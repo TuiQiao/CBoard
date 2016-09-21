@@ -1,5 +1,5 @@
 # CBoard
-### 一款可以连接**任何数据产品**的**免费**BI Dashboard应用 https://github.com/yzhang921/CBoard/wiki
+### 一款可以连接**任何数据产品**的**免费**BI Dashboard应用
 
 ## CBoard特点
 * 轻量级
@@ -32,6 +32,8 @@ http://_yourserverip_:port_/cboard
 ### 图表设计
 ### 看板设计
 
+
+## 项目详细介绍请移步[CBoard Wiki](https://github.com/yzhang921/CBoard/wiki)
 
 ## RoadMap
 

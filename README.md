@@ -1,6 +1,8 @@
 # CBoard
 ### 一款可以连接**任何数据产品**的**免费**BI Dashboard应用
 
+
+
 ## CBoard特点
 * 轻量级
   * **CBoard**前端页面样式与布局基于[AdminLTE2](https://github.com/almasaeed2010/AdminLTE)
@@ -15,7 +17,7 @@
 * 支持读取当今最流行的开源多维分析产品Saiku保存的报表、并定能选择性的制数据与图形
 * 方便扩展实现自己的DataProvider连接任何数据源
 
-
+![wiget_overview](https://raw.githubusercontent.com/yzhang921/CloudResource/b460e7b7ed188bb3ea9ced5a9377bab1489c3982/gif/cboard/widget_design_overview.gif)
 ## 项目构建
 1 编译打包web app war
 ```

@@ -1,7 +1,7 @@
 # CBoard
 ### 一款可以连接**任何数据产品**的**免费**BI Dashboard应用
 
-
+![SS](https://raw.githubusercontent.com/yzhang921/CloudResource/gif/gif/cboard/starter.png)
 
 ## CBoard特点
 * 轻量级

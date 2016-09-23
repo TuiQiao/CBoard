@@ -4,13 +4,13 @@
 
 ![SS](https://raw.githubusercontent.com/yzhang921/CloudResource/gif/gif/cboard/starter.png)
 
-## CBoard特点
-* 界面和图表美观大方
-* 架构轻量级，核心代码简洁，整个项目没有依赖任何第三方多维分析工具
+# Features Of CBoard
+* 界面和图表美观大方，Bootstrap原生支持**移动端访问**
+* 轻量级架构，核心代码简洁，整个项目没有依赖任何第三方多维分析工具
   * **CBoard**前端页面样式与布局基于[AdminLTE2](https://github.com/almasaeed2010/AdminLTE)
   * 图表插件使用[EChart](http://echarts.baidu.com/)
   * JS采用AngularJSMVC框架
-* 交互、拖拽式类似“OLAP”报表开发体验
+* 交互、拖拽式类"OLAP"报表开发体验
 * 支持常用图表与表格
   * 柱线图/堆叠柱线图、双轴图
   * 饼图

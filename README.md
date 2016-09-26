@@ -1,6 +1,6 @@
 # CBoard
 #### 一款**开放式**、**免费**BI Dashboard应用
-项目底层采用Spring+IBatis，前端基于AngularJS1和Bootstrap  
+项目底层采用Spring+MyBatis，前端基于AngularJS1和Bootstrap  
 
 ![SS](https://raw.githubusercontent.com/yzhang921/CloudResource/gif/gif/cboard/starter.png)
 

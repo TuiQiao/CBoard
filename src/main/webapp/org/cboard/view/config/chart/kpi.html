@@ -1,0 +1,117 @@
+<div class="form-group">
+    <label class="col-sm-2 control-label">可选</label>
+    <div class="col-sm-10">
+        <div dnd-list="curWidget.config.selects" dnd-inserted="valueToCell(curWidget.config.selects,index,item,type)"
+             dnd-allowed-types="['select','col','group','key']"
+             class="form-control"
+             style="min-height: 35px;height: auto;padding: 0px">
+            <div class="dndPlaceholder sort-highlight"
+                 style="height: 24px; width: 93px;margin: 3px 3px;display: inline-block;vertical-align: middle;">
+            </div>
+                <span ng-repeat="o in curWidget.config.selects track by o" dnd-draggable="o"
+                      dnd-effect-allowed="move"
+                      dnd-type="'select'"
+                      dnd-moved="curWidget.config.selects.splice($index, 1)"
+                      class="btn btn-default btn-sm"
+                      style="cursor: move;margin: 3px 3px;">{{o}}</span>
+        </div>
+    </div>
+</div>
+<div class="form-group">
+    <label class="col-sm-2 control-label">值</label>
+    <div class="col-sm-10">
+        <div class="form-control" dnd-list="curWidget.config.values[0].cols"
+             dnd-drop="curWidget.config.values[0].cols.length == 0 ? item:false"
+             dnd-inserted="cellToValue(curWidget.config.values[0].cols,index,item,type)"
+             dnd-allowed-types="['select','col','group','key','exp']"
+             style="min-height: 35px;height: auto;padding: 0px">
+            <div class="dndPlaceholder sort-highlight"
+                 style="height: 24px; width: 93px;margin: 3px 3px;display: inline-block;vertical-align: middle;">
+            </div>
+            <div ng-repeat="o in curWidget.config.values[0].cols" dnd-draggable="o" dnd-type="o.type=='exp'?'exp':'col'"
+                 dnd-effect-allowed="move"
+                 dnd-moved="curWidget.config.values[0].cols.splice($index, 1)" class="btn-group"
+                 style="margin: 3px 3px;">
+                <ng-switch on="o.type">
+                    <div ng-switch-when="exp" class="btn-group">
+                        <button type="button" class="btn btn-default btn-sm" style="cursor: move;">
+                            {{o.alias?o.alias:o.exp}}
+                        </button>
+                        <button type="button" class="btn btn-default btn-sm dropdown-toggle"
+                                ng-click="editExp(o)">
+                            <span class="fa fa-edit"></span>
+                        </button>
+                    </div>
+                    <div ng-switch-default class="btn-group">
+                        <button type="button"
+                                ng-click="curWidget.config.selects.push(o.col);curWidget.config.values[0].cols.splice($index, 1);"
+                                class="btn btn-default btn-sm" style="cursor: move;">
+                            {{o.aggregate_type+'('+o.col+')'+ (o.alias?(' -> '+o.alias):'')}}
+                        </button>
+                        <button type="button" class="btn btn-default btn-sm dropdown-toggle"
+                                data-toggle="dropdown">
+                            <span class="fa fa-edit"></span>
+                        </button>
+                        <ul class="dropdown-menu" role="menu">
+                            <li><input class="form-control" ng-model="o.alias" placeholder="别名"></li>
+                            <li ng-repeat="a in value_aggregate_types">
+                                <a ng-click="o.aggregate_type=a.value">{{a.name+'('+o.col+')'}}</a>
+                            </li>
+                        </ul>
+                    </div>
+                </ng-switch>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="form-group">
+    <label class="col-sm-2 control-label">
+        自定义表达式
+    </label>
+    <div class="col-sm-10">
+        <div class="input-group">
+            <div dnd-list="expressions"
+                 dnd-inserted="cellToValue(expressions,index,item,type)"
+                 dnd-allowed-types="['exp']"
+                 class="form-control" style="min-height: 38px;height: auto;padding: 0px">
+                <div class="dndPlaceholder sort-highlight"
+                     style="height: 24px; width: 93px;margin: 3px 3px;display: inline-block;vertical-align: middle;">
+                </div>
+                <div ng-repeat="o in expressions" dnd-draggable="o" dnd-type="'exp'"
+                     dnd-effect-allowed="move"
+                     dnd-moved="expressions.splice($index, 1)" class="btn-group"
+                     style="margin: 3px 3px;">
+                    <button type="button" class="btn btn-default btn-sm" style="cursor: move;">
+                        {{o.alias?o.alias:o.exp}}
+                    </button>
+                    <button type="button" class="btn btn-default btn-sm dropdown-toggle"
+                            ng-click="editExp(o)">
+                        <span class="fa fa-edit"></span>
+                    </button>
+                </div>
+            </div>
+            <div class="input-group-btn">
+                <button type="button" class="btn btn-info" ng-click="editExp()" style="min-height: 38px;">添加</button>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="form-group">
+    <label class="col-sm-2 control-label">文字</label>
+    <div class="col-sm-10">
+        <input type="text" ng-model="curWidget.config.values[0].name" class="form-control" placeholder="名称"/>
+    </div>
+</div>
+<div class="form-group">
+    <label class="col-sm-2 control-label">格式化</label>
+    <div class="col-sm-10">
+        <input type="text" ng-model="curWidget.config.values[0].format" class="form-control" placeholder="名称"/>
+        <span class="help-block">如：'0,0.00' '0.00' '0%' '0.00%' ，<a href="http://numbrojs.com/format.html" target="_blank">更多</a> </span>
+    </div>
+</div>
+<div class="form-group">
+    <label class="col-sm-2 control-label">样式</label>
+    <div class="col-sm-10">
+        <select class="form-control" ng-model="curWidget.config.values[0].style" ng-options="s.value as s.name for s in kpi_styles"></select>
+    </div>
+</div>

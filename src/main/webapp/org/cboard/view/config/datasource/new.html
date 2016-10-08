@@ -1,0 +1,16 @@
+<div class="form-group">
+    <label>数据源类型</label>
+    <select class="form-control" ng-model="curDatasource.type"
+            ng-change="changeDsView()"
+            ng-options="d for d in providerList"></select>
+</div>
+<div class="form-group">
+    <label>名称</label>
+    <input ng-model="curDatasource.name" class="form-control input-sm"/>
+</div>
+<div ng-include="dsView"></div>
+</div>
+<div class="form-group">
+    <button type="submit" class="btn btn-danger pull-right">取消</button>
+    <button type="submit" ng-click="saveNew()" class="btn btn-success pull-right" style="margin-right: 5px">保存</button>
+</div>

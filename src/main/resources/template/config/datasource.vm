@@ -1,0 +1,12 @@
+#foreach($param in $params)
+<div class="form-group">
+    <label>$param.label</label>
+    #if ($param.type == "input")
+        <input ng-model="curDatasource.config.$param.name" class="form-control input-sm"/>
+    #elseif ($param.type == "textarea")
+        <textarea ng-model="curDatasource.config.$param.name" class="form-control input-sm"/>
+    #elseif ($param.type == "password")
+        <input ng-model="curDatasource.config.$param.name" class="form-control input-sm" type="password"/>
+    #end
+</div>
+#end

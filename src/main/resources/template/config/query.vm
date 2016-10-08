@@ -1,0 +1,12 @@
+#foreach($param in $params)
+<div class="form-group">
+    <label class="col-sm-2 control-label">$param.get("label")</label>
+    <div class="col-sm-10">
+    #if ($param.get("type") == "input")
+        <input ng-model="curWidget.query.$param.get("name")" class="form-control"/>
+    #elseif ($param.type == "textarea")
+        <textarea ng-model="curWidget.query.$param.get("name")" class="form-control"/>
+    #end
+    </div>
+</div>
+#end

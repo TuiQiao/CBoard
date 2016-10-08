@@ -1,0 +1,34 @@
+<beans:beans xmlns="http://www.springframework.org/schema/security"
+             xmlns:beans="http://www.springframework.org/schema/beans"
+             xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+             xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.1.xsd
+    http://www.springframework.org/schema/security
+    http://www.springframework.org/schema/security/spring-security-4.1.xsd">
+
+    <http auto-config="true">
+        <intercept-url pattern="/lib/**" access="permitAll"/>
+        <intercept-url pattern="/dist/**" access="permitAll"/>
+        <intercept-url pattern="/bootstrap/**" access="permitAll"/>
+        <intercept-url pattern="/plugins/**" access="permitAll"/>
+        <intercept-url pattern="/js/**" access="permitAll"/>
+        <intercept-url pattern="/login**" access="permitAll"/>
+        <intercept-url pattern="/css/**" access="permitAll"/>
+        <intercept-url pattern="/**" access="!anonymous"/>
+        <form-login login-page="/login.do" username-parameter="username" password-parameter="password"
+                    default-target-url="/starter.html" always-use-default-target="true"/>
+        <csrf disabled="true"/>
+    </http>
+    <authentication-manager>
+        <authentication-provider>
+            <user-service>
+                <user name="bill" password="abc123" authorities="ROLE_USER"/>
+                <user name="admin" password="root123" authorities="ROLE_ADMIN"/>
+                <user name="dba" password="root123" authorities="ROLE_ADMIN,ROLE_DBA"/>
+            </user-service>
+        </authentication-provider>
+    </authentication-manager>
+
+    <beans:bean id="inMemAuthenticationService"
+                class="org.cboard.security.service.InMemAuthenticationService"/>
+</beans:beans>
+

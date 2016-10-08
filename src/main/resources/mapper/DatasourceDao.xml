@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="org.cboard.dao.DatasourceDao">
+
+    <select id="getDatasourceConfig" resultType="java.lang.String">
+        <![CDATA[
+        SELECT config FROM dashboard_datasource WHERE datasource_id = #{0}
+        ]]>
+    </select>
+
+    <select id="getDatasourceList" resultType="org.cboard.pojo.DashboardDatasource">
+       SELECT datasource_id id,user_id userId,source_name name,source_type type ,config FROM dashboard_datasource
+        order by source_name
+    </select>
+
+    <select id="getDatasource" resultType="org.cboard.pojo.DashboardDatasource">
+        SELECT datasource_id id,user_id userId,source_name name,source_type type ,config FROM dashboard_datasource WHERE datasource_id = #{0}
+    </select>
+
+    <insert id="save" parameterType="org.cboard.pojo.DashboardDatasource">
+        <![CDATA[
+        INSERT INTO dashboard_datasource(user_id,source_name,source_type,config) VALUES (#{userId},#{name},#{type},#{config})
+        ]]>
+    </insert>
+
+    <update id="update" parameterType="org.cboard.pojo.DashboardDatasource">
+        <![CDATA[
+        UPDATE dashboard_datasource SET source_name = #{name},config = #{config} where datasource_id = #{id}
+        ]]>
+    </update>
+
+    <select id="countExistDatasourceName" resultType="java.lang.Long">
+        SELECT count(1) from dashboard_datasource where 1=1
+        <if test="datasource_id != null" >
+        <![CDATA[
+            and datasource_id <> #{datasource_id}
+            ]]>
+        </if>
+          and source_name = #{source_name}
+    </select>
+
+    <delete id="delete">
+        delete from dashboard_datasource where datasource_id = #{0}
+    </delete>
+</mapper>

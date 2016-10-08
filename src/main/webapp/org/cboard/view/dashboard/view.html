@@ -1,0 +1,12 @@
+<!-- Content Wrapper. Contains page content -->
+<section class="content-header">
+    <h1>
+        <div ng-show="loading"><i class="fa fa-spinner fa-spin"></i> 正在读取</div>
+        {{board.name}}
+    </h1>
+</section>
+<div id="inner-container" class="content">
+    <div class="row" ng-repeat="row in board.layout.rows track by $index" ng-style="{height:row.height+'px'}">
+        <dashboard-widget ng-repeat="widget in row.widgets track by $index"></dashboard-widget>
+    </div>
+</div>

@@ -1,0 +1,150 @@
+<!-- Content Wrapper. Contains page content -->
+<!-- Content Wrapper. Contains page content -->
+<div id="inner-container">
+    <div class="row">
+        <div class="col-md-3">
+            <button class="btn btn-success btn-block margin-bottom" ng-click="newWgt()">
+                New
+            </button>
+            <div class="box box-solid">
+                <div class="box-header with-border">
+                    <h3 class="box-title">图表</h3>
+                </div>
+                <div class="box-body no-padding">
+                    <uib-accordion class="nav nav-pills nav-stacked" close-others="true">
+                        <div uib-accordion-group ng-repeat="category in categoryList" >
+                            <uib-accordion-heading>
+                                {{category}}<i class="pull-right glyphicon"></i>
+                            </uib-accordion-heading>
+                            <ul class="nav nav-pills nav-stacked">
+                                <li ng-repeat="o in widgetList | filter:{categoryName:category}">
+                                    <a>
+                                        {{o.name}}
+                                <span class="pull-right text-red">
+                                    <i class="fa fa-edit" style="cursor: pointer" ng-click="editWgt(o)"></i>
+                                    <i class="fa fa-trash-o" style="cursor: pointer"
+                                       ng-click="deleteWgt(o)"></i>
+                                </span>
+                                    </a>
+                                </li>
+                            </ul>
+                        </div>
+                    </uib-accordion>
+                    <!-- /.box-body -->
+                </div>
+            </div>
+        </div>
+        <div class="col-md-9">
+            <div class="box" ng-show="optFlag == 'new' || optFlag == 'edit'">
+                <div class="box-header with-border">
+                    <h3 class="box-title">{{widgetName}}</h3>
+                </div>
+                <div class="box-body">
+                    <div class="row">
+                        <div class="col-md-12 form-horizontal">
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <div class="form-group">
+                                        <label class="col-sm-2 control-label">数据源</label>
+                                        <div class="col-sm-10">
+                                            <select class="form-control" ng-model="datasource"
+                                                    ng-options="d as d.name+' ('+d.type+')' for d in datasourceList"></select>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-12" ng-show="datasource.name"
+                                     ng-include="datasource.type?('/dashboard/getConfigView.do?type=' + datasource.type):''"></div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <div class="form-group">
+                                        <div class="col-sm-offset-2 col-sm-2">
+                                            <button type="button" class="btn btn-block btn-success" ng-click="loadData()">读取数据 </button>
+                                        </div>
+                                    </div>
+                                    <div class="form-group" ng-repeat="alert in alerts">
+                                        <div class="col-sm-offset-2 col-sm-10">
+                                            <div uib-alert ng-class="'alert-' + (alert.type || 'warning')"
+                                            close="alerts.splice($index, 1)">{{alert.msg}}
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <hr/>
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <div class="form-group">
+                                        <label class="col-sm-2 control-label">名称</label>
+                                        <div class="col-sm-10">
+                                            <input ng-model="widgetName" class="form-control col-sm-10"/>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <div class="form-group">
+                                        <label class="col-sm-2 control-label">分类</label>
+                                        <div class="col-sm-10">
+                                            <input ng-model="widgetCategory" list="categoryList" class="form-control col-sm-10"/>
+                                            <datalist id="categoryList">
+                                                <option ng-repeat="cate in categoryList | filter: {cate: '!默认分类'}" value="{{cate}}"></option>
+                                                <option value="默认分类"></option>
+                                            </datalist>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row" ng-show="widgetData">
+                                <div class="col-md-12">
+                                    <div class="form-group">
+                                        <label class="col-sm-2 control-label">图表类型</label>
+                                        <div class="col-sm-10">
+                                            <select class="form-control" ng-model="curWidget.config.chart_type"
+                                                    ng-change="newConfig()"
+                                                    ng-options="type.value as type.name for type in chart_types"></select>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-12" ng-include="getChartView()"></div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <div class="form-group">
+                                        <div class="col-sm-offset-2 col-sm-10">
+                                            <button type="submit" class="btn btn-danger pull-right">取消</button>
+                                            <button type="submit" ng-click="saveWgt()"
+                                                    class="btn btn-success pull-right"
+                                                    style="margin-right: 5px">保存
+                                            </button>
+                                            <button type="submit" ng-click="preview()"
+                                                    class="btn btn-success pull-right"
+                                                    style="margin-right: 5px">预览
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-{{previewDivWidth}}">
+                                    <div id="preview_widget" style="height: 300px;"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- /.box-body -->
+                <div class="box-footer">
+                </div>
+                <!-- /.box-footer-->
+                <div class="overlay" ng-show="loading">
+                    <i class="fa fa-spinner fa-spin"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</div>

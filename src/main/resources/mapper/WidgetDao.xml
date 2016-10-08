@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="org.cboard.dao.WidgetDao">
+
+    <select id="getCategoryList" resultType="java.lang.String">
+        SELECT DISTINCT(category_name) category FROM dashboard_widget order by category
+    </select>
+
+    <select id="getWidgetList" resultType="org.cboard.pojo.DashboardWidget">
+       SELECT widget_id id,user_id userId,widget_name name,data_json data,category_name categoryName FROM dashboard_widget
+       order by widget_name
+    </select>
+
+    <select id="getWidget" resultType="org.cboard.pojo.DashboardWidget">
+       SELECT widget_id id,user_id userId,widget_name name,data_json data,category_name categoryName FROM dashboard_widget WHERE widget_id = #{0}
+    </select>
+
+    <insert id="save" parameterType="org.cboard.pojo.DashboardWidget">
+        <![CDATA[
+        INSERT INTO dashboard_widget(user_id,widget_name,data_json,category_name) VALUES (#{userId},#{name},#{data},#{categoryName})
+        ]]>
+    </insert>
+
+    <update id="update" parameterType="org.cboard.pojo.DashboardWidget">
+        <![CDATA[
+        UPDATE dashboard_widget SET widget_name = #{name},data_json = #{data},category_name = #{categoryName} where widget_id = #{id}
+        ]]>
+    </update>
+
+    <select id="countExistWidgetName" resultType="java.lang.Long">
+        SELECT count(1) from dashboard_widget where 1=1
+        <if test="widget_id != null" >
+        <![CDATA[
+            and widget_id <> #{widget_id}
+            ]]>
+        </if>
+          and widget_name = #{widget_name}
+    </select>
+
+    <delete id="delete">
+        delete from dashboard_widget where widget_id = #{0}
+    </delete>
+</mapper>

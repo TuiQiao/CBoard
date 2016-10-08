@@ -1,0 +1,175 @@
+<!-- Content Wrapper. Contains page content -->
+<div id="inner-container">
+    <div class="row">
+        <div class="col-md-3">
+            <button class="btn btn-success btn-block margin-bottom" ng-click="newBoard()">
+                New
+            </button>
+            <div class="box box-solid">
+                <div class="box-header with-border">
+                    <h3 class="box-title">看板</h3>
+                </div>
+                <div class="box-body no-padding">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <ul class="nav nav-pills nav-stacked">
+                                <li ng-repeat="o in boardList">
+                                    <a>
+                                        {{o.name}}
+                                        <span class="pull-right text-red">
+                                            <i class="fa fa-edit" style="cursor: pointer" ng-click="editBoard(o)"></i>
+                                            <i class="fa fa-trash-o" style="cursor: pointer"
+                                               ng-click="deleteBoard(o)"></i>
+                                        </span>
+                                    </a>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                <!-- /.box-body -->
+                <div class="box-footer">
+                </div>
+                <!-- /.box-footer-->
+            </div>
+        </div>
+        <div class="col-md-9">
+            <div class="box" ng-show="optFlag == 'new' || optFlag == 'edit'">
+                <div class="box-header with-border">
+                    <h3 class="box-title">{{curBoard.name}}</h3>
+                </div>
+                <div class="box-body">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <div class="form-group">
+                                        <button type="submit" class="btn btn-danger pull-right">取消</button>
+                                        <button type="submit" class="btn btn-success pull-right" ng-click="saveBoard()"
+                                                style="margin-right: 5px">保存
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <div class="form-group">
+                                        <label>分类</label>
+                                        <select class="form-control" ng-model="curBoard.categoryId"
+                                                ng-options="w.id as w.name for w in categoryList"></select>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <div class="form-group">
+                                        <label>名称</label>
+                                        <input ng-model="curBoard.name" class="form-control"/>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-1">
+                                    <button type="submit" class="btn btn-success" ng-click="addRow()">
+                                        添加行
+                                    </button>
+                                </div>
+                            </div>
+                            <div dnd-list="curBoard.layout.rows" dnd-allowed-types="['r']">
+                                <div class="dndPlaceholder row margin">
+                                    <div class="box sort-highlight" style="height: 130px"></div>
+                                </div>
+                                <div class="row margin" ng-repeat="row in curBoard.layout.rows">
+                                    <div class="box box-success"
+                                         style="border-left: 1px solid #d2d6de; border-right: 1px solid #d2d6de">
+                                        <div class="box-header" dnd-draggable="row" dnd-type="'r'" nd-effect-allowed="move"
+                                             dnd-moved="curBoard.layout.rows.splice($index, 1)" style="cursor:move">
+                                            行
+                                            <div class="box-tools pull-right">
+                                                <button type="button" class="btn btn-xs btn-success"
+                                                        ng-click="addWidget(row)">
+                                                    添加列
+                                                </button>
+                                                <button type="button" class="btn btn-box-tool" data-widget="collapse"><i
+                                                        class="fa fa-minus"></i>
+                                                </button>
+                                                <button type="button" class="btn btn-box-tool" data-widget="remove"
+                                                        ng-click="curBoard.layout.rows.splice($index, 1)"><i
+                                                        class="fa fa-times"></i>
+                                                </button>
+                                            </div>
+                                        </div>
+                                        <div class="box-body">
+                                            <div class="row">
+                                                <div class="col-sm-12 dataTables_filter">
+                                                    <label>高度<input type="search" ng-model="row.height" class="form-control input-sm" style="width: 100px"></label></label>
+                                                </div>
+                                            </div>
+                                            <div class="row" dnd-list="row.widgets" dnd-allowed-types="['w']"
+                                                 style="min-height: 60px">
+                                                <div class="dndPlaceholder col-md-2">
+                                                    <div class="box sort-highlight" style="height: 40px;display: inline-block;vertical-align: middle;"></div>
+                                                </div>
+                                                <div class="col-md-{{widget.width}}" ng-repeat="widget in row.widgets">
+                                                    <div class="box box-primary collapsed-box"
+                                                         style="border-left: 1px solid #d2d6de; border-right: 1px solid #d2d6de">
+                                                        <div class="box-header" dnd-draggable="widget" dnd-type="'w'"
+                                                             nd-effect-allowed="move"
+                                                             dnd-moved="row.widgets.splice($index, 1)" style="cursor:move">
+                                                            {{widget.name}}
+                                                            <div class="box-tools pull-right">
+                                                                <button type="button" class="btn btn-box-tool"
+                                                                        data-widget="collapse"><i class="fa fa-wrench"></i>
+                                                                </button>
+                                                                <button type="button" class="btn btn-box-tool"
+                                                                        data-widget="remove"
+                                                                        ng-click="row.widgets.splice($index, 1)"><i
+                                                                        class="fa fa-times"></i>
+                                                                </button>
+                                                            </div>
+                                                        </div>
+                                                        <div class="box-body">
+                                                            <div class="form-group">
+                                                                <label>名称</label>
+                                                                <input type="text" ng-model="widget.name"
+                                                                       ng-model-options="{updateOn: 'blur'}"
+                                                                       class="form-control" placeholder="名称"/>
+                                                            </div>
+                                                            <div class="form-group">
+                                                                <label>宽度(1-12)</label>
+                                                                <input type="text" ng-model="widget.width"
+                                                                       ng-model-options="{updateOn: 'blur'}"
+                                                                       class="form-control"/>
+                                                            </div>
+                                                            <div class="form-group">
+                                                                <label>图表</label>
+                                                                <ui-select ng-model="widget.widgetId">
+                                                                    <ui-select-match>
+                                                                        {{$select.selected.name}}
+                                                                    </ui-select-match>
+                                                                    <ui-select-choices group-by="widgetGroup" repeat="w.id as w in widgetList | filter:{name : $select.search}">
+                                                                        {{w.name}}
+                                                                    </ui-select-choices>
+                                                                </ui-select>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    </form>
+                    <!-- /.box-body -->
+                    <div class="box-footer">
+                    </div>
+                    <!-- /.box-footer-->
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</div>

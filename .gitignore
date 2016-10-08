@@ -5,6 +5,7 @@
 
 # User-specific stuff:
 .idea
+target
 **/*.iml
 
 ## File-based project format:

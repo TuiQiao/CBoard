@@ -45,16 +45,17 @@ cd进入项目根目录
 mvn clean package
 ```
 4 部署war到tomcat容器
+ * 拷贝CBoard\target\cboard.war到tomcat的webapp目录，修改cboard.war名为ROOT.war，**以ROOT应用部署**
+ * 启动tomcat
 
-
-## 快速开始
+## 访问CBoard
 ```
-http://_yourserverip_:port_/cboard
+http://_yourserverip_:8080
 默认登录用户名密码: admin/root123
 ```
 
 
-## 项目详细介绍请移步[CBoard Wiki](https://github.com/yzhang921/CBoard/wiki)
+## 项目详细介绍与使用请移步[CBoard Wiki](https://github.com/yzhang921/CBoard/wiki)
 
 
 ## 联系我们

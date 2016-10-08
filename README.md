@@ -45,7 +45,7 @@ cd进入项目根目录
 mvn clean package
 ```
 4 部署war到tomcat容器
- * 拷贝CBoard\target\cboard.war到tomcat的webapp目录，修改cboard.war名为ROOT.war，**以ROOT应用部署**
+ * 拷贝CBoard\target\cboard.war到tomcat的webapp目录，修改cboard.war名为ROOT.war，**以ROOT应用部署，否则应用会报错**
  * 启动tomcat
 
 ## 访问CBoard

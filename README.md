@@ -21,17 +21,36 @@
 * 方便扩展实现自己的DataProvider连接任何数据源
 
 ![wiget_overview](https://raw.githubusercontent.com/yzhang921/CloudResource/b460e7b7ed188bb3ea9ced5a9377bab1489c3982/gif/cboard/widget_design_overview.gif)
+
 ## 项目构建
-1 编译打包web app war
+1 准备CBoard元数据库
+```mysql
+以MySQL为例
+-- CREATE DATEBASE cboard;
+执行元数据表创建脚本: sql/mysql/mysql.sql
 ```
+2 修改元数据配置文件
+```
+CBoard\src\main\resources\config.properties
+```
+```pro
+validationQuery=SELECT 1
+jdbc_url=jdbc:mysql://localhost:3306/cboard
+jdbc_username=root
+jdbc_password=111111
+```
+3 Maven 编译打包
+```
+cd进入项目根目录
 mvn clean package
 ```
-2 部署war到tomcat容器
+4 部署war到tomcat容器
 
 
 ## 快速开始
 ```
 http://_yourserverip_:port_/cboard
+默认登录用户名密码: admin/root123
 ```
 
 
@@ -39,9 +58,7 @@ http://_yourserverip_:port_/cboard
 
 
 ## 联系我们
-欢迎大家通过GitHub Issue系统反馈Bug与需求、提Pull Request  
-CBoard交流群讨论QQ群: 301028618  
+欢迎大家通过GitHub Issue系统反馈Bug与需求、提Pull Request
+CBoard交流群讨论QQ群: 301028618
 EMail: peter.zhang921@gmail.com, g.yuanyf@gmail.com
 
-
-.

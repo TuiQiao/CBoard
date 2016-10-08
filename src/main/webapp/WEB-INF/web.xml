@@ -43,6 +43,11 @@
     </filter-mapping>
 
     <listener>
+        <description>data provider cache listener</description>
+        <listener-class>org.cboard.services.CachedDataProviderService</listener-class>
+    </listener>
+
+    <listener>
         <description>spring listener</description>
         <listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
     </listener>

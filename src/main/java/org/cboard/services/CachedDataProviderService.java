@@ -3,40 +3,73 @@ package org.cboard.services;
 import org.cboard.dto.DataProviderResult;
 import org.springframework.stereotype.Repository;
 
-import javax.servlet.ServletRequestEvent;
-import javax.servlet.ServletRequestListener;
-import java.util.HashMap;
+import java.util.Date;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
 
 /**
  * Created by yfyuan on 2016/8/24.
  */
 @Repository
-public class CachedDataProviderService extends DataProviderService implements ServletRequestListener {
+public class CachedDataProviderService extends DataProviderService {
 
-    private static ThreadLocal<Map<String, DataProviderResult>> cache = new ThreadLocal<>();
 
-    @Override
-    public DataProviderResult getData(Long datasourceId, Map<String, String> query) {
-        Map<String, DataProviderResult> map = cache.get();
+    private static ConcurrentMap<String, CacheObject> cache = new ConcurrentHashMap<>();
 
+    public DataProviderResult getData(Long datasourceId, Map<String, String> query, boolean reload) {
         String keys = "" + datasourceId + "_" + query.toString();
 
-        DataProviderResult data = map.get(keys);
-        if (data == null) {
-            data = super.getData(datasourceId, query);
-            map.put(keys, data);
+        CacheObject o = cache.get(keys);
+        if (o == null || new Date().getTime() >= o.getT1() + o.getExpire() || reload) {
+            synchronized (keys) {
+                CacheObject oo = cache.get(keys);
+                if (oo == null || new Date().getTime() >= oo.getT1() + oo.getExpire() || reload) {
+                    DataProviderResult d = super.getData(datasourceId, query);
+                    cache.put(keys, new CacheObject(new Date().getTime(), 12 * 60 * 60 * 1000, d));
+                    return d;
+                } else {
+                    return (DataProviderResult) oo.getD();
+                }
+            }
+        } else {
+            return (DataProviderResult) o.getD();
         }
-        return data;
     }
 
-    @Override
-    public void requestDestroyed(ServletRequestEvent servletRequestEvent) {
-        cache.remove();
-    }
+    class CacheObject {
+        private long t1;
+        private long expire;
+        private Object d;
 
-    @Override
-    public void requestInitialized(ServletRequestEvent servletRequestEvent) {
-        cache.set(new HashMap<String, DataProviderResult>());
+        public CacheObject(long t1, long expire, Object d) {
+            this.t1 = t1;
+            this.expire = expire;
+            this.d = d;
+        }
+
+        public long getT1() {
+            return t1;
+        }
+
+        public void setT1(long t1) {
+            this.t1 = t1;
+        }
+
+        public long getExpire() {
+            return expire;
+        }
+
+        public void setExpire(long expire) {
+            this.expire = expire;
+        }
+
+        public Object getD() {
+            return d;
+        }
+
+        public void setD(Object d) {
+            this.d = d;
+        }
     }
 }

@@ -7,8 +7,43 @@ cBoard.controller('dashboardViewCtrl', function ($scope, $state, $stateParams, $
     $scope.loading = true;
 
     $http.get("/dashboard/getBoardData.do?id=" + $stateParams.id).success(function (response) {
-        $scope.board = response;
         $scope.loading = false;
+        $scope.board = response;
+        var queries = [];
+        _.each($scope.board.layout.rows, function (row) {
+            _.each(row.widgets, function (widget) {
+                var w = widget.widget.data;
+                var q;
+                for (var i = 0; i < queries.length; i++) {
+                    if (queries[i].k == angular.toJson({d: w.datasource, q: w.query})) {
+                        q = queries[i];
+                        break;
+                    }
+                }
+                if (!q) {
+                    q = {
+                        k: angular.toJson({d: w.datasource, q: w.query}),
+                        datasource: w.datasource,
+                        query: w.query,
+                        widgets: [widget]
+                    };
+                    queries.push(q);
+                } else {
+                    q.widgets.push(widget);
+                }
+            });
+        });
+        _.each(queries, function (q) {
+            $http.post("/dashboard/getCachedData.do", {
+                datasourceId: q.datasource,
+                query: angular.toJson(q.query)
+            }).success(function (response) {
+                _.each(q.widgets, function (w) {
+                    w.widget.queryData = response.data;
+                    w.show = true;
+                });
+            });
+        });
     });
 
     $scope.modalChart = function (widget) {
@@ -17,6 +52,18 @@ cBoard.controller('dashboardViewCtrl', function ($scope, $state, $stateParams, $
 
     $scope.config = function (widget) {
         $state.go('config.widget', {id: widget.widget.id});
+    };
+
+    $scope.reload = function (widget) {
+        widget.show = false;
+        $http.post("/dashboard/getCachedData.do", {
+            datasourceId: widget.widget.data.datasource,
+            query: angular.toJson(widget.widget.data.query),
+            reload: true
+        }).success(function (response) {
+            widget.widget.queryData = response.data;
+            widget.show = true;
+        });
     };
 
 });

@@ -45,6 +45,9 @@ public class DashboardController {
     private DataProviderService dataProviderService;
 
     @Autowired
+    private CachedDataProviderService cachedDataProviderService;
+
+    @Autowired
     private DatasourceService datasourceService;
 
     @Autowired
@@ -71,6 +74,14 @@ public class DashboardController {
         JSONObject queryO = JSONObject.parseObject(query);
         Map<String, String> strParams = Maps.transformValues(queryO, Functions.toStringFunction());
         DataProviderResult result = dataProviderService.getData(datasourceId, strParams);
+        return result;
+    }
+
+    @RequestMapping(value = "/getCachedData")
+    public DataProviderResult getCachedData(@RequestParam(name = "datasourceId") Long datasourceId, @RequestParam(name = "query") String query, @RequestParam(name = "reload", required = false, defaultValue = "false") Boolean reload) {
+        JSONObject queryO = JSONObject.parseObject(query);
+        Map<String, String> strParams = Maps.transformValues(queryO, Functions.toStringFunction());
+        DataProviderResult result = cachedDataProviderService.getData(datasourceId, strParams, reload);
         return result;
     }
 

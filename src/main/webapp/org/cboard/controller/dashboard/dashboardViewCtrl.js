@@ -16,16 +16,17 @@ cBoard.controller('dashboardViewCtrl', function ($scope, $state, $stateParams, $
                     var w = widget.widget.data;
                     var q;
                     for (var i = 0; i < queries.length; i++) {
-                        if (queries[i].k == angular.toJson({d: w.datasource, q: w.query})) {
+                        if (queries[i].k == angular.toJson({d: w.datasource, q: w.query, s: w.datasetId})) {
                             q = queries[i];
                             break;
                         }
                     }
                     if (!q) {
                         q = {
-                            k: angular.toJson({d: w.datasource, q: w.query}),
+                            k: angular.toJson({d: w.datasource, q: w.query, s: w.datasetId}),
                             datasource: w.datasource,
                             query: w.query,
+                            datasetId: w.datasetId,
                             widgets: [widget]
                         };
                         queries.push(q);
@@ -38,6 +39,7 @@ cBoard.controller('dashboardViewCtrl', function ($scope, $state, $stateParams, $
                 $http.post("/dashboard/getCachedData.do", {
                     datasourceId: q.datasource,
                     query: angular.toJson(q.query),
+                    datasetId: q.datasetId,
                     reload: reload
                 }).success(function (response) {
                     _.each(q.widgets, function (w) {
@@ -47,7 +49,7 @@ cBoard.controller('dashboardViewCtrl', function ($scope, $state, $stateParams, $
                 });
             });
         });
-        
+
     };
 
     $scope.load(false);

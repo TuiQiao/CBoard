@@ -38,7 +38,7 @@ cBoard.controller('boardCtrl', function ($scope, $http, ModalUtils) {
 
     $scope.widgetGroup = function (item) {
         return item.categoryName;
-    }
+    };
 
     $scope.newBoard = function () {
         $scope.optFlag = 'new';

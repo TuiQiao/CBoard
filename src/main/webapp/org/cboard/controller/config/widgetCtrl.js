@@ -45,6 +45,15 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
     $scope.curWidget = {};
     $scope.previewDivWidth = 12;
     $scope.expressions = [];
+    $scope.customDs = false;
+
+    $http.get("/dashboard/getDatasetList.do").success(function (response) {
+        $scope.datasetList = response;
+    });
+
+    $http.get("/dashboard/getDatasetCategoryList.do").success(function (response) {
+        $scope.datasetCategoryList = response;
+    });
 
     $http.get("/dashboard/getDatasourceList.do").success(function (response) {
         $scope.datasourceList = response;
@@ -57,6 +66,10 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
             }
         });
     });
+
+    $scope.datasetGroup = function (item) {
+        return item.categoryName;
+    };
 
     var getWidgetList = function (callback) {
         $http.get("/dashboard/getWidgetList.do").success(function (response) {
@@ -150,7 +163,7 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
 
     $scope.loadData = function () {
         $scope.loading = true;
-        dataService.getData($scope.datasource.id, $scope.curWidget.query, function (widgetData) {
+        dataService.getData($scope.datasource ? $scope.datasource.id : null, $scope.curWidget.query, $scope.curWidget.datasetId, function (widgetData) {
             $scope.loading = false;
             $scope.toChartDisabled = false;
             if (widgetData.msg == '1') {
@@ -172,6 +185,7 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
         $scope.widgetCategory = null;
         $scope.widgetId = null;
         $scope.optFlag = 'new';
+        $scope.customDs = false;
     };
 
     $scope.newConfig = function () {
@@ -273,9 +287,13 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
         o.name = $scope.widgetName;
         o.categoryName = $scope.widgetCategory;
         o.data = {};
-        o.data.query = $scope.curWidget.query;
         o.data.config = $scope.curWidget.config;
-        o.data.datasource = $scope.datasource.id;
+        if ($scope.customDs) {
+            o.data.query = $scope.curWidget.query;
+            o.data.datasource = $scope.datasource.id;
+        } else {
+            o.data.datasetId = $scope.curWidget.datasetId;
+        }
         if ($scope.optFlag == 'new') {
             $http.post("/dashboard/saveNewWidget.do", {json: angular.toJson(o)}).success(function (serviceStatus) {
                 if (serviceStatus.status == '1') {
@@ -311,7 +329,9 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
         $scope.widgetId = widget.id;
         $scope.optFlag = 'edit';
         $scope.loading = true;
-        dataService.getData($scope.datasource.id, $scope.curWidget.query, function (widgetData) {
+        $scope.customDs = _.isUndefined($scope.curWidget.datasetId);
+
+        dataService.getData($scope.datasource ? $scope.datasource.id : null, $scope.curWidget.query, $scope.curWidget.datasetId, function (widgetData) {
             $scope.loading = false;
             if (widgetData.msg == '1') {
                 $scope.widgetData = widgetData.data;

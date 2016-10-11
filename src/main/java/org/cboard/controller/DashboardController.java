@@ -1,23 +1,14 @@
 package org.cboard.controller;
 
 import com.alibaba.fastjson.JSONObject;
-import org.cboard.dao.BoardDao;
-import org.cboard.dao.CategoryDao;
-import org.cboard.dao.DatasourceDao;
-import org.cboard.dao.WidgetDao;
-import org.cboard.dataprovider.DataProviderManager;
-import org.cboard.dataprovider.DataProviderViewManager;
-import org.cboard.dto.DataProviderResult;
-import org.cboard.dto.ViewDashboardBoard;
-import org.cboard.dto.ViewDashboardDatasource;
-import org.cboard.dto.ViewDashboardWidget;
-import org.cboard.pojo.DashboardBoard;
-import org.cboard.pojo.DashboardCategory;
-import org.cboard.pojo.DashboardDatasource;
-import org.cboard.pojo.DashboardWidget;
 import com.google.common.base.Functions;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+import org.cboard.dao.*;
+import org.cboard.dataprovider.DataProviderManager;
+import org.cboard.dataprovider.DataProviderViewManager;
+import org.cboard.dto.*;
+import org.cboard.pojo.*;
 import org.cboard.services.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -68,20 +59,32 @@ public class DashboardController {
     @Autowired
     private AuthenticationService authenticationService;
 
+    @Autowired
+    private DatasetDao datasetDao;
+
+    @Autowired
+    private DatasetService datasetService;
+
 
     @RequestMapping(value = "/getData")
-    public DataProviderResult getData(@RequestParam(name = "datasourceId") Long datasourceId, @RequestParam(name = "query") String query) {
-        JSONObject queryO = JSONObject.parseObject(query);
-        Map<String, String> strParams = Maps.transformValues(queryO, Functions.toStringFunction());
-        DataProviderResult result = dataProviderService.getData(datasourceId, strParams);
+    public DataProviderResult getData(@RequestParam(name = "datasourceId", required = false) Long datasourceId, @RequestParam(name = "query", required = false) String query, @RequestParam(name = "datasetId", required = false) Long datasetId) {
+        Map<String, String> strParams = null;
+        if (query != null) {
+            JSONObject queryO = JSONObject.parseObject(query);
+            strParams = Maps.transformValues(queryO, Functions.toStringFunction());
+        }
+        DataProviderResult result = dataProviderService.getData(datasourceId, strParams, datasetId);
         return result;
     }
 
     @RequestMapping(value = "/getCachedData")
-    public DataProviderResult getCachedData(@RequestParam(name = "datasourceId") Long datasourceId, @RequestParam(name = "query") String query, @RequestParam(name = "reload", required = false, defaultValue = "false") Boolean reload) {
-        JSONObject queryO = JSONObject.parseObject(query);
-        Map<String, String> strParams = Maps.transformValues(queryO, Functions.toStringFunction());
-        DataProviderResult result = cachedDataProviderService.getData(datasourceId, strParams, reload);
+    public DataProviderResult getCachedData(@RequestParam(name = "datasourceId", required = false) Long datasourceId, @RequestParam(name = "query", required = false) String query, @RequestParam(name = "datasetId", required = false) Long datasetId, @RequestParam(name = "reload", required = false, defaultValue = "false") Boolean reload) {
+        Map<String, String> strParams = null;
+        if (query != null) {
+            JSONObject queryO = JSONObject.parseObject(query);
+            strParams = Maps.transformValues(queryO, Functions.toStringFunction());
+        }
+        DataProviderResult result = cachedDataProviderService.getData(datasourceId, strParams, datasetId, reload);
         return result;
     }
 
@@ -222,5 +225,40 @@ public class DashboardController {
     public List<String> getWidgetCategoryList() {
         return widgetDao.getCategoryList();
     }
+
+    @RequestMapping(value = "/saveNewDataset")
+    public ServiceStatus saveNewDataset(@RequestParam(name = "json") String json) {
+
+        String userid = authenticationService.getCurrentUser().getUserId();
+        return datasetService.save(userid, json);
+    }
+
+    @RequestMapping(value = "/getDatasetList")
+    public List<ViewDashboardDataset> getDatasetList() {
+
+        String userid = authenticationService.getCurrentUser().getUserId();
+        List<DashboardDataset> list = datasetDao.getDatasetList(userid);
+        return Lists.transform(list, ViewDashboardDataset.TO);
+    }
+
+    @RequestMapping(value = "/updateDataset")
+    public ServiceStatus updateDataset(@RequestParam(name = "json") String json) {
+
+        String userid = authenticationService.getCurrentUser().getUserId();
+        return datasetService.update(userid, json);
+    }
+
+    @RequestMapping(value = "/deleteDataset")
+    public ServiceStatus deleteDataset(@RequestParam(name = "id") Long id) {
+
+        String userid = authenticationService.getCurrentUser().getUserId();
+        return datasetService.delete(userid, id);
+    }
+
+    @RequestMapping(value = "/getDatasetCategoryList")
+    public List<String> getDatasetCategoryList() {
+        return datasetDao.getCategoryList();
+    }
+
 
 }

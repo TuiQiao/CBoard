@@ -17,15 +17,20 @@ public class CachedDataProviderService extends DataProviderService {
 
     private static ConcurrentMap<String, CacheObject> cache = new ConcurrentHashMap<>();
 
-    public DataProviderResult getData(Long datasourceId, Map<String, String> query, boolean reload) {
-        String keys = "" + datasourceId + "_" + query.toString();
+    public DataProviderResult getData(Long datasourceId, Map<String, String> query, Long datasetId, boolean reload) {
+        String keys = null;
+        if (datasetId != null) {
+            keys = "dataset_" + datasetId.toString();
+        } else {
+            keys = "" + datasourceId + "_" + query.toString();
+        }
 
         CacheObject o = cache.get(keys);
         if (o == null || new Date().getTime() >= o.getT1() + o.getExpire() || reload) {
             synchronized (keys) {
                 CacheObject oo = cache.get(keys);
                 if (oo == null || new Date().getTime() >= oo.getT1() + oo.getExpire() || reload) {
-                    DataProviderResult d = super.getData(datasourceId, query);
+                    DataProviderResult d = super.getData(datasourceId, query, datasetId);
                     cache.put(keys, new CacheObject(new Date().getTime(), 12 * 60 * 60 * 1000, d));
                     return d;
                 } else {

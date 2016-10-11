@@ -42,7 +42,25 @@
                 <div class="box-body">
                     <div class="row">
                         <div class="col-md-12 form-horizontal">
-                            <div class="row">
+                            <div class="row" ng-show="!customDs">
+                                <div class="col-md-12">
+                                    <div class="form-group">
+                                        <label class="col-sm-2 control-label">数据集</label>
+                                        <div class="col-sm-10">
+                                            <ui-select ng-model="curWidget.datasetId">
+                                                <ui-select-match>
+                                                    {{$select.selected.name}}
+                                                </ui-select-match>
+                                                <ui-select-choices group-by="datasetGroup"
+                                                                   repeat="w.id as w in datasetList | filter:{name : $select.search}">
+                                                    {{w.name}}
+                                                </ui-select-choices>
+                                            </ui-select>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row" ng-show="customDs">
                                 <div class="col-md-12">
                                     <div class="form-group">
                                         <label class="col-sm-2 control-label">数据源</label>
@@ -53,7 +71,7 @@
                                     </div>
                                 </div>
                             </div>
-                            <div class="row">
+                            <div class="row" ng-show="customDs">
                                 <div class="col-md-12" ng-show="datasource.name"
                                      ng-include="datasource.type?('/dashboard/getConfigView.do?type=' + datasource.type):''"></div>
                             </div>
@@ -61,7 +79,12 @@
                                 <div class="col-md-12">
                                     <div class="form-group">
                                         <div class="col-sm-offset-2 col-sm-2">
-                                            <button type="button" class="btn btn-block btn-success" ng-click="loadData()">读取数据 </button>
+                                            <button type="button" class="btn btn-block"
+                                                    ng-click="customDs=!customDs">{{customDs?'自定义数据集':'选择数据集'}}
+                                            </button>
+                                        </div>
+                                        <div class="col-sm-2">
+                                            <button type="button" class="btn btn-block btn-success" ng-click="loadData()">读取数据</button>
                                         </div>
                                     </div>
                                     <div class="form-group" ng-repeat="alert in alerts">

@@ -9,10 +9,11 @@ cBoard.service('dataService', function ($http) {
      * @param query
      * @param callback
      */
-    this.getData = function (datasource, query, callback) {
+    this.getData = function (datasource, query, datasetId, callback) {
         $http.post("/dashboard/getData.do", {
             datasourceId: datasource,
-            query: angular.toJson(query)
+            query: angular.toJson(query),
+            datasetId: datasetId
         }).success(function (response) {
             callback(response);
         });

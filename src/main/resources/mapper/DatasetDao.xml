@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="org.cboard.dao.DatasetDao">
+
+    <select id="getCategoryList" resultType="java.lang.String">
+        SELECT DISTINCT(category_name) category FROM dashboard_dataset order by category
+    </select>
+
+    <select id="getDatasetList" resultType="org.cboard.pojo.DashboardDataset">
+       SELECT dataset_id id,user_id userId,dataset_name name,data_json data,category_name categoryName FROM dashboard_dataset
+       order by dataset_name
+    </select>
+
+    <select id="getDataset" resultType="org.cboard.pojo.DashboardDataset">
+       SELECT dataset_id id,user_id userId,dataset_name name,data_json data,category_name categoryName FROM dashboard_dataset WHERE dataset_id = #{0}
+    </select>
+
+    <insert id="save" parameterType="org.cboard.pojo.DashboardDataset">
+        <![CDATA[
+        INSERT INTO dashboard_dataset(user_id,dataset_name,data_json,category_name) VALUES (#{userId},#{name},#{data},#{categoryName})
+        ]]>
+    </insert>
+
+    <update id="update" parameterType="org.cboard.pojo.DashboardDataset">
+        <![CDATA[
+        UPDATE dashboard_dataset SET dataset_name = #{name},data_json = #{data},category_name = #{categoryName} where dataset_id = #{id}
+        ]]>
+    </update>
+
+    <select id="countExistDatasetName" resultType="java.lang.Long">
+        SELECT count(1) from dashboard_dataset where 1=1
+        <if test="dataset_id != null" >
+        <![CDATA[
+            and dataset_id <> #{dataset_id}
+            ]]>
+        </if>
+          and dataset_name = #{dataset_name}
+    </select>
+
+    <delete id="delete">
+        delete from dashboard_dataset where dataset_id = #{0}
+    </delete>
+</mapper>

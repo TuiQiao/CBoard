@@ -195,7 +195,12 @@ desired effect
                     url: '/category',
                     templateUrl: 'org/cboard/view/config/category.html',
                     controller: 'categoryCtrl'
+                }).state('config.dataset', {
+                    url: '/dataset',
+                    templateUrl: 'org/cboard/view/config/dataset.html',
+                    controller: 'datasetCtrl'
                 });
+
     }]);
 
     cBoard.factory('sessionHelper', ["$rootScope", function ($rootScope) {
@@ -276,6 +281,7 @@ desired effect
 <script src="org/cboard/controller/config/datasourceCtrl.js"></script>
 <script src="org/cboard/controller/config/boardCtrl.js"></script>
 <script src="org/cboard/controller/config/categoryCtrl.js"></script>
+<script src="org/cboard/controller/config/datasetCtrl.js"></script>
 
 <script src="org/cboard/service/dashboard/dashboardService.js"></script>
 <script src="org/cboard/service/data/dataService.js"></script>

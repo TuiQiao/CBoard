@@ -6,45 +6,51 @@ cBoard.controller('dashboardViewCtrl', function ($scope, $state, $stateParams, $
 
     $scope.loading = true;
 
-    $http.get("/dashboard/getBoardData.do?id=" + $stateParams.id).success(function (response) {
-        $scope.loading = false;
-        $scope.board = response;
-        var queries = [];
-        _.each($scope.board.layout.rows, function (row) {
-            _.each(row.widgets, function (widget) {
-                var w = widget.widget.data;
-                var q;
-                for (var i = 0; i < queries.length; i++) {
-                    if (queries[i].k == angular.toJson({d: w.datasource, q: w.query})) {
-                        q = queries[i];
-                        break;
+    $scope.load = function (reload) {
+        $http.get("/dashboard/getBoardData.do?id=" + $stateParams.id).success(function (response) {
+            $scope.loading = false;
+            $scope.board = response;
+            var queries = [];
+            _.each($scope.board.layout.rows, function (row) {
+                _.each(row.widgets, function (widget) {
+                    var w = widget.widget.data;
+                    var q;
+                    for (var i = 0; i < queries.length; i++) {
+                        if (queries[i].k == angular.toJson({d: w.datasource, q: w.query})) {
+                            q = queries[i];
+                            break;
+                        }
                     }
-                }
-                if (!q) {
-                    q = {
-                        k: angular.toJson({d: w.datasource, q: w.query}),
-                        datasource: w.datasource,
-                        query: w.query,
-                        widgets: [widget]
-                    };
-                    queries.push(q);
-                } else {
-                    q.widgets.push(widget);
-                }
+                    if (!q) {
+                        q = {
+                            k: angular.toJson({d: w.datasource, q: w.query}),
+                            datasource: w.datasource,
+                            query: w.query,
+                            widgets: [widget]
+                        };
+                        queries.push(q);
+                    } else {
+                        q.widgets.push(widget);
+                    }
+                });
             });
-        });
-        _.each(queries, function (q) {
-            $http.post("/dashboard/getCachedData.do", {
-                datasourceId: q.datasource,
-                query: angular.toJson(q.query)
-            }).success(function (response) {
-                _.each(q.widgets, function (w) {
-                    w.widget.queryData = response.data;
-                    w.show = true;
+            _.each(queries, function (q) {
+                $http.post("/dashboard/getCachedData.do", {
+                    datasourceId: q.datasource,
+                    query: angular.toJson(q.query),
+                    reload: reload
+                }).success(function (response) {
+                    _.each(q.widgets, function (w) {
+                        w.widget.queryData = response.data;
+                        w.show = true;
+                    });
                 });
             });
         });
-    });
+        
+    };
+
+    $scope.load(false);
 
     $scope.modalChart = function (widget) {
         ModalUtils.chart(widget);

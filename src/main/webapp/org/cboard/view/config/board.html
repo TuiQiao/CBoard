@@ -82,7 +82,8 @@
                                 <div class="row margin" ng-repeat="row in curBoard.layout.rows">
                                     <div class="box box-success"
                                          style="border-left: 1px solid #d2d6de; border-right: 1px solid #d2d6de">
-                                        <div class="box-header" dnd-draggable="row" dnd-type="'r'" nd-effect-allowed="move"
+                                        <div class="box-header" dnd-draggable="row" dnd-type="'r'"
+                                             nd-effect-allowed="move"
                                              dnd-moved="curBoard.layout.rows.splice($index, 1)" style="cursor:move">
                                             行
                                             <div class="box-tools pull-right">
@@ -102,24 +103,28 @@
                                         <div class="box-body">
                                             <div class="row">
                                                 <div class="col-sm-12 dataTables_filter">
-                                                    <label>高度<input type="search" ng-model="row.height" class="form-control input-sm" style="width: 100px"></label></label>
+                                                    <label>高度<input type="search" ng-model="row.height"
+                                                                    class="form-control input-sm" style="width: 100px"></label></label>
                                                 </div>
                                             </div>
                                             <div class="row" dnd-list="row.widgets" dnd-allowed-types="['w']"
                                                  style="min-height: 60px">
                                                 <div class="dndPlaceholder col-md-2">
-                                                    <div class="box sort-highlight" style="height: 40px;display: inline-block;vertical-align: middle;"></div>
+                                                    <div class="box sort-highlight"
+                                                         style="height: 40px;display: inline-block;vertical-align: middle;"></div>
                                                 </div>
                                                 <div class="col-md-{{widget.width}}" ng-repeat="widget in row.widgets">
                                                     <div class="box box-primary collapsed-box"
                                                          style="border-left: 1px solid #d2d6de; border-right: 1px solid #d2d6de">
                                                         <div class="box-header" dnd-draggable="widget" dnd-type="'w'"
                                                              nd-effect-allowed="move"
-                                                             dnd-moved="row.widgets.splice($index, 1)" style="cursor:move">
+                                                             dnd-moved="row.widgets.splice($index, 1)"
+                                                             style="cursor:move">
                                                             {{widget.name}}
                                                             <div class="box-tools pull-right">
                                                                 <button type="button" class="btn btn-box-tool"
-                                                                        data-widget="collapse"><i class="fa fa-wrench"></i>
+                                                                        data-widget="collapse"><i
+                                                                        class="fa fa-wrench"></i>
                                                                 </button>
                                                                 <button type="button" class="btn btn-box-tool"
                                                                         data-widget="remove"
@@ -143,11 +148,12 @@
                                                             </div>
                                                             <div class="form-group">
                                                                 <label>图表</label>
-                                                                <ui-select ng-model="widget.widgetId">
+                                                                <ui-select ng-model="widget.widgetId" on-select="widget.name = $item.name">
                                                                     <ui-select-match>
                                                                         {{$select.selected.name}}
                                                                     </ui-select-match>
-                                                                    <ui-select-choices group-by="widgetGroup" repeat="w.id as w in widgetList | filter:{name : $select.search}">
+                                                                    <ui-select-choices group-by="widgetGroup"
+                                                                                       repeat="w.id as w in widgetList | filter:{name : $select.search}">
                                                                         {{w.name}}
                                                                     </ui-select-choices>
                                                                 </ui-select>

@@ -47,6 +47,7 @@ cBoard.controller('dashboardViewCtrl', function ($scope, $state, $stateParams, $
                 });
             });
         });
+        
     };
 
     $scope.load(false);

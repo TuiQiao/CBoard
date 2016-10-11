@@ -16,6 +16,7 @@
         <intercept-url pattern="/**" access="!anonymous"/>
         <form-login login-page="/login.do" username-parameter="username" password-parameter="password"
                     default-target-url="/starter.html" always-use-default-target="true"/>
+        <logout logout-url="/j_spring_cas_security_logout"/>
         <csrf disabled="true"/>
     </http>
     <authentication-manager>
@@ -30,5 +31,6 @@
 
     <beans:bean id="inMemAuthenticationService"
                 class="org.cboard.security.service.InMemAuthenticationService"/>
+
 </beans:beans>
 

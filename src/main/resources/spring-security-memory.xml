@@ -17,6 +17,7 @@
         <form-login login-page="/login.do" username-parameter="username" password-parameter="password"
                     default-target-url="/starter.html" always-use-default-target="true"/>
         <logout logout-url="/j_spring_cas_security_logout"/>
+        <remember-me remember-me-parameter="remember_me" />
         <csrf disabled="true"/>
     </http>
     <authentication-manager>

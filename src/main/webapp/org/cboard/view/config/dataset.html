@@ -11,7 +11,7 @@
                 </div>
                 <div class="box-body no-padding">
                     <uib-accordion class="nav nav-pills nav-stacked" close-others="true">
-                        <div uib-accordion-group ng-repeat="category in categoryList" >
+                        <div uib-accordion-group ng-repeat="category in categoryList">
                             <uib-accordion-heading>
                                 {{category}}<i class="pull-right glyphicon"></i>
                             </uib-accordion-heading>
@@ -46,7 +46,7 @@
                                     <div class="form-group">
                                         <label class="col-sm-2 control-label">名称</label>
                                         <div class="col-sm-10">
-                                            <input ng-model="curDataset.name" class="form-control input-sm"/>
+                                            <input ng-model="curDataset.name" class="form-control"/>
                                         </div>
                                     </div>
                                 </div>
@@ -56,9 +56,11 @@
                                     <div class="form-group">
                                         <label class="col-sm-2 control-label">分类</label>
                                         <div class="col-sm-10">
-                                            <input ng-model="curDataset.categoryName" list="categoryList" class="form-control col-sm-10"/>
+                                            <input ng-model="curDataset.categoryName" list="categoryList"
+                                                   class="form-control col-sm-10"/>
                                             <datalist id="categoryList">
-                                                <option ng-repeat="cate in categoryList | filter: {cate: '!默认分类'}" value="{{cate}}"></option>
+                                                <option ng-repeat="cate in categoryList | filter: {cate: '!默认分类'}"
+                                                        value="{{cate}}"></option>
                                                 <option value="默认分类"></option>
                                             </datalist>
                                         </div>
@@ -70,7 +72,8 @@
                                     <div class="form-group">
                                         <label class="col-sm-2 control-label">数据源</label>
                                         <div class="col-sm-10">
-                                            <select class="form-control" ng-model="datasource" ng-change="curWidget.query={}"
+                                            <select class="form-control" ng-model="datasource"
+                                                    ng-change="curWidget.query={}"
                                                     ng-options="d as d.name+' ('+d.type+')' for d in datasourceList"></select>
                                         </div>
                                     </div>
@@ -80,15 +83,74 @@
                                 <div class="col-md-12" ng-show="datasource.name"
                                      ng-include="datasource.type?('/dashboard/getConfigView.do?type=' + datasource.type):''"></div>
                             </div>
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <div class="form-group">
+                                        <div class="col-sm-offset-2 col-sm-2">
+                                            <button type="button" class="btn btn-block btn-success" ng-click="loadData()">读取数据</button>
+                                        </div>
+                                    </div>
+                                    <div class="form-group" ng-repeat="alert in alerts">
+                                        <div class="col-sm-offset-2 col-sm-10">
+                                            <div uib-alert ng-class="'alert-' + (alert.type || 'warning')"
+                                                 close="alerts.splice($index, 1)">{{alert.msg}}
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row" ng-show="widgetData">
+                                <div class="col-md-12">
+                                    <div class="form-group">
+                                        <label class="col-sm-2 control-label">
+                                            自定义表达式
+                                        </label>
+                                        <div class="col-sm-10">
+                                            <div class="input-group">
+                                                <div class="form-control"
+                                                     style="min-height: 38px;height: auto;padding: 0px">
+                                                    <div ng-repeat="o in curDataset.data.expressions" class="btn-group"
+                                                         style="margin: 3px 3px;">
+                                                        <button type="button" class="btn btn-default btn-sm"
+                                                                style="cursor: move;">
+                                                            {{o.alias?o.alias:o.exp}}
+                                                        </button>
+                                                        <button type="button"
+                                                                class="btn btn-default btn-sm dropdown-toggle"
+                                                                ng-click="editExp(o)">
+                                                            <span class="fa fa-edit"></span>
+                                                        </button>
+                                                        <button type="button"
+                                                                class="btn btn-default btn-sm dropdown-toggle"
+                                                                ng-click="curDataset.data.expressions.splice($index, 1)">
+                                                            <span class="fa fa-trash-o"></span>
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                                <div class="input-group-btn">
+                                                    <button type="button" class="btn btn-info" ng-click="editExp()"
+                                                            style="min-height: 38px;">添加
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
                 <!-- /.box-body -->
                 <div class="box-footer">
                     <button type="submit" class="btn btn-danger pull-right">取消</button>
-                    <button type="submit" ng-click="save()" class="btn btn-success pull-right" style="margin-right: 5px">保存</button>
+                    <button type="submit" ng-click="save()" class="btn btn-success pull-right"
+                            style="margin-right: 5px">保存
+                    </button>
                 </div>
                 <!-- /.box-footer-->
+                <div class="overlay" ng-show="loading">
+                    <i class="fa fa-spinner fa-spin"></i>
+                </div>
             </div>
         </div>
     </div>

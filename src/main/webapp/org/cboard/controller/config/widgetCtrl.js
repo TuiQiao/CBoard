@@ -188,6 +188,16 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
         $scope.customDs = false;
     };
 
+    var loadExpressions = function () {
+        if ($scope.customDs) {
+            $scope.expressions = [];
+        } else {
+            $scope.expressions = angular.copy(_.find($scope.datasetList, function (ds) {
+                return ds.id == $scope.curWidget.datasetId;
+            }).data.expressions);
+        }
+    };
+
     $scope.newConfig = function () {
         var config = $scope.curWidget.config.chart_type;
         $scope.curWidget.config = {};
@@ -195,7 +205,7 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
             config = $scope.chart_types[0].value;
         }
         $scope.curWidget.config.chart_type = config;
-        $scope.expressions = [];
+        loadExpressions();
         switch ($scope.curWidget.config.chart_type) {
             case 'line':
                 $scope.curWidget.config.selects = angular.copy($scope.widgetData[0]);
@@ -330,6 +340,7 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
         $scope.optFlag = 'edit';
         $scope.loading = true;
         $scope.customDs = _.isUndefined($scope.curWidget.datasetId);
+        loadExpressions();
 
         dataService.getData($scope.datasource ? $scope.datasource.id : null, $scope.curWidget.query, $scope.curWidget.datasetId, function (widgetData) {
             $scope.loading = false;

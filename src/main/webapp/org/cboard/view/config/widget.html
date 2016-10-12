@@ -79,9 +79,9 @@
                                 <div class="col-md-12">
                                     <div class="form-group">
                                         <div class="col-sm-offset-2 col-sm-2">
-                                            <button type="button" class="btn btn-block"
-                                                    ng-click="customDs=!customDs">{{customDs?'自定义数据集':'选择数据集'}}
-                                            </button>
+                                            <a class="btn btn-block btn-success" ng-click="customDs=!customDs">
+                                                <i class="fa fa-fw {{customDs?'fa-table':'fa-edit'}}"></i> <b>切换 </b>{{customDs?'选择数据集':'自定义数据集'}}
+                                            </a>
                                         </div>
                                         <div class="col-sm-2">
                                             <button type="button" class="btn btn-block btn-success" ng-click="loadData()">读取数据</button>

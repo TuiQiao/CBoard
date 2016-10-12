@@ -78,12 +78,12 @@
                             <div class="row">
                                 <div class="col-md-12">
                                     <div class="form-group">
-                                        <div class="col-sm-offset-2 col-sm-2">
+                                        <div class="col-sm-offset-2 col-xs-12 col-sm-5 col-md-4 col-lg-3">
                                             <a class="btn btn-block btn-success" ng-click="customDs=!customDs">
-                                                <i class="fa fa-fw {{customDs?'fa-table':'fa-edit'}}"></i> <b>切换 </b>{{customDs?'选择数据集':'自定义数据集'}}
+                                                <i class="fa fa-fw {{customDs?'fa-table':'fa-edit'}}"></i><b>切换-><b/>{{customDs?'已有查询':'新建查询'}}
                                             </a>
                                         </div>
-                                        <div class="col-sm-2">
+                                        <div class="col-xs-12 col-sm-5 col-md-3 col-lg-2">
                                             <button type="button" class="btn btn-block btn-success" ng-click="loadData()">读取数据</button>
                                         </div>
                                     </div>

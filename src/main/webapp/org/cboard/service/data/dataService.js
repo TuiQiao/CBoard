@@ -73,6 +73,7 @@ cBoard.service('dataService', function ($http) {
                 if (i > 0) {
                     e.splitLine = false;
                 }
+                e.scale = true;
             });
             echartOption = {
                 legend: {

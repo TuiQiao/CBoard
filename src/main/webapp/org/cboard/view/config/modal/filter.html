@@ -1,0 +1,27 @@
+<div class="modal-header">
+    <button type="button" class="close" data-dismiss="modal" aria-label="Close" ng-click="close()">
+        <span aria-hidden="true">×</span></button>
+    <h4 class="modal-title">过滤条件</h4>
+</div>
+<div class="modal-body">
+    <div class="row">
+        <div class="col-md-5">
+            <select multiple class="form-control">
+                <option ng-repeat="v in selects|filter:selected" ng-click="col.values.push(v)">{{v}}</option>
+            </select>
+        </div>
+        <div class="col-md-2">
+            <button class="btn btn-block" ng-class="{'eq':'btn-success'}[col.type]" ng-click="col.type='eq'">等于</button>
+            <button class="btn btn-block" ng-class="{'ne':'btn-success'}[col.type]" ng-click="col.type='ne'">不等于</button>
+        </div>
+        <div class="col-md-5">
+            <select multiple class="form-control">
+                <option ng-repeat="v in col.values" ng-click="col.values.splice($index, 1)">{{v}}</option>
+            </select>
+        </div>
+    </div>
+</div>
+<div class="modal-footer">
+    <button type="button" class="btn btn-default pull-left" data-dismiss="modal" ng-click="close()">取消</button>
+    <button type="button" class="btn btn-primary" ng-click="ok()">确定</button>
+</div>

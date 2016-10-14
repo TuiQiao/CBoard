@@ -1,7 +1,7 @@
 /**
  * Created by yfyuan on 2016/8/12.
  */
-cBoard.service('dataService', function ($http) {
+cBoard.service('dataService', function ($http, updateService) {
 
     /**
      * Get raw data from server side.
@@ -132,7 +132,7 @@ cBoard.service('dataService', function ($http) {
             var columns = [];
             var keyLength = chartConfig.keys.length;
             for (var i = 0; i < keyLength; i++) {
-                columns.push({title: chartConfig.keys[i]});
+                columns.push({title: chartConfig.keys[i].col});
             }
             _.each(casted_values, function (e) {
                 columns.push({title: e});
@@ -207,6 +207,52 @@ cBoard.service('dataService', function ($http) {
         return result;
     };
 
+    var getRule = function (cfg, colIdx) {
+        switch (cfg.type) {
+            case 'eq':
+                return function (row) {
+                    for (var i = 0; i < cfg.values.length; i++) {
+                        if (row[colIdx] == cfg.values[i]) {
+                            return true;
+                        }
+                    }
+                    return cfg.values.length == 0;
+                };
+                break;
+            case 'ne':
+                return function (row) {
+                    for (var i = 0; i < cfg.values.length; i++) {
+                        if (row[colIdx] == cfg.values[i]) {
+                            return false;
+                        }
+                    }
+                    return true;
+                };
+                break;
+        }
+    };
+
+
+    var getFilter = function (chartConfig, keysIdx, groupsIdx) {
+        var rules = [];
+        _.map(keysIdx, function (v, i) {
+            var cfg = chartConfig.keys[i];
+            rules.push(getRule(cfg, v));
+        });
+        _.map(groupsIdx, function (v, i) {
+            var cfg = chartConfig.groups[i];
+            rules.push(getRule(cfg, v));
+        });
+        return function (row) {
+            for (var i = 0; i < rules.length; i++) {
+                if (!rules[i](row)) {
+                    return false;
+                }
+            }
+            return true;
+        };
+    };
+
     /**
      * Cast the aggregated raw data into data series
      * @param rawData
@@ -214,15 +260,25 @@ cBoard.service('dataService', function ($http) {
      * @param callback function which is used to transform series data to widgets option
      */
     var castRawData2Series = function (rawData, chartConfig, callback) {
-
-        var keysIdx = getHeaderIndex(rawData, chartConfig.keys);
-        var groupsIdx = getHeaderIndex(rawData, chartConfig.groups);
+        updateService.updateConfig(chartConfig);
+        var keysIdx = getHeaderIndex(rawData, _.map(chartConfig.keys, function (e) {
+            return e.col;
+        }));
+        var groupsIdx = getHeaderIndex(rawData, _.map(chartConfig.groups, function (e) {
+            return e.col;
+        }));
         var dataSeries = getDataSeries(rawData, chartConfig);
 
         var castedKeys = new Array();
         var castedGroups = new Array();
         var newData = {};
+
+        var filter = getFilter(chartConfig, keysIdx, groupsIdx);
+
         for (var i = 1; i < rawData.length; i++) {
+            if (!filter(rawData[i])) {
+                continue;
+            }
             //组合keys
             var newKey = getRowElements(rawData[i], keysIdx);
             newKey = JSON.stringify(newKey);

@@ -2,7 +2,7 @@
  * Created by yfyuan on 2016/8/12.
  */
 
-cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal, dataService, ModalUtils) {
+cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal, dataService, ModalUtils, updateService) {
     //图表类型初始化
     $scope.chart_types = [
         {name: '折线/柱状图', value: 'line'},
@@ -188,7 +188,7 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
         $scope.customDs = false;
     };
 
-    var loadExpressions = function () {
+    var loadDsExpressions = function () {
         if ($scope.customDs) {
             $scope.expressions = [];
         } else {
@@ -205,7 +205,7 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
             config = $scope.chart_types[0].value;
         }
         $scope.curWidget.config.chart_type = config;
-        loadExpressions();
+        loadDsExpressions();
         switch ($scope.curWidget.config.chart_type) {
             case 'line':
                 $scope.curWidget.config.selects = angular.copy($scope.widgetData[0]);
@@ -290,7 +290,7 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
         } else {
             ModalUtils.alert(serviceStatus.msg, "modal-warning", "lg");
         }
-    }
+    };
 
     $scope.saveWgt = function () {
         var o = {};
@@ -331,6 +331,7 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
     $scope.editWgt = function (widget) {
         $('#preview_widget').html('');
         $scope.curWidget = angular.copy(widget.data);
+        updateService.updateConfig($scope.curWidget.config);
         $scope.datasource = _.find($scope.datasourceList, function (ds) {
             return ds.id == widget.data.datasource;
         });
@@ -340,7 +341,7 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
         $scope.optFlag = 'edit';
         $scope.loading = true;
         $scope.customDs = _.isUndefined($scope.curWidget.datasetId);
-        loadExpressions();
+        loadDsExpressions();
 
         dataService.getData($scope.datasource ? $scope.datasource.id : null, $scope.curWidget.query, $scope.curWidget.datasetId, function (widgetData) {
             $scope.loading = false;
@@ -383,15 +384,66 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
         });
     };
 
-    $scope.cellToValue = function (list, index, item, type) {
-        if (type != 'col' && type != 'exp') {
-            list[index] = {col: item, aggregate_type: 'sum'};
+    $scope.dndTransfer = {
+        toCol: function (list, index, item, type) {
+            if (type == 'key' || type == 'group') {
+                list[index] = {col: item.col, aggregate_type: 'sum'};
+            } else if (type == 'select') {
+                list[index] = {col: item, aggregate_type: 'sum'};
+            }
+        },
+        toSelect: function (list, index, item, type) {
+            if (type == 'col') {
+                list[index] = item.col;
+            } else if (type == 'key' || type == 'group') {
+                list[index] = item.col;
+            }
+        },
+        toKeysGroups: function (list, index, item, type) {
+            if (type == 'col') {
+                list[index] = {col: item.col, type: 'eq', values: []};
+            } else if (type == 'select') {
+                list[index] = {col: item, type: 'eq', values: []};
+            }
         }
     };
 
-    $scope.valueToCell = function (list, index, item, type) {
-        if (type == 'col') {
-            list[index] = item.col;
+    $scope.editFilter = function (a, x) {
+        var item = a[x];
+        var col;
+        if (item.col) {
+            col = angular.copy(item);
+        } else {
+            col = {col: item, type: 'eq', values: []}
         }
+
+        var selects = [];
+        var idx = _.indexOf($scope.widgetData[0], col.col);
+        for (var i = 1; i < $scope.widgetData.length; i++) {
+            var v = $scope.widgetData[i][idx];
+            if (_.indexOf(selects, v) < 0) {
+                selects.push(v);
+            }
+        }
+
+        $uibModal.open({
+            templateUrl: 'org/cboard/view/config/modal/filter.html',
+            windowTemplateUrl: 'org/cboard/view/util/modal/window.html',
+            backdrop: false,
+            controller: function ($scope, $uibModalInstance) {
+                $scope.selects = selects;
+                $scope.col = col;
+                $scope.close = function () {
+                    $uibModalInstance.close();
+                };
+                $scope.selected = function (v) {
+                    return _.indexOf($scope.col.values, v) == -1
+                };
+                $scope.ok = function () {
+                    a[x] = $scope.col;
+                    $uibModalInstance.close();
+                };
+            }
+        });
     };
 });

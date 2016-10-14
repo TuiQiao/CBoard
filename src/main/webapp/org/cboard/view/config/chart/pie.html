@@ -1,7 +1,8 @@
 <div class="form-group">
     <label class="col-sm-2 control-label">可选</label>
     <div class="col-sm-10">
-        <div dnd-list="curWidget.config.selects" dnd-inserted="valueToCell(curWidget.config.selects,index,item,type)"
+        <div dnd-list="curWidget.config.selects"
+             dnd-inserted="dndTransfer.toSelect(curWidget.config.selects,index,item,type)"
              dnd-allowed-types="['select','col','group','key']"
              class="form-control"
              style="min-height: 35px;height: auto;padding: 0px">
@@ -20,18 +21,25 @@
 <div class="form-group">
     <label class="col-sm-2 control-label">行</label>
     <div class="col-sm-10">
-        <div dnd-list="curWidget.config.keys" dnd-drop=""
-             dnd-inserted="valueToCell(curWidget.config.keys,index,item,type)"
+        <div dnd-list="curWidget.config.keys"
+             dnd-inserted="dndTransfer.toKeysGroups(curWidget.config.keys,index,item,type)"
              dnd-allowed-types="['select','col','group','key']" dnd-type="'key'"
              class="form-control" style="min-height: 35px;height: auto;padding: 0px">
             <div class="dndPlaceholder sort-highlight"
                  style="height: 24px; width: 93px;margin: 3px 3px;display: inline-block;vertical-align: middle;">
             </div>
-                <span ng-repeat="o in curWidget.config.keys" dnd-draggable="o" dnd-effect-allowed="move"
-                      dnd-moved="curWidget.config.keys.splice($index, 1)"
-                      class="btn btn-default btn-sm"
-                      style="cursor: move;margin: 3px 3px;"
-                      ng-click="curWidget.config.selects.push(o);curWidget.config.keys.splice($index, 1);">{{o}}</span>
+            <div ng-repeat="o in curWidget.config.keys" dnd-draggable="o" dnd-effect-allowed="move"
+                 dnd-moved="curWidget.config.keys.splice($index, 1)"
+                 class="btn-group" style="cursor: move;margin: 3px 3px;" >
+                <button type="button" class="btn btn-default btn-sm" style="cursor: move;"
+                        ng-click="curWidget.config.selects.push(o.col);curWidget.config.keys.splice($index, 1);">
+                    {{o.col}}
+                </button>
+                <button type="button" class="btn btn-default btn-sm dropdown-toggle"
+                        ng-click="editFilter(curWidget.config.keys,$index)">
+                    <span class="fa fa-edit"></span>
+                </button>
+            </div>
         </div>
     </div>
 </div>
@@ -40,7 +48,7 @@
     <div class="col-sm-10">
         <div class="form-control" dnd-list="curWidget.config.values[0].cols"
              dnd-drop="curWidget.config.values[0].cols.length == 0 ? item:false"
-             dnd-inserted="cellToValue(curWidget.config.values[0].cols,index,item,type)"
+             dnd-inserted="dndTransfer.toCol(curWidget.config.values[0].cols,index,item,type)"
              dnd-allowed-types="['select','col','group','key','exp']"
              style="min-height: 35px;height: auto;padding: 0px">
             <div class="dndPlaceholder sort-highlight"
@@ -89,7 +97,6 @@
     <div class="col-sm-10">
         <div class="input-group">
             <div dnd-list="expressions"
-                 dnd-inserted="cellToValue(expressions,index,item,type)"
                  dnd-allowed-types="['exp']"
                  class="form-control" style="min-height: 38px;height: auto;padding: 0px">
                 <div class="dndPlaceholder sort-highlight"

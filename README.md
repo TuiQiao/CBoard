@@ -42,6 +42,8 @@ jdbc_password=111111
 3 Maven 编译打包
 ```
 cd进入项目根目录
+# Install SQLServer JDBC Driver into your local respository
+mvn install:install-file -Dfile=lib\sqljdbc4-4.0.jar -DgroupId=com.microsoft.sqlserver -DartifactId=sqljdbc4 -Dversion=4.0 -Dpackaging=jar
 mvn clean package
 ```
 4 部署war到tomcat容器
@@ -62,4 +64,3 @@ http://_yourserverip_:8080
 欢迎大家通过GitHub Issue系统反馈Bug与需求、提Pull Request
 CBoard交流群讨论QQ群: 301028618
 EMail: peter.zhang921@gmail.com, g.yuanyf@gmail.com
-

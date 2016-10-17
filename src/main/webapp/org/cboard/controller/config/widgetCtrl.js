@@ -408,8 +408,8 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
         }
     };
 
-    $scope.editFilter = function (a, x) {
-        var item = a[x];
+    $scope.editFilter = function (dims, idx) {
+        var item = dims[idx];
         var col;
         if (item.col) {
             col = angular.copy(item);
@@ -425,6 +425,7 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
                 selects.push(v);
             }
         }
+        selects = _.sortBy(selects)
 
         $uibModal.open({
             templateUrl: 'org/cboard/view/config/modal/filter.html',
@@ -440,7 +441,7 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
                     return _.indexOf($scope.col.values, v) == -1
                 };
                 $scope.ok = function () {
-                    a[x] = $scope.col;
+                    dims[idx] = $scope.col;
                     $uibModalInstance.close();
                 };
             }

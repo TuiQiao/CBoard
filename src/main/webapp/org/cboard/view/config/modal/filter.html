@@ -5,8 +5,15 @@
 </div>
 <div class="modal-body">
     <div class="row">
+        <div class="col-md-12" ng-repeat="alert in alerts">
+            <div uib-alert ng-class="'alert-' + (alert.type || 'warning')"
+                 close="alerts.splice($index, 1)">{{alert.msg}}
+            </div>
+        </div>
+    </div>
+    <div class="row">
         <div class="col-md-5">
-            <select multiple class="form-control">
+            <select multiple class="form-control" style="height: 300px">
                 <option ng-repeat="v in selects|filter:selected" ng-click="col.values.push(v)">{{v}}</option>
             </select>
         </div>
@@ -15,7 +22,7 @@
             <button class="btn btn-block" ng-class="{'ne':'btn-success'}[col.type]" ng-click="col.type='ne'">不等于</button>
         </div>
         <div class="col-md-5">
-            <select multiple class="form-control">
+            <select multiple class="form-control" style="height: 300px">
                 <option ng-repeat="v in col.values" ng-click="col.values.splice($index, 1)">{{v}}</option>
             </select>
         </div>

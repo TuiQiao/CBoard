@@ -11,5 +11,8 @@ cBoard.service('updateService', function () {
         };
         config.keys = _.map(config.keys, toFilterConfig);
         config.groups = _.map(config.groups, toFilterConfig);
+        if (!config.filters) {
+            config.filters = [];
+        }
     };
 });

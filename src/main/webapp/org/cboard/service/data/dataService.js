@@ -233,7 +233,7 @@ cBoard.service('dataService', function ($http, updateService) {
     };
 
 
-    var getFilter = function (chartConfig, keysIdx, groupsIdx) {
+    var getFilter = function (chartConfig, keysIdx, groupsIdx, filtersIdx) {
         var rules = [];
         _.map(keysIdx, function (v, i) {
             var cfg = chartConfig.keys[i];
@@ -241,6 +241,10 @@ cBoard.service('dataService', function ($http, updateService) {
         });
         _.map(groupsIdx, function (v, i) {
             var cfg = chartConfig.groups[i];
+            rules.push(getRule(cfg, v));
+        });
+        _.map(filtersIdx, function (v, i) {
+            var cfg = chartConfig.filters[i];
             rules.push(getRule(cfg, v));
         });
         return function (row) {
@@ -267,13 +271,16 @@ cBoard.service('dataService', function ($http, updateService) {
         var groupsIdx = getHeaderIndex(rawData, _.map(chartConfig.groups, function (e) {
             return e.col;
         }));
+        var filtersIdx = getHeaderIndex(rawData, _.map(chartConfig.filters, function (e) {
+            return e.col;
+        }));
         var dataSeries = getDataSeries(rawData, chartConfig);
 
         var castedKeys = new Array();
         var castedGroups = new Array();
         var newData = {};
 
-        var filter = getFilter(chartConfig, keysIdx, groupsIdx);
+        var filter = getFilter(chartConfig, keysIdx, groupsIdx, filtersIdx);
 
         for (var i = 1; i < rawData.length; i++) {
             if (!filter(rawData[i])) {

@@ -46,6 +46,7 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
     $scope.previewDivWidth = 12;
     $scope.expressions = [];
     $scope.customDs = false;
+    $scope.filterSelect = {};
 
     $http.get("/dashboard/getDatasetList.do").success(function (response) {
         $scope.datasetList = response;
@@ -170,6 +171,7 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
                 $scope.alerts = [];
                 $scope.widgetData = widgetData.data;
                 $scope.newConfig();
+                $scope.filterSelect = {};
             } else {
                 $scope.alerts = [{msg: widgetData.msg, type: 'danger'}];
             }
@@ -212,6 +214,7 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
                 $scope.curWidget.config.keys = new Array();
                 $scope.curWidget.config.groups = new Array();
                 $scope.curWidget.config.values = new Array();
+                $scope.curWidget.config.filters = new Array();
                 $scope.add_value();
                 break;
             case 'pie':
@@ -221,6 +224,7 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
                     name: '',
                     cols: []
                 }];
+                $scope.curWidget.config.filters = new Array();
                 break;
             case 'kpi':
                 $scope.curWidget.config.selects = angular.copy($scope.widgetData[0]);
@@ -229,6 +233,7 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
                     cols: [],
                     style: 'bg-aqua'
                 }];
+                $scope.curWidget.config.filters = new Array();
                 break;
             case 'table':
                 $scope.curWidget.config.selects = angular.copy($scope.widgetData[0]);
@@ -238,6 +243,7 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
                     name: '',
                     cols: []
                 }];
+                $scope.curWidget.config.filters = new Array();
                 break;
         }
     };
@@ -386,7 +392,7 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
 
     $scope.dndTransfer = {
         toCol: function (list, index, item, type) {
-            if (type == 'key' || type == 'group') {
+            if (type == 'key' || type == 'group' || type == 'filter') {
                 list[index] = {col: item.col, aggregate_type: 'sum'};
             } else if (type == 'select') {
                 list[index] = {col: item, aggregate_type: 'sum'};
@@ -395,7 +401,7 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
         toSelect: function (list, index, item, type) {
             if (type == 'col') {
                 list[index] = item.col;
-            } else if (type == 'key' || type == 'group') {
+            } else if (type == 'key' || type == 'group' || type == 'filter') {
                 list[index] = item.col;
             }
         },
@@ -408,8 +414,8 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
         }
     };
 
-    $scope.editFilter = function (dims, idx) {
-        var item = dims[idx];
+    $scope.editFilter = function (setbackArr, setbackIdx) {
+        var item = setbackArr[setbackIdx];
         var col;
         if (item.col) {
             col = angular.copy(item);
@@ -418,14 +424,19 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
         }
 
         var selects = [];
-        var idx = _.indexOf($scope.widgetData[0], col.col);
-        for (var i = 1; i < $scope.widgetData.length; i++) {
-            var v = $scope.widgetData[i][idx];
-            if (_.indexOf(selects, v) < 0) {
-                selects.push(v);
+        if ($scope.filterSelect[col.col]) {
+            selects = $scope.filterSelect[col.col];
+        } else {
+            var idx = _.indexOf($scope.widgetData[0], col.col);
+            for (var i = 1; i < $scope.widgetData.length; i++) {
+                var v = $scope.widgetData[i][idx];
+                if (_.indexOf(selects, v) < 0) {
+                    selects.push(v);
+                }
             }
+            selects = _.sortBy(selects);
+            $scope.filterSelect[col.col] = selects;
         }
-        selects = _.sortBy(selects)
 
         $uibModal.open({
             templateUrl: 'org/cboard/view/config/modal/filter.html',
@@ -441,7 +452,10 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
                     return _.indexOf($scope.col.values, v) == -1
                 };
                 $scope.ok = function () {
-                    dims[idx] = $scope.col;
+                    if ($scope.col.values.length > 100) {
+                        $scope.alerts = [{msg: '条件数量过多>100', type: 'danger'}];
+                    }
+                    setbackArr[setbackIdx] = $scope.col;
                     $uibModalInstance.close();
                 };
             }

@@ -4,13 +4,19 @@
 
 ![SS](https://raw.githubusercontent.com/yzhang921/CloudResource/gif/gif/cboard/starter.png)
 
+
 # Features Of CBoard
 * 界面和图表美观大方，Bootstrap原生支持**移动端访问**
-* 轻量级架构，核心代码简洁，整个项目没有依赖任何第三方多维分析工具
+* 架构轻量级，核心代码简洁，整个项目没有依赖任何第三方多维分析工具
   * **CBoard**前端页面样式与布局基于[AdminLTE2](https://github.com/almasaeed2010/AdminLTE)
   * 图表插件使用[EChart](http://echarts.baidu.com/)
-  * JS采用AngularJSMVC框架
+  * JS采用MVVM AngularJS1.X框架
 * 交互、拖拽式类"OLAP"报表开发体验
+* 基于数据集的报表设计，一次数据集获取生成多张图表  
+![image](https://cloud.githubusercontent.com/assets/6037522/19502570/70af928a-95e0-11e6-846e-5ae46dbb1b85.png)  
+* OLAP切片过滤操作  
+<img src="https://cloud.githubusercontent.com/assets/6037522/19502732/806b1086-95e1-11e6-940f-ab1a18bbff77.png" width="450">
+* 全局查询缓存，避免多次请求重复的数据查询
 * 支持常用图表与表格
   * 柱线图/堆叠柱线图、双轴图
   * 饼图

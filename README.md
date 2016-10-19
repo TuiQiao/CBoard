@@ -2,6 +2,9 @@
 #### 一款**开放式**、**免费**BI Dashboard应用
 项目底层采用Spring+MyBatis，前端基于AngularJS1和Bootstrap  
 
+![image](https://cloud.githubusercontent.com/assets/6037522/19503349/9604c366-95e5-11e6-8318-2e53d2451019.png)  
+
+# 截图
 ![SS](https://raw.githubusercontent.com/yzhang921/CloudResource/gif/gif/cboard/starter.png)
 
 
@@ -11,7 +14,8 @@
   * **CBoard**前端页面样式与布局基于[AdminLTE2](https://github.com/almasaeed2010/AdminLTE)
   * 图表插件使用[EChart](http://echarts.baidu.com/)
   * JS采用MVVM AngularJS1.X框架
-* 交互、拖拽式类"OLAP"报表开发体验
+* 交互、拖拽式类"OLAP"报表开发体验  
+![wiget_overview](https://raw.githubusercontent.com/yzhang921/CloudResource/b460e7b7ed188bb3ea9ced5a9377bab1489c3982/gif/cboard/widget_design_overview.gif)
 * 基于数据集的报表设计，一次数据集获取生成多张图表  
 ![image](https://cloud.githubusercontent.com/assets/6037522/19502570/70af928a-95e0-11e6-846e-5ae46dbb1b85.png)  
 * OLAP切片过滤操作  
@@ -24,9 +28,11 @@
   * 交叉表格
 * 支持JDBC协议的各种数据产品
 * 支持读取当今比较流行的开源多维分析产品Saiku2保存的报表、并定能选择性的制数据与图形
-* 方便扩展实现自己的DataProvider连接任何数据源
+* 方便扩展实现自己的DataProvider连接任何数据源. 即便是昂贵的商业BI套件想要囊括大数据时代所有的数据源连接都是不可能做到的，在NoSQL领域中，传统观念中的Schema可以通过不同的数据结构来实现，如散列表、数组、树、图等等，不同的人使用相同的NoSQL产品设计出来的Schema都可能千差万别，最熟悉这种存储结构的是用户自己，让用户找一个Java程序员写个Class连接自己的数据源却很容易做到的, 为此我们把这种需求开放给用户自己实现，我们的愿景是让用户在CBoard大架构下轻松的接入自己的各种数据源。  
+![image](https://cloud.githubusercontent.com/assets/6037522/19501689/1439ff8c-95da-11e6-9374-750eb6ad82fe.png)
 
-![wiget_overview](https://raw.githubusercontent.com/yzhang921/CloudResource/b460e7b7ed188bb3ea9ced5a9377bab1489c3982/gif/cboard/widget_design_overview.gif)
+
+
 
 ## 项目构建
 1 准备CBoard元数据库

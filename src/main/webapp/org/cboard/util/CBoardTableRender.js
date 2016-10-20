@@ -13,7 +13,8 @@ CBoardTableRender.prototype.do = function (height) {
         scrollX: true,
         scrollY: height - 150,
         scrollCollapse: true,
-        paging: true
+        paging: true,
+        order: []
     });
 };
 

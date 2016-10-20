@@ -49,7 +49,7 @@ cBoard.service('dataService', function ($http, updateService) {
         castRawData2Series(chartData, chartConfig, function (casted_keys, casted_values, aggregate_data, newValuesConfig) {
             var series_data = new Array();
             var string_keys = _.map(casted_keys, function (key) {
-                return JSON.parse(key).join('-');
+                return key.join('-');
             });
 
             for (var i = 0; i < aggregate_data.length; i++) {
@@ -95,7 +95,7 @@ cBoard.service('dataService', function ($http, updateService) {
         castRawData2Series(chartData, chartConfig, function (casted_keys, casted_values, aggregate_data, newValuesConfig) {
             var series_data = new Array();
             var string_keys = _.map(casted_keys, function (key) {
-                return JSON.parse(key).join('-');
+                return key.join('-');
             });
 
             for (var i = 0; i < aggregate_data[0].length; i++) {
@@ -139,7 +139,7 @@ cBoard.service('dataService', function ($http, updateService) {
             });
 
             for (var i = 0; i < casted_keys.length; i++) {
-                table_data[i] = JSON.parse(casted_keys[i]);
+                table_data[i] = casted_keys[i];
             }
 
             for (var i = 0; i < casted_values.length; i++) {
@@ -268,9 +268,15 @@ cBoard.service('dataService', function ($http, updateService) {
         var keysIdx = getHeaderIndex(rawData, _.map(chartConfig.keys, function (e) {
             return e.col;
         }));
+        var keysSort = _.map(chartConfig.keys, function (e) {
+            return e.sort;
+        });
         var groupsIdx = getHeaderIndex(rawData, _.map(chartConfig.groups, function (e) {
             return e.col;
         }));
+        var groupsSort = _.map(chartConfig.groups, function (e) {
+            return e.sort;
+        });
         var filtersIdx = getHeaderIndex(rawData, _.map(chartConfig.filters, function (e) {
             return e.col;
         }));
@@ -288,28 +294,35 @@ cBoard.service('dataService', function ($http, updateService) {
             }
             //组合keys
             var newKey = getRowElements(rawData[i], keysIdx);
-            newKey = JSON.stringify(newKey);
-            pushIfNoExist(castedKeys, newKey);
+            var keysInsert = sortInsert(castedKeys, newKey, keysSort);
+            if (keysInsert.newKey) {
+                _.mapObject(newData, function (g) {
+                    _.mapObject(g, function (groupSeries) {
+                        _.each(_.keys(groupSeries), function (aggregateType) {
+                            groupSeries[aggregateType].splice(keysInsert.idx, 0, undefined)
+                        });
+                    });
+                });
+            }
             //组合groups
             var group = getRowElements(rawData[i], groupsIdx);
+            sortInsert(castedGroups, group, groupsSort);
             var newGroup = group.join('-');
-            pushIfNoExist(castedGroups, newGroup);
             // pick the raw values into coordinate cell and then use aggregate function to do calculate
-            var _keyIdx = indexOf(castedKeys, newKey);
             _.each(dataSeries, function (dSeries) {
-                if (!newData[newGroup]) {
+                if (_.isUndefined(newData[newGroup])) {
                     newData[newGroup] = {};
                 }
-                if (!newData[newGroup][dSeries.name]) {
+                if (_.isUndefined(newData[newGroup][dSeries.name])) {
                     newData[newGroup][dSeries.name] = {};
                 }
-                if (!newData[newGroup][dSeries.name][dSeries.aggregate]) {
-                    newData[newGroup][dSeries.name][dSeries.aggregate] = new Array();
+                if (_.isUndefined(newData[newGroup][dSeries.name][dSeries.aggregate])) {
+                    newData[newGroup][dSeries.name][dSeries.aggregate] = [];
                 }
-                if (!newData[newGroup][dSeries.name][dSeries.aggregate][_keyIdx]) {
-                    newData[newGroup][dSeries.name][dSeries.aggregate][_keyIdx] = new Array();
+                if (_.isUndefined(newData[newGroup][dSeries.name][dSeries.aggregate][keysInsert.idx])) {
+                    newData[newGroup][dSeries.name][dSeries.aggregate][keysInsert.idx] = [];
                 }
-                newData[newGroup][dSeries.name][dSeries.aggregate][_keyIdx].push(rawData[i][dSeries.index]);
+                newData[newGroup][dSeries.name][dSeries.aggregate][keysInsert.idx].push(rawData[i][dSeries.index]);
             });
         }
         // do aggregate
@@ -331,11 +344,16 @@ cBoard.service('dataService', function ($http, updateService) {
             _.each(chartConfig.values, function (value, vIdx) {
                 _.each(value.cols, function (series) {
                     var seriesName = series.alias ? series.alias : series.col;
-                    var newSeriesName = group ? (group + '-' + seriesName) : seriesName;
+                    var newSeriesName = seriesName;
+                    if (group && group.length > 0) {
+                        var a = [].concat(group);
+                        a.push(seriesName);
+                        newSeriesName = a.join('-');
+                    }
                     castedAliasSeriesName.push(newSeriesName);
                     aliasSeriesConfig[newSeriesName] = {type: value.series_type, yAxisIndex: vIdx};
 
-                    castSeriesData(series, group, castedKeys, newData, function (castedData, keyIdx) {
+                    castSeriesData(series, group.join('-'), castedKeys, newData, function (castedData, keyIdx) {
                         if (!aliasData[castedAliasSeriesName.length - 1]) {
                             aliasData[castedAliasSeriesName.length - 1] = new Array();
                         }
@@ -345,7 +363,6 @@ cBoard.service('dataService', function ($http, updateService) {
                 });
             });
         });
-
         callback(castedKeys, castedAliasSeriesName, aliasData, aliasSeriesConfig);
     };
 
@@ -445,21 +462,48 @@ cBoard.service('dataService', function ($http, updateService) {
         return arr;
     };
 
-    var pushIfNoExist = function (arr, elm) {
-        if (indexOf(arr, elm) < 0) {
+    var sortInsert = function (arr, elm, sort) {
+        var idx = indexOf(arr, elm);
+        if (idx < 0) {
+            for (var i = 0; i < arr.length; i++) {
+                for (var j = 0; j < arr[i].length; j++) {
+                    if (!sort[j] || elm[j] == arr[i][j]) {
+                        continue;
+                    }
+                    var a = Number(elm[j]);
+                    var b = Number(arr[i][j]);
+                    if (Number.isNaN(a) || Number.isNaN(b)) {
+                        a = elm[j];
+                        b = arr[i][j];
+                    }
+                    if ((a > b) ^ (sort[j] != 'asc')) {
+                        break;
+                    } else {
+                        arr.splice(i, 0, elm);
+                        return {idx: i, newKey: true};
+                    }
+                }
+            }
             arr.push(elm);
-            return true;
+            return {idx: arr.length, newKey: true};
+        } else {
+            return {idx: idx, newKey: false};
         }
-        return false;
     };
 
     var indexOf = function (array, key) {
         var idx = -1;
-        for (var i = 0; i < array.length; i++) {
-            if (key.toString() == array[i].toString()) {
-                idx = i;
-                break;
+        outer : for (var i = 0; i < array.length; i++) {
+            // if (array[i].length != key.length) {
+            //     continue outer;
+            // }
+            for (var j = 0; j < array[i].length; j++) {
+                if (array[i][j] != key[j]) {
+                    continue outer;
+                }
             }
+            idx = i;
+            break;
         }
         return idx;
     };

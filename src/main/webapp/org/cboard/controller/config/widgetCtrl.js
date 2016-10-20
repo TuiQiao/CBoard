@@ -461,4 +461,18 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
             }
         });
     };
+
+    $scope.editSort = function (o) {
+        switch (o.sort) {
+            case 'asc':
+                o.sort = 'desc';
+                break;
+            case 'desc':
+                o.sort = undefined;
+                break;
+            default:
+                o.sort = 'asc';
+                break;
+        }
+    };
 });

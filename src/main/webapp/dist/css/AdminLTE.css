@@ -27,8 +27,8 @@ body {
   overflow-y: auto;
 }
 hr {
-    margin-top: 0px;
-    margin-bottom: 10px;
+  margin-top: 0px;
+  margin-bottom: 10px;
 }
 /* Layout */
 .wrapper {
@@ -148,6 +148,7 @@ body.hold-transition .main-header .logo {
 /* Content */
 .content {
   min-height: 250px;
+  margin-top:50px;
   padding: 15px;
   margin-right: auto;
   margin-left: auto;
@@ -195,7 +196,8 @@ a:focus {
  * ----------------------
  */
 .main-header {
-  position: relative;
+  position: fixed;
+  width:100%;
   max-height: 100px;
   z-index: 1030;
 }
@@ -419,7 +421,7 @@ a:focus {
  */
 .main-sidebar,
 .left-side {
-  position: absolute;
+  position: fixed;
   top: 0;
   left: 0;
   padding-top: 50px;
@@ -4918,12 +4920,5 @@ table.text-center th {
   .invoice-col {
     float: left;
     width: 33.3333333%;
-  }
-  .table-responsive {
-    overflow: auto;
-  }
-  .table-responsive > .table tr th,
-  .table-responsive > .table tr td {
-    white-space: normal !important;
   }
 }

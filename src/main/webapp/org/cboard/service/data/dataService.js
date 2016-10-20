@@ -484,8 +484,9 @@ cBoard.service('dataService', function ($http, updateService) {
                     }
                 }
             }
+            var x = arr.length;
             arr.push(elm);
-            return {idx: arr.length, newKey: true};
+            return {idx: x, newKey: true};
         } else {
             return {idx: idx, newKey: false};
         }

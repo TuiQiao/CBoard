@@ -58,6 +58,10 @@ cBoard.controller('dashboardViewCtrl', function ($scope, $state, $stateParams, $
         ModalUtils.chart(widget);
     };
 
+    $scope.modalTable = function (widget) {
+        ModalUtils.table(widget);
+    };
+
     $scope.config = function (widget) {
         $state.go('config.widget', {id: widget.widget.id});
     };

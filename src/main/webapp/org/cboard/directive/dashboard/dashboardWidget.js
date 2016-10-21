@@ -27,12 +27,12 @@ cBoard.directive('dashboardWidget', function ($compile, $templateCache, dataServ
 
     var renderTable = function (scope, element, attrs) {
         var template = $templateCache.get("tableContent");
-        scope.myheight = scope.row.height ? (scope.row.height - 44) : 450;
+        scope.myheight = scope.row.height ? (scope.row.height - 44) : 300;
         var aa = $compile(template)(scope);
         element.append(aa);
         var tableOption = dataService.parseTableOption(scope.widget.widget.queryData, scope.widget.widget.data.config);
         var ndWrapper = $(element).find('.box-body');
-        new CBoardTableRender(ndWrapper, tableOption).do(scope.myheight);
+        new CBoardTableRender(ndWrapper, tableOption).do(scope.myheight - 20);
     };
 
     return {

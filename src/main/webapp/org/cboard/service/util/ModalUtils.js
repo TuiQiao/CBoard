@@ -83,4 +83,23 @@ cBoard.service('ModalUtils', function ($uibModal, dataService) {
             }
         });
     };
+
+    this.table = function (widget) {
+        $uibModal.open({
+            templateUrl: 'org/cboard/view/util/modal/chart.html',
+            windowTemplateUrl: 'org/cboard/view/util/modal/window.html',
+            windowClass: 'modal-fit',
+            backdrop: false,
+            controller: function ($scope, $uibModalInstance) {
+                $scope.widget = widget;
+                $scope.close = function () {
+                    $uibModalInstance.close();
+                };
+                $scope.render1 = function () {
+                    var option = dataService.parseTableOption(widget.widget.queryData, widget.widget.data.config);
+                    new CBoardTableRender($('#modal_chart'), option).do();
+                };
+            }
+        });
+    };
 });

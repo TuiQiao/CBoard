@@ -128,7 +128,7 @@ cBoard.service('dataService', function ($http, updateService) {
     this.parseTableOption = function (chartData, chartConfig) {
         var tableOption = null;
         castRawData2Series(chartData, chartConfig, function (casted_keys, casted_values, aggregate_data, newValuesConfig) {
-            var keysList = [],
+            var keysList = casted_keys,
                 values_double_list = [],
                 keyArr = [],
                 emptyList = [],
@@ -144,9 +144,6 @@ cBoard.service('dataService', function ($http, updateService) {
                 }
                 return arr;
             };
-            for (var i = 0; i < casted_keys.length; i++) {
-                keysList[i] = JSON.parse(casted_keys[i]);
-            }
             var table_data = Array.matrix(keysList.length, keysList[0].length, 0);
             for(var h = 0;h < keysList[0].length;h++){
                 for(var k = 0; k < keysList.length; k++) {

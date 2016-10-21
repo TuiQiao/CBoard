@@ -39,6 +39,8 @@ cBoard.service('dataService', function ($http, updateService) {
                 return parseEchartOptionLine(chartData, config);
             case 'pie':
                 return parseEchartOptionPie(chartData, config);
+            case 'funnel':
+                return parseEchartOptionFunnel(chartData, config);
             default:
                 return null;
         }
@@ -125,6 +127,45 @@ cBoard.service('dataService', function ($http, updateService) {
         return echartOption;
     };
 
+    var parseEchartOptionFunnel = function (chartData, chartConfig) {
+        var echartOption = null;
+        castRawData2Series(chartData, chartConfig, function (casted_keys, casted_values, aggregate_data, newValuesConfig) {
+            var series_data = new Array();
+            var string_keys = _.map(casted_keys, function (key) {
+                return key.join('-');
+            });
+
+            var series = [];
+            for (var d = 0; d < aggregate_data.length; d++) {
+                var s = {
+                    name: casted_values[d],
+                    type: 'funnel',
+                    left: '10%',
+                    width: '80%',
+                    maxSize: 100 - (100 / casted_values.length * d) + '%',
+                    data: []
+                };
+                for (var i = 0; i < aggregate_data[d].length; i++) {
+                    s.data.push({name: string_keys[i], value: aggregate_data[d][i]});
+                }
+                series.push(s);
+            }
+
+            echartOption = {
+                legend: {
+                    data: string_keys
+                },
+                tooltip: {
+                    trigger: 'item',
+                    formatter: "{a} <br/>{b} : {c}"
+                },
+                toolbox: false,
+                series: series
+            };
+        });
+        return echartOption;
+    };
+
     this.parseTableOption = function (chartData, chartConfig) {
         var tableOption = null;
         castRawData2Series(chartData, chartConfig, function (casted_keys, casted_values, aggregate_data, newValuesConfig) {
@@ -133,7 +174,7 @@ cBoard.service('dataService', function ($http, updateService) {
                 keyArr = [],
                 emptyList = [],
                 keyLength = chartConfig.keys.length;
-            Array.matrix = function(numrows, numcols, initial) {
+            Array.matrix = function (numrows, numcols, initial) {
                 var arr = [];
                 for (var a = 0; a < numrows; ++a) {
                     var columns = [];
@@ -145,8 +186,8 @@ cBoard.service('dataService', function ($http, updateService) {
                 return arr;
             };
             var table_data = Array.matrix(keysList.length, keysList[0].length, 0);
-            for(var h = 0;h < keysList[0].length;h++){
-                for(var k = 0; k < keysList.length; k++) {
+            for (var h = 0; h < keysList[0].length; h++) {
+                for (var k = 0; k < keysList.length; k++) {
                     var node = keysList[k][h];
                     k > 0 ? (node == keysList[k - 1][h] ? table_data[k][h] = null : table_data[k][h] = keysList[k][h]) : table_data[k][h] = keysList[k][h];
                 }
@@ -160,14 +201,14 @@ cBoard.service('dataService', function ($http, updateService) {
                     }
                 }
             }
-            var merge_header = Array.matrix(chartConfig.groups.length+1, casted_values.length, 0),
-                column_header = Array.matrix(chartConfig.groups.length+1, casted_values.length, 0);
-            _.each(casted_values, function(d) {
+            var merge_header = Array.matrix(chartConfig.groups.length + 1, casted_values.length, 0),
+                column_header = Array.matrix(chartConfig.groups.length + 1, casted_values.length, 0);
+            _.each(casted_values, function (d) {
                 var valuesList = d.split("-");
                 values_double_list.push(valuesList);
             });
-            for(var n = 0;n < values_double_list.length;n++){
-                for(var m = 0;m < values_double_list[n].length;m++){
+            for (var n = 0; n < values_double_list.length; n++) {
+                for (var m = 0; m < values_double_list[n].length; m++) {
                     column_header[m][n] = values_double_list[n][m];
                 }
             }
@@ -175,20 +216,20 @@ cBoard.service('dataService', function ($http, updateService) {
                 keyArr.push(chartConfig.keys[y].col);
                 emptyList.push(null);
             }
-            for(var j = 0;j < column_header.length;j++){
-                j == column_header.length-1 ?
+            for (var j = 0; j < column_header.length; j++) {
+                j == column_header.length - 1 ?
                     column_header[j] = keyArr.concat(column_header[j]) : column_header[j] = emptyList.concat(column_header[j]);
             }
-            for(var x = 0; x < column_header.length-1; x++){
-                for(var y = emptyList.length; y < column_header[x].length; y++){
+            for (var x = 0; x < column_header.length - 1; x++) {
+                for (var y = emptyList.length; y < column_header[x].length; y++) {
                     var header_node = column_header[x][y];
-                    y > emptyList.length ? (header_node == column_header[x][y-1] ? merge_header[x][y] = '' : merge_header[x][y] = column_header[x][y]) : merge_header[x][y] = column_header[x][y];
+                    y > emptyList.length ? (header_node == column_header[x][y - 1] ? merge_header[x][y] = '' : merge_header[x][y] = column_header[x][y]) : merge_header[x][y] = column_header[x][y];
                 }
-                for(var z = 0; z < emptyList.length; z++){
+                for (var z = 0; z < emptyList.length; z++) {
                     merge_header[x][z] = null;
                 }
             }
-            merge_header[column_header.length-1] = column_header[column_header.length-1];
+            merge_header[column_header.length - 1] = column_header[column_header.length - 1];
             table_data = merge_header.concat(table_data);
             tableOption = {
                 chartConfig: chartConfig,

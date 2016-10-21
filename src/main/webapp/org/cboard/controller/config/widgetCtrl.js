@@ -8,7 +8,8 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
         {name: '折线/柱状图', value: 'line'},
         {name: '饼图', value: 'pie'},
         {name: 'kpi', value: 'kpi'},
-        {name: '表格', value: 'table'}
+        {name: '表格', value: 'table'},
+        {name: '漏斗图', value: 'funnel'}
     ];
 
     $scope.value_series_types = [
@@ -245,6 +246,15 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
                 }];
                 $scope.curWidget.config.filters = new Array();
                 break;
+            case 'funnel':
+                $scope.curWidget.config.selects = angular.copy($scope.widgetData[0]);
+                $scope.curWidget.config.keys = new Array();
+                $scope.curWidget.config.values = [{
+                    name: '',
+                    cols: []
+                }];
+                $scope.curWidget.config.filters = new Array();
+                break;
         }
     };
 
@@ -270,6 +280,11 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
                 $scope.previewDivWidth = 12;
                 var option = dataService.parseTableOption($scope.widgetData, $scope.curWidget.config);
                 new CBoardTableRender($('#preview_widget'), option).do();
+                break;
+            case 'funnel':
+                $scope.previewDivWidth = 12;
+                var echartOption = dataService.parseEchartOption($scope.widgetData, $scope.curWidget.config);
+                new CBoardEChartRender($('#preview_widget'), echartOption).chart();
                 break;
         }
 

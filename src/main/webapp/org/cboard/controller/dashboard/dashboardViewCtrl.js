@@ -67,6 +67,7 @@ cBoard.controller('dashboardViewCtrl', function ($scope, $state, $stateParams, $
         $http.post("/dashboard/getCachedData.do", {
             datasourceId: widget.widget.data.datasource,
             query: angular.toJson(widget.widget.data.query),
+            datasetId: widget.widget.data.datasetId,
             reload: true
         }).success(function (response) {
             widget.widget.queryData = response.data;

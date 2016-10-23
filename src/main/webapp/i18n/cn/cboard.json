@@ -1,4 +1,9 @@
 {
+  "COMMON": {
+    "OK": "确认",
+    "CANCEL": "取消",
+    "SAVE": "保存"
+  },
   "SIDEBAR":{
     "DASHBOARD": "看板",
     "MY_DASHBOARD": "我的看板",
@@ -11,5 +16,12 @@
   },
   "HEADER": {
     "SIGN_OUT": "注销"
+  },
+  "CONFIG": {
+    "DATA_SOURCE": {
+      "DATA_SOURCE_HEADER": "数据源",
+      "DATA_PROVIDER": "数据源类型",
+      "NAME": "新建数据源名称"
+    }
   }
 }

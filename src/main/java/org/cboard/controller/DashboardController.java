@@ -109,7 +109,7 @@ public class DashboardController {
 
     @RequestMapping(value = "/getDatasourceView")
     public String getDatasourceView(@RequestParam(name = "type") String type) {
-        return DataProviderViewManager.getDatasourceView(type);
+        return DataProviderViewManager.getDatasourceView(type.toUpperCase());
     }
 
     @RequestMapping(value = "/saveNewDatasource")

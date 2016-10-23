@@ -1,5 +1,10 @@
 {
-  "SIDEBAR":{
+  "COMMON": {
+    "OK": "OK",
+    "CANCEL": "Cancel",
+    "SAVE": "Save"
+  },
+  "SIDEBAR": {
     "DASHBOARD": "Dashboard",
     "MY_DASHBOARD": "My DashBoard",
     "CONFIG": "Configuration",
@@ -11,5 +16,12 @@
   },
   "HEADER": {
     "SIGN_OUT": "SignOut"
+  },
+  "CONFIG": {
+    "DATA_SOURCE": {
+      "DATA_SOURCE_HEADER": "Data Source(s)",
+      "DATA_PROVIDER": "Data Source Type",
+      "NAME": "Data Source Name"
+    }
   }
 }

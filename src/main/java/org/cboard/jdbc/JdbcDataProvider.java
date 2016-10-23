@@ -14,19 +14,19 @@ import java.util.Properties;
 /**
  * Created by yfyuan on 2016/8/17.
  */
-@ProviderName(name = "jdbc")
+@ProviderName(name = "JDBC")
 public class JdbcDataProvider extends DataProvider {
 
-    @DatasourceParameter(label = "驱动", type = DatasourceParameter.Type.Input, order = 1)
+    @DatasourceParameter(label = "Driver (eg: com.mysql.jdbc.Driver)", type = DatasourceParameter.Type.Input, order = 1)
     private String DRIVER = "driver";
 
-    @DatasourceParameter(label = "JDBC URL", type = DatasourceParameter.Type.Input, order = 2)
+    @DatasourceParameter(label = "JDBC Url (eg: jdbc:mysql://hostname:port/db)", type = DatasourceParameter.Type.Input, order = 2)
     private String JDBC_URL = "jdbcurl";
 
-    @DatasourceParameter(label = "登录名", type = DatasourceParameter.Type.Input, order = 3)
+    @DatasourceParameter(label = "User Name", type = DatasourceParameter.Type.Input, order = 3)
     private String USERNAME = "username";
 
-    @DatasourceParameter(label = "密码", type = DatasourceParameter.Type.Password, order = 4)
+    @DatasourceParameter(label = "Password", type = DatasourceParameter.Type.Password, order = 4)
     private String PASSWORD = "password";
 
     @QueryParameter(label = "SQL TEXT", type = QueryParameter.Type.TextArea, order = 1)

@@ -18,7 +18,7 @@ public class DataProviderManager {
         Set<Class<?>> classSet = new Reflections("org.cboard").getTypesAnnotatedWith(ProviderName.class);
         for (Class c : classSet) {
             if (!c.isAssignableFrom(DataProvider.class)) {
-                providers.put(((ProviderName) c.getAnnotation(ProviderName.class)).name(), c);
+                providers.put(((ProviderName) c.getAnnotation(ProviderName.class)).name().toUpperCase(), c);
             } else {
                 System.out.println("自定义DataProvider需要继承org.cboard.dataprovider.DataProvider");
             }

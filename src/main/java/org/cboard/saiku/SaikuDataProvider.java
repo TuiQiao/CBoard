@@ -20,19 +20,19 @@ import java.util.UUID;
 /**
  * Created by yfyuan on 2016/8/15.
  */
-@ProviderName(name = "saiku")
+@ProviderName(name = "SAIKU")
 public class SaikuDataProvider extends DataProvider {
 
-    @DatasourceParameter(label = "Saiku服务器 [如: http://domain:port]", type = DatasourceParameter.Type.Input)
+    @DatasourceParameter(label = "Saiku Server (http://domain:port)", type = DatasourceParameter.Type.Input, order = 1)
     private String SERVERIP = "serverIp";
 
-    @DatasourceParameter(label = "密码", type = DatasourceParameter.Type.Password)
-    private String PASSWORD = "password";
-
-    @DatasourceParameter(label = "用户名", type = DatasourceParameter.Type.Input)
+    @DatasourceParameter(label = "User Name (for Saiku Server)", type = DatasourceParameter.Type.Input, order = 2)
     private String USERNAME = "username";
 
-    @QueryParameter(label = "saiku文件路径", type = QueryParameter.Type.Input)
+    @DatasourceParameter(label = "Password", type = DatasourceParameter.Type.Password, order = 3)
+    private String PASSWORD = "password";
+
+    @QueryParameter(label = "Repository Path of Saved Report", type = QueryParameter.Type.Input)
     private String FILE = "file";
 
     public String[][] getData(Map<String, String> dataSource, Map<String, String> query) throws Exception {

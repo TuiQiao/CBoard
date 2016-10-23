@@ -1,0 +1,15 @@
+{
+  "SIDEBAR":{
+    "DASHBOARD": "Dashboard",
+    "MY_DASHBOARD": "My DashBoard",
+    "CONFIG": "Configuration",
+    "DATA_SOURCE": "DataSource",
+    "CUBE": "Cube",
+    "WIDGET": "Widget",
+    "DASHBOARD": "Dashboard",
+    "DASHBOARD_CATEGORY": "Dashboard Category"
+  },
+  "HEADER": {
+    "SIGN_OUT": "SignOut"
+  }
+}

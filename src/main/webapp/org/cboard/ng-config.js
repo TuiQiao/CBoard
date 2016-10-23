@@ -131,3 +131,13 @@ angular.module('cBoard').config(function ($httpProvider) {
     $httpProvider.interceptors.push('sessionHelper');
 
 });
+
+
+angular.module('cBoard').config(function ($translateProvider, $translatePartialLoaderProvider) {
+    $translatePartialLoaderProvider.addPart('cboard');
+    $translateProvider.useLoader('$translatePartialLoader', {
+        urlTemplate: '/i18n/{lang}/{part}.json'
+    });
+
+    $translateProvider.preferredLanguage(settings.preferredLanguage);
+});

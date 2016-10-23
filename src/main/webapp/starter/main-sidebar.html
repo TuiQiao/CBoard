@@ -17,7 +17,7 @@
         <li class="treeview" ui-sref-active="active">
             <a ui-sref="dashboard">
                 <i class="fa fa-th"></i>
-                <span>看板</span>
+                <span>{{'SIDEBAR.DASHBOARD'|translate}}</span>
                 <span class="pull-right-container"><i class="fa fa-angle-left pull-right"></i></span>
             </a>
             <ul class="treeview-menu">
@@ -40,7 +40,7 @@
         <li class="treeview" ui-sref-active="active">
             <a ui-sref="mine">
                 <i class="fa fa-th"></i>
-                <span>我的看板</span>
+                <span>{{'SIDEBAR.MY_DASHBOARD'|translate}}</span>
                 <span class="pull-right-container"><i class="fa fa-angle-left pull-right"></i></span>
             </a>
             <ul class="treeview-menu">
@@ -53,26 +53,26 @@
         <li class="treeview" ui-sref-active="active">
             <a ui-sref="config">
                 <i class="fa fa-cog"></i>
-                <span>配置</span>
+                <span>{{'SIDEBAR.CONFIG'|translate}}</span>
                 <span class="pull-right-container">
                     <i class="fa fa-angle-left pull-right"></i>
                 </span>
             </a>
             <ul class="treeview-menu">
                 <li ui-sref-active="active">
-                    <a ui-sref="config.datasource"><i class="fa fa-database"></i>数据源管理</a>
+                    <a ui-sref="config.datasource"><i class="fa fa-database"></i>{{'SIDEBAR.DATA_SOURCE'|translate}}</a>
                 </li>
                 <li ui-sref-active="active">
-                    <a ui-sref="config.dataset"><i class="fa fa-table"></i>数据集管理</a>
+                    <a ui-sref="config.dataset"><i class="fa fa-table"></i>{{'SIDEBAR.CUBE'|translate}}</a>
                 </li>
                 <li ui-sref-active="active">
-                    <a ui-sref="config.widget"><i class="fa fa-line-chart"></i>图表设计</a>
+                    <a ui-sref="config.widget"><i class="fa fa-line-chart"></i>{{'SIDEBAR.WIDGET'|translate}}</a>
                 </li>
                 <li ui-sref-active="active">
-                    <a ui-sref="config.board"><i class="fa fa-puzzle-piece"></i>看板设计</a>
+                    <a ui-sref="config.board"><i class="fa fa-puzzle-piece"></i>{{'SIDEBAR.DASHBOARD'|translate}}</a>
                 </li>
                 <li ui-sref-active="active">
-                    <a ui-sref="config.category"><i class="fa fa-folder"></i>看板分类</a>
+                    <a ui-sref="config.category"><i class="fa fa-folder"></i>{{'SIDEBAR.DASHBOARD_CATEGORY'|translate}}</a>
                 </li>
             </ul>
         </li>

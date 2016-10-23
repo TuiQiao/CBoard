@@ -1,0 +1,15 @@
+{
+  "SIDEBAR":{
+    "DASHBOARD": "看板",
+    "MY_DASHBOARD": "我的看板",
+    "CONFIG": "配置",
+    "DATA_SOURCE": "数据源管理",
+    "CUBE": "数据集管理",
+    "WIDGET": "图表设计",
+    "DASHBOARD": "看板设计",
+    "DASHBOARD_CATEGORY": "看板分类"
+  },
+  "HEADER": {
+    "SIGN_OUT": "注销"
+  }
+}

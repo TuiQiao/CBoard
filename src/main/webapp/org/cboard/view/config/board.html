@@ -7,7 +7,7 @@
             </button>
             <div class="box box-solid">
                 <div class="box-header with-border">
-                    <h3 class="box-title">看板</h3>
+                    <h3 class="box-title">{{'CONFIG.DASHBOARD.DASHBOARD'|translate}}</h3>
                 </div>
                 <div class="box-body no-padding">
                     <div class="row">
@@ -44,9 +44,12 @@
                             <div class="row">
                                 <div class="col-md-12">
                                     <div class="form-group">
-                                        <button type="submit" class="btn btn-danger pull-right">取消</button>
+                                        <button type="submit" class="btn btn-danger pull-right">{{'COMMON.CANCEL'|translate}}</button>
+                                        <a class="btn btn-success pull-right" ui-sref="mine.view({id:curBoard.id})" target="_blank"
+                                                style="margin-right: 5px">{{'CONFIG.DASHBOARD.PREVIEW'|translate}}
+                                        </a>
                                         <button type="submit" class="btn btn-success pull-right" ng-click="saveBoard()"
-                                                style="margin-right: 5px">保存
+                                                style="margin-right: 5px">{{'COMMON.SAVE'|translate}}
                                         </button>
                                     </div>
                                 </div>
@@ -54,7 +57,7 @@
                             <div class="row">
                                 <div class="col-md-12">
                                     <div class="form-group">
-                                        <label>分类</label>
+                                        <label>{{'CONFIG.DASHBOARD.CATEGORY'|translate}}</label>
                                         <select class="form-control" ng-model="curBoard.categoryId"
                                                 ng-options="w.id as w.name for w in categoryList"></select>
                                     </div>
@@ -63,7 +66,7 @@
                             <div class="row">
                                 <div class="col-md-12">
                                     <div class="form-group">
-                                        <label>名称</label>
+                                        <label>{{'CONFIG.DASHBOARD.NAME'|translate}}</label>
                                         <input ng-model="curBoard.name" class="form-control"/>
                                     </div>
                                 </div>
@@ -71,7 +74,7 @@
                             <div class="row">
                                 <div class="col-md-1">
                                     <button type="submit" class="btn btn-success" ng-click="addRow()">
-                                        添加行
+                                        {{'CONFIG.DASHBOARD.ADD_ROW'|translate}}
                                     </button>
                                 </div>
                             </div>
@@ -85,11 +88,11 @@
                                         <div class="box-header" dnd-draggable="row" dnd-type="'r'"
                                              nd-effect-allowed="move"
                                              dnd-moved="curBoard.layout.rows.splice($index, 1)" style="cursor:move">
-                                            行
+                                            {{'CONFIG.DASHBOARD.ROW'|translate}}
                                             <div class="box-tools pull-right">
                                                 <button type="button" class="btn btn-xs btn-success"
                                                         ng-click="addWidget(row)">
-                                                    添加列
+                                                    {{'CONFIG.DASHBOARD.ADD_COLUMN'|translate}}
                                                 </button>
                                                 <button type="button" class="btn btn-box-tool" data-widget="collapse"><i
                                                         class="fa fa-minus"></i>
@@ -103,7 +106,7 @@
                                         <div class="box-body">
                                             <div class="row">
                                                 <div class="col-sm-12 dataTables_filter">
-                                                    <label>高度<input type="search" ng-model="row.height"
+                                                    <label>{{'CONFIG.DASHBOARD.HEIGHT'|translate}}<input type="search" ng-model="row.height"
                                                                     class="form-control input-sm" style="width: 100px"></label></label>
                                                 </div>
                                             </div>
@@ -135,19 +138,19 @@
                                                         </div>
                                                         <div class="box-body">
                                                             <div class="form-group">
-                                                                <label>名称</label>
+                                                                <label>{{'CONFIG.DASHBOARD.NAME'|translate}}</label>
                                                                 <input type="text" ng-model="widget.name"
                                                                        ng-model-options="{updateOn: 'blur'}"
-                                                                       class="form-control" placeholder="名称"/>
+                                                                       class="form-control"/>
                                                             </div>
                                                             <div class="form-group">
-                                                                <label>宽度(1-12)</label>
+                                                                <label>{{'CONFIG.DASHBOARD.WIDTH'|translate}}(1-12)</label>
                                                                 <input type="text" ng-model="widget.width"
                                                                        ng-model-options="{updateOn: 'blur'}"
                                                                        class="form-control"/>
                                                             </div>
                                                             <div class="form-group">
-                                                                <label>图表</label>
+                                                                <label>{{'CONFIG.DASHBOARD.WIDGET'|translate}}</label>
                                                                 <ui-select ng-model="widget.widgetId" on-select="widget.name = $item.name">
                                                                     <ui-select-match>
                                                                         {{$select.selected.name}}

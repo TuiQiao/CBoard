@@ -20,7 +20,7 @@ import java.util.UUID;
 /**
  * Created by yfyuan on 2016/8/15.
  */
-@ProviderName(name = "SAIKU")
+@ProviderName(name = "saiku")
 public class SaikuDataProvider extends DataProvider {
 
     @DatasourceParameter(label = "Saiku Server (http://domain:port)", type = DatasourceParameter.Type.Input, order = 1)

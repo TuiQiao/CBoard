@@ -2,20 +2,22 @@
  * Created by yfyuan on 2016/8/12.
  */
 
-cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal, dataService, ModalUtils, updateService) {
+cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal, dataService, ModalUtils, updateService, $filter) {
+
+    var translate = $filter('translate');
     //图表类型初始化
     $scope.chart_types = [
-        {name: '折线/柱状图', value: 'line'},
-        {name: '饼图', value: 'pie'},
-        {name: 'kpi', value: 'kpi'},
-        {name: '表格', value: 'table'},
-        {name: '漏斗图', value: 'funnel'}
+        {name: translate('CONFIG.WIDGET.LINE_BAR'), value: 'line'},
+        {name: translate('CONFIG.WIDGET.PIE'), value: 'pie'},
+        {name: translate('CONFIG.WIDGET.KPI'), value: 'kpi'},
+        {name: translate('CONFIG.WIDGET.TABLE'), value: 'table'},
+        {name: translate('CONFIG.WIDGET.FUNNEL'), value: 'funnel'}
     ];
 
     $scope.value_series_types = [
-        {name: '折线', value: 'line'},
-        {name: '柱状', value: 'bar'},
-        {name: '堆叠柱状', value: 'stackbar'}
+        {name: translate('CONFIG.WIDGET.LINE'), value: 'line'},
+        {name: translate('CONFIG.WIDGET.BAR'), value: 'bar'},
+        {name: translate('CONFIG.WIDGET.STACKED_BAR'), value: 'stackbar'}
     ];
 
     $scope.value_aggregate_types = [
@@ -27,10 +29,10 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
     ];
 
     $scope.kpi_styles = [
-        {name: '蓝色', value: 'bg-aqua'},
-        {name: '红色', value: 'bg-red'},
-        {name: '绿色', value: 'bg-green'},
-        {name: '黄色', value: 'bg-yellow'}
+        {name: translate('CONFIG.WIDGET.AQUA'), value: 'bg-aqua'},
+        {name: translate('CONFIG.WIDGET.RED'), value: 'bg-red'},
+        {name: translate('CONFIG.WIDGET.GREEN'), value: 'bg-green'},
+        {name: translate('CONFIG.WIDGET.YELLOW'), value: 'bg-yellow'}
     ];
 
     //界面控制

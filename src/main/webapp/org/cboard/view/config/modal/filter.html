@@ -1,7 +1,7 @@
 <div class="modal-header">
     <button type="button" class="close" data-dismiss="modal" aria-label="Close" ng-click="close()">
         <span aria-hidden="true">×</span></button>
-    <h4 class="modal-title">过滤条件</h4>
+    <h4 class="modal-title">{{'CONFIG.WIDGET.EXPRESSION'|translate}}</h4>
 </div>
 <div class="modal-body">
     <div class="row">
@@ -14,7 +14,7 @@
     <div class="row">
         <div class="col-md-12 form-horizontal">
             <div class="form-group">
-                <label class="col-sm-2 control-label">查找</label>
+                <label class="col-sm-2 control-label">{{'CONFIG.WIDGET.FIND'|translate}}</label>
                 <div class="col-sm-10">
                     <input class="form-control" ng-model="keyword">
                 </div>
@@ -28,8 +28,8 @@
             </select>
         </div>
         <div class="col-md-2">
-            <button class="btn btn-block" ng-class="{'eq':'btn-success'}[col.type]" ng-click="col.type='eq'">等于</button>
-            <button class="btn btn-block" ng-class="{'ne':'btn-success'}[col.type]" ng-click="col.type='ne'">不等于</button>
+            <button class="btn btn-block" ng-class="{'eq':'btn-success'}[col.type]" ng-click="col.type='eq'">{{'CONFIG.WIDGET.EQUAL'|translate}}</button>
+            <button class="btn btn-block" ng-class="{'ne':'btn-success'}[col.type]" ng-click="col.type='ne'">{{'CONFIG.WIDGET.NOT_EQUAL'|translate}}</button>
         </div>
         <div class="col-md-5">
             <select multiple class="form-control" style="height: 300px">
@@ -39,6 +39,6 @@
     </div>
 </div>
 <div class="modal-footer">
-    <button type="button" class="btn btn-default pull-left" data-dismiss="modal" ng-click="close()">取消</button>
-    <button type="button" class="btn btn-primary" ng-click="ok()">确定</button>
+    <button type="button" class="btn btn-default pull-left" data-dismiss="modal" ng-click="close()">{{'CONFIG.WIDGET.CALCEL'|translate}}</button>
+    <button type="button" class="btn btn-primary" ng-click="ok()">{{'COMMON.OK'|translate}}</button>
 </div>

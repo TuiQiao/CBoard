@@ -14,7 +14,7 @@ import java.util.Properties;
 /**
  * Created by yfyuan on 2016/8/17.
  */
-@ProviderName(name = "JDBC")
+@ProviderName(name = "jdbc")
 public class JdbcDataProvider extends DataProvider {
 
     @DatasourceParameter(label = "Driver (eg: com.mysql.jdbc.Driver)", type = DatasourceParameter.Type.Input, order = 1)

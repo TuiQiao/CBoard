@@ -83,7 +83,8 @@
       "ROW": "行",
       "HEIGHT": "高度",
       "WIDTH": "宽度",
-      "WIDGET": "图表"
+      "WIDGET": "图表",
+      "PREVIEW": "预览"
     },
     "CATEGORY": {
       "NAME": "看板分类名称",

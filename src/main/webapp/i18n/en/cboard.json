@@ -83,7 +83,8 @@
       "ROW": "Row",
       "HEIGHT": "Height",
       "WIDTH": "Width",
-      "WIDGET": "Widget"
+      "WIDGET": "Widget",
+      "PREVIEW": "Preview"
     },
     "CATEGORY": {
       "NAME": "Category Name",

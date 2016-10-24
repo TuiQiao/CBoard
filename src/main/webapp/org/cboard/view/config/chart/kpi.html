@@ -1,7 +1,7 @@
 <div class="form-group" ng-include="'org/cboard/view/config/chart/template/selects.html'"></div>
 <div class="form-group" ng-include="'org/cboard/view/config/chart/template/filters.html'"></div>
 <div class="form-group">
-    <label class="col-sm-2 control-label">值</label>
+    <label class="col-sm-2 control-label">{{'CONFIG.WIDGET.VALUE'|translate}}</label>
     <div class="col-sm-10">
         <div class="form-control" dnd-list="curWidget.config.values[0].cols"
              dnd-drop="curWidget.config.values[0].cols.length == 0 ? item:false"
@@ -36,7 +36,7 @@
                             <span class="fa fa-edit"></span>
                         </button>
                         <ul class="dropdown-menu" role="menu">
-                            <li><input class="form-control" ng-model="o.alias" placeholder="别名"></li>
+                            <li><input class="form-control" ng-model="o.alias" placeholder="{{'CONFIG.WIDGET.ALIAS'|translate}}"></li>
                             <li ng-repeat="a in value_aggregate_types">
                                 <a ng-click="o.aggregate_type=a.value">{{a.name+'('+o.col+')'}}</a>
                             </li>
@@ -49,21 +49,21 @@
 </div>
 <div class="form-group" ng-include="'org/cboard/view/config/chart/template/expressions.html'"></div>
 <div class="form-group">
-    <label class="col-sm-2 control-label">文字</label>
+    <label class="col-sm-2 control-label">{{'CONFIG.WIDGET.LABEL'|translate}}</label>
     <div class="col-sm-10">
-        <input type="text" ng-model="curWidget.config.values[0].name" class="form-control" placeholder="名称"/>
+        <input type="text" ng-model="curWidget.config.values[0].name" class="form-control" />
     </div>
 </div>
 <div class="form-group">
-    <label class="col-sm-2 control-label">格式化</label>
+    <label class="col-sm-2 control-label">{{'CONFIG.WIDGET.FORMATTER'|translate}}</label>
     <div class="col-sm-10">
-        <input type="text" ng-model="curWidget.config.values[0].format" class="form-control" placeholder="名称"/>
-        <span class="help-block">如：'0,0.00' '0.00' '0%' '0.00%' ，<a href="http://numbrojs.com/format.html"
-                                                                    target="_blank">更多</a> </span>
+        <input type="text" ng-model="curWidget.config.values[0].format" class="form-control" />
+        <span class="help-block">{{'CONFIG.WIDGET.EXAMPLE'|translate}}：'0,0.00' '0.00' '0%' '0.00%' ，<a href="http://numbrojs.com/format.html"
+                                                                    target="_blank">{{'CONFIG.WIDGET.MORE'|translate}}</a> </span>
     </div>
 </div>
 <div class="form-group">
-    <label class="col-sm-2 control-label">样式</label>
+    <label class="col-sm-2 control-label">{{'CONFIG.WIDGET.STYLE'|translate}}</label>
     <div class="col-sm-10">
         <select class="form-control" ng-model="curWidget.config.values[0].style"
                 ng-options="s.value as s.name for s in kpi_styles"></select>

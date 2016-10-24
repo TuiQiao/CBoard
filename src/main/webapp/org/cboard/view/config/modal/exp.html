@@ -1,13 +1,13 @@
 <div class="modal-header">
     <button type="button" class="close" data-dismiss="modal" aria-label="Close" ng-click="close()">
         <span aria-hidden="true">×</span></button>
-    <h4 class="modal-title">表达式</h4>
+    <h4 class="modal-title">{{'CONFIG.WIDGET.EXPRESSION'|translate}}</h4>
 </div>
 <div class="modal-body">
     <div class="row">
         <div class="col-md-12 form-horizontal">
             <div class="form-group">
-                <label class="col-sm-2 control-label">字段</label>
+                <label class="col-sm-2 control-label">{{'CONFIG.WIDGET.COLUMN'|translate}}</label>
                 <div class="col-sm-10">
                     <div class="form-control"
                          style="min-height: 35px;height: auto;padding: 0px">
@@ -18,7 +18,7 @@
                 </div>
             </div>
             <div class="form-group">
-                <label class="col-sm-2 control-label">聚合</label>
+                <label class="col-sm-2 control-label">{{'CONFIG.WIDGET.AGGREGATE'|translate}}</label>
                 <div class="col-sm-10">
                     <div class="form-control"
                          style="min-height: 35px;height: auto;padding: 0px">
@@ -29,7 +29,7 @@
                 </div>
             </div>
             <div class="form-group">
-                <label class="col-sm-2 control-label">表达式</label>
+                <label class="col-sm-2 control-label">{{'CONFIG.WIDGET.EXPRESSION_TEXT'|translate}}</label>
                 <div class="col-sm-10">
                     <textarea ng-model="expression" id="expression_area" class="form-control"></textarea>
                 </div>
@@ -42,7 +42,7 @@
                 </div>
             </div>
             <div class="form-group">
-                <label class="col-sm-2 control-label">别名</label>
+                <label class="col-sm-2 control-label">{{'CONFIG.WIDGET.ALIAS'|translate}}</label>
                 <div class="col-sm-10">
                     <input class="form-control" ng-model="alias">
                 </div>
@@ -51,7 +51,7 @@
     </div>
 </div>
 <div class="modal-footer">
-    <button type="button" class="btn btn-default pull-left" data-dismiss="modal" ng-click="close()">取消</button>
-    <button type="button" class="btn btn-primary" ng-click="verify()">校验表达式</button>
-    <button type="button" class="btn btn-primary" ng-click="ok()">确定</button>
+    <button type="button" class="btn btn-default pull-left" data-dismiss="modal" ng-click="close()">{{'COMMON.CANCEL'|translate}}</button>
+    <button type="button" class="btn btn-primary" ng-click="verify()">{{'CONFIG.WIDGET.CHECK'|translate}}</button>
+    <button type="button" class="btn btn-primary" ng-click="ok()">{{'COMMON.OK'|translate}}</button>
 </div>

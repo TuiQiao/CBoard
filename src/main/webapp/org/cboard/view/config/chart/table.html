@@ -3,7 +3,7 @@
 <div class="form-group" ng-include="'org/cboard/view/config/chart/template/groups.html'"></div>
 <div class="form-group" ng-include="'org/cboard/view/config/chart/template/filters.html'"></div>
 <div class="form-group">
-    <label class="col-sm-2 control-label">值</label>
+    <label class="col-sm-2 control-label">{{'CONFIG.WIDGET.VALUE'|translate}}</label>
     <div class="col-sm-10">
         <div dnd-list="curWidget.config.values[0].cols"
              dnd-inserted="dndTransfer.toCol(curWidget.config.values[0].cols,index,item,type)"
@@ -37,7 +37,7 @@
                             <span class="fa fa-edit"></span>
                         </button>
                         <ul class="dropdown-menu" role="menu">
-                            <li><input class="form-control" ng-model="o.alias" placeholder="别名"></li>
+                            <li><input class="form-control" ng-model="o.alias" placeholder="{{'CONFIG.WIDGET.ALIAS'|translate}}"></li>
                             <li ng-repeat="a in value_aggregate_types">
                                 <a ng-click="o.aggregate_type=a.value">{{a.name+'('+o.col+')'}}</a>
                             </li>

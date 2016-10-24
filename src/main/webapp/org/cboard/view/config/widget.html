@@ -8,7 +8,7 @@
             </button>
             <div class="box box-solid">
                 <div class="box-header with-border">
-                    <h3 class="box-title">图表</h3>
+                    <h3 class="box-title">{{'CONFIG.WIDGET.WIDGET'|translate}}</h3>
                 </div>
                 <div class="box-body no-padding">
                     <uib-accordion class="nav nav-pills nav-stacked" close-others="true">
@@ -45,7 +45,7 @@
                             <div class="row" ng-show="!customDs">
                                 <div class="col-md-12">
                                     <div class="form-group">
-                                        <label class="col-sm-2 control-label">数据集</label>
+                                        <label class="col-sm-2 control-label">{{'CONFIG.WIDGET.DATASET'|translate}}</label>
                                         <div class="col-sm-10">
                                             <ui-select ng-model="curWidget.datasetId">
                                                 <ui-select-match>
@@ -63,7 +63,7 @@
                             <div class="row" ng-show="customDs">
                                 <div class="col-md-12">
                                     <div class="form-group">
-                                        <label class="col-sm-2 control-label">数据源</label>
+                                        <label class="col-sm-2 control-label">{{'CONFIG.WIDGET.DATA_SOURCE'|translate}}</label>
                                         <div class="col-sm-10">
                                             <select class="form-control" ng-model="datasource"
                                                     ng-options="d as d.name+' ('+d.type+')' for d in datasourceList"></select>
@@ -80,11 +80,11 @@
                                     <div class="form-group">
                                         <div class="col-sm-offset-2 col-xs-12 col-sm-5 col-md-4 col-lg-3">
                                             <a class="btn btn-block btn-success" ng-click="customDs=!customDs">
-                                                <i class="fa fa-fw {{customDs?'fa-table':'fa-edit'}}"></i><b>切换-><b/>{{customDs?'已有查询':'新建查询'}}
+                                                <i class="fa fa-fw {{customDs?'fa-table':'fa-edit'}}"></i><b>{{'SWITCH'|translate}}-></b>{{(customDs?'CONFIG.WIDGET.EXIST_QUERY':'CONFIG.WIDGET.NEW_QUERY')|translate}}
                                             </a>
                                         </div>
                                         <div class="col-xs-12 col-sm-5 col-md-3 col-lg-2">
-                                            <button type="button" class="btn btn-block btn-success" ng-click="loadData()">读取数据</button>
+                                            <button type="button" class="btn btn-block btn-success" ng-click="loadData()">{{'CONFIG.WIDGET.LOAD_DATA'|translate}}</button>
                                         </div>
                                     </div>
                                     <div class="form-group" ng-repeat="alert in alerts">
@@ -100,7 +100,7 @@
                             <div class="row">
                                 <div class="col-md-12">
                                     <div class="form-group">
-                                        <label class="col-sm-2 control-label">名称</label>
+                                        <label class="col-sm-2 control-label">{{'CONFIG.WIDGET.NAME'|translate}}</label>
                                         <div class="col-sm-10">
                                             <input ng-model="widgetName" class="form-control col-sm-10"/>
                                         </div>
@@ -110,7 +110,7 @@
                             <div class="row">
                                 <div class="col-md-12">
                                     <div class="form-group">
-                                        <label class="col-sm-2 control-label">分类</label>
+                                        <label class="col-sm-2 control-label">{{'CONFIG.WIDGET.CATEGORY'|translate}}</label>
                                         <div class="col-sm-10">
                                             <input ng-model="widgetCategory" list="categoryList" class="form-control col-sm-10"/>
                                             <datalist id="categoryList">
@@ -124,7 +124,7 @@
                             <div class="row" ng-show="widgetData">
                                 <div class="col-md-12">
                                     <div class="form-group">
-                                        <label class="col-sm-2 control-label">图表类型</label>
+                                        <label class="col-sm-2 control-label">{{'CONFIG.WIDGET.WIDGET_TYPE'|translate}}</label>
                                         <div class="col-sm-10">
                                             <select class="form-control" ng-model="curWidget.config.chart_type"
                                                     ng-change="newConfig()"
@@ -138,14 +138,14 @@
                                 <div class="col-md-12">
                                     <div class="form-group">
                                         <div class="col-sm-offset-2 col-sm-10">
-                                            <button type="submit" class="btn btn-danger pull-right">取消</button>
+                                            <button type="submit" class="btn btn-danger pull-right">{{'CONFIG.WIDGET.CANCEL'|translate}}</button>
                                             <button type="submit" ng-click="saveWgt()"
                                                     class="btn btn-success pull-right"
-                                                    style="margin-right: 5px">保存
+                                                    style="margin-right: 5px">{{'CONFIG.WIDGET.SAVE'|translate}}
                                             </button>
                                             <button type="submit" ng-click="preview()"
                                                     class="btn btn-success pull-right"
-                                                    style="margin-right: 5px">预览
+                                                    style="margin-right: 5px">{{'CONFIG.WIDGET.PREVIEW'|translate}}
                                             </button>
                                         </div>
                                     </div>

@@ -2,7 +2,14 @@
   "COMMON": {
     "OK": "确认",
     "CANCEL": "取消",
-    "SAVE": "保存"
+    "SAVE": "保存",
+    "LOADING": "玩命加载中..." ,
+    "REFRESH": "刷新",
+    "EDIT": "编辑",
+    "CONFIRM_DELETE": "真的想好了要删除吗!!!",
+    "TIP": "提示",
+    "SUCCESS": "成功!",
+    "FAIL": "失败!"
   },
   "SIDEBAR": {
     "DASHBOARD": "看板",
@@ -18,6 +25,9 @@
     "SIGN_OUT": "注销"
   },
   "CONFIG": {
+    "COMMON": {
+      "CUSTOM_EXPRESSION": "自定义表达式"
+    },
     "DATA_SOURCE": {
       "DATA_SOURCE_HEADER": "数据源",
       "DATA_PROVIDER": "数据源类型",
@@ -28,8 +38,8 @@
       "DATA_SOURCE": "数据源类型",
       "DATASET": "新建数据源名称",
       "LOAD_DATA": "读取数据",
-      "NAME": "名称",
-      "CATEGORY": "分类",
+      "NAME": "图表名称",
+      "CATEGORY": "图表分类",
       "WIDGET_TYPE": "图表类型",
       "CANCEL": "取消",
       "SAVE": "保存",
@@ -47,7 +57,6 @@
       "STYLE": "样式",
       "CHART": "图形",
       "ADD_NEW_AXIS": "添加轴",
-      "CUSTOM_EXPRESSION": "自定义表达式",
       "ADD": "添加",
       "OPTIONAL": "可选",
       "ALIAS": "别名",
@@ -96,7 +105,6 @@
       "CATEGORY": "分类",
       "LOAD_DATA": "读取数据",
       "DATASOURCE": "数据源",
-      "CUSTOM_EXPRESSION": "自定义表达式",
       "ADD": "添加"
     }
   }

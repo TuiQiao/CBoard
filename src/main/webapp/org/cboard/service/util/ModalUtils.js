@@ -2,7 +2,10 @@
  * Created by yfyuan on 2016/8/26.
  */
 
-cBoard.service('ModalUtils', function ($uibModal, dataService) {
+cBoard.service('ModalUtils', function ($uibModal, dataService, $filter) {
+
+    var translate = $filter('translate');
+
     this.alert = function (content, style, size, callback) {
         $uibModal.open({
             templateUrl: 'org/cboard/view/util/modal/alert.html',

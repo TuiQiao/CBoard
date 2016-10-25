@@ -2,7 +2,9 @@
  * Created by yfyuan on 2016/8/2.
  */
 
-cBoard.controller('boardCtrl', function ($scope, $http, ModalUtils) {
+cBoard.controller('boardCtrl', function ($scope, $http, ModalUtils, $filter) {
+
+    var translate = $filter('translate');
 
     $scope.optFlag = 'none';
     $scope.curBoard = {layout: {rows: []}};
@@ -21,7 +23,7 @@ cBoard.controller('boardCtrl', function ($scope, $http, ModalUtils) {
 
     var getCategoryList = function () {
         $http.get("/dashboard/getCategoryList.do").success(function (response) {
-            $scope.categoryList = [{id: null, name: '个人看板'}];
+            $scope.categoryList = [{id: null, name: translate('CONFIG.DASHBOARD.MY_DASHBOARD')}];
             _.each(response, function (o) {
                 $scope.categoryList.push(o);
             })
@@ -89,7 +91,7 @@ cBoard.controller('boardCtrl', function ($scope, $http, ModalUtils) {
     };
 
     $scope.deleteBoard = function (board) {
-        ModalUtils.confirm("确认删除吗？", "modal-warning", "lg", function () {
+        ModalUtils.confirm(translate("COMMON.CONFIRM_DELETE"), "modal-warning", "lg", function () {
             $http.post("/dashboard/deleteBoard.do", {id: board.id}).success(function () {
                 getBoardList();
                 $scope.optFlag == 'none';

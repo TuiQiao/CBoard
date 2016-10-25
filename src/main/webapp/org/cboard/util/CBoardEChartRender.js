@@ -10,7 +10,7 @@ var CBoardEChartRender = function (jqContainer, options, isDeepSpec) {
         title: {},
         grid: {
             left: '50',
-            right: '25',
+            right: '40',
             bottom: '15%',
             top: '20%',
             containLabel: false

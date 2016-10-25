@@ -32,7 +32,7 @@ public class SaikuDataProvider extends DataProvider {
     @DatasourceParameter(label = "Password", type = DatasourceParameter.Type.Password, order = 3)
     private String PASSWORD = "password";
 
-    @QueryParameter(label = "Repository Path of Saved Report", type = QueryParameter.Type.Input)
+    @QueryParameter(label = "Repo Path of Report", type = QueryParameter.Type.Input)
     private String FILE = "file";
 
     public String[][] getData(Map<String, String> dataSource, Map<String, String> query) throws Exception {

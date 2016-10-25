@@ -1,8 +1,9 @@
 /**
  * Created by yfyuan on 2016/8/19.
  */
-cBoard.controller('datasourceCtrl', function ($scope, $http, ModalUtils) {
+cBoard.controller('datasourceCtrl', function ($scope, $http, ModalUtils, $filter) {
 
+    var translate = $filter('translate');
     $scope.optFlag = 'none';
     $scope.dsView = '';
     $scope.curDatasource = {};
@@ -30,7 +31,7 @@ cBoard.controller('datasourceCtrl', function ($scope, $http, ModalUtils) {
         $scope.changeDsView();
     };
     $scope.deleteDs = function (ds) {
-        ModalUtils.confirm("确认删除吗？", "modal-warning", "lg", function () {
+        ModalUtils.confirm(translate("COMMON.CONFIRM_DELETE"), "modal-warning", "lg", function () {
             $http.post("/dashboard/deleteDatasource.do", {id: ds.id}).success(function () {
                 $scope.optFlag = 'none';
                 getDatasourceList();
@@ -48,7 +49,7 @@ cBoard.controller('datasourceCtrl', function ($scope, $http, ModalUtils) {
             if (serviceStatus.status == '1') {
                 $scope.optFlag = 'none';
                 getDatasourceList();
-                ModalUtils.alert("成功", "modal-success", "sm");
+                ModalUtils.alert(translate("COMMON.SUCCESS"), "modal-success", "sm");
             } else {
                 ModalUtils.alert(serviceStatus.msg, "modal-warning", "lg");
             }
@@ -60,7 +61,7 @@ cBoard.controller('datasourceCtrl', function ($scope, $http, ModalUtils) {
             if (serviceStatus.status == '1') {
                 $scope.optFlag = 'none';
                 getDatasourceList();
-                ModalUtils.alert("成功", "modal-success", "sm");
+                ModalUtils.alert(translate("COMMON.SUCCESS"), "modal-success", "sm");
             } else {
                 ModalUtils.alert(serviceStatus.msg, "modal-warning", "lg");
             }

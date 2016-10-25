@@ -309,7 +309,7 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
         if (serviceStatus.status == '1') {
             getWidgetList();
             getCategoryList();
-            ModalUtils.alert("成功", "modal-success", "sm");
+            ModalUtils.alert(translate("COMMON.SUCCESS"), "modal-success", "sm");
         } else {
             ModalUtils.alert(serviceStatus.msg, "modal-warning", "lg");
         }
@@ -332,7 +332,7 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
                 if (serviceStatus.status == '1') {
                     getWidgetList();
                     getCategoryList();
-                    ModalUtils.alert("成功", "modal-success", "sm");
+                    ModalUtils.alert(translate("COMMON.SUCCESS"), "modal-success", "sm");
                 } else {
                     ModalUtils.alert(serviceStatus.msg, "modal-warning", "lg");
                 }
@@ -343,7 +343,7 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
                 if (serviceStatus.status == '1') {
                     getWidgetList();
                     getCategoryList();
-                    ModalUtils.alert("成功", "modal-success", "sm");
+                    ModalUtils.alert(translate("COMMON.SUCCESS"), "modal-success", "sm");
                 } else {
                     ModalUtils.alert(serviceStatus.msg, "modal-warning", "lg");
                 }
@@ -377,7 +377,7 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
     };
 
     $scope.deleteWgt = function (widget) {
-        ModalUtils.confirm("确认删除吗？", "modal-warning", "lg", function () {
+        ModalUtils.confirm(translate("COMMON.CONFIRM_DELETE"), "modal-warning", "lg", function () {
             $http.post("/dashboard/deleteWidget.do", {id: widget.id}).success(function () {
                 getWidgetList();
                 $scope.optFlag == 'none';

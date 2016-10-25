@@ -1,17 +1,17 @@
 <!-- Content Wrapper. Contains page content -->
 <section class="content-header">
     <h1>
-        <div ng-show="loading"><i class="fa fa-spinner fa-spin"></i> 正在读取</div>
+        <div ng-show="loading"><i class="fa fa-spinner fa-spin"></i> {{"COMMON.LOADING" | translate}}</div>
         {{board.name}}
     </h1>
-    <div class="breadcrumb" style="cursor: pointer" ng-click="load(true)"><i class="fa fa-refresh"></i> 刷新</div>
+    <div class="breadcrumb" style="cursor: pointer" ng-click="load(true)"><i class="fa fa-refresh"></i> {{"COMMON.REFRESH" | translate}}</div>
 </section>
 <div id="inner-container" class="content">
     <div class="row" ng-repeat="row in board.layout.rows track by $index" ng-style="{height:row.height+'px'}">
         <div ng-repeat="widget in row.widgets track by $index">
             <dashboard-widget ng-if="widget.show"></dashboard-widget>
             <div ng-if="!widget.show" class="col-md-{{widget.width}}" style="height: 50px;">
-                <i class="fa fa-spinner fa-spin"></i> 正在读取
+                <i class="fa fa-spinner fa-spin"></i> {{"COMMON.LOADING" | translate}}
             </div>
         </div>
     </div>

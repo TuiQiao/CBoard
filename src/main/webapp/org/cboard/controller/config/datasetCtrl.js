@@ -1,8 +1,9 @@
 /**
  * Created by yfyuan on 2016/10/11.
  */
-cBoard.controller('datasetCtrl', function ($scope, $http, dataService, $uibModal, ModalUtils) {
+cBoard.controller('datasetCtrl', function ($scope, $http, dataService, $uibModal, ModalUtils, $filter) {
 
+    var translate = $filter('translate');
     $scope.optFlag = 'none';
     $scope.curDataset = {data: {expressions: []}};
     $scope.curWidget = {};
@@ -44,7 +45,7 @@ cBoard.controller('datasetCtrl', function ($scope, $http, dataService, $uibModal
         $scope.loadData();
     };
     $scope.deleteDs = function (ds) {
-        ModalUtils.confirm("确认删除吗？", "modal-warning", "lg", function () {
+        ModalUtils.confirm(translate("COMMON.CONFIRM_DELETE"), "modal-warning", "lg", function () {
             $http.post("/dashboard/deleteDataset.do", {id: ds.id}).success(function () {
                 $scope.optFlag = 'none';
                 getDatasetList();
@@ -61,7 +62,7 @@ cBoard.controller('datasetCtrl', function ($scope, $http, dataService, $uibModal
                     $scope.optFlag = 'none';
                     getCategoryList();
                     getDatasetList();
-                    ModalUtils.alert("成功", "modal-success", "sm");
+                    ModalUtils.alert(translate("COMMON.SUCCESS"), "modal-success", "sm");
                 } else {
                     ModalUtils.alert(serviceStatus.msg, "modal-warning", "lg");
                 }
@@ -72,7 +73,7 @@ cBoard.controller('datasetCtrl', function ($scope, $http, dataService, $uibModal
                     $scope.optFlag = 'none';
                     getCategoryList();
                     getDatasetList();
-                    ModalUtils.alert("成功", "modal-success", "sm");
+                    ModalUtils.alert(translate("COMMON.SUCCESS"), "modal-success", "sm");
                 } else {
                     ModalUtils.alert(serviceStatus.msg, "modal-warning", "lg");
                 }

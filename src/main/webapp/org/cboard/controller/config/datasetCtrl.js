@@ -151,7 +151,7 @@ cBoard.controller('datasetCtrl', function ($scope, $http, dataService, $uibModal
                 $scope.verify = function () {
                     $scope.alerts = [];
                     var v = verifyAggExpRegx($scope.expression);
-                    $scope.alerts = [{msg: v.isValid ? '正确' : v.msg, type: v.isValid ? 'success' : 'danger'}];
+                    $scope.alerts = [{msg: v.isValid ? translate("COMMON.SUCCESS") : v.msg, type: v.isValid ? 'success' : 'danger'}];
                 };
                 $scope.ok = function () {
                     ok($scope.expression, $scope.alias);

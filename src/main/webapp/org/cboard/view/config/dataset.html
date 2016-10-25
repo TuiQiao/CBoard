@@ -59,9 +59,9 @@
                                             <input ng-model="curDataset.categoryName" list="categoryList"
                                                    class="form-control col-sm-10"/>
                                             <datalist id="categoryList">
-                                                <option ng-repeat="cate in categoryList | filter: {cate: '!默认分类'}"
+                                                <option ng-repeat="cate in categoryList | filter: {cate: '!默认分类'} | filter: {cate: '!Default Category'}"
                                                         value="{{cate}}"></option>
-                                                <option value="默认分类"></option>
+                                                <option value="{{'COMMON.DEFAULT_CATEGORY'|translate}}"></option>
                                             </datalist>
                                         </div>
                                     </div>

@@ -25,6 +25,6 @@ CBoardKpiRender.prototype.template =
                    <i class='ion ion-stats-bars'></i> \
                </div> \
                <a class='small-box-footer'>\
-                Refresh <i class='fa fa-refresh' style='cursor: pointer' ng-click='reload(widget)'></i>\
-                Edit <i class='fa fa-wrench' style='cursor: pointer' ng-click='config(widget)'></i></a>\
+                {{'COMMON.REFRESH'|translate}} <i class='fa fa-refresh' style='cursor: pointer' ng-click='reload(widget)'></i>\
+                {{'COMMON.EDIT'|translate}} <i class='fa fa-wrench' style='cursor: pointer' ng-click='config(widget)'></i></a>\
             </div>";

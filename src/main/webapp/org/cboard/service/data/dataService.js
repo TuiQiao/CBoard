@@ -55,8 +55,9 @@ cBoard.service('dataService', function ($http, updateService) {
             });
 
             for (var i = 0; i < aggregate_data.length; i++) {
-                var s = angular.copy(newValuesConfig[casted_values[i]]);
-                s.name = casted_values[i];
+                var joined_values = casted_values[i].join('-');
+                var s = angular.copy(newValuesConfig[joined_values]);
+                s.name = joined_values;
                 s.data = aggregate_data[i];
                 if (s.type == 'stackbar') {
                     s.type = 'bar';
@@ -79,7 +80,9 @@ cBoard.service('dataService', function ($http, updateService) {
             });
             echartOption = {
                 legend: {
-                    data: casted_values
+                    data: _.map(casted_values, function (v) {
+                        return v.join('-');
+                    })
                 },
                 xAxis: {
                     type: 'category',
@@ -138,7 +141,7 @@ cBoard.service('dataService', function ($http, updateService) {
             var series = [];
             for (var d = 0; d < aggregate_data.length; d++) {
                 var s = {
-                    name: casted_values[d],
+                    name: casted_values[d].join('-'),
                     type: 'funnel',
                     left: '10%',
                     width: '80%',
@@ -204,7 +207,7 @@ cBoard.service('dataService', function ($http, updateService) {
             var merge_header = Array.matrix(chartConfig.groups.length + 1, casted_values.length, 0),
                 column_header = Array.matrix(chartConfig.groups.length + 1, casted_values.length, 0);
             _.each(casted_values, function (d) {
-                var valuesList = d.split("-");
+                var valuesList = d;
                 values_double_list.push(valuesList);
             });
             for (var n = 0; n < values_double_list.length; n++) {
@@ -427,8 +430,11 @@ cBoard.service('dataService', function ($http, updateService) {
                         var a = [].concat(group);
                         a.push(seriesName);
                         newSeriesName = a.join('-');
+                        castedAliasSeriesName.push(a);
+                    }else{
+                        castedAliasSeriesName.push([seriesName]);
                     }
-                    castedAliasSeriesName.push(newSeriesName);
+                    //castedAliasSeriesName.push(newSeriesName);
                     aliasSeriesConfig[newSeriesName] = {type: value.series_type, yAxisIndex: vIdx};
 
                     castSeriesData(series, group.join('-'), castedKeys, newData, function (castedData, keyIdx) {

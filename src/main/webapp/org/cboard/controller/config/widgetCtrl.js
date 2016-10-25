@@ -459,6 +459,7 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
             templateUrl: 'org/cboard/view/config/modal/filter.html',
             windowTemplateUrl: 'org/cboard/view/util/modal/window.html',
             backdrop: false,
+            size:'lg',
             controller: function ($scope, $uibModalInstance) {
                 $scope.selects = selects;
                 $scope.col = col;

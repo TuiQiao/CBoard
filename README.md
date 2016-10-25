@@ -1,54 +1,55 @@
 # CBoard
-#### 一款**开放式**、**支持多维设计与分析** 的BI Dashboard应用
-项目底层采用Spring+MyBatis，前端基于AngularJS1和Bootstrap  
+#### An **open** BI Dashboard platform that supports **interactive** multi-dimensional report design and data analysis  
+Server side framework is Spring+MyBatis and front-end is based on AngularJS1 and Bootstrap. The whole architecture graphic is as below:   
 
 ![image](https://cloud.githubusercontent.com/assets/6037522/19503349/9604c366-95e5-11e6-8318-2e53d2451019.png)  
 
-# 截图
-![image](https://cloud.githubusercontent.com/assets/6037522/19585261/863a0538-977d-11e6-8573-ec3964aeb867.png)
+# Screenshot
+![image](https://cloud.githubusercontent.com/assets/6037522/19674284/9f161120-9ab9-11e6-98e9-ca692da4957d.png)
 
 
 # Features Of CBoard
-* 界面和图表美观大方，Bootstrap原生支持**移动端访问**
-* 架构轻量级，核心代码简洁，整个项目没有依赖任何第三方多维分析工具
-  * **CBoard**前端页面样式与布局基于[AdminLTE2](https://github.com/almasaeed2010/AdminLTE)
-  * 图表插件使用[EChart](http://echarts.baidu.com/)
-  * JS采用MVVM AngularJS1.X框架
-* 交互、拖拽式类"OLAP"报表开发体验  
-![wiget_overview](https://raw.githubusercontent.com/yzhang921/CloudResource/b460e7b7ed188bb3ea9ced5a9377bab1489c3982/gif/cboard/widget_design_overview.gif)
-* 基于数据集的报表设计，一次数据集获取生成多张图表  
+* Simple and beautiful interface and layout
+* Lightweight architecture and concise source code, the entire project does not rely on any third-party multi-dimensional analysis tools  
+  * Front page style and layout of CBoard is based on [AdminLTE2](https://github.com/almasaeed2010/AdminLTE)  
+  * The chart plugin uses [EChart](http://echarts.baidu.com/)  
+  * Javascript uses MVVM AngularJS 1.X framework  
+* Interactive, drag-and-drop **OLAP** classisc report development experience  
+![wiget_overview](https://raw.githubusercontent.com/yzhang921/CloudResource/gif/gif/cboard/wiget_demo2.gif)
+* One dataset, multiple report widgets. Maximize reuse query resoult
 <div align="center">
 ![image](https://cloud.githubusercontent.com/assets/6037522/19502570/70af928a-95e0-11e6-846e-5ae46dbb1b85.png)  
 </div>
-* OLAP切片过滤操作  
+* Supports OLAP slice filter operation  
 <div align="center">
 <img src="https://cloud.githubusercontent.com/assets/6037522/19502732/806b1086-95e1-11e6-940f-ab1a18bbff77.png" width="450">
 </div>
-* 支持在行维、列维上多个字段同时排序
-* 全局查询缓存，避免多次请求重复的数据查询
-* 支持常用图表与表格
-  * 柱线图/堆叠柱线图、双轴图
-  * 饼图
+* Supports sort multiple columns/rows at the sametime
+* Global query cache, to avoid repeated query requests for data
+* Support common charts and cross tables
+  * Column chart / Stacked bar chart, biaxial view
+  * Pie chart
   * KPI Widget
-  * 交叉表格
-  * 其他图表后续会慢慢增加
-* 支持JDBC协议的各种数据产品
-* 支持读取当今比较流行的开源多维分析产品Saiku2保存的报表、并定能选择性的制数据与图形
-* 方便扩展实现自己的DataProvider连接任何数据源. 即便是昂贵的商业BI套件想要囊括大数据时代所有的数据源连接都是不可能做到的，在NoSQL领域中，传统观念中的Schema可以通过不同的数据结构来实现，如散列表、数组、树、图等等，不同的人使用相同的NoSQL产品设计出来的Schema都可能千差万别，最熟悉这种存储结构的是用户自己，让用户找一个Java程序员写个Class连接自己的数据源却很容易做到的, 为此我们把这种需求开放给用户自己实现，我们的愿景是让用户在CBoard大架构下轻松的接入自己的各种数据源。
+  * Cross-tabulation
+  * Other graphs is coming soon
+* Support JDBC data connection
+* Support to connect one of the most popular open source multi-dimensional analysis of products **Saiku2**, and will be able to selectively create data and graphics
+* Easy to implement your own **DataProvider** to connect any data source. Even for expensive commercial BI suite, it's not possible to connect all the NOSQL and NewSQL data source in the era of big data. Due to the schema of NOSQL are various, such as hash tables, arrays, trees, maps, etc., different people using the same NoSQL products designed Schema may vary widely. The user who most familiar with their storage schema are the user themselves. And it's easy to find a Java programmers to code a Class to connect their own data source. So we leave this part of work to the end user with an easy extended data connection framework in CBoard
+
 <div align="center">
 ![image](https://cloud.githubusercontent.com/assets/6037522/19501689/1439ff8c-95da-11e6-9374-750eb6ad82fe.png)
 </div>
 
 
 
-## 项目构建
-1 准备CBoard元数据库
+## How to build project
+1 Install metadata of CBoard
 ```mysql
-以MySQL为例
+ take MySQL database as example
 -- CREATE DATEBASE cboard;
-执行元数据表创建脚本: sql/mysql/mysql.sql
+Execute ddl to create metadata table: _sql/mysql/mysql.sql_
 ```
-2 修改元数据配置文件
+2 Modify metadata connection properties file according to your db environment  
 ```
 CBoard\src\main\resources\config.properties
 ```
@@ -58,29 +59,32 @@ jdbc_url=jdbc:mysql://localhost:3306/cboard
 jdbc_username=root
 jdbc_password=111111
 ```
-3 Maven 编译打包
+3 Comile and package project with Maven
 ```
-cd进入项目根目录
+cd root path of CBoard
 # Install SQLServer JDBC Driver into your local respository
 mvn install:install-file -Dfile=lib\sqljdbc4-4.0.jar -DgroupId=com.microsoft.sqlserver -DartifactId=sqljdbc4 -Dversion=4.0 -Dpackaging=jar
 mvn clean package
 ```
-4 部署war到tomcat容器
- * 拷贝CBoard\target\cboard.war到tomcat的webapp目录，修改cboard.war名为ROOT.war，**以ROOT应用部署，否则应用会报错**
- * 启动tomcat
+4 Deploy war to Tomcat application
+ * Copy **CBoard\target\cboard.war** to **webapp** folder of Tomcat and rename cboard.war to ROOT.war, **Make sure deploy app as ROOT, Otherwise the application will not work**
+ * Start up Tomcat
 
-## 访问CBoard
+## Access CBoard
 ```
 http://_yourserverip_:8080
-默认登录用户名密码: admin/root123
+Default login username and passwor: admin/root123
 ```
 
 
-## 项目详细介绍与使用请移步[CBoard Wiki](https://github.com/yzhang921/CBoard/wiki)
+## For more detailed Chinese document [CBoard Wiki](https://github.com/yzhang921/CBoard/wiki)
+## English document coming soon
 
+## Contact us
+You can create any issue or requirements through the Issue system of github.  
+If you like CBoard then use it, contribute to CBoard and **don't forget to star it** :star:  
+Waiting for your Contribution and pull request!
 
-## 联系我们
-欢迎大家通过GitHub Issue系统反馈Bug与需求、提Pull Request  
-CBoard交流群讨论QQ群: 301028618  
-peter.zhang921@gmail.com, g.yuanyf@gmail.com  
-**前端问题**：Fine<479428312@qq.com>
+CBoard QQ Group for Chinese: 301028618  
+Email: peter.zhang921@gmail.com, g.yuanyf@gmail.com  
+**Front-end question**：Fine<479428312@qq.com>

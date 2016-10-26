@@ -9,7 +9,8 @@
     "CONFIRM_DELETE": "真的想好了要删除吗!!!",
     "TIP": "提示",
     "SUCCESS": "成功!",
-    "FAIL": "失败!"
+    "FAIL": "失败!",
+    "DEFAULT_CATEGORY": "默认分类"
   },
   "SIDEBAR": {
     "DASHBOARD": "看板",

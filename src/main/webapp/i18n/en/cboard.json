@@ -9,7 +9,8 @@
     "CONFIRM_DELETE": "Confirm to Delete!!!",
     "TIP": "Tip",
     "SUCCESS": "Success!",
-    "FAIL": "Fail!"
+    "FAIL": "Fail!",
+    "DEFAULT_CATEGORY": "Default Category"
   },
   "SIDEBAR": {
     "DASHBOARD": "Dashboard",

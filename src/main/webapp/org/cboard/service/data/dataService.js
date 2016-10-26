@@ -133,30 +133,36 @@ cBoard.service('dataService', function ($http, updateService) {
     var parseEchartOptionFunnel = function (chartData, chartConfig) {
         var echartOption = null;
         castRawData2Series(chartData, chartConfig, function (casted_keys, casted_values, aggregate_data, newValuesConfig) {
-            var series_data = new Array();
-            var string_keys = _.map(casted_keys, function (key) {
-                return key.join('-');
+            var string_values = _.map(casted_values, function (value) {
+                return value.join('-');
             });
 
             var series = [];
-            for (var d = 0; d < aggregate_data.length; d++) {
+            var b = 100 / (casted_keys.length * 9 + 1);
+            for (var i = 0; i < casted_keys.length; i++) {
                 var s = {
-                    name: casted_values[d].join('-'),
+                    name: casted_keys[i].join('-'),
                     type: 'funnel',
-                    left: '10%',
-                    width: '80%',
-                    maxSize: 100 - (100 / casted_values.length * d) + '%',
+                    left: b + i * b * 9 + '%',
+                    width: b * 8 + '%',
+                    maxSize: '100%',
+                    label: {
+                        normal: {
+                            show: true,
+                            position: 'inside'
+                        }
+                    },
                     data: []
                 };
-                for (var i = 0; i < aggregate_data[d].length; i++) {
-                    s.data.push({name: string_keys[i], value: aggregate_data[d][i]});
+                for (var d = 0; d < string_values.length; d++) {
+                    s.data.push({name: string_values[d], value: aggregate_data[d][i]});
                 }
                 series.push(s);
             }
 
             echartOption = {
                 legend: {
-                    data: string_keys
+                    data: string_values
                 },
                 tooltip: {
                     trigger: 'item',
@@ -431,7 +437,7 @@ cBoard.service('dataService', function ($http, updateService) {
                         a.push(seriesName);
                         newSeriesName = a.join('-');
                         castedAliasSeriesName.push(a);
-                    }else{
+                    } else {
                         castedAliasSeriesName.push([seriesName]);
                     }
                     //castedAliasSeriesName.push(newSeriesName);

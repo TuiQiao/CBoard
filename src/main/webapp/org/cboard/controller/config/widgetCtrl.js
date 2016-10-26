@@ -266,11 +266,27 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
             case 'line':
                 $scope.previewDivWidth = 12;
                 var echartOption = dataService.parseEchartOption($scope.widgetData, $scope.curWidget.config);
+                echartOption.toolbox = {
+                    feature: {
+                        dataView: {
+                            show: true,
+                            readOnly: true
+                        }
+                    }
+                };
                 new CBoardEChartRender($('#preview_widget'), echartOption).chart();
                 break;
             case 'pie':
                 $scope.previewDivWidth = 12;
                 var echartOption = dataService.parseEchartOption($scope.widgetData, $scope.curWidget.config);
+                echartOption.toolbox = {
+                    feature: {
+                        dataView: {
+                            show: true,
+                            readOnly: true
+                        }
+                    }
+                };
                 new CBoardEChartRender($('#preview_widget'), echartOption).chart();
                 break;
             case 'kpi':
@@ -286,6 +302,14 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
             case 'funnel':
                 $scope.previewDivWidth = 12;
                 var echartOption = dataService.parseEchartOption($scope.widgetData, $scope.curWidget.config);
+                echartOption.toolbox = {
+                    feature: {
+                        dataView: {
+                            show: true,
+                            readOnly: true
+                        }
+                    }
+                };
                 new CBoardEChartRender($('#preview_widget'), echartOption).chart();
                 break;
         }

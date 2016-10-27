@@ -59,6 +59,9 @@ cBoard.directive('dashboardWidget', function ($compile, $templateCache, dataServ
                         case 'funnel':
                             renderEchart(scope, element, attrs);
                             break;
+                        case 'sankey':
+                            renderEchart(scope, element, attrs);
+                            break;
                     }
                 }
             }

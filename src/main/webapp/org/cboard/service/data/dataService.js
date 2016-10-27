@@ -41,6 +41,8 @@ cBoard.service('dataService', function ($http, updateService) {
                 return parseEchartOptionPie(chartData, config);
             case 'funnel':
                 return parseEchartOptionFunnel(chartData, config);
+            case 'sankey':
+                return parseEchartOptionSankey(chartData, config);
             default:
                 return null;
         }
@@ -178,6 +180,59 @@ cBoard.service('dataService', function ($http, updateService) {
                 },
                 toolbox: false,
                 series: series
+            };
+        });
+        return echartOption;
+    };
+
+    var parseEchartOptionSankey = function (chartData, chartConfig) {
+        var echartOption = null;
+        castRawData2Series(chartData, chartConfig, function (casted_keys, casted_values, aggregate_data, newValuesConfig) {
+            var nodes = [];
+            var string_keys = _.map(casted_keys, function (key) {
+                var s = key.join('-')
+                nodes.push({name: s});
+                return s;
+            });
+            var string_values = _.map(casted_values, function (value) {
+                var s = value.join('-')
+                nodes.push({name: s});
+                return s;
+            });
+            var links = [];
+            for (var i = 0; i < aggregate_data.length; i++) {
+                for (var j = 0; j < aggregate_data[i].length; j++) {
+                    links.push({
+                        source: string_keys[j],
+                        target: string_values[i],
+                        value: aggregate_data[i][j]
+                    })
+                }
+            }
+            echartOption = {
+                tooltip: {
+                    trigger: 'item',
+                    triggerOn: 'mousemove'
+                },
+                toolbox: false,
+                series: [{
+                    type: 'sankey',
+                    layout: 'none',
+                    data: nodes,
+                    links: links,
+                    itemStyle: {
+                        normal: {
+                            borderWidth: 1,
+                            borderColor: '#aaa'
+                        }
+                    },
+                    lineStyle: {
+                        normal: {
+                            color: 'source',
+                            curveness: 0.5
+                        }
+                    }
+                }]
             };
         });
         return echartOption;

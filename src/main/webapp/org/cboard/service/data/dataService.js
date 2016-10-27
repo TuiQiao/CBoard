@@ -133,21 +133,26 @@ cBoard.service('dataService', function ($http, updateService) {
     var parseEchartOptionFunnel = function (chartData, chartConfig) {
         var echartOption = null;
         castRawData2Series(chartData, chartConfig, function (casted_keys, casted_values, aggregate_data, newValuesConfig) {
+            var string_keys = _.map(casted_keys, function (key) {
+                return key.join('-');
+            });
             var string_values = _.map(casted_values, function (value) {
                 return value.join('-');
             });
 
             var series = [];
-            var b = 100 / (casted_keys.length * 9 + 1);
-            for (var i = 0; i < casted_keys.length; i++) {
+            var b = 100 / (string_keys.length * 9 + 1);
+            for (var i = 0; i < string_keys.length; i++) {
                 var s = {
-                    name: casted_keys[i].join('-'),
+                    name: string_keys[i],
                     type: 'funnel',
                     left: b + i * b * 9 + '%',
                     width: b * 8 + '%',
                     maxSize: '100%',
+                    minSize:'10%',
                     label: {
                         normal: {
+                            formatter: '{a}\n{b}\n{d}%',
                             show: true,
                             position: 'inside'
                         }
@@ -166,7 +171,7 @@ cBoard.service('dataService', function ($http, updateService) {
                 },
                 tooltip: {
                     trigger: 'item',
-                    formatter: "{a} <br/>{b} : {c}"
+                    formatter: "{a} <br/>{b} : {c}{d}"
                 },
                 toolbox: false,
                 series: series

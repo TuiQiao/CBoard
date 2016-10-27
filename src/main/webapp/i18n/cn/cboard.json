@@ -91,7 +91,7 @@
       "ADD_ROW": "添加行",
       "ADD_COLUMN": "添加列",
       "ROW": "行",
-      "HEIGHT": "高度",
+      "HEIGHT": "行高度(像素)",
       "WIDTH": "宽度",
       "WIDGET": "图表",
       "PREVIEW": "预览"

@@ -33,13 +33,31 @@ CBoardEChartRender.prototype.chart = function (group) {
     var self = this;
     var options = this.isDeppSpec == true ? self.options : $.extend(true, {}, self.basicOption, self.options);
     self.ecc.setOption(options);
+    self.changeSize(self.ecc);
     self.container.resize(function (e) {
         self.ecc.resize();
+        self.changeSize(self.ecc);
     }); // 图表大小自适应
-    if(group){
+    if (group) {
         self.ecc.group = group;
         echarts.connect(group);
     }
-}
+};
+CBoardEChartRender.prototype.changeSize = function (instance) {
+    var o = instance.getOption();
+    if (o.series[0].type == 'pie') {
+        var l = o.series.length;
+        var b = instance.getWidth() / (l + 1 + l * 8)
+        for (var i = 0; i < l; i++) {
+            if ((b * 8) < (instance.getHeight() * 0.75)) {
+                o.series[i].radius = [0, b * 4];
+            } else {
+                o.series[i].radius = [0, '75%'];
+            }
+        }
+        instance.setOption(o);
+    }
+
+};
 
 //CBoardEChartRender.prototyp.

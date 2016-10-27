@@ -14,5 +14,14 @@ cBoard.service('updateService', function () {
         if (!config.filters) {
             config.filters = [];
         }
+
+        switch (config.chart_type) {
+            case 'pie':
+                //the new pie
+                if(!config.groups){
+                    config.groups = [];
+                }
+                break;
+        }
     };
 });

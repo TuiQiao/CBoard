@@ -223,6 +223,7 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
             case 'pie':
                 $scope.curWidget.config.selects = angular.copy($scope.widgetData[0]);
                 $scope.curWidget.config.keys = new Array();
+                $scope.curWidget.config.groups = new Array();
                 $scope.curWidget.config.values = [{
                     name: '',
                     cols: []

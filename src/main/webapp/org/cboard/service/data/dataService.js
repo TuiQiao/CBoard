@@ -98,13 +98,23 @@ cBoard.service('dataService', function ($http, updateService) {
     var parseEchartOptionPie = function (chartData, chartConfig) {
         var echartOption = null;
         castRawData2Series(chartData, chartConfig, function (casted_keys, casted_values, aggregate_data, newValuesConfig) {
-            var series_data = new Array();
+            var series = new Array();
             var string_keys = _.map(casted_keys, function (key) {
                 return key.join('-');
             });
-
-            for (var i = 0; i < aggregate_data[0].length; i++) {
-                series_data.push({name: string_keys[i], value: aggregate_data[0][i]});
+            var b = 100 / (casted_values.length * 9 + 1);
+            for (var i = 0; i < aggregate_data.length; i++) {
+                var s = {
+                    name: casted_values[i].join('-'),
+                    type: 'pie',
+                    center: [5 * b + i * 9 * b + '%', '50%'],
+                    data: [],
+                    roseType: 'angle'
+                }
+                for (var j = 0; j < aggregate_data[i].length; j++) {
+                    s.data.push({name: string_keys[j], value: aggregate_data[i][j]})
+                }
+                series.push(s);
             }
             echartOption = {
                 legend: {
@@ -117,14 +127,7 @@ cBoard.service('dataService', function ($http, updateService) {
                     formatter: "{a} <br/>{b} : {c} ({d}%)"
                 },
                 toolbox: false,
-                series: [
-                    {
-                        name: chartConfig.values[0].name,
-                        type: 'pie',
-                        data: series_data,
-                        roseType: 'angle'
-                    }
-                ]
+                series: series
             };
         });
         return echartOption;
@@ -149,7 +152,7 @@ cBoard.service('dataService', function ($http, updateService) {
                     left: b + i * b * 9 + '%',
                     width: b * 8 + '%',
                     maxSize: '100%',
-                    minSize:'10%',
+                    minSize: '10%',
                     label: {
                         normal: {
                             formatter: '{a}\n{b}\n{d}%',

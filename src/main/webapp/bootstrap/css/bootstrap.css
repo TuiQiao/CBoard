@@ -3619,10 +3619,11 @@ tbody.collapse.in {
 }
 .dropdown-header {
   display: block;
-  padding: 3px 20px;
-  font-size: 12px;
+  padding: 3px 5px;
+  font-weight:bold;
+  font-size: 14px;
   line-height: 1.42857143;
-  color: #777;
+  color: #333;
   white-space: nowrap;
 }
 .dropdown-backdrop {

@@ -92,7 +92,7 @@
       "ADD_ROW": "Add Row",
       "ADD_COLUMN": "Add Column",
       "ROW": "Row",
-      "HEIGHT": "Height",
+      "HEIGHT": "Row Height(px)",
       "WIDTH": "Width",
       "WIDGET": "Widget",
       "PREVIEW": "Preview"

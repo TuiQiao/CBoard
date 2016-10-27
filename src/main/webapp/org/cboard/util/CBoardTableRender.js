@@ -36,5 +36,12 @@ CBoardTableRender.prototype.do = function (tall) {
     $(this.container).html("<div style='width: 100%;height:" + tall + "px;overflow: auto'>" + html + "</div>");
     $(this.container).css({
         height: "600px"
-    })
+    });
+    $(this.container).resize(function (e) {
+        var wrapper = $(e.target).find('.table_wrapper');
+        wrapper.css('width', 'auto');
+        if(wrapper.width() < $(e.target).width()){
+            wrapper.css('width','100%');
+        }
+    });
 };

@@ -219,6 +219,7 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
                 $scope.curWidget.config.groups = new Array();
                 $scope.curWidget.config.values = new Array();
                 $scope.curWidget.config.filters = new Array();
+                $scope.curWidget.config.valueAxis = 'vertical';
                 $scope.add_value();
                 break;
             case 'pie':

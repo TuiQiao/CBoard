@@ -63,13 +63,18 @@ cBoard.service('dataService', function ($http, updateService) {
                 s.data = aggregate_data[i];
                 if (s.type == 'stackbar') {
                     s.type = 'bar';
-                    s.stack = s.yAxisIndex.toString();
+                    s.stack = s.valueAxisIndex.toString();
+                }
+                if (chartConfig.valueAxis == 'horizontal') {
+                    s.xAxisIndex = s.valueAxisIndex;
+                } else {
+                    s.yAxisIndex = s.valueAxisIndex;
                 }
                 series_data.push(s);
             }
 
-            var yAxis = angular.copy(chartConfig.values);
-            _.each(yAxis, function (e, i) {
+            var valueAxis = angular.copy(chartConfig.values);
+            _.each(valueAxis, function (e, i) {
                 e.axisLabel = {
                     formatter: function (value) {
                         return numbro(value).format("0a.[0000]");
@@ -80,17 +85,18 @@ cBoard.service('dataService', function ($http, updateService) {
                 }
                 e.scale = true;
             });
+            var categoryAxis = {
+                type: 'category',
+                data: string_keys
+            };
             echartOption = {
                 legend: {
                     data: _.map(casted_values, function (v) {
                         return v.join('-');
                     })
                 },
-                xAxis: {
-                    type: 'category',
-                    data: string_keys
-                },
-                yAxis: yAxis,
+                xAxis: chartConfig.valueAxis == 'horizontal' ? valueAxis : categoryAxis,
+                yAxis: chartConfig.valueAxis == 'horizontal' ? categoryAxis : valueAxis,
                 series: series_data
             };
         });
@@ -504,7 +510,7 @@ cBoard.service('dataService', function ($http, updateService) {
                         castedAliasSeriesName.push([seriesName]);
                     }
                     //castedAliasSeriesName.push(newSeriesName);
-                    aliasSeriesConfig[newSeriesName] = {type: value.series_type, yAxisIndex: vIdx};
+                    aliasSeriesConfig[newSeriesName] = {type: value.series_type, valueAxisIndex: vIdx};
 
                     castSeriesData(series, group.join('-'), castedKeys, newData, function (castedData, keyIdx) {
                         if (!aliasData[castedAliasSeriesName.length - 1]) {

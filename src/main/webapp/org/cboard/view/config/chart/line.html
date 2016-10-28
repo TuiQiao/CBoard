@@ -68,6 +68,9 @@
             </tr>
             <tr>
                 <th colspan="5">
+                    <button type="button" class="btn btn-info btn-sm" ng-click="curWidget.config.valueAxis=curWidget.config.valueAxis == 'horizontal'?'vertical':'horizontal';console.log(curWidget.config.valueAxis);">
+                        {{'CONFIG.WIDGET.'+curWidget.config.valueAxis|uppercase|translate}}
+                    </button>
                     <button type="button" class="btn btn-info btn-sm" ng-click="add_value()">
                         {{'CONFIG.WIDGET.ADD_NEW_AXIS'|translate}}
                     </button>

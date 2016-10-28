@@ -18,8 +18,13 @@ cBoard.service('updateService', function () {
         switch (config.chart_type) {
             case 'pie':
                 //the new pie
-                if(!config.groups){
+                if (!config.groups) {
                     config.groups = [];
+                }
+                break;
+            case 'line':
+                if (!config.valueAxis) {
+                    config.valueAxis = 'vertical';
                 }
                 break;
         }

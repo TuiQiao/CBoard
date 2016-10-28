@@ -3,7 +3,7 @@
     "OK": "确认",
     "CANCEL": "取消",
     "SAVE": "保存",
-    "LOADING": "玩命加载中..." ,
+    "LOADING": "玩命加载中...",
     "REFRESH": "刷新",
     "EDIT": "编辑",
     "CONFIRM_DELETE": "真的想好了要删除吗!!!",
@@ -83,7 +83,9 @@
       "CHECK": "校验",
       "FIND": "查找",
       "EQUAL": "等于",
-      "NOT_EQUAL": "不等于"
+      "NOT_EQUAL": "不等于",
+      "HORIZONTAL": "垂直",
+      "VERTICAL": "水平"
     },
     "DASHBOARD": {
       "DASHBOARD": "看板",

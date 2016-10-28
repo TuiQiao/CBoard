@@ -83,7 +83,9 @@
       "CHECK": "Check",
       "FIND": "Find",
       "EQUAL": "Equal",
-      "NOT_EQUAL": "Not Equal"
+      "NOT_EQUAL": "Not Equal",
+      "HORIZONTAL": "Horizontal",
+      "VERTICAL": "Vertical"
     },
     "DASHBOARD": {
       "CATEGORY": "Category",

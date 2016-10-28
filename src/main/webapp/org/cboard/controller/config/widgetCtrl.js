@@ -1,8 +1,8 @@
 /**
  * Created by yfyuan on 2016/8/12.
  */
-
-cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal, dataService, ModalUtils, updateService, $filter) {
+'use strict';
+cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal, dataService, ModalUtils, updateService, $filter, chartService) {
 
     var translate = $filter('translate');
     //图表类型初始化
@@ -156,7 +156,10 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
                 $scope.verify = function () {
                     $scope.alerts = [];
                     var v = verifyAggExpRegx($scope.expression);
-                    $scope.alerts = [{msg: v.isValid ? translate("COMMON.SUCCESS") : v.msg, type: v.isValid ? 'success' : 'danger'}];
+                    $scope.alerts = [{
+                        msg: v.isValid ? translate("COMMON.SUCCESS") : v.msg,
+                        type: v.isValid ? 'success' : 'danger'
+                    }];
                 };
                 $scope.ok = function () {
                     ok($scope.expression, $scope.alias);
@@ -275,70 +278,61 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
 
 
     $scope.preview = function () {
-        switch ($scope.curWidget.config.chart_type) {
-            case 'line':
-                $scope.previewDivWidth = 12;
-                var echartOption = dataService.parseEchartOption($scope.widgetData, $scope.curWidget.config);
-                echartOption.toolbox = {
-                    feature: {
-                        dataView: {
-                            show: true,
-                            readOnly: true
+        chartService.render($('#preview_widget'), $scope.widgetData, $scope.curWidget.config, function (option) {
+            switch ($scope.curWidget.config.chart_type) {
+                case 'line':
+                    $scope.previewDivWidth = 12;
+                    option.toolbox = {
+                        feature: {
+                            dataView: {
+                                show: true,
+                                readOnly: true
+                            }
                         }
-                    }
-                };
-                new CBoardEChartRender($('#preview_widget'), echartOption).chart();
-                break;
-            case 'pie':
-                $scope.previewDivWidth = 12;
-                var echartOption = dataService.parseEchartOption($scope.widgetData, $scope.curWidget.config);
-                echartOption.toolbox = {
-                    feature: {
-                        dataView: {
-                            show: true,
-                            readOnly: true
+                    };
+                    break;
+                case 'pie':
+                    $scope.previewDivWidth = 12;
+                    option.toolbox = {
+                        feature: {
+                            dataView: {
+                                show: true,
+                                readOnly: true
+                            }
                         }
-                    }
-                };
-                new CBoardEChartRender($('#preview_widget'), echartOption).chart();
-                break;
-            case 'kpi':
-                $scope.previewDivWidth = 6;
-                var option = dataService.parseKpiOption($scope.widgetData, $scope.curWidget.config);
-                new CBoardKpiRender($('#preview_widget'), option).do();
-                break;
-            case 'table':
-                $scope.previewDivWidth = 12;
-                var option = dataService.parseTableOption($scope.widgetData, $scope.curWidget.config);
-                new CBoardTableRender($('#preview_widget'), option).do();
-                break;
-            case 'funnel':
-                $scope.previewDivWidth = 12;
-                var echartOption = dataService.parseEchartOption($scope.widgetData, $scope.curWidget.config);
-                echartOption.toolbox = {
-                    feature: {
-                        dataView: {
-                            show: true,
-                            readOnly: true
+                    };
+                    break;
+                case 'kpi':
+                    $scope.previewDivWidth = 6;
+                    break;
+                case 'table':
+                    $scope.previewDivWidth = 12;
+                    break;
+                case 'funnel':
+                    $scope.previewDivWidth = 12;
+                    option.toolbox = {
+                        feature: {
+                            dataView: {
+                                show: true,
+                                readOnly: true
+                            }
                         }
-                    }
-                };
-                new CBoardEChartRender($('#preview_widget'), echartOption).chart();
-                break;
-            case 'sankey':
-                $scope.previewDivWidth = 12;
-                var echartOption = dataService.parseEchartOption($scope.widgetData, $scope.curWidget.config);
-                echartOption.toolbox = {
-                    feature: {
-                        dataView: {
-                            show: true,
-                            readOnly: true
+                    };
+                    break;
+                case 'sankey':
+                    $scope.previewDivWidth = 12;
+                    option.toolbox = {
+                        feature: {
+                            dataView: {
+                                show: true,
+                                readOnly: true
+                            }
                         }
-                    }
-                };
-                new CBoardEChartRender($('#preview_widget'), echartOption).chart();
-                break;
-        }
+                    };
+                    break;
+            }
+        });
+
 
     };
 
@@ -509,7 +503,7 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
             templateUrl: 'org/cboard/view/config/modal/filter.html',
             windowTemplateUrl: 'org/cboard/view/util/modal/window.html',
             backdrop: false,
-            size:'lg',
+            size: 'lg',
             controller: function ($scope, $uibModalInstance) {
                 $scope.selects = selects;
                 $scope.col = col;

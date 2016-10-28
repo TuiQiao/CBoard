@@ -1,6 +1,7 @@
 /**
  * Created by yfyuan on 2016/8/12.
  */
+'use strict';
 cBoard.service('dataService', function ($http, updateService) {
 
     /**
@@ -174,15 +175,24 @@ cBoard.service('dataService', function ($http, updateService) {
                     minSize: '10%',
                     label: {
                         normal: {
-                            formatter: '{a}\n{b}\n{d}%',
+                            formatter: function (params) {
+                                return params.seriesName + "\n" + params.name + "\n" + params.value + "\n" + params.data.percent + "%";
+                            },
                             show: true,
                             position: 'inside'
                         }
                     },
                     data: []
                 };
+                var m = _.max(aggregate_data, function (d) {
+                    return d[i]
+                })[i];
                 for (var d = 0; d < string_values.length; d++) {
-                    s.data.push({name: string_values[d], value: aggregate_data[d][i]});
+                    s.data.push({
+                        name: string_values[d],
+                        value: aggregate_data[d][i],
+                        percent: (aggregate_data[d][i] / m * 100).toFixed(2)
+                    });
                 }
                 series.push(s);
             }
@@ -193,11 +203,14 @@ cBoard.service('dataService', function ($http, updateService) {
                 },
                 tooltip: {
                     trigger: 'item',
-                    formatter: "{a} <br/>{b} : {c}{d}"
+                    formatter: function (params) {
+                        return params.seriesName + " <br/>" + params.name + " : " + params.value + "<br>" + params.data.percent + "%";
+                    }
                 },
                 toolbox: false,
                 series: series
-            };
+            }
+            ;
         });
         return echartOption;
     };

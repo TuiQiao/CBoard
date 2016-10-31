@@ -2,7 +2,7 @@
  * Created by yfyuan on 2016/10/28.
  */
 'use strict';
-cBoard.service('chartService', function (chartPieService, chartLineService, chartFunnelService, chartSankeyService, chartTableService, chartKpiService) {
+cBoard.service('chartService', function (chartPieService, chartLineService, chartFunnelService, chartSankeyService, chartTableService, chartKpiService, chartRadarService) {
 
         this.render = function (containerDom, chartData, chartConfig, optionFilter, scope) {
             var chart;
@@ -24,6 +24,9 @@ cBoard.service('chartService', function (chartPieService, chartLineService, char
                     break;
                 case 'sankey':
                     chart = chartSankeyService;
+                    break;
+                case 'radar':
+                    chart = chartRadarService;
                     break;
             }
             var option = chart.parseOption(chartData, chartConfig);

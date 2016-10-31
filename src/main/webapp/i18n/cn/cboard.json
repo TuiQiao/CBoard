@@ -85,7 +85,8 @@
       "EQUAL": "等于",
       "NOT_EQUAL": "不等于",
       "HORIZONTAL": "垂直",
-      "VERTICAL": "水平"
+      "VERTICAL": "水平",
+      "RADAR": "雷达图"
     },
     "DASHBOARD": {
       "DASHBOARD": "看板",

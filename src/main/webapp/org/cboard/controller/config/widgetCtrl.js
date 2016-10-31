@@ -12,7 +12,8 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
         {name: translate('CONFIG.WIDGET.KPI'), value: 'kpi'},
         {name: translate('CONFIG.WIDGET.TABLE'), value: 'table'},
         {name: translate('CONFIG.WIDGET.FUNNEL'), value: 'funnel'},
-        {name: translate('CONFIG.WIDGET.SANKEY'), value: 'sankey'}
+        {name: translate('CONFIG.WIDGET.SANKEY'), value: 'sankey'},
+        {name: translate('CONFIG.WIDGET.RADAR'), value: 'radar'}
     ];
 
     $scope.value_series_types = [
@@ -264,6 +265,16 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
                 $scope.curWidget.config.filters = new Array();
                 break;
             case 'sankey':
+                $scope.curWidget.config.selects = angular.copy($scope.widgetData[0]);
+                $scope.curWidget.config.keys = new Array();
+                $scope.curWidget.config.groups = new Array();
+                $scope.curWidget.config.values = [{
+                    name: '',
+                    cols: []
+                }];
+                $scope.curWidget.config.filters = new Array();
+                break;
+            case 'radar':
                 $scope.curWidget.config.selects = angular.copy($scope.widgetData[0]);
                 $scope.curWidget.config.keys = new Array();
                 $scope.curWidget.config.groups = new Array();

@@ -85,7 +85,8 @@
       "EQUAL": "Equal",
       "NOT_EQUAL": "Not Equal",
       "HORIZONTAL": "Horizontal",
-      "VERTICAL": "Vertical"
+      "VERTICAL": "Vertical",
+      "RADAR": "Radar"
     },
     "DASHBOARD": {
       "CATEGORY": "Category",

@@ -17,19 +17,19 @@ cBoard.service('chartSankeyService', function (dataService) {
                 nodes.push({name: s});
                 return s;
             });
-            var string_values = _.map(casted_values, function (value) {
-                var s = value.join('-')
-                nodes.push({name: s});
-                return s;
-            });
             var links = [];
             for (var i = 0; i < aggregate_data.length; i++) {
                 for (var j = 0; j < aggregate_data[i].length; j++) {
-                    links.push({
-                        source: string_keys[j],
-                        target: string_values[i],
-                        value: aggregate_data[i][j]
-                    })
+                    if (!_.isUndefined(aggregate_data[i][j])) {
+                        if (casted_values[i].length > 1) {
+                            casted_values[i].splice(-1, 1);
+                        }
+                        links.push({
+                            source: string_keys[j],
+                            target: casted_values[i].join('-'),
+                            value: aggregate_data[i][j]
+                        });
+                    }
                 }
             }
             echartOption = {

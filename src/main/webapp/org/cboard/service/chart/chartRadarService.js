@@ -40,6 +40,8 @@ cBoard.service('chartRadarService', function (dataService) {
                 },
                 toolbox: false,
                 legend: {
+                    orient: 'vertical',
+                    left: 'left',
                     data: string_values
                 },
                 radar: {

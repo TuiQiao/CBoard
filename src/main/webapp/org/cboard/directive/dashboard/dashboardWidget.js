@@ -57,6 +57,9 @@ cBoard.directive('dashboardWidget', function ($compile, $templateCache, dataServ
                         case 'sankey':
                             renderEchart(scope, element, attrs);
                             break;
+                        case 'radar':
+                            renderEchart(scope, element, attrs);
+                            break;
                     }
                 }
             }

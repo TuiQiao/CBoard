@@ -27,13 +27,17 @@ Server side framework is Spring+MyBatis and front-end is based on AngularJS1 and
 * Supports sort multiple columns/rows at the sametime
 * Global query cache, to avoid repeated query requests for data
 * Support common charts and cross tables
-  * Column chart / Stacked bar chart, biaxial view
+  * Columnar/Stacked vertical and horizontal bar and line mixed chart with dual axis view
   * Pie chart
+  * Radar Chart
+  * Sanky Chart
+  * Funnel Chart
   * KPI Widget
   * Cross-tabulation
   * Other graphs is coming soon
 * Support JDBC data connection
 * Support to connect one of the most popular open source multi-dimensional analysis of products **Saiku2**, and will be able to selectively create data and graphics
+* Cube level data refresh / realtime chart for quick query
 * Easy to implement your own **DataProvider** to connect any data source. Even for expensive commercial BI suite, it's not possible to connect all the NOSQL and NewSQL data source in the era of big data. Due to the schema of NOSQL are various, such as hash tables, arrays, trees, maps, etc., different people using the same NoSQL products designed Schema may vary widely. The user who most familiar with their storage schema are the user themselves. And it's easy to find a Java programmers to code a Class to connect their own data source. So we leave this part of work to the end user with an easy extended data connection framework in CBoard
 
 <div align="center">

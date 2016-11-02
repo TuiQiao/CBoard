@@ -5,7 +5,7 @@
 cBoard.service('chartPieService', function (dataService) {
 
     this.render = function (containerDom, option, scope) {
-        new CBoardEChartRender(containerDom, option).chart();
+        return new CBoardEChartRender(containerDom, option).chart();
     };
 
     this.parseOption = function (chartData, chartConfig) {

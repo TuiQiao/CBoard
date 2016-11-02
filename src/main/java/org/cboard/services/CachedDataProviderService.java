@@ -14,7 +14,6 @@ import java.util.concurrent.ConcurrentMap;
 @Repository
 public class CachedDataProviderService extends DataProviderService {
 
-
     private static ConcurrentMap<String, CacheObject> cache = new ConcurrentHashMap<>();
 
     public DataProviderResult getData(Long datasourceId, Map<String, String> query, Long datasetId, boolean reload) {
@@ -31,7 +30,14 @@ public class CachedDataProviderService extends DataProviderService {
                 CacheObject oo = cache.get(keys);
                 if (oo == null || new Date().getTime() >= oo.getT1() + oo.getExpire() || reload) {
                     DataProviderResult d = super.getData(datasourceId, query, datasetId);
-                    cache.put(keys, new CacheObject(new Date().getTime(), 12 * 60 * 60 * 1000, d));
+                    long expire = 12 * 60 * 60 * 1000;
+                    if (datasetId != null) {
+                        Dataset dataset = super.getDataset(datasetId);
+                        if (dataset.getInterval() != null && dataset.getInterval() > 0) {
+                            expire = dataset.getInterval() * 1000;
+                        }
+                    }
+                    cache.put(keys, new CacheObject(new Date().getTime(), expire, d));
                     return d;
                 } else {
                     return (DataProviderResult) oo.getD();

@@ -5,6 +5,28 @@
 cBoard.service('chartService', function (chartPieService, chartLineService, chartFunnelService, chartSankeyService, chartTableService, chartKpiService, chartRadarService) {
 
         this.render = function (containerDom, chartData, chartConfig, optionFilter, scope) {
+            var chart = getChartServices(chartConfig);
+            var option = chart.parseOption(chartData, chartConfig);
+            if (optionFilter) {
+                optionFilter(option);
+            }
+            return chart.render(containerDom, option, scope);
+        };
+
+
+        this.realTimeRender = function (realTimeTicket, chartData, chartConfig, optionFilter, scope) {
+            if (!realTimeTicket) {
+                return;
+            }
+            var chart = getChartServices(chartConfig);
+            var option = chart.parseOption(chartData, chartConfig);
+            if (optionFilter) {
+                optionFilter(option);
+            }
+            realTimeTicket(option);
+        };
+
+        var getChartServices = function (chartConfig) {
             var chart;
             switch (chartConfig.chart_type) {
                 case 'line':
@@ -29,11 +51,7 @@ cBoard.service('chartService', function (chartPieService, chartLineService, char
                     chart = chartRadarService;
                     break;
             }
-            var option = chart.parseOption(chartData, chartConfig);
-            if (optionFilter) {
-                optionFilter(option);
-            }
-            chart.render(containerDom, option, scope);
+            return chart;
         };
 
     }

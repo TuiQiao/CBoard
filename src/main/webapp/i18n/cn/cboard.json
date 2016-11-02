@@ -110,7 +110,8 @@
       "CATEGORY": "分类",
       "LOAD_DATA": "读取数据",
       "DATASOURCE": "数据源",
-      "ADD": "添加"
+      "ADD": "添加",
+      "REAL_TIME_INTERVAL": "实时间隔"
     }
   }
 }

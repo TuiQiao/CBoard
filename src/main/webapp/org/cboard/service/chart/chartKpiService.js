@@ -5,12 +5,14 @@
 cBoard.service('chartKpiService', function (dataService, $compile) {
 
     this.render = function (containerDom, option, scope) {
-        var html = new CBoardKpiRender(containerDom, option).rendered();
+        var render = new CBoardKpiRender(containerDom, option);
+        var html = render.html();
         if (scope) {
             containerDom.append($compile(html)(scope));
-        }else{
+        } else {
             containerDom.html(html);
         }
+        return render.realTimeTicket();
     };
 
     this.parseOption = function (chartData, config) {

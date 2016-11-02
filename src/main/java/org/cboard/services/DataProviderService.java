@@ -51,11 +51,13 @@ public class DataProviderService {
     protected class Dataset {
         private Long datasourceId;
         private Map<String, String> query;
+        private Long interval;
 
         public Dataset(DashboardDataset dataset) {
             JSONObject data = JSONObject.parseObject(dataset.getData());
             this.query = Maps.transformValues(data.getJSONObject("query"), Functions.toStringFunction());
             this.datasourceId = data.getLong("datasource");
+            this.interval = data.getLong("interval");
         }
 
         public Long getDatasourceId() {
@@ -72,6 +74,14 @@ public class DataProviderService {
 
         public void setQuery(Map<String, String> query) {
             this.query = query;
+        }
+
+        public Long getInterval() {
+            return interval;
+        }
+
+        public void setInterval(Long interval) {
+            this.interval = interval;
         }
     }
 }

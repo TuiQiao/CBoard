@@ -2,15 +2,27 @@
  * Created by yfyuan on 2016/8/2.
  */
 
-cBoard.controller('dashboardViewCtrl', function ($scope, $state, $stateParams, $http, ModalUtils) {
+cBoard.controller('dashboardViewCtrl', function ($scope, $state, $stateParams, $http, ModalUtils, chartService, $interval) {
 
     $scope.loading = true;
 
+    $http.get("/dashboard/getDatasetList.do").success(function (response) {
+        $scope.datasetList = response;
+        $scope.datasets = {};
+        $scope.intervals = [];
+        $scope.load(false);
+    });
+
     $scope.load = function (reload) {
+        _.each($scope.intervals, function (e) {
+            $interval.cancel(e);
+        });
+        $scope.intervals = [];
         $http.get("/dashboard/getBoardData.do?id=" + $stateParams.id).success(function (response) {
             $scope.loading = false;
             $scope.board = response;
             var queries = [];
+
             _.each($scope.board.layout.rows, function (row) {
                 _.each(row.widgets, function (widget) {
                     var w = widget.widget.data;
@@ -33,6 +45,17 @@ cBoard.controller('dashboardViewCtrl', function ($scope, $state, $stateParams, $
                     } else {
                         q.widgets.push(widget);
                     }
+
+                    //real time
+                    var ds = _.find($scope.datasetList, function (e) {
+                        return e.id == w.datasetId;
+                    });
+                    if (ds && ds.data.interval && ds.data.interval > 0) {
+                        if (!$scope.datasets[ds.id]) {
+                            $scope.datasets[ds.id] = [];
+                        }
+                        $scope.datasets[ds.id].push(widget);
+                    }
                 });
             });
             _.each(queries, function (q) {
@@ -48,11 +71,28 @@ cBoard.controller('dashboardViewCtrl', function ($scope, $state, $stateParams, $
                     });
                 });
             });
+
+            //real time load task
+            _.each(_.keys($scope.datasets), function (dsId) {
+                var ds = _.find($scope.datasetList, function (e) {
+                    return e.id == dsId;
+                });
+                $scope.intervals.push($interval(function () {
+                    $http.post("/dashboard/getCachedData.do", {
+                        datasetId: ds.id,
+                    }).success(function (response) {
+                        _.each($scope.datasets[dsId], function (w) {
+                            w.widget.queryData = response.data;
+                            chartService.realTimeRender(w.realTimeTicket, w.widget.queryData, w.widget.data.config);
+                        });
+                    });
+                }, ds.data.interval * 1000));
+
+            });
+
         });
 
     };
-
-    $scope.load(false);
 
     $scope.modalChart = function (widget) {
         ModalUtils.chart(widget);

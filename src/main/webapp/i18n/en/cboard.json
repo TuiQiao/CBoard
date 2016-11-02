@@ -111,7 +111,8 @@
       "CATEGORY": "Category",
       "LOAD_DATA": "Load Data",
       "DATASOURCE": "Datasource",
-      "ADD": "Add"
+      "ADD": "Add",
+      "REAL_TIME_INTERVAL": "Real Time Interval"
     }
   }
 }

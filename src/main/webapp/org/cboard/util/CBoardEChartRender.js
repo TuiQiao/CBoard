@@ -42,7 +42,11 @@ CBoardEChartRender.prototype.chart = function (group) {
         self.ecc.group = group;
         echarts.connect(group);
     }
+    return function (o) {
+        self.ecc.setOption(o);
+    }
 };
+
 CBoardEChartRender.prototype.changeSize = function (instance) {
     var o = instance.getOption();
     if (o.series[0].type == 'pie') {

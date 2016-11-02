@@ -6,9 +6,9 @@ cBoard.service('chartTableService', function (dataService) {
 
     this.render = function (containerDom, option, scope) {
         if (scope) {
-            new CBoardTableRender(containerDom, option).do(scope.myheight - 20);
+            return new CBoardTableRender(containerDom, option).do(scope.myheight - 20);
         } else {
-            new CBoardTableRender(containerDom, option).do();
+            return new CBoardTableRender(containerDom, option).do();
         }
     };
 

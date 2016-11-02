@@ -3,11 +3,18 @@ var CBoardKpiRender = function (jqContainer, options) {
     this.options = options;
 };
 
-CBoardKpiRender.prototype.rendered = function () {
+CBoardKpiRender.prototype.html = function () {
     var self = this;
     var temp = "" + self.template;
     var html = temp.render(self.options);
     return html;
+};
+
+CBoardKpiRender.prototype.realTimeTicket = function () {
+    var self = this;
+    return function (o) {
+        $(self.container).find('h3').html(o.kpiValue);
+    }
 };
 
 CBoardKpiRender.prototype.do = function () {

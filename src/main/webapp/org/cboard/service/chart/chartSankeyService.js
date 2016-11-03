@@ -17,13 +17,16 @@ cBoard.service('chartSankeyService', function (dataService) {
                 nodes.push({name: s});
                 return s;
             });
+            _.each(casted_values, function (values) {
+                if (values.length > 1) {
+                    values.splice(-1, 1);
+                }
+                nodes.push({name: values.join('-')});
+            });
             var links = [];
             for (var i = 0; i < aggregate_data.length; i++) {
                 for (var j = 0; j < aggregate_data[i].length; j++) {
                     if (!_.isUndefined(aggregate_data[i][j])) {
-                        if (casted_values[i].length > 1) {
-                            casted_values[i].splice(-1, 1);
-                        }
                         links.push({
                             source: string_keys[j],
                             target: casted_values[i].join('-'),

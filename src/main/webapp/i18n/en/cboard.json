@@ -112,7 +112,8 @@
       "LOAD_DATA": "Load Data",
       "DATASOURCE": "Datasource",
       "ADD": "Add",
-      "REAL_TIME_INTERVAL": "Real Time Interval"
+      "REAL_TIME_INTERVAL": "Real Time Interval(s)",
+      "REAL_TIME_TIP": "If You don't need refresh, just leave it as BLANK"
     }
   }
 }

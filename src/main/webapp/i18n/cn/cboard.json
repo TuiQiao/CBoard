@@ -111,7 +111,8 @@
       "LOAD_DATA": "读取数据",
       "DATASOURCE": "数据源",
       "ADD": "添加",
-      "REAL_TIME_INTERVAL": "实时间隔"
+      "REAL_TIME_INTERVAL": "实时间隔(秒)",
+      "REAL_TIME_TIP": "留空则不做后台刷新"
     }
   }
 }

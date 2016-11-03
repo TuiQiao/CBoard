@@ -171,6 +171,7 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
     };
 
     $scope.loadData = function () {
+        cleanPreview();
         $scope.loading = true;
         dataService.getData($scope.datasource ? $scope.datasource.id : null, $scope.curWidget.query, $scope.curWidget.datasetId, function (widgetData) {
             $scope.loading = false;
@@ -216,6 +217,7 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
         }
         $scope.curWidget.config.chart_type = config;
         loadDsExpressions();
+        cleanPreview();
         switch ($scope.curWidget.config.chart_type) {
             case 'line':
                 $scope.curWidget.config.selects = angular.copy($scope.widgetData[0]);
@@ -287,6 +289,9 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
         }
     };
 
+    var cleanPreview = function () {
+        $('#preview_widget').html("");
+    };
 
     $scope.preview = function () {
         chartService.render($('#preview_widget'), $scope.widgetData, $scope.curWidget.config, function (option) {

@@ -5,7 +5,18 @@
     #if ($param.get("type") == "input")
         <input ng-model="curWidget.query.$param.get("name")" class="form-control"/>
     #elseif ($param.type == "textarea")
-        <textarea ng-model="curWidget.query.$param.get("name")" class="form-control"/>
+        <div ui-ace="{
+            useWrapMode : false,
+            mode: 'sql',
+            advanced: {
+                autoScrollEditorIntoView: true
+            },
+            rendererOptions:{
+              fontSize: '14px',
+                minLines: 10,
+                maxLines: 100
+            }
+        }" ng-model="curWidget.query.$param.get("name")" class="form-control" ></div>
     #end
     </div>
 </div>

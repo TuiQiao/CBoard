@@ -13,7 +13,7 @@
     "DEFAULT_CATEGORY": "Default Category"
   },
   "SIDEBAR": {
-    "DASHBOARD": "Dashboard",
+    "C_DASHBOARD": "Dashboard",
     "MY_DASHBOARD": "My DashBoard",
     "CONFIG": "Configuration",
     "DATA_SOURCE": "DataSource",

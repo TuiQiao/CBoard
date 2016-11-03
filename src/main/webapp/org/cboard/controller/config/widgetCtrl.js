@@ -171,9 +171,8 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
     };
 
     $scope.loadData = function () {
-        cleanPreview();
         $scope.loading = true;
-        dataService.getData($scope.datasource ? $scope.datasource.id : null, $scope.curWidget.query, $scope.curWidget.datasetId, function (widgetData) {
+        dataService.getData($scope.datasource ? $scope.datasource.id : null, $scope.curWidget.query, $scope.customDs ? null : $scope.curWidget.datasetId, function (widgetData) {
             $scope.loading = false;
             $scope.toChartDisabled = false;
             if (widgetData.msg == '1') {

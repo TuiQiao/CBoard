@@ -13,15 +13,20 @@ cBoard.service('chartSankeyService', function (dataService) {
         dataService.castRawData2Series(chartData, chartConfig, function (casted_keys, casted_values, aggregate_data, newValuesConfig) {
             var nodes = [];
             var string_keys = _.map(casted_keys, function (key) {
-                var s = key.join('-')
-                nodes.push({name: s});
+                var s = key.join('-');
+                if (!_.find(nodes, function (e) {return e.name == s;})) {
+                    nodes.push({name: s});
+                }
                 return s;
             });
             _.each(casted_values, function (values) {
                 if (values.length > 1) {
                     values.splice(-1, 1);
                 }
-                nodes.push({name: values.join('-')});
+                var s = values.join('-');
+                if (!_.find(nodes, function (e) {return e.name == s;})) {
+                    nodes.push({name: s});
+                }
             });
             var links = [];
             for (var i = 0; i < aggregate_data.length; i++) {

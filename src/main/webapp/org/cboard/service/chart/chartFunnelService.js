@@ -20,6 +20,7 @@ cBoard.service('chartFunnelService', function (dataService) {
 
             var series = [];
             var b = 100 / (string_keys.length * 9 + 1);
+            var titles = [];
             for (var i = 0; i < string_keys.length; i++) {
                 var s = {
                     name: string_keys[i],
@@ -31,7 +32,7 @@ cBoard.service('chartFunnelService', function (dataService) {
                     label: {
                         normal: {
                             formatter: function (params) {
-                                return params.seriesName + "\n" + params.name + "\n" + params.value + "\n" + params.data.percent + "%";
+                                return params.value + "\n" + params.data.percent + "%";
                             },
                             show: true,
                             position: 'inside'
@@ -39,8 +40,14 @@ cBoard.service('chartFunnelService', function (dataService) {
                     },
                     data: []
                 };
+                titles.push({
+                    textAlign: 'center', textStyle: {
+                        fontSize: 12,
+                        fontWeight: 'normal'
+                    }, text: string_keys[i], left: 5 * b + i * 9 * b + '%', top: '90%'
+                });
                 var m = _.max(aggregate_data, function (d) {
-                    return d[i]
+                    return Number(d[i]);
                 })[i];
                 for (var d = 0; d < string_values.length; d++) {
                     s.data.push({
@@ -53,6 +60,7 @@ cBoard.service('chartFunnelService', function (dataService) {
             }
 
             echartOption = {
+                title: titles,
                 legend: {
                     data: string_values
                 },

@@ -9,10 +9,12 @@
             useWrapMode : false,
             mode: 'sql',
             advanced: {
-                fontSize: '14px',
-                minLines: 10,
-                maxLines: 500,
                 autoScrollEditorIntoView: true
+            },
+            rendererOptions:{
+              fontSize: '14px',
+                minLines: 10,
+                maxLines: 500
             }
         }" ng-model="curWidget.query.$param.get("name")" class="form-control" ></div>
     #end

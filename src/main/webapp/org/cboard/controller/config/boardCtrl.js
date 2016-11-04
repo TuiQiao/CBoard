@@ -64,7 +64,7 @@ cBoard.controller('boardCtrl', function ($scope, $http, ModalUtils, $filter) {
             $http.post("/dashboard/saveNewBoard.do", {json: angular.toJson($scope.curBoard)}).success(function (serviceStatus) {
                 if (serviceStatus.status == '1') {
                     getBoardList();
-                    $scope.optFlag = 'none';
+                    $scope.optFlag = 'edit';
                     ModalUtils.alert(serviceStatus.msg, "modal-success", "sm");
                     boardChange();
                 } else {
@@ -75,7 +75,7 @@ cBoard.controller('boardCtrl', function ($scope, $http, ModalUtils, $filter) {
             $http.post("/dashboard/updateBoard.do", {json: angular.toJson($scope.curBoard)}).success(function (serviceStatus) {
                 if (serviceStatus.status == '1') {
                     getBoardList();
-                    $scope.optFlag = 'none';
+                    $scope.optFlag = 'edit';
                     ModalUtils.alert(serviceStatus.msg, "modal-success", "sm");
                     boardChange();
                 } else {

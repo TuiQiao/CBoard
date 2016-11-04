@@ -13,7 +13,7 @@
     "DEFAULT_CATEGORY": "默认分类"
   },
   "SIDEBAR": {
-    "DASHBOARD": "看板",
+    "C_DASHBOARD": "看板",
     "MY_DASHBOARD": "我的看板",
     "CONFIG": "配置",
     "DATA_SOURCE": "数据源管理",
@@ -85,7 +85,8 @@
       "EQUAL": "等于",
       "NOT_EQUAL": "不等于",
       "HORIZONTAL": "垂直",
-      "VERTICAL": "水平"
+      "VERTICAL": "水平",
+      "RADAR": "雷达图"
     },
     "DASHBOARD": {
       "DASHBOARD": "看板",
@@ -109,7 +110,9 @@
       "CATEGORY": "分类",
       "LOAD_DATA": "读取数据",
       "DATASOURCE": "数据源",
-      "ADD": "添加"
+      "ADD": "添加",
+      "REAL_TIME_INTERVAL": "实时间隔(秒)",
+      "REAL_TIME_TIP": "留空则不做后台刷新"
     }
   }
 }

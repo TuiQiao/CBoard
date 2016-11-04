@@ -5,7 +5,7 @@
 cBoard.service('chartSankeyService', function (dataService) {
 
     this.render = function (containerDom, option, scope) {
-        new CBoardEChartRender(containerDom, option).chart();
+        return new CBoardEChartRender(containerDom, option).chart();
     };
 
     this.parseOption = function (chartData, chartConfig) {
@@ -13,23 +13,31 @@ cBoard.service('chartSankeyService', function (dataService) {
         dataService.castRawData2Series(chartData, chartConfig, function (casted_keys, casted_values, aggregate_data, newValuesConfig) {
             var nodes = [];
             var string_keys = _.map(casted_keys, function (key) {
-                var s = key.join('-')
-                nodes.push({name: s});
+                var s = key.join('-');
+                if (!_.find(nodes, function (e) {return e.name == s;})) {
+                    nodes.push({name: s});
+                }
                 return s;
             });
-            var string_values = _.map(casted_values, function (value) {
-                var s = value.join('-')
-                nodes.push({name: s});
-                return s;
+            _.each(casted_values, function (values) {
+                if (values.length > 1) {
+                    values.splice(-1, 1);
+                }
+                var s = values.join('-');
+                if (!_.find(nodes, function (e) {return e.name == s;})) {
+                    nodes.push({name: s});
+                }
             });
             var links = [];
             for (var i = 0; i < aggregate_data.length; i++) {
                 for (var j = 0; j < aggregate_data[i].length; j++) {
-                    links.push({
-                        source: string_keys[j],
-                        target: string_values[i],
-                        value: aggregate_data[i][j]
-                    })
+                    if (!_.isUndefined(aggregate_data[i][j])) {
+                        links.push({
+                            source: string_keys[j],
+                            target: casted_values[i].join('-'),
+                            value: aggregate_data[i][j]
+                        });
+                    }
                 }
             }
             echartOption = {

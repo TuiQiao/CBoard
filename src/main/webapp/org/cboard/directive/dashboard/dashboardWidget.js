@@ -10,7 +10,7 @@ cBoard.directive('dashboardWidget', function ($compile, $templateCache, dataServ
         var link = $compile(template);
         element.append(link(scope));
         var ndWrapper = $(element).find('.box-body');
-        chartService.render(ndWrapper, scope.widget.widget.queryData, scope.widget.widget.data.config);
+        scope.widget.realTimeTicket = chartService.render(ndWrapper, scope.widget.widget.queryData, scope.widget.widget.data.config);
     };
 
     var renderKpi = function (scope, element, attrs) {
@@ -18,7 +18,7 @@ cBoard.directive('dashboardWidget', function ($compile, $templateCache, dataServ
         var aa = $compile(template)(scope);
         element.append(aa);
         var ndWrapper = $(element).find('.kpi-body');
-        chartService.render(ndWrapper, scope.widget.widget.queryData, scope.widget.widget.data.config, null, scope);
+        scope.widget.realTimeTicket = chartService.render(ndWrapper, scope.widget.widget.queryData, scope.widget.widget.data.config, null, scope);
     };
 
     var renderTable = function (scope, element, attrs) {
@@ -27,7 +27,7 @@ cBoard.directive('dashboardWidget', function ($compile, $templateCache, dataServ
         var aa = $compile(template)(scope);
         element.append(aa);
         var ndWrapper = $(element).find('.box-body');
-        chartService.render(ndWrapper, scope.widget.widget.queryData, scope.widget.widget.data.config, null, scope);
+        scope.widget.realTimeTicket = chartService.render(ndWrapper, scope.widget.widget.queryData, scope.widget.widget.data.config, null, scope);
     };
 
     return {
@@ -55,6 +55,9 @@ cBoard.directive('dashboardWidget', function ($compile, $templateCache, dataServ
                             renderEchart(scope, element, attrs);
                             break;
                         case 'sankey':
+                            renderEchart(scope, element, attrs);
+                            break;
+                        case 'radar':
                             renderEchart(scope, element, attrs);
                             break;
                     }

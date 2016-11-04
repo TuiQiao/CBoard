@@ -6781,7 +6781,7 @@ table th.row {
 table td.data {
   border-left: 1px solid #d5d5d5;
   border-top: 1px solid #d5d5d5;
-  text-align: right;
+  text-align: left;
   white-space: nowrap;
 }
 table th {

@@ -12,7 +12,8 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
         {name: translate('CONFIG.WIDGET.KPI'), value: 'kpi'},
         {name: translate('CONFIG.WIDGET.TABLE'), value: 'table'},
         {name: translate('CONFIG.WIDGET.FUNNEL'), value: 'funnel'},
-        {name: translate('CONFIG.WIDGET.SANKEY'), value: 'sankey'}
+        {name: translate('CONFIG.WIDGET.SANKEY'), value: 'sankey'},
+        {name: translate('CONFIG.WIDGET.RADAR'), value: 'radar'}
     ];
 
     $scope.value_series_types = [
@@ -171,7 +172,7 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
 
     $scope.loadData = function () {
         $scope.loading = true;
-        dataService.getData($scope.datasource ? $scope.datasource.id : null, $scope.curWidget.query, $scope.curWidget.datasetId, function (widgetData) {
+        dataService.getData($scope.datasource ? $scope.datasource.id : null, $scope.curWidget.query, $scope.customDs ? null : $scope.curWidget.datasetId, function (widgetData) {
             $scope.loading = false;
             $scope.toChartDisabled = false;
             if (widgetData.msg == '1') {
@@ -215,6 +216,7 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
         }
         $scope.curWidget.config.chart_type = config;
         loadDsExpressions();
+        cleanPreview();
         switch ($scope.curWidget.config.chart_type) {
             case 'line':
                 $scope.curWidget.config.selects = angular.copy($scope.widgetData[0]);
@@ -273,9 +275,22 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
                 }];
                 $scope.curWidget.config.filters = new Array();
                 break;
+            case 'radar':
+                $scope.curWidget.config.selects = angular.copy($scope.widgetData[0]);
+                $scope.curWidget.config.keys = new Array();
+                $scope.curWidget.config.groups = new Array();
+                $scope.curWidget.config.values = [{
+                    name: '',
+                    cols: []
+                }];
+                $scope.curWidget.config.filters = new Array();
+                break;
         }
     };
 
+    var cleanPreview = function () {
+        $('#preview_widget').html("");
+    };
 
     $scope.preview = function () {
         chartService.render($('#preview_widget'), $scope.widgetData, $scope.curWidget.config, function (option) {

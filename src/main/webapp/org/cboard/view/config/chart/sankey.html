@@ -7,6 +7,7 @@
     <label class="col-sm-2 control-label">{{'CONFIG.WIDGET.VALUE'|translate}}</label>
     <div class="col-sm-10">
         <div dnd-list="curWidget.config.values[0].cols"
+             dnd-drop="curWidget.config.values[0].cols.length == 0 ? item:false"
              dnd-inserted="dndTransfer.toCol(curWidget.config.values[0].cols,index,item,type)"
              dnd-allowed-types="['select','col','group','key','exp']"
              class="form-control" style="min-height: 35px;height: auto;padding: 0px">
@@ -22,7 +23,7 @@
                         <button type="button" class="btn btn-primary btn-sm" style="cursor: move;" ng-click="expressions.push(o);curWidget.config.values[0].cols.splice($index, 1);">
                             {{o.alias?o.alias:o.exp}}
                         </button>
-                        <button type="button" class="btn btn-default btn-sm dropdown-toggle"
+                        <button type="button" class="btn btn-primary btn-sm dropdown-toggle"
                                 ng-click="editExp(o)">
                             <span class="fa fa-edit"></span>
                         </button>

@@ -13,7 +13,7 @@
     "DEFAULT_CATEGORY": "Default Category"
   },
   "SIDEBAR": {
-    "DASHBOARD": "Dashboard",
+    "C_DASHBOARD": "Dashboard",
     "MY_DASHBOARD": "My DashBoard",
     "CONFIG": "Configuration",
     "DATA_SOURCE": "DataSource",
@@ -85,7 +85,8 @@
       "EQUAL": "Equal",
       "NOT_EQUAL": "Not Equal",
       "HORIZONTAL": "Horizontal",
-      "VERTICAL": "Vertical"
+      "VERTICAL": "Vertical",
+      "RADAR": "Radar"
     },
     "DASHBOARD": {
       "CATEGORY": "Category",
@@ -110,7 +111,9 @@
       "CATEGORY": "Category",
       "LOAD_DATA": "Load Data",
       "DATASOURCE": "Datasource",
-      "ADD": "Add"
+      "ADD": "Add",
+      "REAL_TIME_INTERVAL": "Real Time Interval(s)",
+      "REAL_TIME_TIP": "If You don't need refresh, just leave it as BLANK"
     }
   }
 }

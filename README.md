@@ -5,8 +5,10 @@ Server side framework is Spring+MyBatis and front-end is based on AngularJS1 and
 ![image](https://cloud.githubusercontent.com/assets/6037522/19718976/654610b2-9b9a-11e6-8a19-97de7df42b5b.png)
 
 # Screenshot
-![image](https://cloud.githubusercontent.com/assets/6037522/19674284/9f161120-9ab9-11e6-98e9-ca692da4957d.png)
-
+![image](https://cloud.githubusercontent.com/assets/6037522/19992208/10a6fef2-a277-11e6-8b43-26249b8dc1fd.png)
+# Near Realtime data refresh  
+**Be attention, refresh level is cube level rather than whole dashboard **
+![realtime_demo](https://raw.githubusercontent.com/yzhang921/CloudResource/gif/gif/cboard/realtime_dashboard.gif)
 
 # Features Of CBoard
 * Simple and beautiful interface and layout
@@ -45,15 +47,18 @@ Server side framework is Spring+MyBatis and front-end is based on AngularJS1 and
 </div>
 
 
-
 ## How to build project
-1 Install metadata of CBoard
+1 Download or git clone project
+```
+git clone https://github.com/yzhang921/CBoard.git
+```
+2 Install metadata of CBoard
 ```mysql
  take MySQL database as example
 -- CREATE DATEBASE cboard;
 Execute ddl to create metadata table: _sql/mysql/mysql.sql_
 ```
-2 Modify metadata connection properties file according to your db environment  
+3 Modify metadata connection properties file according to your db environment  
 ```
 CBoard\src\main\resources\config.properties
 ```
@@ -63,14 +68,14 @@ jdbc_url=jdbc:mysql://localhost:3306/cboard
 jdbc_username=root
 jdbc_password=111111
 ```
-3 Comile and package project with Maven
+4 Comile and package project with Maven
 ```
 cd root path of CBoard
 # Install SQLServer JDBC Driver into your local respository
 mvn install:install-file -Dfile=lib\sqljdbc4-4.0.jar -DgroupId=com.microsoft.sqlserver -DartifactId=sqljdbc4 -Dversion=4.0 -Dpackaging=jar
 mvn clean package
 ```
-4 Deploy war to Tomcat application
+5 Deploy war to Tomcat application
  * Copy **CBoard\target\cboard.war** to **webapp** folder of Tomcat and rename cboard.war to ROOT.war, **Make sure deploy app as ROOT, Otherwise the application will not work**
  * Start up Tomcat
 

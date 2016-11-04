@@ -20,14 +20,14 @@ CBoardTableRender.prototype.do = function (tall) {
     this.tall = tall;
     var html = "<table  class = 'table_wrapper'><thead>",
         chartConfig = this.options.chartConfig,
-        data = this.options.data;
+        data = this.options.handle_header.concat(this.options.data);
     for(var i = 0;i < chartConfig.groups.length+1;i++){
         var colContent = "<tr>";
         for(var j = 0;j < data[i].length;j++){
             var node = null;
             data[i][j] == null ?
                 node = "<th class='all_null'><div></div></th>" :
-                (data[i][j] == [] ? node = "<th class='col_null'><div></div></th>" : node = "<th class='row'><div>"+data[i][j]+"</div></th>");;
+                (data[i][j] == [] ? node = "<th class='col_null'><div></div></th>" : node = "<th class='row'><div>"+data[i][j]+"</div></th>");
             colContent = colContent + node;
         }
         html = html + colContent + "</tr>";

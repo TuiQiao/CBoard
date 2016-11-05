@@ -14,7 +14,7 @@ cBoard.service('ModalUtils', function ($uibModal, $filter) {
             windowClass: style,
             size: size,
             controller: function ($scope, $uibModalInstance) {
-                $scope.content = content;
+                content ? $scope.content = content : $scope.content = 'There is something wrong.';
                 $scope.ok = function () {
                     $uibModalInstance.close();
                     if (callback) {

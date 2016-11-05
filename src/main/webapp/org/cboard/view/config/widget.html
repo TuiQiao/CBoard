@@ -3,9 +3,7 @@
 <div id="inner-container">
     <div class="row">
         <div class="col-md-3">
-            <button class="btn btn-success btn-block margin-bottom" ng-click="newWgt()">
-                New
-            </button>
+            <button class="btn btn-success btn-block margin-bottom" ng-click="newWgt()">New</button>
             <div class="box box-solid">
                 <div class="box-header with-border">
                     <h3 class="box-title">{{'CONFIG.WIDGET.WIDGET'|translate}}</h3>
@@ -84,7 +82,9 @@
                                             </a>
                                         </div>
                                         <div class="col-xs-12 col-sm-5 col-md-3 col-lg-2">
-                                            <button type="button" class="btn btn-block btn-success" ng-click="loadData()">{{'CONFIG.WIDGET.LOAD_DATA'|translate}}</button>
+                                            <button type="button" class="btn btn-block btn-success" ng-click="loadData()">
+                                                {{'CONFIG.WIDGET.LOAD_DATA'|translate}}
+                                            </button>
                                         </div>
                                     </div>
                                     <div class="form-group" ng-repeat="alert in alerts">
@@ -138,14 +138,17 @@
                                 <div class="col-md-12">
                                     <div class="form-group">
                                         <div class="col-sm-offset-2 col-sm-10">
-                                            <button type="submit" class="btn btn-danger pull-right">{{'CONFIG.WIDGET.CANCEL'|translate}}</button>
+                                            <button type="submit" class="btn btn-danger pull-right">
+                                                {{'CONFIG.WIDGET.CANCEL'|translate}}
+                                            </button>
                                             <button type="submit" ng-click="saveWgt()"
                                                     class="btn btn-success pull-right"
                                                     style="margin-right: 5px">{{'CONFIG.WIDGET.SAVE'|translate}}
                                             </button>
                                             <button type="submit" ng-click="preview()"
                                                     class="btn btn-success pull-right"
-                                                    style="margin-right: 5px">{{'CONFIG.WIDGET.PREVIEW'|translate}}
+                                                    style="margin-right: 5px">
+                                                {{'CONFIG.WIDGET.PREVIEW'|translate}}
                                             </button>
                                         </div>
                                     </div>

@@ -54,9 +54,11 @@ cBoard.controller('datasetCtrl', function ($scope, $http, dataService, $uibModal
     };
 
     $scope.save = function () {
-        $scope.curDataset.data.datasource = $scope.datasource.id;
+        $scope.datasource ? $scope.curDataset.data.datasource = $scope.datasource.id : null;
         $scope.curDataset.data.query = $scope.curWidget.query;
-        if ($scope.optFlag == 'new') {
+        if(!$scope.curDataset.data.datasource && !$scope.curDataset.name) {
+            ModalUtils.alert('Please fill out the complete data.', "modal-warning", "md");
+        } else if ($scope.optFlag == 'new') {
             $http.post("/dashboard/saveNewDataset.do", {json: angular.toJson($scope.curDataset)}).success(function (serviceStatus) {
                 if (serviceStatus.status == '1') {
                     $scope.optFlag = 'none';

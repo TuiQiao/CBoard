@@ -181,6 +181,7 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
                 $scope.newConfig();
                 $scope.filterSelect = {};
             } else {
+                widgetData.msg ? null : widgetData.msg = 'There is something wrong.';
                 $scope.alerts = [{msg: widgetData.msg, type: 'danger'}];
             }
         });
@@ -387,15 +388,19 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
             o.data.datasetId = $scope.curWidget.datasetId;
         }
         if ($scope.optFlag == 'new') {
-            $http.post("/dashboard/saveNewWidget.do", {json: angular.toJson(o)}).success(function (serviceStatus) {
-                if (serviceStatus.status == '1') {
-                    getWidgetList();
-                    getCategoryList();
-                    ModalUtils.alert(translate("COMMON.SUCCESS"), "modal-success", "sm");
-                } else {
-                    ModalUtils.alert(serviceStatus.msg, "modal-warning", "lg");
-                }
-            });
+            if(o.name == null || o.data.datasetId == undefined){
+                ModalUtils.alert('Please fill out the complete information.', "modal-warning", "md");
+            } else {
+                $http.post("/dashboard/saveNewWidget.do", {json: angular.toJson(o)}).success(function (serviceStatus) {
+                    if (serviceStatus.status == '1') {
+                        getWidgetList();
+                        getCategoryList();
+                        ModalUtils.alert(translate("COMMON.SUCCESS"), "modal-success", "sm");
+                    } else {
+                        ModalUtils.alert(serviceStatus.msg, "modal-warning", "lg");
+                    }
+                });
+            }
         } else if ($scope.optFlag == 'edit') {
             o.id = $scope.widgetId;
             $http.post("/dashboard/updateWidget.do", {json: angular.toJson(o)}).success(function (serviceStatus) {
@@ -436,7 +441,7 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
     };
 
     $scope.deleteWgt = function (widget) {
-        ModalUtils.confirm(translate("COMMON.CONFIRM_DELETE"), "modal-warning", "lg", function () {
+        ModalUtils.confirm(translate("COMMON.CONFIRM_DELETE"), "modal-info", "lg", function () {
             $http.post("/dashboard/deleteWidget.do", {id: widget.id}).success(function () {
                 getWidgetList();
                 $scope.optFlag == 'none';

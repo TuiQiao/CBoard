@@ -2338,6 +2338,12 @@ a:focus {
   border-radius: 3px;
   margin: 0 0 0 180px;
   cursor: pointer;
+  display: block;
+  float:right;
+}
+button.pull-left{
+  cursor: pointer;
+  margin-left: 650px;
 }
 .btn-outline:hover,
 .btn-outline:focus,
@@ -3036,11 +3042,12 @@ table.text-center th {
   }
 }
 .modal-footer {
+
   border-top: none;
 }
 .modal-body>p {
   font-size: 15px;
-  margin-left: 40px;
+  margin-left: 10px;
   word-wrap: break-word;
 }
 .modal-primary .modal-footer .btn-outline {
@@ -4462,6 +4469,9 @@ table.text-center th {
 .modal-danger .modal-footer {
   color: #000 !important;
 }
+.modal-body>p {
+  margin-left: 40px;
+}
 .bg-gray {
   color: #000;
   background-color: #d2d6de !important;
@@ -4492,7 +4502,7 @@ table.text-center th {
 .alert-info,
 .label-info,
 .modal-info .modal-body {
-  background-color: #00c0ef !important;
+  /*background-color: #00c0ef !important;*/
 }
 .bg-blue {
   background-color: #0073b7 !important;

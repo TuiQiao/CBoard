@@ -2,7 +2,7 @@
  * Created by yfyuan on 2016/8/26.
  */
 
-cBoard.service('ModalUtils', function ($uibModal, dataService, $filter) {
+cBoard.service('ModalUtils', function ($uibModal, $filter) {
 
     var translate = $filter('translate');
 
@@ -56,32 +56,32 @@ cBoard.service('ModalUtils', function ($uibModal, dataService, $filter) {
             windowTemplateUrl: 'org/cboard/view/util/modal/window.html',
             windowClass: 'modal-fit',
             backdrop: false,
-            controller: function ($scope, $uibModalInstance) {
+            controller: function ($scope, $uibModalInstance, chartService) {
                 $scope.widget = widget;
                 $scope.close = function () {
                     $uibModalInstance.close();
                 };
                 $scope.render1 = function () {
-                    var echartOption = dataService.parseEchartOption(widget.widget.queryData, widget.widget.data.config);
-                    echartOption.toolbox = {
-                        feature: {
-                            //saveAsImage: {},
-                            dataView: {
-                                show: true,
+                    chartService.render($('#modal_chart'), widget.widget.queryData, widget.widget.data.config, function (option) {
+                        option.toolbox = {
+                            feature: {
+                                //saveAsImage: {},
+                                dataView: {
+                                    show: true,
                                     readOnly: true
-                            },
-                            magicType: {
-                                type: ['line', 'bar', 'stack', 'tiled']
-                            },
-                            dataZoom: {
-                                show: true
-                            },
-                            restore: {
-                                show: true
+                                },
+                                magicType: {
+                                    type: ['line', 'bar', 'stack', 'tiled']
+                                },
+                                dataZoom: {
+                                    show: true
+                                },
+                                restore: {
+                                    show: true
+                                }
                             }
-                        }
-                    };
-                    new CBoardEChartRender($('#modal_chart'), echartOption).chart();
+                        };
+                    });
                 };
             }
         });
@@ -93,14 +93,13 @@ cBoard.service('ModalUtils', function ($uibModal, dataService, $filter) {
             windowTemplateUrl: 'org/cboard/view/util/modal/window.html',
             windowClass: 'modal-fit',
             backdrop: false,
-            controller: function ($scope, $uibModalInstance) {
+            controller: function ($scope, $uibModalInstance, chartService) {
                 $scope.widget = widget;
                 $scope.close = function () {
                     $uibModalInstance.close();
                 };
                 $scope.render1 = function () {
-                    var option = dataService.parseTableOption(widget.widget.queryData, widget.widget.data.config);
-                    new CBoardTableRender($('#modal_chart'), option).do();
+                    chartService.render($('#modal_chart'), widget.widget.queryData, widget.widget.data.config);
                 };
             }
         });

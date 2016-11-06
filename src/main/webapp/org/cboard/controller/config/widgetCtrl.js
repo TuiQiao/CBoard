@@ -1,8 +1,8 @@
 /**
  * Created by yfyuan on 2016/8/12.
  */
-
-cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal, dataService, ModalUtils, updateService, $filter) {
+'use strict';
+cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal, dataService, ModalUtils, updateService, $filter, chartService) {
 
     var translate = $filter('translate');
     //图表类型初始化
@@ -11,7 +11,9 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
         {name: translate('CONFIG.WIDGET.PIE'), value: 'pie'},
         {name: translate('CONFIG.WIDGET.KPI'), value: 'kpi'},
         {name: translate('CONFIG.WIDGET.TABLE'), value: 'table'},
-        {name: translate('CONFIG.WIDGET.FUNNEL'), value: 'funnel'}
+        {name: translate('CONFIG.WIDGET.FUNNEL'), value: 'funnel'},
+        {name: translate('CONFIG.WIDGET.SANKEY'), value: 'sankey'},
+        {name: translate('CONFIG.WIDGET.RADAR'), value: 'radar'}
     ];
 
     $scope.value_series_types = [
@@ -155,7 +157,10 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
                 $scope.verify = function () {
                     $scope.alerts = [];
                     var v = verifyAggExpRegx($scope.expression);
-                    $scope.alerts = [{msg: v.isValid ? translate("COMMON.SUCCESS") : v.msg, type: v.isValid ? 'success' : 'danger'}];
+                    $scope.alerts = [{
+                        msg: v.isValid ? translate("COMMON.SUCCESS") : v.msg,
+                        type: v.isValid ? 'success' : 'danger'
+                    }];
                 };
                 $scope.ok = function () {
                     ok($scope.expression, $scope.alias);
@@ -167,7 +172,7 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
 
     $scope.loadData = function () {
         $scope.loading = true;
-        dataService.getData($scope.datasource ? $scope.datasource.id : null, $scope.curWidget.query, $scope.curWidget.datasetId, function (widgetData) {
+        dataService.getData($scope.datasource ? $scope.datasource.id : null, $scope.curWidget.query, $scope.customDs ? null : $scope.curWidget.datasetId, function (widgetData) {
             $scope.loading = false;
             $scope.toChartDisabled = false;
             if (widgetData.msg == '1') {
@@ -211,6 +216,7 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
         }
         $scope.curWidget.config.chart_type = config;
         loadDsExpressions();
+        cleanPreview();
         switch ($scope.curWidget.config.chart_type) {
             case 'line':
                 $scope.curWidget.config.selects = angular.copy($scope.widgetData[0]);
@@ -218,11 +224,13 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
                 $scope.curWidget.config.groups = new Array();
                 $scope.curWidget.config.values = new Array();
                 $scope.curWidget.config.filters = new Array();
+                $scope.curWidget.config.valueAxis = 'vertical';
                 $scope.add_value();
                 break;
             case 'pie':
                 $scope.curWidget.config.selects = angular.copy($scope.widgetData[0]);
                 $scope.curWidget.config.keys = new Array();
+                $scope.curWidget.config.groups = new Array();
                 $scope.curWidget.config.values = [{
                     name: '',
                     cols: []
@@ -257,38 +265,89 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
                 }];
                 $scope.curWidget.config.filters = new Array();
                 break;
+            case 'sankey':
+                $scope.curWidget.config.selects = angular.copy($scope.widgetData[0]);
+                $scope.curWidget.config.keys = new Array();
+                $scope.curWidget.config.groups = new Array();
+                $scope.curWidget.config.values = [{
+                    name: '',
+                    cols: []
+                }];
+                $scope.curWidget.config.filters = new Array();
+                break;
+            case 'radar':
+                $scope.curWidget.config.selects = angular.copy($scope.widgetData[0]);
+                $scope.curWidget.config.keys = new Array();
+                $scope.curWidget.config.groups = new Array();
+                $scope.curWidget.config.values = [{
+                    name: '',
+                    cols: []
+                }];
+                $scope.curWidget.config.filters = new Array();
+                break;
         }
     };
 
+    var cleanPreview = function () {
+        $('#preview_widget').html("");
+    };
 
     $scope.preview = function () {
-        switch ($scope.curWidget.config.chart_type) {
-            case 'line':
-                $scope.previewDivWidth = 12;
-                var echartOption = dataService.parseEchartOption($scope.widgetData, $scope.curWidget.config);
-                new CBoardEChartRender($('#preview_widget'), echartOption).chart();
-                break;
-            case 'pie':
-                $scope.previewDivWidth = 12;
-                var echartOption = dataService.parseEchartOption($scope.widgetData, $scope.curWidget.config);
-                new CBoardEChartRender($('#preview_widget'), echartOption).chart();
-                break;
-            case 'kpi':
-                $scope.previewDivWidth = 6;
-                var option = dataService.parseKpiOption($scope.widgetData, $scope.curWidget.config);
-                new CBoardKpiRender($('#preview_widget'), option).do();
-                break;
-            case 'table':
-                $scope.previewDivWidth = 12;
-                var option = dataService.parseTableOption($scope.widgetData, $scope.curWidget.config);
-                new CBoardTableRender($('#preview_widget'), option).do();
-                break;
-            case 'funnel':
-                $scope.previewDivWidth = 12;
-                var echartOption = dataService.parseEchartOption($scope.widgetData, $scope.curWidget.config);
-                new CBoardEChartRender($('#preview_widget'), echartOption).chart();
-                break;
-        }
+        chartService.render($('#preview_widget'), $scope.widgetData, $scope.curWidget.config, function (option) {
+            switch ($scope.curWidget.config.chart_type) {
+                case 'line':
+                    $scope.previewDivWidth = 12;
+                    option.toolbox = {
+                        feature: {
+                            dataView: {
+                                show: true,
+                                readOnly: true
+                            }
+                        }
+                    };
+                    break;
+                case 'pie':
+                    $scope.previewDivWidth = 12;
+                    option.toolbox = {
+                        feature: {
+                            dataView: {
+                                show: true,
+                                readOnly: true
+                            }
+                        }
+                    };
+                    break;
+                case 'kpi':
+                    $scope.previewDivWidth = 6;
+                    break;
+                case 'table':
+                    $scope.previewDivWidth = 12;
+                    break;
+                case 'funnel':
+                    $scope.previewDivWidth = 12;
+                    option.toolbox = {
+                        feature: {
+                            dataView: {
+                                show: true,
+                                readOnly: true
+                            }
+                        }
+                    };
+                    break;
+                case 'sankey':
+                    $scope.previewDivWidth = 12;
+                    option.toolbox = {
+                        feature: {
+                            dataView: {
+                                show: true,
+                                readOnly: true
+                            }
+                        }
+                    };
+                    break;
+            }
+        });
+
 
     };
 
@@ -459,7 +518,7 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
             templateUrl: 'org/cboard/view/config/modal/filter.html',
             windowTemplateUrl: 'org/cboard/view/util/modal/window.html',
             backdrop: false,
-            size:'lg',
+            size: 'lg',
             controller: function ($scope, $uibModalInstance) {
                 $scope.selects = selects;
                 $scope.col = col;

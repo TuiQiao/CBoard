@@ -2,27 +2,23 @@
  * Created by yfyuan on 2016/8/8.
  */
 
-cBoard.directive('dashboardWidget', function ($compile, $templateCache, dataService) {
+cBoard.directive('dashboardWidget', function ($compile, $templateCache, dataService, chartService) {
 
     var renderEchart = function (scope, element, attrs) {
         var template = $templateCache.get("echartContent");
         scope.myheight = scope.row.height ? (scope.row.height - 44) : 300;
         var link = $compile(template);
         element.append(link(scope));
-        var echartOption = dataService.parseEchartOption(scope.widget.widget.queryData, scope.widget.widget.data.config);
         var ndWrapper = $(element).find('.box-body');
-        new CBoardEChartRender(ndWrapper, echartOption).chart();
+        scope.widget.realTimeTicket = chartService.render(ndWrapper, scope.widget.widget.queryData, scope.widget.widget.data.config);
     };
 
     var renderKpi = function (scope, element, attrs) {
         var template = $templateCache.get("kpiContent");
         var aa = $compile(template)(scope);
         element.append(aa);
-        var option = dataService.parseKpiOption(scope.widget.widget.queryData, scope.widget.widget.data.config);
         var ndWrapper = $(element).find('.kpi-body');
-        var html = new CBoardKpiRender(ndWrapper, option).rendered();
-        aa = $compile(html)(scope);
-        ndWrapper.append(aa);
+        scope.widget.realTimeTicket = chartService.render(ndWrapper, scope.widget.widget.queryData, scope.widget.widget.data.config, null, scope);
     };
 
     var renderTable = function (scope, element, attrs) {
@@ -30,9 +26,8 @@ cBoard.directive('dashboardWidget', function ($compile, $templateCache, dataServ
         scope.myheight = scope.row.height ? (scope.row.height - 44) : 300;
         var aa = $compile(template)(scope);
         element.append(aa);
-        var tableOption = dataService.parseTableOption(scope.widget.widget.queryData, scope.widget.widget.data.config);
         var ndWrapper = $(element).find('.box-body');
-        new CBoardTableRender(ndWrapper, tableOption).do(scope.myheight - 20);
+        scope.widget.realTimeTicket = chartService.render(ndWrapper, scope.widget.widget.queryData, scope.widget.widget.data.config, null, scope);
     };
 
     return {
@@ -57,6 +52,12 @@ cBoard.directive('dashboardWidget', function ($compile, $templateCache, dataServ
                             renderTable(scope, element, attrs);
                             break;
                         case 'funnel':
+                            renderEchart(scope, element, attrs);
+                            break;
+                        case 'sankey':
+                            renderEchart(scope, element, attrs);
+                            break;
+                        case 'radar':
                             renderEchart(scope, element, attrs);
                             break;
                     }

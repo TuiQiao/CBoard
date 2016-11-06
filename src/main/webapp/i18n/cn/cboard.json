@@ -3,7 +3,7 @@
     "OK": "确认",
     "CANCEL": "取消",
     "SAVE": "保存",
-    "LOADING": "玩命加载中..." ,
+    "LOADING": "玩命加载中...",
     "REFRESH": "刷新",
     "EDIT": "编辑",
     "CONFIRM_DELETE": "真的想好了要删除吗!!!",
@@ -13,7 +13,7 @@
     "DEFAULT_CATEGORY": "默认分类"
   },
   "SIDEBAR": {
-    "DASHBOARD": "看板",
+    "C_DASHBOARD": "看板",
     "MY_DASHBOARD": "我的看板",
     "CONFIG": "配置",
     "DATA_SOURCE": "数据源管理",
@@ -64,6 +64,7 @@
       "MORE": "更多",
       "EXAMPLE": "如",
       "FUNNEL": "漏斗图",
+      "SANKEY": "桑基图",
       "TABLE": "表格",
       "KPI": "KPI",
       "PIE": "饼图",
@@ -82,7 +83,10 @@
       "CHECK": "校验",
       "FIND": "查找",
       "EQUAL": "等于",
-      "NOT_EQUAL": "不等于"
+      "NOT_EQUAL": "不等于",
+      "HORIZONTAL": "垂直",
+      "VERTICAL": "水平",
+      "RADAR": "雷达图"
     },
     "DASHBOARD": {
       "DASHBOARD": "看板",
@@ -91,7 +95,7 @@
       "ADD_ROW": "添加行",
       "ADD_COLUMN": "添加列",
       "ROW": "行",
-      "HEIGHT": "高度",
+      "HEIGHT": "行高度(像素)",
       "WIDTH": "宽度",
       "WIDGET": "图表",
       "PREVIEW": "预览"
@@ -106,7 +110,9 @@
       "CATEGORY": "分类",
       "LOAD_DATA": "读取数据",
       "DATASOURCE": "数据源",
-      "ADD": "添加"
+      "ADD": "添加",
+      "REAL_TIME_INTERVAL": "实时间隔(秒)",
+      "REAL_TIME_TIP": "留空则不做后台刷新"
     }
   }
 }

@@ -3619,10 +3619,11 @@ tbody.collapse.in {
 }
 .dropdown-header {
   display: block;
-  padding: 3px 20px;
-  font-size: 12px;
+  padding: 3px 5px;
+  font-weight:bold;
+  font-size: 14px;
   line-height: 1.42857143;
-  color: #777;
+  color: #333;
   white-space: nowrap;
 }
 .dropdown-backdrop {
@@ -6780,7 +6781,7 @@ table th.row {
 table td.data {
   border-left: 1px solid #d5d5d5;
   border-top: 1px solid #d5d5d5;
-  text-align: right;
+  text-align: left;
   white-space: nowrap;
 }
 table th {

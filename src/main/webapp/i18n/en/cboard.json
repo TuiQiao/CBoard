@@ -13,7 +13,7 @@
     "DEFAULT_CATEGORY": "Default Category"
   },
   "SIDEBAR": {
-    "DASHBOARD": "Dashboard",
+    "C_DASHBOARD": "Dashboard",
     "MY_DASHBOARD": "My DashBoard",
     "CONFIG": "Configuration",
     "DATA_SOURCE": "DataSource",
@@ -64,6 +64,7 @@
       "MORE": "More",
       "EXAMPLE": "Example",
       "FUNNEL": "Funnel",
+      "SANKEY": "Sankey",
       "TABLE": "Table",
       "KPI": "KPI",
       "PIE": "Pie",
@@ -82,7 +83,10 @@
       "CHECK": "Check",
       "FIND": "Find",
       "EQUAL": "Equal",
-      "NOT_EQUAL": "Not Equal"
+      "NOT_EQUAL": "Not Equal",
+      "HORIZONTAL": "Horizontal",
+      "VERTICAL": "Vertical",
+      "RADAR": "Radar"
     },
     "DASHBOARD": {
       "CATEGORY": "Category",
@@ -92,7 +96,7 @@
       "ADD_ROW": "Add Row",
       "ADD_COLUMN": "Add Column",
       "ROW": "Row",
-      "HEIGHT": "Height",
+      "HEIGHT": "Row Height(px)",
       "WIDTH": "Width",
       "WIDGET": "Widget",
       "PREVIEW": "Preview"
@@ -107,7 +111,9 @@
       "CATEGORY": "Category",
       "LOAD_DATA": "Load Data",
       "DATASOURCE": "Datasource",
-      "ADD": "Add"
+      "ADD": "Add",
+      "REAL_TIME_INTERVAL": "Real Time Interval(s)",
+      "REAL_TIME_TIP": "If You don't need refresh, just leave it as BLANK"
     }
   }
 }

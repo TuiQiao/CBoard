@@ -37,10 +37,10 @@
                          dnd-moved="v.cols.splice($index, 1)" class="btn-group" style="margin: 3px 3px;">
                         <ng-switch on="o.type">
                             <div ng-switch-when="exp" class="btn-group">
-                                <button type="button" class="btn btn-default btn-sm" style="cursor: move;">
+                                <button type="button" class="btn btn-primary btn-sm" style="cursor: move;" ng-click="expressions.push(o);v.cols.splice($index, 1);">
                                     {{o.alias?o.alias:o.exp}}
                                 </button>
-                                <button type="button" class="btn btn-default btn-sm dropdown-toggle"
+                                <button type="button" class="btn btn-primary btn-sm dropdown-toggle"
                                         ng-click="editExp(o)">
                                     <span class="fa fa-edit"></span>
                                 </button>
@@ -68,6 +68,9 @@
             </tr>
             <tr>
                 <th colspan="5">
+                    <button type="button" class="btn btn-info btn-sm" ng-click="curWidget.config.valueAxis=curWidget.config.valueAxis == 'horizontal'?'vertical':'horizontal';console.log(curWidget.config.valueAxis);">
+                        {{'CONFIG.WIDGET.'+curWidget.config.valueAxis|uppercase|translate}}
+                    </button>
                     <button type="button" class="btn btn-info btn-sm" ng-click="add_value()">
                         {{'CONFIG.WIDGET.ADD_NEW_AXIS'|translate}}
                     </button>

@@ -1,9 +1,11 @@
 package org.cboard.dto;
 
+import java.io.Serializable;
+
 /**
  * Created by yfyuan on 2016/8/26.
  */
-public class DataProviderResult {
+public class DataProviderResult implements Serializable{
 
     private String[][] data;
 

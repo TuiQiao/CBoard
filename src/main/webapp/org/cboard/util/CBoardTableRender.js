@@ -48,13 +48,13 @@ CBoardTableRender.prototype.do = function (tall) {
     html = html + "</tbody></table>";
     tall ? null : tall = 600;
     $(this.container).html("<div style='width: 100%;height:" + tall + "px;overflow: auto'>" + html + "</div>");
-    // $(this.container).css({
-    //     height: "600px"
-    // });
-    this.resize(this.container);
-    var _this = this;
-    return function (o) {
-        _this.options = o;
-        _this.do(_this.tall);
-    }
+    $(this.container).css({
+        height: "600px"
+    });
+    // this.resize(this.container);
+    // var _this = this;
+    // return function (o) {
+    //     _this.options = o;
+    //     _this.do(_this.tall);
+    // }
 };

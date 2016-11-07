@@ -5,11 +5,9 @@
 cBoard.service('chartTableService', function (dataService) {
 
     this.render = function (containerDom, option, scope) {
-        if (scope) {
-            return new CBoardTableRender(containerDom, option).do(scope.myheight - 20);
-        } else {
-            return new CBoardTableRender(containerDom, option).do();
-        }
+        var height;
+        scope ? height = scope.myheight - 20 : null;
+        new CBoardTableRender(containerDom, option).do(height);
     };
 
     this.parseOption = function (chartData, chartConfig) {
@@ -47,7 +45,7 @@ cBoard.service('chartTableService', function (dataService) {
                     }
                 }
             }
-            var merge_header = Array.matrix(chartConfig.groups.length + 1, casted_values.length, 0),
+            var handle_header = Array.matrix(chartConfig.groups.length + 1, casted_values.length, 0),
                 column_header = Array.matrix(chartConfig.groups.length + 1, casted_values.length, 0);
             _.each(casted_values, function (d) {
                 var valuesList = d;
@@ -64,21 +62,22 @@ cBoard.service('chartTableService', function (dataService) {
             }
             for (var j = 0; j < column_header.length; j++) {
                 j == column_header.length - 1 ?
-                    column_header[j] = keyArr.concat(column_header[j]) : column_header[j] = emptyList.concat(column_header[j]);
+                    column_header[j] = keyArr. concat(column_header[j]) : column_header[j] = emptyList.concat(column_header[j]);
             }
             for (var x = 0; x < column_header.length - 1; x++) {
                 for (var y = emptyList.length; y < column_header[x].length; y++) {
                     var header_node = column_header[x][y];
-                    y > emptyList.length ? (header_node == column_header[x][y - 1] ? merge_header[x][y] = '' : merge_header[x][y] = column_header[x][y]) : merge_header[x][y] = column_header[x][y];
+                    y > emptyList.length ? (header_node == column_header[x][y - 1] ? handle_header[x][y] = '' : handle_header[x][y] = column_header[x][y]) : handle_header[x][y] = column_header[x][y];
                 }
                 for (var z = 0; z < emptyList.length; z++) {
-                    merge_header[x][z] = null;
+                    handle_header[x][z] = null;
                 }
             }
-            merge_header[column_header.length - 1] = column_header[column_header.length - 1];
-            table_data = merge_header.concat(table_data);
+            handle_header[column_header.length - 1] = column_header[column_header.length - 1];
             tableOption = {
                 chartConfig: chartConfig,
+                handle_header: handle_header,
+                column_header: column_header,
                 data: table_data
             };
         });

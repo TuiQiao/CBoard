@@ -96,4 +96,4 @@ Waiting for your Contribution and pull request!
 
 CBoard QQ Group for Chinese: 301028618  
 Email: peter.zhang921@gmail.com, g.yuanyf@gmail.com  
-**Front-end question**：Fine<479428312@qq.com>
+**Front-end question**：Fine<fine0830@qq.com>

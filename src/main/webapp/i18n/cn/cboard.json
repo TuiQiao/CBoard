@@ -32,7 +32,8 @@
     "DATA_SOURCE": {
       "DATA_SOURCE_HEADER": "数据源",
       "DATA_PROVIDER": "数据源类型",
-      "NAME": "新建数据源名称"
+      "NAME": "新建数据源名称",
+      "TEST": "测试"
     },
     "WIDGET": {
       "WIDGET": "图表",

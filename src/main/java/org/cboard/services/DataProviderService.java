@@ -27,6 +27,16 @@ public class DataProviderService {
     @Autowired
     private DatasetDao datasetDao;
 
+    public ServiceStatus test(JSONObject dataSource, Map<String, String> query) {
+        try {
+            DataProvider dataProvider = DataProviderManager.getDataProvider(dataSource.getString("type"));
+            dataProvider.getData(Maps.transformValues(dataSource.getJSONObject("config"), Functions.toStringFunction()), query);
+            return new ServiceStatus(ServiceStatus.Status.Success, null);
+        } catch (Exception e) {
+            return new ServiceStatus(ServiceStatus.Status.Fail, e.getMessage());
+        }
+    }
+
     public DataProviderResult getData(Long datasourceId, Map<String, String> query, Long datasetId) {
         if (datasetId != null) {
             Dataset dataset = getDataset(datasetId);

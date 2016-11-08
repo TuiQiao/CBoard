@@ -65,6 +65,12 @@ public class DashboardController {
     @Autowired
     private DatasetService datasetService;
 
+    @RequestMapping(value = "/test")
+    public ServiceStatus test(@RequestParam(name = "datasource", required = false) String datasource, @RequestParam(name = "query", required = false) String query) {
+        JSONObject queryO = JSONObject.parseObject(query);
+        JSONObject datasourceO = JSONObject.parseObject(datasource);
+        return dataProviderService.test(datasourceO, Maps.transformValues(queryO, Functions.toStringFunction()));
+    }
 
     @RequestMapping(value = "/getData")
     public DataProviderResult getData(@RequestParam(name = "datasourceId", required = false) Long datasourceId, @RequestParam(name = "query", required = false) String query, @RequestParam(name = "datasetId", required = false) Long datasetId) {

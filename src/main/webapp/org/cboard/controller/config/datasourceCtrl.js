@@ -1,7 +1,7 @@
 /**
  * Created by yfyuan on 2016/8/19.
  */
-cBoard.controller('datasourceCtrl', function ($scope, $http, ModalUtils, $filter) {
+cBoard.controller('datasourceCtrl', function ($scope, $http, ModalUtils, $uibModal, $filter) {
 
     var translate = $filter('translate');
     $scope.optFlag = 'none';
@@ -64,6 +64,42 @@ cBoard.controller('datasourceCtrl', function ($scope, $http, ModalUtils, $filter
                 ModalUtils.alert(translate("COMMON.SUCCESS"), "modal-success", "sm");
             } else {
                 ModalUtils.alert(serviceStatus.msg, "modal-warning", "lg");
+            }
+        });
+    };
+
+    $scope.test = function () {
+        var datasource = $scope.curDatasource;
+        $uibModal.open({
+            templateUrl: 'org/cboard/view/config/modal/test.html',
+            windowTemplateUrl: 'org/cboard/view/util/modal/window.html',
+            size: 'lg',
+            backdrop: false,
+            controller: function ($scope, $uibModalInstance) {
+                $scope.datasource = datasource;
+                $scope.curWidget = {query: {}};
+                $scope.alerts = [];
+                $scope.close = function () {
+                    $uibModalInstance.close();
+                };
+                $scope.do = function () {
+                    $http.post("/dashboard/test.do", {
+                        datasource: angular.toJson($scope.datasource),
+                        query: angular.toJson($scope.curWidget.query)
+                    }).success(function (result) {
+                        if (result.status != '1') {
+                            $scope.alerts = [{
+                                msg: result.msg,
+                                type: 'danger'
+                            }];
+                        } else {
+                            $scope.alerts = [{
+                                msg: translate("COMMON.SUCCESS"),
+                                type: 'success'
+                            }];
+                        }
+                    });
+                };
             }
         });
     };

@@ -46,10 +46,10 @@ CBoardTableRender.prototype.do = function (tall) {
         html = html + rowContent + "</tr>";
     }
     html = html + "</tbody></table>";
-    tall ? null : tall = 600;
+    tall = _.isUndefined(tall) ? 600 : tall;
     $(this.container).html("<div style='width: 100%;height:" + tall + "px;overflow: auto'>" + html + "</div>");
     $(this.container).css({
-        height: "600px"
+        height: tall + "px"
     });
     // this.resize(this.container);
     // var _this = this;

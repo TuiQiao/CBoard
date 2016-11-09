@@ -1,7 +1,7 @@
 /**
  * Created by yfyuan on 2016/10/11.
  */
-cBoard.controller('datasetCtrl', function ($scope, $http, dataService, $uibModal, ModalUtils, $filter) {
+cBoard.controller('datasetCtrl', function ($scope, $http, dataService, $uibModal, ModalUtils, $filter, chartService) {
 
     var translate = $filter('translate');
     $scope.optFlag = 'none';
@@ -31,6 +31,7 @@ cBoard.controller('datasetCtrl', function ($scope, $http, dataService, $uibModal
         $scope.optFlag = 'new';
         $scope.curDataset = {data: {expressions: []}};
         $scope.curWidget = {};
+        cleanPreview();
     };
     $scope.editDs = function (ds) {
         $scope.optFlag = 'edit';
@@ -56,7 +57,7 @@ cBoard.controller('datasetCtrl', function ($scope, $http, dataService, $uibModal
     $scope.save = function () {
         $scope.datasource ? $scope.curDataset.data.datasource = $scope.datasource.id : null;
         $scope.curDataset.data.query = $scope.curWidget.query;
-        if(!$scope.curDataset.data.datasource && !$scope.curDataset.name) {
+        if (!$scope.curDataset.data.datasource && !$scope.curDataset.name) {
             ModalUtils.alert('Please fill out the complete data.', "modal-warning", "md");
         } else if ($scope.optFlag == 'new') {
             $http.post("/dashboard/saveNewDataset.do", {json: angular.toJson($scope.curDataset)}).success(function (serviceStatus) {
@@ -153,7 +154,10 @@ cBoard.controller('datasetCtrl', function ($scope, $http, dataService, $uibModal
                 $scope.verify = function () {
                     $scope.alerts = [];
                     var v = verifyAggExpRegx($scope.expression);
-                    $scope.alerts = [{msg: v.isValid ? translate("COMMON.SUCCESS") : v.msg, type: v.isValid ? 'success' : 'danger'}];
+                    $scope.alerts = [{
+                        msg: v.isValid ? translate("COMMON.SUCCESS") : v.msg,
+                        type: v.isValid ? 'success' : 'danger'
+                    }];
                 };
                 $scope.ok = function () {
                     ok($scope.expression, $scope.alias);
@@ -164,6 +168,7 @@ cBoard.controller('datasetCtrl', function ($scope, $http, dataService, $uibModal
     };
 
     $scope.loadData = function () {
+        cleanPreview();
         $scope.loading = true;
         dataService.getData($scope.datasource.id, $scope.curWidget.query, null, function (widgetData) {
             $scope.loading = false;
@@ -175,7 +180,32 @@ cBoard.controller('datasetCtrl', function ($scope, $http, dataService, $uibModal
             } else {
                 $scope.alerts = [{msg: widgetData.msg, type: 'danger'}];
             }
+
+            var widget = {
+                chart_type: "table",
+                filters: [],
+                groups: [],
+                keys: [],
+                selects: [],
+                values: [{
+                    cols: []
+                }
+                ]
+            };
+            _.each($scope.widgetData[0], function (c) {
+                widget.keys.push({
+                    col: c,
+                    type: "eq",
+                    values: []
+                });
+            });
+
+            chartService.render($('#dataset_preview'), $scope.widgetData, widget, null, {myheight: 300});
         });
+    };
+
+    var cleanPreview = function () {
+        $('#dataset_preview').html("");
     };
 
 });

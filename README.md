@@ -18,9 +18,9 @@ Server side framework is Spring+MyBatis and front-end is based on AngularJS1 and
   * Javascript uses MVVM AngularJS 1.X framework  
 * Interactive, drag-and-drop **OLAP** classisc report development experience  
 ![wiget_overview](https://raw.githubusercontent.com/yzhang921/CloudResource/gif/gif/cboard/wiget_demo2.gif)
-* One dataset, multiple report widgets. Maximize reuse query resoult
+* One dataset, multiple report widgets. Maximize reuse query resoult. **But, the first and foremost survival rule in CBoard is make the dataset used in CBoard small using aggregate. Don't worry the source data can be very big. You don't need so many dimension in one chart**
 <div align="center">
-![image](https://cloud.githubusercontent.com/assets/6037522/19502570/70af928a-95e0-11e6-846e-5ae46dbb1b85.png)  
+![image](https://cloud.githubusercontent.com/assets/6037522/20123306/429b8f8c-a659-11e6-9954-8f9352d3d9ef.png)
 </div>
 * Supports OLAP slice filter operation  
 <div align="center">

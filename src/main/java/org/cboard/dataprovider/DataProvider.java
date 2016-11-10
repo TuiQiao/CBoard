@@ -8,4 +8,5 @@ import java.util.Map;
 public abstract class DataProvider {
 
     abstract public String[][] getData(Map<String, String> dataSource, Map<String, String> query) throws Exception;
+    abstract public int resultCount(Map<String, String> dataSource, Map<String, String> query) throws Exception;
 }

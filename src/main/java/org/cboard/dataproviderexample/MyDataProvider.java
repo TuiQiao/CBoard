@@ -22,6 +22,11 @@ public class MyDataProvider  extends DataProvider {
     @QueryParameter(label = "查询参数", type = QueryParameter.Type.Input, order = 1)
     private String QUERY_PARAM_KEY = "query";
 
+    @Override
+    public int resultCount(Map<String, String> dataSource, Map<String, String> query) throws Exception {
+        return 0;
+    }
+
     /**
      *
      * @param dataSource 参数Map

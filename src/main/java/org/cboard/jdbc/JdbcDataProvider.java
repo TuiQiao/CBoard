@@ -33,29 +33,17 @@ public class JdbcDataProvider extends DataProvider {
     private String SQL = "sql";
 
     public String[][] getData(Map<String, String> dataSource, Map<String, String> query) throws Exception {
-        String driver = dataSource.get(DRIVER);
-        String jdbcurl = dataSource.get(JDBC_URL);
-        String username = dataSource.get(USERNAME);
-        String password = dataSource.get(PASSWORD);
+
+        Connection con = getConnection(dataSource);
 
         String sql = query.get(SQL);
-
-        Class.forName(driver);
-        Properties props = new Properties();
-        props.setProperty("user", username);
-        props.setProperty("password", password);
-        Connection con = null;
         PreparedStatement ps = null;
         ResultSet rs = null;
         List<String[]> list = null;
 
         try {
-            con = DriverManager.getConnection(jdbcurl, props);
-
             ps = con.prepareStatement(sql);
-
             rs = ps.executeQuery();
-
             ResultSetMetaData metaData = rs.getMetaData();
             int columnCount = metaData.getColumnCount();
             list = new LinkedList<>();
@@ -94,4 +82,60 @@ public class JdbcDataProvider extends DataProvider {
 
         return list.toArray(new String[][]{});
     }
+
+    @Override
+    public int resultCount(Map<String, String> dataSource, Map<String, String> query) throws Exception {
+        Connection con = getConnection(dataSource);
+        StringBuffer cubeSqlBuffer = new StringBuffer();
+        String querySql = query.get(SQL).replace(";", "");
+        cubeSqlBuffer.append("SELECT count(*) AS count FROM ( ")
+                .append(querySql)
+                .append(" ) AS cube_query__");
+
+        PreparedStatement ps = null;
+        ResultSet rs = null;
+        int count = 0;
+
+        try {
+            ps = con.prepareStatement(cubeSqlBuffer.toString());
+            rs = ps.executeQuery();
+            rs.next();
+            count = rs.getInt("count");
+        } finally {
+            if (rs != null) {
+                try {
+                    rs.close();
+                } catch (Exception e) {
+                }
+            }
+            if (ps != null) {
+                try {
+                    ps.close();
+                } catch (Exception e) {
+                }
+            }
+            if (con != null) {
+                try {
+                    con.close();
+                } catch (Exception e) {
+                }
+            }
+        }
+        return count;
+    }
+
+    private Connection getConnection(Map<String, String> dataSource) throws Exception {
+        String driver = dataSource.get(DRIVER);
+        String jdbcurl = dataSource.get(JDBC_URL);
+        String username = dataSource.get(USERNAME);
+        String password = dataSource.get(PASSWORD);
+
+        Class.forName(driver);
+        Properties props = new Properties();
+        props.setProperty("user", username);
+        props.setProperty("password", password);
+
+        return DriverManager.getConnection(jdbcurl, props);
+    }
+
 }

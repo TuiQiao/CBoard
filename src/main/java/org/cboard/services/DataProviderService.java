@@ -38,6 +38,11 @@ public class DataProviderService {
     }
 
     public DataProviderResult getData(Long datasourceId, Map<String, String> query, Long datasetId) {
+        String[][] dataArray = null;
+        int resultCount = 0;
+        int resultLimit = 200000;
+        String msg = "1";
+
         if (datasetId != null) {
             Dataset dataset = getDataset(datasetId);
             datasourceId = dataset.getDatasourceId();
@@ -47,11 +52,17 @@ public class DataProviderService {
         try {
             JSONObject config = JSONObject.parseObject(datasource.getConfig());
             DataProvider dataProvider = DataProviderManager.getDataProvider(datasource.getType());
-            String[][] data = dataProvider.getData(Maps.transformValues(config, Functions.toStringFunction()), query);
-            return new DataProviderResult(data, "1");
+            Map<String, String> parameterMap = Maps.transformValues(config, Functions.toStringFunction());
+            resultCount = dataProvider.resultCount(parameterMap, query);
+            if (resultCount > resultLimit) {
+                msg = "Cube result count is " + resultCount + ", greater than limit " + resultLimit;
+            } else {
+                dataArray = dataProvider.getData(parameterMap, query);
+            }
         } catch (Exception e) {
-            return new DataProviderResult(null, e.getMessage());
+            msg =  e.getMessage();
         }
+        return new DataProviderResult(dataArray, msg);
     }
 
     protected Dataset getDataset(Long datasetId) {

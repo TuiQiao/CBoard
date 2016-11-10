@@ -200,7 +200,7 @@ cBoard.controller('datasetCtrl', function ($scope, $http, dataService, $uibModal
                 });
             });
 
-            chartService.render($('#dataset_preview'), $scope.widgetData, widget, null, {myheight: 300});
+            //chartService.render($('#dataset_preview'), $scope.widgetData, widget, null, {myheight: 300});
         });
     };
 

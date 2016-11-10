@@ -126,9 +126,14 @@
                                     <div class="form-group">
                                         <label class="col-sm-2 control-label">{{'CONFIG.WIDGET.WIDGET_TYPE'|translate}}</label>
                                         <div class="col-sm-10">
-                                            <select class="form-control" ng-model="curWidget.config.chart_type"
-                                                    ng-change="newConfig()"
-                                                    ng-options="type.value as type.name for type in chart_types"></select>
+                                            <ui-select ng-model="curWidget.config.chart_type" ng-change="newConfig()">
+                                                <ui-select-match>
+                                                    {{$select.selected.name}}
+                                                </ui-select-match>
+                                                <ui-select-choices repeat="chart.value as chart in chart_types | filter:{name: $select.search}">
+                                                    {{chart.name}}
+                                                </ui-select-choices>
+                                            </ui-select>
                                         </div>
                                     </div>
                                 </div>

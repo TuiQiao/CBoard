@@ -60,7 +60,7 @@ Execute ddl to create metadata table: _sql/mysql/mysql.sql_
 ```
 3 Modify metadata connection properties file according to your db environment  
 ```
-CBoard\src\main\resources\config.properties
+CBoard/src/main/resources/config.properties
 ```
 ```pro
 validationQuery=SELECT 1
@@ -72,11 +72,11 @@ jdbc_password=111111
 ```
 cd root path of CBoard
 # Install SQLServer JDBC Driver into your local respository
-mvn install:install-file -Dfile=lib\sqljdbc4-4.0.jar -DgroupId=com.microsoft.sqlserver -DartifactId=sqljdbc4 -Dversion=4.0 -Dpackaging=jar
+mvn install:install-file -Dfile=lib/sqljdbc4-4.0.jar -DgroupId=com.microsoft.sqlserver -DartifactId=sqljdbc4 -Dversion=4.0 -Dpackaging=jar
 mvn clean package
 ```
 5 Deploy war to Tomcat application
- * Copy **CBoard\target\cboard.war** to **webapp** folder of Tomcat and rename cboard.war to ROOT.war, **Make sure deploy app as ROOT, Otherwise the application will not work**
+ * Copy **CBoard/target/cboard.war** to **webapp** folder of Tomcat and rename cboard.war to ROOT.war, **Make sure deploy app as ROOT, Otherwise the application will not work**
  * Start up Tomcat
 
 ## Access CBoard

@@ -88,7 +88,7 @@ public class JdbcDataProvider extends DataProvider {
         Connection con = getConnection(dataSource);
         StringBuffer cubeSqlBuffer = new StringBuffer();
         String querySql = query.get(SQL).replace(";", "");
-        cubeSqlBuffer.append("SELECT count(*) AS count FROM ( ")
+        cubeSqlBuffer.append("SELECT count(*) AS cnt FROM ( ")
                 .append(querySql)
                 .append(" ) AS cube_query__");
 
@@ -100,7 +100,7 @@ public class JdbcDataProvider extends DataProvider {
             ps = con.prepareStatement(cubeSqlBuffer.toString());
             rs = ps.executeQuery();
             rs.next();
-            count = rs.getInt("count");
+            count = rs.getInt("cnt");
         } finally {
             if (rs != null) {
                 try {

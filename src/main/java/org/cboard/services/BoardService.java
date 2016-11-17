@@ -38,7 +38,7 @@ public class BoardService {
         JSONArray rows = layout.getJSONArray("rows");
         for (Object row : rows) {
             JSONObject o = (JSONObject) row;
-            if (!"widget".equals(o.getString("type"))) {
+            if ("param".equals(o.getString("type"))) {
                 continue;
             }
             JSONArray widgets = o.getJSONArray("widgets");

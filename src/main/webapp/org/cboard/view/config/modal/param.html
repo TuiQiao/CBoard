@@ -1,0 +1,43 @@
+<div class="modal-header">
+    <button type="button" class="close" data-dismiss="modal" aria-label="Close" ng-click="close()">
+        <span aria-hidden="true">×</span></button>
+    <h4 class="modal-title">{{'CONFIG.DASHBOARD.PARAM'|translate}}</h4>
+</div>
+<div class="modal-body">
+    <div class="row">
+        <div class="col-md-12" ng-repeat="alert in alerts">
+            <div uib-alert ng-class="'alert-' + (alert.type || 'warning')"
+                 close="alerts.splice($index, 1)">{{alert.msg}}
+            </div>
+        </div>
+    </div>
+    <div class="row" style="margin-bottom: 10px">
+        <div class="col-md-12 form-horizontal">
+            <div class="input-group">
+                <span class="input-group-addon">{{'CONFIG.DASHBOARD.PARAM_NAME'|translate}}</span>
+                <input type="text" class="form-control" ng-model="param.name">
+            </div>
+        </div>
+        <br/>
+    </div>
+    <div class="row">
+        <div class="col-md-5">
+            <select class="form-control" ng-model="selectedDataset" ng-options="w.name for w in boardDataset">
+            </select>
+            <select multiple class="form-control" style="height: 300px">
+                <option ng-repeat="v in selectedDataset.columns" ng-click="param.col.push({datasetId:selectedDataset.id,column:v,name:selectedDataset.name})">{{v}}</option>
+            </select>
+        </div>
+        <div class="col-md-2">
+        </div>
+        <div class="col-md-5">
+            <select multiple class="form-control" style="height: 300px">
+                <option ng-repeat="v in param.col" ng-click="param.col.splice($index, 1)">{{'[' + v.name + '].[' + v.column + ']';}}</option>
+            </select>
+        </div>
+    </div>
+</div>
+<div class="modal-footer">
+    <button type="button" class="btn btn-default pull-left" data-dismiss="modal" ng-click="close()">{{'COMMON.CANCEL'|translate}}</button>
+    <button type="button" class="btn btn-primary" ng-click="ok()">{{'COMMON.OK'|translate}}</button>
+</div>

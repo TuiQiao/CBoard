@@ -29,4 +29,12 @@ cBoard.service('updateService', function () {
                 break;
         }
     };
+
+    this.updateBoard = function (board) {
+        _.each(board.layout.rows, function (row) {
+            if (!row.type) {
+                row.type = 'widget';
+            }
+        });
+    };
 });

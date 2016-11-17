@@ -68,6 +68,7 @@ cBoard.service('dataService', function ($http, updateService) {
 
     var getRule = function (cfg, colIdx) {
         switch (cfg.type) {
+            case '=':
             case 'eq':
                 return function (row) {
                     for (var i = 0; i < cfg.values.length; i++) {
@@ -78,6 +79,7 @@ cBoard.service('dataService', function ($http, updateService) {
                     return cfg.values.length == 0;
                 };
                 break;
+            case '≠':
             case 'ne':
                 return function (row) {
                     for (var i = 0; i < cfg.values.length; i++) {
@@ -88,9 +90,70 @@ cBoard.service('dataService', function ($http, updateService) {
                     return true;
                 };
                 break;
+            case '>':
+                var v = cfg.values[0];
+                if (!_.isUndefined(v) && row[colIdx] <= v) {
+                    return false;
+                }
+                return true;
+                break;
+            case '<':
+                var v = cfg.values[0];
+                if (!_.isUndefined(v) && row[colIdx] >= v) {
+                    return false;
+                }
+                return true;
+                break;
+            case '≥':
+                var v = cfg.values[0];
+                if (!_.isUndefined(v) && row[colIdx] < v) {
+                    return false;
+                }
+                return true;
+                break;
+            case '≤':
+                var v = cfg.values[0];
+                if (!_.isUndefined(v) && row[colIdx] > v) {
+                    return false;
+                }
+                return true;
+                break;
+            case '(a,b]':
+                var a = cfg.values[0];
+                var b = cfg.values[1];
+                if (!_.isUndefined(a) && !_.isUndefined(b) && (row[colIdx] <= a || row[colIdx] > b)) {
+                    return false;
+                }
+                return true;
+                break;
+            case '[a,b)':
+                var a = cfg.values[0];
+                var b = cfg.values[1];
+                if (!_.isUndefined(a) && !_.isUndefined(b) && (row[colIdx] < a || row[colIdx] >= b)) {
+                    return false;
+                }
+                return true;
+                break;
+            case '(a,b)':
+                var a = cfg.values[0];
+                var b = cfg.values[1];
+                if (!_.isUndefined(a) && !_.isUndefined(b) && (row[colIdx] <= a || row[colIdx] >= b)) {
+                    return false;
+                }
+                return true;
+                break;
+            case '[a,b]':
+                var a = cfg.values[0];
+                var b = cfg.values[1];
+                if (!_.isUndefined(a) && !_.isUndefined(b) && (row[colIdx] < a || row[colIdx] > b)) {
+                    return false;
+                }
+                return true;
+                break;
         }
     };
 
+    this.getRule = getRule;
 
     var getFilter = function (chartConfig, keysIdx, groupsIdx, filtersIdx) {
         var rules = [];

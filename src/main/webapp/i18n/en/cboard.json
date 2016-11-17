@@ -100,7 +100,12 @@
       "HEIGHT": "Row Height(px)",
       "WIDTH": "Width",
       "WIDGET": "Widget",
-      "PREVIEW": "Preview"
+      "PREVIEW": "Preview",
+      "ADD_PARAMROW": "Add Condition Row",
+      "ADD_PARAM": "Add Condition",
+      "PARAM_ROW": "Condition Row",
+      "PARAM": "Filter",
+      "PARAM_NAME": "Name"
     },
     "CATEGORY": {
       "NAME": "Category Name",

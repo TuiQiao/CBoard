@@ -2,7 +2,7 @@
  * Created by yfyuan on 2016/8/2.
  */
 
-cBoard.controller('boardCtrl', function ($scope, $http, ModalUtils, $filter) {
+cBoard.controller('boardCtrl', function ($scope, $http, ModalUtils, $filter, updateService, $uibModal) {
 
     var translate = $filter('translate');
 
@@ -30,6 +30,39 @@ cBoard.controller('boardCtrl', function ($scope, $http, ModalUtils, $filter) {
         });
     };
 
+    var getDatasetList = function () {
+        $http.get("/dashboard/getDatasetList.do").success(function (response) {
+            $scope.datasetList = response;
+        });
+    };
+
+    var loadBoardDataset = function () {
+        var datasetIdArr = [];
+        _.each($scope.curBoard.layout.rows, function (row) {
+            _.each(row.widgets, function (widget) {
+                var w = _.find($scope.widgetList, function (w) {
+                    return w.id == widget.widgetId
+                });
+                if (w.data.datasetId) {
+                    datasetIdArr.push(w.data.datasetId);
+                }
+            });
+        });
+        datasetIdArr = _.union(datasetIdArr);
+        $scope.boardDataset = [];
+        _.each(datasetIdArr, function (d) {
+            $http.post("/dashboard/getCachedData.do", {
+                datasetId: d,
+            }).success(function (response) {
+                var dataset = _.find($scope.datasetList, function (ds) {
+                    return ds.id == d;
+                });
+                dataset.columns = response.data[0];
+                $scope. boardDataset.push(dataset);
+            });
+        });
+    };
+
     var boardChange = function () {
         $scope.$emit("boardChange");
     };
@@ -37,6 +70,7 @@ cBoard.controller('boardCtrl', function ($scope, $http, ModalUtils, $filter) {
     getBoardList();
     getWidgetList();
     getCategoryList();
+    getDatasetList();
 
     $scope.widgetGroup = function (item) {
         return item.categoryName;
@@ -56,7 +90,11 @@ cBoard.controller('boardCtrl', function ($scope, $http, ModalUtils, $filter) {
     };
 
     $scope.addRow = function () {
-        $scope.curBoard.layout.rows.push({widgets: []})
+        $scope.curBoard.layout.rows.push({type: 'widget', widgets: []});
+    };
+
+    $scope.addPramRow = function () {
+        $scope.curBoard.layout.rows.push({type: 'param', params: []});
     };
 
     $scope.saveBoard = function () {
@@ -86,8 +124,11 @@ cBoard.controller('boardCtrl', function ($scope, $http, ModalUtils, $filter) {
     };
 
     $scope.editBoard = function (board) {
-        $scope.curBoard = angular.copy(board);
+        var b = angular.copy(board);
+        updateService.updateBoard(b);
+        $scope.curBoard = b;
         $scope.optFlag = 'edit';
+        loadBoardDataset();
     };
 
     $scope.deleteBoard = function (board) {
@@ -97,6 +138,43 @@ cBoard.controller('boardCtrl', function ($scope, $http, ModalUtils, $filter) {
                 $scope.optFlag == 'none';
                 boardChange();
             });
+        });
+    };
+
+    $scope.editParam = function (row, index) {
+        var parent = $scope;
+        var ok;
+        var param;
+        if (_.isUndefined(index)) {
+            param = {col: []};
+            ok = function (p) {
+                if (!row.params) {
+                    row.params = [];
+                }
+                row.params.push(p);
+            };
+        } else {
+            param = angular.copy(row.params[index]);
+            ok = function (p) {
+                row.params[index] = p;
+            };
+        }
+        $uibModal.open({
+            templateUrl: 'org/cboard/view/config/modal/param.html',
+            windowTemplateUrl: 'org/cboard/view/util/modal/window.html',
+            backdrop: false,
+            size: 'lg',
+            controller: function ($scope, $uibModalInstance) {
+                $scope.param = param;
+                $scope.boardDataset = parent.boardDataset;
+                $scope.close = function () {
+                    $uibModalInstance.close();
+                };
+                $scope.ok = function () {
+                    ok($scope.param);
+                    $uibModalInstance.close();
+                };
+            }
         });
     };
 

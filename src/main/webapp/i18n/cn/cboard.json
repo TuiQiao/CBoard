@@ -99,7 +99,12 @@
       "HEIGHT": "行高度(像素)",
       "WIDTH": "宽度",
       "WIDGET": "图表",
-      "PREVIEW": "预览"
+      "PREVIEW": "预览",
+      "ADD_PARAMROW": "添加条件行",
+      "ADD_PARAM": "添加条件",
+      "PARAM_ROW": "条件行",
+      "PARAM": "过滤器",
+      "PARAM_NAME": "名称"
     },
     "CATEGORY": {
       "NAME": "看板分类名称",

@@ -77,98 +77,25 @@
                                         {{'CONFIG.DASHBOARD.ADD_ROW'|translate}}
                                     </button>
                                 </div>
+                                <div class="col-md-1">
+                                    <button type="submit" class="btn btn-success" ng-click="addPramRow()">
+                                        {{'CONFIG.DASHBOARD.ADD_PARAMROW'|translate}}
+                                    </button>
+                                </div>
                             </div>
                             <div dnd-list="curBoard.layout.rows" dnd-allowed-types="['r']">
                                 <div class="dndPlaceholder row margin">
                                     <div class="box sort-highlight" style="height: 130px"></div>
                                 </div>
                                 <div class="row margin" ng-repeat="row in curBoard.layout.rows">
-                                    <div class="box box-success"
-                                         style="border-left: 1px solid #d2d6de; border-right: 1px solid #d2d6de">
-                                        <div class="box-header" dnd-draggable="row" dnd-type="'r'"
-                                             nd-effect-allowed="move"
-                                             dnd-moved="curBoard.layout.rows.splice($index, 1)" style="cursor:move">
-                                            {{'CONFIG.DASHBOARD.ROW'|translate}}
-
-                                            <div class="box-tools pull-right">
-                                                <div class="input-group input-group-sm" style="width: 300px;">
-                                                    <input type="text" name="table_search" ng-model="row.height"
-                                                           class="form-control pull-right" placeholder="{{'CONFIG.DASHBOARD.HEIGHT'|translate}}">
-                                                    <div class="input-group-btn">
-                                                        <button type="button" class="btn btn-xs btn-success"
-                                                                ng-click="addWidget(row)">
-                                                            {{'CONFIG.DASHBOARD.ADD_COLUMN'|translate}}
-                                                        </button>
-                                                        <button type="button" class="btn btn-box-tool" data-widget="collapse"><i
-                                                                class="fa fa-minus"></i>
-                                                        </button>
-                                                        <button type="button" class="btn btn-box-tool" data-widget="remove"
-                                                                ng-click="curBoard.layout.rows.splice($index, 1)"><i
-                                                                class="fa fa-times"></i>
-                                                        </button>
-                                                    </div>
-                                                </div>
-
-                                            </div>
+                                    <ng-switch on="row.type">
+                                        <div ng-switch-when="param">
+                                            <div ng-include="'org/cboard/view/config/board/param.html'"></div>
                                         </div>
-                                        <div class="box-body">
-                                            <div class="row" dnd-list="row.widgets" dnd-allowed-types="['w']"
-                                                 style="min-height: 60px">
-                                                <div class="dndPlaceholder col-md-2">
-                                                    <div class="box sort-highlight"
-                                                         style="height: 40px;display: inline-block;vertical-align: middle;"></div>
-                                                </div>
-                                                <div class="col-md-{{widget.width}}" ng-repeat="widget in row.widgets">
-                                                    <div class="box box-primary collapsed-box"
-                                                         style="border-left: 1px solid #d2d6de; border-right: 1px solid #d2d6de">
-                                                        <div class="box-header" dnd-draggable="widget" dnd-type="'w'"
-                                                             nd-effect-allowed="move"
-                                                             dnd-moved="row.widgets.splice($index, 1)"
-                                                             style="cursor:move">
-                                                            {{widget.name}}
-                                                            <div class="box-tools pull-right">
-                                                                <button type="button" class="btn btn-box-tool"
-                                                                        data-widget="collapse"><i
-                                                                        class="fa fa-wrench"></i>
-                                                                </button>
-                                                                <button type="button" class="btn btn-box-tool"
-                                                                        data-widget="remove"
-                                                                        ng-click="row.widgets.splice($index, 1)"><i
-                                                                        class="fa fa-times"></i>
-                                                                </button>
-                                                            </div>
-                                                        </div>
-                                                        <div class="box-body">
-                                                            <div class="form-group">
-                                                                <label>{{'CONFIG.DASHBOARD.NAME'|translate}}</label>
-                                                                <input type="text" ng-model="widget.name"
-                                                                       ng-model-options="{updateOn: 'blur'}"
-                                                                       class="form-control"/>
-                                                            </div>
-                                                            <div class="form-group">
-                                                                <label>{{'CONFIG.DASHBOARD.WIDTH'|translate}}(1-12)</label>
-                                                                <input type="text" ng-model="widget.width"
-                                                                       ng-model-options="{updateOn: 'blur'}"
-                                                                       class="form-control"/>
-                                                            </div>
-                                                            <div class="form-group">
-                                                                <label>{{'CONFIG.DASHBOARD.WIDGET'|translate}}</label>
-                                                                <ui-select ng-model="widget.widgetId" on-select="widget.name = $item.name">
-                                                                    <ui-select-match>
-                                                                        {{$select.selected.name}}
-                                                                    </ui-select-match>
-                                                                    <ui-select-choices group-by="widgetGroup"
-                                                                                       repeat="w.id as w in widgetList | filter:{name : $select.search}">
-                                                                        {{w.name}}
-                                                                    </ui-select-choices>
-                                                                </ui-select>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
+                                        <div ng-switch-default>
+                                            <div ng-include="'org/cboard/view/config/board/widget.html'"></div>
                                         </div>
-                                    </div>
+                                    </ng-switch>
                                 </div>
                             </div>
                         </div>

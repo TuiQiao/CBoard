@@ -52,9 +52,9 @@ CBoardTableRender.prototype.do = function (tall) {
         height: tall + "px"
     });
     // this.resize(this.container);
-    // var _this = this;
-    // return function (o) {
-    //     _this.options = o;
-    //     _this.do(_this.tall);
-    // }
+    var _this = this;
+    return function (o) {
+        _this.options = o;
+        _this.do(_this.tall);
+    }
 };

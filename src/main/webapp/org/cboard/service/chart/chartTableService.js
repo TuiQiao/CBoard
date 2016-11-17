@@ -7,7 +7,7 @@ cBoard.service('chartTableService', function (dataService) {
     this.render = function (containerDom, option, scope) {
         var height;
         scope ? height = scope.myheight - 20 : null;
-        new CBoardTableRender(containerDom, option).do(height);
+        return new CBoardTableRender(containerDom, option).do(height);
     };
 
     this.parseOption = function (chartData, chartConfig) {

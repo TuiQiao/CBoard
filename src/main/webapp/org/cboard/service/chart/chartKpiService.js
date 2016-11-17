@@ -18,7 +18,7 @@ cBoard.service('chartKpiService', function (dataService, $compile) {
     this.parseOption = function (chartData, config) {
         var option = {};
         dataService.castRawData2Series(chartData, config, function (casted_keys, casted_values, aggregate_data, newValuesConfig) {
-            option.kpiValue = aggregate_data[0][0];
+            option.kpiValue = aggregate_data.length > 0 ? aggregate_data[0][0] : 'N/A';
             if (config.values[0].format) {
                 option.kpiValue = numbro(option.kpiValue).format(config.values[0].format);
             }

@@ -43,7 +43,8 @@ CBoardEChartRender.prototype.chart = function (group) {
         echarts.connect(group);
     }
     return function (o) {
-        self.ecc.setOption(o);
+        o = $.extend(true, {}, self.basicOption, o)
+        self.ecc.setOption(o,true);
     }
 };
 

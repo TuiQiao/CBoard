@@ -36,7 +36,7 @@ cBoard.controller('boardCtrl', function ($scope, $http, ModalUtils, $filter, upd
         });
     };
 
-    var loadBoardDataset = function () {
+    var loadBoardDataset = function (status) {
         var datasetIdArr = [];
         _.each($scope.curBoard.layout.rows, function (row) {
             _.each(row.widgets, function (widget) {
@@ -51,6 +51,7 @@ cBoard.controller('boardCtrl', function ($scope, $http, ModalUtils, $filter, upd
         datasetIdArr = _.union(datasetIdArr);
         $scope.boardDataset = [];
         _.each(datasetIdArr, function (d) {
+            status.i++;
             $http.post("/dashboard/getCachedData.do", {
                 datasetId: d,
             }).success(function (response) {
@@ -58,7 +59,8 @@ cBoard.controller('boardCtrl', function ($scope, $http, ModalUtils, $filter, upd
                     return ds.id == d;
                 });
                 dataset.columns = response.data[0];
-                $scope. boardDataset.push(dataset);
+                $scope.boardDataset.push(dataset);
+                status.i--;
             });
         });
     };
@@ -128,7 +130,6 @@ cBoard.controller('boardCtrl', function ($scope, $http, ModalUtils, $filter, upd
         updateService.updateBoard(b);
         $scope.curBoard = b;
         $scope.optFlag = 'edit';
-        loadBoardDataset();
     };
 
     $scope.deleteBoard = function (board) {
@@ -142,6 +143,8 @@ cBoard.controller('boardCtrl', function ($scope, $http, ModalUtils, $filter, upd
     };
 
     $scope.editParam = function (row, index) {
+        var status = {i: 0};
+        loadBoardDataset(status);
         var parent = $scope;
         var ok;
         var param;
@@ -165,6 +168,7 @@ cBoard.controller('boardCtrl', function ($scope, $http, ModalUtils, $filter, upd
             backdrop: false,
             size: 'lg',
             controller: function ($scope, $uibModalInstance) {
+                $scope.status = status;
                 $scope.param = param;
                 $scope.boardDataset = parent.boardDataset;
                 $scope.close = function () {

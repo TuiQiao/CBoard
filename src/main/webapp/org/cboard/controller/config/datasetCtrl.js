@@ -53,6 +53,19 @@ cBoard.controller('datasetCtrl', function ($scope, $http, dataService, $uibModal
             });
         });
     };
+    $scope.copyDs = function (ds) {
+        var data=angular.copy(ds);
+        data.name=data.name+"_copy";
+        $http.post("/dashboard/copyDataset.do", {json: angular.toJson(data)}).success(function (serviceStatus) {
+            if (serviceStatus.status == '1') {
+                $scope.optFlag = 'none';
+                getDatasetList();
+                ModalUtils.alert(translate("COMMON.SUCCESS"), "modal-success", "sm");
+            } else {
+                ModalUtils.alert(serviceStatus.msg, "modal-warning", "lg");
+            }
+        });
+    };
 
     $scope.save = function () {
         $scope.datasource ? $scope.curDataset.data.datasource = $scope.datasource.id : null;

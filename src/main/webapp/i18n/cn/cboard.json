@@ -91,6 +91,7 @@
     },
     "DASHBOARD": {
       "DASHBOARD": "看板",
+      "MY_DASHBOARD": "我的看板",
       "CATEGORY": "分类",
       "NAME": "名称",
       "ADD_ROW": "添加行",

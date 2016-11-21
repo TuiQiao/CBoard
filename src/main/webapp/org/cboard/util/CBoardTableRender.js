@@ -51,7 +51,7 @@ CBoardTableRender.prototype.do = function (tall) {
     $(this.container).css({
         height: tall + "px"
     });
-    // this.resize(this.container);
+    this.resize(this.container);
     var _this = this;
     return function (o) {
         _this.options = o;

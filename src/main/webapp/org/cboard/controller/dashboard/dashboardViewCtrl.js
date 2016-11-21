@@ -234,8 +234,8 @@ cBoard.controller('dashboardViewCtrl', function ($scope, $state, $stateParams, $
             windowTemplateUrl: 'org/cboard/view/util/modal/window.html',
             backdrop: false,
             size: 'lg',
-            controller: function ($scope, $uibModalInstance) {
-                $scope.selects = param.selects;
+            controller: function ($scope, $uibModalInstance, dataService) {
+                $scope.selects = _.sortBy(dataService.toNumber(param.selects));
                 $scope.type = ['=', '≠', '>', '<', '≥', '≤', '(a,b]', '[a,b)', '(a,b)', '[a,b]'];
                 $scope.param = param;
                 $scope.selected = function (v) {

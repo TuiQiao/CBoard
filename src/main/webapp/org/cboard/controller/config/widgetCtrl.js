@@ -388,7 +388,7 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
             o.data.datasetId = $scope.curWidget.datasetId;
         }
         if ($scope.optFlag == 'new') {
-            if(o.name == null || o.data.datasetId == undefined){
+            if (o.name == null || o.data.datasetId == undefined) {
                 ModalUtils.alert('Please fill out the complete information.', "modal-warning", "md");
             } else {
                 $http.post("/dashboard/saveNewWidget.do", {json: angular.toJson(o)}).success(function (serviceStatus) {
@@ -515,7 +515,7 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
                     selects.push(v);
                 }
             }
-            selects = _.sortBy(selects);
+            selects = _.sortBy(dataService.toNumber(selects));
             $scope.filterSelect[col.col] = selects;
         }
 

@@ -91,65 +91,101 @@ cBoard.service('dataService', function ($http, updateService) {
                 };
                 break;
             case '>':
-                var v = cfg.values[0];
-                if (!_.isUndefined(v) && row[colIdx] <= v) {
-                    return false;
-                }
-                return true;
+                return function (row) {
+                    var v = cfg.values[0];
+                    var params = toNumber(row[colIdx], v);
+                    if (!_.isUndefined(v) && params[0] <= params[1]) {
+                        return false;
+                    }
+                    return true;
+                };
                 break;
             case '<':
-                var v = cfg.values[0];
-                if (!_.isUndefined(v) && row[colIdx] >= v) {
-                    return false;
-                }
-                return true;
+                return function (row) {
+                    var v = cfg.values[0];
+                    var params = toNumber(row[colIdx], v);
+                    if (!_.isUndefined(v) && params[0] >= params[1]) {
+                        return false;
+                    }
+                    return true;
+                };
                 break;
             case '≥':
-                var v = cfg.values[0];
-                if (!_.isUndefined(v) && row[colIdx] < v) {
-                    return false;
-                }
-                return true;
+                return function (row) {
+                    var v = cfg.values[0];
+                    var params = toNumber(row[colIdx], v);
+                    if (!_.isUndefined(v) && params[0] < params[1]) {
+                        return false;
+                    }
+                    return true;
+                };
                 break;
             case '≤':
-                var v = cfg.values[0];
-                if (!_.isUndefined(v) && row[colIdx] > v) {
-                    return false;
-                }
-                return true;
+                return function (row) {
+                    var v = cfg.values[0];
+                    var params = toNumber(row[colIdx], v);
+                    if (!_.isUndefined(v) && params[0] > params[1]) {
+                        return false;
+                    }
+                    return true;
+                };
                 break;
             case '(a,b]':
-                var a = cfg.values[0];
-                var b = cfg.values[1];
-                if (!_.isUndefined(a) && !_.isUndefined(b) && (row[colIdx] <= a || row[colIdx] > b)) {
-                    return false;
-                }
-                return true;
+                return function (row) {
+                    var a = cfg.values[0];
+                    var b = cfg.values[1];
+                    var params = toNumber(row[colIdx], a, b);
+                    if (!_.isUndefined(a) && !_.isUndefined(b) && (params[0] <= params[1] || params[0] > params[2])) {
+                        return false;
+                    }
+                    return true;
+                };
                 break;
             case '[a,b)':
-                var a = cfg.values[0];
-                var b = cfg.values[1];
-                if (!_.isUndefined(a) && !_.isUndefined(b) && (row[colIdx] < a || row[colIdx] >= b)) {
-                    return false;
-                }
-                return true;
+                return function (row) {
+                    var a = cfg.values[0];
+                    var b = cfg.values[1];
+                    var params = toNumber(row[colIdx], a, b);
+                    if (!_.isUndefined(a) && !_.isUndefined(b) && (params[0] < params[1] || params[0] >= params[2])) {
+                        return false;
+                    }
+                    return true;
+                };
                 break;
             case '(a,b)':
-                var a = cfg.values[0];
-                var b = cfg.values[1];
-                if (!_.isUndefined(a) && !_.isUndefined(b) && (row[colIdx] <= a || row[colIdx] >= b)) {
-                    return false;
-                }
-                return true;
+                return function (row) {
+                    var a = cfg.values[0];
+                    var b = cfg.values[1];
+                    var params = toNumber(row[colIdx], a, b);
+                    if (!_.isUndefined(a) && !_.isUndefined(b) && (params[0] <= params[1] || params[0] >= params[2])) {
+                        return false;
+                    }
+                    return true;
+                };
                 break;
             case '[a,b]':
-                var a = cfg.values[0];
-                var b = cfg.values[1];
-                if (!_.isUndefined(a) && !_.isUndefined(b) && (row[colIdx] < a || row[colIdx] > b)) {
-                    return false;
-                }
-                return true;
+                return function (row) {
+                    var a = cfg.values[0];
+                    var b = cfg.values[1];
+                    var params = toNumber(row[colIdx], a, b);
+                    if (!_.isUndefined(a) && !_.isUndefined(b) && (params[0] < params[1] || params[0] > params[2])) {
+                        return false;
+                    }
+                    return true;
+                };
                 break;
+        }
+    };
+
+    var toNumber = function (args) {
+        var result = [];
+        for (var i = 0; i < arguments.length; i++) {
+            var a = Number(arguments[i]);
+            if (Number.isNaN(a)) {
+                return arguments;
+            } else {
+                result.push(a);
+            }
         }
     };
 

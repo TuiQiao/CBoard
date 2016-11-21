@@ -449,6 +449,20 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
         });
     };
 
+    $scope.copyWgt = function (widget) {
+        var o=angular.copy(widget);
+        o.name=o.name+"_copy";
+        $http.post("/dashboard/saveNewWidget.do", {json: angular.toJson(o)}).success(function (serviceStatus) {
+            if (serviceStatus.status == '1') {
+                getWidgetList();
+                ModalUtils.alert(translate("COMMON.SUCCESS"), "modal-success", "sm");
+            } else {
+                ModalUtils.alert(serviceStatus.msg, "modal-warning", "lg");
+            }
+            $scope.optFlag == 'none';
+        });
+    };
+
     $scope.getQueryView = function () {
         if ($scope.datasource && $scope.datasource.name) {
             return '/dashboard/getConfigView.do?type=' + $scope.datasource.type;

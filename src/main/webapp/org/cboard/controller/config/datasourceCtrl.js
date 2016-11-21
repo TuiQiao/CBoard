@@ -38,7 +38,19 @@ cBoard.controller('datasourceCtrl', function ($scope, $http, ModalUtils, $uibMod
             });
         });
     };
-
+    $scope.copyDs = function (ds) {
+        var data=angular.copy(ds);
+        data.name=data.name+"_copy";
+        $http.post("/dashboard/saveNewDatasource.do", {json: angular.toJson(data)}).success(function (serviceStatus) {
+            if (serviceStatus.status == '1') {
+                $scope.optFlag = 'none';
+                getDatasourceList();
+                ModalUtils.alert(translate("COMMON.SUCCESS"), "modal-success", "sm");
+            } else {
+                ModalUtils.alert(serviceStatus.msg, "modal-warning", "lg");
+            }
+        });
+    };
 
     $scope.changeDsView = function () {
         $scope.dsView = '/dashboard/getDatasourceView.do?type=' + $scope.curDatasource.type;

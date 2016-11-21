@@ -450,8 +450,8 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
     };
 
     $scope.copyWgt = function (widget) {
-        var o=angular.copy(widget);
-        o.name=o.name+"_copy";
+        var o = angular.copy(widget);
+        o.name = o.name + "_copy";
         $http.post("/dashboard/saveNewWidget.do", {json: angular.toJson(o)}).success(function (serviceStatus) {
             if (serviceStatus.status == '1') {
                 getWidgetList();

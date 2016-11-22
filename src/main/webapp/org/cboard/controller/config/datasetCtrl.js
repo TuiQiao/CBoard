@@ -54,9 +54,9 @@ cBoard.controller('datasetCtrl', function ($scope, $http, dataService, $uibModal
         });
     };
     $scope.copyDs = function (ds) {
-        var data=angular.copy(ds);
-        data.name=data.name+"_copy";
-        $http.post("/dashboard/copyDataset.do", {json: angular.toJson(data)}).success(function (serviceStatus) {
+        var data = angular.copy(ds);
+        data.name = data.name + "_copy";
+        $http.post("/dashboard/saveNewDataset.do", {json: angular.toJson(data)}).success(function (serviceStatus) {
             if (serviceStatus.status == '1') {
                 $scope.optFlag = 'none';
                 getDatasetList();

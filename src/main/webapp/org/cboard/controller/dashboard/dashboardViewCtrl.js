@@ -116,6 +116,23 @@ cBoard.controller('dashboardViewCtrl', function ($scope, $state, $stateParams, $
                                 });
                             });
                         }
+                    } else {
+                        _.each(q.widgets, function (w) {
+                            _.each($scope.board.layout.rows, function (row) {
+                                _.each(row.params, function (param) {
+                                    _.each(param.col, function (c) {
+                                        if (c.widgetId == w.widgetId) {
+                                            var index = _.indexOf(response.data[0], c.column);
+                                            for (var i = 1; i < response.data.length; i++) {
+                                                if (_.indexOf(param.selects, response.data[i][index]) < 0) {
+                                                    param.selects.push(response.data[i][index]);
+                                                }
+                                            }
+                                        }
+                                    });
+                                });
+                            });
+                        });
                     }
                 });
             });
@@ -131,19 +148,20 @@ cBoard.controller('dashboardViewCtrl', function ($scope, $state, $stateParams, $
                     }).success(function (response) {
                         _.each($scope.realtimeDataset[dsId], function (w) {
                             w.widget.queryData = response.data;
-                            chartService.realTimeRender(w.realTimeTicket, filterData(dsId, response.data), w.widget.data.config);
+                            try {
+                                chartService.realTimeRender(w.realTimeTicket, filterData(w.widget.id, w.widget.queryData), w.widget.data.config);
+                            } catch (e) {
+                                console.error(e);
+                            }
                         });
                     });
                 }, ds.data.interval * 1000));
-
             });
-
         });
-
     };
 
-    var filterData = function (datasetId, data) {
-        var filter = $scope.datasetFilters[datasetId];
+    var filterData = function (widgetId, data) {
+        var filter = $scope.widgetFilters[widgetId];
         if (filter) {
             var result = [data[0]];
             for (var i = 1; i < data.length; i++) {
@@ -156,49 +174,86 @@ cBoard.controller('dashboardViewCtrl', function ($scope, $state, $stateParams, $
         return data;
     };
 
+    var getBoardWidgetByWidgetId = function (widgetId) {
+        for (var i = 0; i < $scope.board.layout.rows.length; i++) {
+            var row = $scope.board.layout.rows[i];
+            for (var j = 0; row.widgets && j < row.widgets.length; j++) {
+                if (row.widgets[j].widget.id == widgetId) {
+                    return row.widgets[j];
+                }
+            }
+        }
+    };
+
+    var getBoardWidgetByDatasetId = function (datasetId) {
+        var result = [];
+        _.each($scope.board.layout.rows, function (row) {
+            _.each(row.widgets, function (w) {
+                if (w.widget.data.datasetId == datasetId) {
+                    result.push(w);
+                }
+            });
+        });
+        return result;
+    };
+
     $scope.applyParamFilter = function () {
-        $scope.datasetFilters = [];
-        var datasetRules = {};
+        $scope.widgetFilters = [];
+        var widgetRules = {};
+        var pushWidgetRules = function (widgetId, rule) {
+            if (!widgetRules[widgetId]) {
+                widgetRules[widgetId] = [];
+            }
+            widgetRules[widgetId].push(rule);
+        };
         _.each($scope.board.layout.rows, function (row) {
             _.each(row.params, function (param) {
+                if (param.values.length <= 0) {
+                    return;
+                }
                 _.each(param.col, function (col) {
-                    $scope.datasetFilters[col.datasetId] = {};
-                    if (param.values.length > 0) {
-                        if (!datasetRules[col.datasetId]) {
-                            datasetRules[col.datasetId] = [];
-                        }
-                        var idx = _.indexOf($scope.datasetMeta[col.datasetId], col.column);
-                        datasetRules[col.datasetId].push(dataService.getRule({
+                    if (_.isUndefined(col.datasetId)) {
+                        var w = getBoardWidgetByWidgetId(col.widgetId);
+                        var idx = _.indexOf(w.widget.queryData[0], col.column);
+                        var rule = dataService.getRule({
                             type: param.type,
                             values: param.values
-                        }, idx));
+                        }, idx);
+                        pushWidgetRules(w.widget.id, rule);
+                    } else {
+                        var wArr = getBoardWidgetByDatasetId(col.datasetId);
+                        var idx = _.indexOf($scope.datasetMeta[col.datasetId], col.column);
+                        var rule = dataService.getRule({
+                            type: param.type,
+                            values: param.values
+                        }, idx);
+                        _.each(wArr, function (w) {
+                            pushWidgetRules(w.widget.id, rule);
+                        });
                     }
                 });
             });
         });
-        _.each(_.keys($scope.datasetFilters), function (dsId) {
-            $scope.datasetFilters[dsId] = function (row) {
-                for (var i = 0; datasetRules[dsId] && i < datasetRules[dsId].length; i++) {
-                    if (!datasetRules[dsId][i](row)) {
+
+        _.each(_.keys(widgetRules), function (widgetId) {
+            $scope.widgetFilters[widgetId] = function (row) {
+                for (var i = 0; i < widgetRules[widgetId].length; i++) {
+                    if (!widgetRules[widgetId][i](row)) {
                         return false;
                     }
                 }
                 return true;
             };
+        });
 
-            _.each($scope.board.layout.rows, function (row) {
-                _.each(row.widgets, function (w) {
-                    if (w.widget.data.datasetId == dsId) {
-                        chartService.realTimeRender(w.realTimeTicket, filterData(dsId, w.widget.queryData), w.widget.data.config);
-                    }
-                });
+        _.each($scope.board.layout.rows, function (row) {
+            _.each(row.widgets, function (w) {
+                try {
+                    chartService.realTimeRender(w.realTimeTicket, filterData(w.widget.id, w.widget.queryData), w.widget.data.config);
+                } catch (e) {
+                    console.error(e);
+                }
             });
-
-            // $http.post("/dashboard/getCachedData.do", {
-            //     datasetId: dsId,
-            // }).success(function (response) {
-            //
-            // });
         });
     };
 

@@ -25,7 +25,7 @@
             <select class="form-control" ng-model="selectedDataset" ng-options="w.name for w in boardDataset">
             </select>
             <select multiple class="form-control" style="height: 300px">
-                <option ng-repeat="v in selectedDataset.columns" ng-click="param.col.push({datasetId:selectedDataset.id,column:v,name:selectedDataset.name})">{{v}}</option>
+                <option ng-repeat="v in selectedDataset.columns" ng-click="add(selectedDataset,v)">{{v}}</option>
             </select>
         </div>
         <div class="col-md-2">

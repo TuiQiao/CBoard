@@ -1,7 +1,7 @@
 /**
  * Created by yfyuan on 2016/8/2.
  */
-
+'use strict';
 cBoard.controller('boardCtrl', function ($scope, $http, ModalUtils, $filter, updateService, $uibModal) {
 
     var translate = $filter('translate');
@@ -38,6 +38,7 @@ cBoard.controller('boardCtrl', function ($scope, $http, ModalUtils, $filter, upd
 
     var loadBoardDataset = function (status) {
         var datasetIdArr = [];
+        var widgetArr = [];
         _.each($scope.curBoard.layout.rows, function (row) {
             _.each(row.widgets, function (widget) {
                 var w = _.find($scope.widgetList, function (w) {
@@ -45,6 +46,8 @@ cBoard.controller('boardCtrl', function ($scope, $http, ModalUtils, $filter, upd
                 });
                 if (w.data.datasetId) {
                     datasetIdArr.push(w.data.datasetId);
+                } else {
+                    widgetArr.push(w);
                 }
             });
         });
@@ -58,8 +61,17 @@ cBoard.controller('boardCtrl', function ($scope, $http, ModalUtils, $filter, upd
                 var dataset = _.find($scope.datasetList, function (ds) {
                     return ds.id == d;
                 });
-                dataset.columns = response.data[0];
-                $scope.boardDataset.push(dataset);
+                $scope.boardDataset.push({name: dataset.name, columns: response.data[0], datasetId: dataset.id});
+                status.i--;
+            });
+        });
+        _.each(widgetArr, function (w) {
+            status.i++;
+            $http.post("/dashboard/getCachedData.do", {
+                datasourceId: w.data.datasource,
+                query: angular.toJson(w.data.query),
+            }).success(function (response) {
+                $scope.boardDataset.push({name: w.name, columns: response.data[0], widgetId: w.id});
                 status.i--;
             });
         });
@@ -171,6 +183,12 @@ cBoard.controller('boardCtrl', function ($scope, $http, ModalUtils, $filter, upd
                 $scope.status = status;
                 $scope.param = param;
                 $scope.boardDataset = parent.boardDataset;
+                $scope.add = function (selectedDataset, column) {
+                    var v = angular.copy(selectedDataset);
+                    delete v.columns;
+                    v.column = column;
+                    $scope.param.col.push(v);
+                };
                 $scope.close = function () {
                     $uibModalInstance.close();
                 };

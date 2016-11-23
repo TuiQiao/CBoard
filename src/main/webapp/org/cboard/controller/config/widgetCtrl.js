@@ -388,8 +388,10 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
             o.data.datasetId = $scope.curWidget.datasetId;
         }
         if ($scope.optFlag == 'new') {
-            if (o.name == null || o.data.datasetId == undefined) {
-                ModalUtils.alert('Please fill out the complete information.', "modal-warning", "md");
+            if (o.name == null ) {
+                ModalUtils.alert('Please input a widget name.', "modal-warning", "md");
+            } else if(o.data.datasetId == undefined && $scope.customDs == false) {
+                ModalUtils.alert('Please select a DataSet or Ad-hoc query for widget', "modal-warning", "md");
             } else {
                 $http.post("/dashboard/saveNewWidget.do", {json: angular.toJson(o)}).success(function (serviceStatus) {
                     if (serviceStatus.status == '1') {

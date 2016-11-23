@@ -8,7 +8,7 @@
         {{"COMMON.REFRESH" | translate}}
     </div>
 </section>
-<div id="inner-container" class="content">
+<div id="inner-container" class="content" style="margin-top: 15px;">
     <div class="row" ng-repeat="row in board.layout.rows track by $index" ng-style="{height:row.height+'px'}">
         <ng-switch on="row.type">
             <div ng-switch-when="param">

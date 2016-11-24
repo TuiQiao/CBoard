@@ -10,7 +10,8 @@
     "TIP": "提示",
     "SUCCESS": "成功!",
     "FAIL": "失败!",
-    "DEFAULT_CATEGORY": "默认分类"
+    "DEFAULT_CATEGORY": "默认分类",
+    "NOT_EMPTY":"不能为空!"
   },
   "SIDEBAR": {
     "C_DASHBOARD": "看板",

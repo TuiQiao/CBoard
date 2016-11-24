@@ -16,7 +16,6 @@
         <jackson.version>1.9.10</jackson.version>
         <jdk.version>1.7</jdk.version>
     </properties>
-
     <dependencies>
         <dependency>
             <groupId>com.google.guava</groupId>
@@ -83,6 +82,11 @@
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-lang3</artifactId>
             <version>3.4</version>
+        </dependency>
+        <dependency>
+            <groupId>commons-io</groupId>
+            <artifactId>commons-io</artifactId>
+            <version>2.5</version>
         </dependency>
         <dependency>
             <groupId>org.mybatis</groupId>

@@ -187,7 +187,12 @@ cBoard.controller('boardCtrl', function ($scope, $http, ModalUtils, $filter, upd
                     var v = angular.copy(selectedDataset);
                     delete v.columns;
                     v.column = column;
-                    $scope.param.col.push(v);
+                    var paramCol = $scope.param.col;
+                    var haveCol = null;
+                    for(var i = 0; i < paramCol.length; i++) {
+                        (paramCol[i].column == v.column && paramCol[i].name == v.name) ? haveCol = true : null;
+                    }
+                    (!haveCol || $scope.param.col ==[]) ? $scope.param.col.push(v) : null;
                 };
                 $scope.close = function () {
                     $uibModalInstance.close();

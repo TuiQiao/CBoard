@@ -196,6 +196,19 @@ cBoard.controller('boardCtrl', function ($scope, $http, ModalUtils, $filter, upd
                     ok($scope.param);
                     $uibModalInstance.close();
                 };
+                $scope.foldCube = function(cube, e) {
+                    var node= e.target.parentNode;
+                    var imgNode=node.getElementsByTagName("img");
+                    if(e.target.className == "cubeName ng-binding") {
+                        if(node.style.height=="25px"||node.style.height==""){
+                            node.style.height=25*(cube.columns.length+1)+"px";
+                            imgNode[0].style.webkitTransform="rotate(90deg)";
+                        }else{
+                            node.style.height="25px";
+                            imgNode[0].style.webkitTransform="rotate(0deg)";
+                        }
+                    }
+                }
             }
         });
     };

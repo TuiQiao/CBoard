@@ -2343,7 +2343,16 @@ a:focus {
   display: block;
   float:right;
 }
-button.pull-left{
+button.pull-left {
+  background: #3c8dbc;
+  color:#fff;
+}
+button.pull-left:hover{
+  background: #0d6aad;
+  color:#fff;
+  border: 1px solid #4c4c4c;
+}
+.modal-warning button.pull-left{
   cursor: pointer;
   margin-left: 650px;
 }

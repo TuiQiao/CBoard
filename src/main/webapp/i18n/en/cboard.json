@@ -10,7 +10,8 @@
     "TIP": "Tip",
     "SUCCESS": "Success!",
     "FAIL": "Fail!",
-    "DEFAULT_CATEGORY": "Default Category"
+    "DEFAULT_CATEGORY": "Default Category",
+    "NOT_EMPTY":" cannot be empty!"
   },
   "SIDEBAR": {
     "C_DASHBOARD": "Dashboard",

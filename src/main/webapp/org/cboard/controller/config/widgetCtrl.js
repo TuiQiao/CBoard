@@ -52,6 +52,7 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
     $scope.expressions = [];
     $scope.customDs = false;
     $scope.filterSelect = {};
+    $scope.verify = {widgetName:true};
 
     $http.get("/dashboard/getDatasetList.do").success(function (response) {
         $scope.datasetList = response;
@@ -387,22 +388,29 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
         } else {
             o.data.datasetId = $scope.curWidget.datasetId;
         }
+        $scope.alerts = [];
+        $scope.verify = {widgetName:true};
+        
+        if (o.name == null || o.name == "") {
+            $scope.alerts = [{msg: translate('CONFIG.WIDGET.NAME')+translate('COMMON.NOT_EMPTY'), type: 'danger'}];
+            $scope.verify = {widgetName:false};
+            $("#widgetName").focus();
+            return;
+        } else if (o.data.datasetId == undefined && $scope.customDs == false) {
+            $scope.alerts = [{msg: translate('CONFIG.WIDGET.DATASET')+translate('COMMON.NOT_EMPTY'), type: 'danger'}];
+            return;
+        }
+        
         if ($scope.optFlag == 'new') {
-            if (o.name == null ) {
-                ModalUtils.alert('Please input a widget name.', "modal-warning", "md");
-            } else if(o.data.datasetId == undefined && $scope.customDs == false) {
-                ModalUtils.alert('Please select a DataSet or Ad-hoc query for widget', "modal-warning", "md");
-            } else {
-                $http.post("/dashboard/saveNewWidget.do", {json: angular.toJson(o)}).success(function (serviceStatus) {
-                    if (serviceStatus.status == '1') {
-                        getWidgetList();
-                        getCategoryList();
-                        ModalUtils.alert(translate("COMMON.SUCCESS"), "modal-success", "sm");
-                    } else {
-                        ModalUtils.alert(serviceStatus.msg, "modal-warning", "lg");
-                    }
-                });
-            }
+            $http.post("/dashboard/saveNewWidget.do", {json: angular.toJson(o)}).success(function (serviceStatus) {
+                if (serviceStatus.status == '1') {
+                    getWidgetList();
+                    getCategoryList();
+                    ModalUtils.alert(translate("COMMON.SUCCESS"), "modal-success", "sm");
+                } else {
+                    $scope.alerts = [{msg: serviceStatus.msg, type: 'danger'}];
+                }
+            });
         } else if ($scope.optFlag == 'edit') {
             o.id = $scope.widgetId;
             $http.post("/dashboard/updateWidget.do", {json: angular.toJson(o)}).success(function (serviceStatus) {
@@ -411,7 +419,7 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
                     getCategoryList();
                     ModalUtils.alert(translate("COMMON.SUCCESS"), "modal-success", "sm");
                 } else {
-                    ModalUtils.alert(serviceStatus.msg, "modal-warning", "lg");
+                    $scope.alerts = [{msg: serviceStatus.msg, type: 'danger'}];
                 }
             });
         }

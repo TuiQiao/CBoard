@@ -187,7 +187,12 @@ cBoard.controller('boardCtrl', function ($scope, $http, ModalUtils, $filter, upd
                     var v = angular.copy(selectedDataset);
                     delete v.columns;
                     v.column = column;
-                    $scope.param.col.push(v);
+                    var paramCol = $scope.param.col;
+                    var haveCol = null;
+                    for(var i = 0; i < paramCol.length; i++) {
+                        (paramCol[i].column == v.column && paramCol[i].name == v.name) ? haveCol = true : null;
+                    }
+                    (!haveCol || $scope.param.col ==[]) ? $scope.param.col.push(v) : null;
                 };
                 $scope.close = function () {
                     $uibModalInstance.close();
@@ -196,6 +201,19 @@ cBoard.controller('boardCtrl', function ($scope, $http, ModalUtils, $filter, upd
                     ok($scope.param);
                     $uibModalInstance.close();
                 };
+                $scope.foldCube = function(cube, e) {
+                    var node= e.target.parentNode;
+                    var imgNode=node.getElementsByTagName("img");
+                    if(e.target.className == "cubeName ng-binding") {
+                        if(node.style.height=="25px"||node.style.height==""){
+                            node.style.height=25*(cube.columns.length+1)+"px";
+                            imgNode[0].style.webkitTransform="rotate(90deg)";
+                        }else{
+                            node.style.height="25px";
+                            imgNode[0].style.webkitTransform="rotate(0deg)";
+                        }
+                    }
+                }
             }
         });
     };

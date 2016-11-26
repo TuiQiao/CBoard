@@ -108,7 +108,7 @@ cBoard.controller('boardCtrl', function ($scope, $http, ModalUtils, $filter, upd
     };
 
     $scope.addPramRow = function () {
-        $scope.curBoard.layout.rows.push({type: 'param', params: []});
+        $scope.curBoard.layout.rows.unshift({type: 'param', params: []});
     };
 
     $scope.saveBoard = function () {

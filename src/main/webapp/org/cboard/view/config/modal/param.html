@@ -23,11 +23,11 @@
     <div class="row">
         <div class="col-md-5">
             <div class="cubeTree">
-                <div class="title fa fa-cube"><span>{{'CONFIG.DASHBOARD.CUBE_TREE'|translate}}</span></div>
+                <div class="title"><i class="fa fa-cube"></i><span>{{'CONFIG.DASHBOARD.CUBE_TREE'|translate}}</span></div>
                 <div class="cubes">
                     <div ng-repeat="c in boardDataset">
                         <div class="cube" ng-click="foldCube(c, $event)">
-                            <span class="cubeName"><img src="../../dist/img/arrow.png">{{c.name}}</span>
+                            <i class="cubeName"><img src="../../dist/img/arrow.png">{{c.name}}</i>
                             <span ng-repeat="v in c.columns" ng-click="add(c, v)">
                                 {{v}}
                             </span>
@@ -40,9 +40,9 @@
         </div>
         <div class="col-md-5">
             <div class="cubeSelected">
-                <div class="title">{{'CONFIG.DASHBOARD.LINKED_COLUMN'|translate}}</div>
+                <div class="title"><span>{{'CONFIG.DASHBOARD.LINKED_COLUMN'|translate}}</span></div>
                 <div class="cubes">
-                    <span ng-repeat="v in param.col" ng-click="param.col.splice($index, 1)">{{'[' + v.name + '].[' + v.column + ']';}}</span>
+                    <span ng-repeat="v in param.col" ng-click="deleteSelected($index)">{{'[' + v.name + '].[' + v.column + ']';}}</span>
                 </div>
             </div>
         </div>

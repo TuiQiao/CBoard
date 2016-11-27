@@ -2585,6 +2585,11 @@ div.cubeTree .cubeName{
   padding-left: 0;
   font-size: 14px;
   font-weight: bold;
+  cursor: pointer;
+  font-style:normal;
+}
+.itemSelected {
+  color: #ccc;
 }
 div.cubeTree>.title, div.cubeSelected>.title{
   width:100%;

@@ -11,7 +11,10 @@
     "SUCCESS": "Success!",
     "FAIL": "Fail!",
     "DEFAULT_CATEGORY": "Default Category",
-    "NOT_EMPTY":" cannot be empty!"
+    "NOT_EMPTY":" can not be empty!"
+  },
+  "TIPS":{
+    "CAL_EXPR": "Calculate after aggregation. Use assist click input to avoid typo! e.g: Math.log(sum(columnA)/count(columB))"
   },
   "SIDEBAR": {
     "C_DASHBOARD": "Dashboard",
@@ -25,6 +28,17 @@
   },
   "HEADER": {
     "SIGN_OUT": "SignOut"
+  },
+  "DASHBOARD":{
+    "PARAM":{
+      "NAME": "Parameter",
+      "FIND": "Find",
+      "OPT_VALUE": "Optional Values",
+      "VALUE_LIST": "Value List",
+      "VALUE": "Value",
+      "VALUE_A": "Lower Bound",
+      "VALUE_B": "Upper Bound"
+    }
   },
   "CONFIG": {
     "COMMON": {
@@ -41,7 +55,7 @@
       "DATA_SOURCE": "Data Source",
       "DATASET": "Cube",
       "LOAD_DATA": "Load Data",
-      "NAME": "Widget Name",
+      "NAME": "Axis Name",
       "CATEGORY": "Widget Category",
       "WIDGET_TYPE": "Widget Type",
       "CANCEL": "Cancel",
@@ -51,7 +65,7 @@
       "NEW_QUERY": "New Query",
       "SWITCH": "Switch",
       "ROW": "Row",
-      "GROUP": "Group",
+      "GROUP": "Column",
       "VALUE": "Value",
       "VALUE_AXIS": "Value Axis",
       "FILTER": "Filter",
@@ -102,11 +116,13 @@
       "WIDTH": "Width",
       "WIDGET": "Widget",
       "PREVIEW": "Preview",
-      "ADD_PARAMROW": "Add Condition Row",
-      "ADD_PARAM": "Add Condition",
-      "PARAM_ROW": "Condition Row",
-      "PARAM": "Filter",
-      "PARAM_NAME": "Name"
+      "ADD_PARAMROW": "Add Param Row",
+      "ADD_PARAM": "Add Param",
+      "PARAM_ROW": "Param Row",
+      "PARAM": "Param",
+      "PARAM_NAME": "Param Name",
+      "CUBE_TREE": "Cube/Query in dashboard",
+      "LINKED_COLUMN": "Columns linked with this param"
     },
     "CATEGORY": {
       "NAME": "Category Name",

@@ -23,7 +23,7 @@
     <div class="row">
         <div class="col-md-5">
             <div class="cubeTree">
-                <div class="title fa fa-cube"><span>Cube in dashboard</span></div>
+                <div class="title fa fa-cube"><span>{{'CONFIG.DASHBOARD.CUBE_TREE'|translate}}</span></div>
                 <div class="cubes">
                     <div ng-repeat="c in boardDataset">
                         <div class="cube" ng-click="foldCube(c, $event)">
@@ -40,7 +40,7 @@
         </div>
         <div class="col-md-5">
             <div class="cubeSelected">
-                <div class="title">Selected items</div>
+                <div class="title">{{'CONFIG.DASHBOARD.LINKED_COLUMN'|translate}}</div>
                 <div class="cubes">
                     <span ng-repeat="v in param.col" ng-click="param.col.splice($index, 1)">{{'[' + v.name + '].[' + v.column + ']';}}</span>
                 </div>

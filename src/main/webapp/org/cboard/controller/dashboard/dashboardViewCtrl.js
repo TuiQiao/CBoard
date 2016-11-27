@@ -380,7 +380,9 @@ cBoard.controller('dashboardViewCtrl', function ($scope, $state, $stateParams, $
                             paramObj.filter = $scope.param.type +' ' + $scope.param.values;
                         },
                         closeInterval: function () {
-                            paramObj.filter = 'between(' + $scope.param.values[0] +','+ $scope.param.values[1] + ')';
+                            var leftBrackets  = $scope.param.type.split('a')[0];
+                            var rightBrackets  = $scope.param.type.split('b')[1];
+                            paramObj.filter = 'between ' + leftBrackets + $scope.param.values[0] +','+ $scope.param.values[1] + rightBrackets;
                         }
                     };
                     paramObj.name = $scope.param.name;
@@ -394,7 +396,7 @@ cBoard.controller('dashboardViewCtrl', function ($scope, $state, $stateParams, $
                     }
                     var template = '';
                     paramArr.map(function (d) {
-                        template += "<span class='filterParam'><span>" + d.name + "</span><span> : " + d.filter + "</span></span>"
+                        template += "<span class='filterParam'><span>" + d.name + "</span><span> :  " + d.filter + "</span></span>"
                     });
                     $('div.paramTemplate').html(template);
                 };

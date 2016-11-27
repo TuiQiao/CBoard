@@ -197,9 +197,23 @@ cBoard.controller('boardCtrl', function ($scope, $http, ModalUtils, $filter, upd
                 $scope.close = function () {
                     $uibModalInstance.close();
                 };
+                $scope.deleteSelected =function (index) {
+                    var select = $scope.param.col[index].column;
+                    var nodes = $('.cube>span');
+                    for (var i = 0; i < nodes.length; i++) {
+                        if (($(nodes[i]))[0].innerText == select) {
+                            $(nodes[i]).removeClass('itemSelected');
+                        }
+                    }
+                    $scope.param.col.splice(index, 1);
+                };
                 $scope.ok = function () {
-                    ok($scope.param);
-                    $uibModalInstance.close();
+                    if($scope.param.name){
+                        ok($scope.param);
+                        $uibModalInstance.close();
+                    }else{
+                        ModalUtils.alert('Please fill out the information', "modal-warning", "lg");
+                    }
                 };
                 $scope.foldCube = function(cube, e) {
                     var node = (e.target.localName == 'img') ? e.target.parentNode.parentNode : e.target.parentNode;
@@ -212,10 +226,21 @@ cBoard.controller('boardCtrl', function ($scope, $http, ModalUtils, $filter, upd
                             node.style.height="25px";
                             imgNode[0].style.webkitTransform="rotate(0deg)";
                         }
-                    }else{
-                        e.target.style.color='#ccc';
+                    }else if($(e.target)[0].localName == 'span') {
+                        $(e.target).addClass('itemSelected');
                     }
-                }
+                    $scope.param.col.map(function (d) {
+                        var columnSelect = d.column;
+                        var cubeName = d.name;
+                        var nodeList = $('.cube>span');
+                        for (var i = 0; i < nodeList.length; i++) {
+                            var name = nodeList[i].parentNode.firstElementChild.innerText;
+                            if (($(nodeList[i]))[0].innerText == columnSelect && cubeName == name) {
+                                $(nodeList[i]).addClass('itemSelected');
+                            }
+                        }
+                    });
+                };
             }
         });
     };

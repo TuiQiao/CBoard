@@ -27,19 +27,14 @@
                 <div class="cubes">
                     <div ng-repeat="c in boardDataset">
                         <div class="cube" ng-click="foldCube(c, $event)">
-                            <span class="cubeName"><img width="18px" src="../../dist/img/arrow.png">{{c.name}}</span>
-                            <span ng-repeat="v in c.columns" ng-click="add(c,v)">
+                            <span class="cubeName"><img src="../../dist/img/arrow.png">{{c.name}}</span>
+                            <span ng-repeat="v in c.columns" ng-click="add(c, v)">
                                 {{v}}
                             </span>
                         </div>
                     </div>
                 </div>
             </div>
-            <!--<select class="form-control" ng-model="selectedDataset" ng-options="w.name for w in boardDataset">-->
-            <!--</select>-->
-            <!--<select multiple class="form-control" style="height: 300px">-->
-                <!--<option ng-repeat="v in selectedDataset.columns" ng-click="add(selectedDataset,v)">{{v}}</option>-->
-            <!--</select>-->
         </div>
         <div class="col-md-2">
         </div>
@@ -50,9 +45,6 @@
                     <span ng-repeat="v in param.col" ng-click="param.col.splice($index, 1)">{{'[' + v.name + '].[' + v.column + ']';}}</span>
                 </div>
             </div>
-            <!--<select multiple class="form-control" style="height: 300px">-->
-                <!--<option ng-repeat="v in param.col" ng-click="param.col.splice($index, 1)">{{'[' + v.name + '].[' + v.column + ']';}}</option>-->
-            <!--</select>-->
         </div>
     </div>
 </div>

@@ -22,18 +22,41 @@
     </div>
     <div class="row">
         <div class="col-md-5">
-            <select multiple class="form-control" style="height: 300px">
-                <option ng-repeat="v in selects|filter:selected|filter:keyword" ng-click="param.values.push(v)">{{v}}</option>
-            </select>
+            <div class="SelectsOption">
+                <span>Selects</span>
+                <select multiple class="form-control selectsOption" style="height: 300px">
+                    <option ng-repeat="v in selects" ng-click="selectedValues($event)">{{v}}</option>
+                </select>
+            </div>
+            <!--<select multiple class="form-control selectsOption" style="height: 300px">-->
+                <!--<option ng-repeat="v in selects|filter:selected|filter:keyword" ng-click="param.values.push(v)">{{v}}</option>-->
+            <!--</select>-->
         </div>
         <div class="col-md-2">
-            <select class="form-control" ng-model="param.type" ng-options="t as t for t in type">
+            <select class="form-control filterOptions" ng-model="param.type" ng-options="t as t for t in type" ng-change="filterType()">
             </select>
         </div>
         <div class="col-md-5">
-            <select multiple class="form-control" style="height: 300px">
-                <option ng-repeat="v in param.values" ng-click="param.values.splice($index, 1)">{{v}}</option>
-            </select>
+            <div class="multiValues" ng-if="operate.equal">
+                <span>Multi Values</span>
+                <select multiple class="form-control" style="height: 300px">
+                    <option ng-repeat="v in param.values" ng-click="deleteSelected($event)">{{v}}</option>
+                </select>
+            </div>
+            <div class="doubleValues" ng-if="operate.closeInterval">
+                <div>
+                    <span>Value a</span>
+                    <div ng-click="deleteDoubleValues(0)">{{param.values[0]}}</div>
+                </div>
+                <div>
+                    <span>Value b</span>
+                    <div ng-click="deleteDoubleValues(1)">{{param.values[1]}}</div>
+                </div>
+            </div>
+            <div class="signalValue" ng-if="operate.openInterval">
+                <span>Signal Value</span>
+                <div ng-click="deleteSelected($event)">{{param.values[0]}}</div>
+            </div>
         </div>
     </div>
 </div>

@@ -202,9 +202,9 @@ cBoard.controller('boardCtrl', function ($scope, $http, ModalUtils, $filter, upd
                     $uibModalInstance.close();
                 };
                 $scope.foldCube = function(cube, e) {
-                    var node= e.target.parentNode;
+                    var node = (e.target.localName == 'img') ? e.target.parentNode.parentNode : e.target.parentNode;
                     var imgNode=node.getElementsByTagName("img");
-                    if(e.target.className == "cubeName ng-binding") {
+                    if(e.target.className == "cubeName ng-binding" || e.target.localName == 'img') {
                         if(node.style.height=="25px"||node.style.height==""){
                             node.style.height=25*(cube.columns.length+1)+"px";
                             imgNode[0].style.webkitTransform="rotate(90deg)";
@@ -212,6 +212,8 @@ cBoard.controller('boardCtrl', function ($scope, $http, ModalUtils, $filter, upd
                             node.style.height="25px";
                             imgNode[0].style.webkitTransform="rotate(0deg)";
                         }
+                    }else{
+                        e.target.style.color='#ccc';
                     }
                 }
             }

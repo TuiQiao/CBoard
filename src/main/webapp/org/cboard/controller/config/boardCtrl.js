@@ -108,7 +108,7 @@ cBoard.controller('boardCtrl', function ($scope, $http, ModalUtils, $filter, upd
     };
 
     $scope.addPramRow = function () {
-        $scope.curBoard.layout.rows.push({type: 'param', params: []});
+        $scope.curBoard.layout.rows.unshift({type: 'param', params: []});
     };
 
     $scope.saveBoard = function () {
@@ -197,14 +197,28 @@ cBoard.controller('boardCtrl', function ($scope, $http, ModalUtils, $filter, upd
                 $scope.close = function () {
                     $uibModalInstance.close();
                 };
+                $scope.deleteSelected =function (index) {
+                    var select = $scope.param.col[index].column;
+                    var nodes = $('.cube>span');
+                    for (var i = 0; i < nodes.length; i++) {
+                        if (($(nodes[i]))[0].innerText == select) {
+                            $(nodes[i]).removeClass('itemSelected');
+                        }
+                    }
+                    $scope.param.col.splice(index, 1);
+                };
                 $scope.ok = function () {
-                    ok($scope.param);
-                    $uibModalInstance.close();
+                    if($scope.param.name){
+                        ok($scope.param);
+                        $uibModalInstance.close();
+                    }else{
+                        ModalUtils.alert('Please fill out the information', "modal-warning", "lg");
+                    }
                 };
                 $scope.foldCube = function(cube, e) {
-                    var node= e.target.parentNode;
+                    var node = (e.target.localName == 'img') ? e.target.parentNode.parentNode : e.target.parentNode;
                     var imgNode=node.getElementsByTagName("img");
-                    if(e.target.className == "cubeName ng-binding") {
+                    if(e.target.className == "cubeName ng-binding" || e.target.localName == 'img') {
                         if(node.style.height=="25px"||node.style.height==""){
                             node.style.height=25*(cube.columns.length+1)+"px";
                             imgNode[0].style.webkitTransform="rotate(90deg)";
@@ -212,8 +226,21 @@ cBoard.controller('boardCtrl', function ($scope, $http, ModalUtils, $filter, upd
                             node.style.height="25px";
                             imgNode[0].style.webkitTransform="rotate(0deg)";
                         }
+                    }else if($(e.target)[0].localName == 'span') {
+                        $(e.target).addClass('itemSelected');
                     }
-                }
+                    $scope.param.col.map(function (d) {
+                        var columnSelect = d.column;
+                        var cubeName = d.name;
+                        var nodeList = $('.cube>span');
+                        for (var i = 0; i < nodeList.length; i++) {
+                            var name = nodeList[i].parentNode.firstElementChild.innerText;
+                            if (($(nodeList[i]))[0].innerText == columnSelect && cubeName == name) {
+                                $(nodeList[i]).addClass('itemSelected');
+                            }
+                        }
+                    });
+                };
             }
         });
     };

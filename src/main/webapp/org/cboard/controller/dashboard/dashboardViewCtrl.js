@@ -15,6 +15,17 @@ cBoard.controller('dashboardViewCtrl', function ($scope, $state, $stateParams, $
         $scope.load(false);
     });
 
+    var buildRender = function (w) {
+        w.render = function (content, optionFilter, scope) {
+            w.realTimeTicket = chartService.render(content, w.widget.queryData, w.widget.data.config, optionFilter, scope);
+            w.realTimeOption = {optionFilter: optionFilter, scope: scope};
+        };
+        w.modalRender = function (content, optionFilter, scope) {
+            w.modalRealTimeTicket = chartService.render(content, w.widget.queryData, w.widget.data.config, optionFilter, scope);
+            w.modalRealTimeOption = {optionFilter: optionFilter, scope: scope};
+        };
+    };
+
     $scope.load = function (reload) {
         _.each($scope.intervals, function (e) {
             $interval.cancel(e);
@@ -80,6 +91,7 @@ cBoard.controller('dashboardViewCtrl', function ($scope, $state, $stateParams, $
                 }).success(function (response) {
                     _.each(q.widgets, function (w) {
                         w.widget.queryData = response.data;
+                        buildRender(w);
                         w.show = true;
                     });
 
@@ -150,6 +162,9 @@ cBoard.controller('dashboardViewCtrl', function ($scope, $state, $stateParams, $
                             w.widget.queryData = response.data;
                             try {
                                 chartService.realTimeRender(w.realTimeTicket, filterData(w.widget.id, w.widget.queryData), w.widget.data.config);
+                                if (w.modalRealTimeTicket) {
+                                    chartService.realTimeRender(w.modalRealTimeTicket, filterData(w.widget.id, w.widget.queryData), w.widget.data.config, w.modalRealTimeOption.optionFilter, null);
+                                }
                             } catch (e) {
                                 console.error(e);
                             }
@@ -161,7 +176,7 @@ cBoard.controller('dashboardViewCtrl', function ($scope, $state, $stateParams, $
     };
 
     var filterData = function (widgetId, data) {
-        var filter = $scope.widgetFilters[widgetId];
+        var filter = $scope.widgetFilters ? $scope.widgetFilters[widgetId] : undefined;
         if (filter) {
             var result = [data[0]];
             for (var i = 1; i < data.length; i++) {
@@ -258,11 +273,60 @@ cBoard.controller('dashboardViewCtrl', function ($scope, $state, $stateParams, $
     };
 
     $scope.modalChart = function (widget) {
-        ModalUtils.chart(widget);
+        $uibModal.open({
+            templateUrl: 'org/cboard/view/util/modal/chart.html',
+            windowTemplateUrl: 'org/cboard/view/util/modal/window.html',
+            windowClass: 'modal-fit',
+            backdrop: false,
+            controller: function ($scope, $uibModalInstance, chartService) {
+                $scope.widget = widget;
+                $scope.close = function () {
+                    $uibModalInstance.close();
+                    delete widget.modalRealTimeTicket;
+                    delete widget.modalRealTimeOption;
+                };
+                $scope.render1 = function () {
+                    widget.modalRender($('#modal_chart'), function (option) {
+                        option.toolbox = {
+                            feature: {
+                                //saveAsImage: {},
+                                dataView: {
+                                    show: true,
+                                    readOnly: true
+                                },
+                                magicType: {
+                                    type: ['line', 'bar', 'stack', 'tiled']
+                                },
+                                dataZoom: {
+                                    show: true
+                                },
+                                restore: {
+                                    show: true
+                                }
+                            }
+                        };
+                    }, null);
+                };
+            }
+        });
     };
 
     $scope.modalTable = function (widget) {
-        ModalUtils.table(widget);
+        $uibModal.open({
+            templateUrl: 'org/cboard/view/util/modal/chart.html',
+            windowTemplateUrl: 'org/cboard/view/util/modal/window.html',
+            windowClass: 'modal-fit',
+            backdrop: false,
+            controller: function ($scope, $uibModalInstance, chartService) {
+                $scope.widget = widget;
+                $scope.close = function () {
+                    $uibModalInstance.close();
+                };
+                $scope.render1 = function () {
+                    widget.modalRender($('#modal_chart'), null, null);
+                };
+            }
+        });
     };
 
     $scope.config = function (widget) {

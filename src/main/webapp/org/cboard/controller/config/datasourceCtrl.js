@@ -7,7 +7,9 @@ cBoard.controller('datasourceCtrl', function ($scope, $http, ModalUtils, $uibMod
     $scope.optFlag = 'none';
     $scope.dsView = '';
     $scope.curDatasource = {};
-
+    $scope.alerts = [];
+    $scope.verify = {dsName:true};
+    
     var getDatasourceList = function () {
         $http.get("/dashboard/getDatasourceList.do").success(function (response) {
             $scope.datasourceList = response;
@@ -55,8 +57,40 @@ cBoard.controller('datasourceCtrl', function ($scope, $http, ModalUtils, $uibMod
     $scope.changeDsView = function () {
         $scope.dsView = '/dashboard/getDatasourceView.do?type=' + $scope.curDatasource.type;
     };
-
+    
+    var validate = function () {
+        $scope.alerts = [];
+        if($scope.curDatasource.name == null){
+            $scope.alerts = [{msg: translate('CONFIG.DATA_SOURCE.NAME')+translate('COMMON.NOT_EMPTY'), type: 'danger'}];
+            $scope.verify = {dsName : false};
+            return false;
+        }
+        if($scope.curDatasource.config.driver == null){
+            $scope.alerts = [{msg: 'Driver'+translate('COMMON.NOT_EMPTY'), type: 'danger'}];
+            $scope.verify = {Driver : false};
+            return false;
+        }
+        if($scope.curDatasource.config.jdbcurl == null){
+            $scope.alerts = [{msg: 'JDBC Url'+translate('COMMON.NOT_EMPTY'), type: 'danger'}];
+            $scope.verify = {jdbcurl : false};
+            return false;
+        }
+        if($scope.curDatasource.config.username == null){
+            $scope.alerts = [{msg: 'User Name'+translate('COMMON.NOT_EMPTY'), type: 'danger'}];
+            $scope.verify = {username : false};
+            return false;
+        }
+        if($scope.curDatasource.config.password == null){
+            $scope.alerts = [{msg: 'Password'+translate('COMMON.NOT_EMPTY'), type: 'danger'}];
+            $scope.verify = {password : false};
+            return false;
+        }
+        return true;
+    }
     $scope.saveNew = function () {
+        if(!validate()){
+            return;
+        }
         $http.post("/dashboard/saveNewDatasource.do", {json: angular.toJson($scope.curDatasource)}).success(function (serviceStatus) {
             if (serviceStatus.status == '1') {
                 $scope.optFlag = 'none';
@@ -69,6 +103,9 @@ cBoard.controller('datasourceCtrl', function ($scope, $http, ModalUtils, $uibMod
     };
 
     $scope.saveEdit = function () {
+        if(!validate()){
+            return;
+        }
         $http.post("/dashboard/updateDatasource.do", {json: angular.toJson($scope.curDatasource)}).success(function (serviceStatus) {
             if (serviceStatus.status == '1') {
                 $scope.optFlag = 'none';

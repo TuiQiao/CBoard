@@ -387,9 +387,12 @@ cBoard.controller('dashboardViewCtrl', function ($scope, $state, $stateParams, $
                     };
                     paramObj.name = $scope.param.name;
                     types[opt] ? types[opt]() : null;
-                    if (paramArr.length > 0) {
+                    var oldParam = _.find(paramArr, function (param) {
+                        return param.name == paramObj.name;
+                    });
+                    if (oldParam) {
                         paramArr.map(function(d){
-                            d.name == $scope.param.name ? d.filter = paramObj.filter : paramArr.push(paramObj);
+                            if (d.name == oldParam.name)  { d.filter = paramObj.filter; }
                         });
                     } else {
                         paramArr.push(paramObj);

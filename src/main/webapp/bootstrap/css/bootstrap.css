@@ -2641,6 +2641,8 @@ div.cubeTree .cube, div.cubeSelected .cube{
 }
 .paramTemplate{
   text-align: right;
+  color: blue;
+  font-size: small;
 }
 .paramTemplate span.filterParam{
   display: inline-block;

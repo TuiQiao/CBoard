@@ -65,10 +65,15 @@
                             </div>
                             <div class="row">
                                 <div class="col-md-12">
-                                    <div class="form-group">
+                                    <div class="form-group" ng-class="{'has-error': !(verify.boardName || curBoard.name.length)}">
                                         <label>{{'CONFIG.DASHBOARD.NAME'|translate}}</label>
-                                        <input ng-model="curBoard.name" class="form-control"/>
+                                        <input id="BoardName" ng-model="curBoard.name" class="form-control"/>
                                     </div>
+                                </div>
+                            </div>
+                            <div class="form-group" ng-repeat="alert in alerts">
+                                <div uib-alert ng-class="'alert-' + (alert.type || 'warning')"
+                                     close="alerts.splice($index, 1)">{{alert.msg}}
                                 </div>
                             </div>
                             <div class="row">

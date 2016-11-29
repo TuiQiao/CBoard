@@ -8,6 +8,8 @@ cBoard.controller('boardCtrl', function ($scope, $http, ModalUtils, $filter, upd
 
     $scope.optFlag = 'none';
     $scope.curBoard = {layout: {rows: []}};
+    $scope.alerts = [];
+    $scope.verify = {boardName:true};
 
     var getBoardList = function () {
         $http.get("/dashboard/getBoardList.do").success(function (response) {
@@ -78,6 +80,7 @@ cBoard.controller('boardCtrl', function ($scope, $http, ModalUtils, $filter, upd
     };
 
     var boardChange = function () {
+        $scope.verify = {boardName:true};
         $scope.$emit("boardChange");
     };
 
@@ -111,7 +114,21 @@ cBoard.controller('boardCtrl', function ($scope, $http, ModalUtils, $filter, upd
         $scope.curBoard.layout.rows.unshift({type: 'param', params: []});
     };
 
+    var validate = function () {
+        $scope.alerts = [];
+        if(!$scope.curBoard.name){
+            $scope.alerts = [{msg: translate('CONFIG.DASHBOARD.NAME')+translate('COMMON.NOT_EMPTY'), type: 'danger'}];
+            $scope.verify = {boardName : false};
+            $("#BoardName").focus();
+            return false;
+        }
+        return true;
+    }
+
     $scope.saveBoard = function () {
+        if(!validate()){
+            return;
+        }
         if ($scope.optFlag == 'new') {
             $http.post("/dashboard/saveNewBoard.do", {json: angular.toJson($scope.curBoard)}).success(function (serviceStatus) {
                 if (serviceStatus.status == '1') {
@@ -120,7 +137,8 @@ cBoard.controller('boardCtrl', function ($scope, $http, ModalUtils, $filter, upd
                     ModalUtils.alert(serviceStatus.msg, "modal-success", "sm");
                     boardChange();
                 } else {
-                    ModalUtils.alert(serviceStatus.msg, "modal-warning", "lg");
+                    $scope.alerts = [{msg: serviceStatus.msg, type: 'danger'}];
+                    //ModalUtils.alert(serviceStatus.msg, "modal-warning", "lg");
                 }
             });
         } else if ($scope.optFlag == 'edit') {
@@ -131,7 +149,8 @@ cBoard.controller('boardCtrl', function ($scope, $http, ModalUtils, $filter, upd
                     ModalUtils.alert(serviceStatus.msg, "modal-success", "sm");
                     boardChange();
                 } else {
-                    ModalUtils.alert(serviceStatus.msg, "modal-warning", "lg");
+                    $scope.alerts = [{msg: serviceStatus.msg, type: 'danger'}];
+                    //ModalUtils.alert(serviceStatus.msg, "modal-warning", "lg");
                 }
             });
         }

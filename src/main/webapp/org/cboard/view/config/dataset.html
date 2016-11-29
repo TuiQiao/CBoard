@@ -44,10 +44,10 @@
                         <div class="col-md-12 form-horizontal">
                             <div class="row">
                                 <div class="col-md-12">
-                                    <div class="form-group">
+                                    <div class="form-group" ng-class="{'has-error': !(verify.dsName || curDataset.name.length)}">
                                         <label class="col-sm-2 control-label">{{'CONFIG.DATASET.NAME'|translate}}</label>
                                         <div class="col-sm-10">
-                                            <input ng-model="curDataset.name" class="form-control"/>
+                                            <input id="DatasetName" ng-model="curDataset.name" class="form-control"/>
                                         </div>
                                     </div>
                                 </div>
@@ -80,6 +80,13 @@
                                     </div>
                                 </div>
                             </div>
+                            <div class="form-group" ng-repeat="alert in alerts">
+                                <div class="col-sm-offset-2 col-sm-10">
+                                    <div uib-alert ng-class="'alert-' + (alert.type || 'warning')"
+                                         close="alerts.splice($index, 1)">{{alert.msg}}
+                                    </div>
+                                </div>
+                            </div>
                             <div class="row">
                                 <div class="col-md-12" ng-show="datasource.name"
                                      ng-include="datasource.type?('/dashboard/getConfigView.do?type=' + datasource.type):''"></div>
@@ -91,13 +98,6 @@
                                             <button type="button" class="btn btn-block btn-success"
                                                     ng-click="loadData()">{{'CONFIG.DATASET.LOAD_DATA'|translate}}
                                             </button>
-                                        </div>
-                                    </div>
-                                    <div class="form-group" ng-repeat="alert in alerts">
-                                        <div class="col-sm-offset-2 col-sm-10">
-                                            <div uib-alert ng-class="'alert-' + (alert.type || 'warning')"
-                                                 close="alerts.splice($index, 1)">{{alert.msg}}
-                                            </div>
                                         </div>
                                     </div>
                                 </div>

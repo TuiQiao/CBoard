@@ -7,6 +7,8 @@ cBoard.controller('datasetCtrl', function ($scope, $http, dataService, $uibModal
     $scope.optFlag = 'none';
     $scope.curDataset = {data: {expressions: []}};
     $scope.curWidget = {};
+    $scope.alerts = [];
+    $scope.verify = {dsName:true};
 
     var getDatasetList = function () {
         $http.get("/dashboard/getDatasetList.do").success(function (response) {
@@ -67,20 +69,33 @@ cBoard.controller('datasetCtrl', function ($scope, $http, dataService, $uibModal
         });
     };
 
+    var validate = function () {
+        $scope.alerts = [];
+        if(!$scope.curDataset.name){
+            $scope.alerts = [{msg: translate('CONFIG.DATASET.NAME')+translate('COMMON.NOT_EMPTY'), type: 'danger'}];
+            $scope.verify = {dsName : false};
+            $("#DatasetName").focus();
+            return false;
+        }
+        return true;
+    }
     $scope.save = function () {
         $scope.datasource ? $scope.curDataset.data.datasource = $scope.datasource.id : null;
         $scope.curDataset.data.query = $scope.curWidget.query;
-        if (!$scope.curDataset.data.datasource && !$scope.curDataset.name) {
-            ModalUtils.alert('Please fill out the complete data.', "modal-warning", "md");
-        } else if ($scope.optFlag == 'new') {
+
+        if(!validate()){
+            return;
+        }
+        if ($scope.optFlag == 'new') {
             $http.post("/dashboard/saveNewDataset.do", {json: angular.toJson($scope.curDataset)}).success(function (serviceStatus) {
                 if (serviceStatus.status == '1') {
                     $scope.optFlag = 'none';
                     getCategoryList();
                     getDatasetList();
+                    $scope.verify = {dsName:true};
                     ModalUtils.alert(translate("COMMON.SUCCESS"), "modal-success", "sm");
                 } else {
-                    ModalUtils.alert(serviceStatus.msg, "modal-warning", "lg");
+                    $scope.alerts = [{msg: serviceStatus.msg, type: 'danger'}];
                 }
             });
         } else {
@@ -89,9 +104,10 @@ cBoard.controller('datasetCtrl', function ($scope, $http, dataService, $uibModal
                     $scope.optFlag = 'none';
                     getCategoryList();
                     getDatasetList();
+                    $scope.verify = {dsName:true};
                     ModalUtils.alert(translate("COMMON.SUCCESS"), "modal-success", "sm");
                 } else {
-                    ModalUtils.alert(serviceStatus.msg, "modal-warning", "lg");
+                    $scope.alerts = [{msg: serviceStatus.msg, type: 'danger'}];
                 }
             });
         }
@@ -183,6 +199,7 @@ cBoard.controller('datasetCtrl', function ($scope, $http, dataService, $uibModal
     $scope.loadData = function () {
         cleanPreview();
         $scope.loading = true;
+
         dataService.getData($scope.datasource.id, $scope.curWidget.query, null, function (widgetData) {
             $scope.loading = false;
             $scope.toChartDisabled = false;
@@ -191,7 +208,9 @@ cBoard.controller('datasetCtrl', function ($scope, $http, dataService, $uibModal
                 $scope.widgetData = widgetData.data;
                 $scope.selects = angular.copy($scope.widgetData[0]);
             } else {
-                $scope.alerts = [{msg: widgetData.msg, type: 'danger'}];
+                if(widgetData.msg != null){
+                    $scope.alerts = [{msg: widgetData.msg, type: 'danger'}];
+                }
             }
 
             var widget = {

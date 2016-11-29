@@ -21,7 +21,7 @@ cBoard.controller('dashboardViewCtrl', function ($scope, $state, $stateParams, $
             w.realTimeOption = {optionFilter: optionFilter, scope: scope};
         };
         w.modalRender = function (content, optionFilter, scope) {
-            w.modalRealTimeTicket = chartService.render(content, w.widget.queryData, w.widget.data.config, optionFilter, scope);
+            w.modalRealTimeTicket = chartService.render(content, filterData(w.widget.id, w.widget.queryData), w.widget.data.config, optionFilter, scope);
             w.modalRealTimeOption = {optionFilter: optionFilter, scope: scope};
         };
     };

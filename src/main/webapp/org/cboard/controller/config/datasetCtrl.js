@@ -190,7 +190,7 @@ cBoard.controller('datasetCtrl', function ($scope, $http, dataService, $uibModal
                 };
                 $scope.ok = function () {
                     if(!$scope.alias){
-                        ModalUtils.alert("别名"+translate('COMMON.NOT_EMPTY'), "modal-warning", "lg");
+                        ModalUtils.alert(translate('CONFIG.WIDGET.ALIAS')+translate('COMMON.NOT_EMPTY'), "modal-warning", "lg");
                         return;
                     }
                     ok($scope.expression, $scope.alias);

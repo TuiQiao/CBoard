@@ -2,7 +2,7 @@
  * Created by yfyuan on 2016/8/2.
  */
 
-cBoard.controller('dashboardViewCtrl', function ($scope, $state, $stateParams, $http, ModalUtils, chartService, $interval, $uibModal, dataService) {
+cBoard.controller('dashboardViewCtrl', function ($rootScope, $scope, $state, $stateParams, $http, ModalUtils, chartService, $interval, $uibModal, dataService) {
 
     $scope.loading = true;
 
@@ -25,6 +25,15 @@ cBoard.controller('dashboardViewCtrl', function ($scope, $state, $stateParams, $
             w.modalRealTimeOption = {optionFilter: optionFilter, scope: scope};
         };
     };
+
+    $rootScope.$on('$stateChangeSuccess', function (event, toState, toParams, fromState) {
+            if (fromState.controller == 'dashboardViewCtrl') {
+                _.each($scope.intervals, function (i) {
+                    $interval.cancel(i);
+                })
+            }
+        }
+    );
 
     $scope.load = function (reload) {
         _.each($scope.intervals, function (e) {
@@ -368,54 +377,54 @@ cBoard.controller('dashboardViewCtrl', function ($scope, $state, $stateParams, $
                     var equal = ['=', '≠'];
                     var openInterval = ['>', '<', '≥', '≤'];
                     var closeInterval = ['(a,b]', '[a,b)', '(a,b)', '[a,b]'];
-                    operate.equal = $.inArray(type, equal)>-1 ? true : false;
-                    operate.openInterval = $.inArray(type, openInterval)>-1 ? true : false;
-                    operate.closeInterval = $.inArray(type, closeInterval)>-1 ? true : false;
+                    operate.equal = $.inArray(type, equal) > -1 ? true : false;
+                    operate.openInterval = $.inArray(type, openInterval) > -1 ? true : false;
+                    operate.closeInterval = $.inArray(type, closeInterval) > -1 ? true : false;
                 };
                 showValues($scope.operate, $scope.param.type);
                 $scope.selected = function (v) {
                     return _.indexOf($scope.param.values, v) == -1
                 };
-                $scope.selectedValues = function(ev){
-                    var opt = $scope.operate.equal ? 'equal' :($scope.operate.openInterval ? 'openInterval' : 'closeInterval');
+                $scope.selectedValues = function (ev) {
+                    var opt = $scope.operate.equal ? 'equal' : ($scope.operate.openInterval ? 'openInterval' : 'closeInterval');
                     var select = ev.target.textContent;
                     var types = {
-                        equal: function(){
+                        equal: function () {
                             param.values.push(select);
-                            $scope.selects.map(function(d, i){
-                                d == select ? $scope.selects.splice(i, 1):null;
+                            $scope.selects.map(function (d, i) {
+                                d == select ? $scope.selects.splice(i, 1) : null;
                             });
                         },
-                        openInterval: function() {
-                            if(param.values.length == 0) {
+                        openInterval: function () {
+                            if (param.values.length == 0) {
                                 param.values.push(select);
-                                $scope.selects.map(function(d, i){
-                                    d == select ? $scope.selects.splice(i, 1):null;
+                                $scope.selects.map(function (d, i) {
+                                    d == select ? $scope.selects.splice(i, 1) : null;
                                 });
                             }
                         },
                         closeInterval: function () {
-                            if(param.values[0] == null) {
+                            if (param.values[0] == null) {
                                 param.values[0] = select;
-                                $scope.selects.map(function(d, i){
-                                    d == select ? $scope.selects.splice(i, 1):null;
+                                $scope.selects.map(function (d, i) {
+                                    d == select ? $scope.selects.splice(i, 1) : null;
                                 });
-                            } else if(param.values[1] == null) {
+                            } else if (param.values[1] == null) {
                                 param.values[1] = select;
-                                $scope.selects.map(function(d, i){
-                                    d == select ? $scope.selects.splice(i, 1):null;
+                                $scope.selects.map(function (d, i) {
+                                    d == select ? $scope.selects.splice(i, 1) : null;
                                 });
                             }
                         }
                     };
                     types[opt] ? types[opt]() : null;
                 };
-                $scope.filterType = function() {
+                $scope.filterType = function () {
                     $scope.param.values = [];
                     $scope.selects = _.sortBy(dataService.toNumber(param.selects));
                     showValues($scope.operate, $scope.param.type);
                 };
-                $scope.deleteSelected = function(ev){
+                $scope.deleteSelected = function (ev) {
                     var select = ev.target.textContent;
                     $scope.selects.push(select);
                     $scope.selects = _.sortBy(dataService.toNumber($scope.selects));
@@ -423,7 +432,7 @@ cBoard.controller('dashboardViewCtrl', function ($scope, $state, $stateParams, $
                         d == select ? $scope.param.values.splice(i, 1) : null;
                     });
                 };
-                $scope.deleteDoubleValues = function(index){
+                $scope.deleteDoubleValues = function (index) {
                     $scope.selects.push($scope.param.values[index]);
                     $scope.selects = _.sortBy(dataService.toNumber($scope.selects));
                     $scope.param.values[index] = null;
@@ -437,16 +446,16 @@ cBoard.controller('dashboardViewCtrl', function ($scope, $state, $stateParams, $
                     var paramObj = {};
                     var opt = $scope.operate.equal ? 'equal' : ($scope.operate.openInterval ? 'openInterval' : 'closeInterval');
                     var types = {
-                        equal: function(){
+                        equal: function () {
                             paramObj.filter = $scope.param.type + ' (' + $scope.param.values + ')';
                         },
-                        openInterval: function() {
-                            paramObj.filter = $scope.param.type +' ' + $scope.param.values;
+                        openInterval: function () {
+                            paramObj.filter = $scope.param.type + ' ' + $scope.param.values;
                         },
                         closeInterval: function () {
-                            var leftBrackets  = $scope.param.type.split('a')[0];
-                            var rightBrackets  = $scope.param.type.split('b')[1];
-                            paramObj.filter = 'between ' + leftBrackets + $scope.param.values[0] +','+ $scope.param.values[1] + rightBrackets;
+                            var leftBrackets = $scope.param.type.split('a')[0];
+                            var rightBrackets = $scope.param.type.split('b')[1];
+                            paramObj.filter = 'between ' + leftBrackets + $scope.param.values[0] + ',' + $scope.param.values[1] + rightBrackets;
                         }
                     };
                     paramObj.name = $scope.param.name;
@@ -455,8 +464,10 @@ cBoard.controller('dashboardViewCtrl', function ($scope, $state, $stateParams, $
                         return param.name == paramObj.name;
                     });
                     if (oldParam) {
-                        paramArr.map(function(d){
-                            if (d.name == oldParam.name)  { d.filter = paramObj.filter; }
+                        paramArr.map(function (d) {
+                            if (d.name == oldParam.name) {
+                                d.filter = paramObj.filter;
+                            }
                         });
                     } else {
                         paramArr.push(paramObj);

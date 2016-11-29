@@ -8,7 +8,7 @@ cBoard.controller('datasourceCtrl', function ($scope, $http, ModalUtils, $uibMod
     $scope.dsView = '';
     $scope.curDatasource = {};
     $scope.alerts = [];
-    $scope.verify = {dsName:true};
+    $scope.verify = {dsName:true,provider:true};
     
     var getDatasourceList = function () {
         $http.get("/dashboard/getDatasourceList.do").success(function (response) {
@@ -60,29 +60,15 @@ cBoard.controller('datasourceCtrl', function ($scope, $http, ModalUtils, $uibMod
     
     var validate = function () {
         $scope.alerts = [];
-        if($scope.curDatasource.name == null){
+        if($scope.curDatasource.type == null){
+            $scope.alerts = [{msg: translate('CONFIG.DATA_SOURCE.DATA_PROVIDER')+translate('COMMON.NOT_EMPTY'), type: 'danger'}];
+            $scope.verify = {provider : false};
+            return false;
+        }
+        if(!$scope.curDatasource.name){
             $scope.alerts = [{msg: translate('CONFIG.DATA_SOURCE.NAME')+translate('COMMON.NOT_EMPTY'), type: 'danger'}];
             $scope.verify = {dsName : false};
-            return false;
-        }
-        if($scope.curDatasource.config.driver == null){
-            $scope.alerts = [{msg: 'Driver'+translate('COMMON.NOT_EMPTY'), type: 'danger'}];
-            $scope.verify = {Driver : false};
-            return false;
-        }
-        if($scope.curDatasource.config.jdbcurl == null){
-            $scope.alerts = [{msg: 'JDBC Url'+translate('COMMON.NOT_EMPTY'), type: 'danger'}];
-            $scope.verify = {jdbcurl : false};
-            return false;
-        }
-        if($scope.curDatasource.config.username == null){
-            $scope.alerts = [{msg: 'User Name'+translate('COMMON.NOT_EMPTY'), type: 'danger'}];
-            $scope.verify = {username : false};
-            return false;
-        }
-        if($scope.curDatasource.config.password == null){
-            $scope.alerts = [{msg: 'Password'+translate('COMMON.NOT_EMPTY'), type: 'danger'}];
-            $scope.verify = {password : false};
+            $("#DatasetName").focus();
             return false;
         }
         return true;
@@ -95,9 +81,10 @@ cBoard.controller('datasourceCtrl', function ($scope, $http, ModalUtils, $uibMod
             if (serviceStatus.status == '1') {
                 $scope.optFlag = 'none';
                 getDatasourceList();
+                $scope.verify = {dsName:true,provider:true};
                 ModalUtils.alert(translate("COMMON.SUCCESS"), "modal-success", "sm");
             } else {
-                ModalUtils.alert(serviceStatus.msg, "modal-warning", "lg");
+                $scope.alerts = [{msg: serviceStatus.msg, type: 'danger'}];
             }
         });
     };
@@ -110,9 +97,10 @@ cBoard.controller('datasourceCtrl', function ($scope, $http, ModalUtils, $uibMod
             if (serviceStatus.status == '1') {
                 $scope.optFlag = 'none';
                 getDatasourceList();
+                $scope.verify = {dsName:true,provider:true};
                 ModalUtils.alert(translate("COMMON.SUCCESS"), "modal-success", "sm");
             } else {
-                ModalUtils.alert(serviceStatus.msg, "modal-warning", "lg");
+                $scope.alerts = [{msg: serviceStatus.msg, type: 'danger'}];
             }
         });
     };

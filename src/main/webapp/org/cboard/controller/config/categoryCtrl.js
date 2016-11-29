@@ -6,6 +6,8 @@ cBoard.controller('categoryCtrl', function ($scope, $http, ModalUtils, $filter) 
     var translate = $filter('translate');
     $scope.optFlag = 'none';
     $scope.categoryList = {};
+    $scope.alerts = [];
+    $scope.verify = {categoryName:true};
 
     var getCategoryList = function () {
         $http.get("/dashboard/getCategoryList.do").success(function (response) {
@@ -14,6 +16,7 @@ cBoard.controller('categoryCtrl', function ($scope, $http, ModalUtils, $filter) 
     };
 
     var categoryChange = function () {
+        $scope.verify = {categoryName:true};
         $scope.$emit("categoryChange");
     };
 
@@ -37,7 +40,21 @@ cBoard.controller('categoryCtrl', function ($scope, $http, ModalUtils, $filter) 
         });
     };
 
+    var validate = function () {
+        $scope.alerts = [];
+        if(!$scope.curCategory.name){
+            $scope.alerts = [{msg: translate('CONFIG.CATEGORY.NAME')+translate('COMMON.NOT_EMPTY'), type: 'danger'}];
+            $scope.verify = {categoryName : false};
+            $("#CategoryName").focus();
+            return false;
+        }
+        return true;
+    }
+
     $scope.save = function () {
+        if(!validate()){
+            return;
+        }
         if ($scope.optFlag == "new") {
             $http.post("/dashboard/saveNewCategory.do", {json: angular.toJson($scope.curCategory)}).success(function (serviceStatus) {
                 if (serviceStatus.status == '1') {
@@ -46,7 +63,7 @@ cBoard.controller('categoryCtrl', function ($scope, $http, ModalUtils, $filter) 
                     ModalUtils.alert(translate("COMMON.SUCCESS"), "modal-success", "sm");
                     categoryChange();
                 } else {
-                    ModalUtils.alert(serviceStatus.msg, "modal-warning", "lg");
+                    $scope.alerts = [{msg: serviceStatus.msg, type: 'danger'}];
                 }
             });
         } else {
@@ -57,7 +74,7 @@ cBoard.controller('categoryCtrl', function ($scope, $http, ModalUtils, $filter) 
                     ModalUtils.alert(translate("COMMON.SUCCESS"), "modal-success", "sm");
                     categoryChange();
                 } else {
-                    ModalUtils.alert(serviceStatus.msg, "modal-warning", "lg");
+                    $scope.alerts = [{msg: serviceStatus.msg, type: 'danger'}];
                 }
             });
         }

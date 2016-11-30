@@ -378,7 +378,7 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
 
     $scope.saveWgt = function () {
         var o = {};
-        if($scope.widgetName.indexOf("/"<=0)){
+        if($scope.widgetName.indexOf("/")<=0){
             o.name = $scope.widgetName;
             o.categoryName = "";
         }else {

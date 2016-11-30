@@ -378,14 +378,8 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
 
     $scope.saveWgt = function () {
         var o = {};
-        if($scope.widgetName.indexOf("/")<=0){
-            o.name = $scope.widgetName;
-            o.categoryName = "";
-        }else {
-            o.name = $scope.widgetName.split('/')[1];
-            o.categoryName = $scope.widgetName.split('/')[0];
-        }
-        
+        o.name = $scope.widgetName.slice($scope.widgetName.lastIndexOf("/")+1);
+        o.categoryName = $scope.widgetName.substring(0,$scope.widgetName.lastIndexOf("/"));
         o.data = {};
         o.data.config = $scope.curWidget.config;
         if ($scope.customDs) {

@@ -378,8 +378,8 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
 
     $scope.saveWgt = function () {
         var o = {};
-        o.name = $scope.widgetName;
-        o.categoryName = $scope.widgetCategory;
+        o.name = $scope.widgetName.split('/')[1];
+        o.categoryName = $scope.widgetName.split('/')[0];
         o.data = {};
         o.data.config = $scope.curWidget.config;
         if ($scope.customDs) {
@@ -432,8 +432,7 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
         $scope.datasource = _.find($scope.datasourceList, function (ds) {
             return ds.id == widget.data.datasource;
         });
-        $scope.widgetName = angular.copy(widget.name);
-        $scope.widgetCategory = angular.copy(widget.categoryName);
+        $scope.widgetName = angular.copy(widget.categoryName+"/"+widget.name);
         $scope.widgetId = widget.id;
         $scope.optFlag = 'edit';
         $scope.loading = true;

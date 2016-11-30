@@ -52,7 +52,7 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
     $scope.expressions = [];
     $scope.customDs = false;
     $scope.filterSelect = {};
-    $scope.verify = {widgetName: true};
+    $scope.verify = {widgetName:true};
 
     $http.get("/dashboard/getDatasetList.do").success(function (response) {
         $scope.datasetList = response;
@@ -378,8 +378,8 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
 
     $scope.saveWgt = function () {
         var o = {};
-        o.name = $scope.widgetName;
-        o.categoryName = $scope.widgetCategory;
+        o.name = $scope.widgetName.slice($scope.widgetName.lastIndexOf("/")+1).trim();
+        o.categoryName = $scope.widgetName.substring(0,$scope.widgetName.lastIndexOf("/")).trim();
         o.data = {};
         o.data.config = $scope.curWidget.config;
         if ($scope.customDs) {
@@ -389,18 +389,18 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
             o.data.datasetId = $scope.curWidget.datasetId;
         }
         $scope.alerts = [];
-        $scope.verify = {widgetName: true};
-
+        $scope.verify = {widgetName:true};
+        
         if (o.name == null || o.name == "") {
-            $scope.alerts = [{msg: translate('CONFIG.WIDGET.NAME') + translate('COMMON.NOT_EMPTY'), type: 'danger'}];
-            $scope.verify = {widgetName: false};
+            $scope.alerts = [{msg: translate('CONFIG.WIDGET.WIDGET_NAME')+translate('COMMON.NOT_EMPTY'), type: 'danger'}];
+            $scope.verify = {widgetName:false};
             $("#widgetName").focus();
             return;
         } else if (o.data.datasetId == undefined && $scope.customDs == false) {
-            $scope.alerts = [{msg: translate('CONFIG.WIDGET.DATASET') + translate('COMMON.NOT_EMPTY'), type: 'danger'}];
+            $scope.alerts = [{msg: translate('CONFIG.WIDGET.DATASET')+translate('COMMON.NOT_EMPTY'), type: 'danger'}];
             return;
         }
-
+        
         if ($scope.optFlag == 'new') {
             $http.post("/dashboard/saveNewWidget.do", {json: angular.toJson(o)}).success(function (serviceStatus) {
                 if (serviceStatus.status == '1') {
@@ -432,8 +432,7 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
         $scope.datasource = _.find($scope.datasourceList, function (ds) {
             return ds.id == widget.data.datasource;
         });
-        $scope.widgetName = angular.copy(widget.name);
-        $scope.widgetCategory = angular.copy(widget.categoryName);
+        $scope.widgetName = angular.copy(widget.categoryName+"/"+widget.name);
         $scope.widgetId = widget.id;
         $scope.optFlag = 'edit';
         $scope.loading = true;

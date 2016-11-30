@@ -378,8 +378,8 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
 
     $scope.saveWgt = function () {
         var o = {};
-        o.name = $scope.widgetName.slice($scope.widgetName.lastIndexOf("/")+1);
-        o.categoryName = $scope.widgetName.substring(0,$scope.widgetName.lastIndexOf("/"));
+        o.name = $scope.widgetName.slice($scope.widgetName.lastIndexOf("/")+1).trim();
+        o.categoryName = $scope.widgetName.substring(0,$scope.widgetName.lastIndexOf("/")).trim();
         o.data = {};
         o.data.config = $scope.curWidget.config;
         if ($scope.customDs) {
@@ -392,7 +392,7 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
         $scope.verify = {widgetName:true};
         
         if (o.name == null || o.name == "") {
-            $scope.alerts = [{msg: translate('CONFIG.WIDGET.NAME')+translate('COMMON.NOT_EMPTY'), type: 'danger'}];
+            $scope.alerts = [{msg: translate('CONFIG.WIDGET.WIDGET_NAME')+translate('COMMON.NOT_EMPTY'), type: 'danger'}];
             $scope.verify = {widgetName:false};
             $("#widgetName").focus();
             return;

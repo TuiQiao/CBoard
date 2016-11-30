@@ -218,6 +218,19 @@ cBoard.service('dataService', function ($http, updateService) {
         };
     };
 
+    this.getFilterByConfig = function (chartData, chartConfig) {
+        var keysIdx = getHeaderIndex(chartData, _.map(chartConfig.keys, function (e) {
+            return e.col;
+        }));
+        var groupsIdx = getHeaderIndex(chartData, _.map(chartConfig.groups, function (e) {
+            return e.col;
+        }));
+        var filtersIdx = getHeaderIndex(chartData, _.map(chartConfig.filters, function (e) {
+            return e.col;
+        }));
+        return getFilter(chartConfig, keysIdx, groupsIdx, filtersIdx);
+    };
+
     /**
      * Cast the aggregated raw data into data series
      * @param rawData

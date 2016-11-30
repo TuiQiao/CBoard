@@ -52,7 +52,7 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
     $scope.expressions = [];
     $scope.customDs = false;
     $scope.filterSelect = {};
-    $scope.verify = {widgetName:true};
+    $scope.verify = {widgetName: true};
 
     $http.get("/dashboard/getDatasetList.do").success(function (response) {
         $scope.datasetList = response;
@@ -389,18 +389,18 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
             o.data.datasetId = $scope.curWidget.datasetId;
         }
         $scope.alerts = [];
-        $scope.verify = {widgetName:true};
-        
+        $scope.verify = {widgetName: true};
+
         if (o.name == null || o.name == "") {
-            $scope.alerts = [{msg: translate('CONFIG.WIDGET.NAME')+translate('COMMON.NOT_EMPTY'), type: 'danger'}];
-            $scope.verify = {widgetName:false};
+            $scope.alerts = [{msg: translate('CONFIG.WIDGET.NAME') + translate('COMMON.NOT_EMPTY'), type: 'danger'}];
+            $scope.verify = {widgetName: false};
             $("#widgetName").focus();
             return;
         } else if (o.data.datasetId == undefined && $scope.customDs == false) {
-            $scope.alerts = [{msg: translate('CONFIG.WIDGET.DATASET')+translate('COMMON.NOT_EMPTY'), type: 'danger'}];
+            $scope.alerts = [{msg: translate('CONFIG.WIDGET.DATASET') + translate('COMMON.NOT_EMPTY'), type: 'danger'}];
             return;
         }
-        
+
         if ($scope.optFlag == 'new') {
             $http.post("/dashboard/saveNewWidget.do", {json: angular.toJson(o)}).success(function (serviceStatus) {
                 if (serviceStatus.status == '1') {
@@ -528,20 +528,28 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
             col = {col: item, type: 'eq', values: []}
         }
 
+        var selectsByFilter = [];
         var selects = [];
-        if ($scope.filterSelect[col.col]) {
-            selects = $scope.filterSelect[col.col];
-        } else {
-            var idx = _.indexOf($scope.widgetData[0], col.col);
-            for (var i = 1; i < $scope.widgetData.length; i++) {
-                var v = $scope.widgetData[i][idx];
-                if (_.indexOf(selects, v) < 0) {
-                    selects.push(v);
+        var config = angular.copy($scope.curWidget.config);
+        var arr = _.findKey($scope.curWidget.config, function (o) {
+            return o == setbackArr;
+        });
+        config[arr].splice(setbackIdx, 1);
+        var filter = dataService.getFilterByConfig($scope.widgetData, config);
+        var idx = _.indexOf($scope.widgetData[0], col.col);
+        for (var i = 1; i < $scope.widgetData.length; i++) {
+            var v = $scope.widgetData[i][idx];
+            if (filter($scope.widgetData[i])) {
+                if (_.indexOf(selectsByFilter, v) < 0) {
+                    selectsByFilter.push(v);
                 }
             }
-            selects = _.sortBy(dataService.toNumber(selects));
-            $scope.filterSelect[col.col] = selects;
+            if (_.indexOf(selects, v) < 0) {
+                selects.push(v);
+            }
         }
+        selects = _.sortBy(dataService.toNumber(selects));
+        selectsByFilter = _.sortBy(dataService.toNumber(selectsByFilter));
 
         $uibModal.open({
             templateUrl: 'org/cboard/view/config/modal/filter.html',
@@ -549,7 +557,10 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
             backdrop: false,
             size: 'lg',
             controller: function ($scope, $uibModalInstance) {
+                $scope.type = ['=', '≠', '>', '<', '≥', '≤', '(a,b]', '[a,b)', '(a,b)', '[a,b]'];
+                $scope.byFilter = true;
                 $scope.selects = selects;
+                $scope.selectsByFilter = selectsByFilter;
                 $scope.col = col;
                 $scope.close = function () {
                     $uibModalInstance.close();

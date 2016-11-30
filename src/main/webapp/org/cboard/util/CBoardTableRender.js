@@ -17,7 +17,6 @@ CBoardTableRender.prototype.resize = function (container) {
 };
 
 CBoardTableRender.prototype.do = function (tall) {
-    console.log(this.options);
     this.tall = tall;
     var html = "<table  class = 'table_wrapper' id='tableWrapper'><thead>",
         chartConfig = this.options.chartConfig,
@@ -48,7 +47,10 @@ CBoardTableRender.prototype.do = function (tall) {
     }
     html = html + "</tbody></table>";
     tall = _.isUndefined(tall) ? 600 : tall;
-    $(this.container).append("<div class='exportBnt'><button>export</button></div><div style='width: 100%;height:" + tall + "px;overflow: auto'>" + html + "</div>");
+    var divHeight = tall - 40;
+    var exportBnt = "<div class='exportBnt'><button>export</button></div>";
+    $(this.container).append(exportBnt);
+    $(this.container).append("<div style='width: 100%;height:" + divHeight + "px;overflow: auto'>" + html + "</div>");
     $(this.container).css({
         height: tall + 40 + "px"
     });
@@ -114,12 +116,12 @@ CBoardTableRender.prototype.export = function() {
             xlsheet.Paste();
             oXL.Visible = true;
             try {
-                var fname = oXL.Application.GetSaveAsFilename("Excel.xls", "Excel Spreadsheets (*.xls), *.xls");
+                var fname = oXL.Application.GetSaveAsFilename("Excel .xls", "Excel Spreadsheets (* .xls), * .xls");
             } catch (e) {
                 print("Nested catch caught " + e);
             } finally {
                 oWB.SaveAs(fname);
-                oWB.Close(savechanges = false);
+                oWB.Close(savechanges = true);
                 oXL.Quit();
                 oXL = null;
                 idTmr = window.setInterval("Cleanup();", 1);

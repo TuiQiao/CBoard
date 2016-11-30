@@ -23,7 +23,7 @@ cBoard.directive('dashboardWidget', function ($compile, $templateCache, dataServ
 
     var renderTable = function (scope, element, attrs) {
         var template = $templateCache.get("tableContent");
-        scope.myheight = scope.row.height ? (scope.row.height - 44) : 300;
+        scope.myheight = scope.row.height ? (scope.row.height - 44) : 500;
         var aa = $compile(template)(scope);
         element.append(aa);
         var ndWrapper = $(element).find('.box-body');

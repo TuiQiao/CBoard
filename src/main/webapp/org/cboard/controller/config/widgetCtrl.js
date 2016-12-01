@@ -7,13 +7,13 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
     var translate = $filter('translate');
     //图表类型初始化
     $scope.chart_types = [
-        {name: translate('CONFIG.WIDGET.LINE_BAR'), value: 'line'},
-        {name: translate('CONFIG.WIDGET.PIE'), value: 'pie'},
-        {name: translate('CONFIG.WIDGET.KPI'), value: 'kpi'},
-        {name: translate('CONFIG.WIDGET.TABLE'), value: 'table'},
-        {name: translate('CONFIG.WIDGET.FUNNEL'), value: 'funnel'},
-        {name: translate('CONFIG.WIDGET.SANKEY'), value: 'sankey'},
-        {name: translate('CONFIG.WIDGET.RADAR'), value: 'radar'}
+        {name: translate('CONFIG.WIDGET.LINE_BAR'), value: 'line',class:'cLine',isDisabled:false},
+        {name: translate('CONFIG.WIDGET.PIE'), value: 'pie',class:'cPie',isDisabled:false},
+        {name: translate('CONFIG.WIDGET.KPI'), value: 'kpi',class:'cKpi',isDisabled:true},
+        {name: translate('CONFIG.WIDGET.TABLE'), value: 'table',class:'cTable',isDisabled:false},
+        {name: translate('CONFIG.WIDGET.FUNNEL'), value: 'funnel',class:'cFunnel',isDisabled:false},
+        {name: translate('CONFIG.WIDGET.SANKEY'), value: 'sankey',class:'cSankey',isDisabled:false},
+        {name: translate('CONFIG.WIDGET.RADAR'), value: 'radar',class:'cRadar',isDisabled:false}
     ];
 
     $scope.value_series_types = [
@@ -52,6 +52,7 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
     $scope.expressions = [];
     $scope.customDs = false;
     $scope.filterSelect = {};
+    $scope.select_type='';
 
     $http.get("/dashboard/getDatasetList.do").success(function (response) {
         $scope.datasetList = response;
@@ -209,8 +210,12 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
         }
     };
 
-    $scope.newConfig = function () {
-        var config = $scope.curWidget.config.chart_type;
+    $scope.newConfig = function (config,chart) {
+        //var config = $scope.curWidget.config.chart_type;
+        if(chart.isDisabled){
+            return;
+        }
+        $scope.select_type=chart && chart.class ||'';
         $scope.curWidget.config = {};
         if (!config) {
             config = $scope.chart_types[0].value;
@@ -347,6 +352,9 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
                     };
                     break;
             }
+            // if($scope.widgetData){
+            //     $scope.previewDivWidth=  $scope.previewDivWidth==12 ? 10 : $scope.previewDivWidth;
+            // }
         });
 
 
@@ -571,4 +579,31 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
                 break;
         }
     };
+    $scope.getClassType=function(chart){
+        // if(chart.isDisabled){
+        //     return;
+        // }
+        // $scope.select_type=chart && chart.class ||'';
+        // $scope.curWidget.config.chart_type=o;
+    };
+
+    $scope.showTooltip=function(chart,e) {
+        if (chart.isDisabled) {
+            return;
+        }
+        var $curTarget = $(e.currentTarget),
+            _tooltip = $curTarget.find(".chart-tip");
+        // var _top = $curTarget.offset().top - 703 ;
+        // _top= _top>0?_top+ 45:45;
+        // _tooltip.css("top", _top);
+        _tooltip.show();
+    }
+    $scope.hideTooltip=function(chart,e) {
+        if(chart.isDisabled){
+            return;
+        }
+        var $curTarget = $(e.currentTarget),
+            _tooltip = $curTarget.find(".chart-tip");
+        _tooltip.hide();
+    }
 });

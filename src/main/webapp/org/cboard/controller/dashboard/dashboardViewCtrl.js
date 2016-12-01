@@ -358,7 +358,7 @@ cBoard.controller('dashboardViewCtrl', function ($rootScope, $scope, $state, $st
     $scope.editParam = function (param) {
         var ok = $scope.applyParamFilter;
         $uibModal.open({
-            templateUrl: 'org/cboard/view/dashboard/modal/filter.html',
+            templateUrl: 'org/cboard/view/dashboard/modal/boardParam.html',
             windowTemplateUrl: 'org/cboard/view/util/modal/window.html',
             backdrop: false,
             size: 'lg',

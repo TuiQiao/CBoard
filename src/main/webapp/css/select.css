@@ -366,4 +366,74 @@ body > .ui-select-bootstrap.open {
 
 .ui-select-refreshing.ng-animate {
   -webkit-animation: none 0s;
-} 
+}
+.chart-type-icon {
+    display: inline-block;
+    width: 40px;
+    height: 40px;
+    background-repeat: no-repeat;
+    background-position: 0 0;
+
+}
+.cLine{  background-image: url(/imgs/line-active.png);  }
+.cLine.disabled{background-image: url(/imgs/line.png); }
+/*.cBar{  background-image: url(/imgs/bar-active.png);  }*/
+/*.cBar.disabled{background-image: url(/imgs/bar.png);  }*/
+.cPie{  background-image: url(/imgs/pie-active.png);  }
+.cPie.disabled{  background-image: url(/imgs/pie.png);  }
+.cFunnel{  background-image: url(/imgs/funnel-active.png);  }
+.cFunnel.disabled{  background-image: url(/imgs/funnel.png);  }
+
+.cKpi{  background-image: url(/imgs/kpi-active.png);  }
+.cKpi.disabled{  background-image: url(/imgs/kpi.png);  }
+.cSankey{  background-image: url(/imgs/sankey-active.png);  }
+.cSankey.disabled{  background-image: url(/imgs/sankey.png);  }
+.cRadar{  background-image: url(/imgs/radar-active.png);  }
+.cRadar.disabled{  background-image: url(/imgs/radar.png);  }
+.cTable{  background-image: url(/imgs/table-active.png);  }
+.cTable.disabled{  background-image: url(/imgs/table.png);  }
+
+.chart-type a.active{
+    background-color: #FFF;
+    box-shadow: 0 0 0 2px rgba(81,130,227,.06),inset 0 0 0 2px rgba(81,129,228,.6);
+}
+.chart-type a {
+    display: block;
+    width: 40px;
+    height: 40px;
+    margin: 0 4px 4px 0;
+    cursor: pointer;
+}
+.chart-type a.active:hover {
+    background-color: rgba(179, 180, 182, 0.64);
+}
+.chart-tip{
+    position: absolute;
+    top: 45px;
+    /*left: 0;*/
+    padding: 12px 16px;
+    line-height: 14px;
+    white-space: nowrap;
+    z-index: 1001;
+    display: none;
+
+    background-color: #FFF;
+    box-shadow: 0 0 6px 0 rgba(0,0,0,.1),0 10px 12px 0 rgba(170,182,206,.36);
+}
+.chart-tip .arrow{
+    border-style: dotted dotted solid;
+    border-width: 10px;
+    border-color: transparent transparent rgba(226, 231, 238, 0.55);
+    top: -20px;
+    position: absolute;
+}
+.tooltip-title{
+    width: 100%;
+    line-height: 1.6;
+    font-size: 12px;
+    letter-spacing: 0;
+    font-weight: 700;
+}
+.chart-tip span {
+    display: block;
+}

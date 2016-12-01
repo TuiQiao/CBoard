@@ -48,9 +48,7 @@ CBoardTableRender.prototype.do = function (tall) {
     html = html + "</tbody></table>";
     tall = _.isUndefined(tall) ? 600 : tall;
     var divHeight = tall - 40;
-    var exportBnt = "<div class='exportBnt'><button>export</button></div>";
-    $(this.container).append(exportBnt);
-    $(this.container).append("<div style='width: 100%;height:" + divHeight + "px;overflow: auto'>" + html + "</div>");
+    $(this.container).html("<div class='exportBnt'><button>export</button></div><div style='width: 100%;max-height:" + divHeight + "px;overflow: auto'>" + html + "</div>");
     $(this.container).css({
         height: tall + 40 + "px"
     });

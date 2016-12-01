@@ -2650,7 +2650,8 @@ div.cubeTree .cube, div.cubeSelected .cube{
 }
 .exportBnt{
   margin-bottom: 10px;
-  text-align: right;
+  float: right;
+  width: 60px;
 }
 .form-control {
   display: block;

@@ -7,14 +7,18 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
     var translate = $filter('translate');
     //图表类型初始化
     $scope.chart_types = [
-        {name: translate('CONFIG.WIDGET.LINE_BAR'), value: 'line',class:'cLine',isDisabled:false},
-        {name: translate('CONFIG.WIDGET.PIE'), value: 'pie',class:'cPie',isDisabled:false},
-        {name: translate('CONFIG.WIDGET.KPI'), value: 'kpi',class:'cKpi',isDisabled:true},
-        {name: translate('CONFIG.WIDGET.TABLE'), value: 'table',class:'cTable',isDisabled:false},
-        {name: translate('CONFIG.WIDGET.FUNNEL'), value: 'funnel',class:'cFunnel',isDisabled:false},
-        {name: translate('CONFIG.WIDGET.SANKEY'), value: 'sankey',class:'cSankey',isDisabled:false},
-        {name: translate('CONFIG.WIDGET.RADAR'), value: 'radar',class:'cRadar',isDisabled:false}
+        {name: translate('CONFIG.WIDGET.LINE_BAR'), value: 'line', class: 'cLine'},
+        {name: translate('CONFIG.WIDGET.PIE'), value: 'pie', class: 'cPie'},
+        {name: translate('CONFIG.WIDGET.KPI'), value: 'kpi', class: 'cKpi'},
+        {name: translate('CONFIG.WIDGET.TABLE'), value: 'table', class: 'cTable'},
+        {name: translate('CONFIG.WIDGET.FUNNEL'), value: 'funnel', class: 'cFunnel'},
+        {name: translate('CONFIG.WIDGET.SANKEY'), value: 'sankey', class: 'cSankey'},
+        {name: translate('CONFIG.WIDGET.RADAR'), value: 'radar', class: 'cRadar'}
     ];
+
+    $scope.chart_types_status = {
+        "line": true, "pie": true, "kpi": true, "table": true, "funnel": true, "sankey": true, "radar": true
+    };
 
     $scope.value_series_types = [
         {name: translate('CONFIG.WIDGET.LINE'), value: 'line'},
@@ -37,6 +41,16 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
         {name: translate('CONFIG.WIDGET.YELLOW'), value: 'bg-yellow'}
     ];
 
+    $scope.configRule = {
+        line: {keys: 0, groups: 0, filters: 0, values: 0},
+        pie: {keys: 0, groups: 0, filters: 0, values: 0},
+        kpi: {keys: -1, groups: -1, filters: 0, values: 1},
+        table: {keys: 0, groups: 0, filters: 0, values: 0},
+        funnel: {keys: 0, groups: -1, filters: 0, values: 0},
+        sankey: {keys: 0, groups: 0, filters: 0, values: 1},
+        radar: {keys: 0, groups: 0, filters: 0, values: 0}
+    };
+
     //界面控制
     $scope.loading = false;
     $scope.toChartDisabled = true;
@@ -52,8 +66,7 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
     $scope.expressions = [];
     $scope.customDs = false;
     $scope.filterSelect = {};
-    $scope.select_type='';
-    $scope.verify = {widgetName:true};
+    $scope.verify = {widgetName: true};
 
     $http.get("/dashboard/getDatasetList.do").success(function (response) {
         $scope.datasetList = response;
@@ -211,16 +224,99 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
         }
     };
 
-    $scope.newConfig = function (config,chart) {
-        if(chart.isDisabled){
+    var addWatch = function () {
+        $scope.$watch('curWidget.config.keys', changeChartStatus, true);
+        $scope.$watch('curWidget.config.groups', changeChartStatus, true);
+        $scope.$watch('curWidget.config.values', changeChartStatus, true);
+        $scope.$watch('curWidget.config.filters', changeChartStatus, true);
+
+    };
+    var changeChartStatus = function () {
+        for (var type in $scope.chart_types_status) {
+            var rule = $scope.configRule[type];
+            var config = $scope.curWidget.config;
+            for (var k in rule) {
+                var r = true;
+                if (k == 'values') {
+                    if (rule[k] == -1) {
+                        r = config[k].length == 1 && config[k][0].cols.length <= 1;
+                    } else if (rule[k] > 0) {
+                        var l = 0;
+                        _.each(config[k], function (c) {
+                            l += c.cols.length;
+                        });
+                        r = l <= rule[k];
+                    }
+                } else {
+                    if (rule[k] == -1) {
+                        r = config[k].length == 0
+                    } else if (rule[k] > 0) {
+                        r = config[k].length <= rule[k];
+                    }
+                }
+                if (!r) {
+                    $scope.chart_types_status[type] = r;
+                    break;
+                }
+            }
+            $scope.chart_types_status[type] = r;
+        }
+    };
+
+    $scope.changeChart = function (chart_type) {
+        if (!$scope.chart_types_status[chart_type]) {
             return;
         }
-        $scope.select_type=chart && chart.class ||'';
+        var oldConfig = angular.copy($scope.curWidget.config);
         $scope.curWidget.config = {};
-        if (!config) {
-            config = $scope.chart_types[0].value;
+        $scope.curWidget.config.chart_type = chart_type;
+        //loadDsExpressions();
+        cleanPreview();
+
+        $scope.curWidget.config.selects = oldConfig.selects;
+        $scope.curWidget.config.keys = oldConfig.keys;
+        $scope.curWidget.config.groups = oldConfig.groups;
+        $scope.curWidget.config.values = [];
+
+        $scope.curWidget.config.filters = oldConfig.filters;
+        switch ($scope.curWidget.config.chart_type) {
+            case 'line':
+                _.each(oldConfig.values, function (v) {
+                    $scope.curWidget.config.values.push({name: v.name, cols: v.cols});
+                });
+                $scope.curWidget.config.valueAxis = 'vertical';
+                _.each($scope.curWidget.config.values, function (v) {
+                    v.series_type = 'line';
+                    v.type = 'value';
+                });
+                break;
+            case 'kpi':
+                $scope.curWidget.config.values.push({name: '', cols: []});
+                _.each(oldConfig.values, function (v) {
+                    _.each(v.cols, function (c) {
+                        $scope.curWidget.config.values[0].cols.push(c);
+                    });
+                });
+                $scope.curWidget.config.selects = angular.copy($scope.widgetData[0]);
+                _.each($scope.curWidget.config.values, function (v) {
+                    v.style = 'bg-aqua';
+                });
+                break;
+            default:
+                $scope.curWidget.config.values.push({name: '', cols: []});
+                _.each(oldConfig.values, function (v) {
+                    _.each(v.cols, function (c) {
+                        $scope.curWidget.config.values[0].cols.push(c);
+                    });
+                });
+                break;
         }
-        $scope.curWidget.config.chart_type = config;
+        $scope.preview();
+    };
+
+    $scope.newConfig = function () {
+        $scope.curWidget.config = {};
+        $scope.curWidget.config.chart_type = 'line';
         loadDsExpressions();
         cleanPreview();
         switch ($scope.curWidget.config.chart_type) {
@@ -292,6 +388,7 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
                 $scope.curWidget.config.filters = new Array();
                 break;
         }
+        addWatch();
     };
 
     var cleanPreview = function () {
@@ -357,9 +454,9 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
 
     };
 
-    // $scope.saveChart = function () {
-    //     dashboardService.saveWidget('123', $scope.datasource, $scope.config);
-    // };
+// $scope.saveChart = function () {
+//     dashboardService.saveWidget('123', $scope.datasource, $scope.config);
+// };
 
     $scope.add_value = function () {
         $scope.curWidget.config.values.push({
@@ -382,8 +479,8 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
 
     $scope.saveWgt = function () {
         var o = {};
-        o.name = $scope.widgetName.slice($scope.widgetName.lastIndexOf("/")+1).trim();
-        o.categoryName = $scope.widgetName.substring(0,$scope.widgetName.lastIndexOf("/")).trim();
+        o.name = $scope.widgetName.slice($scope.widgetName.lastIndexOf("/") + 1).trim();
+        o.categoryName = $scope.widgetName.substring(0, $scope.widgetName.lastIndexOf("/")).trim();
         o.data = {};
         o.data.config = $scope.curWidget.config;
         if ($scope.customDs) {
@@ -393,18 +490,21 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
             o.data.datasetId = $scope.curWidget.datasetId;
         }
         $scope.alerts = [];
-        $scope.verify = {widgetName:true};
-        
+        $scope.verify = {widgetName: true};
+
         if (o.name == null || o.name == "") {
-            $scope.alerts = [{msg: translate('CONFIG.WIDGET.WIDGET_NAME')+translate('COMMON.NOT_EMPTY'), type: 'danger'}];
-            $scope.verify = {widgetName:false};
+            $scope.alerts = [{
+                msg: translate('CONFIG.WIDGET.WIDGET_NAME') + translate('COMMON.NOT_EMPTY'),
+                type: 'danger'
+            }];
+            $scope.verify = {widgetName: false};
             $("#widgetName").focus();
             return;
         } else if (o.data.datasetId == undefined && $scope.customDs == false) {
-            $scope.alerts = [{msg: translate('CONFIG.WIDGET.DATASET')+translate('COMMON.NOT_EMPTY'), type: 'danger'}];
+            $scope.alerts = [{msg: translate('CONFIG.WIDGET.DATASET') + translate('COMMON.NOT_EMPTY'), type: 'danger'}];
             return;
         }
-        
+
         if ($scope.optFlag == 'new') {
             $http.post("/dashboard/saveNewWidget.do", {json: angular.toJson(o)}).success(function (serviceStatus) {
                 if (serviceStatus.status == '1') {
@@ -436,13 +536,13 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
         $scope.datasource = _.find($scope.datasourceList, function (ds) {
             return ds.id == widget.data.datasource;
         });
-        $scope.widgetName = angular.copy(widget.categoryName+"/"+widget.name);
+        $scope.widgetName = angular.copy(widget.categoryName + "/" + widget.name);
         $scope.widgetId = widget.id;
         $scope.optFlag = 'edit';
         $scope.loading = true;
         $scope.customDs = _.isUndefined($scope.curWidget.datasetId);
         loadDsExpressions();
-
+        addWatch();
         dataService.getData($scope.datasource ? $scope.datasource.id : null, $scope.curWidget.query, $scope.curWidget.datasetId, function (widgetData) {
             $scope.loading = false;
             if (widgetData.msg == '1') {
@@ -596,7 +696,7 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
         }
     };
 
-    $scope.showTooltip=function(chart,e) {
+    $scope.showTooltip = function (chart, e) {
         if (chart.isDisabled) {
             return;
         }
@@ -604,12 +704,13 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
             _tooltip = $curTarget.find(".chart-tip");
         _tooltip.show();
     }
-    $scope.hideTooltip=function(chart,e) {
-        if(chart.isDisabled){
+    $scope.hideTooltip = function (chart, e) {
+        if (chart.isDisabled) {
             return;
         }
         var $curTarget = $(e.currentTarget),
             _tooltip = $curTarget.find(".chart-tip");
         _tooltip.hide();
     }
-});
+})
+;

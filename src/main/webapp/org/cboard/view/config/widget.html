@@ -115,15 +115,17 @@
                                         <label class="col-sm-2 control-label">{{'CONFIG.WIDGET.WIDGET_TYPE'|translate}}</label>
                                         <div class="col-sm-10 chart-type">
                                             <ul class="list-inline" ng-model="curWidget.config.chart_type">
-                                                <li ng-repeat="chart in chart_types"  class="ng-scope nav-item" ng-mouseover="showTooltip(chart,$event)" ng-mouseout="hideTooltip(chart,$event)">
-                                                    <a   ng-click="newConfig(chart.value,chart)" class="ng-scope" ng-class="!chart.isDisabled && chart.class == select_type ? 'active':''">
-                                                    <i class="chart-type-icon {{chart.class}} " ng-class="{true:'disabled',false:'' }[chart.isDisabled]"></i>
+                                                <li ng-repeat="chart in chart_types" class="ng-scope nav-item"
+                                                    ng-mouseover="showTooltip(chart,$event)"
+                                                    ng-mouseout="hideTooltip(chart,$event)">
+                                                    <a ng-click="changeChart(chart.value)" class="ng-scope"
+                                                       ng-class="[chart_types_status[chart.value]] && chart.value == curWidget.config.chart_type ? 'active':''">
+                                                        <i class="chart-type-icon {{chart.class}} "
+                                                           ng-class="{true:'',false:'disabled' }[chart_types_status[chart.value]]"></i>
                                                     </a>
                                                     <div class="chart-tip">
                                                         <em class="arrow"></em>
-                                                        <span class="tooltip-title">title</span>
-                                                        <span>tooltip test {{chart.class}}...</span>
-                                                        <span>tooltip test {{chart.class}}...</span>
+                                                        <span class="tooltip-title">{{chart.name}}</span>
                                                     </div>
                                                 </li>
                                             </ul>

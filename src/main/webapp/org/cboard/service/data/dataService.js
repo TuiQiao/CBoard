@@ -176,20 +176,23 @@ cBoard.service('dataService', function ($http, updateService) {
                 break;
         }
     };
+    this.getRule = getRule;
 
-    var toNumber = function (args) {
+
+    var toNumber = function () {
+        var arr = _.isArray(arguments[0]) ? arguments[0] : arguments;
         var result = [];
-        for (var i = 0; i < arguments.length; i++) {
-            var a = Number(arguments[i]);
+        for (var i = 0; i < arr.length; i++) {
+            var a = Number(arr[i]);
             if (Number.isNaN(a)) {
-                return arguments;
+                return arr;
             } else {
                 result.push(a);
             }
         }
+        return result;
     };
-
-    this.getRule = getRule;
+    this.toNumber = toNumber;
 
     var getFilter = function (chartConfig, keysIdx, groupsIdx, filtersIdx) {
         var rules = [];
@@ -213,6 +216,19 @@ cBoard.service('dataService', function ($http, updateService) {
             }
             return true;
         };
+    };
+
+    this.getFilterByConfig = function (chartData, chartConfig) {
+        var keysIdx = getHeaderIndex(chartData, _.map(chartConfig.keys, function (e) {
+            return e.col;
+        }));
+        var groupsIdx = getHeaderIndex(chartData, _.map(chartConfig.groups, function (e) {
+            return e.col;
+        }));
+        var filtersIdx = getHeaderIndex(chartData, _.map(chartConfig.filters, function (e) {
+            return e.col;
+        }));
+        return getFilter(chartConfig, keysIdx, groupsIdx, filtersIdx);
     };
 
     /**
@@ -431,13 +447,8 @@ cBoard.service('dataService', function ($http, updateService) {
                     if (!sort[j] || elm[j] == arr[i][j]) {
                         continue;
                     }
-                    var a = Number(elm[j]);
-                    var b = Number(arr[i][j]);
-                    if (Number.isNaN(a) || Number.isNaN(b)) {
-                        a = elm[j];
-                        b = arr[i][j];
-                    }
-                    if ((a > b) ^ (sort[j] != 'asc')) {
+                    var params = toNumber(elm[j], arr[i][j]);
+                    if ((params[0] > params[1]) ^ (sort[j] != 'asc')) {
                         break;
                     } else {
                         arr.splice(i, 0, elm);

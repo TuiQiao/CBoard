@@ -7,7 +7,9 @@ cBoard.controller('datasourceCtrl', function ($scope, $http, ModalUtils, $uibMod
     $scope.optFlag = 'none';
     $scope.dsView = '';
     $scope.curDatasource = {};
-
+    $scope.alerts = [];
+    $scope.verify = {dsName:true,provider:true};
+    
     var getDatasourceList = function () {
         $http.get("/dashboard/getDatasourceList.do").success(function (response) {
             $scope.datasourceList = response;
@@ -39,8 +41,8 @@ cBoard.controller('datasourceCtrl', function ($scope, $http, ModalUtils, $uibMod
         });
     };
     $scope.copyDs = function (ds) {
-        var data=angular.copy(ds);
-        data.name=data.name+"_copy";
+        var data = angular.copy(ds);
+        data.name = data.name + "_copy";
         $http.post("/dashboard/saveNewDatasource.do", {json: angular.toJson(data)}).success(function (serviceStatus) {
             if (serviceStatus.status == '1') {
                 $scope.optFlag = 'none';
@@ -55,27 +57,50 @@ cBoard.controller('datasourceCtrl', function ($scope, $http, ModalUtils, $uibMod
     $scope.changeDsView = function () {
         $scope.dsView = '/dashboard/getDatasourceView.do?type=' + $scope.curDatasource.type;
     };
-
+    
+    var validate = function () {
+        $scope.alerts = [];
+        if($scope.curDatasource.type == null){
+            $scope.alerts = [{msg: translate('CONFIG.DATA_SOURCE.DATA_PROVIDER')+translate('COMMON.NOT_EMPTY'), type: 'danger'}];
+            $scope.verify = {provider : false};
+            return false;
+        }
+        if(!$scope.curDatasource.name){
+            $scope.alerts = [{msg: translate('CONFIG.DATA_SOURCE.NAME')+translate('COMMON.NOT_EMPTY'), type: 'danger'}];
+            $scope.verify = {dsName : false};
+            $("#DatasetName").focus();
+            return false;
+        }
+        return true;
+    }
     $scope.saveNew = function () {
+        if(!validate()){
+            return;
+        }
         $http.post("/dashboard/saveNewDatasource.do", {json: angular.toJson($scope.curDatasource)}).success(function (serviceStatus) {
             if (serviceStatus.status == '1') {
                 $scope.optFlag = 'none';
                 getDatasourceList();
+                $scope.verify = {dsName:true,provider:true};
                 ModalUtils.alert(translate("COMMON.SUCCESS"), "modal-success", "sm");
             } else {
-                ModalUtils.alert(serviceStatus.msg, "modal-warning", "lg");
+                $scope.alerts = [{msg: serviceStatus.msg, type: 'danger'}];
             }
         });
     };
 
     $scope.saveEdit = function () {
+        if(!validate()){
+            return;
+        }
         $http.post("/dashboard/updateDatasource.do", {json: angular.toJson($scope.curDatasource)}).success(function (serviceStatus) {
             if (serviceStatus.status == '1') {
                 $scope.optFlag = 'none';
                 getDatasourceList();
+                $scope.verify = {dsName:true,provider:true};
                 ModalUtils.alert(translate("COMMON.SUCCESS"), "modal-success", "sm");
             } else {
-                ModalUtils.alert(serviceStatus.msg, "modal-warning", "lg");
+                $scope.alerts = [{msg: serviceStatus.msg, type: 'danger'}];
             }
         });
     };

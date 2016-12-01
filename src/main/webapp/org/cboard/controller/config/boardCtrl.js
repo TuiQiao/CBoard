@@ -1,13 +1,15 @@
 /**
  * Created by yfyuan on 2016/8/2.
  */
-
+'use strict';
 cBoard.controller('boardCtrl', function ($scope, $http, ModalUtils, $filter, updateService, $uibModal) {
 
     var translate = $filter('translate');
 
     $scope.optFlag = 'none';
     $scope.curBoard = {layout: {rows: []}};
+    $scope.alerts = [];
+    $scope.verify = {boardName:true};
 
     var getBoardList = function () {
         $http.get("/dashboard/getBoardList.do").success(function (response) {
@@ -38,6 +40,7 @@ cBoard.controller('boardCtrl', function ($scope, $http, ModalUtils, $filter, upd
 
     var loadBoardDataset = function (status) {
         var datasetIdArr = [];
+        var widgetArr = [];
         _.each($scope.curBoard.layout.rows, function (row) {
             _.each(row.widgets, function (widget) {
                 var w = _.find($scope.widgetList, function (w) {
@@ -45,6 +48,8 @@ cBoard.controller('boardCtrl', function ($scope, $http, ModalUtils, $filter, upd
                 });
                 if (w.data.datasetId) {
                     datasetIdArr.push(w.data.datasetId);
+                } else {
+                    widgetArr.push(w);
                 }
             });
         });
@@ -58,14 +63,24 @@ cBoard.controller('boardCtrl', function ($scope, $http, ModalUtils, $filter, upd
                 var dataset = _.find($scope.datasetList, function (ds) {
                     return ds.id == d;
                 });
-                dataset.columns = response.data[0];
-                $scope.boardDataset.push(dataset);
+                $scope.boardDataset.push({name: dataset.name, columns: response.data[0], datasetId: dataset.id});
+                status.i--;
+            });
+        });
+        _.each(widgetArr, function (w) {
+            status.i++;
+            $http.post("/dashboard/getCachedData.do", {
+                datasourceId: w.data.datasource,
+                query: angular.toJson(w.data.query),
+            }).success(function (response) {
+                $scope.boardDataset.push({name: w.name, columns: response.data[0], widgetId: w.id});
                 status.i--;
             });
         });
     };
 
     var boardChange = function () {
+        $scope.verify = {boardName:true};
         $scope.$emit("boardChange");
     };
 
@@ -96,10 +111,24 @@ cBoard.controller('boardCtrl', function ($scope, $http, ModalUtils, $filter, upd
     };
 
     $scope.addPramRow = function () {
-        $scope.curBoard.layout.rows.push({type: 'param', params: []});
+        $scope.curBoard.layout.rows.unshift({type: 'param', params: []});
     };
 
+    var validate = function () {
+        $scope.alerts = [];
+        if(!$scope.curBoard.name){
+            $scope.alerts = [{msg: translate('CONFIG.DASHBOARD.NAME')+translate('COMMON.NOT_EMPTY'), type: 'danger'}];
+            $scope.verify = {boardName : false};
+            $("#BoardName").focus();
+            return false;
+        }
+        return true;
+    }
+
     $scope.saveBoard = function () {
+        if(!validate()){
+            return;
+        }
         if ($scope.optFlag == 'new') {
             $http.post("/dashboard/saveNewBoard.do", {json: angular.toJson($scope.curBoard)}).success(function (serviceStatus) {
                 if (serviceStatus.status == '1') {
@@ -108,7 +137,8 @@ cBoard.controller('boardCtrl', function ($scope, $http, ModalUtils, $filter, upd
                     ModalUtils.alert(serviceStatus.msg, "modal-success", "sm");
                     boardChange();
                 } else {
-                    ModalUtils.alert(serviceStatus.msg, "modal-warning", "lg");
+                    $scope.alerts = [{msg: serviceStatus.msg, type: 'danger'}];
+                    //ModalUtils.alert(serviceStatus.msg, "modal-warning", "lg");
                 }
             });
         } else if ($scope.optFlag == 'edit') {
@@ -119,7 +149,8 @@ cBoard.controller('boardCtrl', function ($scope, $http, ModalUtils, $filter, upd
                     ModalUtils.alert(serviceStatus.msg, "modal-success", "sm");
                     boardChange();
                 } else {
-                    ModalUtils.alert(serviceStatus.msg, "modal-warning", "lg");
+                    $scope.alerts = [{msg: serviceStatus.msg, type: 'danger'}];
+                    //ModalUtils.alert(serviceStatus.msg, "modal-warning", "lg");
                 }
             });
         }
@@ -171,12 +202,63 @@ cBoard.controller('boardCtrl', function ($scope, $http, ModalUtils, $filter, upd
                 $scope.status = status;
                 $scope.param = param;
                 $scope.boardDataset = parent.boardDataset;
+                $scope.add = function (selectedDataset, column) {
+                    var v = angular.copy(selectedDataset);
+                    delete v.columns;
+                    v.column = column;
+                    var paramCol = $scope.param.col;
+                    var haveCol = null;
+                    for(var i = 0; i < paramCol.length; i++) {
+                        (paramCol[i].column == v.column && paramCol[i].name == v.name) ? haveCol = true : null;
+                    }
+                    (!haveCol || $scope.param.col ==[]) ? $scope.param.col.push(v) : null;
+                };
                 $scope.close = function () {
                     $uibModalInstance.close();
                 };
+                $scope.deleteSelected =function (index) {
+                    var select = $scope.param.col[index].column;
+                    var nodes = $('.cube>span');
+                    for (var i = 0; i < nodes.length; i++) {
+                        if (($(nodes[i]))[0].innerText == select) {
+                            $(nodes[i]).removeClass('itemSelected');
+                        }
+                    }
+                    $scope.param.col.splice(index, 1);
+                };
                 $scope.ok = function () {
-                    ok($scope.param);
-                    $uibModalInstance.close();
+                    if($scope.param.name){
+                        ok($scope.param);
+                        $uibModalInstance.close();
+                    }else{
+                        ModalUtils.alert('Please fill out the information', "modal-warning", "lg");
+                    }
+                };
+                $scope.foldCube = function(cube, e) {
+                    var node = (e.target.localName == 'img') ? e.target.parentNode.parentNode : e.target.parentNode;
+                    var imgNode=node.getElementsByTagName("img");
+                    if(e.target.className == "cubeName ng-binding" || e.target.localName == 'img') {
+                        if(node.style.height=="25px"||node.style.height==""){
+                            node.style.height=25*(cube.columns.length+1)+"px";
+                            imgNode[0].style.webkitTransform="rotate(90deg)";
+                        }else{
+                            node.style.height="25px";
+                            imgNode[0].style.webkitTransform="rotate(0deg)";
+                        }
+                    }else if($(e.target)[0].localName == 'span') {
+                        $(e.target).addClass('itemSelected');
+                    }
+                    $scope.param.col.map(function (d) {
+                        var columnSelect = d.column;
+                        var cubeName = d.name;
+                        var nodeList = $('.cube>span');
+                        for (var i = 0; i < nodeList.length; i++) {
+                            var name = nodeList[i].parentNode.firstElementChild.innerText;
+                            if (($(nodeList[i]))[0].innerText == columnSelect && cubeName == name) {
+                                $(nodeList[i]).addClass('itemSelected');
+                            }
+                        }
+                    });
                 };
             }
         });

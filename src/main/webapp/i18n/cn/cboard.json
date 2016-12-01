@@ -10,7 +10,11 @@
     "TIP": "提示",
     "SUCCESS": "成功!",
     "FAIL": "失败!",
-    "DEFAULT_CATEGORY": "默认分类"
+    "DEFAULT_CATEGORY": "默认分类",
+    "NOT_EMPTY":"不能为空!"
+  },
+  "TIPS":{
+    "CAL_EXPR": "用于聚合后再计算. 使用上面的点击辅助输入避免输入错误! 如: Math.log(sum(columnA)/count(columB))"
   },
   "SIDEBAR": {
     "C_DASHBOARD": "看板",
@@ -24,6 +28,17 @@
   },
   "HEADER": {
     "SIGN_OUT": "注销"
+  },
+  "DASHBOARD":{
+    "PARAM":{
+      "NAME": "面板查询参数",
+      "FIND": "查找",
+      "OPT_VALUE": "值列表",
+      "VALUE_LIST": "选定值列",
+      "VALUE": "选定值",
+      "VALUE_A": "下限",
+      "VALUE_B": "上限"
+    }
   },
   "CONFIG": {
     "COMMON": {
@@ -40,7 +55,8 @@
       "DATA_SOURCE": "数据源类型",
       "DATASET": "新建数据源名称",
       "LOAD_DATA": "读取数据",
-      "NAME": "图表名称",
+      "WIDGET_NAME": "图表名",
+      "AXIS_NAME": "轴名",
       "CATEGORY": "图表分类",
       "WIDGET_TYPE": "图表类型",
       "CANCEL": "取消",
@@ -50,7 +66,7 @@
       "NEW_QUERY": "新建查询",
       "SWITCH": "切换",
       "ROW": "行",
-      "GROUP": "组",
+      "GROUP": "列",
       "VALUE": "值",
       "VALUE_AXIS": "值轴",
       "FILTER": "过滤",
@@ -87,7 +103,8 @@
       "NOT_EQUAL": "不等于",
       "HORIZONTAL": "垂直",
       "VERTICAL": "水平",
-      "RADAR": "雷达图"
+      "RADAR": "雷达图",
+      "SHOW_BY_FILTER":"根据已有条件过滤"
     },
     "DASHBOARD": {
       "DASHBOARD": "看板",
@@ -101,11 +118,13 @@
       "WIDTH": "宽度",
       "WIDGET": "图表",
       "PREVIEW": "预览",
-      "ADD_PARAMROW": "添加条件行",
-      "ADD_PARAM": "添加条件",
-      "PARAM_ROW": "条件行",
-      "PARAM": "过滤器",
-      "PARAM_NAME": "名称"
+      "ADD_PARAMROW": "添加参数行",
+      "ADD_PARAM": "添加参数",
+      "PARAM_ROW": "参数行",
+      "PARAM": "查询参数",
+      "PARAM_NAME": "参数名称",
+      "CUBE_TREE": "看板中的数据集/查询",
+      "LINKED_COLUMN": "参数关联上的列"
     },
     "CATEGORY": {
       "NAME": "看板分类名称",

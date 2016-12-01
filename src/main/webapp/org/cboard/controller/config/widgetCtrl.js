@@ -53,6 +53,7 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
     $scope.customDs = false;
     $scope.filterSelect = {};
     $scope.select_type='';
+    $scope.verify = {widgetName:true};
 
     $http.get("/dashboard/getDatasetList.do").success(function (response) {
         $scope.datasetList = response;
@@ -211,7 +212,6 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
     };
 
     $scope.newConfig = function (config,chart) {
-        //var config = $scope.curWidget.config.chart_type;
         if(chart.isDisabled){
             return;
         }
@@ -352,9 +352,6 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
                     };
                     break;
             }
-            // if($scope.widgetData){
-            //     $scope.previewDivWidth=  $scope.previewDivWidth==12 ? 10 : $scope.previewDivWidth;
-            // }
         });
 
 
@@ -385,8 +382,8 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
 
     $scope.saveWgt = function () {
         var o = {};
-        o.name = $scope.widgetName;
-        o.categoryName = $scope.widgetCategory;
+        o.name = $scope.widgetName.slice($scope.widgetName.lastIndexOf("/")+1).trim();
+        o.categoryName = $scope.widgetName.substring(0,$scope.widgetName.lastIndexOf("/")).trim();
         o.data = {};
         o.data.config = $scope.curWidget.config;
         if ($scope.customDs) {
@@ -395,20 +392,29 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
         } else {
             o.data.datasetId = $scope.curWidget.datasetId;
         }
+        $scope.alerts = [];
+        $scope.verify = {widgetName:true};
+        
+        if (o.name == null || o.name == "") {
+            $scope.alerts = [{msg: translate('CONFIG.WIDGET.WIDGET_NAME')+translate('COMMON.NOT_EMPTY'), type: 'danger'}];
+            $scope.verify = {widgetName:false};
+            $("#widgetName").focus();
+            return;
+        } else if (o.data.datasetId == undefined && $scope.customDs == false) {
+            $scope.alerts = [{msg: translate('CONFIG.WIDGET.DATASET')+translate('COMMON.NOT_EMPTY'), type: 'danger'}];
+            return;
+        }
+        
         if ($scope.optFlag == 'new') {
-            if(o.name == null || o.data.datasetId == undefined){
-                ModalUtils.alert('Please fill out the complete information.', "modal-warning", "md");
-            } else {
-                $http.post("/dashboard/saveNewWidget.do", {json: angular.toJson(o)}).success(function (serviceStatus) {
-                    if (serviceStatus.status == '1') {
-                        getWidgetList();
-                        getCategoryList();
-                        ModalUtils.alert(translate("COMMON.SUCCESS"), "modal-success", "sm");
-                    } else {
-                        ModalUtils.alert(serviceStatus.msg, "modal-warning", "lg");
-                    }
-                });
-            }
+            $http.post("/dashboard/saveNewWidget.do", {json: angular.toJson(o)}).success(function (serviceStatus) {
+                if (serviceStatus.status == '1') {
+                    getWidgetList();
+                    getCategoryList();
+                    ModalUtils.alert(translate("COMMON.SUCCESS"), "modal-success", "sm");
+                } else {
+                    $scope.alerts = [{msg: serviceStatus.msg, type: 'danger'}];
+                }
+            });
         } else if ($scope.optFlag == 'edit') {
             o.id = $scope.widgetId;
             $http.post("/dashboard/updateWidget.do", {json: angular.toJson(o)}).success(function (serviceStatus) {
@@ -417,7 +423,7 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
                     getCategoryList();
                     ModalUtils.alert(translate("COMMON.SUCCESS"), "modal-success", "sm");
                 } else {
-                    ModalUtils.alert(serviceStatus.msg, "modal-warning", "lg");
+                    $scope.alerts = [{msg: serviceStatus.msg, type: 'danger'}];
                 }
             });
         }
@@ -430,8 +436,7 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
         $scope.datasource = _.find($scope.datasourceList, function (ds) {
             return ds.id == widget.data.datasource;
         });
-        $scope.widgetName = angular.copy(widget.name);
-        $scope.widgetCategory = angular.copy(widget.categoryName);
+        $scope.widgetName = angular.copy(widget.categoryName+"/"+widget.name);
         $scope.widgetId = widget.id;
         $scope.optFlag = 'edit';
         $scope.loading = true;
@@ -458,8 +463,8 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
     };
 
     $scope.copyWgt = function (widget) {
-        var o=angular.copy(widget);
-        o.name=o.name+"_copy";
+        var o = angular.copy(widget);
+        o.name = o.name + "_copy";
         $http.post("/dashboard/saveNewWidget.do", {json: angular.toJson(o)}).success(function (serviceStatus) {
             if (serviceStatus.status == '1') {
                 getWidgetList();
@@ -526,20 +531,28 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
             col = {col: item, type: 'eq', values: []}
         }
 
+        var selectsByFilter = [];
         var selects = [];
-        if ($scope.filterSelect[col.col]) {
-            selects = $scope.filterSelect[col.col];
-        } else {
-            var idx = _.indexOf($scope.widgetData[0], col.col);
-            for (var i = 1; i < $scope.widgetData.length; i++) {
-                var v = $scope.widgetData[i][idx];
-                if (_.indexOf(selects, v) < 0) {
-                    selects.push(v);
+        var config = angular.copy($scope.curWidget.config);
+        var arr = _.findKey($scope.curWidget.config, function (o) {
+            return o == setbackArr;
+        });
+        config[arr].splice(setbackIdx, 1);
+        var filter = dataService.getFilterByConfig($scope.widgetData, config);
+        var idx = _.indexOf($scope.widgetData[0], col.col);
+        for (var i = 1; i < $scope.widgetData.length; i++) {
+            var v = $scope.widgetData[i][idx];
+            if (filter($scope.widgetData[i])) {
+                if (_.indexOf(selectsByFilter, v) < 0) {
+                    selectsByFilter.push(v);
                 }
             }
-            selects = _.sortBy(selects);
-            $scope.filterSelect[col.col] = selects;
+            if (_.indexOf(selects, v) < 0) {
+                selects.push(v);
+            }
         }
+        selects = _.sortBy(dataService.toNumber(selects));
+        selectsByFilter = _.sortBy(dataService.toNumber(selectsByFilter));
 
         $uibModal.open({
             templateUrl: 'org/cboard/view/config/modal/filter.html',
@@ -547,7 +560,10 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
             backdrop: false,
             size: 'lg',
             controller: function ($scope, $uibModalInstance) {
+                $scope.type = ['=', '≠', '>', '<', '≥', '≤', '(a,b]', '[a,b)', '(a,b)', '[a,b]'];
+                $scope.byFilter = true;
                 $scope.selects = selects;
+                $scope.selectsByFilter = selectsByFilter;
                 $scope.col = col;
                 $scope.close = function () {
                     $uibModalInstance.close();
@@ -579,13 +595,6 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
                 break;
         }
     };
-    $scope.getClassType=function(chart){
-        // if(chart.isDisabled){
-        //     return;
-        // }
-        // $scope.select_type=chart && chart.class ||'';
-        // $scope.curWidget.config.chart_type=o;
-    };
 
     $scope.showTooltip=function(chart,e) {
         if (chart.isDisabled) {
@@ -593,9 +602,6 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
         }
         var $curTarget = $(e.currentTarget),
             _tooltip = $curTarget.find(".chart-tip");
-        // var _top = $curTarget.offset().top - 703 ;
-        // _top= _top>0?_top+ 45:45;
-        // _tooltip.css("top", _top);
         _tooltip.show();
     }
     $scope.hideTooltip=function(chart,e) {

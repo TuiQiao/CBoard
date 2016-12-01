@@ -10,7 +10,7 @@ cBoard.directive('dashboardWidget', function ($compile, $templateCache, dataServ
         var link = $compile(template);
         element.append(link(scope));
         var ndWrapper = $(element).find('.box-body');
-        scope.widget.realTimeTicket = chartService.render(ndWrapper, scope.widget.widget.queryData, scope.widget.widget.data.config);
+        scope.widget.render(ndWrapper, null, scope);
     };
 
     var renderKpi = function (scope, element, attrs) {
@@ -18,16 +18,16 @@ cBoard.directive('dashboardWidget', function ($compile, $templateCache, dataServ
         var aa = $compile(template)(scope);
         element.append(aa);
         var ndWrapper = $(element).find('.kpi-body');
-        scope.widget.realTimeTicket = chartService.render(ndWrapper, scope.widget.widget.queryData, scope.widget.widget.data.config, null, scope);
+        scope.widget.render(ndWrapper, null, scope);
     };
 
     var renderTable = function (scope, element, attrs) {
         var template = $templateCache.get("tableContent");
-        scope.myheight = scope.row.height ? (scope.row.height - 44) : 300;
+        scope.myheight = scope.row.height ? (scope.row.height - 44) : 500;
         var aa = $compile(template)(scope);
         element.append(aa);
         var ndWrapper = $(element).find('.box-body');
-        scope.widget.realTimeTicket = chartService.render(ndWrapper, scope.widget.widget.queryData, scope.widget.widget.data.config, null, scope);
+        scope.widget.render(ndWrapper, null, scope);
     };
 
     return {

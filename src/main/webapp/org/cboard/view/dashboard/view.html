@@ -8,25 +8,15 @@
         {{"COMMON.REFRESH" | translate}}
     </div>
 </section>
-<div id="inner-container" class="content">
+<div id="inner-container" class="content" style="margin-top: 15px;">
     <div class="row" ng-repeat="row in board.layout.rows track by $index" ng-style="{height:row.height+'px'}">
         <ng-switch on="row.type">
             <div ng-switch-when="param">
                 <div class="col-sm-12">
-                    <div class="box box-success"
-                         style="border-left: 1px solid #d2d6de; border-right: 1px solid #d2d6de">
-                        <div class="box-header">
-                            <i class="fa fa-cube"></i>
-                            <h3 class="box-title"></h3>
-                            <div class="box-tools pull-right">
-                                <button type="button" class="btn btn-box-tool" data-widget="collapse"><i
-                                        class="fa fa-minus"></i>
-                                </button>
-                            </div>
-                        </div>
+                    <div class="box box-success" style="border-left: 1px solid #d2d6de; border-right: 1px solid #d2d6de">
                         <div class="box-body">
                             <div class="col-sm-12">
-                                <div class="form-control" style="min-height: 35px;height: auto;padding: 0px">
+                                <div style="min-height: 35px;height: auto;padding: 0px">
                                     <div ng-repeat="param in row.params" class="btn-group"
                                          style="cursor: move;margin: 3px 3px;">
                                         <button type="button" class="btn btn-default btn-sm">
@@ -38,6 +28,7 @@
                                         </button>
                                     </div>
                                 </div>
+                                <div class="paramTemplate"></div>
                             </div>
                         </div>
                     </div>

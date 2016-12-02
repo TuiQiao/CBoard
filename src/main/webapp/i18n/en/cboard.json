@@ -104,7 +104,14 @@
       "HORIZONTAL": "Horizontal",
       "VERTICAL": "Vertical",
       "RADAR": "Radar",
-      "SHOW_BY_FILTER":"Filter by existing condition"
+      "SHOW_BY_FILTER":"Filter by existing condition",
+      "TIPS_ROW_DIM": "Row Dimension",
+      "TIPS_COLUMN_DIM": "Column Dimension",
+      "TIPS_MEASURE": "Value",
+      "TIPS_DIM_NUM_0": "0",
+      "TIPS_DIM_NUM_1": "1",
+      "TIPS_DIM_NUM_0_MORE": "0 or more",
+      "TIPS_DIM_NUM_1_MORE": "1 or more"
     },
     "DASHBOARD": {
       "CATEGORY": "Category",

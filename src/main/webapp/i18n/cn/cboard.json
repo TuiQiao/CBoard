@@ -104,7 +104,14 @@
       "HORIZONTAL": "垂直",
       "VERTICAL": "水平",
       "RADAR": "雷达图",
-      "SHOW_BY_FILTER":"根据已有条件过滤"
+      "SHOW_BY_FILTER":"根据已有条件过滤",
+      "TIPS_ROW_DIM": "行维",
+      "TIPS_COLUMN_DIM": "列维",
+      "TIPS_MEASURE": "值",
+      "TIPS_DIM_NUM_0": "0",
+      "TIPS_DIM_NUM_1": "1",
+      "TIPS_DIM_NUM_0_MORE": "0个或多个",
+      "TIPS_DIM_NUM_1_MORE": "1个或多个"
     },
     "DASHBOARD": {
       "DASHBOARD": "看板",

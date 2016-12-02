@@ -240,6 +240,7 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
         $scope.widgetId = null;
         $scope.optFlag = 'new';
         $scope.customDs = false;
+        addValidateWatch();
     };
 
     var loadDsExpressions = function () {
@@ -257,7 +258,31 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
         $scope.$watch('curWidget.config.groups', changeChartStatus, true);
         $scope.$watch('curWidget.config.values', changeChartStatus, true);
         $scope.$watch('curWidget.config.filters', changeChartStatus, true);
+        addValidateWatch();
+    };
+    var addValidateWatch = function () {
+        $scope.$watch('widgetName', clearAlert, true);
+        $scope.$watch('curWidget.datasetId', clearAlert, true);
+    };
+    var clearAlert = function () {
+        $scope.alerts = [];
+        $scope.verify = {widgetName:true};
+    };
+    var validation = function () {
+        $scope.alerts = [];
+        $scope.verify = {widgetName:true};
 
+        if (!$scope.widgetName) {
+            $scope.alerts = [{msg: translate('CONFIG.WIDGET.WIDGET_NAME') + translate('COMMON.NOT_EMPTY'), type: 'danger'}];
+            $scope.verify = {widgetName:false};
+            $("#widgetName").focus();
+            return false;
+        }
+        if ($scope.customDs == false && $scope.curWidget.datasetId == undefined) {
+            $scope.alerts = [{msg: translate('CONFIG.WIDGET.DATASET') + translate('COMMON.NOT_EMPTY'), type: 'danger'}];
+            return false;
+        }
+        return true;
     };
     var changeChartStatus = function () {
         for (var type in $scope.chart_types_status) {
@@ -506,6 +531,10 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
     };
 
     $scope.saveWgt = function () {
+        if(!validation()){
+            return;
+        }
+
         var o = {};
         o.name = $scope.widgetName.slice($scope.widgetName.lastIndexOf("/") + 1).trim();
         o.categoryName = $scope.widgetName.substring(0, $scope.widgetName.lastIndexOf("/")).trim();

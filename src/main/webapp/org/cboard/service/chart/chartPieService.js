@@ -35,7 +35,10 @@ cBoard.service('chartPieService', function (dataService) {
                     }, text: string_value[i], left: 5 * b + i * 9 * b + '%', top: '90%'
                 });
                 for (var j = 0; j < aggregate_data[i].length; j++) {
-                    s.data.push({name: string_keys[j], value: aggregate_data[i][j]})
+                    s.data.push({
+                        name: string_keys[j],
+                        value: _.isUndefined(aggregate_data[i][j]) ? 0 : aggregate_data[i][j]
+                    });
                 }
                 series.push(s);
             }

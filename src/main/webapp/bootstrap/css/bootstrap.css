@@ -196,7 +196,7 @@ th {
   white-space: nowrap;
   font-weight: normal;
   font-size: 10px;
-  padding: 3px 9px 3px 4px;
+  padding: 3px 0px;
 }
 /*! Source: https://github.com/h5bp/html5-boilerplate/blob/master/src/css/main.css */
 @media print {
@@ -2272,7 +2272,7 @@ caption {
 th {
   font-size: 10px;
   font-weight: normal;
-  padding: 3px 9px 3px 4px;
+  /*padding: 3px 9px 3px 4px;*/
 }
 .table {
   font-weight: normal;
@@ -6866,13 +6866,18 @@ button.close {
 table th.row {
   border-top: 1px solid #d5d5d5;
   white-space: nowrap;
-  text-align: left;
+  text-align: center;
 }
-table td.data {
+table td.data, table th.header_key {
   border-left: 1px solid #d5d5d5;
   border-top: 1px solid #d5d5d5;
-  text-align: left;
+  text-align: center;
   white-space: nowrap;
+}
+table th.header_empty {
+  border-left: none;
+  border-top: none;
+  background: none;
 }
 table th {
   background: #f9f9f9;

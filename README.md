@@ -14,7 +14,7 @@ Server side framework is Spring+MyBatis and front-end is based on AngularJS1 and
 * Simple and beautiful interface and layout
 * Lightweight architecture and concise source code, the entire project does not rely on any third-party multi-dimensional analysis tools  
   * Front page style and layout of CBoard is based on [AdminLTE2](https://github.com/almasaeed2010/AdminLTE)  
-  * The chart plugin uses [EChart](http://echarts.baidu.com/)  
+  * The chart plugin uses [ECharts](http://echarts.baidu.com/)
   * Javascript uses MVVM AngularJS 1.X framework  
 * Interactive, drag-and-drop **OLAP** classisc report development experience  
 ![wiget_overview](https://raw.githubusercontent.com/yzhang921/CloudResource/gif/gif/cboard/wiget_demo2.gif)
@@ -96,4 +96,4 @@ Waiting for your Contribution and pull request!
 
 CBoard QQ Group for Chinese: 301028618  
 Email: peter.zhang921@gmail.com, g.yuanyf@gmail.com  
-**Front-end question**：Fine<fine0830@qq.com>
+**Front-end question**：fine0830@outlook.com

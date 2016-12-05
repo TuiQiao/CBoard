@@ -2,7 +2,7 @@
  * Created by Fine on 2016/12/4.
  */
 
-var acrossTable = {
+var crossTable = {
     table: function(args){
         var data = args.data,
             chartConfig = args.chartConfig,

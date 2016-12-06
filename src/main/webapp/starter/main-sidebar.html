@@ -76,6 +76,21 @@
                 </li>
             </ul>
         </li>
+        <!-- Admin -->
+        <li class="treeview" ui-sref-active="active">
+            <a ui-sref="admin">
+                <i class="fa fa-cog"></i>
+                <span>{{'SIDEBAR.ADMIN'|translate}}</span>
+                <span class="pull-right-container">
+                    <i class="fa fa-angle-left pull-right"></i>
+                </span>
+            </a>
+            <ul class="treeview-menu">
+                <li ui-sref-active="active">
+                    <a ui-sref="admin.user"><i class="fa fa-database"></i>{{'SIDEBAR.USER_ADMIN'|translate}}</a>
+                </li>
+            </ul>
+        </li>
     </ul>
     <!-- /.sidebar-menu -->
 </section>

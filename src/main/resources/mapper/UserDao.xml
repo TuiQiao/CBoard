@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="org.cboard.dao.UserDao">
+
+    <update id="save">
+        <![CDATA[
+
+        INSERT INTO dashboard_user(user_id,login_name,user_name,user_password,user_status) VALUES (#{userId},#{loginName},#{userName},#{userPassword},#{userStatus})
+
+        ]]>
+    </update>
+
+    <select id="getUserList" resultType="org.cboard.pojo.DashboardUser">
+        SELECT user_id userId,login_name loginName,user_name userName,user_status userStatus FROM dashboard_user
+        order by login_name
+    </select>
+
+    <update id="update" parameterType="org.cboard.pojo.DashboardUser">
+        <![CDATA[
+
+        update dashboard_user set login_name = #{loginName},user_name = #{userName} where user_id = #{userId}
+
+        ]]>
+    </update>
+
+    <delete id="deleteUserRole">
+        delete from dashboard_user_role where user_id = #{userId}
+    </delete>
+
+    <insert id="saveUserRole" parameterType="java.util.List">
+        insert into dashboard_user_role
+        (user_id, role_id)
+        values
+        <foreach collection="list" item="ur" index="index" separator=",">
+            (#{ur.userId}, #{ur.roleId})
+        </foreach>
+    </insert>
+
+    <select id="getUserRoleList" resultType="org.cboard.pojo.DashboardUserRole">
+        SELECT user_id userId,role_id roleId FROM dashboard_user_role
+    </select>
+</mapper>

@@ -9,7 +9,7 @@ cBoard.controller('boardCtrl', function ($scope, $http, ModalUtils, $filter, upd
     $scope.optFlag = 'none';
     $scope.curBoard = {layout: {rows: []}};
     $scope.alerts = [];
-    $scope.verify = {boardName:true};
+    $scope.verify = {boardName: true};
 
     var getBoardList = function () {
         $http.get("/dashboard/getBoardList.do").success(function (response) {
@@ -80,7 +80,7 @@ cBoard.controller('boardCtrl', function ($scope, $http, ModalUtils, $filter, upd
     };
 
     var boardChange = function () {
-        $scope.verify = {boardName:true};
+        $scope.verify = {boardName: true};
         $scope.$emit("boardChange");
     };
 
@@ -114,11 +114,24 @@ cBoard.controller('boardCtrl', function ($scope, $http, ModalUtils, $filter, upd
         $scope.curBoard.layout.rows.unshift({type: 'param', params: []});
     };
 
+    $scope.copyBoard = function (board) {
+        var o = angular.copy(board);
+        o.name = o.name + '_copy';
+        $http.post("/dashboard/saveNewBoard.do", {json: angular.toJson(o)}).success(function (serviceStatus) {
+            if (serviceStatus.status == '1') {
+                getBoardList();
+                ModalUtils.alert(serviceStatus.msg, "modal-success", "sm");
+                boardChange();
+            } else {
+                ModalUtils.alert(serviceStatus.msg, "modal-warning", "lg");
+            }
+        });
+    }
     var validate = function () {
         $scope.alerts = [];
-        if(!$scope.curBoard.name){
-            $scope.alerts = [{msg: translate('CONFIG.DASHBOARD.NAME')+translate('COMMON.NOT_EMPTY'), type: 'danger'}];
-            $scope.verify = {boardName : false};
+        if (!$scope.curBoard.name) {
+            $scope.alerts = [{msg: translate('CONFIG.DASHBOARD.NAME') + translate('COMMON.NOT_EMPTY'), type: 'danger'}];
+            $scope.verify = {boardName: false};
             $("#BoardName").focus();
             return false;
         }
@@ -126,7 +139,7 @@ cBoard.controller('boardCtrl', function ($scope, $http, ModalUtils, $filter, upd
     }
 
     $scope.saveBoard = function () {
-        if(!validate()){
+        if (!validate()) {
             return;
         }
         if ($scope.optFlag == 'new') {
@@ -138,7 +151,6 @@ cBoard.controller('boardCtrl', function ($scope, $http, ModalUtils, $filter, upd
                     boardChange();
                 } else {
                     $scope.alerts = [{msg: serviceStatus.msg, type: 'danger'}];
-                    //ModalUtils.alert(serviceStatus.msg, "modal-warning", "lg");
                 }
             });
         } else if ($scope.optFlag == 'edit') {
@@ -150,7 +162,6 @@ cBoard.controller('boardCtrl', function ($scope, $http, ModalUtils, $filter, upd
                     boardChange();
                 } else {
                     $scope.alerts = [{msg: serviceStatus.msg, type: 'danger'}];
-                    //ModalUtils.alert(serviceStatus.msg, "modal-warning", "lg");
                 }
             });
         }
@@ -208,15 +219,15 @@ cBoard.controller('boardCtrl', function ($scope, $http, ModalUtils, $filter, upd
                     v.column = column;
                     var paramCol = $scope.param.col;
                     var haveCol = null;
-                    for(var i = 0; i < paramCol.length; i++) {
+                    for (var i = 0; i < paramCol.length; i++) {
                         (paramCol[i].column == v.column && paramCol[i].name == v.name) ? haveCol = true : null;
                     }
-                    (!haveCol || $scope.param.col ==[]) ? $scope.param.col.push(v) : null;
+                    (!haveCol || $scope.param.col == []) ? $scope.param.col.push(v) : null;
                 };
                 $scope.close = function () {
                     $uibModalInstance.close();
                 };
-                $scope.deleteSelected =function (index) {
+                $scope.deleteSelected = function (index) {
                     var select = $scope.param.col[index].column;
                     var nodes = $('.cube>span');
                     for (var i = 0; i < nodes.length; i++) {
@@ -227,25 +238,25 @@ cBoard.controller('boardCtrl', function ($scope, $http, ModalUtils, $filter, upd
                     $scope.param.col.splice(index, 1);
                 };
                 $scope.ok = function () {
-                    if($scope.param.name){
+                    if ($scope.param.name) {
                         ok($scope.param);
                         $uibModalInstance.close();
-                    }else{
+                    } else {
                         ModalUtils.alert('Please fill out the information', "modal-warning", "lg");
                     }
                 };
-                $scope.foldCube = function(cube, e) {
+                $scope.foldCube = function (cube, e) {
                     var node = (e.target.localName == 'img') ? e.target.parentNode.parentNode : e.target.parentNode;
-                    var imgNode=node.getElementsByTagName("img");
-                    if(e.target.className == "cubeName ng-binding" || e.target.localName == 'img') {
-                        if(node.style.height=="25px"||node.style.height==""){
-                            node.style.height=25*(cube.columns.length+1)+"px";
-                            imgNode[0].style.webkitTransform="rotate(90deg)";
-                        }else{
-                            node.style.height="25px";
-                            imgNode[0].style.webkitTransform="rotate(0deg)";
+                    var imgNode = node.getElementsByTagName("img");
+                    if (e.target.className == "cubeName ng-binding" || e.target.localName == 'img') {
+                        if (node.style.height == "25px" || node.style.height == "") {
+                            node.style.height = 25 * (cube.columns.length + 1) + "px";
+                            imgNode[0].style.webkitTransform = "rotate(90deg)";
+                        } else {
+                            node.style.height = "25px";
+                            imgNode[0].style.webkitTransform = "rotate(0deg)";
                         }
-                    }else if($(e.target)[0].localName == 'span') {
+                    } else if ($(e.target)[0].localName == 'span') {
                         $(e.target).addClass('itemSelected');
                     }
                     $scope.param.col.map(function (d) {

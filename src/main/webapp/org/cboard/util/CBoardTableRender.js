@@ -26,7 +26,7 @@ CBoardTableRender.prototype.do = function (tall) {
         data: this.options.data,
         container: this.container
     };
-    acrossTable.table(args);
+    crossTable.table(args);
     $(this.container).css({
         height: tall + 40 + "px"
     });

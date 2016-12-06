@@ -8,39 +8,39 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
     //图表类型初始化
     $scope.chart_types = [
         {name: translate('CONFIG.WIDGET.LINE_BAR'), value: 'line', class: 'cLine',
-            row: translate('CONFIG.WIDGET.TIPS_DIM_NUM_1_MORE') + ' ' + translate('CONFIG.WIDGET.TIPS_ROW_DIM'),
-            column: translate('CONFIG.WIDGET.TIPS_DIM_NUM_0_MORE') + ' ' + translate('CONFIG.WIDGET.TIPS_COLUMN_DIM'),
-            measure: translate('CONFIG.WIDGET.TIPS_DIM_NUM_1_MORE') + ' ' + translate('CONFIG.WIDGET.TIPS_MEASURE')
+            row: translate('CONFIG.WIDGET.TIPS_DIM_NUM_1_MORE'),
+            column: translate('CONFIG.WIDGET.TIPS_DIM_NUM_0_MORE'),
+            measure: translate('CONFIG.WIDGET.TIPS_DIM_NUM_1_MORE')
         },
         {name: translate('CONFIG.WIDGET.PIE'), value: 'pie', class: 'cPie',
-            row: translate('CONFIG.WIDGET.TIPS_DIM_NUM_1_MORE') + ' ' + translate('CONFIG.WIDGET.TIPS_ROW_DIM'),
-            column: translate('CONFIG.WIDGET.TIPS_DIM_NUM_0_MORE') + ' ' + translate('CONFIG.WIDGET.TIPS_COLUMN_DIM'),
-            measure: translate('CONFIG.WIDGET.TIPS_DIM_NUM_1_MORE') + ' ' + translate('CONFIG.WIDGET.TIPS_MEASURE')
+            row: translate('CONFIG.WIDGET.TIPS_DIM_NUM_1_MORE'),
+            column: translate('CONFIG.WIDGET.TIPS_DIM_NUM_0_MORE'),
+            measure: translate('CONFIG.WIDGET.TIPS_DIM_NUM_1_MORE')
         },
         {name: translate('CONFIG.WIDGET.KPI'), value: 'kpi', class: 'cKpi',
-            row: translate('CONFIG.WIDGET.TIPS_DIM_NUM_0') + ' ' + translate('CONFIG.WIDGET.TIPS_ROW_DIM'),
-            column: translate('CONFIG.WIDGET.TIPS_DIM_NUM_0') + ' ' + translate('CONFIG.WIDGET.TIPS_COLUMN_DIM'),
-            measure: translate('CONFIG.WIDGET.TIPS_DIM_NUM_1') + ' ' + translate('CONFIG.WIDGET.TIPS_MEASURE')
+            row: translate('CONFIG.WIDGET.TIPS_DIM_NUM_0'),
+            column: translate('CONFIG.WIDGET.TIPS_DIM_NUM_0'),
+            measure: translate('CONFIG.WIDGET.TIPS_DIM_NUM_1')
         },
         {name: translate('CONFIG.WIDGET.TABLE'), value: 'table', class: 'cTable',
-            row: translate('CONFIG.WIDGET.TIPS_DIM_NUM_1_MORE') + ' ' + translate('CONFIG.WIDGET.TIPS_ROW_DIM'),
-            column: translate('CONFIG.WIDGET.TIPS_DIM_NUM_0_MORE') + ' ' + translate('CONFIG.WIDGET.TIPS_COLUMN_DIM'),
-            measure: translate('CONFIG.WIDGET.TIPS_DIM_NUM_1_MORE') + ' ' + translate('CONFIG.WIDGET.TIPS_MEASURE')
+            row: translate('CONFIG.WIDGET.TIPS_DIM_NUM_1_MORE'),
+            column: translate('CONFIG.WIDGET.TIPS_DIM_NUM_0_MORE'),
+            measure: translate('CONFIG.WIDGET.TIPS_DIM_NUM_1_MORE')
         },
         {name: translate('CONFIG.WIDGET.FUNNEL'), value: 'funnel', class: 'cFunnel',
-            row: translate('CONFIG.WIDGET.TIPS_DIM_NUM_1_MORE') + ' ' + translate('CONFIG.WIDGET.TIPS_ROW_DIM'),
-            column: translate('CONFIG.WIDGET.TIPS_DIM_NUM_0') + ' ' + translate('CONFIG.WIDGET.TIPS_COLUMN_DIM'),
-            measure: translate('CONFIG.WIDGET.TIPS_DIM_NUM_1_MORE') + ' ' + translate('CONFIG.WIDGET.TIPS_MEASURE')
+            row: translate('CONFIG.WIDGET.TIPS_DIM_NUM_1_MORE'),
+            column: translate('CONFIG.WIDGET.TIPS_DIM_NUM_0'),
+            measure: translate('CONFIG.WIDGET.TIPS_DIM_NUM_1_MORE')
         },
         {name: translate('CONFIG.WIDGET.SANKEY'), value: 'sankey', class: 'cSankey',
-            row: translate('CONFIG.WIDGET.TIPS_DIM_NUM_1') + ' ' + translate('CONFIG.WIDGET.TIPS_ROW_DIM'),
-            column: translate('CONFIG.WIDGET.TIPS_DIM_NUM_1') + ' ' + translate('CONFIG.WIDGET.TIPS_COLUMN_DIM'),
-            measure: translate('CONFIG.WIDGET.TIPS_DIM_NUM_1') + ' ' + translate('CONFIG.WIDGET.TIPS_MEASURE')
+            row: translate('CONFIG.WIDGET.TIPS_DIM_NUM_1'),
+            column: translate('CONFIG.WIDGET.TIPS_DIM_NUM_1'),
+            measure: translate('CONFIG.WIDGET.TIPS_DIM_NUM_1')
         },
         {name: translate('CONFIG.WIDGET.RADAR'), value: 'radar', class: 'cRadar',
-            row: translate('CONFIG.WIDGET.TIPS_DIM_NUM_1_MORE') + ' ' + translate('CONFIG.WIDGET.TIPS_ROW_DIM'),
-            column: translate('CONFIG.WIDGET.TIPS_DIM_NUM_0_MORE') + ' ' + translate('CONFIG.WIDGET.TIPS_COLUMN_DIM'),
-            measure: translate('CONFIG.WIDGET.TIPS_DIM_NUM_1_MORE') + ' ' + translate('CONFIG.WIDGET.TIPS_MEASURE')
+            row: translate('CONFIG.WIDGET.TIPS_DIM_NUM_1_MORE'),
+            column: translate('CONFIG.WIDGET.TIPS_DIM_NUM_0_MORE'),
+            measure: translate('CONFIG.WIDGET.TIPS_DIM_NUM_1_MORE')
         }
     ];
 

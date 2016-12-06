@@ -45,25 +45,9 @@
                             <div class="row">
                                 <div class="col-md-12">
                                     <div class="form-group" ng-class="{'has-error': !(verify.dsName || curDataset.name.length)}">
-                                        <label class="col-sm-2 control-label">{{'CONFIG.DATASET.NAME'|translate}}</label>
+                                        <label class="col-sm-2 control-label">{{'CONFIG.DATASET.CATEGORY'|translate}}/{{'CONFIG.DATASET.NAME'|translate}}</label>
                                         <div class="col-sm-10">
-                                            <input id="DatasetName" ng-model="curDataset.name" class="form-control"/>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="row">
-                                <div class="col-md-12">
-                                    <div class="form-group">
-                                        <label class="col-sm-2 control-label">{{'CONFIG.DATASET.CATEGORY'|translate}}</label>
-                                        <div class="col-sm-10">
-                                            <input ng-model="curDataset.categoryName" list="categoryList"
-                                                   class="form-control col-sm-10"/>
-                                            <datalist id="categoryList">
-                                                <option ng-repeat="cate in categoryList | filter: {cate: '!默认分类'} | filter: {cate: '!Default Category'}"
-                                                        value="{{cate}}"></option>
-                                                <option value="{{'COMMON.DEFAULT_CATEGORY'|translate}}"></option>
-                                            </datalist>
+                                            <input id="DatasetName" ng-model="curDataset.name" class="form-control" placeholder="{{'CONFIG.DATASET.CATEGORY'|translate}}/{{'CONFIG.DATASET.NAME'|translate}}"/>
                                         </div>
                                     </div>
                                 </div>

@@ -3,7 +3,7 @@
     "OK": "OK",
     "CANCEL": "Cancel",
     "SAVE": "Save",
-    "LOADING": "Loading..." ,
+    "LOADING": "Loading...",
     "REFRESH": "Refresh",
     "EDIT": "Edit",
     "CONFIRM_DELETE": "Confirm to Delete!!!",
@@ -11,9 +11,9 @@
     "SUCCESS": "Success!",
     "FAIL": "Fail!",
     "DEFAULT_CATEGORY": "Default Category",
-    "NOT_EMPTY":" can not be empty!"
+    "NOT_EMPTY": " can not be empty!"
   },
-  "TIPS":{
+  "TIPS": {
     "CAL_EXPR": "Calculate after aggregation. Use assist click input to avoid typo! e.g: Math.log(sum(columnA)/count(columB))"
   },
   "SIDEBAR": {
@@ -24,13 +24,15 @@
     "CUBE": "Cube",
     "WIDGET": "Widget",
     "DASHBOARD": "Dashboard",
-    "DASHBOARD_CATEGORY": "Dashboard Category"
+    "DASHBOARD_CATEGORY": "Dashboard Category",
+    "ADMIN": "Admin",
+    "USER_ADMIN": "User Admin"
   },
   "HEADER": {
     "SIGN_OUT": "SignOut"
   },
-  "DASHBOARD":{
-    "PARAM":{
+  "DASHBOARD": {
+    "PARAM": {
       "NAME": "Parameter",
       "FIND": "Find",
       "OPT_VALUE": "Optional Values",
@@ -104,7 +106,7 @@
       "HORIZONTAL": "Horizontal",
       "VERTICAL": "Vertical",
       "RADAR": "Radar",
-      "SHOW_BY_FILTER":"Filter by existing condition",
+      "SHOW_BY_FILTER": "Filter by existing condition",
       "TIPS_ROW_DIM": "Row Dimension",
       "TIPS_COLUMN_DIM": "Column Dimension",
       "TIPS_MEASURE": "Value",
@@ -146,6 +148,15 @@
       "ADD": "Add",
       "REAL_TIME_INTERVAL": "Real Time Interval(s)",
       "REAL_TIME_TIP": "If You don't need refresh, just leave it as BLANK"
+    }
+  },
+  "ADMIN": {
+    "USER": {
+      "LOGIN_NAME": "Login Name",
+      "NAME": "User Name"
+    },
+    "ROLE": {
+      "ROLE_NAME": "Role Name"
     }
   }
 }

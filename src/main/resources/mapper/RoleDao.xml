@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="org.cboard.dao.RoleDao">
+
+    <update id="save">
+        <![CDATA[
+        INSERT INTO dashboard_role(role_id,role_name) VALUES (#{roleId},#{roleName})
+        ]]>
+    </update>
+
+    <select id="getRoleList" resultType="org.cboard.pojo.DashboardRole">
+        SELECT role_id roleId,role_name roleName FROM dashboard_role
+        order by role_name
+    </select>
+
+    <update id="update" parameterType="org.cboard.pojo.DashboardUser">
+        <![CDATA[
+        update dashboard_role set role_name = #{roleName} where role_id = #{roleId}
+        ]]>
+    </update>
+</mapper>

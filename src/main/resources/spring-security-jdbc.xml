@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:security="http://www.springframework.org/schema/security"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.1.xsd
+    http://www.springframework.org/schema/security
+    http://www.springframework.org/schema/security/spring-security-4.1.xsd">
+
+    <security:http auto-config="true">
+        <security:intercept-url pattern="/lib/**" access="permitAll"/>
+        <security:intercept-url pattern="/dist/**" access="permitAll"/>
+        <security:intercept-url pattern="/bootstrap/**" access="permitAll"/>
+        <security:intercept-url pattern="/plugins/**" access="permitAll"/>
+        <security:intercept-url pattern="/js/**" access="permitAll"/>
+        <security:intercept-url pattern="/login**" access="permitAll"/>
+        <security:intercept-url pattern="/css/**" access="permitAll"/>
+        <security:intercept-url pattern="/**" access="!anonymous"/>
+        <security:form-login login-page="/login.do" username-parameter="username" password-parameter="password"
+                    default-target-url="/starter.html" always-use-default-target="true"/>
+        <security:logout logout-url="/j_spring_cas_security_logout"/>
+        <security:remember-me remember-me-parameter="remember_me" />
+        <security:csrf disabled="true"/>
+    </security:http>
+
+    <security:authentication-manager alias="authenticationManager">
+        <security:authentication-provider ref="daoAuthenticationProvider"/>
+    </security:authentication-manager>
+
+    <bean id="daoAuthenticationProvider"
+          class="org.springframework.security.authentication.dao.DaoAuthenticationProvider">
+        <property name="userDetailsService">
+            <ref bean="userDetailsService"/>
+        </property>
+        <property name="passwordEncoder">
+            <ref bean="passwordEncoder"/>
+        </property>
+    </bean>
+
+    <bean id="userDetailsService"
+          class="org.springframework.security.core.userdetails.jdbc.JdbcDaoImpl">
+        <property name="dataSource" ref="dataSource">
+        </property>
+        <property name="authoritiesByUsernameQuery">
+            <value>
+                <![CDATA[SELECT login_name username, 'admin' AS authority
+                           FROM dashboard_user
+                          WHERE login_name = ?
+                         ]]>
+            </value>
+        </property>
+        <property name="usersByUsernameQuery">
+            <value>
+                <![CDATA[SELECT login_name, user_password, 1 AS enabled
+                           FROM dashboard_user
+                          WHERE login_name = ? ]]>
+            </value>
+        </property>
+    </bean>
+
+    <bean id="passwordEncoder"
+          class="org.springframework.security.authentication.encoding.Md5PasswordEncoder"/>
+
+    <bean id="inMemAuthenticationService"
+          class="org.cboard.security.service.InMemAuthenticationService"/>
+
+</beans>

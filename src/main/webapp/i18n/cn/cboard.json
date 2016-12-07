@@ -11,9 +11,9 @@
     "SUCCESS": "成功!",
     "FAIL": "失败!",
     "DEFAULT_CATEGORY": "默认分类",
-    "NOT_EMPTY":"不能为空!"
+    "NOT_EMPTY": "不能为空!"
   },
-  "TIPS":{
+  "TIPS": {
     "CAL_EXPR": "用于聚合后再计算. 使用上面的点击辅助输入避免输入错误! 如: Math.log(sum(columnA)/count(columB))"
   },
   "SIDEBAR": {
@@ -24,13 +24,15 @@
     "CUBE": "数据集管理",
     "WIDGET": "图表设计",
     "DASHBOARD": "看板设计",
-    "DASHBOARD_CATEGORY": "看板分类"
+    "DASHBOARD_CATEGORY": "看板分类",
+    "ADMIN": "管理",
+    "USER_ADMIN": "用户管理"
   },
   "HEADER": {
     "SIGN_OUT": "注销"
   },
-  "DASHBOARD":{
-    "PARAM":{
+  "DASHBOARD": {
+    "PARAM": {
       "NAME": "面板查询参数",
       "FIND": "查找",
       "OPT_VALUE": "值列表",
@@ -104,7 +106,7 @@
       "HORIZONTAL": "垂直",
       "VERTICAL": "水平",
       "RADAR": "雷达图",
-      "SHOW_BY_FILTER":"根据已有条件过滤",
+      "SHOW_BY_FILTER": "根据已有条件过滤",
       "TIPS_ROW_DIM": "行维",
       "TIPS_COLUMN_DIM": "列维",
       "TIPS_MEASURE": "值",
@@ -146,6 +148,15 @@
       "ADD": "添加",
       "REAL_TIME_INTERVAL": "实时间隔(秒)",
       "REAL_TIME_TIP": "留空则不做后台刷新"
+    }
+  },
+  "ADMIN": {
+    "USER": {
+      "LOGIN_NAME": "账号",
+      "NAME": "姓名"
+    },
+    "ROLE": {
+      "ROLE_NAME": "角色名"
     }
   }
 }

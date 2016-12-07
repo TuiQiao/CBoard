@@ -11,6 +11,7 @@ import org.cboard.dto.DataProviderResult;
 import org.cboard.pojo.DashboardDataset;
 import org.cboard.pojo.DashboardDatasource;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Repository;
 
 import java.util.Map;
@@ -20,6 +21,9 @@ import java.util.Map;
  */
 @Repository
 public class DataProviderService {
+
+    @Value("${dataprovider.resultLimit:200000}")
+    private int resultLimit;
 
     @Autowired
     private DatasourceDao datasourceDao;
@@ -40,7 +44,6 @@ public class DataProviderService {
     public DataProviderResult getData(Long datasourceId, Map<String, String> query, Long datasetId) {
         String[][] dataArray = null;
         int resultCount = 0;
-        int resultLimit = 200000;
         String msg = "1";
 
         if (datasetId != null) {

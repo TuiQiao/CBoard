@@ -8,7 +8,7 @@ cBoard.controller('datasetCtrl', function ($scope, $http, dataService, $uibModal
     $scope.curDataset = {data: {expressions: []}};
     $scope.curWidget = {};
     $scope.alerts = [];
-    $scope.verify = {dsName:true};
+    $scope.verify = {dsName: true};
 
     var getDatasetList = function () {
         $http.get("/dashboard/getDatasetList.do").success(function (response) {
@@ -38,6 +38,7 @@ cBoard.controller('datasetCtrl', function ($scope, $http, dataService, $uibModal
     $scope.editDs = function (ds) {
         $scope.optFlag = 'edit';
         $scope.curDataset = angular.copy(ds);
+        $scope.curDataset.name = $scope.curDataset.categoryName + '/' + $scope.curDataset.name;
         if (!$scope.curDataset.data.expressions) {
             $scope.curDataset.data.expressions = [];
         }
@@ -71,9 +72,9 @@ cBoard.controller('datasetCtrl', function ($scope, $http, dataService, $uibModal
 
     var validate = function () {
         $scope.alerts = [];
-        if(!$scope.curDataset.name){
-            $scope.alerts = [{msg: translate('CONFIG.DATASET.NAME')+translate('COMMON.NOT_EMPTY'), type: 'danger'}];
-            $scope.verify = {dsName : false};
+        if (!$scope.curDataset.name) {
+            $scope.alerts = [{msg: translate('CONFIG.DATASET.NAME') + translate('COMMON.NOT_EMPTY'), type: 'danger'}];
+            $scope.verify = {dsName: false};
             $("#DatasetName").focus();
             return false;
         }
@@ -83,16 +84,19 @@ cBoard.controller('datasetCtrl', function ($scope, $http, dataService, $uibModal
         $scope.datasource ? $scope.curDataset.data.datasource = $scope.datasource.id : null;
         $scope.curDataset.data.query = $scope.curWidget.query;
 
-        if(!validate()){
+        if (!validate()) {
             return;
         }
+        var index = $scope.curDataset.name.lastIndexOf('/');
+        $scope.curDataset.categoryName = $scope.curDataset.name.substring(0, index).trim();
+        $scope.curDataset.name = $scope.curDataset.name.slice(index + 1).trim();
         if ($scope.optFlag == 'new') {
             $http.post("/dashboard/saveNewDataset.do", {json: angular.toJson($scope.curDataset)}).success(function (serviceStatus) {
                 if (serviceStatus.status == '1') {
                     $scope.optFlag = 'none';
                     getCategoryList();
                     getDatasetList();
-                    $scope.verify = {dsName:true};
+                    $scope.verify = {dsName: true};
                     ModalUtils.alert(translate("COMMON.SUCCESS"), "modal-success", "sm");
                 } else {
                     $scope.alerts = [{msg: serviceStatus.msg, type: 'danger'}];
@@ -104,7 +108,7 @@ cBoard.controller('datasetCtrl', function ($scope, $http, dataService, $uibModal
                     $scope.optFlag = 'none';
                     getCategoryList();
                     getDatasetList();
-                    $scope.verify = {dsName:true};
+                    $scope.verify = {dsName: true};
                     ModalUtils.alert(translate("COMMON.SUCCESS"), "modal-success", "sm");
                 } else {
                     $scope.alerts = [{msg: serviceStatus.msg, type: 'danger'}];
@@ -189,8 +193,8 @@ cBoard.controller('datasetCtrl', function ($scope, $http, dataService, $uibModal
                     }];
                 };
                 $scope.ok = function () {
-                    if(!$scope.alias){
-                        ModalUtils.alert(translate('CONFIG.WIDGET.ALIAS')+translate('COMMON.NOT_EMPTY'), "modal-warning", "lg");
+                    if (!$scope.alias) {
+                        ModalUtils.alert(translate('CONFIG.WIDGET.ALIAS') + translate('COMMON.NOT_EMPTY'), "modal-warning", "lg");
                         return;
                     }
                     ok($scope.expression, $scope.alias);
@@ -212,7 +216,7 @@ cBoard.controller('datasetCtrl', function ($scope, $http, dataService, $uibModal
                 $scope.widgetData = widgetData.data;
                 $scope.selects = angular.copy($scope.widgetData[0]);
             } else {
-                if(widgetData.msg != null){
+                if (widgetData.msg != null) {
                     $scope.alerts = [{msg: widgetData.msg, type: 'danger'}];
                 }
             }

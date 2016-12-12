@@ -18,14 +18,29 @@ var crossTable = {
             }
             for (var y = chartConfig.keys.length ;y < data[i].length; y++) {
                 if ((data[i][y + 1]) && (data[i][y].data == data[i][y + 1].data)) {
-                    colspan++;
+                    if(i>0) {
+                        if(data[i - 1][y].data == data[i - 1][y + 1].data) {
+                            colspan++
+                        }
+                        else {
+                            colList.push({
+                                data: data[i][y].data,
+                                colSpan: colspan,
+                                property: data[i][y].property
+                            });
+                            colspan = 1;
+                        }
+                    }
+                    else if(i == 0) {
+                        colspan++
+                    }
                 }
                 else {
-                    colList.push({
+                    data[i][y] != data[i][y - 1] ? colList.push({
                         data: data[i][y].data,
                         colSpan: colspan,
                         property: data[i][y].property
-                    });
+                    }) : null;
                     colspan = 1;
                 }
             }
@@ -43,14 +58,30 @@ var crossTable = {
         for (var r = 0; r < chartConfig.keys.length; r++) {
             for(var  n = chartConfig.groups.length + 1; n < data.length; n++){
                 var node = data[n][r].data;
-                k > 0 ? (node == data[n - 1][r].data ? data[n][r] = {
-                    data: data[n][r].data,
-                    rowSpan: 'row_null',
-                    property: data[n][r].property
-                } : data[n][r] = {
-                    data: data[n][r].data,
-                    rowSpan: 'row',
-                    property: data[n][r].property}) : null;
+                if(r > 0){
+                    var parent = data[n][r - 1].data;
+                    var next;
+                    n > 0 ? next = data[n - 1][r - 1].data : null;
+                    (node == data[n - 1][r].data && parent == next) ? data[n][r] = {
+                        data: data[n][r].data,
+                        rowSpan: 'row_null',
+                        property: data[n][r].property
+                    } : data[n][r] = {
+                        data: data[n][r].data,
+                        rowSpan: 'row',
+                        property: data[n][r].property};
+                }
+                else if (r == 0) {
+                    var preNode = n > 0 ? data[n - 1][r].data : null;
+                    (node == preNode) ? data[n][r] = {
+                        data: data[n][r].data,
+                        rowSpan: 'row_null',
+                        property: data[n][r].property
+                    } : data[n][r] = {
+                        data: data[n][r].data,
+                        rowSpan: 'row',
+                        property: data[n][r].property};
+                }
             }
         }
         for(var  n = chartConfig.groups.length + 1; n < data.length; n++){
@@ -68,7 +99,7 @@ var crossTable = {
             html = html + rowContent + "</tr>";
         }
         html = html + "</tbody></table>";
-        $(container).html("<div class='exportBnt'><button>export</button></div><div style='width: 100%;max-height:" + tall + "px;overflow: auto'>" + html + "</div>");
+        $(container).html("<div class='exportBnt'><button>export</button></div><div style='width: 99%;max-height:" + tall + "px;overflow: auto'>" + html + "</div>");
         this.export();
     },
     export: function() {

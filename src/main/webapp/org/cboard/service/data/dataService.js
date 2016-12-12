@@ -258,30 +258,29 @@ cBoard.service('dataService', function ($http, updateService) {
 
         var castedKeys = new Array();
         var castedGroups = new Array();
+        var joinedKeys = {};
+        var joinedGroups = {};
         var newData = {};
 
         var filter = getFilter(chartConfig, keysIdx, groupsIdx, filtersIdx);
-
         for (var i = 1; i < rawData.length; i++) {
             if (!filter(rawData[i])) {
                 continue;
             }
             //组合keys
             var newKey = getRowElements(rawData[i], keysIdx);
-            var keysInsert = sortInsert(castedKeys, newKey, keysSort);
-            if (keysInsert.newKey) {
-                _.mapObject(newData, function (g) {
-                    _.mapObject(g, function (groupSeries) {
-                        _.each(_.keys(groupSeries), function (aggregateType) {
-                            groupSeries[aggregateType].splice(keysInsert.idx, 0, undefined)
-                        });
-                    });
-                });
+            var jk = newKey.join('-');
+            if (_.isUndefined(joinedKeys[jk])) {
+                castedKeys.push(newKey);
+                joinedKeys[jk] = true;
             }
             //组合groups
             var group = getRowElements(rawData[i], groupsIdx);
-            sortInsert(castedGroups, group, groupsSort);
             var newGroup = group.join('-');
+            if (_.isUndefined(joinedGroups[newGroup])) {
+                castedGroups.push(group);
+                joinedGroups[newGroup] = true;
+            }
             // pick the raw values into coordinate cell and then use aggregate function to do calculate
             _.each(dataSeries, function (dSeries) {
                 if (_.isUndefined(newData[newGroup])) {
@@ -291,26 +290,50 @@ cBoard.service('dataService', function ($http, updateService) {
                     newData[newGroup][dSeries.name] = {};
                 }
                 if (_.isUndefined(newData[newGroup][dSeries.name][dSeries.aggregate])) {
-                    newData[newGroup][dSeries.name][dSeries.aggregate] = [];
+                    newData[newGroup][dSeries.name][dSeries.aggregate] = {};
                 }
-                if (_.isUndefined(newData[newGroup][dSeries.name][dSeries.aggregate][keysInsert.idx])) {
-                    newData[newGroup][dSeries.name][dSeries.aggregate][keysInsert.idx] = [];
+                if (_.isUndefined(newData[newGroup][dSeries.name][dSeries.aggregate][jk])) {
+                    newData[newGroup][dSeries.name][dSeries.aggregate][jk] = [];
                 }
-                newData[newGroup][dSeries.name][dSeries.aggregate][keysInsert.idx].push(rawData[i][dSeries.index]);
+                newData[newGroup][dSeries.name][dSeries.aggregate][jk].push(rawData[i][dSeries.index]);
             });
         }
+        //sort dimension
+        var getSort = function (sort) {
+            return function (a, b) {
+                var r = 0;
+                var j = 0;
+                for (; j < a.length; j++) {
+                    if (!sort[j]) {
+                        continue;
+                    }
+                    if (a[j] == b[j]) {
+                        r = 0;
+                        continue;
+                    }
+                    var params = toNumber(a[j], b[j]);
+                    r = (params[0] > params[1]) ? 1 : -1;
+                    if (sort[j] == 'desc') r = r * -1;
+                    break;
+                }
+                return r;
+            }
+        };
+        castedKeys.sort(getSort(keysSort));
+        castedGroups.sort(getSort(groupsSort));
         // do aggregate
         _.mapObject(newData, function (g) {
             _.mapObject(g, function (groupSeries) {
                 _.each(_.keys(groupSeries), function (aggregateType) {
-                    for (var i = 0; i < groupSeries[aggregateType].length; i++) {
-                        if (groupSeries[aggregateType][i]) {
-                            groupSeries[aggregateType][i] = aggregate(groupSeries[aggregateType][i], aggregateType);
+                    for (var k in groupSeries[aggregateType]) {
+                        if (groupSeries[aggregateType][k]) {
+                            groupSeries[aggregateType][k] = aggregate(groupSeries[aggregateType][k], aggregateType);
                         }
                     }
                 });
             });
         });
+        //
         var castedAliasSeriesName = new Array();
         var aliasSeriesConfig = {};
         var aliasData = new Array();
@@ -348,11 +371,13 @@ cBoard.service('dataService', function ($http, updateService) {
             case 'exp':
                 var runExp = compileExp(series.exp);
                 for (var i = 0; i < castedKeys.length; i++) {
-                    iterator(runExp(newData[group], i), i);
+                    iterator(runExp(newData[group], castedKeys[i].join('-')), i);
                 }
                 break;
             default:
-                _.each(newData[group][series.col][series.aggregate_type], iterator);
+                for (var i = 0; i < castedKeys.length; i++) {
+                    iterator(newData[group][series.col][series.aggregate_type][castedKeys[i].join('-')], i)
+                }
                 break;
         }
     };
@@ -362,9 +387,9 @@ cBoard.service('dataService', function ($http, updateService) {
         _.each(exp.match(/(sum|avg|count|max|min)\([\u4e00-\u9fa5_a-zA-Z0-9]+\)/g), function (text) {
             var name = text.substring(text.indexOf('(') + 1, text.indexOf(')'));
             var aggregate = text.substring(0, text.indexOf('('));
-            exp = exp.replace(text, "groupData['" + name + "']['" + aggregate + "'][keyIdx]");
+            exp = exp.replace(text, "groupData['" + name + "']['" + aggregate + "'][key]");
         });
-        return function (groupData, keyIdx) {
+        return function (groupData, key) {
             return eval(exp);
         };
     };
@@ -439,45 +464,4 @@ cBoard.service('dataService', function ($http, updateService) {
         return arr;
     };
 
-    var sortInsert = function (arr, elm, sort) {
-        var idx = indexOf(arr, elm);
-        if (idx < 0) {
-            for (var i = 0; i < arr.length; i++) {
-                for (var j = 0; j < arr[i].length; j++) {
-                    if (!sort[j] || elm[j] == arr[i][j]) {
-                        continue;
-                    }
-                    var params = toNumber(elm[j], arr[i][j]);
-                    if ((params[0] > params[1]) ^ (sort[j] != 'asc')) {
-                        break;
-                    } else {
-                        arr.splice(i, 0, elm);
-                        return {idx: i, newKey: true};
-                    }
-                }
-            }
-            var x = arr.length;
-            arr.push(elm);
-            return {idx: x, newKey: true};
-        } else {
-            return {idx: idx, newKey: false};
-        }
-    };
-
-    var indexOf = function (array, key) {
-        var idx = -1;
-        outer : for (var i = 0; i < array.length; i++) {
-            // if (array[i].length != key.length) {
-            //     continue outer;
-            // }
-            for (var j = 0; j < array[i].length; j++) {
-                if (array[i][j] != key[j]) {
-                    continue outer;
-                }
-            }
-            idx = i;
-            break;
-        }
-        return idx;
-    };
 });

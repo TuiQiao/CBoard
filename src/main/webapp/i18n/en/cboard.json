@@ -155,7 +155,8 @@
   "ADMIN": {
     "USER": {
       "LOGIN_NAME": "Login Name",
-      "NAME": "User Name"
+      "NAME": "User Name",
+      "PASSWORD": "Password"
     },
     "ROLE": {
       "ROLE_NAME": "Role Name"

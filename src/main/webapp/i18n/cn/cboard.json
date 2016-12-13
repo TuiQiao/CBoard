@@ -155,7 +155,8 @@
   "ADMIN": {
     "USER": {
       "LOGIN_NAME": "账号",
-      "NAME": "姓名"
+      "NAME": "姓名",
+      "PASSWORD": "密码"
     },
     "ROLE": {
       "ROLE_NAME": "角色名"

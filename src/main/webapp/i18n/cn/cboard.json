@@ -113,7 +113,8 @@
       "TIPS_DIM_NUM_0": "0",
       "TIPS_DIM_NUM_1": "1",
       "TIPS_DIM_NUM_0_MORE": "0个或多个",
-      "TIPS_DIM_NUM_1_MORE": "1个或多个"
+      "TIPS_DIM_NUM_1_MORE": "1个或多个",
+      "FROM_CACHE": "从缓存加载"
     },
     "DASHBOARD": {
       "DASHBOARD": "看板",

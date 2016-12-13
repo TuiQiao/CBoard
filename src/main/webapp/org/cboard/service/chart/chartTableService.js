@@ -13,7 +13,6 @@ cBoard.service('chartTableService', function (dataService) {
     this.parseOption = function (chartData, chartConfig) {
         var tableOption = null;
         dataService.castRawData2Series(chartData, chartConfig, function (casted_keys, casted_values, aggregate_data, newValuesConfig) {
-            console.log(newValuesConfig);
             var keysList = casted_keys,
                 keyArr = [],
                 emptyList = [],

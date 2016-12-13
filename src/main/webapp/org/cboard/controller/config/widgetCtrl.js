@@ -33,8 +33,8 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
             measure: translate('CONFIG.WIDGET.TIPS_DIM_NUM_1_MORE')
         },
         {name: translate('CONFIG.WIDGET.SANKEY'), value: 'sankey', class: 'cSankey',
-            row: translate('CONFIG.WIDGET.TIPS_DIM_NUM_1'),
-            column: translate('CONFIG.WIDGET.TIPS_DIM_NUM_1'),
+            row: translate('CONFIG.WIDGET.TIPS_DIM_NUM_1_MORE'),
+            column: translate('CONFIG.WIDGET.TIPS_DIM_NUM_0_MORE'),
             measure: translate('CONFIG.WIDGET.TIPS_DIM_NUM_1')
         },
         {name: translate('CONFIG.WIDGET.RADAR'), value: 'radar', class: 'cRadar',

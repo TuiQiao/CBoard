@@ -26,7 +26,8 @@
     "DASHBOARD": "看板设计",
     "DASHBOARD_CATEGORY": "看板分类",
     "ADMIN": "管理",
-    "USER_ADMIN": "用户管理"
+    "USER_ADMIN": "用户管理",
+    "RES_ADMIN": "资源管理"
   },
   "HEADER": {
     "SIGN_OUT": "注销"

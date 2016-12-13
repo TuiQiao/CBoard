@@ -26,7 +26,8 @@
     "DASHBOARD": "Dashboard",
     "DASHBOARD_CATEGORY": "Dashboard Category",
     "ADMIN": "Admin",
-    "USER_ADMIN": "User Admin"
+    "USER_ADMIN": "User Admin",
+    "RES_ADMIN": "Resource Admin"
   },
   "HEADER": {
     "SIGN_OUT": "SignOut"

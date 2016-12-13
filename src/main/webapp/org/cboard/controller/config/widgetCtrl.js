@@ -618,7 +618,7 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
             } else {
                 ModalUtils.alert(widgetData.msg, "modal-danger", "lg");
             }
-        });
+        }, $scope.loadFromCache);
     };
 
     $scope.deleteWgt = function (widget) {

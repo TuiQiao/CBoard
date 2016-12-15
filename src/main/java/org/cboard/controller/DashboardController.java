@@ -172,7 +172,7 @@ public class DashboardController {
     public List<ViewDashboardBoard> getBoardList() {
 
         String userid = authenticationService.getCurrentUser().getUserId();
-        List<DashboardBoard> list = boardDao.getBoardList(userid);
+        List<DashboardBoard> list = boardService.getBoardList(userid);
         return Lists.transform(list, ViewDashboardBoard.TO);
     }
 

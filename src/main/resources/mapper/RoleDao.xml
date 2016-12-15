@@ -35,4 +35,5 @@
     <delete id="deleteRoleRes">
         delete from dashboard_role_res where role_id = #{0} and res_type = #{1}
     </delete>
+
 </mapper>

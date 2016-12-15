@@ -16,9 +16,9 @@
         <security:intercept-url pattern="/css/**" access="permitAll"/>
         <security:intercept-url pattern="/**" access="!anonymous"/>
         <security:form-login login-page="/login.do" username-parameter="username" password-parameter="password"
-                    default-target-url="/starter.html" always-use-default-target="true"/>
+                             default-target-url="/starter.html" always-use-default-target="true"/>
         <security:logout logout-url="/j_spring_cas_security_logout"/>
-        <security:remember-me remember-me-parameter="remember_me" />
+        <security:remember-me remember-me-parameter="remember_me"/>
         <security:csrf disabled="true"/>
     </security:http>
 
@@ -37,7 +37,7 @@
     </bean>
 
     <bean id="userDetailsService"
-          class="org.springframework.security.core.userdetails.jdbc.JdbcDaoImpl">
+          class="org.cboard.security.service.DbUserDetailService">
         <property name="dataSource" ref="dataSource">
         </property>
         <property name="authoritiesByUsernameQuery">
@@ -50,7 +50,7 @@
         </property>
         <property name="usersByUsernameQuery">
             <value>
-                <![CDATA[SELECT login_name, user_password, 1 AS enabled
+                <![CDATA[SELECT user_id,user_name,login_name, user_password, 1 AS enabled
                            FROM dashboard_user
                           WHERE login_name = ? ]]>
             </value>
@@ -60,7 +60,7 @@
     <bean id="passwordEncoder"
           class="org.springframework.security.authentication.encoding.Md5PasswordEncoder"/>
 
-    <bean id="inMemAuthenticationService"
-          class="org.cboard.security.service.InMemAuthenticationService"/>
+    <bean id="dbAuthenticationService"
+          class="org.cboard.security.service.DbAuthenticationService"/>
 
 </beans>

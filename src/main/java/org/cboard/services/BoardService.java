@@ -4,17 +4,15 @@ import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import org.cboard.dao.BoardDao;
 import org.cboard.dao.WidgetDao;
-import org.cboard.dto.DataProviderResult;
 import org.cboard.dto.ViewDashboardBoard;
 import org.cboard.dto.ViewDashboardWidget;
 import org.cboard.pojo.DashboardBoard;
 import org.cboard.pojo.DashboardWidget;
-import com.google.common.base.Functions;
-import com.google.common.collect.Maps;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -31,6 +29,10 @@ public class BoardService {
 
     @Autowired
     private CachedDataProviderService dataProviderService;
+
+    public List<DashboardBoard> getBoardList(String userId) {
+        return boardDao.getBoardList(userId);
+    }
 
     public ViewDashboardBoard getBoardData(Long id) {
         DashboardBoard board = boardDao.getBoard(id);

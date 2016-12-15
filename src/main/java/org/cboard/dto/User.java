@@ -1,18 +1,33 @@
 package org.cboard.dto;
 
+import org.springframework.security.core.GrantedAuthority;
+
+import java.util.Collection;
+
 /**
  * Created by yfyuan on 2016/9/29.
  */
-public class User {
+public class User extends org.springframework.security.core.userdetails.User {
 
     private String userId;
-    private String username;
     private String company;
     private String department;
+    private String name;
 
-    public User(String userId, String username) {
-        this.userId = userId;
-        this.username = username;
+    public User(String username, String password, Collection<? extends GrantedAuthority> authorities) {
+        super(username, password, authorities);
+    }
+
+    public User(String username, String password, boolean enabled, boolean accountNonExpired, boolean credentialsNonExpired, boolean accountNonLocked, Collection<? extends GrantedAuthority> authorities) {
+        super(username, password, enabled, accountNonExpired, credentialsNonExpired, accountNonLocked, authorities);
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 
     public String getCompany() {
@@ -38,12 +53,5 @@ public class User {
     public void setUserId(String userId) {
         this.userId = userId;
     }
-
-    public String getUsername() {
-        return username;
-    }
-
-    public void setUsername(String username) {
-        this.username = username;
-    }
 }
+

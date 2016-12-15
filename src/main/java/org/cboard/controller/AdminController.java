@@ -2,9 +2,12 @@ package org.cboard.controller;
 
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import com.google.common.base.Function;
+import com.google.common.collect.Lists;
 import org.cboard.dao.RoleDao;
 import org.cboard.dao.UserDao;
 import org.cboard.pojo.DashboardRole;
+import org.cboard.pojo.DashboardRoleRes;
 import org.cboard.pojo.DashboardUser;
 import org.cboard.pojo.DashboardUserRole;
 import org.cboard.services.AdminSerivce;
@@ -77,5 +80,21 @@ public class AdminController {
     public List<DashboardUserRole> getUserRoleList() {
         List<DashboardUserRole> list = userDao.getUserRoleList();
         return list;
+    }
+
+    @RequestMapping(value = "/getRoleResList")
+    public List<DashboardRoleRes> getRoleResList() {
+        List<DashboardRoleRes> list = roleDao.getRoleResList();
+        return list;
+    }
+
+    @RequestMapping(value = "/updateRoleRes")
+    public String updateRoleRes(@RequestParam(name = "roleIdArr") String roleIdArr, @RequestParam(name = "resIdArr") String resIdArr, @RequestParam(name = "resType") String resType) {
+        return adminSerivce.updateRoleRes(JSONArray.parseArray(roleIdArr).toArray(new String[]{}), Lists.transform(JSONArray.parseArray(resIdArr), new Function<Object, Long>() {
+            @Override
+            public Long apply(Object o) {
+                return Long.parseLong(o.toString());
+            }
+        }).toArray(new Long[]{}), resType);
     }
 }

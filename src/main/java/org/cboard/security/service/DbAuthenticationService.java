@@ -1,15 +1,19 @@
 package org.cboard.security.service;
 
+import org.cboard.dao.UserDao;
 import org.cboard.dto.User;
 import org.cboard.services.AuthenticationService;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.stereotype.Repository;
 
 /**
- * Created by yfyuan on 2016/9/29.
+ * Created by yfyuan on 2016/12/14.
  */
-public class InMemAuthenticationService implements AuthenticationService {
+@Repository
+public class DbAuthenticationService implements AuthenticationService {
+
     @Override
     public User getCurrentUser() {
         SecurityContext context = SecurityContextHolder.getContext();
@@ -24,7 +28,7 @@ public class InMemAuthenticationService implements AuthenticationService {
         if (user == null) {
             return null;
         }
-        user.setUserId(user.getUsername());
         return user;
     }
+
 }

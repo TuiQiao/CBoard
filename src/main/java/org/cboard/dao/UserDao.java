@@ -22,4 +22,6 @@ public interface UserDao {
     int deleteUserRole(String userId);
 
     List<DashboardUserRole> getUserRoleList();
+
+    DashboardUser getUserByLoginName(String loginName);
 }

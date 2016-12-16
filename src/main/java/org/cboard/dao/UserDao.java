@@ -24,4 +24,6 @@ public interface UserDao {
     List<DashboardUserRole> getUserRoleList();
 
     DashboardUser getUserByLoginName(String loginName);
+
+    int saveNewUser(String userId, String user_name, String loginName);
 }

@@ -34,4 +34,5 @@ CREATE TABLE dashboard_role_res (
 
 UPDATE dashboard_dataset SET user_id = '1';
 UPDATE dashboard_datasource SET user_id = '1';
+UPDATE dashboard_board SET user_id = '1';
 UPDATE dashboard_widget SET user_id = '1';

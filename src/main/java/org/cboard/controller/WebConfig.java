@@ -18,6 +18,7 @@ import java.util.List;
 @Configuration
 @EnableWebMvc
 @ComponentScan(basePackages = {"org.cboard.controller"})
+@EnableAspectJAutoProxy(proxyTargetClass = true)
 public class WebConfig extends WebMvcConfigurerAdapter {
 
     @Bean

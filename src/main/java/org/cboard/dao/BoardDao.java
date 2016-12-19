@@ -23,4 +23,6 @@ public interface BoardDao {
     int delete(Long id, String userId);
 
     DashboardBoard getBoard(Long id);
+
+    long checkBoardRole(String userId, Long boardId);
 }

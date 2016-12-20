@@ -549,6 +549,9 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
         var o = {};
         o.name = $scope.widgetName.slice($scope.widgetName.lastIndexOf("/") + 1).trim();
         o.categoryName = $scope.widgetName.substring(0, $scope.widgetName.lastIndexOf("/")).trim();
+        if (o.categoryName == '') {
+            o.categoryName = translate("COMMON.DEFAULT_CATEGORY");
+        }
         o.data = {};
         o.data.config = $scope.curWidget.config;
         if ($scope.customDs) {

@@ -26,7 +26,8 @@
     "DASHBOARD": "看板设计",
     "DASHBOARD_CATEGORY": "看板分类",
     "ADMIN": "管理",
-    "USER_ADMIN": "用户管理"
+    "USER_ADMIN": "用户管理",
+    "RES_ADMIN": "资源管理"
   },
   "HEADER": {
     "SIGN_OUT": "注销"
@@ -113,7 +114,8 @@
       "TIPS_DIM_NUM_0": "0",
       "TIPS_DIM_NUM_1": "1",
       "TIPS_DIM_NUM_0_MORE": "0个或多个",
-      "TIPS_DIM_NUM_1_MORE": "1个或多个"
+      "TIPS_DIM_NUM_1_MORE": "1个或多个",
+      "FROM_CACHE": "从缓存加载"
     },
     "DASHBOARD": {
       "DASHBOARD": "看板",
@@ -153,7 +155,8 @@
   "ADMIN": {
     "USER": {
       "LOGIN_NAME": "账号",
-      "NAME": "姓名"
+      "NAME": "姓名",
+      "PASSWORD": "密码"
     },
     "ROLE": {
       "ROLE_NAME": "角色名"

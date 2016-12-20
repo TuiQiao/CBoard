@@ -18,4 +18,22 @@
         update dashboard_role set role_name = #{roleName} where role_id = #{roleId}
         ]]>
     </update>
+
+    <select id="getRoleResList" resultType="org.cboard.pojo.DashboardRoleRes">
+        SELECT role_res_id roleResId,role_id roleId,res_id resId,res_type resType FROM dashboard_role_res
+    </select>
+
+    <insert id="saveRoleRes" parameterType="java.util.List">
+        insert into dashboard_role_res
+        (res_id, role_id,res_type)
+        values
+        <foreach collection="list" item="rr" index="index" separator=",">
+            (#{rr.resId}, #{rr.roleId} ,#{rr.resType})
+        </foreach>
+    </insert>
+
+    <delete id="deleteRoleRes">
+        delete from dashboard_role_res where role_id = #{0} and res_type = #{1}
+    </delete>
+
 </mapper>

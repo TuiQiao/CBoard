@@ -5,6 +5,7 @@ import com.google.common.hash.Hashing;
 import org.cboard.dao.RoleDao;
 import org.cboard.dao.UserDao;
 import org.cboard.pojo.DashboardRole;
+import org.cboard.pojo.DashboardRoleRes;
 import org.cboard.pojo.DashboardUser;
 import org.cboard.pojo.DashboardUserRole;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -73,6 +74,24 @@ public class AdminSerivce {
                     list.add(userRole);
                 }
                 userDao.saveUserRole(list);
+            }
+        }
+        return "1";
+    }
+
+    public String updateRoleRes(String[] roleId, Long[] resId, String resType) {
+        for (String rid : roleId) {
+            roleDao.deleteRoleRes(rid, resType);
+            if (resId != null && resId.length > 0) {
+                List<DashboardRoleRes> list = new ArrayList<>();
+                for (Long res : resId) {
+                    DashboardRoleRes roleRes = new DashboardRoleRes();
+                    roleRes.setRoleId(rid);
+                    roleRes.setResId(res);
+                    roleRes.setResType(resType);
+                    list.add(roleRes);
+                }
+                roleDao.saveRoleRes(list);
             }
         }
         return "1";

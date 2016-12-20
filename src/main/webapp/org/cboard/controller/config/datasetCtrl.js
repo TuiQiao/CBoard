@@ -90,6 +90,9 @@ cBoard.controller('datasetCtrl', function ($scope, $http, dataService, $uibModal
         var index = $scope.curDataset.name.lastIndexOf('/');
         $scope.curDataset.categoryName = $scope.curDataset.name.substring(0, index).trim();
         $scope.curDataset.name = $scope.curDataset.name.slice(index + 1).trim();
+        if ($scope.curDataset.categoryName == '') {
+            $scope.curDataset.categoryName = translate("COMMON.DEFAULT_CATEGORY");
+        }
         if ($scope.optFlag == 'new') {
             $http.post("/dashboard/saveNewDataset.do", {json: angular.toJson($scope.curDataset)}).success(function (serviceStatus) {
                 if (serviceStatus.status == '1') {

@@ -7,27 +7,32 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
     var translate = $filter('translate');
     //图表类型初始化
     $scope.chart_types = [
-        {name: translate('CONFIG.WIDGET.LINE_BAR'), value: 'line', class: 'cLine',
+        {
+            name: translate('CONFIG.WIDGET.LINE_BAR'), value: 'line', class: 'cLine',
             row: translate('CONFIG.WIDGET.TIPS_DIM_NUM_1_MORE'),
             column: translate('CONFIG.WIDGET.TIPS_DIM_NUM_0_MORE'),
             measure: translate('CONFIG.WIDGET.TIPS_DIM_NUM_1_MORE')
         },
-        {name: translate('CONFIG.WIDGET.PIE'), value: 'pie', class: 'cPie',
+        {
+            name: translate('CONFIG.WIDGET.PIE'), value: 'pie', class: 'cPie',
             row: translate('CONFIG.WIDGET.TIPS_DIM_NUM_1_MORE'),
             column: translate('CONFIG.WIDGET.TIPS_DIM_NUM_0_MORE'),
             measure: translate('CONFIG.WIDGET.TIPS_DIM_NUM_1_MORE')
         },
-        {name: translate('CONFIG.WIDGET.KPI'), value: 'kpi', class: 'cKpi',
+        {
+            name: translate('CONFIG.WIDGET.KPI'), value: 'kpi', class: 'cKpi',
             row: translate('CONFIG.WIDGET.TIPS_DIM_NUM_0'),
             column: translate('CONFIG.WIDGET.TIPS_DIM_NUM_0'),
             measure: translate('CONFIG.WIDGET.TIPS_DIM_NUM_1')
         },
-        {name: translate('CONFIG.WIDGET.TABLE'), value: 'table', class: 'cTable',
+        {
+            name: translate('CONFIG.WIDGET.TABLE'), value: 'table', class: 'cTable',
             row: translate('CONFIG.WIDGET.TIPS_DIM_NUM_1_MORE'),
             column: translate('CONFIG.WIDGET.TIPS_DIM_NUM_0_MORE'),
             measure: translate('CONFIG.WIDGET.TIPS_DIM_NUM_1_MORE')
         },
-        {name: translate('CONFIG.WIDGET.FUNNEL'), value: 'funnel', class: 'cFunnel',
+        {
+            name: translate('CONFIG.WIDGET.FUNNEL'), value: 'funnel', class: 'cFunnel',
             row: translate('CONFIG.WIDGET.TIPS_DIM_NUM_1_MORE'),
             column: translate('CONFIG.WIDGET.TIPS_DIM_NUM_0'),
             measure: translate('CONFIG.WIDGET.TIPS_DIM_NUM_1_MORE')
@@ -37,7 +42,8 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
             column: translate('CONFIG.WIDGET.TIPS_DIM_NUM_0_MORE'),
             measure: translate('CONFIG.WIDGET.TIPS_DIM_NUM_1')
         },
-        {name: translate('CONFIG.WIDGET.RADAR'), value: 'radar', class: 'cRadar',
+        {
+            name: translate('CONFIG.WIDGET.RADAR'), value: 'radar', class: 'cRadar',
             row: translate('CONFIG.WIDGET.TIPS_DIM_NUM_1_MORE'),
             column: translate('CONFIG.WIDGET.TIPS_DIM_NUM_0_MORE'),
             measure: translate('CONFIG.WIDGET.TIPS_DIM_NUM_1_MORE')
@@ -93,6 +99,7 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
     $scope.previewDivWidth = 12;
     $scope.expressions = [];
     $scope.customDs = false;
+    $scope.loadFromCache = true;
     $scope.filterSelect = {};
     $scope.verify = {widgetName: true};
 
@@ -227,7 +234,7 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
                 widgetData.msg ? null : widgetData.msg = 'There is something wrong.';
                 $scope.alerts = [{msg: widgetData.msg, type: 'danger'}];
             }
-        });
+        }, $scope.loadFromCache);
     };
 
     $scope.newWgt = function () {
@@ -266,15 +273,18 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
     };
     var clearAlert = function () {
         $scope.alerts = [];
-        $scope.verify = {widgetName:true};
+        $scope.verify = {widgetName: true};
     };
     var validation = function () {
         $scope.alerts = [];
-        $scope.verify = {widgetName:true};
+        $scope.verify = {widgetName: true};
 
         if (!$scope.widgetName) {
-            $scope.alerts = [{msg: translate('CONFIG.WIDGET.WIDGET_NAME') + translate('COMMON.NOT_EMPTY'), type: 'danger'}];
-            $scope.verify = {widgetName:false};
+            $scope.alerts = [{
+                msg: translate('CONFIG.WIDGET.WIDGET_NAME') + translate('COMMON.NOT_EMPTY'),
+                type: 'danger'
+            }];
+            $scope.verify = {widgetName: false};
             $("#widgetName").focus();
             return false;
         }
@@ -531,13 +541,16 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
     };
 
     $scope.saveWgt = function () {
-        if(!validation()){
+        if (!validation()) {
             return;
         }
 
         var o = {};
         o.name = $scope.widgetName.slice($scope.widgetName.lastIndexOf("/") + 1).trim();
         o.categoryName = $scope.widgetName.substring(0, $scope.widgetName.lastIndexOf("/")).trim();
+        if (o.categoryName == '') {
+            o.categoryName = translate("COMMON.DEFAULT_CATEGORY");
+        }
         o.data = {};
         o.data.config = $scope.curWidget.config;
         if ($scope.customDs) {
@@ -607,7 +620,7 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
             } else {
                 ModalUtils.alert(widgetData.msg, "modal-danger", "lg");
             }
-        });
+        }, $scope.loadFromCache);
     };
 
     $scope.deleteWgt = function (widget) {

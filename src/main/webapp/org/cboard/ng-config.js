@@ -70,7 +70,11 @@ angular.module('cBoard').config(['$stateProvider', function ($stateProvider) {
             url: '/user',
             templateUrl: 'org/cboard/view/admin/user.html',
             controller: 'userAdminCtrl'
-    });
+        }).state('admin.res', {
+            url: '/res',
+            templateUrl: 'org/cboard/view/admin/res.html',
+            controller: 'resAdminCtrl'
+        });
 
 }]);
 

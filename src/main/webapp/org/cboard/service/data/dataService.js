@@ -10,11 +10,12 @@ cBoard.service('dataService', function ($http, updateService) {
      * @param query
      * @param callback
      */
-    this.getData = function (datasource, query, datasetId, callback) {
-        $http.post("/dashboard/getData.do", {
+    this.getData = function (datasource, query, datasetId, callback, fromCache) {
+        $http.post("/dashboard/getCachedData.do", {
             datasourceId: datasource,
             query: angular.toJson(query),
-            datasetId: datasetId
+            datasetId: datasetId,
+            reload: fromCache ? false : true
         }).success(function (response) {
             callback(response);
         });

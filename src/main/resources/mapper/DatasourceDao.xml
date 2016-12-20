@@ -9,7 +9,7 @@
     </select>
 
     <select id="getDatasourceList" resultType="org.cboard.pojo.DashboardDatasource">
-       SELECT datasource_id id,user_id userId,source_name name,source_type type ,config FROM dashboard_datasource
+       SELECT datasource_id id,user_id userId,source_name name,source_type type ,config FROM dashboard_datasource where user_id = #{0} or user_id = '1'
         order by source_name
     </select>
 

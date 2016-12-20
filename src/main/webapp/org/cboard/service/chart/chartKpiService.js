@@ -2,7 +2,9 @@
  * Created by yfyuan on 2016/10/28.
  */
 'use strict';
-cBoard.service('chartKpiService', function (dataService, $compile) {
+cBoard.service('chartKpiService', function (dataService, $compile, $filter) {
+
+    var translate = $filter('translate');
 
     this.render = function (containerDom, option, scope) {
         var render = new CBoardKpiRender(containerDom, option);
@@ -26,6 +28,8 @@ cBoard.service('chartKpiService', function (dataService, $compile) {
             option.style = config.values[0].style;
 
         });
+        option.edit = translate("COMMON.EDIT");
+        option.refresh = translate("COMMON.REFRESH");
         return option;
     };
 });

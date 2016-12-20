@@ -7,7 +7,7 @@
     </select>
 
     <select id="getWidgetList" resultType="org.cboard.pojo.DashboardWidget">
-       SELECT widget_id id,user_id userId,widget_name name,data_json data,category_name categoryName FROM dashboard_widget
+       SELECT widget_id id,user_id userId,widget_name name,data_json data,category_name categoryName FROM dashboard_widget where user_id = #{0} or user_id = '1'
        order by widget_name
     </select>
 

@@ -26,7 +26,8 @@
     "DASHBOARD": "Dashboard",
     "DASHBOARD_CATEGORY": "Dashboard Category",
     "ADMIN": "Admin",
-    "USER_ADMIN": "User Admin"
+    "USER_ADMIN": "User Admin",
+    "RES_ADMIN": "Resource Admin"
   },
   "HEADER": {
     "SIGN_OUT": "SignOut"
@@ -113,7 +114,8 @@
       "TIPS_DIM_NUM_0": "0",
       "TIPS_DIM_NUM_1": "1",
       "TIPS_DIM_NUM_0_MORE": "0 or more",
-      "TIPS_DIM_NUM_1_MORE": "1 or more"
+      "TIPS_DIM_NUM_1_MORE": "1 or more",
+      "FROM_CACHE": "From Cache"
     },
     "DASHBOARD": {
       "CATEGORY": "Category",
@@ -153,7 +155,8 @@
   "ADMIN": {
     "USER": {
       "LOGIN_NAME": "Login Name",
-      "NAME": "User Name"
+      "NAME": "User Name",
+      "PASSWORD": "Password"
     },
     "ROLE": {
       "ROLE_NAME": "Role Name"

@@ -7,7 +7,7 @@
     </select>
 
     <select id="getDatasetList" resultType="org.cboard.pojo.DashboardDataset">
-       SELECT dataset_id id,user_id userId,dataset_name name,data_json data,category_name categoryName FROM dashboard_dataset
+       SELECT dataset_id id,user_id userId,dataset_name name,data_json data,category_name categoryName FROM dashboard_dataset where user_id = #{0} or user_id = '1'
        order by dataset_name
     </select>
 

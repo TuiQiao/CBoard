@@ -4,9 +4,7 @@
 
     <update id="save">
         <![CDATA[
-
         INSERT INTO dashboard_user(user_id,login_name,user_name,user_password,user_status) VALUES (#{userId},#{loginName},#{userName},#{userPassword},#{userStatus})
-
         ]]>
     </update>
 
@@ -39,4 +37,16 @@
     <select id="getUserRoleList" resultType="org.cboard.pojo.DashboardUserRole">
         SELECT user_id userId,role_id roleId FROM dashboard_user_role
     </select>
+
+    <select id="getUserByLoginName" resultType="org.cboard.pojo.DashboardUser">
+        SELECT user_id userId,login_name loginName,user_name userName,user_status userStatus FROM dashboard_user where login_name = #{0}
+    </select>
+
+    <insert id="saveNewUser" >
+        INSERT INTO dashboard_user(user_id,login_name,user_name)
+        SELECT a.*
+        FROM ( SELECT uid, #{2},#{1} FROM (SELECT #{0} AS uid FROM dashboard_user) new_uid GROUP BY uid) a
+        LEFT JOIN (SELECT user_id AS uid FROM dashboard_user WHERE  user_id= #{0}) b ON a.uid = b.uid
+        WHERE b.uid IS NULL
+    </insert>
 </mapper>

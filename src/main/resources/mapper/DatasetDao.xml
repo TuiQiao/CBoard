@@ -7,8 +7,15 @@
     </select>
 
     <select id="getDatasetList" resultType="org.cboard.pojo.DashboardDataset">
-       SELECT dataset_id id,user_id userId,dataset_name name,data_json data,category_name categoryName FROM dashboard_dataset where user_id = #{0} or user_id = '1'
-       order by dataset_name
+       SELECT
+              dataset_id    AS id,
+              user_id       AS userId,
+              dataset_name  AS name,
+              data_json     AS data,
+              category_name AS categoryName
+         FROM dashboard_dataset
+        WHERE user_id = #{0} OR #{0} = '${admin_user_id}'
+        ORDER BY dataset_name
     </select>
 
     <select id="getDataset" resultType="org.cboard.pojo.DashboardDataset">

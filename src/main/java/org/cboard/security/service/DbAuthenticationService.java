@@ -11,7 +11,6 @@ import org.springframework.stereotype.Repository;
 /**
  * Created by yfyuan on 2016/12/14.
  */
-@Repository
 public class DbAuthenticationService implements AuthenticationService {
 
     @Override

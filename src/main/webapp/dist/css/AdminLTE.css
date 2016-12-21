@@ -1586,6 +1586,7 @@ a:focus {
   margin-bottom: 20px;
   width: 100%;
   box-shadow: 0 1px 1px rgba(0, 0, 0, 0.1);
+  /*
   webkit-animation-duration: 1s;
   animation-duration: 1s;
   -webkit-animation-fill-mode: both;
@@ -1593,6 +1594,7 @@ a:focus {
   z-index: 100;
   -webkit-animation-name: fadeInRight;
   animation-name: fadeInRight;
+  */
 }
 .box.box-primary {
   border-top-color: #3c8dbc;

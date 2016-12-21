@@ -86,8 +86,8 @@ Default login username and passwor: admin/root123
 ```
 
 
-## For more detailed Chinese document [CBoard Wiki](https://github.com/yzhang921/CBoard/wiki)
-## English document coming soon
+## For more detailed Chinese document [CBoard 中文文档](https://github.com/yzhang921/CBoard/wiki/%E4%B8%AD%E6%96%87%E6%96%87%E6%A1%A3)
+## For more detailed English document [CBoard Wiki](https://github.com/yzhang921/CBoard/wiki/English-Document)
 
 ## Contact us
 You can create any issue or requirements through the Issue system of github.  

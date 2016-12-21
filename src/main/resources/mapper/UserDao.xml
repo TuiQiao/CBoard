@@ -43,10 +43,10 @@
     </select>
 
     <insert id="saveNewUser" >
-        INSERT INTO dashboard_user(user_id,login_name,user_name)
+        INSERT INTO dashboard_user(user_id, login_name, user_name)
         SELECT a.*
-        FROM ( SELECT uid, #{2},#{1} FROM (SELECT #{0} AS uid FROM dashboard_user) new_uid GROUP BY uid) a
-        LEFT JOIN (SELECT user_id AS uid FROM dashboard_user WHERE  user_id= #{0}) b ON a.uid = b.uid
+        FROM (SELECT uid, #{2} AS login_name, #{1} AS user_name) a
+        LEFT JOIN (SELECT user_id AS uid FROM dashboard_user WHERE user_id=#{0}) b ON a.uid = b.uid
         WHERE b.uid IS NULL
     </insert>
 </mapper>

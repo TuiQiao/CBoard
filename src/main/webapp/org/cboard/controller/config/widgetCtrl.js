@@ -37,10 +37,9 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
             column: translate('CONFIG.WIDGET.TIPS_DIM_NUM_0'),
             measure: translate('CONFIG.WIDGET.TIPS_DIM_NUM_1_MORE')
         },
-        {
-            name: translate('CONFIG.WIDGET.SANKEY'), value: 'sankey', class: 'cSankey',
-            row: translate('CONFIG.WIDGET.TIPS_DIM_NUM_1'),
-            column: translate('CONFIG.WIDGET.TIPS_DIM_NUM_1'),
+        {name: translate('CONFIG.WIDGET.SANKEY'), value: 'sankey', class: 'cSankey',
+            row: translate('CONFIG.WIDGET.TIPS_DIM_NUM_1_MORE'),
+            column: translate('CONFIG.WIDGET.TIPS_DIM_NUM_0_MORE'),
             measure: translate('CONFIG.WIDGET.TIPS_DIM_NUM_1')
         },
         {
@@ -549,6 +548,9 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
         var o = {};
         o.name = $scope.widgetName.slice($scope.widgetName.lastIndexOf("/") + 1).trim();
         o.categoryName = $scope.widgetName.substring(0, $scope.widgetName.lastIndexOf("/")).trim();
+        if (o.categoryName == '') {
+            o.categoryName = translate("COMMON.DEFAULT_CATEGORY");
+        }
         o.data = {};
         o.data.config = $scope.curWidget.config;
         if ($scope.customDs) {

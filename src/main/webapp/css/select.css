@@ -201,7 +201,7 @@ body > .select2-container.open {
 .ui-select-bootstrap > .ui-select-choices ,.ui-select-bootstrap > .ui-select-no-choice {
   width: 100%;
   height: auto;
-  max-height: 200px;
+  max-height: 450px;
   overflow-x: hidden;
   margin-top: -1px;
 }

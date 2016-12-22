@@ -7,8 +7,15 @@
     </select>
 
     <select id="getWidgetList" resultType="org.cboard.pojo.DashboardWidget">
-       SELECT widget_id id,user_id userId,widget_name name,data_json data,category_name categoryName FROM dashboard_widget where user_id = #{0} or user_id = '1'
-       order by widget_name
+       SELECT
+              widget_id     AS id,
+              user_id       AS userId,
+              widget_name   AS name,
+              data_json     AS data,
+              category_name AS categoryName
+         FROM dashboard_widget
+        WHERE user_id = #{0} OR #{0} = '${admin_user_id}'
+        ORDER BY widget_name
     </select>
 
     <select id="getWidget" resultType="org.cboard.pojo.DashboardWidget">
@@ -28,16 +35,19 @@
     </update>
 
     <select id="countExistWidgetName" resultType="java.lang.Long">
-        SELECT count(1) from dashboard_widget where 1=1
+        SELECT count(1)
+          FROM dashboard_widget
+         WHERE 1=1
         <if test="widget_id != null" >
-        <![CDATA[
-            and widget_id <> #{widget_id}
-            ]]>
+          <![CDATA[
+            AND widget_id <> #{widget_id}
+          ]]>
         </if>
-          and widget_name = #{widget_name}
+          AND widget_name = #{widget_name}
+          AND category_name = #{category_name}
     </select>
 
     <delete id="delete">
-        delete from dashboard_widget where widget_id = #{0}
+        DELETE FROM dashboard_widget WHERE widget_id = #{0}
     </delete>
 </mapper>

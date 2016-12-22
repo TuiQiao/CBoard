@@ -47,7 +47,7 @@ cBoard.service('chartTableService', function (dataService) {
                     } else {
                         table_data[j][i + keyLength] = {
                             property: 'data',
-                            data: 'N/A'
+                            data: ''
                         };
                     }
                 }

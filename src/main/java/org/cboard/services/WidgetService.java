@@ -32,12 +32,13 @@ public class WidgetService {
         Map<String, Object> paramMap = new HashMap<String, Object>();
         paramMap.put("widget_name", widget.getName());
         paramMap.put("user_id", widget.getUserId());
+        paramMap.put("category_name", widget.getCategoryName());
 
         if (widgetDao.countExistWidgetName(paramMap) <= 0) {
             widgetDao.save(widget);
             return new ServiceStatus(ServiceStatus.Status.Success, "success");
         } else {
-            return new ServiceStatus(ServiceStatus.Status.Fail, "名称已存在");
+            return new ServiceStatus(ServiceStatus.Status.Fail, "Duplicated name");
         }
     }
 
@@ -56,11 +57,12 @@ public class WidgetService {
         paramMap.put("widget_name", widget.getName());
         paramMap.put("user_id", widget.getUserId());
         paramMap.put("widget_id", widget.getId());
+        paramMap.put("category_name", widget.getCategoryName());
         if (widgetDao.countExistWidgetName(paramMap) <= 0) {
             widgetDao.update(widget);
             return new ServiceStatus(ServiceStatus.Status.Success, "success");
         } else {
-            return new ServiceStatus(ServiceStatus.Status.Fail, "名称已存在");
+            return new ServiceStatus(ServiceStatus.Status.Fail, "Duplicated name");
         }
     }
 

@@ -132,13 +132,11 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
     var getWidgetList = function (callback) {
         $http.get("/dashboard/getWidgetList.do").success(function (response) {
             $scope.widgetList = response;
+            $scope.originalData = getTreeData(response);
             if (callback) {
                 callback();
-            }else{
-                $scope.reloadTree();
             }
-            $scope.originalData = getTreeData(response);
-            angular.copy($scope.originalData, $scope.treeData);
+            $scope.reloadTree();
         });
     };
 
@@ -269,7 +267,7 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
                             icon: 'glyphicon glyphicon-file'
                         });
                     } else {
-                        list.push({"id": 'parent' + newParentId, "parent": parent, "text": a, state: {opened: true}});
+                        list.push({"id": 'parent' + newParentId, "parent": parent, "text": a});
                     }
                     parent = 'parent' + newParentId;
                     newParentId++;
@@ -280,7 +278,6 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
         }
         return list;
     };
-    
     $scope.treeConfig = {
         core : {
             multiple : false,
@@ -307,11 +304,14 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
         dnd : {
             check_while_dragging: true
         },
+        state : { "key" : "cboard" },
         version : 1,
         plugins : ['types','unique','state','sort','dnd']
     };
 
     $scope.reloadTree = function () {
+        $scope.ignoreChanges = true;
+        angular.copy($scope.originalData, $scope.treeData);
         $scope.treeConfig.version ++;
     }
     $scope.copyNode = function(){
@@ -391,7 +391,7 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
     };
 
     $scope.applyModelChanges = function() {
-        return $scope.ignoreChanges;
+        return !$scope.ignoreChanges;
     };
     
     $scope.newWgt = function () {
@@ -435,7 +435,6 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
     var validation = function () {
         $scope.alerts = [];
         $scope.verify = {widgetName: true};
-
         if (!$scope.widgetName) {
             $scope.alerts = [{
                 msg: translate('CONFIG.WIDGET.WIDGET_NAME') + translate('COMMON.NOT_EMPTY'),

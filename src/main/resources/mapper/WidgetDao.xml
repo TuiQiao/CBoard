@@ -35,13 +35,16 @@
     </update>
 
     <select id="countExistWidgetName" resultType="java.lang.Long">
-        SELECT count(1) from dashboard_widget where 1=1
+        SELECT count(1)
+          FROM dashboard_widget
+         WHERE 1=1
         <if test="widget_id != null" >
-        <![CDATA[
+          <![CDATA[
             AND widget_id <> #{widget_id}
-            ]]>
+          ]]>
         </if>
           AND widget_name = #{widget_name}
+          AND category_name = #{category_name}
     </select>
 
     <delete id="delete">

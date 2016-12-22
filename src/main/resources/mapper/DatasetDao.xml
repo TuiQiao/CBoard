@@ -35,13 +35,16 @@
     </update>
 
     <select id="countExistDatasetName" resultType="java.lang.Long">
-        SELECT count(1) from dashboard_dataset where 1=1
+        SELECT count(1)
+          FROM dashboard_dataset
+         WHERE 1=1
         <if test="dataset_id != null" >
-        <![CDATA[
-            and dataset_id <> #{dataset_id}
-            ]]>
+          <![CDATA[
+            AND dataset_id <> #{dataset_id}
+          ]]>
         </if>
-          and dataset_name = #{dataset_name}
+            AND dataset_name = #{dataset_name}
+            AND category_name = #{category_name}
     </select>
 
     <delete id="delete">

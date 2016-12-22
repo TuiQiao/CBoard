@@ -25,4 +25,6 @@ public interface DatasourceDao {
     int update(DashboardDatasource dashboardDatasource);
 
     int delete(Long id, String userId);
+
+    long checkDatasourceRole(String userId, Long datasourceId);
 }

@@ -9,6 +9,12 @@ cBoard.controller('cBoardCtrl', function ($scope, $location, $http, $q, md5) {
         $scope.user.avatar = avatarUrl;
     });
 
+    var getMenuList = function () {
+        $http.get("/commons/getMenuList.do").success(function (response) {
+            $scope.menuList = response;
+        });
+    };
+
     var getCategoryList = function () {
         $http.get("/dashboard/getCategoryList.do").success(function (response) {
             $scope.categoryList = response;
@@ -21,14 +27,21 @@ cBoard.controller('cBoardCtrl', function ($scope, $location, $http, $q, md5) {
         });
     };
 
-    $scope.$on("boardChange",function () {
+    $scope.$on("boardChange", function () {
         getBoardList();
     });
 
-    $scope.$on("categoryChange",function () {
+    $scope.$on("categoryChange", function () {
         getCategoryList();
     });
 
+    $scope.isShowMenu = function (code) {
+        return !_.isUndefined(_.find($scope.menuList, function (menu) {
+            return menu.menuCode == code
+        }));
+    };
+
+    getMenuList();
     getCategoryList();
     getBoardList();
 });

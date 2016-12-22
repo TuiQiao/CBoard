@@ -25,4 +25,6 @@ public interface WidgetDao {
     int delete(Long id, String userId);
 
     DashboardWidget getWidget(Long id);
+
+    long checkWidgetRole(String userId, Long widgetId);
 }

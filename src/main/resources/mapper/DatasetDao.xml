@@ -7,8 +7,15 @@
     </select>
 
     <select id="getDatasetList" resultType="org.cboard.pojo.DashboardDataset">
-       SELECT dataset_id id,user_id userId,dataset_name name,data_json data,category_name categoryName FROM dashboard_dataset where user_id = #{0} or user_id = '1'
-       order by dataset_name
+       SELECT
+              dataset_id    AS id,
+              user_id       AS userId,
+              dataset_name  AS name,
+              data_json     AS data,
+              category_name AS categoryName
+         FROM dashboard_dataset
+        WHERE user_id = #{0} OR #{0} = '${admin_user_id}'
+        ORDER BY dataset_name
     </select>
 
     <select id="getDataset" resultType="org.cboard.pojo.DashboardDataset">
@@ -28,13 +35,16 @@
     </update>
 
     <select id="countExistDatasetName" resultType="java.lang.Long">
-        SELECT count(1) from dashboard_dataset where 1=1
+        SELECT count(1)
+          FROM dashboard_dataset
+         WHERE 1=1
         <if test="dataset_id != null" >
-        <![CDATA[
-            and dataset_id <> #{dataset_id}
-            ]]>
+          <![CDATA[
+            AND dataset_id <> #{dataset_id}
+          ]]>
         </if>
-          and dataset_name = #{dataset_name}
+            AND dataset_name = #{dataset_name}
+            AND category_name = #{category_name}
     </select>
 
     <delete id="delete">

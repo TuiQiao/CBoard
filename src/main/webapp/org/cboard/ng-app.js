@@ -3,4 +3,4 @@
  */
 
 var cBoard = angular.module('cBoard', ['ui.router', 'angular-md5', 'dndLists',
-    'ui.bootstrap', 'ngSanitize', 'ui.select', 'pascalprecht.translate', 'ui.ace']);
+    'ui.bootstrap', 'ngSanitize', 'ui.select', 'pascalprecht.translate', 'ui.ace', 'ngJsTree']);

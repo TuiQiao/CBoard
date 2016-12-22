@@ -3,33 +3,19 @@
 <div id="inner-container">
     <div class="row">
         <div class="col-md-3">
-            <button class="btn btn-success btn-block margin-bottom" ng-click="newWgt()">New</button>
             <div class="box box-solid">
-                <div class="box-header with-border">
-                    <h3 class="box-title">{{'CONFIG.WIDGET.WIDGET'|translate}}</h3>
+                <div class="box-header panel panel-default">
+                    <i class="fa fa-bar-chart-o"></i> <h3 class="box-title"> {{'CONFIG.WIDGET.WIDGET'|translate}}</h3>
+                    <div class="box-tools pull-right">
+                        <i class="fa fa-file" style="cursor: pointer" ng-click="newWgt()"></i>&nbsp;&nbsp;
+                        <i class="fa fa-copy" style="cursor: pointer" ng-click="copyNode()"></i>&nbsp;&nbsp;
+                        <i class="fa fa-edit" style="cursor: pointer" ng-click="editNode()"></i>&nbsp;&nbsp;
+                        <i class="fa fa-trash-o" style="cursor: pointer" ng-click="deleteNode()"></i>
+                    </div>
                 </div>
-                <div class="box-body no-padding">
-                    <uib-accordion class="nav nav-pills nav-stacked" close-others="true">
-                        <div uib-accordion-group ng-repeat="category in categoryList" >
-                            <uib-accordion-heading>
-                                {{category}}<i class="pull-right glyphicon"></i>
-                            </uib-accordion-heading>
-                            <ul class="nav nav-pills nav-stacked">
-                                <li ng-repeat="o in widgetList | filter:{categoryName:category}">
-                                    <a>
-                                        {{o.name}}
-                                <span class="pull-right text-red">
-                                    <i class="fa fa-copy" style="cursor: pointer" ng-click="copyWgt(o)"></i>&nbsp;
-                                    <i class="fa fa-edit" style="cursor: pointer" ng-click="editWgt(o)"></i>&nbsp;
-                                    <i class="fa fa-trash-o" style="cursor: pointer"
-                                       ng-click="deleteWgt(o)"></i>
-                                </span>
-                                    </a>
-                                </li>
-                            </ul>
-                        </div>
-                    </uib-accordion>
-                    <!-- /.box-body -->
+                <div class="panel-body">
+                    <div js-tree="treeConfig" should-apply="applyModelChanges()" ng-model="treeData" tree="treeInstance"
+                         tree-events="ready:readyCB;activate_node:selectNode;move_node:moveNode"></div>
                 </div>
             </div>
         </div>

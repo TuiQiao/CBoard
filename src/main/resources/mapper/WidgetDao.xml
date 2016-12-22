@@ -40,4 +40,9 @@
     <delete id="delete">
         delete from dashboard_widget where widget_id = #{0}
     </delete>
+
+    <select id="checkWidgetRole" resultType="java.lang.Long">
+        SELECT count(1) FROM dashboard_widget WHERE widget_id = #{1} and (#{0} = '1' OR user_id = #{0} OR widget_id IN (SELECT res_id FROM dashboard_user_role ur LEFT JOIN dashboard_role_res rr ON ur.role_id = rr.role_id WHERE ur.user_id = #{0} AND rr.res_type = 'widget'))
+    </select>
+
 </mapper>

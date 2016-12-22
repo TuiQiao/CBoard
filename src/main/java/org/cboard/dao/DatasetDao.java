@@ -26,4 +26,6 @@ public interface DatasetDao {
 
     DashboardDataset getDataset(Long id);
 
+    long checkDatasetRole(String userId, Long widgetId);
+
 }

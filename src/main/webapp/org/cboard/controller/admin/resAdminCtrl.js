@@ -4,7 +4,7 @@
 cBoard.controller('resAdminCtrl', function ($scope, $http, ModalUtils, $filter) {
     var translate = $filter('translate');
 
-    $scope.resTypeList = [{name: '看板', value: 'board'}];
+    $scope.resTypeList = [{name: '看板', value: 'board'},{name: '菜单', value: 'menu'}];
 
     var getRoleList = function () {
         $http.get("/admin/getRoleList.do").success(function (response) {
@@ -20,6 +20,13 @@ cBoard.controller('resAdminCtrl', function ($scope, $http, ModalUtils, $filter) 
     };
     getBoardList();
 
+    var getMenuList = function () {
+        $http.get("/commons/getMenuList.do").success(function (response) {
+            $scope.menuList = response;
+        });
+    };
+    getMenuList();
+
     var getRoleResList = function () {
         $http.get("/admin/getRoleResList.do").success(function (response) {
             $scope.roleResList = response;
@@ -34,6 +41,11 @@ cBoard.controller('resAdminCtrl', function ($scope, $http, ModalUtils, $filter) 
                     return e.categoryId;
                 }), function (e) {
                     return {id: e.id, name: e.name};
+                });
+                break;
+            case 'menu':
+                $scope.resList = _.map($scope.menuList, function (e) {
+                    return {id: e.menuId, name: e.menuName};
                 });
                 break;
         }

@@ -11,7 +11,10 @@
     "SUCCESS": "Success!",
     "FAIL": "Fail!",
     "DEFAULT_CATEGORY": "Default Category",
-    "NOT_EMPTY": " can not be empty!"
+    "NOT_EMPTY": " can not be empty!",
+    "NEW": "New",
+    "COPY": "Copy",
+    "DELETE": "Delete"
   },
   "TIPS": {
     "CAL_EXPR": "Calculate after aggregation. Use assist click input to avoid typo! e.g: Math.log(sum(columnA)/count(columB))"

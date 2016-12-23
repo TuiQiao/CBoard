@@ -1805,9 +1805,10 @@ a:focus {
   margin-right: 5px;
 }
 .box-header > .box-tools {
-  position: absolute;
+  /*position: absolute;
   right: 10px;
-  top: 5px;
+  top: 5px;*/
+  vertical-align: middle;
 }
 .box-header > .box-tools [data-toggle="tooltip"] {
   position: relative;
@@ -4960,6 +4961,10 @@ button >canvas {
   top: 0;
   left: 0;
   z-index: 5;
+}
+.toolbar-icon {
+  cursor: pointer;
+  font-size: large
 }
 /*
  * Misc: print

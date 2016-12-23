@@ -304,9 +304,9 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
         dnd : {
             check_while_dragging: true
         },
-        state : { "key" : "cboard" },
-        version : 1,
-        plugins : ['types','unique','state','sort','dnd']
+        state: {"key": "cboard"},
+        version: 1,
+        plugins: ['types', 'unique', 'state', 'sort', 'dnd']
     };
 
     $scope.reloadTree = function () {
@@ -314,7 +314,22 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
         angular.copy($scope.originalData, $scope.treeData);
         $scope.treeConfig.version ++;
     }
+
+    var checkTreeNode = function(action) {
+        var nodes = $("[js-tree]").jstree(true).get_selected(true);
+        if (nodes.length == 0) {
+            ModalUtils.alert("Please, select one widget first!", "modal-warning", "lg");
+            return false;
+        } else if (typeof(nodes.children) != "undefined" && nodes.children.length > 0) {
+            ModalUtils.alert("Can't " + action + " a folder!", "modal-warning", "lg");
+            return false;
+        } else {
+            return true;
+        }
+    }
+
     $scope.copyNode = function(){
+        if (!checkTreeNode("copy")) return;
         var node = $("[js-tree]").jstree(true).get_selected(true)[0];
         var newnode = angular.copy(node);
         if(newnode.children.length > 0){
@@ -331,11 +346,8 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
     };
 
     $scope.editNode = function () {
+        if (!checkTreeNode("edit")) return;
         var node = $("[js-tree]").jstree(true).get_selected(true)[0];
-        if(node.children.length > 0){
-            ModalUtils.alert("Can not edit folder!", "modal-warning", "lg");
-            return;
-        }
         for(var j=0; j<$scope.widgetList.length;j++){
             if($scope.widgetList[j].id == node.id){
                 $scope.editWgt($scope.widgetList[j]);
@@ -344,11 +356,8 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
         }
     };
     $scope.deleteNode = function(){
+        if (!checkTreeNode("delete")) return;
         var node = $("[js-tree]").jstree(true).get_selected(true)[0];
-        if(node.children.length > 0){
-            ModalUtils.alert("Can not delete folder!", "modal-warning", "lg");
-            return;
-        }
         for(var j=0; j<$scope.widgetList.length;j++){
             if($scope.widgetList[j].id == node.id){
                 $scope.deleteWgt($scope.widgetList[j]);

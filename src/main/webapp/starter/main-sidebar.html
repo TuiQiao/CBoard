@@ -15,14 +15,14 @@
         <li class="header">MENU</li>
         <!-- DashBoard -->
         <li class="treeview" ui-sref-active="active">
-            <a ui-sref="dashboard">
+            <a>
                 <i class="fa fa-th"></i>
                 <span>{{'SIDEBAR.C_DASHBOARD'|translate}}</span>
                 <span class="pull-right-container"><i class="fa fa-angle-left pull-right"></i></span>
             </a>
             <ul class="treeview-menu">
                 <li ui-sref-active="active" ng-repeat="c in categoryList">
-                    <a ui-sref="dashboard.category({category:c.name})">
+                    <a>
                         <i class="fa fa-folder"></i>
                             {{c.name}}
                         <span class="pull-right-container">
@@ -38,7 +38,7 @@
             </ul>
         </li>
         <li class="treeview" ui-sref-active="active">
-            <a ui-sref="mine">
+            <a>
                 <i class="fa fa-th"></i>
                 <span>{{'SIDEBAR.MY_DASHBOARD'|translate}}</span>
                 <span class="pull-right-container"><i class="fa fa-angle-left pull-right"></i></span>
@@ -51,7 +51,7 @@
         </li>
         <!-- Config -->
         <li class="treeview" ui-sref-active="active" ng-if="isShowMenu('config')">
-            <a ui-sref="config">
+            <a>
                 <i class="fa fa-cog"></i>
                 <span>{{'SIDEBAR.CONFIG'|translate}}</span>
                 <span class="pull-right-container">
@@ -78,7 +78,7 @@
         </li>
         <!-- Admin -->
         <li class="treeview" ui-sref-active="active" ng-if="isShowMenu('admin')">
-            <a ui-sref="admin">
+            <a>
                 <i class="fa fa-cog"></i>
                 <span>{{'SIDEBAR.ADMIN'|translate}}</span>
                 <span class="pull-right-container">

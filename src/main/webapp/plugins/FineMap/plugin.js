@@ -77,6 +77,7 @@ var threeLevelMap = {
             }
             columnHeaderLink.push(title.join('-'));
         }
+        this.tipHeader = columnHeaderLink[0];
         if (data[0].length) {
             for (var i = columnHeaderLength + 1; i < data.length; i++) {
                 (data[i][rowHeaderLength].data == "N/A" ?  columnList.push(0) :
@@ -85,22 +86,24 @@ var threeLevelMap = {
         }
         columnMax = d3.max(columnList);
         columnMin = d3.min(columnList);
-        var computeColor = d3.interpolate(d3.rgb(177,224,248), d3.rgb(137,199,242));
+        var computeColor = d3.interpolate(d3.rgb(180,227,248), d3.rgb(2,112,221));
         var linear = d3.scale.linear()
             .domain([columnMin, columnMax])
             .range([0, 1]);
         if (data[0].length) {
             data.map(function (d) {
-                d[rowHeaderLength - 1].data == name ? dataValue = d[rowHeaderLength].data : null;
+                (d[rowHeaderLength - 1] && d[rowHeaderLength - 1].data) == name ? dataValue = d[rowHeaderLength].data : null;
             });
         }
-        var t = linear(dataValue);
-        var color = computeColor(t);
         if (dataValue < 0){
             color = "#FF7A4C";
         }
-        else if (dataValue == null){
+        else if (dataValue == null || dataValue == 'N/A'){
             color = "#F0F0F0";
+        }
+        else {
+            var t = linear(dataValue);
+            var color = computeColor(t);
         }
         return color;
     },
@@ -123,7 +126,6 @@ var threeLevelMap = {
                 }
                 columnHeaderLink.push(title.join('-'));
             }
-            this.tipHeader = columnHeaderLink[0];
             for (var k = 0; k < data.length; k++) {
                 if (data[k][rowHeaderLength - 1].data == name) {
                     for(var t = 0;t < columnHeaderLink.length;t++){
@@ -158,7 +160,7 @@ var threeLevelMap = {
         var colorLength = 130;
         var colorWidth = 20;
         args.svg.append("rect")
-            .attr("x", args.width * 0.65 - 7)
+            .attr("x", args.width * 0.7 - 7)
             .attr("y", args.height * 0.6)
             .attr("width", colorWidth)
             .attr("height", colorLength)
@@ -168,7 +170,7 @@ var threeLevelMap = {
         args.svg.append("text")
             .attr({
                 "class": "valueText",
-                "x": args.width*0.65 + 5,
+                "x": args.width*0.7 + 5,
                 "y": args.height*0.6 - 10,
                 "text-anchor": "middle"
             })
@@ -177,7 +179,7 @@ var threeLevelMap = {
             });
         args.svg.append("text")
             .attr("class", "valueText")
-            .attr("x", args.width*0.65 - 40)
+            .attr("x", args.width*0.7 - 40)
             .attr("y", args.height*0.6 + 10)
             .text("High");
         //.text(function(){
@@ -186,7 +188,7 @@ var threeLevelMap = {
 
         args.svg.append("text")
             .attr("class","valueText")
-            .attr("x", args.width*0.65 - 40)
+            .attr("x", args.width*0.7 - 40)
             .attr("y", args.height*0.6 + colorLength)
             .text("Low");
         //.text(function(){
@@ -202,7 +204,7 @@ var threeLevelMap = {
             .attr('width', width)
             .attr('height', options.height)
             .append('g')
-            .attr('transform', ' translate(' + width * 0.2 + ', 30)');
+            .attr('transform', ' translate(' + width * 0.12 + ', 30)');
         var tip = d3.behavior.tip()
             .attr('class', 'd3-tip')
             .offset([-10, 0]);
@@ -215,7 +217,7 @@ var threeLevelMap = {
                 var zoomScale = that.getZoomScale(root.features, width, options.height);
                 var projection = d3.geo.mercator()
                     .center([107, 38])
-                    .scale(zoomScale*43)
+                    .scale(zoomScale*40)
                     .translate([width/3, options.height/2.5]);
                 path = d3.geo.path().projection(projection);
             }
@@ -239,7 +241,7 @@ var threeLevelMap = {
                     backColor = d3.select(this).attr("fill");
                     d3.select(this)
                         .attr("fill", overColor);
-                    var tipString = options.data[0].length ? that.tipData(options.data, nameNode) : nameNode;
+                    var tipString = that.tipData(options.data, nameNode) ? that.tipData(options.data, nameNode) : nameNode;
                     tip.html(tipString);
                     tip.show();
                 })
@@ -265,11 +267,11 @@ var threeLevelMap = {
                 });
             var colorParam = {
                 svg: svg,
-                minColor: d3.rgb(177,224,248),
-                maxColor: d3.rgb(137,199,242),
+                minColor: d3.rgb(180,227,248),
+                maxColor: d3.rgb(2,112,221),
                 width: width,
                 height: options.height,
-                contentHeader: this.tipHeader
+                contentHeader: that.tipHeader
             };
             options.data[0].length ? that.colorRange(colorParam) : null;
             // options.data[0].length ? _this.drawBubble(options.data, svg, root, projection) : null;
@@ -291,7 +293,7 @@ var threeLevelMap = {
                 return console.error(error);
             var projection = d3.geo.mercator()
                 .center(centers)
-                .scale(zoomScale*43)
+                .scale(zoomScale*40)
                 .translate([argsProvince.width/3, argsProvince.height/2]);
             var path = d3.geo.path().projection(projection);
             var tip = d3.behavior.tip()

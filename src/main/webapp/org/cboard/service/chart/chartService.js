@@ -2,7 +2,8 @@
  * Created by yfyuan on 2016/10/28.
  */
 'use strict';
-cBoard.service('chartService', function (chartPieService, chartLineService, chartFunnelService, chartSankeyService, chartTableService, chartKpiService, chartRadarService) {
+cBoard.service('chartService', function (chartPieService, chartLineService, chartFunnelService,
+        chartSankeyService, chartTableService, chartKpiService, chartRadarService, chartMapService) {
 
         this.render = function (containerDom, chartData, chartConfig, optionFilter, scope) {
             var chart = getChartServices(chartConfig);
@@ -49,6 +50,9 @@ cBoard.service('chartService', function (chartPieService, chartLineService, char
                     break;
                 case 'radar':
                     chart = chartRadarService;
+                    break;
+                case 'map':
+                    chart = chartMapService;
                     break;
             }
             return chart;

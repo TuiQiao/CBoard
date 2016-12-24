@@ -48,11 +48,18 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
             row: translate('CONFIG.WIDGET.TIPS_DIM_NUM_1_MORE'),
             column: translate('CONFIG.WIDGET.TIPS_DIM_NUM_0_MORE'),
             measure: translate('CONFIG.WIDGET.TIPS_DIM_NUM_1_MORE')
+        },
+        {
+            name: translate('CONFIG.WIDGET.MAP'), value: 'map', class: 'cMap',
+            row: translate('CONFIG.WIDGET.TIPS_DIM_NUM_1_MORE'),
+            column: translate('CONFIG.WIDGET.TIPS_DIM_NUM_0_MORE'),
+            measure: translate('CONFIG.WIDGET.TIPS_DIM_NUM_1_MORE')
         }
     ];
 
     $scope.chart_types_status = {
-        "line": true, "pie": true, "kpi": true, "table": true, "funnel": true, "sankey": true, "radar": true
+        "line": true, "pie": true, "kpi": true, "table": true,
+        "funnel": true, "sankey": true, "radar": true, "map": true
     };
 
     $scope.value_series_types = [
@@ -83,7 +90,8 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
         table: {keys: 0, groups: 0, filters: 0, values: 0},
         funnel: {keys: 0, groups: -1, filters: 0, values: 0},
         sankey: {keys: 0, groups: 0, filters: 0, values: 1},
-        radar: {keys: 0, groups: 0, filters: 0, values: 0}
+        radar: {keys: 0, groups: 0, filters: 0, values: 0},
+        map: {keys: 0, groups: 0, filters: 0, values: 0},
     };
 
     //界面控制
@@ -451,6 +459,16 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
                 }];
                 $scope.curWidget.config.filters = new Array();
                 break;
+            case 'map':
+                $scope.curWidget.config.selects = angular.copy($scope.widgetData[0]);
+                $scope.curWidget.config.keys = new Array();
+                $scope.curWidget.config.groups = new Array();
+                $scope.curWidget.config.values = [{
+                    name: '',
+                    cols: []
+                }];
+                $scope.curWidget.config.filters = new Array();
+                break;
         }
         addWatch();
     };
@@ -511,6 +529,9 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
                             }
                         }
                     };
+                    break;
+                case 'map':
+                    $scope.previewDivWidth = 12;
                     break;
             }
         });

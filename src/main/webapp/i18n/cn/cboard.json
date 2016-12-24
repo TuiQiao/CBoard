@@ -11,7 +11,10 @@
     "SUCCESS": "成功!",
     "FAIL": "失败!",
     "DEFAULT_CATEGORY": "默认分类",
-    "NOT_EMPTY": "不能为空!"
+    "NOT_EMPTY": "不能为空!",
+    "NEW": "新建",
+    "COPY": "复制",
+    "DELETE": "删除"
   },
   "TIPS": {
     "CAL_EXPR": "用于聚合后再计算. 使用上面的点击辅助输入避免输入错误! 如: Math.log(sum(columnA)/count(columB))"

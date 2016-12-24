@@ -107,7 +107,7 @@
         <dependency>
             <groupId>com.alibaba</groupId>
             <artifactId>druid</artifactId>
-            <version>0.2.26</version>
+            <version>1.0.27</version>
         </dependency>
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>

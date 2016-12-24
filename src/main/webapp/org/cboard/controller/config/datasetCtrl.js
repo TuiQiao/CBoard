@@ -35,6 +35,7 @@ cBoard.controller('datasetCtrl', function ($scope, $http, dataService, $uibModal
         $scope.curWidget = {};
         cleanPreview();
     };
+
     $scope.editDs = function (ds) {
         $scope.optFlag = 'edit';
         $scope.curDataset = angular.copy(ds);
@@ -48,6 +49,7 @@ cBoard.controller('datasetCtrl', function ($scope, $http, dataService, $uibModal
         $scope.curWidget.query = $scope.curDataset.data.query;
         $scope.loadData();
     };
+
     $scope.deleteDs = function (ds) {
         ModalUtils.confirm(translate("COMMON.CONFIRM_DELETE"), "modal-warning", "lg", function () {
             $http.post("/dashboard/deleteDataset.do", {id: ds.id}).success(function () {
@@ -56,6 +58,7 @@ cBoard.controller('datasetCtrl', function ($scope, $http, dataService, $uibModal
             });
         });
     };
+
     $scope.copyDs = function (ds) {
         var data = angular.copy(ds);
         data.name = data.name + "_copy";
@@ -79,7 +82,8 @@ cBoard.controller('datasetCtrl', function ($scope, $http, dataService, $uibModal
             return false;
         }
         return true;
-    }
+    };
+
     $scope.save = function () {
         $scope.datasource ? $scope.curDataset.data.datasource = $scope.datasource.id : null;
         $scope.curDataset.data.query = $scope.curWidget.query;
@@ -87,13 +91,18 @@ cBoard.controller('datasetCtrl', function ($scope, $http, dataService, $uibModal
         if (!validate()) {
             return;
         }
-        var index = $scope.curDataset.name.lastIndexOf('/');
-        $scope.curDataset.categoryName = $scope.curDataset.name.substring(0, index).trim();
-        $scope.curDataset.name = $scope.curDataset.name.slice(index + 1).trim();
+        var ds = angular.copy($scope.curDataset);
+        var index = ds.name.lastIndexOf('/');
+        ds.categoryName = $scope.curDataset.name.substring(0, index).trim();
+        ds.name = $scope.curDataset.name.slice(index + 1).trim();
+        if (ds.categoryName == '') {
+            ds.categoryName = translate("COMMON.DEFAULT_CATEGORY");
+        }
+
         if ($scope.optFlag == 'new') {
-            $http.post("/dashboard/saveNewDataset.do", {json: angular.toJson($scope.curDataset)}).success(function (serviceStatus) {
+            $http.post("/dashboard/saveNewDataset.do", {json: angular.toJson(ds)}).success(function (serviceStatus) {
                 if (serviceStatus.status == '1') {
-                    $scope.optFlag = 'none';
+                    $scope.optFlag = 'edit';
                     getCategoryList();
                     getDatasetList();
                     $scope.verify = {dsName: true};
@@ -103,9 +112,9 @@ cBoard.controller('datasetCtrl', function ($scope, $http, dataService, $uibModal
                 }
             });
         } else {
-            $http.post("/dashboard/updateDataset.do", {json: angular.toJson($scope.curDataset)}).success(function (serviceStatus) {
+            $http.post("/dashboard/updateDataset.do", {json: angular.toJson(ds)}).success(function (serviceStatus) {
                 if (serviceStatus.status == '1') {
-                    $scope.optFlag = 'none';
+                    $scope.optFlag = 'edit';
                     getCategoryList();
                     getDatasetList();
                     $scope.verify = {dsName: true};

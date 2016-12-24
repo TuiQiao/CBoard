@@ -32,12 +32,12 @@ public class DatasetService {
         Map<String, Object> paramMap = new HashMap<String, Object>();
         paramMap.put("dataset_name", dataset.getName());
         paramMap.put("user_id", dataset.getUserId());
-
+        paramMap.put("category_name", dataset.getCategoryName());
         if (datasetDao.countExistDatasetName(paramMap) <= 0) {
             datasetDao.save(dataset);
             return new ServiceStatus(ServiceStatus.Status.Success, "success");
         } else {
-            return new ServiceStatus(ServiceStatus.Status.Fail, "名称已存在");
+            return new ServiceStatus(ServiceStatus.Status.Fail, "Duplicated name");
         }
     }
 
@@ -56,11 +56,12 @@ public class DatasetService {
         paramMap.put("dataset_name", dataset.getName());
         paramMap.put("user_id", dataset.getUserId());
         paramMap.put("dataset_id", dataset.getId());
+        paramMap.put("category_name", dataset.getCategoryName());
         if (datasetDao.countExistDatasetName(paramMap) <= 0) {
             datasetDao.update(dataset);
             return new ServiceStatus(ServiceStatus.Status.Success, "success");
         } else {
-            return new ServiceStatus(ServiceStatus.Status.Fail, "名称已存在");
+            return new ServiceStatus(ServiceStatus.Status.Fail, "Duplicated name");
         }
     }
 

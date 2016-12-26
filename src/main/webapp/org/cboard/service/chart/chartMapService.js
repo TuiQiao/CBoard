@@ -9,7 +9,7 @@ cBoard.service('chartMapService', function (dataService) {
     };
 
     this.parseOption = function (chartData, chartConfig) {
-        var tableOption = null;
+        var mapOption = null;
         dataService.castRawData2Series(chartData, chartConfig, function (casted_keys, casted_values, aggregate_data, newValuesConfig) {
             var keysList = casted_keys,
                 keyArr = [],
@@ -74,13 +74,13 @@ cBoard.service('chartMapService', function (dataService) {
                     column_header[j] = keyArr. concat(column_header[j]) :
                     column_header[j] = emptyList.concat(column_header[j]);
             }
-            tableOption = {
+            mapOption = {
                 chartConfig: chartConfig,
                 data: column_header.concat(table_data)
             };
             table_data = null;
             column_header = null;
         });
-        return tableOption;
+        return mapOption;
     };
 });

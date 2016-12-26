@@ -495,7 +495,7 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
                         r = l <= rule[k];
                     }
                 } else {
-                    if (rule[k] == -1) {
+                    if (rule[k] == -1 && config[k] != undefined) {
                         r = config[k].length == 0
                     } else if (rule[k] > 0) {
                         r = config[k].length <= rule[k];

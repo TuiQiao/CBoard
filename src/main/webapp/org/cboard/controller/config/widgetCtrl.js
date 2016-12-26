@@ -151,6 +151,9 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
     var getCategoryList = function () {
         $http.get("/dashboard/getWidgetCategoryList.do").success(function (response) {
             $scope.categoryList = response;
+            $("#widgetName").autocomplete({
+                source: $scope.categoryList
+            });
         });
     };
 

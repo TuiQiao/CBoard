@@ -151,6 +151,9 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
     var getCategoryList = function () {
         $http.get("/dashboard/getWidgetCategoryList.do").success(function (response) {
             $scope.categoryList = response;
+            $("#widgetName").autocomplete({
+                source: $scope.categoryList
+            });
         });
     };
 
@@ -316,11 +319,14 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
         version: 1,
         plugins: ['types', 'unique', 'state', 'sort', 'dnd']
     };
-
+    $('[js-tree]').keyup(function(e){
+        if(e.keyCode == 46) {
+            $scope.deleteNode();
+        }
+    });
     $scope.reloadTree = function () {
-        $scope.ignoreChanges = true;
-        angular.copy($scope.originalData, $scope.treeData);
-        $scope.treeConfig.version ++;
+        $('[js-tree]').jstree(true).settings.core.data = $scope.originalData;
+        $('[js-tree]').jstree(true).refresh();
     }
 
     var checkTreeNode = function(action) {
@@ -334,7 +340,7 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
         } else {
             return true;
         }
-    }
+    };
 
     $scope.copyNode = function(){
         if (!checkTreeNode("copy")) return;
@@ -343,7 +349,7 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
         if(newnode.children.length > 0){
             ModalUtils.alert("Can not copy folder!", "modal-warning", "lg");
             return;
-        }
+        };
 
         for(var j=0; j<$scope.widgetList.length;j++){
             if($scope.widgetList[j].id == newnode.id){
@@ -362,6 +368,11 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
                 break;
             }
         }
+    };
+    $scope.switchNode = function (id) {
+        $scope.ignoreChanges = false;
+        $("[js-tree]").jstree(true).deselect_all();
+        $("[js-tree]").jstree(true).select_node(id);
     };
     $scope.deleteNode = function(){
         if (!checkTreeNode("delete")) return;
@@ -484,7 +495,7 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
                         r = l <= rule[k];
                     }
                 } else {
-                    if (rule[k] == -1) {
+                    if (rule[k] == -1 && config[k] != undefined) {
                         r = config[k].length == 0
                     } else if (rule[k] > 0) {
                         r = config[k].length <= rule[k];
@@ -786,6 +797,10 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
     };
 
     $scope.editWgt = function (widget) {
+        $timeout(function () {
+            $scope.switchNode(widget.id)
+        }, 500);
+        $scope.switchNode(widget.id);
         $('#preview_widget').html('');
         $scope.curWidget = angular.copy(widget.data);
         updateService.updateConfig($scope.curWidget.config);
@@ -793,8 +808,7 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
             return ds.id == widget.data.datasource;
         });
 
-        var selectedNode = $("[js-tree]").jstree(true).get_selected(true)[0];
-        $scope.widgetName = $("[js-tree]").jstree(true).get_path(selectedNode,'/').substring(5);
+        $scope.widgetName = angular.copy(widget.categoryName + "/" + widget.name);
 
         $scope.widgetId = widget.id;
         $scope.optFlag = 'edit';

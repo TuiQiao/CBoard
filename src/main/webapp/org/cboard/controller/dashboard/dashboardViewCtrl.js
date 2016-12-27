@@ -47,6 +47,9 @@ cBoard.controller('dashboardViewCtrl', function ($rootScope, $scope, $state, $st
 
             _.each($scope.board.layout.rows, function (row) {
                 _.each(row.widgets, function (widget) {
+                    if (!_.isUndefined(widget.hasRole) && !widget.hasRole) {
+                        return;
+                    }
                     var w = widget.widget.data;
                     var q;
                     for (var i = 0; i < queries.length; i++) {
@@ -81,7 +84,6 @@ cBoard.controller('dashboardViewCtrl', function ($rootScope, $scope, $state, $st
                 });
 
             });
-
 
             _.each($scope.board.layout.rows, function (row) {
                 _.each(row.params, function (param) {
@@ -155,6 +157,8 @@ cBoard.controller('dashboardViewCtrl', function ($rootScope, $scope, $state, $st
                             });
                         });
                     }
+                }).error(function (data, header, config, status) {
+                    console.log(status);
                 });
             });
 

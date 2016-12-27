@@ -92,6 +92,7 @@
       "KPI": "KPI",
       "PIE": "Pie",
       "LINE_BAR": "Line/Bar",
+      "MAP": "China Map",
       "LINE": "Line",
       "BAR": "Bar",
       "STACKED_BAR": "Stacked Bar",
@@ -163,6 +164,12 @@
     },
     "ROLE": {
       "ROLE_NAME": "Role Name"
-    }
+    },
+    "BOARD": "Dashboard",
+    "MENU": "Menu",
+    "DATASOURCE": "Datasource",
+    "DATASET": "Cube",
+    "WIDGET": "Widget",
+    "CONTACT_ADMIN": "Please contact the administrator to grant access to the following resources"
   }
 }

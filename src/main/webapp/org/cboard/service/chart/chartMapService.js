@@ -30,7 +30,7 @@ cBoard.service('chartMapService', function (dataService) {
             for (var h = 0; h < keysList[0].length; h++) {
                 for (var k = 0; k < keysList.length; k++) {
                     table_data[k][h] = {
-                        property: 'header_key',
+                        property: 'row_key',
                         data: keysList[k][h]
                     };
                 }
@@ -54,14 +54,14 @@ cBoard.service('chartMapService', function (dataService) {
             for (var n = 0; n < casted_values.length; n++) {
                 for (var m = 0; m < casted_values[n].length; m++) {
                     column_header[m][n] = {
-                        property: 'header_key',
+                        property: 'column_key',
                         data: casted_values[n][m]
                     };
                 }
             }
             for (var y = 0; y < keyLength; y++) {
                 keyArr.push({
-                    property: 'header_key',
+                    property: 'row_key',
                     data: chartConfig.keys[y].col
                 });
                 emptyList.push({
@@ -80,6 +80,7 @@ cBoard.service('chartMapService', function (dataService) {
             };
             table_data = null;
             column_header = null;
+            console.log(tableOption.data);
         });
         return tableOption;
     };

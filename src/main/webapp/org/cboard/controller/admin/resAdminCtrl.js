@@ -75,7 +75,7 @@ cBoard.controller('resAdminCtrl', function ($scope, $http, ModalUtils, $filter) 
                 break;
             case 'menu':
                 $scope.resList = _.map($scope.menuList, function (e) {
-                    return {id: e.menuId, name: e.menuName};
+                    return {id: e.menuId, name: translate(e.menuName)};
                 });
                 break;
             case 'datasource':

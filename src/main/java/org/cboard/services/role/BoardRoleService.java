@@ -48,6 +48,9 @@ public class BoardRoleService {
             JSONArray rows = (JSONArray) value.getLayout().get("rows");
             for (Object row : rows) {
                 JSONArray widgets = ((JSONObject) row).getJSONArray("widgets");
+                if (widgets == null) {
+                    continue;
+                }
                 for (Object widget : widgets) {
                     JSONObject vw = ((JSONObject) widget).getJSONObject("widget");
                     Long widgetId = vw.getLong("id");

@@ -3,6 +3,12 @@ package org.cboard.services;
 import org.cboard.dto.DashboardMenu;
 import org.springframework.stereotype.Repository;
 
+import javax.servlet.http.HttpSession;
+import javax.sql.RowSet;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.ResultSet;
+import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -15,18 +21,19 @@ public class MenuService {
     private static List<DashboardMenu> menuList = new ArrayList<>();
 
     static {
-        menuList.add(new DashboardMenu(1, -1, "配置", "config"));
-        menuList.add(new DashboardMenu(2, 1, "数据源配置", "config.datasource"));
-        menuList.add(new DashboardMenu(3, 1, "数据集配置", "config.dataset"));
-        menuList.add(new DashboardMenu(4, 1, "图表配置", "config.widget"));
-        menuList.add(new DashboardMenu(5, 1, "看板配置", "config.board"));
-        menuList.add(new DashboardMenu(6, 1, "看板分类配置", "config.category"));
-        menuList.add(new DashboardMenu(7, -1, "管理", "admin"));
-        menuList.add(new DashboardMenu(8, 7, "用户管理", "admin.user"));
-        menuList.add(new DashboardMenu(9, 7, "资源管理", "admin.res"));
+        menuList.add(new DashboardMenu(1, -1, "SIDEBAR.CONFIG", "config"));
+        menuList.add(new DashboardMenu(2, 1, "SIDEBAR.DATA_SOURCE", "config.datasource"));
+        menuList.add(new DashboardMenu(3, 1, "SIDEBAR.CUBE", "config.dataset"));
+        menuList.add(new DashboardMenu(4, 1, "SIDEBAR.WIDGET", "config.widget"));
+        menuList.add(new DashboardMenu(5, 1, "SIDEBAR.DASHBOARD", "config.board"));
+        menuList.add(new DashboardMenu(6, 1, "SIDEBAR.DASHBOARD_CATEGORY", "config.category"));
+        menuList.add(new DashboardMenu(7, -1, "SIDEBAR.ADMIN", "admin"));
+        menuList.add(new DashboardMenu(8, 7, "SIDEBAR.USER_ADMIN", "admin.user"));
+        menuList.add(new DashboardMenu(9, 7, "SIDEBAR.RES_ADMIN", "admin.res"));
     }
 
     public List<DashboardMenu> getMenuList() {
         return menuList;
     }
+
 }

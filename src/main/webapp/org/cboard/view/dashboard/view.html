@@ -37,8 +37,26 @@
             <div ng-switch-default>
                 <div ng-repeat="widget in row.widgets track by $index">
                     <dashboard-widget ng-if="widget.show"></dashboard-widget>
-                    <div ng-if="!widget.show" class="col-md-{{widget.width}}" style="height: 50px;">
+                    <div ng-if="!widget.show && widget.hasRole != false" class="col-md-{{widget.width}}" style="height: 50px;">
                         <i class="fa fa-spinner fa-spin"></i> {{"COMMON.LOADING" | translate}}
+                    </div>
+                    <div ng-if="widget.hasRole == false" class="col-md-{{widget.width}}">
+                        <div class="box box-solid">
+                            <div class="box-header">
+                                <i class="fa fa-bar-chart-o"></i>
+                                <h3 class="box-title">{{widget.name}}</h3>
+                                <div class="box-tools pull-right">
+                                    <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="box-body" ng-style="{height:widget.height?widget:300+'px'}">
+                                {{'ADMIN.CONTACT_ADMIN' | translate}}：<br>
+                                <ul>
+                                    <li ng-repeat="ri in widget.roleInfo"> {{ri.type | translate}}：{{ri.name}}</li>
+                                </ul>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>

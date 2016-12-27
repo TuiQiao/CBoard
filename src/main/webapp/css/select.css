@@ -392,6 +392,8 @@ body > .ui-select-bootstrap.open {
 .cRadar.disabled{  background-image: url(/imgs/radar.png);  }
 .cTable{  background-image: url(/imgs/table-active.png);  }
 .cTable.disabled{  background-image: url(/imgs/table.png);  }
+.cMap{  background-image: url(/imgs/map-active.png);  }
+.cMap.disabled{  background-image: url(/imgs/map.png);  }
 
 .chart-type a.active{
     background-color: #FFF;

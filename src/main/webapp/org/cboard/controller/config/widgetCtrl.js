@@ -47,11 +47,18 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
             row: translate('CONFIG.WIDGET.TIPS_DIM_NUM_1_MORE'),
             column: translate('CONFIG.WIDGET.TIPS_DIM_NUM_0_MORE'),
             measure: translate('CONFIG.WIDGET.TIPS_DIM_NUM_1_MORE')
+        },
+        {
+            name: translate('CONFIG.WIDGET.MAP'), value: 'map', class: 'cMap',
+            row: translate('CONFIG.WIDGET.TIPS_DIM_NUM_1_MORE'),
+            column: translate('CONFIG.WIDGET.TIPS_DIM_NUM_0_MORE'),
+            measure: translate('CONFIG.WIDGET.TIPS_DIM_NUM_1_MORE')
         }
     ];
 
     $scope.chart_types_status = {
-        "line": true, "pie": true, "kpi": true, "table": true, "funnel": true, "sankey": true, "radar": true
+        "line": true, "pie": true, "kpi": true, "table": true,
+        "funnel": true, "sankey": true, "radar": true, "map": true
     };
 
     $scope.value_series_types = [
@@ -82,7 +89,8 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
         table: {keys: 0, groups: 0, filters: 0, values: 0},
         funnel: {keys: 0, groups: -1, filters: 0, values: 0},
         sankey: {keys: 0, groups: 0, filters: 0, values: 1},
-        radar: {keys: 0, groups: 0, filters: 0, values: 0}
+        radar: {keys: 0, groups: 0, filters: 0, values: 0},
+        map: {keys: 0, groups: 0, filters: 0, values: 0},
     };
 
     //界面控制
@@ -143,6 +151,9 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
     var getCategoryList = function () {
         $http.get("/dashboard/getWidgetCategoryList.do").success(function (response) {
             $scope.categoryList = response;
+            $("#widgetName").autocomplete({
+                source: $scope.categoryList
+            });
         });
     };
 
@@ -304,23 +315,41 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
         dnd : {
             check_while_dragging: true
         },
-        state : { "key" : "cboard" },
-        version : 1,
-        plugins : ['types','unique','state','sort','dnd']
+        state: {"key": "cboard"},
+        version: 1,
+        plugins: ['types', 'unique', 'state', 'sort', 'dnd']
+    };
+    $('[js-tree]').keyup(function(e){
+        if(e.keyCode == 46) {
+            $scope.deleteNode();
+        }
+    });
+    $scope.reloadTree = function () {
+        $('[js-tree]').jstree(true).settings.core.data = $scope.originalData;
+        $('[js-tree]').jstree(true).refresh();
+    }
+
+    var checkTreeNode = function(action) {
+        var nodes = $("[js-tree]").jstree(true).get_selected(true);
+        if (nodes.length == 0) {
+            ModalUtils.alert("Please, select one widget first!", "modal-warning", "lg");
+            return false;
+        } else if (typeof(nodes.children) != "undefined" && nodes.children.length > 0) {
+            ModalUtils.alert("Can't " + action + " a folder!", "modal-warning", "lg");
+            return false;
+        } else {
+            return true;
+        }
     };
 
-    $scope.reloadTree = function () {
-        $scope.ignoreChanges = true;
-        angular.copy($scope.originalData, $scope.treeData);
-        $scope.treeConfig.version ++;
-    }
     $scope.copyNode = function(){
+        if (!checkTreeNode("copy")) return;
         var node = $("[js-tree]").jstree(true).get_selected(true)[0];
         var newnode = angular.copy(node);
         if(newnode.children.length > 0){
             ModalUtils.alert("Can not copy folder!", "modal-warning", "lg");
             return;
-        }
+        };
 
         for(var j=0; j<$scope.widgetList.length;j++){
             if($scope.widgetList[j].id == newnode.id){
@@ -331,11 +360,8 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
     };
 
     $scope.editNode = function () {
+        if (!checkTreeNode("edit")) return;
         var node = $("[js-tree]").jstree(true).get_selected(true)[0];
-        if(node.children.length > 0){
-            ModalUtils.alert("Can not edit folder!", "modal-warning", "lg");
-            return;
-        }
         for(var j=0; j<$scope.widgetList.length;j++){
             if($scope.widgetList[j].id == node.id){
                 $scope.editWgt($scope.widgetList[j]);
@@ -343,12 +369,14 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
             }
         }
     };
+    $scope.switchNode = function (id) {
+        $scope.ignoreChanges = false;
+        $("[js-tree]").jstree(true).deselect_all();
+        $("[js-tree]").jstree(true).select_node(id);
+    };
     $scope.deleteNode = function(){
+        if (!checkTreeNode("delete")) return;
         var node = $("[js-tree]").jstree(true).get_selected(true)[0];
-        if(node.children.length > 0){
-            ModalUtils.alert("Can not delete folder!", "modal-warning", "lg");
-            return;
-        }
         for(var j=0; j<$scope.widgetList.length;j++){
             if($scope.widgetList[j].id == node.id){
                 $scope.deleteWgt($scope.widgetList[j]);
@@ -467,7 +495,7 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
                         r = l <= rule[k];
                     }
                 } else {
-                    if (rule[k] == -1) {
+                    if (rule[k] == -1 && config[k] != undefined) {
                         r = config[k].length == 0
                     } else if (rule[k] > 0) {
                         r = config[k].length <= rule[k];
@@ -606,6 +634,16 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
                 }];
                 $scope.curWidget.config.filters = new Array();
                 break;
+            case 'map':
+                $scope.curWidget.config.selects = angular.copy($scope.widgetData[0]);
+                $scope.curWidget.config.keys = new Array();
+                $scope.curWidget.config.groups = new Array();
+                $scope.curWidget.config.values = [{
+                    name: '',
+                    cols: []
+                }];
+                $scope.curWidget.config.filters = new Array();
+                break;
         }
         addWatch();
     };
@@ -666,6 +704,9 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
                             }
                         }
                     };
+                    break;
+                case 'map':
+                    $scope.previewDivWidth = 12;
                     break;
             }
         });
@@ -756,6 +797,10 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
     };
 
     $scope.editWgt = function (widget) {
+        $timeout(function () {
+            $scope.switchNode(widget.id)
+        }, 500);
+        $scope.switchNode(widget.id);
         $('#preview_widget').html('');
         $scope.curWidget = angular.copy(widget.data);
         updateService.updateConfig($scope.curWidget.config);
@@ -763,8 +808,7 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
             return ds.id == widget.data.datasource;
         });
 
-        var selectedNode = $("[js-tree]").jstree(true).get_selected(true)[0];
-        $scope.widgetName = $("[js-tree]").jstree(true).get_path(selectedNode,'/').substring(5);
+        $scope.widgetName = angular.copy(widget.categoryName + "/" + widget.name);
 
         $scope.widgetId = widget.id;
         $scope.optFlag = 'edit';

@@ -80,6 +80,8 @@ cBoard.service('chartTableService', function (dataService) {
                 chartConfig: chartConfig,
                 data: column_header.concat(table_data)
             };
+            table_data = null;
+            column_header = null;
         });
         return tableOption;
     };

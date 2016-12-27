@@ -557,6 +557,7 @@ a:focus {
   position: relative;
   margin: 0;
   padding: 0;
+  cursor: pointer;
 }
 .sidebar-menu > li > a {
   padding: 12px 5px 12px 15px;
@@ -1805,9 +1806,10 @@ a:focus {
   margin-right: 5px;
 }
 .box-header > .box-tools {
-  position: absolute;
+  /*position: absolute;
   right: 10px;
-  top: 5px;
+  top: 5px;*/
+  vertical-align: middle;
 }
 .box-header > .box-tools [data-toggle="tooltip"] {
   position: relative;
@@ -4961,6 +4963,10 @@ button >canvas {
   left: 0;
   z-index: 5;
 }
+.toolbar-icon {
+  cursor: pointer;
+  font-size: large
+}
 /*
  * Misc: print
  * -----------
@@ -4997,4 +5003,34 @@ button >canvas {
     float: left;
     width: 33.3333333%;
   }
+}
+#preview_widget {
+  text-align: center;
+}
+.d3-tip {
+  line-height: 1;
+  font-weight: normal;
+  padding: 12px;
+  background: rgba(0, 0, 0, 0.8);
+  color: #fff;
+  border-radius: 3px;
+}
+
+/* Creates a small triangle extender for the tooltip */
+.d3-tip:after {
+  box-sizing: border-box;
+  display: inline;
+  font-size: 10px;
+  width: 100%;
+  line-height: 1;
+  color: rgba(0, 0, 0, 0.8);
+  content: "\25BC";
+  position: absolute;
+  text-align: center;
+}
+
+.d3-tip.n:after {
+  margin: -1px 0 0 0;
+  top: 100%;
+  left: 0;
 }

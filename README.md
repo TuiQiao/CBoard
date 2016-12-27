@@ -17,15 +17,11 @@ Server side framework is Spring+MyBatis and front-end is based on AngularJS1 and
   * The chart plugin uses [ECharts](http://echarts.baidu.com/)
   * Javascript uses MVVM AngularJS 1.X framework  
 * Interactive, drag-and-drop **OLAP** classisc report development experience  
-![wiget_overview](https://raw.githubusercontent.com/yzhang921/CloudResource/gif/gif/cboard/wiget_demo2.gif)
 * One dataset, multiple report widgets. Maximize reuse query resoult. **But, the first and foremost survival rule in CBoard is make the dataset used in CBoard small using aggregate. Don't worry the source data can be very big. You don't need so many dimension in one chart**
 <div align="center">
 ![image](https://cloud.githubusercontent.com/assets/6037522/20123306/429b8f8c-a659-11e6-9954-8f9352d3d9ef.png)
 </div>
-* Supports OLAP slice filter operation  
-<div align="center">
-<img src="https://cloud.githubusercontent.com/assets/6037522/19502732/806b1086-95e1-11e6-940f-ab1a18bbff77.png" width="450">
-</div>
+* Supports OLAP slice filter operation
 * Supports sort multiple columns/rows at the sametime
 * Global query cache, to avoid repeated query requests for data
 * Support common charts and cross tables
@@ -46,6 +42,19 @@ Server side framework is Spring+MyBatis and front-end is based on AngularJS1 and
   <img src="https://cloud.githubusercontent.com/assets/6037522/19501689/1439ff8c-95da-11e6-9374-750eb6ad82fe.png" width="450">
 </div>
 
+## Demo(Click for larger gif)
+
+|Load Data from query or DataSet | Basic Operation |
+| :-----------: | :------: |
+| ![case 0-switchdataload](https://cloud.githubusercontent.com/assets/6037522/21477518/9a874210-cb7d-11e6-9b7e-11721aac322c.gif)       | ![case 1-](https://cloud.githubusercontent.com/assets/6037522/21477521/9c2ead88-cb7d-11e6-9ae4-4c1990f675c2.gif)   |
+
+| Switch Chart Type | Calculated Measure |
+| :-----------: | :------: |
+| ![case2](https://cloud.githubusercontent.com/assets/6037522/21477522/9de976b2-cb7d-11e6-8217-4290e5ad039b.gif)       | ![case 3-calculatedmeasures 1](https://cloud.githubusercontent.com/assets/6037522/21477523/9f3be54a-cb7d-11e6-882b-ef82bbb5100b.gif)  |
+
+| Add Dashboard Parameters | Use Parameters |
+| :-----------: | :------: |
+| ![case4-useparam](https://cloud.githubusercontent.com/assets/6037522/21478021/73f81fe8-cb82-11e6-95ea-d98b43a4abf2.gif)  | ![case4-addboardparam](https://cloud.githubusercontent.com/assets/6037522/21478022/74216f2e-cb82-11e6-9612-390a2f93184c.gif)|
 
 ## How to build project
 1 Download or git clone project

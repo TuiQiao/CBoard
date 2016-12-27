@@ -7,15 +7,15 @@
                 <div class="box-header panel panel-default">
                     <i class="fa fa-bar-chart-o"></i> <h3 class="box-title"> {{'CONFIG.WIDGET.WIDGET'|translate}}</h3>
                     <div class="box-tools pull-right">
-                        <i class="fa fa-file" style="cursor: pointer" ng-click="newWgt()"></i>&nbsp;&nbsp;
-                        <i class="fa fa-copy" style="cursor: pointer" ng-click="copyNode()"></i>&nbsp;&nbsp;
-                        <i class="fa fa-edit" style="cursor: pointer" ng-click="editNode()"></i>&nbsp;&nbsp;
-                        <i class="fa fa-trash-o" style="cursor: pointer" ng-click="deleteNode()"></i>
+                        <i class="glyphicon glyphicon-plus toolbar-icon" ng-click="newWgt()" title="{{'COMMON.NEW'|translate}}"></i>&nbsp;&nbsp;
+                        <i class="fa fa-copy toolbar-icon" ng-click="copyNode()" title="{{'COMMON.COPY'|translate}}"></i>&nbsp;&nbsp;
+                        <i class="fa fa-edit toolbar-icon" ng-click="editNode()" title="{{'COMMON.EDIT'|translate}}"></i>&nbsp;&nbsp;
+                        <i class="fa fa-trash-o toolbar-icon"  ng-click="deleteNode()" title="{{'COMMON.DELETE'|translate}}"></i>
                     </div>
                 </div>
                 <div class="panel-body">
                     <div js-tree="treeConfig" should-apply="applyModelChanges()" ng-model="treeData" tree="treeInstance"
-                         tree-events="ready:readyCB;activate_node:selectNode;move_node:moveNode"></div>
+                         tree-events="ready:readyCB;activate_node:selectNode;move_node:moveNode;dblclick:editNode"></div>
                 </div>
             </div>
         </div>

@@ -300,55 +300,50 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
         $scope.deleteWgt(getSelectedWidget());
     };
 
-    /**
-     * Double Click Event Listener for tree nodes
-     */
-    $scope.dbclkNode = function () {
-        var selectedNodes = jstree_GetSelectedNodes($scope.widgetTreeID);
-        if (selectedNodes.length == 0) return; // Ignore double click folder action
-        $scope.editNode();
+    $scope.applyModelChanges = function() {
+        return !$scope.ignoreChanges;
     };
 
-
-    $scope.moveNode = function () {
-        var myJsTree = jstree_GetWholeTree($scope.widgetTreeID);
-        for (var i = 0; i < $scope.widgetList.length; i++) {
-            for (var j = 0; j < $scope.treeData.length; j++) {
-                if ($scope.widgetList[i].id == $scope.treeData[j].id) {
-                    var categoryName = myJsTree.get_path($scope.treeData[j], '/').substring(5);
-                    categoryName = categoryName.substring(0, categoryName.lastIndexOf("/")).trim();
-                    if (categoryName != $scope.widgetList[i].categoryName) {
-                        $scope.widgetList[i].categoryName = categoryName;
-                        $http.post("/dashboard/updateWidget.do", {json: angular.toJson($scope.widgetList[i])}).success(function (serviceStatus) {
-                            if (serviceStatus.status == '1') {
-                                console.log('success!');
-                            } else {
-                                ModalUtils.alert(serviceStatus.msg, "modal-warning", "lg");
-                            }
-                        });
+    $scope.treeEventsObj = {
+        "ready": function() {
+            $timeout(function() {
+                $scope.ignoreChanges = false;
+            });
+        },
+        "activate_node": function(obj, e) {
+            var myJsTree = jstree_GetWholeTree($scope.widgetTreeID);
+            var data = myJsTree.get_selected(true)[0];
+            if (data.children.length > 0) {
+                myJsTree.deselect_node(data);
+                myJsTree.toggle_node(data);
+            }
+        },
+        "move_node": function () {
+            var myJsTree = jstree_GetWholeTree($scope.widgetTreeID);
+            for (var i = 0; i < $scope.widgetList.length; i++) {
+                for (var j = 0; j < $scope.treeData.length; j++) {
+                    if ($scope.widgetList[i].id == $scope.treeData[j].id) {
+                        var categoryName = myJsTree.get_path($scope.treeData[j], '/').substring(5);
+                        categoryName = categoryName.substring(0, categoryName.lastIndexOf("/")).trim();
+                        if (categoryName != $scope.widgetList[i].categoryName) {
+                            $scope.widgetList[i].categoryName = categoryName;
+                            $http.post("/dashboard/updateWidget.do", {json: angular.toJson($scope.widgetList[i])}).success(function (serviceStatus) {
+                                if (serviceStatus.status == '1') {
+                                    console.log('success!');
+                                } else {
+                                    ModalUtils.alert(serviceStatus.msg, "modal-warning", "lg");
+                                }
+                            });
+                        }
                     }
                 }
             }
+        },
+        "dblclick": function () {
+            var selectedNodes = jstree_GetSelectedNodes($scope.widgetTreeID);
+            if (selectedNodes.length == 0) return; // Ignore double click folder action
+            $scope.editNode();
         }
-    };
-
-    $scope.selectNode = function(obj, e) {
-        var myJsTree = jstree_GetWholeTree($scope.widgetTreeID);
-        var data = myJsTree.get_selected(true)[0];
-        if (data.children.length > 0) {
-            myJsTree.deselect_node(data);
-            myJsTree.toggle_node(data);
-        }
-    };
-
-    $scope.readyCB = function() {
-        $timeout(function() {
-            $scope.ignoreChanges = false;
-        });
-    };
-
-    $scope.applyModelChanges = function() {
-        return !$scope.ignoreChanges;
     };
 
     /** js tree related End... **/

@@ -17,6 +17,7 @@ public class ViewDashboardBoard {
     private Long categoryId;
     private String name;
     private Map<String, Object> layout;
+    private String categoryName;
 
     public static final Function TO = new Function<DashboardBoard, ViewDashboardBoard>() {
         @Nullable
@@ -32,6 +33,7 @@ public class ViewDashboardBoard {
         this.categoryId = board.getCategoryId();
         this.name = board.getName();
         this.layout = JSONObject.parseObject(board.getLayout());
+        this.categoryName = board.getCategoryName();
     }
 
     public Long getId() {
@@ -72,5 +74,13 @@ public class ViewDashboardBoard {
 
     public void setCategoryId(Long categoryId) {
         this.categoryId = categoryId;
+    }
+
+    public String getCategoryName() {
+        return categoryName;
+    }
+
+    public void setCategoryName(String categoryName) {
+        this.categoryName = categoryName;
     }
 }

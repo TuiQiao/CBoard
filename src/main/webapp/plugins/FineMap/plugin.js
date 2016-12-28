@@ -72,12 +72,21 @@ var threeLevelMap = {
         });
         for (var n = rowHeaderLength; n < data[rowHeaderLength].length; n++) {
             var title = [];
-            for (var m = 0; m < columnHeaderLength + 1; m++) {
-                title.push(data[m][n].data);
+            if (rowHeaderLength) {
+                for (var m = 0; m < columnHeaderLength + 1; m++) {
+                    title.push(data[m][n].data);
+                }
+                columnHeaderLink.push(title.join('-'));
+                this.tipHeader = columnHeaderLink[0];
             }
-            columnHeaderLink.push(title.join('-'));
+            else {
+                data[0].map(function (d) {
+                    d.property == 'row_key' ? rowHeaderLength++ : null;
+                });
+                this.tipHeader = data[0][rowHeaderLength].data;
+                break;
+            }
         }
-        this.tipHeader = columnHeaderLink[0];
         if (data[0].length) {
             for (var i = columnHeaderLength + 1; i < data.length; i++) {
                 (data[i][rowHeaderLength].data == "N/A" ?  columnList.push(0) :
@@ -108,8 +117,8 @@ var threeLevelMap = {
         return color;
     },
     tipData: function(data, name) {
-        var rowHeaderLength = null,
-            columnHeaderLength = null,
+        var rowHeaderLength = 0,
+            columnHeaderLength = 0,
             tipsArray = [],
             columnHeaderLink = [];
         data ? data[0].map(function(d){
@@ -121,18 +130,27 @@ var threeLevelMap = {
         if (data[rowHeaderLength]) {
             for (var n = rowHeaderLength; n < data[rowHeaderLength].length; n++) {
                 var title = [];
-                for (var m = 0; m < columnHeaderLength + 1; m++) {
-                    title.push(data[m][n].data);
+                if (rowHeaderLength) {
+                    for (var m = 0; m < columnHeaderLength + 1; m++) {
+                        title.push(data[m][n].data);
+                    }
+                    columnHeaderLink.push(title.join('-'));
                 }
-                columnHeaderLink.push(title.join('-'));
+                else {
+                    data[0].map(function (d) {
+                        d.property == 'column_key' ? columnHeaderLink.push(d.data) : rowHeaderLength++;
+                    });
+                    break;
+                }
             }
             for (var k = 0; k < data.length; k++) {
-                if (data[k][rowHeaderLength - 1].data == name) {
+                if (data[k][rowHeaderLength - 1] && data[k][rowHeaderLength - 1].data == name) {
                     for(var t = 0;t < columnHeaderLink.length;t++){
                         var saveHeader = [],
                             headerStr = [];
                         saveHeader.push(columnHeaderLink[t]);
-                        saveHeader.push(data[k][t + rowHeaderLength].data);
+                        data[k][t + rowHeaderLength] ? saveHeader.push(data[k][t + rowHeaderLength].data) :
+                        saveHeader.push(data[0][rowHeaderLength].data);
                         headerStr = saveHeader.join(" : ");
                         tipsArray.push(headerStr);
                     }
@@ -204,7 +222,7 @@ var threeLevelMap = {
             .attr('width', width)
             .attr('height', options.height)
             .append('g')
-            .attr('transform', ' translate(' + width * 0.12 + ', 30)');
+            .attr('transform', ' translate(' + width * 0.18 + ', 30)');
         var tip = d3.behavior.tip()
             .attr('class', 'd3-tip')
             .offset([-10, 0]);

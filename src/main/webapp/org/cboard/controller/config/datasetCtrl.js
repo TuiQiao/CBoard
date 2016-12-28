@@ -1,7 +1,7 @@
 /**
  * Created by yfyuan on 2016/10/11.
  */
-cBoard.controller('datasetCtrl', function ($scope, $http, dataService, $uibModal, ModalUtils, $filter, chartService) {
+cBoard.controller('datasetCtrl', function ($scope, $http, dataService, $uibModal, ModalUtils, $filter, chartService, $timeout) {
 
     var translate = $filter('translate');
     $scope.optFlag = 'none';
@@ -10,10 +10,24 @@ cBoard.controller('datasetCtrl', function ($scope, $http, dataService, $uibModal
     $scope.alerts = [];
     $scope.verify = {dsName: true};
 
+    var dataSetTreeID = 'dataSetTreeID'; // Set to a same value with treeDom
+    var originalData = [];
+
     var getDatasetList = function () {
         $http.get("/dashboard/getDatasetList.do").success(function (response) {
             $scope.datasetList = response;
+            originalData = jstree_CvtVPath2TreeData(
+                $scope.datasetList.map(function(ds) {
+                    return {
+                        "id": ds.id,
+                        "name": ds.name,
+                        "categoryName": ds.categoryName
+                    };
+                })
+            );
+            jstree_ReloadTree(dataSetTreeID, originalData);
         });
+
     };
 
     var getCategoryList = function () {
@@ -257,4 +271,75 @@ cBoard.controller('datasetCtrl', function ($scope, $http, dataService, $uibModal
         $('#dataset_preview').html("");
     };
 
+
+    /**  js tree related start **/
+    $scope.treeConfig = jsTreeConfig1;
+
+    $("#" + dataSetTreeID).keyup(function(e){
+        if(e.keyCode == 46) {
+            $scope.deleteNode();
+        }
+    });
+
+    var getSelectedDataSet = function() {
+        var selectedNode = jstree_GetSelectedNodes(dataSetTreeID)[0];
+        return _.find($scope.datasetList, function (ds) { return ds.id == selectedNode.id; });
+    };
+
+    var checkTreeNode = function(actionType) {
+        return jstree_CheckTreeNode(actionType, dataSetTreeID, ModalUtils.alert);
+    };
+
+    var switchNode = function (id) {
+        $scope.ignoreChanges = false;
+        var dataSetTree = jstree_GetWholeTree(dataSetTreeID);
+        dataSetTree.deselect_all();
+        dataSetTree.select_node(id);
+    };
+
+    $scope.applyModelChanges = function() {
+        return !$scope.ignoreChanges;
+    };
+
+    $scope.copyNode = function () {
+        if (!checkTreeNode("copy")) return;
+        $scope.copyDs(getSelectedDataSet());
+    };
+
+    $scope.editNode = function () {
+        if (!checkTreeNode("edit")) return;
+        $scope.editDs(getSelectedDataSet());
+    };
+
+    $scope.deleteNode = function(){
+        if (!checkTreeNode("delete")) return;
+        $scope.deleteDs(getSelectedDataSet());
+    };
+
+    $scope.applyModelChanges = function() {
+        return !$scope.ignoreChanges;
+    };
+
+    $scope.treeEventsObj = {
+        "ready": function() {
+            $timeout(function() {
+                $scope.ignoreChanges = false;
+            });
+        },
+        "activate_node": function(obj, e) {
+            var myJsTree = jstree_GetWholeTree(dataSetTreeID);
+            var data = myJsTree.get_selected(true)[0];
+            if (data.children.length > 0) {
+                myJsTree.deselect_node(data);
+                myJsTree.toggle_node(data);
+            }
+        },
+        "dblclick": function () {
+            var selectedNodes = jstree_GetSelectedNodes(dataSetTreeID);
+            if (selectedNodes.length == 0) return; // Ignore double click folder action
+            $scope.editNode();
+        }
+    };
+
+    /**  js tree related end **/
 });

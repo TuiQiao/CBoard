@@ -111,7 +111,7 @@ function jstree_CheckTreeNode(actionType, treeID, popup) {
     } else if (selectedNodes.length == 0) {
         popup("Please, select one widget first!", "modal-warning", "lg");
         return false;
-    } else if (typeof(selectedNodes.children) != "undefined" && selectedNodes.children.length > 0) {
+    } else if (typeof(selectedNodes[0].children) != "undefined" && selectedNodes[0].children.length > 0) {
         popup("Can't " + actionType + " a folder!", "modal-warning", "lg");
         return false;
     } else {

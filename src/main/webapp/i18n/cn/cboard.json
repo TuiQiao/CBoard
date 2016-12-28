@@ -164,6 +164,12 @@
     },
     "ROLE": {
       "ROLE_NAME": "角色名"
-    }
+    },
+    "BOARD": "看板",
+    "MENU": "菜单",
+    "DATASOURCE": "数据源",
+    "DATASET": "数据集",
+    "WIDGET": "图表",
+    "CONTACT_ADMIN": "请联系管理员开通以下权限"
   }
 }

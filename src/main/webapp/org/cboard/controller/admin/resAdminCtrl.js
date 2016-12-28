@@ -4,7 +4,16 @@
 cBoard.controller('resAdminCtrl', function ($scope, $http, ModalUtils, $filter) {
     var translate = $filter('translate');
 
-    $scope.resTypeList = [{name: '看板', value: 'board'},{name: '菜单', value: 'menu'}];
+    $scope.resTypeList = [{name: translate('ADMIN.BOARD'), value: 'board'}, {name: translate('ADMIN.MENU'), value: 'menu'}, {
+        name: translate('ADMIN.DATASOURCE'),
+        value: 'datasource'
+    }, {
+        name: translate('ADMIN.DATASET'),
+        value: 'dataset'
+    }, {
+        name: translate('ADMIN.WIDGET'),
+        value: 'widget'
+    }];
 
     var getRoleList = function () {
         $http.get("/admin/getRoleList.do").success(function (response) {
@@ -27,6 +36,27 @@ cBoard.controller('resAdminCtrl', function ($scope, $http, ModalUtils, $filter) 
     };
     getMenuList();
 
+    var getDatasourceList = function () {
+        $http.get("/dashboard/getDatasourceList.do").success(function (response) {
+            $scope.datasourceList = response;
+        });
+    };
+    getDatasourceList();
+
+    var getDatasetList = function () {
+        $http.get("/dashboard/getDatasetList.do").success(function (response) {
+            $scope.datasetList = response;
+        });
+    };
+    getDatasetList();
+
+    var getWidgetList = function () {
+        $http.get("/dashboard/getWidgetList.do").success(function (response) {
+            $scope.widgetList = response;
+        });
+    };
+    getWidgetList();
+
     var getRoleResList = function () {
         $http.get("/admin/getRoleResList.do").success(function (response) {
             $scope.roleResList = response;
@@ -46,6 +76,21 @@ cBoard.controller('resAdminCtrl', function ($scope, $http, ModalUtils, $filter) 
             case 'menu':
                 $scope.resList = _.map($scope.menuList, function (e) {
                     return {id: e.menuId, name: e.menuName};
+                });
+                break;
+            case 'datasource':
+                $scope.resList = _.map($scope.datasourceList, function (e) {
+                    return {id: e.id, name: e.name};
+                });
+                break;
+            case 'dataset':
+                $scope.resList = _.map($scope.datasetList, function (e) {
+                    return {id: e.id, name: e.name};
+                });
+                break;
+            case 'widget':
+                $scope.resList = _.map($scope.widgetList, function (e) {
+                    return {id: e.id, name: e.name};
                 });
                 break;
         }

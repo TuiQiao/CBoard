@@ -16,7 +16,12 @@
               source_type   AS type,
               config        AS config
          FROM dashboard_datasource
-        where user_id = #{0} OR #{0} = '${admin_user_id}'
+        WHERE #{0} = '${admin_user_id}' OR user_id = #{0} OR datasource_id IN (
+             SELECT res_id
+               FROM dashboard_user_role ur
+               LEFT JOIN dashboard_role_res rr ON ur.role_id = rr.role_id
+              WHERE ur.user_id = #{0} AND rr.res_type = 'datasource'
+          )
         ORDER BY source_name
     </select>
 

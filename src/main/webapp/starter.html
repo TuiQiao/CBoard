@@ -65,7 +65,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
     <script src="plugins/echart/theme-fin1.js"></script>
     <script src="lib/jquery.ba-resize.js"></script>
     <!--<script src="plugins/echart/world.json"></script>-->
-    <script src="plugins/echart/world.js"></script>
+    <!--<script src="plugins/echart/world.js"></script>-->
     <!--<script src="plugins/echart/china.json"></script>-->
     <script src="plugins/echart/china.js"></script>
     <script src="plugins/ace/ace.js"></script>
@@ -224,31 +224,6 @@ desired effect
     </div>
 </script>
 <script type="text/ng-template" id="tableContent">
-    <div class="col-md-{{widget.width}}">
-        <div class="box box-solid">
-            <div class="box-header">
-                <i class="fa fa-bar-chart-o"></i>
-                <h3 class="box-title">{{widget.name}}</h3>
-                <div class="box-tools pull-right">
-                    <button type="button" class="btn btn-box-tool" ng-click="reload(widget)"><i
-                            class="fa fa-refresh"></i>
-                    </button>
-                    <button type="button" class="btn btn-box-tool" ng-click="config(widget)"><i
-                            class="fa fa-wrench"></i>
-                    </button>
-                    <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i>
-                    </button>
-                    <button type="button" class="btn btn-box-tool" ng-click="modalTable(widget)"><i
-                            class="fa fa-square-o"></i>
-                    </button>
-                </div>
-            </div>
-            <div class="box-body" ng-style="{height:myheight+'px'}">
-            </div>
-        </div>
-    </div>
-</script>
-<script type="text/ng-template" id="mapContent">
     <div class="col-md-{{widget.width}}">
         <div class="box box-solid">
             <div class="box-header">

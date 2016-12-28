@@ -33,6 +33,9 @@ cBoard.controller('datasetCtrl', function ($scope, $http, dataService, $uibModal
     var getCategoryList = function () {
         $http.get("/dashboard/getDatasetCategoryList.do").success(function (response) {
             $scope.categoryList = response;
+            $("#DatasetName").autocomplete({
+                source: $scope.categoryList
+            });
         });
     };
 

@@ -1,22 +1,13 @@
 <!-- Content Wrapper. Contains page content -->
 <div id="inner-container">
     <div class="row">
-        <div class="col-md-3">
-            <div class="row">
-                <div class="col-md-4">
-                    <button class="btn btn-success btn-block margin-bottom" ng-click="newUser()">
-                        New
-                    </button>
-                </div>
-                <div class="col-md-4">
-                    <button class="btn btn-success btn-block margin-bottom" ng-click="editUser(selectUser[0])">
-                        Edit
-                    </button>
-                </div>
-                <div class="col-md-4">
-                    <button class="btn btn-success btn-block margin-bottom" ng-click="deleteUser()">
-                        Delete
-                    </button>
+        <div class="col-md-3" >
+            <div class="box-header with-border">
+                <i class="fa fa-fw fa-user"></i> <h3 class="box-title"> {{'ADMIN.USER.USER'|translate}}</h3>
+                <div class="box-tools pull-right">
+                    <i class="fa fa-fw fa-user-plus toolbar-icon" ng-click="newUser()" title="{{'COMMON.NEW'|translate}}"></i>&nbsp;&nbsp;
+                    <i class="fa fa-edit toolbar-icon" ng-click="editUser(selectUser[0])" title="{{'COMMON.EDIT'|translate}}"></i>&nbsp;&nbsp;
+                    <i class="fa fa-trash-o toolbar-icon"  ng-click="deleteUser()" title="{{'COMMON.DELETE'|translate}}"></i>
                 </div>
             </div>
             <div class="row" style="margin-bottom: 10px">
@@ -28,34 +19,21 @@
                 </div>
             </div>
             <div class="row">
-                <div class="col-md-12">
+                <div class="col-md-12" >
                     <select multiple class="form-control" ng-model="selectUser" ng-change="changeRoleSelect()"
-                            ng-options="u.loginName+'('+u.userName+')' for u in userList | filter:{loginName:userKeyword}" style="height: 500px">
+                            ng-options="u.loginName+'('+u.userName+')' for u in userList | filter:{loginName:userKeyword}" 
+                            style="height: 500px; overflow: auto;">
                     </select>
                 </div>
             </div>
         </div>
         <div class="col-md-3">
-            <div class="row">
-                <div class="col-md-3">
-                    <button class="btn btn-success btn-block margin-bottom" ng-click="newRole()">
-                        New
-                    </button>
-                </div>
-                <div class="col-md-3">
-                    <button class="btn btn-success btn-block margin-bottom" ng-click="editRole(selectRole[0])">
-                        Edit
-                    </button>
-                </div>
-                <div class="col-md-3">
-                    <button class="btn btn-success btn-block margin-bottom" ng-click="deleteUser()">
-                        Delete
-                    </button>
-                </div>
-                <div class="col-md-3">
-                    <button class="btn btn-success btn-block margin-bottom" ng-click="grant()">
-                        Grant
-                    </button>
+            <div class="box-header with-border">
+                <i class="fa fa-fw fa-group"></i> <h3 class="box-title"> {{'ADMIN.ROLE.ROLE'|translate}}</h3>
+                <div class="box-tools pull-right">
+                    <i class="glyphicon glyphicon-plus toolbar-icon" ng-click="newRole()" title="{{'COMMON.NEW'|translate}}"></i>&nbsp;&nbsp;
+                    <i class="fa fa-edit toolbar-icon" ng-click="editRole(selectRole[0])" title="{{'COMMON.EDIT'|translate}}"></i>&nbsp;&nbsp;
+                    <i class="fa fa-trash-o toolbar-icon"  ng-click="deleteRole()" title="{{'COMMON.DELETE'|translate}}"></i>
                 </div>
             </div>
             <div class="row" style="margin-bottom: 10px">
@@ -69,58 +47,48 @@
             <div class="row">
                 <div class="col-md-12">
                     <select multiple class="form-control" ng-model="selectRole"
-                            ng-options="u.roleName for u in roleList | filter:{roleName:roleKeyword}" style="height: 500px">
+                            ng-options="u.roleName for u in roleList | filter:{roleName:roleKeyword}"
+                            style="height: 500px; overflow: auto;">
                     </select>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="form-group">
+                        <div class="col-sm-offset-2 col-sm-10" style="padding-right: 0px; padding-top: 5px">
+                            <button type="submit" ng-click="grant()"
+                                    class="btn btn-success pull-right"
+                                    >
+                                Grant
+                            </button>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
         <div class="col-md-6">
             <div class="box" ng-show="optFlag == 'newUser' || optFlag == 'editUser'">
                 <div class="box-header with-border">
-                    <h3 class="box-title"></h3>
+                    <h3 class="box-title">{{'ADMIN.USER.USER'|translate}}</h3>
                 </div>
                 <div class="box-body">
-                    <div class="row">
-                        <div class="col-md-12 form-horizontal">
-                            <div class="row">
-                                <div class="col-md-12">
-                                    <div class="form-group"
-                                         ng-class="{'has-error': !(verify.dsName || curDataset.name.length)}">
-                                        <label class="col-sm-2 control-label">{{'ADMIN.USER.LOGIN_NAME'|translate}}</label>
-                                        <div class="col-sm-10">
-                                            <input ng-model="curUser.loginName" class="form-control"/>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="row">
-                                <div class="col-md-12">
-                                    <div class="form-group"
-                                         ng-class="{'has-error': !(verify.dsName || curDataset.name.length)}">
-                                        <label class="col-sm-2 control-label">{{'ADMIN.USER.NAME'|translate}}</label>
-                                        <div class="col-sm-10">
-                                            <input ng-model="curUser.userName" class="form-control"/>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="row" ng-show="optFlag == 'newUser'">
-                                <div class="col-md-12">
-                                    <div class="form-group"
-                                         ng-class="{'has-error': !(verify.dsName || curDataset.name.length)}">
-                                        <label class="col-sm-2 control-label">{{'ADMIN.USER.PASSWORD'|translate}}</label>
-                                        <div class="col-sm-10">
-                                            <input ng-model="curUser.userPassword" class="form-control" type="password"/>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
+                    <form>
+                        <div class="form-group">
+                            <label>{{'ADMIN.USER.LOGIN_NAME'|translate}}</label>
+                            <input ng-model="curUser.loginName" class="form-control"/>
                         </div>
-                    </div>
+                        <div class="form-group">
+                            <label>{{'ADMIN.USER.NAME'|translate}}</label>
+                            <input ng-model="curUser.userName" class="form-control"/>
+                        </div>
+                        <div class="form-group">
+                            <label>{{'ADMIN.USER.PASSWORD'|translate}}</label>
+                            <input ng-model="curUser.userPassword" class="form-control" type="password"/>
+                        </div>
+                    </form>
                 </div>
                 <!-- /.box-body -->
                 <div class="box-footer">
-                    <button type="submit" class="btn btn-danger pull-right">{{'COMMON.CANCEL'|translate}}</button>
                     <button type="submit" ng-click="saveUser()" class="btn btn-success pull-right"
                             style="margin-right: 5px">{{'COMMON.SAVE'|translate}}
                     </button>
@@ -130,28 +98,18 @@
 
             <div class="box" ng-show="optFlag == 'newRole' || optFlag == 'editRole'">
                 <div class="box-header with-border">
-                    <h3 class="box-title"></h3>
+                    <h3 class="box-title">{{'ADMIN.ROLE.ROLE'|translate}}</h3>
                 </div>
                 <div class="box-body">
-                    <div class="row">
-                        <div class="col-md-12 form-horizontal">
-                            <div class="row">
-                                <div class="col-md-12">
-                                    <div class="form-group"
-                                         ng-class="{'has-error': !(verify.dsName || curDataset.name.length)}">
-                                        <label class="col-sm-2 control-label">{{'ADMIN.ROLE.ROLE_NAME'|translate}}</label>
-                                        <div class="col-sm-10">
-                                            <input ng-model="curRole.roleName" class="form-control"/>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
+                    <form>
+                        <div class="form-group">
+                            <label>{{'ADMIN.ROLE.ROLE_NAME'|translate}}</label>
+                            <input ng-model="curRole.roleName" class="form-control"/>
                         </div>
-                    </div>
+                    </form>
                 </div>
                 <!-- /.box-body -->
                 <div class="box-footer">
-                    <button type="submit" class="btn btn-danger pull-right">{{'COMMON.CANCEL'|translate}}</button>
                     <button type="submit" ng-click="saveRole()" class="btn btn-success pull-right"
                             style="margin-right: 5px">{{'COMMON.SAVE'|translate}}
                     </button>

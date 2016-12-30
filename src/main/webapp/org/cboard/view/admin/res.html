@@ -16,7 +16,7 @@
                 <div class="col-md-12">
                     <select multiple class="form-control" ng-model="selectRole" ng-change="changeResSelect()"
                             ng-options="u.roleName for u in roleList | filter:{roleName:roleKeyword}"
-                            style="height: 500px">
+                            style="height: 500px; overflow: auto;">
                     </select>
                 </div>
             </div>

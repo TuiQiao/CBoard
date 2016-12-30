@@ -158,11 +158,13 @@
   },
   "ADMIN": {
     "USER": {
+      "USER": "User",
       "LOGIN_NAME": "Login Name",
       "NAME": "User Name",
       "PASSWORD": "Password"
     },
     "ROLE": {
+      "ROLE": "Role",
       "ROLE_NAME": "Role Name"
     },
     "BOARD": "Dashboard",

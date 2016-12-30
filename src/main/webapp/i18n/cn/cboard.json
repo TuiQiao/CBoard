@@ -158,11 +158,13 @@
   },
   "ADMIN": {
     "USER": {
+      "USER": "用户管理",
       "LOGIN_NAME": "账号",
       "NAME": "姓名",
       "PASSWORD": "密码"
     },
     "ROLE": {
+      "ROLE": "角色管理",
       "ROLE_NAME": "角色名"
     },
     "BOARD": "看板",

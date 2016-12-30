@@ -32,12 +32,6 @@ cBoard.controller('boardCtrl', function ($scope, $http, ModalUtils, $filter, upd
         });
     };
 
-    var getWidgetList = function () {
-        $http.get("/dashboard/getWidgetList.do").success(function (response) {
-            $scope.widgetList = response;
-        });
-    };
-
     var getCategoryList = function () {
         $http.get("/dashboard/getCategoryList.do").success(function (response) {
             $scope.categoryList = [{id: null, name: translate('CONFIG.DASHBOARD.MY_DASHBOARD')}];
@@ -50,7 +44,18 @@ cBoard.controller('boardCtrl', function ($scope, $http, ModalUtils, $filter, upd
     var getDatasetList = function () {
         $http.get("/dashboard/getDatasetList.do").success(function (response) {
             $scope.datasetList = response;
-        });
+        }).then ($http.get("/dashboard/getWidgetList.do").success(function (response) {
+            $scope.widgetList = response;
+            $scope.widgetList = $scope.widgetList.map(function(w) {
+                if (w.data.datasetId != null) {
+                    var dataset = _.find($scope.datasetList, function (ds) { return ds.id == w.data.datasetId; });
+                    w.dataset = dataset == null ? 'Lost DataSet' : dataset.name;
+                } else {
+                    w.dataset = "Query";
+                }
+                return w;
+            });
+        }));
     };
 
     var loadBoardDataset = function (status) {
@@ -73,12 +78,14 @@ cBoard.controller('boardCtrl', function ($scope, $http, ModalUtils, $filter, upd
         _.each(datasetIdArr, function (d) {
             status.i++;
             $http.post("/dashboard/getCachedData.do", {
-                datasetId: d,
+                datasetId: d
             }).success(function (response) {
                 var dataset = _.find($scope.datasetList, function (ds) {
                     return ds.id == d;
                 });
-                $scope.boardDataset.push({name: dataset.name, columns: response.data[0], datasetId: dataset.id});
+                if (dataset != undefined) {
+                    $scope.boardDataset.push({name: dataset.name, columns: response.data[0], datasetId: dataset.id});
+                }
                 status.i--;
             });
         });
@@ -100,7 +107,6 @@ cBoard.controller('boardCtrl', function ($scope, $http, ModalUtils, $filter, upd
     };
 
     getBoardList();
-    getWidgetList();
     getCategoryList();
     getDatasetList();
 

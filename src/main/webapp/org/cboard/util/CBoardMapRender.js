@@ -6,17 +6,9 @@ var CBoardMapRender = function (jqContainer, options) {
     this.options = options;
     this.tall;
     var _this = this;
-    $(this.container).resize(function (e) {
-        _this.resize(e.target);
+    $(this.container).resize(function () {
+        _this.do(_this.tall);
     });
-};
-
-CBoardMapRender.prototype.resize = function (container) {
-    var wrapper = $(container).find('.table_wrapper');
-    wrapper.css('width', 'auto');
-    if(wrapper.width() < $(container).width()){
-        wrapper.css('width','100%');
-    }
 };
 
 CBoardMapRender.prototype.do = function (tall) {
@@ -33,7 +25,6 @@ CBoardMapRender.prototype.do = function (tall) {
     $(this.container).css({
         height: tall + 40 + "px"
     });
-    this.resize(this.container);
     var _this = this;
     return function (o) {
         _this.options = o;

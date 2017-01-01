@@ -1,6 +1,8 @@
 /**
  * Created by Fine on 2016/12/13.
  */
+
+'use strict';
 var threeLevelMap = {
     container: null,
     tipHeader: null,
@@ -159,7 +161,7 @@ var threeLevelMap = {
             }
         }
     },
-    colorRange: function(args){
+    colorRange: function(args) {
         var defs = args.svg.append("defs");
         var linearGradient = defs.append("linearGradient")
             .attr("id","linearColor")
@@ -212,6 +214,20 @@ var threeLevelMap = {
         //.text(function(){
         //	return maxvalue[0];
         //});
+    },
+    backToTop: function(options) {
+        var _this = this;
+        options.svg.append('image')
+            .attr('x', options.width * 0.7)
+            .attr('y', 0)
+            .attr('width', 30)
+            .attr('height', 30)
+            .attr('class', 'backTop')
+            .attr('xlink:href', '../../imgs/back-top.svg')
+            .style('cursor', 'pointer')
+            .on('click', function(){
+                _this.map(options);
+            });
     },
     map: function(options) {
         var chinaPath = 'plugins/FineMap/mapdata/china.json';
@@ -300,6 +316,7 @@ var threeLevelMap = {
         d3.selectAll(".d3-tip").remove();
         d3.selectAll(".scatter").remove();
         this.drawPrivenceMap(argsProvince);
+        this.backToTop(argsProvince);
     },
     drawPrivenceMap: function(argsProvince) {
         var background,
@@ -362,6 +379,7 @@ var threeLevelMap = {
         d3.selectAll(".pathChina").remove();
         d3.selectAll(".d3-tip").remove();
         this.drawCountyMap(argsCountry);
+        this.backToTop(argsCountry);
     },
     drawCountyMap : function(argsCountry) {
         var backColor;

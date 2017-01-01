@@ -26,10 +26,10 @@ cBoard.service('chartMapService', function (dataService) {
                 }
                 return arr;
             };
-            var table_data = Array.matrix(keysList.length, keysList[0].length, 0);
+            var map_data = Array.matrix(keysList.length, keysList[0].length, 0);
             for (var h = 0; h < keysList[0].length; h++) {
                 for (var k = 0; k < keysList.length; k++) {
-                    table_data[k][h] = {
+                    map_data[k][h] = {
                         property: 'row_key',
                         data: keysList[k][h]
                     };
@@ -38,12 +38,12 @@ cBoard.service('chartMapService', function (dataService) {
             for (var i = 0; i < casted_values.length; i++) {
                 for (var j = 0; j < casted_keys.length; j++) {
                     if (!_.isUndefined(aggregate_data[i][j])) {
-                        table_data[j][i + keyLength] = {
+                        map_data[j][i + keyLength] = {
                             property: 'data',
                             data: aggregate_data[i][j]
                         };
                     } else {
-                        table_data[j][i + keyLength] = {
+                        map_data[j][i + keyLength] = {
                             property: 'data',
                             data: 'N/A'
                         };
@@ -76,11 +76,10 @@ cBoard.service('chartMapService', function (dataService) {
             }
             mapOption = {
                 chartConfig: chartConfig,
-                data: column_header.concat(table_data)
+                data: column_header.concat(map_data)
             };
-            table_data = null;
+            map_data = null;
             column_header = null;
-            console.log(tableOption.data);
         });
         return mapOption;
     };

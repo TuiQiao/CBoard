@@ -42,8 +42,7 @@ Server side framework is Spring+MyBatis and front-end is based on AngularJS1 and
   <img src="https://cloud.githubusercontent.com/assets/6037522/19501689/1439ff8c-95da-11e6-9374-750eb6ad82fe.png" width="450">
 </div>
 
-## Demo(Click for larger gif)
-
+<h2>Demo <font color="red">(Click pics for full screen demo!)</font></h2>  
 |Load Data from query or DataSet | Basic Operation |
 | :-----------: | :------: |
 | ![case 0-switchdataload](https://cloud.githubusercontent.com/assets/6037522/21477518/9a874210-cb7d-11e6-9b7e-11721aac322c.gif)       | ![case 1-](https://cloud.githubusercontent.com/assets/6037522/21477521/9c2ead88-cb7d-11e6-9ae4-4c1990f675c2.gif)   |
@@ -54,7 +53,7 @@ Server side framework is Spring+MyBatis and front-end is based on AngularJS1 and
 
 | Add Dashboard Parameters | Use Parameters |
 | :-----------: | :------: |
-| ![case4-useparam](https://cloud.githubusercontent.com/assets/6037522/21478021/73f81fe8-cb82-11e6-95ea-d98b43a4abf2.gif)  | ![case4-addboardparam](https://cloud.githubusercontent.com/assets/6037522/21478022/74216f2e-cb82-11e6-9612-390a2f93184c.gif)|
+| ![case4-addboardparam](https://cloud.githubusercontent.com/assets/6037522/21478022/74216f2e-cb82-11e6-9612-390a2f93184c.gif)  | ![case4-useparam](https://cloud.githubusercontent.com/assets/6037522/21478021/73f81fe8-cb82-11e6-95ea-d98b43a4abf2.gif)|
 
 ## How to build project
 1 Download or git clone project

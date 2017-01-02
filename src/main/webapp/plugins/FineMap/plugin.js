@@ -181,7 +181,7 @@ var threeLevelMap = {
         var colorWidth = 20;
         args.svg.append("rect")
             .attr("x", args.width * 0.7 - 7)
-            .attr("y", args.height * 0.6)
+            .attr("y", args.height * 0.5)
             .attr("width", colorWidth)
             .attr("height", colorLength)
             .style("fill","url(#" + linearGradient.attr("id") + ")");
@@ -191,7 +191,7 @@ var threeLevelMap = {
             .attr({
                 "class": "valueText",
                 "x": args.width*0.7 + 5,
-                "y": args.height*0.6 - 10,
+                "y": args.height*0.5 - 10,
                 "text-anchor": "middle"
             })
             .text(function(){
@@ -200,7 +200,7 @@ var threeLevelMap = {
         args.svg.append("text")
             .attr("class", "valueText")
             .attr("x", args.width*0.7 - 40)
-            .attr("y", args.height*0.6 + 10)
+            .attr("y", args.height*0.5 + 10)
             .text("High");
         //.text(function(){
         //return minvalue[0];
@@ -209,7 +209,7 @@ var threeLevelMap = {
         args.svg.append("text")
             .attr("class","valueText")
             .attr("x", args.width*0.7 - 40)
-            .attr("y", args.height*0.6 + colorLength)
+            .attr("y", args.height*0.5 + colorLength)
             .text("Low");
         //.text(function(){
         //	return maxvalue[0];
@@ -251,7 +251,7 @@ var threeLevelMap = {
                 var zoomScale = that.getZoomScale(root.features, width, options.height);
                 var projection = d3.geo.mercator()
                     .center([107, 38])
-                    .scale(zoomScale*40)
+                    .scale(zoomScale*41)
                     .translate([width/3, options.height/2.5]);
                 path = d3.geo.path().projection(projection);
             }

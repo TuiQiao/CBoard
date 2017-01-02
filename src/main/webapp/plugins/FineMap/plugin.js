@@ -234,6 +234,7 @@ var threeLevelMap = {
         var that = this;
         var width = this.container[0].clientWidth * 0.95;
         d3.select(that.container[0]).selectAll('svg').remove();
+        d3.selectAll('d3-tip').remove();
         var svg = d3.select(that.container[0]).append('svg')
             .attr('width', width)
             .attr('height', options.height)

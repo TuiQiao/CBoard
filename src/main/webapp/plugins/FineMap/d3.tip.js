@@ -29,7 +29,7 @@ d3.behavior.tip = function() {
 
     nodel.html(content)
       .style({
-			'opacity': 1,
+			'display': 'block',
 			'pointer-events': 'all',
 			'line-height' : '16px',
 			'text-align' :'left'
@@ -46,7 +46,7 @@ d3.behavior.tip = function() {
   // Returns a tip
   tip.hide = function() {
     nodel = d3.select(node);
-    nodel.style({ opacity: 0, 'pointer-events': 'none' });
+    nodel.style({ display: 'none', 'pointer-events': 'none' });
     return tip
   };
 
@@ -191,7 +191,7 @@ d3.behavior.tip = function() {
     var node = d3.select(document.createElement('div'))
     node.style({
       position: 'absolute',
-      opacity: 0,
+      display: 'none',
       pointerEvents: 'none',
       boxSizing: 'border-box'
     })

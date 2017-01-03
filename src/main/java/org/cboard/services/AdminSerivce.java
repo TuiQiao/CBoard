@@ -1,5 +1,7 @@
 package org.cboard.services;
 
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
 import com.google.common.base.Charsets;
 import com.google.common.hash.Hashing;
 import org.cboard.dao.RoleDao;
@@ -79,16 +81,19 @@ public class AdminSerivce {
         return "1";
     }
 
-    public String updateRoleRes(String[] roleId, Long[] resId, String resType) {
+    public String updateRoleRes(String[] roleId, String resIdArr) {
+
+        JSONArray arr = JSONArray.parseArray(resIdArr);
         for (String rid : roleId) {
-            roleDao.deleteRoleRes(rid, resType);
-            if (resId != null && resId.length > 0) {
+            roleDao.deleteRoleRes(rid);
+            if (arr != null && arr.size() > 0) {
                 List<DashboardRoleRes> list = new ArrayList<>();
-                for (Long res : resId) {
+                for (Object res : arr) {
+                    JSONObject jo = (JSONObject) res;
                     DashboardRoleRes roleRes = new DashboardRoleRes();
                     roleRes.setRoleId(rid);
-                    roleRes.setResId(res);
-                    roleRes.setResType(resType);
+                    roleRes.setResId(jo.getLong("resId"));
+                    roleRes.setResType(jo.getString("resType"));
                     list.add(roleRes);
                 }
                 roleDao.saveRoleRes(list);

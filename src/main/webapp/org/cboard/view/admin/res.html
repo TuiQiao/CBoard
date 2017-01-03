@@ -23,11 +23,6 @@
         </div>
         <div class="col-md-3">
             <div class="row">
-                <div class="col-md-9">
-                    <select class="form-control" ng-model="resType" ng-change="getResList()"
-                            ng-options="u.value as u.name for u in resTypeList">
-                    </select>
-                </div>
                 <div class="col-md-3">
                     <button class="btn btn-success btn-block margin-bottom" ng-click="grant()">
                         Grant
@@ -36,18 +31,7 @@
             </div>
             <div class="row" style="margin-bottom: 10px">
                 <div class="col-md-12">
-                    <div class="input-group">
-                        <span class="input-group-addon">{{'CONFIG.WIDGET.FIND'|translate}}</span>
-                        <input type="text" class="form-control" ng-model="resKeyword">
-                    </div>
-                </div>
-            </div>
-            <div class="row">
-                <div class="col-md-12">
-                    <select multiple class="form-control" ng-model="selectRes"
-                            ng-options="u.name for u in resList | filter:{name:resKeyword}"
-                            style="height: 500px">
-                    </select>
+                    <div js-tree="treeConfig" ng-model="resList" tree="treeInstance" style="height: 500px" ></div>
                 </div>
             </div>
         </div>

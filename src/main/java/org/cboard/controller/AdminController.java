@@ -89,12 +89,7 @@ public class AdminController {
     }
 
     @RequestMapping(value = "/updateRoleRes")
-    public String updateRoleRes(@RequestParam(name = "roleIdArr") String roleIdArr, @RequestParam(name = "resIdArr") String resIdArr, @RequestParam(name = "resType") String resType) {
-        return adminSerivce.updateRoleRes(JSONArray.parseArray(roleIdArr).toArray(new String[]{}), Lists.transform(JSONArray.parseArray(resIdArr), new Function<Object, Long>() {
-            @Override
-            public Long apply(Object o) {
-                return Long.parseLong(o.toString());
-            }
-        }).toArray(new Long[]{}), resType);
+    public String updateRoleRes(@RequestParam(name = "roleIdArr") String roleIdArr, @RequestParam(name = "resIdArr") String resIdArr) {
+        return adminSerivce.updateRoleRes(JSONArray.parseArray(roleIdArr).toArray(new String[]{}), resIdArr);
     }
 }

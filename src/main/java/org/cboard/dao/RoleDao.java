@@ -21,7 +21,7 @@ public interface RoleDao {
 
     int saveRoleRes(List<DashboardRoleRes> list);
 
-    int deleteRoleRes(String roleId, String resType);
+    int deleteRoleRes(String roleId);
 
     List<Long> getRoleResByResIds(String userId, String resType);
 }

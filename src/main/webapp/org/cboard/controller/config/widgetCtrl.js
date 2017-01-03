@@ -98,9 +98,9 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
     $scope.toChartDisabled = true;
     $scope.optFlag = '';
     $scope.alerts = [];
-    $scope.originalData = [];
     $scope.treeData = [];
-    $scope.widgetTreeID = 'widgetTreeID'; // Set to a same value with treeDom
+    var originalData = [];
+    var treeID = 'widgetTreeID'; // Set to a same value with treeDom
 
     $scope.datasource;
     $scope.widgetName;
@@ -141,7 +141,7 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
     var getWidgetList = function (callback) {
         $http.get("/dashboard/getWidgetList.do").success(function (response) {
             $scope.widgetList = response;
-            $scope.originalData = jstree_CvtVPath2TreeData(
+            originalData = jstree_CvtVPath2TreeData(
                 $scope.widgetList.map(function(w) {
                     return {
                         "id": w.id,
@@ -151,8 +151,7 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
                 })
             );
             if (callback) { callback(); }
-
-            jstree_ReloadTree($scope.widgetTreeID, $scope.originalData);
+            jstree_ReloadTree(treeID, originalData);
         });
     };
 
@@ -259,94 +258,6 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
             }
         }, $scope.loadFromCache);
     };
-
-    /** js tree related start... **/
-    $scope.treeConfig = jsTreeConfig1;
-
-    $("#" + $scope.widgetTreeID).keyup(function(e){
-        if(e.keyCode == 46) {
-            $scope.deleteNode();
-        }
-    });
-
-    var getSelectedWidget = function() {
-        var selectedNode = jstree_GetSelectedNodes($scope.widgetTreeID)[0];
-        return _.find($scope.widgetList, function (w) { return w.id == selectedNode.id; });
-    };
-
-    var checkTreeNode = function(actionType) {
-        return jstree_CheckTreeNode(actionType, $scope.widgetTreeID, ModalUtils.alert);
-    };
-
-    var switchNode = function (id) {
-        $scope.ignoreChanges = false;
-        var widgetTree = jstree_GetWholeTree($scope.widgetTreeID);
-        widgetTree.deselect_all();
-        widgetTree.select_node(id);
-    };
-
-    $scope.copyNode = function () {
-        if (!checkTreeNode("copy")) return;
-        $scope.copyWgt(getSelectedWidget());
-    };
-
-    $scope.editNode = function () {
-        if (!checkTreeNode("edit")) return;
-        $scope.editWgt(getSelectedWidget());
-    };
-
-    $scope.deleteNode = function(){
-        if (!checkTreeNode("delete")) return;
-        $scope.deleteWgt(getSelectedWidget());
-    };
-
-    $scope.applyModelChanges = function() {
-        return !$scope.ignoreChanges;
-    };
-
-    $scope.treeEventsObj = {
-        "ready": function() {
-            $timeout(function() {
-                $scope.ignoreChanges = false;
-            });
-        },
-        "activate_node": function(obj, e) {
-            var myJsTree = jstree_GetWholeTree($scope.widgetTreeID);
-            var data = myJsTree.get_selected(true)[0];
-            if (data.children.length > 0) {
-                myJsTree.deselect_node(data);
-                myJsTree.toggle_node(data);
-            }
-        },
-        "move_node": function () {
-            var myJsTree = jstree_GetWholeTree($scope.widgetTreeID);
-            for (var i = 0; i < $scope.widgetList.length; i++) {
-                for (var j = 0; j < $scope.treeData.length; j++) {
-                    if ($scope.widgetList[i].id == $scope.treeData[j].id) {
-                        var categoryName = myJsTree.get_path($scope.treeData[j], '/').substring(5);
-                        categoryName = categoryName.substring(0, categoryName.lastIndexOf("/")).trim();
-                        if (categoryName != $scope.widgetList[i].categoryName) {
-                            $scope.widgetList[i].categoryName = categoryName;
-                            $http.post("/dashboard/updateWidget.do", {json: angular.toJson($scope.widgetList[i])}).success(function (serviceStatus) {
-                                if (serviceStatus.status == '1') {
-                                    console.log('success!');
-                                } else {
-                                    ModalUtils.alert(serviceStatus.msg, "modal-warning", "lg");
-                                }
-                            });
-                        }
-                    }
-                }
-            }
-        },
-        "dblclick": function () {
-            var selectedNodes = jstree_GetSelectedNodes($scope.widgetTreeID);
-            if (selectedNodes.length == 0) return; // Ignore double click folder action
-            $scope.editNode();
-        }
-    };
-
-    /** js tree related End... **/
 
     $scope.newWgt = function () {
         $scope.curWidget = {};
@@ -911,5 +822,77 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
             _tooltip = $curTarget.find(".chart-tip");
         _tooltip.hide();
     };
+
+    /** js tree related start... **/
+    $scope.treeConfig = jsTreeConfig1;
+
+    $("#" + treeID).keyup(function(e){
+        if(e.keyCode == 46) {
+            $scope.deleteNode();
+        }
+    });
+
+    var getSelectedWidget = function() {
+        var selectedNode = jstree_GetSelectedNodes(treeID)[0];
+        return _.find($scope.widgetList, function (w) { return w.id == selectedNode.id; });
+    };
+
+    var checkTreeNode = function(actionType) {
+        return jstree_CheckTreeNode(actionType, treeID, ModalUtils.alert);
+    };
+
+    var switchNode = function (id) {
+        $scope.ignoreChanges = false;
+        var widgetTree = jstree_GetWholeTree(treeID);
+        widgetTree.deselect_all();
+        widgetTree.select_node(id);
+    };
+
+    $scope.applyModelChanges = function() {
+        return !$scope.ignoreChanges;
+    };
+
+    $scope.copyNode = function () {
+        if (!checkTreeNode("copy")) return;
+        $scope.copyWgt(getSelectedWidget());
+    };
+
+    $scope.editNode = function () {
+        if (!checkTreeNode("edit")) return;
+        $scope.editWgt(getSelectedWidget());
+    };
+
+    $scope.deleteNode = function(){
+        if (!checkTreeNode("delete")) return;
+        $scope.deleteWgt(getSelectedWidget());
+    };
+
+    $scope.treeEventsObj = function() {
+        var baseEventObj = jstree_baseTreeEventsObj(treeID, $scope, $timeout);
+        baseEventObj.move_node = function () {
+            var myJsTree = jstree_GetWholeTree(treeID);
+            $scope.treeData = jstree_GetWholeTree(treeID).settings.core.data;
+            for (var i = 0; i < $scope.widgetList.length; i++) {
+                for (var j = 0; j < $scope.treeData.length; j++) {
+                    if ($scope.widgetList[i].id == $scope.treeData[j].id) {
+                        var categoryName = myJsTree.get_path($scope.treeData[j], '/').substring(5);
+                        categoryName = categoryName.substring(0, categoryName.lastIndexOf("/")).trim();
+                        if (categoryName != $scope.widgetList[i].categoryName) {
+                            $scope.widgetList[i].categoryName = categoryName;
+                            $http.post("/dashboard/updateWidget.do", {json: angular.toJson($scope.widgetList[i])}).success(function (serviceStatus) {
+                                if (serviceStatus.status == '1') {
+                                    console.log('success!');
+                                } else {
+                                    ModalUtils.alert(serviceStatus.msg, "modal-warning", "lg");
+                                }
+                            });
+                        }
+                    }
+                }
+            }
+        };
+        return baseEventObj;
+    }();
+    /** js tree related End... **/
 })
 ;

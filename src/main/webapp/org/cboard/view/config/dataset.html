@@ -2,35 +2,19 @@
 <div id="inner-container">
     <div class="row">
         <div class="col-md-3">
-            <button class="btn btn-success btn-block margin-bottom" ng-click="newDs()">
-                New
-            </button>
             <div class="box box-solid">
                 <div class="box-header with-border">
-                    <h3 class="box-title">{{'CONFIG.DATASET.DATASET'|translate}}</h3>
+                    <i class="fa fa-cubes"></i> <h3 class="box-title"> {{'CONFIG.DATASET.DATASET'|translate}}</h3>
+                    <div class="box-tools pull-right">
+                        <i class="glyphicon glyphicon-plus toolbar-icon" ng-click="newDs()" title="{{'COMMON.NEW'|translate}}"></i>&nbsp;&nbsp;
+                        <i class="fa fa-copy toolbar-icon" ng-click="copyNode()" title="{{'COMMON.COPY'|translate}}"></i>&nbsp;&nbsp;
+                        <i class="fa fa-edit toolbar-icon" ng-click="editNode()" title="{{'COMMON.EDIT'|translate}}"></i>&nbsp;&nbsp;
+                        <i class="fa fa-trash-o toolbar-icon"  ng-click="deleteNode()" title="{{'COMMON.DELETE'|translate}}"></i>
+                    </div>
                 </div>
-                <div class="box-body no-padding">
-                    <uib-accordion class="nav nav-pills nav-stacked" close-others="true">
-                        <div uib-accordion-group ng-repeat="category in categoryList">
-                            <uib-accordion-heading>
-                                {{category}}<i class="pull-right glyphicon"></i>
-                            </uib-accordion-heading>
-                            <ul class="nav nav-pills nav-stacked">
-                                <li ng-repeat="o in datasetList | filter:{categoryName:category}">
-                                    <a>
-                                        {{o.name}}
-                                <span class="pull-right text-red">
-                                    <i class="fa fa-copy" style="cursor: pointer" ng-click="copyDs(o)"></i>&nbsp;
-                                    <i class="fa fa-edit" style="cursor: pointer" ng-click="editDs(o)"></i>&nbsp;
-                                    <i class="fa fa-trash-o" style="cursor: pointer"
-                                       ng-click="deleteDs(o)"></i>
-                                </span>
-                                    </a>
-                                </li>
-                            </ul>
-                        </div>
-                    </uib-accordion>
-                    <!-- /.box-body -->
+                <div class="panel-body">
+                    <div id="dataSetTreeID" js-tree="treeConfig" should-apply="applyModelChanges()" ng-model="treeData" tree="treeInstance"
+                         tree-events-obj="treeEventsObj"></div>
                 </div>
             </div>
         </div>

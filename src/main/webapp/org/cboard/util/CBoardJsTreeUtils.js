@@ -111,7 +111,7 @@ function jstree_CheckTreeNode(actionType, treeID, popup) {
     } else if (selectedNodes.length == 0) {
         popup("Please, select one widget first!", "modal-warning", "lg");
         return false;
-    } else if (typeof(selectedNodes.children) != "undefined" && selectedNodes.children.length > 0) {
+    } else if (typeof(selectedNodes[0].children) != "undefined" && selectedNodes[0].children.length > 0) {
         popup("Can't " + actionType + " a folder!", "modal-warning", "lg");
         return false;
     } else {
@@ -120,7 +120,7 @@ function jstree_CheckTreeNode(actionType, treeID, popup) {
 }
 
 
-function jstree_ReloadTree (treeID, treeData) {
+function jstree_ReloadTree (treeID, treeData, ngScope) {
     jstree_GetWholeTree(treeID).settings.core.data = treeData;
     jstree_GetWholeTree(treeID).refresh();
 }
@@ -143,3 +143,27 @@ var jstree_CopyNode = function(paramObj) {
         paramObj.copyFunction(paramObj.oldNode);
     };
 };
+
+
+function jstree_baseTreeEventsObj(treeID, ngScope, ngTimeout) {
+    return  {
+        "ready": function() {
+            ngTimeout(function() {
+                ngScope.ignoreChanges = false;
+            });
+        },
+        "activate_node": function(obj, e) {
+            var myJsTree = jstree_GetWholeTree(treeID);
+            var data = myJsTree.get_selected(true)[0];
+            if (data.children.length > 0) {
+                myJsTree.deselect_node(data);
+                myJsTree.toggle_node(data);
+            }
+        },
+        "dblclick": function () {
+            var selectedNodes = jstree_GetSelectedNodes(treeID);
+            if (selectedNodes.length == 0) return; // Ignore double click folder action
+            ngScope.editNode();
+        }
+    };
+}

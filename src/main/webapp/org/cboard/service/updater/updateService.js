@@ -31,6 +31,7 @@ cBoard.service('updateService', function () {
     };
 
     this.updateBoard = function (board) {
+        if (board.layout === undefined) return;
         _.each(board.layout.rows, function (row) {
             if (!row.type) {
                 row.type = 'widget';

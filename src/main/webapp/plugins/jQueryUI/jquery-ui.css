@@ -122,6 +122,9 @@
 .ui-menu .ui-menu-item {
 	margin: 0;
 	cursor: pointer;
+	font-size: 14px;
+	padding-left: 12px;
+	padding-top: 1px;
 	/* support: IE10, see #8844 */
 	list-style-image: url("data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7");
 }
@@ -885,7 +888,7 @@ body .ui-tooltip {
 ----------------------------------*/
 .ui-widget {
 	font-family: "Microsoft YaHei", 'Source Sans Pro', 'Helvetica Neue', Helvetica, Arial, sans-serif;
-	font-size: 1.2em;
+	font-size: 1em;
 }
 .ui-widget .ui-widget {
 	font-size: 1em;

@@ -70,11 +70,11 @@
                             <label>{{'CONFIG.DASHBOARD.WIDGET'|translate}}</label>
                             <ui-select ng-model="widget.widgetId" on-select="widget.name = $item.name">
                                 <ui-select-match>
-                                    {{$select.selected.name}}
+                                    {{$select.selected.name}} ({{$select.selected.dataset}})
                                 </ui-select-match>
                                 <ui-select-choices group-by="widgetGroup"
                                                    repeat="w.id as w in widgetList | filter:{name : $select.search}">
-                                    {{w.name}}
+                                    {{w.name + "(" + w.dataset + ")"}}
                                 </ui-select-choices>
                             </ui-select>
                         </div>

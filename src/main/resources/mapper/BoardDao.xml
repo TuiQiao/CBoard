@@ -8,17 +8,20 @@
 
     <select id="getBoardList" resultType="org.cboard.pojo.DashboardBoard">
         SELECT
-               board_id    AS id,
-               user_id     AS userId,
-               board_name  AS NAME,
-               layout_json AS layout,
-               category_id AS categoryId
-          FROM dashboard_board WHERE #{0} = '${admin_user_id}' OR user_id = #{0} OR board_id IN (
+               board_id        AS id,
+               a.user_id       AS userId,
+               board_name      AS NAME,
+               layout_json     AS layout,
+               a.category_id   AS categoryId,
+               b.category_name AS categoryName
+          FROM dashboard_board a
+          LEFT JOIN dashboard_category b ON a.category_id = b.category_id
+         WHERE #{0} = '${admin_user_id}' OR a.user_id = #{0} OR a.board_id IN (
              SELECT res_id
                FROM dashboard_user_role ur
                LEFT JOIN dashboard_role_res rr ON ur.role_id = rr.role_id
               WHERE ur.user_id = #{0} AND rr.res_type = 'board'
-          ) ORDER BY board_name
+          ) ORDER BY a.board_name
     </select>
 
     <update id="save">

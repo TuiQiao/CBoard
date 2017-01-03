@@ -2,7 +2,7 @@
  * Created by yfyuan on 2016/8/2.
  */
 'use strict';
-cBoard.controller('boardCtrl', function ($scope, $http, ModalUtils, $filter, updateService, $uibModal) {
+cBoard.controller('boardCtrl', function ($scope, $http, ModalUtils, $filter, updateService, $uibModal, $timeout) {
 
     var translate = $filter('translate');
 
@@ -11,15 +11,24 @@ cBoard.controller('boardCtrl', function ($scope, $http, ModalUtils, $filter, upd
     $scope.alerts = [];
     $scope.verify = {boardName: true};
 
+    $scope.treeData = [];
+    var treeID = "boardTreeID";
+    var originalData = [];
+
     var getBoardList = function () {
         $http.get("/dashboard/getBoardList.do").success(function (response) {
             $scope.boardList = response;
-        });
-    };
-
-    var getWidgetList = function () {
-        $http.get("/dashboard/getWidgetList.do").success(function (response) {
-            $scope.widgetList = response;
+            originalData = jstree_CvtVPath2TreeData(
+                $scope.boardList.map(function(ds) {
+                    var categoryName = ds.categoryName == null ? translate('CONFIG.DASHBOARD.MY_DASHBOARD') : ds.categoryName;
+                    return {
+                        "id": ds.id,
+                        "name": ds.name,
+                        "categoryName": categoryName
+                    };
+                })
+            );
+            jstree_ReloadTree(treeID, originalData);
         });
     };
 
@@ -28,14 +37,25 @@ cBoard.controller('boardCtrl', function ($scope, $http, ModalUtils, $filter, upd
             $scope.categoryList = [{id: null, name: translate('CONFIG.DASHBOARD.MY_DASHBOARD')}];
             _.each(response, function (o) {
                 $scope.categoryList.push(o);
-            })
+            });
         });
     };
 
     var getDatasetList = function () {
         $http.get("/dashboard/getDatasetList.do").success(function (response) {
             $scope.datasetList = response;
-        });
+        }).then ($http.get("/dashboard/getWidgetList.do").success(function (response) {
+            $scope.widgetList = response;
+            $scope.widgetList = $scope.widgetList.map(function(w) {
+                if (w.data.datasetId != null) {
+                    var dataset = _.find($scope.datasetList, function (ds) { return ds.id == w.data.datasetId; });
+                    w.dataset = dataset == null ? 'Lost DataSet' : dataset.name;
+                } else {
+                    w.dataset = "Query";
+                }
+                return w;
+            });
+        }));
     };
 
     var loadBoardDataset = function (status) {
@@ -58,12 +78,14 @@ cBoard.controller('boardCtrl', function ($scope, $http, ModalUtils, $filter, upd
         _.each(datasetIdArr, function (d) {
             status.i++;
             $http.post("/dashboard/getCachedData.do", {
-                datasetId: d,
+                datasetId: d
             }).success(function (response) {
                 var dataset = _.find($scope.datasetList, function (ds) {
                     return ds.id == d;
                 });
-                $scope.boardDataset.push({name: dataset.name, columns: response.data[0], datasetId: dataset.id});
+                if (dataset != undefined) {
+                    $scope.boardDataset.push({name: dataset.name, columns: response.data[0], datasetId: dataset.id});
+                }
                 status.i--;
             });
         });
@@ -85,17 +107,47 @@ cBoard.controller('boardCtrl', function ($scope, $http, ModalUtils, $filter, upd
     };
 
     getBoardList();
-    getWidgetList();
     getCategoryList();
     getDatasetList();
-
-    $scope.widgetGroup = function (item) {
-        return item.categoryName;
-    };
 
     $scope.newBoard = function () {
         $scope.optFlag = 'new';
         $scope.curBoard = {layout: {rows: []}};
+    };
+
+    $scope.editBoard = function (board) {
+        var b = angular.copy(board);
+        updateService.updateBoard(b);
+        $scope.curBoard = b;
+        $scope.optFlag = 'edit';
+    };
+
+    $scope.copyBoard = function (board) {
+        var o = angular.copy(board);
+        o.name = o.name + '_copy';
+        $http.post("/dashboard/saveNewBoard.do", {json: angular.toJson(o)}).success(function (serviceStatus) {
+            if (serviceStatus.status == '1') {
+                getBoardList();
+                ModalUtils.alert(serviceStatus.msg, "modal-success", "sm");
+                boardChange();
+            } else {
+                ModalUtils.alert(serviceStatus.msg, "modal-warning", "lg");
+            }
+        });
+    };
+
+    $scope.deleteBoard = function (board) {
+        ModalUtils.confirm(translate("COMMON.CONFIRM_DELETE"), "modal-warning", "lg", function () {
+            $http.post("/dashboard/deleteBoard.do", {id: board.id}).success(function () {
+                getBoardList();
+                $scope.optFlag == 'none';
+                boardChange();
+            });
+        });
+    };
+
+    $scope.widgetGroup = function (item) {
+        return item.categoryName;
     };
 
     $scope.addWidget = function (row) {
@@ -114,19 +166,6 @@ cBoard.controller('boardCtrl', function ($scope, $http, ModalUtils, $filter, upd
         $scope.curBoard.layout.rows.unshift({type: 'param', params: []});
     };
 
-    $scope.copyBoard = function (board) {
-        var o = angular.copy(board);
-        o.name = o.name + '_copy';
-        $http.post("/dashboard/saveNewBoard.do", {json: angular.toJson(o)}).success(function (serviceStatus) {
-            if (serviceStatus.status == '1') {
-                getBoardList();
-                ModalUtils.alert(serviceStatus.msg, "modal-success", "sm");
-                boardChange();
-            } else {
-                ModalUtils.alert(serviceStatus.msg, "modal-warning", "lg");
-            }
-        });
-    }
     var validate = function () {
         $scope.alerts = [];
         if (!$scope.curBoard.name) {
@@ -165,23 +204,6 @@ cBoard.controller('boardCtrl', function ($scope, $http, ModalUtils, $filter, upd
                 }
             });
         }
-    };
-
-    $scope.editBoard = function (board) {
-        var b = angular.copy(board);
-        updateService.updateBoard(b);
-        $scope.curBoard = b;
-        $scope.optFlag = 'edit';
-    };
-
-    $scope.deleteBoard = function (board) {
-        ModalUtils.confirm(translate("COMMON.CONFIRM_DELETE"), "modal-warning", "lg", function () {
-            $http.post("/dashboard/deleteBoard.do", {id: board.id}).success(function () {
-                getBoardList();
-                $scope.optFlag == 'none';
-                boardChange();
-            });
-        });
     };
 
     $scope.editParam = function (row, index) {
@@ -275,4 +297,54 @@ cBoard.controller('boardCtrl', function ($scope, $http, ModalUtils, $filter, upd
         });
     };
 
+
+    /**  js tree related start **/
+    $scope.treeConfig = jsTreeConfig1;
+
+    $("#" + treeID).keyup(function(e){
+        if(e.keyCode == 46) {
+            $scope.deleteBoard();
+        }
+    });
+
+    var getSelectedBoard = function() {
+        var selectedNode = jstree_GetSelectedNodes(treeID)[0];
+        return _.find($scope.boardList, function (ds) { return ds.id == selectedNode.id; });
+    };
+
+    var checkTreeNode = function(actionType) {
+        return jstree_CheckTreeNode(actionType, treeID, ModalUtils.alert);
+    };
+
+    var switchNode = function (id) {
+        $scope.ignoreChanges = false;
+        var dataSetTree = jstree_GetWholeTree(treeID);
+        dataSetTree.deselect_all();
+        dataSetTree.select_node(id);
+    };
+
+    $scope.applyModelChanges = function() {
+        return !$scope.ignoreChanges;
+    };
+
+    $scope.copyNode = function () {
+        if (!checkTreeNode("copy")) return;
+        $scope.copyBoard(getSelectedBoard());
+    };
+
+    $scope.editNode = function () {
+        if (!checkTreeNode("edit")) return;
+        $scope.editBoard(getSelectedBoard());
+    };
+
+    $scope.deleteNode = function(){
+        if (!checkTreeNode("delete")) return;
+        $scope.deleteBoard(getSelectedBoard());
+    };
+
+    $scope.treeEventsObj = function() {
+        return jstree_baseTreeEventsObj(treeID, $scope, $timeout);
+    }();
+
+    /**  js tree related start **/
 });

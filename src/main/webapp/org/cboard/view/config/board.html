@@ -2,36 +2,20 @@
 <div id="inner-container">
     <div class="row">
         <div class="col-md-3">
-            <button class="btn btn-success btn-block margin-bottom" ng-click="newBoard()">
-                New
-            </button>
             <div class="box box-solid">
                 <div class="box-header with-border">
                     <i class="fa fa-dashboard"></i><h3 class="box-title">{{'CONFIG.DASHBOARD.DASHBOARD'|translate}}</h3>
-                </div>
-                <div class="box-body no-padding">
-                    <div class="row">
-                        <div class="col-md-12">
-                            <ul class="nav nav-pills nav-stacked">
-                                <li ng-repeat="o in boardList">
-                                    <a>
-                                        {{o.name}}
-                                        <span class="pull-right text-red">
-                                            <i class="fa fa-copy" style="cursor: pointer" ng-click="copyBoard(o)"></i>&nbsp;
-                                            <i class="fa fa-edit" style="cursor: pointer" ng-click="editBoard(o)"></i>&nbsp;
-                                            <i class="fa fa-trash-o" style="cursor: pointer"
-                                               ng-click="deleteBoard(o)"></i>
-                                        </span>
-                                    </a>
-                                </li>
-                            </ul>
-                        </div>
+                    <div class="box-tools pull-right">
+                        <i class="glyphicon glyphicon-plus toolbar-icon" ng-click="newBoard()" title="{{'COMMON.NEW'|translate}}"></i>&nbsp;&nbsp;
+                        <i class="fa fa-copy toolbar-icon" ng-click="copyNode()" title="{{'COMMON.COPY'|translate}}"></i>&nbsp;&nbsp;
+                        <i class="fa fa-edit toolbar-icon" ng-click="editNode()" title="{{'COMMON.EDIT'|translate}}"></i>&nbsp;&nbsp;
+                        <i class="fa fa-trash-o toolbar-icon"  ng-click="deleteNode()" title="{{'COMMON.DELETE'|translate}}"></i>
                     </div>
                 </div>
-                <!-- /.box-body -->
-                <div class="box-footer">
+                <div class="panel-body">
+                    <div id="boardTreeID" js-tree="treeConfig" should-apply="applyModelChanges()" ng-model="treeData" tree="treeInstance"
+                         tree-events-obj="treeEventsObj"></div>
                 </div>
-                <!-- /.box-footer-->
             </div>
         </div>
         <div class="col-md-9">

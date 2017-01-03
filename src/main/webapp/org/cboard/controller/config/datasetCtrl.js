@@ -1,7 +1,7 @@
 /**
  * Created by yfyuan on 2016/10/11.
  */
-cBoard.controller('datasetCtrl', function ($scope, $http, dataService, $uibModal, ModalUtils, $filter, chartService) {
+cBoard.controller('datasetCtrl', function ($scope, $http, dataService, $uibModal, ModalUtils, $filter, chartService, $timeout) {
 
     var translate = $filter('translate');
     $scope.optFlag = 'none';
@@ -10,15 +10,32 @@ cBoard.controller('datasetCtrl', function ($scope, $http, dataService, $uibModal
     $scope.alerts = [];
     $scope.verify = {dsName: true};
 
+    var treeID = 'dataSetTreeID'; // Set to a same value with treeDom
+    var originalData = [];
+
     var getDatasetList = function () {
         $http.get("/dashboard/getDatasetList.do").success(function (response) {
             $scope.datasetList = response;
+            originalData = jstree_CvtVPath2TreeData(
+                $scope.datasetList.map(function(ds) {
+                    return {
+                        "id": ds.id,
+                        "name": ds.name,
+                        "categoryName": ds.categoryName
+                    };
+                })
+            );
+            jstree_ReloadTree(treeID, originalData);
         });
+
     };
 
     var getCategoryList = function () {
         $http.get("/dashboard/getDatasetCategoryList.do").success(function (response) {
             $scope.categoryList = response;
+            $("#DatasetName").autocomplete({
+                source: $scope.categoryList
+            });
         });
     };
 
@@ -257,4 +274,54 @@ cBoard.controller('datasetCtrl', function ($scope, $http, dataService, $uibModal
         $('#dataset_preview').html("");
     };
 
+
+    /**  js tree related start **/
+    $scope.treeConfig = jsTreeConfig1;
+
+    $("#" + treeID).keyup(function(e){
+        if(e.keyCode == 46) {
+            $scope.deleteNode();
+        }
+    });
+
+    var getSelectedDataSet = function() {
+        var selectedNode = jstree_GetSelectedNodes(treeID)[0];
+        return _.find($scope.datasetList, function (ds) { return ds.id == selectedNode.id; });
+    };
+
+    var checkTreeNode = function(actionType) {
+        return jstree_CheckTreeNode(actionType, treeID, ModalUtils.alert);
+    };
+
+    var switchNode = function (id) {
+        $scope.ignoreChanges = false;
+        var dataSetTree = jstree_GetWholeTree(treeID);
+        dataSetTree.deselect_all();
+        dataSetTree.select_node(id);
+    };
+
+    $scope.applyModelChanges = function() {
+        return !$scope.ignoreChanges;
+    };
+
+    $scope.copyNode = function () {
+        if (!checkTreeNode("copy")) return;
+        $scope.copyDs(getSelectedDataSet());
+    };
+
+    $scope.editNode = function () {
+        if (!checkTreeNode("edit")) return;
+        $scope.editDs(getSelectedDataSet());
+    };
+
+    $scope.deleteNode = function(){
+        if (!checkTreeNode("delete")) return;
+        $scope.deleteDs(getSelectedDataSet());
+    };
+
+    $scope.treeEventsObj = function() {
+        return jstree_baseTreeEventsObj(treeID, $scope, $timeout);
+    }();
+
+    /**  js tree related end **/
 });

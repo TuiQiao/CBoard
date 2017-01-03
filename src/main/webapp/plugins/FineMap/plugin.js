@@ -1,6 +1,8 @@
 /**
  * Created by Fine on 2016/12/13.
  */
+
+'use strict';
 var threeLevelMap = {
     container: null,
     tipHeader: null,
@@ -159,7 +161,7 @@ var threeLevelMap = {
             }
         }
     },
-    colorRange: function(args){
+    colorRange: function(args) {
         var defs = args.svg.append("defs");
         var linearGradient = defs.append("linearGradient")
             .attr("id","linearColor")
@@ -179,7 +181,7 @@ var threeLevelMap = {
         var colorWidth = 20;
         args.svg.append("rect")
             .attr("x", args.width * 0.7 - 7)
-            .attr("y", args.height * 0.6)
+            .attr("y", args.height * 0.5)
             .attr("width", colorWidth)
             .attr("height", colorLength)
             .style("fill","url(#" + linearGradient.attr("id") + ")");
@@ -189,7 +191,7 @@ var threeLevelMap = {
             .attr({
                 "class": "valueText",
                 "x": args.width*0.7 + 5,
-                "y": args.height*0.6 - 10,
+                "y": args.height*0.5 - 10,
                 "text-anchor": "middle"
             })
             .text(function(){
@@ -198,7 +200,7 @@ var threeLevelMap = {
         args.svg.append("text")
             .attr("class", "valueText")
             .attr("x", args.width*0.7 - 40)
-            .attr("y", args.height*0.6 + 10)
+            .attr("y", args.height*0.5 + 10)
             .text("High");
         //.text(function(){
         //return minvalue[0];
@@ -207,17 +209,32 @@ var threeLevelMap = {
         args.svg.append("text")
             .attr("class","valueText")
             .attr("x", args.width*0.7 - 40)
-            .attr("y", args.height*0.6 + colorLength)
+            .attr("y", args.height*0.5 + colorLength)
             .text("Low");
         //.text(function(){
         //	return maxvalue[0];
         //});
+    },
+    backToTop: function(options) {
+        var _this = this;
+        options.svg.append('image')
+            .attr('x', options.width * 0.7)
+            .attr('y', 0)
+            .attr('width', 30)
+            .attr('height', 30)
+            .attr('class', 'backTop')
+            .attr('xlink:href', '../../imgs/back-top.svg')
+            .style('cursor', 'pointer')
+            .on('click', function(){
+                _this.map(options);
+            });
     },
     map: function(options) {
         var chinaPath = 'plugins/FineMap/mapdata/china.json';
         var that = this;
         var width = this.container[0].clientWidth * 0.95;
         d3.select(that.container[0]).selectAll('svg').remove();
+        d3.selectAll('d3-tip').remove();
         var svg = d3.select(that.container[0]).append('svg')
             .attr('width', width)
             .attr('height', options.height)
@@ -235,7 +252,7 @@ var threeLevelMap = {
                 var zoomScale = that.getZoomScale(root.features, width, options.height);
                 var projection = d3.geo.mercator()
                     .center([107, 38])
-                    .scale(zoomScale*40)
+                    .scale(zoomScale*41)
                     .translate([width/3, options.height/2.5]);
                 path = d3.geo.path().projection(projection);
             }
@@ -300,6 +317,7 @@ var threeLevelMap = {
         d3.selectAll(".d3-tip").remove();
         d3.selectAll(".scatter").remove();
         this.drawPrivenceMap(argsProvince);
+        this.backToTop(argsProvince);
     },
     drawPrivenceMap: function(argsProvince) {
         var background,
@@ -362,6 +380,7 @@ var threeLevelMap = {
         d3.selectAll(".pathChina").remove();
         d3.selectAll(".d3-tip").remove();
         this.drawCountyMap(argsCountry);
+        this.backToTop(argsCountry);
     },
     drawCountyMap : function(argsCountry) {
         var backColor;

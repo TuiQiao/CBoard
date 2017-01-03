@@ -5014,6 +5014,7 @@ button >canvas {
   background: rgba(0, 0, 0, 0.8);
   color: #fff;
   border-radius: 3px;
+  z-index: 10000;
 }
 
 /* Creates a small triangle extender for the tooltip */

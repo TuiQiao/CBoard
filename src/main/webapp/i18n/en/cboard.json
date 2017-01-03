@@ -51,7 +51,7 @@
       "CUSTOM_EXPRESSION": "Calculated Measures"
     },
     "DATA_SOURCE": {
-      "DATA_SOURCE_HEADER": "Data Source(s)",
+      "DATA_SOURCE_HEADER": "Data Source",
       "DATA_PROVIDER": "Data Source Type",
       "NAME": "Data Source Name",
       "TEST": "Test"
@@ -158,11 +158,13 @@
   },
   "ADMIN": {
     "USER": {
+      "USER": "User",
       "LOGIN_NAME": "Login Name",
       "NAME": "User Name",
       "PASSWORD": "Password"
     },
     "ROLE": {
+      "ROLE": "Role",
       "ROLE_NAME": "Role Name"
     },
     "BOARD": "Dashboard",

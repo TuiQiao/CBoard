@@ -29,7 +29,6 @@ public class MenuService {
         menuList.add(new DashboardMenu(6, 1, "SIDEBAR.DASHBOARD_CATEGORY", "config.category"));
         menuList.add(new DashboardMenu(7, -1, "SIDEBAR.ADMIN", "admin"));
         menuList.add(new DashboardMenu(8, 7, "SIDEBAR.USER_ADMIN", "admin.user"));
-        menuList.add(new DashboardMenu(9, 7, "SIDEBAR.RES_ADMIN", "admin.res"));
     }
 
     public List<DashboardMenu> getMenuList() {

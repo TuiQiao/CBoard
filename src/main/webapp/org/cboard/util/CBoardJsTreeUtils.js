@@ -144,26 +144,70 @@ var jstree_CopyNode = function(paramObj) {
     };
 };
 
+/**
+ * {
+ *   treeID: xx,
+ *   ngScope: $scope,
+ *   ngHttp: $http,
+ *   ngTimeout $timeout,
+ *   listName: "widgetList",
+ *   updateUrl: xxx
+ * }
+ * @param option
+ * @returns {{ready: ready, activate_node: activate_node, dblclick: dblclick, move_node: move_node}}
+ */
+function jstree_baseTreeEventsObj(option) {
+        return  {
+            ready: function() {
+                option.ngTimeout(function() {
+                    option.ngScope.ignoreChanges = false;
+                });
+            },
+            activate_node: function(obj, e) {
+                var myJsTree = jstree_GetWholeTree(option.treeID);
+                var data = myJsTree.get_selected(true)[0];
+                if (data.children.length > 0) {
+                    myJsTree.deselect_node(data);
+                    myJsTree.toggle_node(data);
+                }
+            },
+            dblclick: function () {
+                var selectedNodes = jstree_GetSelectedNodes(option.treeID);
+                if (selectedNodes.length == 0) return; // Ignore double click folder action
+                option.ngScope.editNode();
+            },
+            move_node: function (e, data) {
 
-function jstree_baseTreeEventsObj(treeID, ngScope, ngTimeout) {
-    return  {
-        "ready": function() {
-            ngTimeout(function() {
-                ngScope.ignoreChanges = false;
-            });
-        },
-        "activate_node": function(obj, e) {
-            var myJsTree = jstree_GetWholeTree(treeID);
-            var data = myJsTree.get_selected(true)[0];
-            if (data.children.length > 0) {
-                myJsTree.deselect_node(data);
-                myJsTree.toggle_node(data);
+                var updateItem = function (nodeid, newCategory) {
+                    var item = _.find(option.ngScope[option.listName], function (i) { return i.id == nodeid; });
+                    item.categoryName = newCategory;
+                    option.ngHttp.post(option.updateUrl, {json: angular.toJson(item)}).success(function (serviceStatus) {
+                        if (serviceStatus.status == '1') {
+                            console.log('success!');
+                        } else {
+                            ModalUtils.alert(serviceStatus.msg, "modal-warning", "lg");
+                        }
+                    });
+                };
+
+                var updateNode = function (node, tarPath) {
+                    var children = node.children;
+                    if (children.length == 0) {
+                        updateItem(node.id, tarPath);
+                    } else {
+                        var newTarPath = tarPath == "" ? node.text : tarPath + "/" + node.text;
+                        for (var i = 0; i < children.length; i++) {
+                            var child = myJsTree.get_node(children[i]);
+                            updateNode(child, newTarPath);
+                        }
+                    }
+                };
+
+                var myJsTree = jstree_GetWholeTree(option.treeID),
+                    curNode = data.node,
+                    tarNodeID = data.parent;
+                var tarPath = myJsTree.get_path(tarNodeID, "/").substring(5);
+                updateNode(curNode, tarPath);
             }
-        },
-        "dblclick": function () {
-            var selectedNodes = jstree_GetSelectedNodes(treeID);
-            if (selectedNodes.length == 0) return; // Ignore double click folder action
-            ngScope.editNode();
-        }
-    };
+        };
 }

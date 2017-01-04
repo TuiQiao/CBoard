@@ -26,12 +26,23 @@
                     </select>
                 </div>
             </div>
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="form-group">
+                        <div class="col-sm-offset-2 col-sm-10" style="padding-right: 0px; padding-top: 5px">
+                            <button type="submit" ng-click="grantRole()" class="btn btn-success pull-right">
+                                Grant
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
         <div class="col-md-3">
             <div class="box-header with-border">
                 <i class="fa fa-fw fa-group"></i> <h3 class="box-title"> {{'ADMIN.ROLE.ROLE'|translate}}</h3>
                 <div class="box-tools pull-right">
-                    <i class="glyphicon glyphicon-plus toolbar-icon" ng-click="newRole()" title="{{'COMMON.NEW'|translate}}"></i>&nbsp;&nbsp;
+                    <i class="fa fa-fw fa-plus toolbar-icon" ng-click="newRole()" title="{{'COMMON.NEW'|translate}}"></i>&nbsp;&nbsp;
                     <i class="fa fa-edit toolbar-icon" ng-click="editRole(selectRole[0])" title="{{'COMMON.EDIT'|translate}}"></i>&nbsp;&nbsp;
                     <i class="fa fa-trash-o toolbar-icon"  ng-click="deleteRole()" title="{{'COMMON.DELETE'|translate}}"></i>
                 </div>
@@ -46,7 +57,7 @@
             </div>
             <div class="row">
                 <div class="col-md-12">
-                    <select multiple class="form-control" ng-model="selectRole"
+                    <select multiple class="form-control" ng-model="selectRole" ng-change="changeResSelect()"
                             ng-options="u.roleName for u in roleList | filter:{roleName:roleKeyword}"
                             style="height: 500px; overflow: auto;">
                     </select>
@@ -56,9 +67,7 @@
                 <div class="col-md-12">
                     <div class="form-group">
                         <div class="col-sm-offset-2 col-sm-10" style="padding-right: 0px; padding-top: 5px">
-                            <button type="submit" ng-click="grant()"
-                                    class="btn btn-success pull-right"
-                                    >
+                            <button type="submit" ng-click="grantRes()" class="btn btn-success pull-right">
                                 Grant
                             </button>
                         </div>
@@ -115,6 +124,9 @@
                     </button>
                 </div>
                 <!-- /.box-footer-->
+            </div>
+            <div class="col-md-12" ng-show="optFlag == 'selectRes'">
+                <div js-tree="treeConfig" ng-model="resList" tree="treeInstance" style="height: 590px; overflow: auto;" ></div>
             </div>
         </div>
     </div>

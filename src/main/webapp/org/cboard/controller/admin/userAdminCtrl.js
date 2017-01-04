@@ -34,24 +34,24 @@ cBoard.controller('userAdminCtrl', function ($scope, $http, ModalUtils, $filter)
 
     $scope.resList = [{
         id: 'Menu',
-        text: 'Menu',
+        text: translate('ADMIN.MENU'),
         parent: '#',
         icon: 'fa fa-fw fa-folder-o',
         state: {disabled: true}
     }, {
         id: 'Dashboard',
-        text: 'Dashboard',
+        text: translate('ADMIN.BOARD'),
         parent: '#', icon: 'fa fa-fw fa-folder-o',
         state: {disabled: true}
     }, {
         id: 'Datasource',
-        text: 'Datasource',
+        text: translate('ADMIN.DATASOURCE'),
         parent: '#', icon: 'fa fa-fw fa-folder-o',
         state: {disabled: true}
-    }, {id: 'Dataset', text: 'Cube', parent: '#', icon: 'fa fa-fw fa-folder-o',
+    }, {id: 'Dataset', text: translate('ADMIN.DATASET'), parent: '#', icon: 'fa fa-fw fa-folder-o',
         state: {disabled: true}}, {
         id: 'Widget',
-        text: 'Widget',
+        text: translate('ADMIN.WIDGET'),
         parent: '#',
         icon: 'fa fa-fw fa-folder-o',
         state: {disabled: true}

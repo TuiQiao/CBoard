@@ -118,11 +118,6 @@ public class ConfigRoleService {
         String userid = authenticationService.getCurrentUser().getUserId();
         if (userid.equals(adminUserId)) {
             return proceedingJoinPoint.proceed();
-        } else {
-            List<Long> menuIdList = menuDao.getMenuIdByUserRole(userid);
-            if (menuIdList.contains(7L) && menuIdList.contains(8L)) {
-                return proceedingJoinPoint.proceed();
-            }
         }
         return null;
     }
@@ -134,7 +129,7 @@ public class ConfigRoleService {
             return proceedingJoinPoint.proceed();
         } else {
             List<Long> menuIdList = menuDao.getMenuIdByUserRole(userid);
-            if (menuIdList.contains(7L) && menuIdList.contains(9L)) {
+            if (menuIdList.contains(7L) && menuIdList.contains(8L)) {
                 return proceedingJoinPoint.proceed();
             }
         }

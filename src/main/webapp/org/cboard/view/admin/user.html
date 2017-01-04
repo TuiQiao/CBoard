@@ -4,7 +4,7 @@
         <div class="col-md-3" >
             <div class="box-header with-border">
                 <i class="fa fa-fw fa-user"></i> <h3 class="box-title"> {{'ADMIN.USER.USER'|translate}}</h3>
-                <div class="box-tools pull-right">
+                <div class="box-tools pull-right" ng-if="isAdmin">
                     <i class="fa fa-fw fa-user-plus toolbar-icon" ng-click="newUser()" title="{{'COMMON.NEW'|translate}}"></i>&nbsp;&nbsp;
                     <i class="fa fa-edit toolbar-icon" ng-click="editUser(selectUser[0])" title="{{'COMMON.EDIT'|translate}}"></i>&nbsp;&nbsp;
                     <i class="fa fa-trash-o toolbar-icon"  ng-click="deleteUser()" title="{{'COMMON.DELETE'|translate}}"></i>
@@ -30,7 +30,7 @@
                 <div class="col-md-12">
                     <div class="form-group">
                         <div class="col-sm-offset-2 col-sm-10" style="padding-right: 0px; padding-top: 5px">
-                            <button type="submit" ng-click="grantRole()" class="btn btn-success pull-right">
+                            <button type="submit" ng-click="grantRole()" ng-if="isAdmin" class="btn btn-success pull-right">
                                 Grant
                             </button>
                         </div>
@@ -41,7 +41,7 @@
         <div class="col-md-3">
             <div class="box-header with-border">
                 <i class="fa fa-fw fa-group"></i> <h3 class="box-title"> {{'ADMIN.ROLE.ROLE'|translate}}</h3>
-                <div class="box-tools pull-right">
+                <div class="box-tools pull-right" ng-if="isAdmin">
                     <i class="fa fa-fw fa-plus toolbar-icon" ng-click="newRole()" title="{{'COMMON.NEW'|translate}}"></i>&nbsp;&nbsp;
                     <i class="fa fa-edit toolbar-icon" ng-click="editRole(selectRole[0])" title="{{'COMMON.EDIT'|translate}}"></i>&nbsp;&nbsp;
                     <i class="fa fa-trash-o toolbar-icon"  ng-click="deleteRole()" title="{{'COMMON.DELETE'|translate}}"></i>

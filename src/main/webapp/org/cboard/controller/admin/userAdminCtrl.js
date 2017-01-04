@@ -7,6 +7,10 @@ cBoard.controller('userAdminCtrl', function ($scope, $http, ModalUtils, $filter)
     $scope.optFlag;
     $scope.curUser;
 
+    $http.get("/admin/isAdmin.do").success(function (response) {
+        $scope.isAdmin = response;
+    });
+
     var getUserList = function () {
         $http.get("/admin/getUserList.do").success(function (response) {
             $scope.userList = response;
@@ -28,19 +32,29 @@ cBoard.controller('userAdminCtrl', function ($scope, $http, ModalUtils, $filter)
     };
     getUserRoleList();
 
-    $scope.resList = [{id: 'Menu', text: 'Menu', parent: '#', icon: 'fa fa-fw fa-folder-o'}, {
+    $scope.resList = [{
+        id: 'Menu',
+        text: 'Menu',
+        parent: '#',
+        icon: 'fa fa-fw fa-folder-o',
+        state: {disabled: true}
+    }, {
         id: 'Dashboard',
         text: 'Dashboard',
-        parent: '#', icon: 'fa fa-fw fa-folder-o'
+        parent: '#', icon: 'fa fa-fw fa-folder-o',
+        state: {disabled: true}
     }, {
         id: 'Datasource',
         text: 'Datasource',
-        parent: '#', icon: 'fa fa-fw fa-folder-o'
-    }, {id: 'Dataset', text: 'Cube', parent: '#', icon: 'fa fa-fw fa-folder-o'}, {
+        parent: '#', icon: 'fa fa-fw fa-folder-o',
+        state: {disabled: true}
+    }, {id: 'Dataset', text: 'Cube', parent: '#', icon: 'fa fa-fw fa-folder-o',
+        state: {disabled: true}}, {
         id: 'Widget',
         text: 'Widget',
         parent: '#',
-        icon: 'fa fa-fw fa-folder-o'
+        icon: 'fa fa-fw fa-folder-o',
+        state: {disabled: true}
     }];
 
     var getBoardList = function () {
@@ -128,7 +142,8 @@ cBoard.controller('userAdminCtrl', function ($scope, $http, ModalUtils, $filter)
                         listOut.push({
                             "id": 'parent' + '_' + type + '_' + newParentId,
                             "parent": parent,
-                            "text": a, icon: 'fa fa-fw fa-folder-o'
+                            "text": a, icon: 'fa fa-fw fa-folder-o',
+                            state: {disabled: true}
                         });
                     }
                     parent = 'parent' + '_' + type + '_' + newParentId;

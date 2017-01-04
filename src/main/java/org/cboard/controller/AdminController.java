@@ -11,7 +11,9 @@ import org.cboard.pojo.DashboardRoleRes;
 import org.cboard.pojo.DashboardUser;
 import org.cboard.pojo.DashboardUserRole;
 import org.cboard.services.AdminSerivce;
+import org.cboard.services.AuthenticationService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -34,6 +36,12 @@ public class AdminController {
 
     @Autowired
     private RoleDao roleDao;
+
+    @Value("${admin_user_id}")
+    private String adminUserId;
+
+    @Autowired
+    private AuthenticationService authenticationService;
 
     @RequestMapping(value = "/saveNewUser")
     public String saveNewUser(@RequestParam(name = "user") String user) {
@@ -91,5 +99,10 @@ public class AdminController {
     @RequestMapping(value = "/updateRoleRes")
     public String updateRoleRes(@RequestParam(name = "roleIdArr") String roleIdArr, @RequestParam(name = "resIdArr") String resIdArr) {
         return adminSerivce.updateRoleRes(JSONArray.parseArray(roleIdArr).toArray(new String[]{}), resIdArr);
+    }
+
+    @RequestMapping(value = "/isAdmin")
+    public boolean isAdmin() {
+        return adminUserId.equals(authenticationService.getCurrentUser().getUserId());
     }
 }

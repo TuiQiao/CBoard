@@ -62,7 +62,7 @@ public class AdminController {
     @RequestMapping(value = "/updateRole")
     public String updateRole(@RequestParam(name = "role") String role) {
         JSONObject jsonObject = JSONObject.parseObject(role);
-        return adminSerivce.updateRole(UUID.randomUUID().toString(), jsonObject.getString("roleName"));
+        return adminSerivce.updateRole(jsonObject.getString("roleId"), jsonObject.getString("roleName"));
     }
 
     @RequestMapping(value = "/getRoleList")

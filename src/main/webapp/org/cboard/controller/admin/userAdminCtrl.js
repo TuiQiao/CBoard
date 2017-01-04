@@ -147,6 +147,7 @@ cBoard.controller('userAdminCtrl', function ($scope, $http, ModalUtils, $filter)
                     return ur.roleId == e.roleId;
                 })
             });
+            $scope.changeResSelect();
         }
     };
 
@@ -255,9 +256,11 @@ cBoard.controller('userAdminCtrl', function ($scope, $http, ModalUtils, $filter)
     $scope.changeResSelect = function () {
         $scope.optFlag = 'selectRes';
         $scope.treeInstance.jstree(true).open_all();
-        if ($scope.selectRole && $scope.selectRole.length == 1) {
+        if ($scope.selectRole) {
             var roleRes = _.filter($scope.roleResList, function (e) {
-                return e.roleId == $scope.selectRole[0].roleId;
+                return !_.isUndefined(_.find($scope.selectRole, function (r) {
+                    return e.roleId == r.roleId;
+                }));
             });
             $scope.treeInstance.jstree(true).uncheck_all();
             _.each($scope.resList, function (e) {

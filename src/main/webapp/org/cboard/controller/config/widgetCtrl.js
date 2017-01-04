@@ -5,6 +5,7 @@
 cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal, dataService, ModalUtils, updateService, $filter, chartService, $timeout) {
 
     var translate = $filter('translate');
+    var updateUrl = "/dashboard/updateWidget.do";
     //图表类型初始化
     $scope.chart_types = [
         {
@@ -621,7 +622,7 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
             });
         } else if ($scope.optFlag == 'edit') {
             o.id = $scope.widgetId;
-            $http.post("/dashboard/updateWidget.do", {json: angular.toJson(o)}).success(function (serviceStatus) {
+            $http.post(updateUrl, {json: angular.toJson(o)}).success(function (serviceStatus) {
                 if (serviceStatus.status == '1') {
                     getWidgetList();
                     getCategoryList();
@@ -866,31 +867,12 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
         if (!checkTreeNode("delete")) return;
         $scope.deleteWgt(getSelectedWidget());
     };
-
+    
     $scope.treeEventsObj = function() {
-        var baseEventObj = jstree_baseTreeEventsObj(treeID, $scope, $timeout);
-        baseEventObj.move_node = function () {
-            var myJsTree = jstree_GetWholeTree(treeID);
-            $scope.treeData = jstree_GetWholeTree(treeID).settings.core.data;
-            for (var i = 0; i < $scope.widgetList.length; i++) {
-                for (var j = 0; j < $scope.treeData.length; j++) {
-                    if ($scope.widgetList[i].id == $scope.treeData[j].id) {
-                        var categoryName = myJsTree.get_path($scope.treeData[j], '/').substring(5);
-                        categoryName = categoryName.substring(0, categoryName.lastIndexOf("/")).trim();
-                        if (categoryName != $scope.widgetList[i].categoryName) {
-                            $scope.widgetList[i].categoryName = categoryName;
-                            $http.post("/dashboard/updateWidget.do", {json: angular.toJson($scope.widgetList[i])}).success(function (serviceStatus) {
-                                if (serviceStatus.status == '1') {
-                                    console.log('success!');
-                                } else {
-                                    ModalUtils.alert(serviceStatus.msg, "modal-warning", "lg");
-                                }
-                            });
-                        }
-                    }
-                }
-            }
-        };
+        var baseEventObj = jstree_baseTreeEventsObj({
+            ngScope: $scope, ngHttp: $http, ngTimeout: $timeout,
+            treeID: treeID, listName: "widgetList", updateUrl: updateUrl
+        });
         return baseEventObj;
     }();
     /** js tree related End... **/

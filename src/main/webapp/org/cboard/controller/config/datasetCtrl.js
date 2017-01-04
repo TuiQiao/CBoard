@@ -12,6 +12,7 @@ cBoard.controller('datasetCtrl', function ($scope, $http, dataService, $uibModal
 
     var treeID = 'dataSetTreeID'; // Set to a same value with treeDom
     var originalData = [];
+    var updateUrl = "/dashboard/updateDataset.do";
 
     var getDatasetList = function () {
         $http.get("/dashboard/getDatasetList.do").success(function (response) {
@@ -129,7 +130,7 @@ cBoard.controller('datasetCtrl', function ($scope, $http, dataService, $uibModal
                 }
             });
         } else {
-            $http.post("/dashboard/updateDataset.do", {json: angular.toJson(ds)}).success(function (serviceStatus) {
+            $http.post(updateUrl, {json: angular.toJson(ds)}).success(function (serviceStatus) {
                 if (serviceStatus.status == '1') {
                     $scope.optFlag = 'edit';
                     getCategoryList();
@@ -320,7 +321,11 @@ cBoard.controller('datasetCtrl', function ($scope, $http, dataService, $uibModal
     };
 
     $scope.treeEventsObj = function() {
-        return jstree_baseTreeEventsObj(treeID, $scope, $timeout);
+        var baseEventObj = jstree_baseTreeEventsObj({
+            ngScope: $scope, ngHttp: $http, ngTimeout: $timeout,
+            treeID: treeID, listName: "datasetList", updateUrl: updateUrl
+        });
+        return baseEventObj;
     }();
 
     /**  js tree related end **/

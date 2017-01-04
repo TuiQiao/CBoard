@@ -14,6 +14,7 @@ cBoard.controller('boardCtrl', function ($scope, $http, ModalUtils, $filter, upd
     $scope.treeData = [];
     var treeID = "boardTreeID";
     var originalData = [];
+    var updateUrl = "/dashboard/updateBoard.do";
 
     var getBoardList = function () {
         $http.get("/dashboard/getBoardList.do").success(function (response) {
@@ -193,7 +194,7 @@ cBoard.controller('boardCtrl', function ($scope, $http, ModalUtils, $filter, upd
                 }
             });
         } else if ($scope.optFlag == 'edit') {
-            $http.post("/dashboard/updateBoard.do", {json: angular.toJson($scope.curBoard)}).success(function (serviceStatus) {
+            $http.post(updateUrl, {json: angular.toJson($scope.curBoard)}).success(function (serviceStatus) {
                 if (serviceStatus.status == '1') {
                     getBoardList();
                     $scope.optFlag = 'edit';
@@ -300,6 +301,7 @@ cBoard.controller('boardCtrl', function ($scope, $http, ModalUtils, $filter, upd
 
     /**  js tree related start **/
     $scope.treeConfig = jsTreeConfig1;
+    $scope.treeConfig.plugins = ['types', 'unique', 'state', 'sort'];
 
     $("#" + treeID).keyup(function(e){
         if(e.keyCode == 46) {
@@ -343,7 +345,12 @@ cBoard.controller('boardCtrl', function ($scope, $http, ModalUtils, $filter, upd
     };
 
     $scope.treeEventsObj = function() {
-        return jstree_baseTreeEventsObj(treeID, $scope, $timeout);
+        var baseEventObj = jstree_baseTreeEventsObj({
+            ngScope: $scope, ngHttp: $http, ngTimeout: $timeout,
+            treeID: treeID, listName: "boardList"
+            //, updateUrl: updateUrl
+        });
+        return baseEventObj;
     }();
 
     /**  js tree related start **/

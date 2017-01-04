@@ -28,15 +28,20 @@ cBoard.controller('userAdminCtrl', function ($scope, $http, ModalUtils, $filter)
     };
     getUserRoleList();
 
-    $scope.resList = [{id: 'Menu', text: 'Menu', parent: '#'}, {
+    $scope.resList = [{id: 'Menu', text: 'Menu', parent: '#', icon: 'fa fa-fw fa-folder-o'}, {
         id: 'Dashboard',
         text: 'Dashboard',
-        parent: '#',
+        parent: '#', icon: 'fa fa-fw fa-folder-o'
     }, {
         id: 'Datasource',
         text: 'Datasource',
-        parent: '#'
-    }, {id: 'Dataset', text: 'Cube', parent: '#'}, {id: 'Widget', text: 'Widget', parent: '#'}];
+        parent: '#', icon: 'fa fa-fw fa-folder-o'
+    }, {id: 'Dataset', text: 'Cube', parent: '#', icon: 'fa fa-fw fa-folder-o'}, {
+        id: 'Widget',
+        text: 'Widget',
+        parent: '#',
+        icon: 'fa fa-fw fa-folder-o'
+    }];
 
     var getBoardList = function () {
         return $http.get("/dashboard/getBoardList.do").success(function (response) {
@@ -45,7 +50,7 @@ cBoard.controller('userAdminCtrl', function ($scope, $http, ModalUtils, $filter)
             }), function (e) {
                 $scope.resList.push({
                     id: 'Dashboard_' + e.id, text: e.name, parent: 'Dashboard', resId: e.id,
-                    type: 'board'
+                    type: 'board', icon: 'fa fa-puzzle-piece'
                 });
             });
         });
@@ -60,7 +65,7 @@ cBoard.controller('userAdminCtrl', function ($scope, $http, ModalUtils, $filter)
                     text: translate(e.menuName),
                     parent: e.parentId == -1 ? 'Menu' : ('menu_' + e.parentId),
                     resId: e.menuId,
-                    type: 'menu'
+                    type: 'menu', icon: 'fa fa-cog'
                 });
             });
         });
@@ -71,7 +76,7 @@ cBoard.controller('userAdminCtrl', function ($scope, $http, ModalUtils, $filter)
             _.each(response, function (e) {
                 $scope.resList.push({
                     id: 'Datasource_' + e.id, text: e.name, parent: 'Datasource', resId: e.id,
-                    type: 'datasource'
+                    type: 'datasource', icon: 'fa fa-database'
                 });
             });
         });
@@ -79,27 +84,61 @@ cBoard.controller('userAdminCtrl', function ($scope, $http, ModalUtils, $filter)
 
     var getDatasetList = function () {
         return $http.get("/dashboard/getDatasetList.do").success(function (response) {
-            _.each(response, function (e) {
-                $scope.resList.push({
-                    id: 'Dataset_' + e.id, text: e.name, parent: 'Dataset', resId: e.id,
-                    type: 'dataset'
-                });
+            _.each(buildNodeByCategory(response, 'Dataset', 'dataset', 'fa fa-table'), function (e) {
+                $scope.resList.push(e);
             });
         });
     };
 
     var getWidgetList = function () {
         return $http.get("/dashboard/getWidgetList.do").success(function (response) {
-            _.each(response, function (e) {
-                $scope.resList.push({
-                    id: 'widget_' + e.id,
-                    text: e.name,
-                    parent: 'Widget',
-                    resId: e.id,
-                    type: 'widget'
-                });
+            _.each(buildNodeByCategory(response, 'Widget', 'widget', 'fa fa-line-chart'), function (e) {
+                $scope.resList.push(e);
             });
         });
+    };
+
+    var buildNodeByCategory = function (listIn, rParent, type, icon) {
+        var newParentId = 1;
+        var listOut = [];
+        for (var i = 0; i < listIn.length; i++) {
+            var arr = listIn[i].categoryName.split('/');
+            arr.push(listIn[i].name);
+            var parent = rParent;
+            for (var j = 0; j < arr.length; j++) {
+                var flag = false;
+                var a = arr[j];
+                for (var m = 0; m < listOut.length; m++) {
+                    if (listOut[m].text == a && listOut[m].parent == parent && listOut[m].id.substring(0, 6) == 'parent') {
+                        flag = true;
+                        break;
+                    }
+                }
+                if (!flag) {
+                    if (j == arr.length - 1) {
+                        listOut.push({
+                            "id": type + '_' + listIn[i].id.toString(),
+                            "parent": parent,
+                            "text": a,
+                            resId: listIn[i].id,
+                            type: type,
+                            icon: icon
+                        });
+                    } else {
+                        listOut.push({
+                            "id": 'parent' + '_' + type + '_' + newParentId,
+                            "parent": parent,
+                            "text": a, icon: 'fa fa-fw fa-folder-o'
+                        });
+                    }
+                    parent = 'parent' + '_' + type + '_' + newParentId;
+                    newParentId++;
+                } else {
+                    parent = listOut[m].id;
+                }
+            }
+        }
+        return listOut;
     };
 
     var loadResData = function () {

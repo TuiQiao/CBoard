@@ -147,6 +147,20 @@ public class ConfigRuleService {
         return null;
     }
 
+    @Around("execution(* org.cboard.services.AdminSerivce.updateRole(..))")
+    public Object updateRole(ProceedingJoinPoint proceedingJoinPoint) throws Throwable {
+        String userid = authenticationService.getCurrentUser().getUserId();
+        if (userid.equals(adminUserId)) {
+            return proceedingJoinPoint.proceed();
+        } else {
+            DashboardRole role = roleDao.getRole((String) proceedingJoinPoint.getArgs()[0]);
+            if (userid.equals(role.getUserId())) {
+                return proceedingJoinPoint.proceed();
+            }
+        }
+        return null;
+    }
+
     @Around("execution(* org.cboard.services.AdminSerivce.updateUserRole(..))")
     public Object updateUserRole(ProceedingJoinPoint proceedingJoinPoint) throws Throwable {
         String userid = authenticationService.getCurrentUser().getUserId();

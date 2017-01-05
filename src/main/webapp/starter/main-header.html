@@ -28,7 +28,6 @@
                     <!-- The user image in the menu -->
                     <li class="user-header">
                         <img src="{{user.avatar}}" class="img-circle">
-
                         <p>
                             {{user.username + ' - ' + user.company + ' ' + user.department}}
                             <small>{{user.userId}}</small>
@@ -51,9 +50,9 @@
                     <!--</li>-->
                     <!-- Menu Footer-->
                     <li class="user-footer">
-                        <!--<div class="pull-left">-->
-                            <!--<a href="#" class="btn btn-default btn-flat">Profile</a>-->
-                        <!--</div>-->
+                        <div class="pull-left">
+                            <div class="btn btn-default btn-flat" ng-click="changePwd()">Change Password</div>
+                        </div>
                         <div class="pull-right">
                             <a href="/j_spring_cas_security_logout" class="btn btn-default btn-flat">{{'HEADER.SIGN_OUT'|translate}}</a>
                         </div>

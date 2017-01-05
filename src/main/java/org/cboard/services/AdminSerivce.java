@@ -101,4 +101,16 @@ public class AdminSerivce {
         }
         return "1";
     }
+
+    public ServiceStatus changePwd(String userId, String curPwd, String newPwd, String cfmPwd) {
+        curPwd = Hashing.md5().newHasher().putString(curPwd, Charsets.UTF_8).hash().toString();
+        newPwd = Hashing.md5().newHasher().putString(newPwd, Charsets.UTF_8).hash().toString();
+        cfmPwd = Hashing.md5().newHasher().putString(cfmPwd, Charsets.UTF_8).hash().toString();
+        if (newPwd.equals(cfmPwd)) {
+            if (userDao.updateUserPassword(userId, curPwd, newPwd) == 1) {
+                return new ServiceStatus(ServiceStatus.Status.Success, "success");
+            }
+        }
+        return null;
+    }
 }

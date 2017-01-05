@@ -1,9 +1,7 @@
 package org.cboard.controller;
 
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.ComponentScan;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.EnableAspectJAutoProxy;
+import org.springframework.context.annotation.*;
+import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
 import org.springframework.http.converter.HttpMessageConverter;
 import org.springframework.http.converter.StringHttpMessageConverter;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
@@ -18,6 +16,7 @@ import java.util.List;
 @Configuration
 @EnableWebMvc
 @ComponentScan(basePackages = {"org.cboard.controller"})
+@PropertySource(value = {"classpath:config.properties"})
 @EnableAspectJAutoProxy(proxyTargetClass = true)
 public class WebConfig extends WebMvcConfigurerAdapter {
 
@@ -37,5 +36,10 @@ public class WebConfig extends WebMvcConfigurerAdapter {
         converters.add(new MappingJackson2HttpMessageConverter());  // 解析json
         adapter.setMessageConverters(converters);
         return adapter;
+    }
+
+    @Bean
+    public static PropertySourcesPlaceholderConfigurer propertyConfigIn() {
+        return new PropertySourcesPlaceholderConfigurer();
     }
 }

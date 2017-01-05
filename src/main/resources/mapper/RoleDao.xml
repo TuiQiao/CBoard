@@ -4,18 +4,18 @@
 
     <update id="save">
         <![CDATA[
-        INSERT INTO dashboard_role(role_id,role_name) VALUES (#{roleId},#{roleName})
+        INSERT INTO dashboard_role(role_id,role_name,user_id) VALUES (#{roleId},#{roleName},#{userId})
         ]]>
     </update>
 
     <select id="getRoleList" resultType="org.cboard.pojo.DashboardRole">
-        SELECT role_id roleId,role_name roleName FROM dashboard_role
+        SELECT role_id roleId,role_name roleName,user_id userId FROM dashboard_role where #{0} = '${admin_user_id}' or user_id = #{0}
         order by role_name
     </select>
 
     <update id="update" parameterType="org.cboard.pojo.DashboardUser">
         <![CDATA[
-        update dashboard_role set role_name = #{roleName} where role_id = #{roleId}
+        update dashboard_role set role_name = #{roleName},user_id = #{userId} where role_id = #{roleId}
         ]]>
     </update>
 

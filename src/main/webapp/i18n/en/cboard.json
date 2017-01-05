@@ -165,7 +165,8 @@
     },
     "ROLE": {
       "ROLE": "Role",
-      "ROLE_NAME": "Role Name"
+      "ROLE_NAME": "Role Name",
+      "ADMIN": "Administrator"
     },
     "BOARD": "Dashboard",
     "MENU": "Menu",

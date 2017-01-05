@@ -165,7 +165,8 @@
     },
     "ROLE": {
       "ROLE": "角色管理",
-      "ROLE_NAME": "角色名"
+      "ROLE_NAME": "角色名",
+      "ADMIN": "管理员"
     },
     "BOARD": "看板",
     "MENU": "菜单",

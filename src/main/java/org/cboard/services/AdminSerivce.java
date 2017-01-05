@@ -4,6 +4,7 @@ import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.google.common.base.Charsets;
 import com.google.common.hash.Hashing;
+import org.apache.commons.lang.StringUtils;
 import org.cboard.dao.RoleDao;
 import org.cboard.dao.UserDao;
 import org.cboard.pojo.DashboardRole;
@@ -39,34 +40,40 @@ public class AdminSerivce {
         return "1";
     }
 
-    public String updateUser(String userId, String loginName, String userName) {
+    public String updateUser(String userId, String loginName, String userName, String userPassword) {
         DashboardUser user = new DashboardUser();
         user.setLoginName(loginName);
         user.setUserId(userId);
         user.setUserName(userName);
+        if (StringUtils.isNotBlank(userPassword)) {
+            String md5 = Hashing.md5().newHasher().putString(userPassword, Charsets.UTF_8).hash().toString();
+            user.setUserPassword(md5);
+        }
         userDao.update(user);
         return "1";
     }
 
-    public String addRole(String roleId, String roleName) {
+    public String addRole(String roleId, String roleName, String userId) {
         DashboardRole role = new DashboardRole();
         role.setRoleId(roleId);
         role.setRoleName(roleName);
+        role.setUserId(userId);
         roleDao.save(role);
         return "1";
     }
 
-    public String updateRole(String roleId, String roleName) {
+    public String updateRole(String roleId, String roleName, String userId) {
         DashboardRole role = new DashboardRole();
         role.setRoleId(roleId);
         role.setRoleName(roleName);
+        role.setUserId(userId);
         roleDao.update(role);
         return "1";
     }
 
-    public String updateUserRole(String[] userId, String[] roleId) {
+    public String updateUserRole(String[] userId, String[] roleId, String curUid) {
         for (String uid : userId) {
-            userDao.deleteUserRole(uid);
+            userDao.deleteUserRole(uid, curUid);
             if (roleId != null && roleId.length > 0) {
                 List<DashboardUserRole> list = new ArrayList<>();
                 for (String rid : roleId) {

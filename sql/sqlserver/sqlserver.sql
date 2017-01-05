@@ -66,6 +66,7 @@ CREATE TABLE dashboard_user_role (
 CREATE TABLE dashboard_role (
   role_id varchar(100) NOT NULL,
   role_name varchar(100) DEFAULT NULL,
+  user_id varchar(50) DEFAULT NULL,
   PRIMARY KEY CLUSTERED(role_id)
 );
 

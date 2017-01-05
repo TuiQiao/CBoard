@@ -30,7 +30,7 @@
                 <div class="col-md-12">
                     <div class="form-group">
                         <div class="col-sm-offset-2 col-sm-10" style="padding-right: 0px; padding-top: 5px">
-                            <button type="submit" ng-click="grantRole()" ng-if="isAdmin" class="btn btn-success pull-right">
+                            <button type="submit" ng-click="grantRole()" class="btn btn-success pull-right">
                                 Grant
                             </button>
                         </div>
@@ -114,6 +114,12 @@
                         <div class="form-group">
                             <label>{{'ADMIN.ROLE.ROLE_NAME'|translate}}</label>
                             <input ng-model="curRole.roleName" class="form-control"/>
+                        </div>
+                        <div class="form-group">
+                            <label>{{'ADMIN.ROLE.ADMIN'|translate}}</label>
+                            <select class="form-control" ng-model="curRole.userId"
+                                    ng-options="u.userId as u.loginName+'('+u.userName+')' for u in userList">
+                            </select>
                         </div>
                     </form>
                 </div>

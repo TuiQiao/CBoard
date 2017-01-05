@@ -52,7 +52,7 @@ public class AdminController {
     @RequestMapping(value = "/updateUser")
     public String updateUser(@RequestParam(name = "user") String user) {
         JSONObject jsonObject = JSONObject.parseObject(user);
-        return adminSerivce.updateUser(jsonObject.getString("userId"), jsonObject.getString("loginName"), jsonObject.getString("userName"));
+        return adminSerivce.updateUser(jsonObject.getString("userId"), jsonObject.getString("loginName"), jsonObject.getString("userName"), jsonObject.getString("userPassword"));
     }
 
     @RequestMapping(value = "/getUserList")
@@ -64,24 +64,24 @@ public class AdminController {
     @RequestMapping(value = "/saveRole")
     public String saveRole(@RequestParam(name = "role") String role) {
         JSONObject jsonObject = JSONObject.parseObject(role);
-        return adminSerivce.addRole(UUID.randomUUID().toString(), jsonObject.getString("roleName"));
+        return adminSerivce.addRole(UUID.randomUUID().toString(), jsonObject.getString("roleName"), jsonObject.getString("userId"));
     }
 
     @RequestMapping(value = "/updateRole")
     public String updateRole(@RequestParam(name = "role") String role) {
         JSONObject jsonObject = JSONObject.parseObject(role);
-        return adminSerivce.updateRole(jsonObject.getString("roleId"), jsonObject.getString("roleName"));
+        return adminSerivce.updateRole(jsonObject.getString("roleId"), jsonObject.getString("roleName"), jsonObject.getString("userId"));
     }
 
     @RequestMapping(value = "/getRoleList")
     public List<DashboardRole> getRoleList() {
-        List<DashboardRole> list = roleDao.getRoleList();
+        List<DashboardRole> list = roleDao.getRoleList(authenticationService.getCurrentUser().getUserId());
         return list;
     }
 
     @RequestMapping(value = "/updateUserRole")
     public String updateUserRole(@RequestParam(name = "userIdArr") String userIdArr, @RequestParam(name = "roleIdArr") String roleIdArr) {
-        return adminSerivce.updateUserRole(JSONArray.parseArray(userIdArr).toArray(new String[]{}), JSONArray.parseArray(roleIdArr).toArray(new String[]{}));
+        return adminSerivce.updateUserRole(JSONArray.parseArray(userIdArr).toArray(new String[]{}), JSONArray.parseArray(roleIdArr).toArray(new String[]{}), authenticationService.getCurrentUser().getUserId());
     }
 
     @RequestMapping(value = "/getUserRoleList")

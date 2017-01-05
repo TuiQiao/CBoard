@@ -1,15 +1,24 @@
 package org.cboard.services.role;
 
+import com.google.common.base.Function;
+import com.google.common.collect.Collections2;
+import com.google.common.collect.Lists;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
 import org.cboard.dao.MenuDao;
+import org.cboard.dao.RoleDao;
+import org.cboard.pojo.DashboardRole;
 import org.cboard.services.AuthenticationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Repository;
 
+import javax.annotation.Nullable;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
 
 /**
@@ -18,7 +27,7 @@ import java.util.List;
 @Repository
 @Aspect
 @Order(2)
-public class ConfigRoleService {
+public class ConfigRuleService {
 
     @Autowired
     private AuthenticationService authenticationService;
@@ -26,13 +35,16 @@ public class ConfigRoleService {
     @Autowired
     private MenuDao menuDao;
 
+    @Autowired
+    private RoleDao roleDao;
+
     @Value("${admin_user_id}")
     private String adminUserId;
 
     @Around("execution(* org.cboard.services.WidgetService.save(..)) || " +
             "execution(* org.cboard.services.WidgetService.update(..)) || " +
             "execution(* org.cboard.services.WidgetService.delete(..))")
-    public Object widgetRole(ProceedingJoinPoint proceedingJoinPoint) throws Throwable {
+    public Object widgetRule(ProceedingJoinPoint proceedingJoinPoint) throws Throwable {
         String userid = authenticationService.getCurrentUser().getUserId();
         if (userid.equals(adminUserId)) {
             return proceedingJoinPoint.proceed();
@@ -48,7 +60,7 @@ public class ConfigRoleService {
     @Around("execution(* org.cboard.services.DatasetService.save(..)) || " +
             "execution(* org.cboard.services.DatasetService.update(..)) || " +
             "execution(* org.cboard.services.DatasetService.delete(..))")
-    public Object datasetRole(ProceedingJoinPoint proceedingJoinPoint) throws Throwable {
+    public Object datasetRule(ProceedingJoinPoint proceedingJoinPoint) throws Throwable {
         String userid = authenticationService.getCurrentUser().getUserId();
         if (userid.equals(adminUserId)) {
             return proceedingJoinPoint.proceed();
@@ -64,7 +76,7 @@ public class ConfigRoleService {
     @Around("execution(* org.cboard.services.DatasourceService.save(..)) || " +
             "execution(* org.cboard.services.DatasourceService.update(..)) || " +
             "execution(* org.cboard.services.DatasourceService.delete(..))")
-    public Object datasourceRole(ProceedingJoinPoint proceedingJoinPoint) throws Throwable {
+    public Object datasourceRule(ProceedingJoinPoint proceedingJoinPoint) throws Throwable {
         String userid = authenticationService.getCurrentUser().getUserId();
         if (userid.equals(adminUserId)) {
             return proceedingJoinPoint.proceed();
@@ -80,7 +92,7 @@ public class ConfigRoleService {
     @Around("execution(* org.cboard.services.BoardService.save(..)) || " +
             "execution(* org.cboard.services.BoardService.update(..)) || " +
             "execution(* org.cboard.services.BoardService.delete(..))")
-    public Object boardRole(ProceedingJoinPoint proceedingJoinPoint) throws Throwable {
+    public Object boardRule(ProceedingJoinPoint proceedingJoinPoint) throws Throwable {
         String userid = authenticationService.getCurrentUser().getUserId();
         if (userid.equals(adminUserId)) {
             return proceedingJoinPoint.proceed();
@@ -96,7 +108,7 @@ public class ConfigRoleService {
     @Around("execution(* org.cboard.services.CategoryService.save(..)) || " +
             "execution(* org.cboard.services.CategoryService.update(..)) || " +
             "execution(* org.cboard.services.CategoryService.delete(..))")
-    public Object categoryRole(ProceedingJoinPoint proceedingJoinPoint) throws Throwable {
+    public Object categoryRule(ProceedingJoinPoint proceedingJoinPoint) throws Throwable {
         String userid = authenticationService.getCurrentUser().getUserId();
         if (userid.equals(adminUserId)) {
             return proceedingJoinPoint.proceed();
@@ -110,11 +122,8 @@ public class ConfigRoleService {
     }
 
     @Around("execution(* org.cboard.services.AdminSerivce.addUser(..)) || " +
-            "execution(* org.cboard.services.AdminSerivce.updateUser(..)) || " +
-            "execution(* org.cboard.services.AdminSerivce.addRole(..)) || " +
-            "execution(* org.cboard.services.AdminSerivce.updateRole(..)) || " +
-            "execution(* org.cboard.services.AdminSerivce.updateUserRole(..))")
-    public Object userAdminRole(ProceedingJoinPoint proceedingJoinPoint) throws Throwable {
+            "execution(* org.cboard.services.AdminSerivce.updateUser(..)))")
+    public Object userAdminRule(ProceedingJoinPoint proceedingJoinPoint) throws Throwable {
         String userid = authenticationService.getCurrentUser().getUserId();
         if (userid.equals(adminUserId)) {
             return proceedingJoinPoint.proceed();
@@ -122,8 +131,10 @@ public class ConfigRoleService {
         return null;
     }
 
-    @Around("execution(* org.cboard.services.AdminSerivce.updateRoleRes(..))")
-    public Object resAdminRole(ProceedingJoinPoint proceedingJoinPoint) throws Throwable {
+    @Around("execution(* org.cboard.services.AdminSerivce.addRole(..)) || " +
+            "execution(* org.cboard.services.AdminSerivce.updateRole(..)) || " +
+            "execution(* org.cboard.services.AdminSerivce.updateRoleRes(..))")
+    public Object resAdminRule(ProceedingJoinPoint proceedingJoinPoint) throws Throwable {
         String userid = authenticationService.getCurrentUser().getUserId();
         if (userid.equals(adminUserId)) {
             return proceedingJoinPoint.proceed();
@@ -134,5 +145,26 @@ public class ConfigRoleService {
             }
         }
         return null;
+    }
+
+    @Around("execution(* org.cboard.services.AdminSerivce.updateUserRole(..))")
+    public Object updateUserRole(ProceedingJoinPoint proceedingJoinPoint) throws Throwable {
+        String userid = authenticationService.getCurrentUser().getUserId();
+        if (userid.equals(adminUserId)) {
+            return proceedingJoinPoint.proceed();
+        } else {
+            List<String> roleId = Lists.transform(roleDao.getRoleList(userid), new Function<DashboardRole, String>() {
+                @Nullable
+                @Override
+                public String apply(@Nullable DashboardRole role) {
+                    return role.getRoleId();
+                }
+            });
+            Object[] args = proceedingJoinPoint.getArgs();
+            String[] argRoleId = (String[]) args[1];
+            roleId.retainAll(Arrays.asList(argRoleId));
+            args[1] = roleId.toArray(new String[]{});
+            return proceedingJoinPoint.proceed(args);
+        }
     }
 }

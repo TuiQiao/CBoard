@@ -13,7 +13,7 @@ import java.util.List;
 public interface RoleDao {
     int save(DashboardRole role);
 
-    List<DashboardRole> getRoleList();
+    List<DashboardRole> getRoleList(String userId);
 
     int update(DashboardRole role);
 

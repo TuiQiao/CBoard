@@ -14,15 +14,15 @@
     </select>
 
     <update id="update" parameterType="org.cboard.pojo.DashboardUser">
-        <![CDATA[
-
-        update dashboard_user set login_name = #{loginName},user_name = #{userName} where user_id = #{userId}
-
-        ]]>
+        update dashboard_user set login_name = #{loginName},user_name = #{userName}
+        <if test="userPassword!=null">
+            ,user_password = #{userPassword}
+        </if>
+        where user_id = #{userId}
     </update>
 
     <delete id="deleteUserRole">
-        delete from dashboard_user_role where user_id = #{userId}
+        delete from dashboard_user_role where user_id = #{0} and role_id in (select role_id from dashboard_role where user_id = #{1})
     </delete>
 
     <insert id="saveUserRole" parameterType="java.util.List">

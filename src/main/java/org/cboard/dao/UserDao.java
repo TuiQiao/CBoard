@@ -19,7 +19,7 @@ public interface UserDao {
 
     int saveUserRole(List<DashboardUserRole> list);
 
-    int deleteUserRole(String userId);
+    int deleteUserRole(String userId, String curUid);
 
     List<DashboardUserRole> getUserRoleList();
 

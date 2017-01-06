@@ -4,6 +4,7 @@ import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.google.common.base.Charsets;
 import com.google.common.hash.Hashing;
+import org.apache.commons.collections.map.HashedMap;
 import org.apache.commons.lang.StringUtils;
 import org.cboard.dao.RoleDao;
 import org.cboard.dao.UserDao;
@@ -12,16 +13,21 @@ import org.cboard.pojo.DashboardRoleRes;
 import org.cboard.pojo.DashboardUser;
 import org.cboard.pojo.DashboardUserRole;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Repository;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by yfyuan on 2016/12/2.
  */
 @Repository
 public class AdminSerivce {
+
+    @Value("${admin_user_id:1}")
+    private String adminUid;
 
     @Autowired
     private UserDao userDao;
@@ -71,9 +77,14 @@ public class AdminSerivce {
         return "1";
     }
 
-    public String updateUserRole(String[] userId, String[] roleId, String curUid) {
+    public String updateUserRole(String[] userId, String[] roleId, final String curUid) {
+
         for (String uid : userId) {
-            userDao.deleteUserRole(uid, curUid);
+            Map<String, Object> params = new HashedMap();
+            params.put("objUid", uid);
+            params.put("curUid", curUid);
+            params.put("adminUid", adminUid);
+            userDao.deleteUserRole(params);
             if (roleId != null && roleId.length > 0) {
                 List<DashboardUserRole> list = new ArrayList<>();
                 for (String rid : roleId) {

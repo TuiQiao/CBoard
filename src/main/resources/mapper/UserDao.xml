@@ -21,8 +21,12 @@
         where user_id = #{userId}
     </update>
 
-    <delete id="deleteUserRole">
-        delete from dashboard_user_role where user_id = #{0} and role_id in (select role_id from dashboard_role where user_id = #{1})
+    <delete id="deleteUserRole" parameterType="Map">
+        DELETE FROM dashboard_user_role
+         WHERE user_id = #{objUid}
+        <if test="curUid != adminUid">
+            AND role_id IN (SELECT role_id FROM dashboard_role WHERE user_id = #{curUid})
+        </if>
     </delete>
 
     <insert id="saveUserRole" parameterType="java.util.List">

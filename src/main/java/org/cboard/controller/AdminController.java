@@ -81,7 +81,11 @@ public class AdminController {
 
     @RequestMapping(value = "/updateUserRole")
     public String updateUserRole(@RequestParam(name = "userIdArr") String userIdArr, @RequestParam(name = "roleIdArr") String roleIdArr) {
-        return adminSerivce.updateUserRole(JSONArray.parseArray(userIdArr).toArray(new String[]{}), JSONArray.parseArray(roleIdArr).toArray(new String[]{}), authenticationService.getCurrentUser().getUserId());
+        return adminSerivce.updateUserRole(
+                JSONArray.parseArray(userIdArr).toArray(new String[]{}),
+                JSONArray.parseArray(roleIdArr).toArray(new String[]{}),
+                authenticationService.getCurrentUser().getUserId()
+               );
     }
 
     @RequestMapping(value = "/getUserRoleList")

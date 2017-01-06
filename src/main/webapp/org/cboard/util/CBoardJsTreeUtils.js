@@ -20,7 +20,7 @@ var jsTreeConfig1 = {
             }
             return true;  //allow all other operations
         },
-        worker : true,
+        worker : true
     },
     types : {
         default : {

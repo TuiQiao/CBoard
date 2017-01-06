@@ -117,9 +117,14 @@
                         </div>
                         <div class="form-group">
                             <label>{{'ADMIN.ROLE.ADMIN'|translate}}</label>
-                            <select class="form-control" ng-model="curRole.userId"
-                                    ng-options="u.userId as u.loginName+'('+u.userName+')' for u in userList">
-                            </select>
+                            <ui-select ng-model="curRole.userId" on-select="curRole.userId = $item.userId">
+                                <ui-select-match>
+                                    {{$select.selected.loginName}} ({{$select.selected.userName}})
+                                </ui-select-match>
+                                <ui-select-choices repeat="u.userId as u in userList | filter:{userName : $select.search}">
+                                    {{u.loginName + "(" + u.userName + ")"}}
+                                </ui-select-choices>
+                            </ui-select>
                         </div>
                     </form>
                 </div>

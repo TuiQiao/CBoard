@@ -6,7 +6,6 @@ import org.cboard.dao.DatasetDao;
 import org.cboard.dao.DatasourceDao;
 import org.cboard.dao.WidgetDao;
 import org.cboard.pojo.DashboardDataset;
-import org.cboard.pojo.DashboardDatasource;
 import org.cboard.pojo.DashboardWidget;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;

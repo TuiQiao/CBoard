@@ -271,4 +271,9 @@ public class DashboardController {
         return widgetService.checkRule(authenticationService.getCurrentUser().getUserId(), id);
     }
 
+    @RequestMapping(value = "/checkDatasource")
+    public ServiceStatus checkDatasource(@RequestParam(name = "id") Long id) {
+        return datasourceService.checkDatasource(authenticationService.getCurrentUser().getUserId(), id);
+    }
+
 }

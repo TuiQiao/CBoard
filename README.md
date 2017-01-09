@@ -5,7 +5,8 @@ Server side framework is Spring+MyBatis and front-end is based on AngularJS1 and
 ![image](https://cloud.githubusercontent.com/assets/6037522/19718976/654610b2-9b9a-11e6-8a19-97de7df42b5b.png)
 
 # Screenshot
-![image](https://cloud.githubusercontent.com/assets/6037522/19992208/10a6fef2-a277-11e6-8b43-26249b8dc1fd.png)
+![image](https://cloud.githubusercontent.com/assets/6037522/21757656/0828c2d6-d66d-11e6-95c5-4d0cb2f6b5b1.png)
+
 # Near Realtime data refresh  
 **Be attention, refresh level is cube level rather than whole dashboard **
 ![realtime_demo](https://raw.githubusercontent.com/yzhang921/CloudResource/gif/gif/cboard/realtime_dashboard.gif)
@@ -32,6 +33,7 @@ Server side framework is Spring+MyBatis and front-end is based on AngularJS1 and
   * Funnel Chart
   * KPI Widget
   * Cross-tabulation
+  * China Map (中国地图, 下一个版本将会支持动态三级下钻, 敬请期待)
   * Other graphs is coming soon
 * Support JDBC data connection
 * Support to connect one of the most popular open source multi-dimensional analysis of products **Saiku2**, and will be able to selectively create data and graphics
@@ -42,7 +44,7 @@ Server side framework is Spring+MyBatis and front-end is based on AngularJS1 and
   <img src="https://cloud.githubusercontent.com/assets/6037522/19501689/1439ff8c-95da-11e6-9374-750eb6ad82fe.png" width="450">
 </div>
 
-<h2>Demo <font color="red">(Click pics for full screen demo!)</font></h2>  
+## Demo (Click pics for full screen demo!)  
 |Load Data from query or DataSet | Basic Operation |
 | :-----------: | :------: |
 | ![case 0-switchdataload](https://cloud.githubusercontent.com/assets/6037522/21477518/9a874210-cb7d-11e6-9b7e-11721aac322c.gif)       | ![case 1-](https://cloud.githubusercontent.com/assets/6037522/21477521/9c2ead88-cb7d-11e6-9ae4-4c1990f675c2.gif)   |
@@ -54,6 +56,15 @@ Server side framework is Spring+MyBatis and front-end is based on AngularJS1 and
 | Add Dashboard Parameters | Use Parameters |
 | :-----------: | :------: |
 | ![case4-addboardparam](https://cloud.githubusercontent.com/assets/6037522/21478022/74216f2e-cb82-11e6-9612-390a2f93184c.gif)  | ![case4-useparam](https://cloud.githubusercontent.com/assets/6037522/21478021/73f81fe8-cb82-11e6-95ea-d98b43a4abf2.gif)|
+
+## Access Control  
+**RBAC** (Role Based Access Control), easy admin and view your users' role and roles' access resource list in one page.  
+- Grant roles to user by left **Grant** button.
+- Grant access resource to a role by right **Grant** button.
+- Resource can only be granted to role. A user can act as more than one roles.
+
+![image](https://cloud.githubusercontent.com/assets/6037522/21757747/4c5e8dae-d66e-11e6-994d-6725f3d08d1c.png)
+
 
 ## How to build project
 1 Download or git clone project
@@ -83,6 +94,7 @@ cd root path of CBoard
 mvn install:install-file -Dfile=lib/sqljdbc4-4.0.jar -DgroupId=com.microsoft.sqlserver -DartifactId=sqljdbc4 -Dversion=4.0 -Dpackaging=jar
 mvn clean package
 ```
+
 5 Deploy war to Tomcat application
  * Copy **CBoard/target/cboard.war** to **webapp** folder of Tomcat and rename cboard.war to ROOT.war, **Make sure deploy app as ROOT, Otherwise the application will not work**
  * Start up Tomcat
@@ -93,9 +105,15 @@ http://_yourserverip_:8080
 Default login username and passwor: admin/root123
 ```
 
+# Road Map
+All tasks are listed in [Issue Page](https://github.com/yzhang921/CBoard/issues) group by milestone.  
+Also you can get our development status from [Project Page](https://github.com/yzhang921/CBoard/projects)
+
 
 ## For more detailed Chinese document [CBoard 中文文档](https://github.com/yzhang921/CBoard/wiki/%E4%B8%AD%E6%96%87%E6%96%87%E6%A1%A3)
 ## For more detailed English document [CBoard Wiki](https://github.com/yzhang921/CBoard/wiki/English-Document)
+
+
 
 ## Contact us
 You can create any issue or requirements through the Issue system of github.  

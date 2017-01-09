@@ -173,6 +173,6 @@
     "DATASOURCE": "Datasource",
     "DATASET": "Cube",
     "WIDGET": "Widget",
-    "CONTACT_ADMIN": "Please contact the administrator to grant access to the following resources"
+    "CONTACT_ADMIN": "Please contact the administrator to apply the following resources' access"
   }
 }

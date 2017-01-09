@@ -266,5 +266,9 @@ public class DashboardController {
         return datasetDao.getCategoryList();
     }
 
+    @RequestMapping(value = "/checkWidget")
+    public ServiceStatus checkWidget(@RequestParam(name = "id") Long id) {
+        return widgetService.checkRule(authenticationService.getCurrentUser().getUserId(), id);
+    }
 
 }

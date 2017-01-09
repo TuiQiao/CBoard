@@ -38,7 +38,8 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
             column: translate('CONFIG.WIDGET.TIPS_DIM_NUM_0'),
             measure: translate('CONFIG.WIDGET.TIPS_DIM_NUM_1_MORE')
         },
-        {name: translate('CONFIG.WIDGET.SANKEY'), value: 'sankey', class: 'cSankey',
+        {
+            name: translate('CONFIG.WIDGET.SANKEY'), value: 'sankey', class: 'cSankey',
             row: translate('CONFIG.WIDGET.TIPS_DIM_NUM_1_MORE'),
             column: translate('CONFIG.WIDGET.TIPS_DIM_NUM_0_MORE'),
             measure: translate('CONFIG.WIDGET.TIPS_DIM_NUM_1')
@@ -143,7 +144,7 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
         $http.get("/dashboard/getWidgetList.do").success(function (response) {
             $scope.widgetList = response;
             originalData = jstree_CvtVPath2TreeData(
-                $scope.widgetList.map(function(w) {
+                $scope.widgetList.map(function (w) {
                     return {
                         "id": w.id,
                         "name": w.name,
@@ -151,7 +152,9 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
                     };
                 })
             );
-            if (callback) { callback(); }
+            if (callback) {
+                callback();
+            }
             jstree_ReloadTree(treeID, originalData);
         });
     };
@@ -635,6 +638,17 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
     };
 
     $scope.editWgt = function (widget) {
+        $http.post("/dashboard/checkWidget.do", {id: widget.id}).success(function (response) {
+            if (response.status == '1') {
+                doEditWgt(widget);
+            } else {
+                var d = widget.data.datasetId ? 'CONFIG.WIDGET.DATASET' : 'CONFIG.WIDGET.DATA_SOURCE';
+                ModalUtils.alert(translate("ADMIN.CONTACT_ADMIN") + "：" + translate(d) + '/' + response.msg, "modal-danger", "lg");
+            }
+        });
+    };
+
+    var doEditWgt = function (widget) {
         $timeout(function () {
             switchNode(widget.id)
         }, 500);
@@ -827,18 +841,20 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
     /** js tree related start... **/
     $scope.treeConfig = jsTreeConfig1;
 
-    $("#" + treeID).keyup(function(e){
-        if(e.keyCode == 46) {
+    $("#" + treeID).keyup(function (e) {
+        if (e.keyCode == 46) {
             $scope.deleteNode();
         }
     });
 
-    var getSelectedWidget = function() {
+    var getSelectedWidget = function () {
         var selectedNode = jstree_GetSelectedNodes(treeID)[0];
-        return _.find($scope.widgetList, function (w) { return w.id == selectedNode.id; });
+        return _.find($scope.widgetList, function (w) {
+            return w.id == selectedNode.id;
+        });
     };
 
-    var checkTreeNode = function(actionType) {
+    var checkTreeNode = function (actionType) {
         return jstree_CheckTreeNode(actionType, treeID, ModalUtils.alert);
     };
 
@@ -849,7 +865,7 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
         widgetTree.select_node(id);
     };
 
-    $scope.applyModelChanges = function() {
+    $scope.applyModelChanges = function () {
         return !$scope.ignoreChanges;
     };
 
@@ -863,12 +879,12 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
         $scope.editWgt(getSelectedWidget());
     };
 
-    $scope.deleteNode = function(){
+    $scope.deleteNode = function () {
         if (!checkTreeNode("delete")) return;
         $scope.deleteWgt(getSelectedWidget());
     };
-    
-    $scope.treeEventsObj = function() {
+
+    $scope.treeEventsObj = function () {
         var baseEventObj = jstree_baseTreeEventsObj({
             ngScope: $scope, ngHttp: $http, ngTimeout: $timeout,
             treeID: treeID, listName: "widgetList", updateUrl: updateUrl

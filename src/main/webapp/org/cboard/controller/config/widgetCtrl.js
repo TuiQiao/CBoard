@@ -874,21 +874,31 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
     $scope.searchNode = function () {
         var para = {wgtName: '', dsName: '', dsrName: ''};
 
+        //map widgetList to list (add datasetName and datasourceName)
         var list = $scope.widgetList.map(function (w) {
             var ds = _.find($scope.datasetList, function (obj) {
                 return obj.id == w.data.datasetId
             });
+            var dsrName = '';
+            if (ds) {
+                dsrName = _.find($scope.datasourceList, function (obj) {
+                    return obj.id == ds.data.datasource
+                }).name;
+            } else if (w.data.datasource) {
+                _.find($scope.datasourceList, function (obj) {
+                    return obj.id == w.data.datasource
+                }).name
+            }
             return {
                 "id": w.id,
                 "name": w.name,
                 "categoryName": w.categoryName,
-                "datasetName": ds.name,
-                "datasourceName": _.find($scope.datasourceList, function (obj) {
-                    return obj.id == ds.data.datasource
-                }).name
+                "datasetName": ds ? ds.name : '',
+                "datasourceName": dsrName
             };
         });
 
+        //split search keywords
         if ($scope.keywords) {
             if ($scope.keywords.indexOf(' ') == -1 && $scope.keywords.indexOf(':') == -1) {
                 para.wgtName = $scope.keywords;
@@ -908,13 +918,14 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
                 }
             }
         }
+        //filter data by keywords
         originalData = jstree_CvtVPath2TreeData(
             $filter('filter')(list, {name: para.wgtName, datasetName: para.dsName, datasourceName: para.dsrName})
         );
 
         jstree_ReloadTree(treeID, originalData);
     };
-    $scope.treeEventsObj = function() {
+    $scope.treeEventsObj = function () {
         var baseEventObj = jstree_baseTreeEventsObj({
             ngScope: $scope, ngHttp: $http, ngTimeout: $timeout,
             treeID: treeID, listName: "widgetList", updateUrl: updateUrl

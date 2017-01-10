@@ -162,24 +162,24 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
         var aggregate = $scope.value_aggregate_types;
         var curWidget = $scope.curWidget;
         var ok;
-        var expression;
-        var alias;
+        var data = {expression: ''};
         if (!col) {
-            expression = '';
-            alias = '';
-            ok = function (exp, alias) {
+            ok = function (data) {
                 $scope.expressions.push({
                     type: 'exp',
-                    exp: exp,
-                    alias: alias
+                    exp: data.expression,
+                    alias: data.alias,
+                    formatter: data.formatter
                 });
             }
         } else {
-            expression = col.exp;
-            alias = col.alias;
-            ok = function (exp, alias) {
-                col.exp = exp;
-                col.alias = alias;
+            data.expression = col.exp;
+            data.alias = col.alias;
+            data.formatter = col.formatter;
+            ok = function (data) {
+                col.exp = data.expression;
+                col.alias = data.alias;
+                col.formatter = data.formatter;
             }
         }
 
@@ -188,8 +188,7 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
             windowTemplateUrl: 'org/cboard/view/util/modal/window.html',
             backdrop: false,
             controller: function ($scope, $uibModalInstance) {
-                $scope.expression = expression;
-                $scope.alias = alias;
+                $scope.data = data;
                 $scope.curWidget = curWidget;
                 $scope.selects = selects;
                 $scope.aggregate = aggregate;
@@ -199,7 +198,7 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
                 };
                 $scope.addToken = function (str, agg) {
                     var tc = document.getElementById("expression_area");
-                    var tclen = $scope.expression.length;
+                    var tclen = $scope.data.expression.length;
                     tc.focus();
                     var selectionIdx = 0;
                     if (typeof document.selection != "undefined") {
@@ -207,11 +206,11 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
                         selectionIdx = str.length - 1;
                     }
                     else {
-                        var a = $scope.expression.substr(0, tc.selectionStart);
-                        var b = $scope.expression.substring(tc.selectionStart, tclen);
-                        $scope.expression = a + str;
-                        selectionIdx = $scope.expression.length - 1;
-                        $scope.expression += b;
+                        var a = $scope.data.expression.substr(0, tc.selectionStart);
+                        var b = $scope.data.expression.substring(tc.selectionStart, tclen);
+                        $scope.data.expression = a + str;
+                        selectionIdx = $scope.data.expression.length - 1;
+                        $scope.data.expression += b;
                     }
                     if (!agg) {
                         selectionIdx++;
@@ -221,14 +220,14 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
                 };
                 $scope.verify = function () {
                     $scope.alerts = [];
-                    var v = verifyAggExpRegx($scope.expression);
+                    var v = verifyAggExpRegx($scope.data.expression);
                     $scope.alerts = [{
                         msg: v.isValid ? translate("COMMON.SUCCESS") : v.msg,
                         type: v.isValid ? 'success' : 'danger'
                     }];
                 };
                 $scope.ok = function () {
-                    ok($scope.expression, $scope.alias);
+                    ok($scope.data);
                     $uibModalInstance.close();
                 };
             }

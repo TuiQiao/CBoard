@@ -344,6 +344,9 @@
 .jstree-default .jstree-no-checkboxes .jstree-checkbox {
   display: none !important;
 }
+.jstree-disabled .jstree-checkbox {
+  display: none !important;
+}
 .jstree-default.jstree-checkbox-no-clicked .jstree-clicked {
   background: transparent;
   box-shadow: none;
@@ -445,6 +448,7 @@
 }
 .jstree-default .jstree-disabled {
   background: transparent;
+  /*cursor: not-allowed;*/
 }
 .jstree-default .jstree-disabled.jstree-hovered {
   background: transparent;

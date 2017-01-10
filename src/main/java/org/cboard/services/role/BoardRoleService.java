@@ -10,6 +10,7 @@ import org.cboard.dao.DatasetDao;
 import org.cboard.dao.DatasourceDao;
 import org.cboard.dao.WidgetDao;
 import org.cboard.dto.ViewDashboardBoard;
+import org.cboard.pojo.DashboardDataset;
 import org.cboard.services.AuthenticationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
@@ -59,11 +60,12 @@ public class BoardRoleService {
                     List<Res> roleInfo = new ArrayList<>();
                     if (widgetDao.checkWidgetRole(userid, widgetId) <= 0) {
                         ((JSONObject) widget).put("hasRole", false);
-                        roleInfo.add(new Res("ADMIN.WIDGET", vw.getString("name")));
+                        roleInfo.add(new Res("ADMIN.WIDGET", vw.getString("categoryName") + "/" + vw.getString("name")));
                     }
                     if (datasetId != null && datasetDao.checkDatasetRole(userid, datasetId) <= 0) {
                         ((JSONObject) widget).put("hasRole", false);
-                        roleInfo.add(new Res("ADMIN.DATASET", datasetDao.getDataset(datasetId).getName()));
+                        DashboardDataset ds = datasetDao.getDataset(datasetId);
+                        roleInfo.add(new Res("ADMIN.DATASET", ds.getCategoryName() + "/" + ds.getName()));
                     }
                     if (datasourceId != null && datasourceDao.checkDatasourceRole(userid, datasourceId) <= 0) {
                         ((JSONObject) widget).put("hasRole", false);

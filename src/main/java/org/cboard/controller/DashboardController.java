@@ -266,5 +266,14 @@ public class DashboardController {
         return datasetDao.getCategoryList();
     }
 
+    @RequestMapping(value = "/checkWidget")
+    public ServiceStatus checkWidget(@RequestParam(name = "id") Long id) {
+        return widgetService.checkRule(authenticationService.getCurrentUser().getUserId(), id);
+    }
+
+    @RequestMapping(value = "/checkDatasource")
+    public ServiceStatus checkDatasource(@RequestParam(name = "id") Long id) {
+        return datasourceService.checkDatasource(authenticationService.getCurrentUser().getUserId(), id);
+    }
 
 }

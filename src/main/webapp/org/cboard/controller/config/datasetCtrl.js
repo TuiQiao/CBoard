@@ -46,6 +46,16 @@ cBoard.controller('datasetCtrl', function ($scope, $http, dataService, $uibModal
     };
 
     $scope.editDs = function (ds) {
+        $http.post("/dashboard/checkDatasource.do", {id: ds.data.datasource}).success(function (response) {
+            if (response.status == '1') {
+                doEditDs(ds);
+            } else {
+                ModalUtils.alert(translate("ADMIN.CONTACT_ADMIN") + "：Datasource/" + response.msg, "modal-danger", "lg");
+            }
+        });
+    };
+
+    var doEditDs = function (ds) {
         $scope.optFlag = 'edit';
         $scope.curDataset = angular.copy(ds);
         $scope.curDataset.name = $scope.curDataset.categoryName + '/' + $scope.curDataset.name;
@@ -270,18 +280,20 @@ cBoard.controller('datasetCtrl', function ($scope, $http, dataService, $uibModal
     /**  js tree related start **/
     $scope.treeConfig = jsTreeConfig1;
 
-    $("#" + treeID).keyup(function(e){
-        if(e.keyCode == 46) {
+    $("#" + treeID).keyup(function (e) {
+        if (e.keyCode == 46) {
             $scope.deleteNode();
         }
     });
 
-    var getSelectedDataSet = function() {
+    var getSelectedDataSet = function () {
         var selectedNode = jstree_GetSelectedNodes(treeID)[0];
-        return _.find($scope.datasetList, function (ds) { return ds.id == selectedNode.id; });
+        return _.find($scope.datasetList, function (ds) {
+            return ds.id == selectedNode.id;
+        });
     };
 
-    var checkTreeNode = function(actionType) {
+    var checkTreeNode = function (actionType) {
         return jstree_CheckTreeNode(actionType, treeID, ModalUtils.alert);
     };
 
@@ -292,7 +304,7 @@ cBoard.controller('datasetCtrl', function ($scope, $http, dataService, $uibModal
         dataSetTree.select_node(id);
     };
 
-    $scope.applyModelChanges = function() {
+    $scope.applyModelChanges = function () {
         return !$scope.ignoreChanges;
     };
 
@@ -306,7 +318,7 @@ cBoard.controller('datasetCtrl', function ($scope, $http, dataService, $uibModal
         $scope.editDs(getSelectedDataSet());
     };
 
-    $scope.deleteNode = function(){
+    $scope.deleteNode = function () {
         if (!checkTreeNode("delete")) return;
         $scope.deleteDs(getSelectedDataSet());
     };
@@ -347,7 +359,7 @@ cBoard.controller('datasetCtrl', function ($scope, $http, dataService, $uibModal
 
         jstree_ReloadTree(treeID, originalData);
     };
-    $scope.treeEventsObj = function() {
+    $scope.treeEventsObj = function () {
         var baseEventObj = jstree_baseTreeEventsObj({
             ngScope: $scope, ngHttp: $http, ngTimeout: $timeout,
             treeID: treeID, listName: "datasetList", updateUrl: updateUrl

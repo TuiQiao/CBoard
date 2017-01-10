@@ -62,4 +62,13 @@ public class DatasourceService {
         datasourceDao.delete(id, userId);
         return new ServiceStatus(ServiceStatus.Status.Success, "success");
     }
+
+    public ServiceStatus checkDatasource(String userId, Long id) {
+        DashboardDatasource datasource = datasourceDao.getDatasource(id);
+        if (datasourceDao.checkDatasourceRole(userId, id) == 1) {
+            return new ServiceStatus(ServiceStatus.Status.Success, "success");
+        } else {
+            return new ServiceStatus(ServiceStatus.Status.Fail, datasource.getName());
+        }
+    }
 }

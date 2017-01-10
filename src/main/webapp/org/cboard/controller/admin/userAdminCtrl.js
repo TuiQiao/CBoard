@@ -48,8 +48,10 @@ cBoard.controller('userAdminCtrl', function ($scope, $http, ModalUtils, $filter)
         text: translate('ADMIN.DATASOURCE'),
         parent: '#', icon: 'fa fa-fw fa-folder-o',
         state: {disabled: true}
-    }, {id: 'Dataset', text: translate('ADMIN.DATASET'), parent: '#', icon: 'fa fa-fw fa-folder-o',
-        state: {disabled: true}}, {
+    }, {
+        id: 'Dataset', text: translate('ADMIN.DATASET'), parent: '#', icon: 'fa fa-fw fa-folder-o',
+        state: {disabled: true}
+    }, {
         id: 'Widget',
         text: translate('ADMIN.WIDGET'),
         parent: '#',
@@ -59,14 +61,11 @@ cBoard.controller('userAdminCtrl', function ($scope, $http, ModalUtils, $filter)
 
     var getBoardList = function () {
         return $http.get("/dashboard/getBoardList.do").success(function (response) {
-            _.each(_.filter(response, function (e) {
+            _.each(buildNodeByCategory(_.filter(response, function (e) {
                 return e.categoryId;
-            }), function (e) {
-                $scope.resList.push({
-                    id: 'Dashboard_' + e.id, text: e.name, parent: 'Dashboard', resId: e.id,
-                    type: 'board', icon: 'fa fa-puzzle-piece'
-                });
-            });
+            }), 'Dashboard', 'board', 'fa fa-puzzle-piece'), function (e) {
+                $scope.resList.push(e);
+            })
         });
     };
 

@@ -342,6 +342,7 @@ cBoard.service('dataService', function ($http, updateService) {
             _.each(chartConfig.values, function (value, vIdx) {
                 _.each(value.cols, function (series) {
                     var seriesName = series.alias ? series.alias : series.col;
+                    var formatter = series.formatter;
                     var newSeriesName = seriesName;
                     if (group && group.length > 0) {
                         var a = [].concat(group);
@@ -359,7 +360,7 @@ cBoard.service('dataService', function ($http, updateService) {
                             aliasData[castedAliasSeriesName.length - 1] = new Array();
                         }
                         // Only format decimal
-                        aliasData[castedAliasSeriesName.length - 1][keyIdx] = dataFormat(castedData);
+                        aliasData[castedAliasSeriesName.length - 1][keyIdx] = dataFormat(castedData, formatter);
                     });
                 });
             });

@@ -183,7 +183,7 @@ function jstree_baseTreeEventsObj(option) {
                     item.categoryName = newCategory;
                     option.ngHttp.post(option.updateUrl, {json: angular.toJson(item)}).success(function (serviceStatus) {
                         if (serviceStatus.status == '1') {
-                            console.log('success!');
+                            //console.log('success!');
                         } else {
                             ModalUtils.alert(serviceStatus.msg, "modal-warning", "lg");
                         }

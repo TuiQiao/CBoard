@@ -47,10 +47,10 @@ function dataStructure(d) {
     };
 }
 
-function dataFormat(d) {
+function dataFormat(d, formatter) {
     var ds = dataStructure(d);
     if (ds.isNumber) {
-        return numbro(d).format("0.[0000]");
+        return numbro(d).format(_.isUndefined(formatter) ? "0.[0000]" : formatter);
     } else {
         return d;
     }

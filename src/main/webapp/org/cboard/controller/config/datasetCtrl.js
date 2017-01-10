@@ -14,19 +14,14 @@ cBoard.controller('datasetCtrl', function ($scope, $http, dataService, $uibModal
     var originalData = [];
     var updateUrl = "/dashboard/updateDataset.do";
 
+    $http.get("/dashboard/getDatasourceList.do").success(function (response) {
+        $scope.datasourceList = response;
+    });
+
     var getDatasetList = function () {
         $http.get("/dashboard/getDatasetList.do").success(function (response) {
             $scope.datasetList = response;
-            originalData = jstree_CvtVPath2TreeData(
-                $scope.datasetList.map(function (ds) {
-                    return {
-                        "id": ds.id,
-                        "name": ds.name,
-                        "categoryName": ds.categoryName
-                    };
-                })
-            );
-            jstree_ReloadTree(treeID, originalData);
+            $scope.searchNode();
         });
 
     };
@@ -42,10 +37,6 @@ cBoard.controller('datasetCtrl', function ($scope, $http, dataService, $uibModal
 
     getCategoryList();
     getDatasetList();
-
-    $http.get("/dashboard/getDatasourceList.do").success(function (response) {
-        $scope.datasourceList = response;
-    });
 
     $scope.newDs = function () {
         $scope.optFlag = 'new';
@@ -331,7 +322,43 @@ cBoard.controller('datasetCtrl', function ($scope, $http, dataService, $uibModal
         if (!checkTreeNode("delete")) return;
         $scope.deleteDs(getSelectedDataSet());
     };
+    $scope.searchNode = function () {
+        var para = {dsName: '', dsrName: ''};
 
+        var list = $scope.datasetList.map(function (ds) {
+            var dsr = _.find($scope.datasourceList, function (obj) {
+                return obj.id == ds.data.datasource
+            });
+            return {
+                "id": ds.id,
+                "name": ds.name,
+                "categoryName": ds.categoryName,
+                "datasourceName": dsr.name
+            };
+        });
+
+        if ($scope.keywords) {
+            if ($scope.keywords.indexOf(' ') == -1 && $scope.keywords.indexOf(':') == -1) {
+                para.dsName = $scope.keywords;
+            } else {
+                var keys = $scope.keywords.split(' ');
+                for (var i = 0; i < keys.length; i++) {
+                    var w = keys[i].trim();
+                    if (w.split(':')[0] == 'ds') {
+                        para["dsName"] = w.split(':')[1];
+                    }
+                    if (w.split(':')[0] == 'dsr') {
+                        para["dsrName"] = w.split(':')[1];
+                    }
+                }
+            }
+        }
+        originalData = jstree_CvtVPath2TreeData(
+            $filter('filter')(list, {name: para.dsName, datasourceName: para.dsrName})
+        );
+
+        jstree_ReloadTree(treeID, originalData);
+    };
     $scope.treeEventsObj = function () {
         var baseEventObj = jstree_baseTreeEventsObj({
             ngScope: $scope, ngHttp: $http, ngTimeout: $timeout,

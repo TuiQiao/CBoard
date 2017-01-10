@@ -13,6 +13,9 @@
                         <i class="fa fa-trash-o toolbar-icon"  ng-click="deleteNode()" title="{{'COMMON.DELETE'|translate}}"></i>
                     </div>
                 </div>
+                <div class="box-body">
+                    <input type="text" class="form-control" placeholder="Search" ng-model="keywords" ng-change="searchNode()">
+                </div>
                 <div class="panel-body">
                     <div id="widgetTreeID" js-tree="treeConfig" should-apply="applyModelChanges()" ng-model="treeData" tree="treeInstance"
                          tree-events-obj="treeEventsObj"></div>

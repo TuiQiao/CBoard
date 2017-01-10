@@ -324,7 +324,7 @@ cBoard.controller('datasetCtrl', function ($scope, $http, dataService, $uibModal
     };
     $scope.searchNode = function () {
         var para = {dsName: '', dsrName: ''};
-
+        //map datasetList to list (add datasourceName)
         var list = $scope.datasetList.map(function (ds) {
             var dsr = _.find($scope.datasourceList, function (obj) {
                 return obj.id == ds.data.datasource
@@ -333,10 +333,10 @@ cBoard.controller('datasetCtrl', function ($scope, $http, dataService, $uibModal
                 "id": ds.id,
                 "name": ds.name,
                 "categoryName": ds.categoryName,
-                "datasourceName": dsr.name
+                "datasourceName": dsr ? dsr.name : ''
             };
         });
-
+        //split search keywords
         if ($scope.keywords) {
             if ($scope.keywords.indexOf(' ') == -1 && $scope.keywords.indexOf(':') == -1) {
                 para.dsName = $scope.keywords;
@@ -353,12 +353,14 @@ cBoard.controller('datasetCtrl', function ($scope, $http, dataService, $uibModal
                 }
             }
         }
+        //filter data by keywords
         originalData = jstree_CvtVPath2TreeData(
             $filter('filter')(list, {name: para.dsName, datasourceName: para.dsrName})
         );
 
         jstree_ReloadTree(treeID, originalData);
     };
+    
     $scope.treeEventsObj = function () {
         var baseEventObj = jstree_baseTreeEventsObj({
             ngScope: $scope, ngHttp: $http, ngTimeout: $timeout,

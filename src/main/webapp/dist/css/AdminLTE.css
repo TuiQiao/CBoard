@@ -980,6 +980,7 @@ a:focus {
 
 .dropdown-menu > li > .input {
   border: none;
+  margin: 5px 20px;
 }
 
 .dropdown-submenu {

@@ -387,6 +387,11 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
                 });
                 break;
         }
+        _.each($scope.curWidget.config.values, function (v) {
+            _.each(v.cols, function (c) {
+                delete c.formatter;
+            });
+        });
         $scope.preview();
     };
 

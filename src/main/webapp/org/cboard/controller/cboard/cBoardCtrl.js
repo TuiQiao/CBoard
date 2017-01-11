@@ -5,26 +5,26 @@ cBoard.controller('cBoardCtrl', function ($scope, $location, $http, $q, $filter,
 
     var translate = $filter('translate');
 
-    $http.get("/commons/getUserDetail.do").success(function (response) {
+    $http.get("commons/getUserDetail.do").success(function (response) {
         $scope.user = response;
-        var avatarUrl = '/dist/img/user-male-circle-blue-128.png';
+        var avatarUrl = 'dist/img/user-male-circle-blue-128.png';
         $scope.user.avatar = avatarUrl;
     });
 
     var getMenuList = function () {
-        $http.get("/commons/getMenuList.do").success(function (response) {
+        $http.get("commons/getMenuList.do").success(function (response) {
             $scope.menuList = response;
         });
     };
 
     var getCategoryList = function () {
-        $http.get("/dashboard/getCategoryList.do").success(function (response) {
+        $http.get("dashboard/getCategoryList.do").success(function (response) {
             $scope.categoryList = response;
         });
     };
 
     var getBoardList = function () {
-        $http.get("/dashboard/getBoardList.do").success(function (response) {
+        $http.get("dashboard/getBoardList.do").success(function (response) {
             $scope.boardList = response;
         });
     };
@@ -58,7 +58,7 @@ cBoard.controller('cBoardCtrl', function ($scope, $location, $http, $q, $filter,
                     $uibModalInstance.close();
                 };
                 $scope.ok = function () {
-                    $http.post("/commons/changePwd.do", {
+                    $http.post("commons/changePwd.do", {
                         curPwd: $scope.curPwd,
                         newPwd: $scope.newPwd,
                         cfmPwd: $scope.cfmPwd

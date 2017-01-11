@@ -10,7 +10,7 @@ cBoard.controller('categoryCtrl', function ($scope, $http, ModalUtils, $filter) 
     $scope.verify = {categoryName:true};
 
     var getCategoryList = function () {
-        $http.get("/dashboard/getCategoryList.do").success(function (response) {
+        $http.get("dashboard/getCategoryList.do").success(function (response) {
             $scope.categoryList = response;
         });
     };
@@ -32,7 +32,7 @@ cBoard.controller('categoryCtrl', function ($scope, $http, ModalUtils, $filter) 
     };
     $scope.deleteBordCategory = function (ds) {
         ModalUtils.confirm(translate("COMMON.CONFIRM_DELETE"), "modal-warning", "lg", function () {
-            $http.post("/dashboard/deleteCategory.do", {id: ds.id}).success(function () {
+            $http.post("dashboard/deleteCategory.do", {id: ds.id}).success(function () {
                 $scope.optFlag = 'none';
                 getCategoryList();
                 categoryChange();
@@ -56,7 +56,7 @@ cBoard.controller('categoryCtrl', function ($scope, $http, ModalUtils, $filter) 
             return;
         }
         if ($scope.optFlag == "new") {
-            $http.post("/dashboard/saveNewCategory.do", {json: angular.toJson($scope.curCategory)}).success(function (serviceStatus) {
+            $http.post("dashboard/saveNewCategory.do", {json: angular.toJson($scope.curCategory)}).success(function (serviceStatus) {
                 if (serviceStatus.status == '1') {
                     $scope.optFlag = 'none';
                     getCategoryList();
@@ -67,7 +67,7 @@ cBoard.controller('categoryCtrl', function ($scope, $http, ModalUtils, $filter) 
                 }
             });
         } else {
-            $http.post("/dashboard/updateCategory.do", {json: angular.toJson($scope.curCategory)}).success(function (serviceStatus) {
+            $http.post("dashboard/updateCategory.do", {json: angular.toJson($scope.curCategory)}).success(function (serviceStatus) {
                 if (serviceStatus.status == '1') {
                     $scope.optFlag = 'none';
                     getCategoryList();

@@ -11,7 +11,7 @@ cBoard.service('dataService', function ($http, updateService) {
      * @param callback
      */
     this.getData = function (datasource, query, datasetId, callback, fromCache) {
-        $http.post("/dashboard/getCachedData.do", {
+        $http.post("dashboard/getCachedData.do", {
             datasourceId: datasource,
             query: angular.toJson(query),
             datasetId: datasetId,

@@ -15,7 +15,7 @@ cBoard.controller('dashboardViewCtrl', function ($rootScope, $scope, $state, $st
         $scope.load(false);
     });
 
-    $http.post("/admin/isConfig.do", {type: 'widget'}).success(function (response) {
+    $http.post("admin/isConfig.do", {type: 'widget'}).success(function (response) {
         $scope.widgetCfg = response;
     });
 

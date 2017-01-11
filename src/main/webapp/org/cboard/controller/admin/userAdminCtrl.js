@@ -354,8 +354,8 @@ cBoard.controller('userAdminCtrl', function ($scope, $http, ModalUtils, $filter)
 
     $scope.deleteRole = function () {
         ModalUtils.confirm(translate("COMMON.CONFIRM_DELETE"), "modal-info", "lg", function () {
-            $http.post("/admin/deleteRole.do", {
-                roleId: $scope.selectRole[0].roleId,
+            $http.post("admin/deleteRole.do", {
+                roleId: $scope.selectRole[0].roleId
             }).success(function (serviceStatus) {
                 if (serviceStatus == '1') {
                     $scope.selectRole = null;

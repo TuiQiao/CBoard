@@ -29,4 +29,6 @@ public interface UserDao {
     int saveNewUser(String userId, String user_name, String loginName);
 
     int updateUserPassword(String userId, String passowrd, String newPassword);
+
+    int deleteUserRoleByRoleId(String roleId);
 }

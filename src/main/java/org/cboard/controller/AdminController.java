@@ -77,6 +77,11 @@ public class AdminController {
         return adminSerivce.updateRole(jsonObject.getString("roleId"), jsonObject.getString("roleName"), jsonObject.getString("userId"));
     }
 
+    @RequestMapping(value = "/deleteRole")
+    public String deleteRole(@RequestParam(name = "roleId") String roleId) {
+        return adminSerivce.deleteRole(roleId);
+    }
+
     @RequestMapping(value = "/getRoleList")
     public List<DashboardRole> getRoleList() {
         List<DashboardRole> list = roleDao.getRoleList(authenticationService.getCurrentUser().getUserId());

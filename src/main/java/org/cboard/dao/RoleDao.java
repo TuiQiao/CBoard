@@ -26,4 +26,6 @@ public interface RoleDao {
     List<Long> getRoleResByResIds(String userId, String resType);
 
     DashboardRole getRole(String roleId);
+
+    int deleteRole(String roleId);
 }

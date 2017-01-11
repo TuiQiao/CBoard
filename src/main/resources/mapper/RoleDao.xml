@@ -40,4 +40,8 @@
         delete from dashboard_role_res where role_id = #{0}
     </delete>
 
+    <delete id="deleteRole">
+        delete from dashboard_role where role_id = #{0}
+    </delete>
+
 </mapper>

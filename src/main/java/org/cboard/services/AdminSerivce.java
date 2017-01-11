@@ -15,6 +15,7 @@ import org.cboard.pojo.DashboardUserRole;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -74,6 +75,14 @@ public class AdminSerivce {
         role.setRoleName(roleName);
         role.setUserId(userId);
         roleDao.update(role);
+        return "1";
+    }
+
+    @Transactional
+    public String deleteRole(String roleId) {
+        userDao.deleteUserRoleByRoleId(roleId);
+        roleDao.deleteRoleRes(roleId);
+        roleDao.deleteRole(roleId);
         return "1";
     }
 

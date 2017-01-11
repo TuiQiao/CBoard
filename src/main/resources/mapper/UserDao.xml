@@ -59,4 +59,8 @@
         update dashboard_user set user_password = #{2} where user_id = #{0} and user_password = #{1}
         ]]>
     </update>
+
+    <delete id="deleteUserRoleByRoleId">
+        delete from dashboard_user_role where role_id = #{0}
+    </delete>
 </mapper>

@@ -33,6 +33,6 @@ CBoardKpiRender.prototype.template =
                </div> \
                <a class='small-box-footer'>\
                    <span ng-click='reload(widget)' style='cursor: pointer'>{refresh} <i class='fa fa-refresh'></i></span>\
-                   <span ng-click='config(widget)' style='cursor: pointer'>{edit} <i class='fa fa-wrench'></i></span>\
+                   <span ng-click='config(widget)' ng-if='widgetCfg' style='cursor: pointer'>{edit} <i class='fa fa-wrench'></i></span>\
                </a>\
             </div>";

@@ -15,6 +15,10 @@ cBoard.controller('dashboardViewCtrl', function ($rootScope, $scope, $state, $st
         $scope.load(false);
     });
 
+    $http.post("/admin/isConfig.do", {type: 'widget'}).success(function (response) {
+        $scope.widgetCfg = response;
+    });
+
     var buildRender = function (w) {
         w.render = function (content, optionFilter, scope) {
             w.realTimeTicket = chartService.render(content, w.widget.queryData, w.widget.data.config, optionFilter, scope);

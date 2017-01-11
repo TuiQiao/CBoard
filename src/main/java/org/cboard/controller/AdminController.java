@@ -4,6 +4,7 @@ import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.google.common.base.Function;
 import com.google.common.collect.Lists;
+import org.cboard.dao.MenuDao;
 import org.cboard.dao.RoleDao;
 import org.cboard.dao.UserDao;
 import org.cboard.pojo.DashboardRole;
@@ -39,6 +40,9 @@ public class AdminController {
 
     @Value("${admin_user_id}")
     private String adminUserId;
+
+    @Autowired
+    private MenuDao menuDao;
 
     @Autowired
     private AuthenticationService authenticationService;
@@ -85,7 +89,7 @@ public class AdminController {
                 JSONArray.parseArray(userIdArr).toArray(new String[]{}),
                 JSONArray.parseArray(roleIdArr).toArray(new String[]{}),
                 authenticationService.getCurrentUser().getUserId()
-               );
+        );
     }
 
     @RequestMapping(value = "/getUserRoleList")
@@ -108,5 +112,19 @@ public class AdminController {
     @RequestMapping(value = "/isAdmin")
     public boolean isAdmin() {
         return adminUserId.equals(authenticationService.getCurrentUser().getUserId());
+    }
+
+    @RequestMapping(value = "/isConfig")
+    public boolean isConfig(@RequestParam(name = "type") String type) {
+        String userid = authenticationService.getCurrentUser().getUserId();
+        if (userid.equals(adminUserId)) {
+            return true;
+        } else if (type.equals("widget")) {
+            List<Long> menuIdList = menuDao.getMenuIdByUserRole(userid);
+            if (menuIdList.contains(1L) && menuIdList.contains(4L)) {
+                return true;
+            }
+        }
+        return false;
     }
 }

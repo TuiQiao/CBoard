@@ -27,7 +27,7 @@
                 <div class="cubes">
                     <div ng-repeat="c in boardDataset">
                         <div class="cube" ng-click="foldCube(c, $event)">
-                            <i class="cubeName"><img src="../../dist/img/arrow.png">{{c.name}}</i>
+                            <i class="cubeName"><img src="dist/img/arrow.png">{{c.name}}</i>
                             <span ng-repeat="v in c.columns" ng-click="add(c, v)">
                                 {{v}}
                             </span>

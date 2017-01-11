@@ -11,14 +11,14 @@ cBoard.controller('datasourceCtrl', function ($scope, $http, ModalUtils, $uibMod
     $scope.verify = {dsName:true,provider:true};
     
     var getDatasourceList = function () {
-        $http.get("/dashboard/getDatasourceList.do").success(function (response) {
+        $http.get("dashboard/getDatasourceList.do").success(function (response) {
             $scope.datasourceList = response;
         });
     };
 
     getDatasourceList();
 
-    $http.get("/dashboard/getProviderList.do").success(function (response) {
+    $http.get("dashboard/getProviderList.do").success(function (response) {
         $scope.providerList = response;
     });
 
@@ -34,7 +34,7 @@ cBoard.controller('datasourceCtrl', function ($scope, $http, ModalUtils, $uibMod
     };
     $scope.deleteDs = function (ds) {
         ModalUtils.confirm(translate("COMMON.CONFIRM_DELETE"), "modal-warning", "lg", function () {
-            $http.post("/dashboard/deleteDatasource.do", {id: ds.id}).success(function () {
+            $http.post("dashboard/deleteDatasource.do", {id: ds.id}).success(function () {
                 $scope.optFlag = 'none';
                 getDatasourceList();
             });
@@ -43,7 +43,7 @@ cBoard.controller('datasourceCtrl', function ($scope, $http, ModalUtils, $uibMod
     $scope.copyDs = function (ds) {
         var data = angular.copy(ds);
         data.name = data.name + "_copy";
-        $http.post("/dashboard/saveNewDatasource.do", {json: angular.toJson(data)}).success(function (serviceStatus) {
+        $http.post("dashboard/saveNewDatasource.do", {json: angular.toJson(data)}).success(function (serviceStatus) {
             if (serviceStatus.status == '1') {
                 $scope.optFlag = 'none';
                 getDatasourceList();
@@ -55,7 +55,7 @@ cBoard.controller('datasourceCtrl', function ($scope, $http, ModalUtils, $uibMod
     };
 
     $scope.changeDsView = function () {
-        $scope.dsView = '/dashboard/getDatasourceView.do?type=' + $scope.curDatasource.type;
+        $scope.dsView = 'dashboard/getDatasourceView.do?type=' + $scope.curDatasource.type;
     };
     
     var validate = function () {
@@ -77,7 +77,7 @@ cBoard.controller('datasourceCtrl', function ($scope, $http, ModalUtils, $uibMod
         if(!validate()){
             return;
         }
-        $http.post("/dashboard/saveNewDatasource.do", {json: angular.toJson($scope.curDatasource)}).success(function (serviceStatus) {
+        $http.post("dashboard/saveNewDatasource.do", {json: angular.toJson($scope.curDatasource)}).success(function (serviceStatus) {
             if (serviceStatus.status == '1') {
                 $scope.optFlag = 'none';
                 getDatasourceList();
@@ -93,7 +93,7 @@ cBoard.controller('datasourceCtrl', function ($scope, $http, ModalUtils, $uibMod
         if(!validate()){
             return;
         }
-        $http.post("/dashboard/updateDatasource.do", {json: angular.toJson($scope.curDatasource)}).success(function (serviceStatus) {
+        $http.post("dashboard/updateDatasource.do", {json: angular.toJson($scope.curDatasource)}).success(function (serviceStatus) {
             if (serviceStatus.status == '1') {
                 $scope.optFlag = 'none';
                 getDatasourceList();
@@ -120,7 +120,7 @@ cBoard.controller('datasourceCtrl', function ($scope, $http, ModalUtils, $uibMod
                     $uibModalInstance.close();
                 };
                 $scope.do = function () {
-                    $http.post("/dashboard/test.do", {
+                    $http.post("dashboard/test.do", {
                         datasource: angular.toJson($scope.datasource),
                         query: angular.toJson($scope.curWidget.query)
                     }).success(function (result) {

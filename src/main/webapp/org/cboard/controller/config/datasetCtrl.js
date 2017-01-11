@@ -12,14 +12,14 @@ cBoard.controller('datasetCtrl', function ($scope, $http, dataService, $uibModal
 
     var treeID = 'dataSetTreeID'; // Set to a same value with treeDom
     var originalData = [];
-    var updateUrl = "/dashboard/updateDataset.do";
+    var updateUrl = "dashboard/updateDataset.do";
 
-    $http.get("/dashboard/getDatasourceList.do").success(function (response) {
+    $http.get("dashboard/getDatasourceList.do").success(function (response) {
         $scope.datasourceList = response;
     });
 
     var getDatasetList = function () {
-        $http.get("/dashboard/getDatasetList.do").success(function (response) {
+        $http.get("dashboard/getDatasetList.do").success(function (response) {
             $scope.datasetList = response;
             $scope.searchNode();
         });
@@ -27,7 +27,7 @@ cBoard.controller('datasetCtrl', function ($scope, $http, dataService, $uibModal
     };
 
     var getCategoryList = function () {
-        $http.get("/dashboard/getDatasetCategoryList.do").success(function (response) {
+        $http.get("dashboard/getDatasetCategoryList.do").success(function (response) {
             $scope.categoryList = response;
             $("#DatasetName").autocomplete({
                 source: $scope.categoryList
@@ -46,7 +46,7 @@ cBoard.controller('datasetCtrl', function ($scope, $http, dataService, $uibModal
     };
 
     $scope.editDs = function (ds) {
-        $http.post("/dashboard/checkDatasource.do", {id: ds.data.datasource}).success(function (response) {
+        $http.post("dashboard/checkDatasource.do", {id: ds.data.datasource}).success(function (response) {
             if (response.status == '1') {
                 doEditDs(ds);
             } else {
@@ -71,7 +71,7 @@ cBoard.controller('datasetCtrl', function ($scope, $http, dataService, $uibModal
 
     $scope.deleteDs = function (ds) {
         ModalUtils.confirm(translate("COMMON.CONFIRM_DELETE"), "modal-warning", "lg", function () {
-            $http.post("/dashboard/deleteDataset.do", {id: ds.id}).success(function () {
+            $http.post("dashboard/deleteDataset.do", {id: ds.id}).success(function () {
                 $scope.optFlag = 'none';
                 getDatasetList();
             });
@@ -81,7 +81,7 @@ cBoard.controller('datasetCtrl', function ($scope, $http, dataService, $uibModal
     $scope.copyDs = function (ds) {
         var data = angular.copy(ds);
         data.name = data.name + "_copy";
-        $http.post("/dashboard/saveNewDataset.do", {json: angular.toJson(data)}).success(function (serviceStatus) {
+        $http.post("dashboard/saveNewDataset.do", {json: angular.toJson(data)}).success(function (serviceStatus) {
             if (serviceStatus.status == '1') {
                 $scope.optFlag = 'none';
                 getDatasetList();
@@ -119,7 +119,7 @@ cBoard.controller('datasetCtrl', function ($scope, $http, dataService, $uibModal
         }
 
         if ($scope.optFlag == 'new') {
-            $http.post("/dashboard/saveNewDataset.do", {json: angular.toJson(ds)}).success(function (serviceStatus) {
+            $http.post("dashboard/saveNewDataset.do", {json: angular.toJson(ds)}).success(function (serviceStatus) {
                 if (serviceStatus.status == '1') {
                     $scope.optFlag = 'edit';
                     getCategoryList();

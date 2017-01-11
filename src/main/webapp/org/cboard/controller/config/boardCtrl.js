@@ -14,10 +14,10 @@ cBoard.controller('boardCtrl', function ($scope, $http, ModalUtils, $filter, upd
     $scope.treeData = [];
     var treeID = "boardTreeID";
     var originalData = [];
-    var updateUrl = "/dashboard/updateBoard.do";
+    var updateUrl = "dashboard/updateBoard.do";
 
     var getBoardList = function () {
-        $http.get("/dashboard/getBoardList.do").success(function (response) {
+        $http.get("dashboard/getBoardList.do").success(function (response) {
             $scope.boardList = response;
             originalData = jstree_CvtVPath2TreeData(
                 $scope.boardList.map(function(ds) {
@@ -34,7 +34,7 @@ cBoard.controller('boardCtrl', function ($scope, $http, ModalUtils, $filter, upd
     };
 
     var getCategoryList = function () {
-        $http.get("/dashboard/getCategoryList.do").success(function (response) {
+        $http.get("dashboard/getCategoryList.do").success(function (response) {
             $scope.categoryList = [{id: null, name: translate('CONFIG.DASHBOARD.MY_DASHBOARD')}];
             _.each(response, function (o) {
                 $scope.categoryList.push(o);
@@ -43,9 +43,9 @@ cBoard.controller('boardCtrl', function ($scope, $http, ModalUtils, $filter, upd
     };
 
     var getDatasetList = function () {
-        $http.get("/dashboard/getDatasetList.do").success(function (response) {
+        $http.get("dashboard/getDatasetList.do").success(function (response) {
             $scope.datasetList = response;
-        }).then ($http.get("/dashboard/getWidgetList.do").success(function (response) {
+        }).then ($http.get("dashboard/getWidgetList.do").success(function (response) {
             $scope.widgetList = response;
             $scope.widgetList = $scope.widgetList.map(function(w) {
                 if (w.data.datasetId != null) {
@@ -78,7 +78,7 @@ cBoard.controller('boardCtrl', function ($scope, $http, ModalUtils, $filter, upd
         $scope.boardDataset = [];
         _.each(datasetIdArr, function (d) {
             status.i++;
-            $http.post("/dashboard/getCachedData.do", {
+            $http.post("dashboard/getCachedData.do", {
                 datasetId: d
             }).success(function (response) {
                 var dataset = _.find($scope.datasetList, function (ds) {
@@ -92,7 +92,7 @@ cBoard.controller('boardCtrl', function ($scope, $http, ModalUtils, $filter, upd
         });
         _.each(widgetArr, function (w) {
             status.i++;
-            $http.post("/dashboard/getCachedData.do", {
+            $http.post("dashboard/getCachedData.do", {
                 datasourceId: w.data.datasource,
                 query: angular.toJson(w.data.query),
             }).success(function (response) {
@@ -126,7 +126,7 @@ cBoard.controller('boardCtrl', function ($scope, $http, ModalUtils, $filter, upd
     $scope.copyBoard = function (board) {
         var o = angular.copy(board);
         o.name = o.name + '_copy';
-        $http.post("/dashboard/saveNewBoard.do", {json: angular.toJson(o)}).success(function (serviceStatus) {
+        $http.post("dashboard/saveNewBoard.do", {json: angular.toJson(o)}).success(function (serviceStatus) {
             if (serviceStatus.status == '1') {
                 getBoardList();
                 ModalUtils.alert(serviceStatus.msg, "modal-success", "sm");
@@ -139,7 +139,7 @@ cBoard.controller('boardCtrl', function ($scope, $http, ModalUtils, $filter, upd
 
     $scope.deleteBoard = function (board) {
         ModalUtils.confirm(translate("COMMON.CONFIRM_DELETE"), "modal-warning", "lg", function () {
-            $http.post("/dashboard/deleteBoard.do", {id: board.id}).success(function () {
+            $http.post("dashboard/deleteBoard.do", {id: board.id}).success(function () {
                 getBoardList();
                 $scope.optFlag == 'none';
                 boardChange();
@@ -176,14 +176,14 @@ cBoard.controller('boardCtrl', function ($scope, $http, ModalUtils, $filter, upd
             return false;
         }
         return true;
-    }
+    };
 
     $scope.saveBoard = function () {
         if (!validate()) {
             return;
         }
         if ($scope.optFlag == 'new') {
-            $http.post("/dashboard/saveNewBoard.do", {json: angular.toJson($scope.curBoard)}).success(function (serviceStatus) {
+            $http.post("dashboard/saveNewBoard.do", {json: angular.toJson($scope.curBoard)}).success(function (serviceStatus) {
                 if (serviceStatus.status == '1') {
                     getBoardList();
                     $scope.optFlag = 'edit';
@@ -305,7 +305,7 @@ cBoard.controller('boardCtrl', function ($scope, $http, ModalUtils, $filter, upd
 
     $("#" + treeID).keyup(function(e){
         if(e.keyCode == 46) {
-            $scope.deleteBoard();
+            $scope.deleteBoard(getSelectedBoard());
         }
     });
 

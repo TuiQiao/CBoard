@@ -375,25 +375,25 @@ body > .ui-select-bootstrap.open {
     background-position: 0 0;
 
 }
-.cLine{  background-image: url(/imgs/line-active.png);  }
-.cLine.disabled{background-image: url(/imgs/line.png); }
-/*.cBar{  background-image: url(/imgs/bar-active.png);  }*/
-/*.cBar.disabled{background-image: url(/imgs/bar.png);  }*/
-.cPie{  background-image: url(/imgs/pie-active.png);  }
-.cPie.disabled{  background-image: url(/imgs/pie.png);  }
-.cFunnel{  background-image: url(/imgs/funnel-active.png);  }
-.cFunnel.disabled{  background-image: url(/imgs/funnel.png);  }
+.cLine{  background-image: url(../imgs/line-active.png);  }
+.cLine.disabled{background-image: url(imgs/line.png); }
+/*.cBar{  background-image: url(../imgs/bar-active.png);  }*/
+/*.cBar.disabled{background-image: url(../imgs/bar.png);  }*/
+.cPie{  background-image: url(../imgs/pie-active.png);  }
+.cPie.disabled{  background-image: url(../imgs/pie.png);  }
+.cFunnel{  background-image: url(../imgs/funnel-active.png);  }
+.cFunnel.disabled{  background-image: url(../imgs/funnel.png);  }
 
-.cKpi{  background-image: url(/imgs/kpi-active.png);  }
-.cKpi.disabled{  background-image: url(/imgs/kpi.png);  }
-.cSankey{  background-image: url(/imgs/sankey-active.png);  }
-.cSankey.disabled{  background-image: url(/imgs/sankey.png);  }
-.cRadar{  background-image: url(/imgs/radar-active.png);  }
-.cRadar.disabled{  background-image: url(/imgs/radar.png);  }
-.cTable{  background-image: url(/imgs/table-active.png);  }
-.cTable.disabled{  background-image: url(/imgs/table.png);  }
-.cMap{  background-image: url(/imgs/map-active.png);  }
-.cMap.disabled{  background-image: url(/imgs/map.png);  }
+.cKpi{  background-image: url(../imgs/kpi-active.png);  }
+.cKpi.disabled{  background-image: url(../imgs/kpi.png);  }
+.cSankey{  background-image: url(../imgs/sankey-active.png);  }
+.cSankey.disabled{  background-image: url(../imgs/sankey.png);  }
+.cRadar{  background-image: url(../imgs/radar-active.png);  }
+.cRadar.disabled{  background-image: url(../imgs/radar.png);  }
+.cTable{  background-image: url(../imgs/table-active.png);  }
+.cTable.disabled{  background-image: url(../imgs/table.png);  }
+.cMap{  background-image: url(../imgs/map-active.png);  }
+.cMap.disabled{  background-image: url(../imgs/map.png);  }
 
 .chart-type a.active{
     background-color: #FFF;

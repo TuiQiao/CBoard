@@ -26,18 +26,18 @@ cBoard.service('dashboardService', function ($http) {
     };
 
     this.saveThis = function () {
-        $http.post("/dashboard/saveData.do", {json: angular.toJson(this.boardData)}).success(function () {
+        $http.post("dashboard/saveData.do", {json: angular.toJson(this.boardData)}).success(function () {
         });
     };
 
     this.save = function (bData) {
-        $http.post("/dashboard/saveData.do", {json: angular.toJson(bData)}).success(function () {
+        $http.post("dashboard/saveData.do", {json: angular.toJson(bData)}).success(function () {
         });
     };
 
     this.get = function (callback) {
         var _this = this;
-        $http.get("/dashboard/getData.do").success(function (response) {
+        $http.get("dashboard/getData.do").success(function (response) {
             if (!response) {
                 response = {rows: []};
             }

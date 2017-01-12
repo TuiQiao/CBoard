@@ -65,6 +65,13 @@ Server side framework is Spring+MyBatis and front-end is based on AngularJS1 and
 
 ![image](https://cloud.githubusercontent.com/assets/6037522/21757747/4c5e8dae-d66e-11e6-994d-6725f3d08d1c.png)
 
+## 中国用户可以访问百度网盘下载已经编译好的包
+1 百度网盘地址 [http://pan.baidu.com/s/1slRKJCT](http://pan.baidu.com/s/1slRKJCT)
+2 进入 0.2.1 目录，下面有两个文件
+- cboard.war 这个war包只是单纯的对项目做了编译
+- apache-tomcat-8.0.28-cboard.zip 捆绑了tomcat的包，需要更改一些元数据库连接配置，建立元数据表和库就可以直接运行了
+
+3 元数据库Setup过程参考下面的英文文档2, 3步
 
 ## How to build project
 1 Download or git clone project
@@ -106,7 +113,7 @@ Default login username and passwor: admin/root123
 ```
 
 # Road Map
-All tasks are listed in [Issue Page](https://github.com/yzhang921/CBoard/issues) group by milestone.  
+All tasks are listed in [Issue Page](https://github.com/yzhang921/CBoard/issues) group by milestone.
 Also you can get our development status from [Project Page](https://github.com/yzhang921/CBoard/projects)
 
 

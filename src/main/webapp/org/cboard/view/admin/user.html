@@ -7,7 +7,6 @@
                 <div class="box-tools pull-right" ng-if="isAdmin">
                     <i class="fa fa-fw fa-user-plus toolbar-icon" ng-click="newUser()" title="{{'COMMON.NEW'|translate}}"></i>&nbsp;&nbsp;
                     <i class="fa fa-edit toolbar-icon" ng-click="editUser(selectUser[0])" title="{{'COMMON.EDIT'|translate}}"></i>&nbsp;&nbsp;
-                    <i class="fa fa-trash-o toolbar-icon"  ng-click="deleteUser()" title="{{'COMMON.DELETE'|translate}}"></i>
                 </div>
             </div>
             <div class="row" style="margin-bottom: 10px">
@@ -43,7 +42,7 @@
                 <i class="fa fa-fw fa-group"></i> <h3 class="box-title"> {{'ADMIN.ROLE.ROLE'|translate}}</h3>
                 <div class="box-tools pull-right">
                     <i class="fa fa-fw fa-plus toolbar-icon" ng-click="newRole()" title="{{'COMMON.NEW'|translate}}"></i>&nbsp;&nbsp;
-                    <i class="fa fa-edit toolbar-icon" ng-click="editRole(selectRole[0])" title="{{'COMMON.EDIT'|translate}}"></i>&nbsp;&nbsp;
+                    <i class="fa fa-edit toolbar-icon" ng-if="selectRole.length==1" ng-click="editRole(selectRole[0])" title="{{'COMMON.EDIT'|translate}}"></i>&nbsp;&nbsp;
                     <i class="fa fa-trash-o toolbar-icon" ng-if="selectRole.length==1" ng-click="deleteRole()" title="{{'COMMON.DELETE'|translate}}"></i>
                 </div>
             </div>

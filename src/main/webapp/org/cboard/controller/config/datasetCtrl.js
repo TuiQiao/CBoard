@@ -162,18 +162,15 @@ cBoard.controller('datasetCtrl', function ($scope, $http, dataService, $uibModal
                 $scope.curDataset.data.expressions.push({
                     type: 'exp',
                     exp: data.expression,
-                    alias: data.alias,
-                    formatter: data.formatter
+                    alias: data.alias
                 });
             }
         } else {
             data.expression = col.exp;
             data.alias = col.alias;
-            data.formatter = col.formatter;
             ok = function (data) {
                 col.exp = data.expression;
                 col.alias = data.alias;
-                col.formatter = data.formatter;
             }
         }
 

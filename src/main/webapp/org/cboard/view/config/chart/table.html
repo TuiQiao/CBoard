@@ -18,10 +18,18 @@
                         <button type="button" class="btn btn-primary btn-sm" style="cursor: move;" ng-click="expressions.push(o);curWidget.config.values[0].cols.splice($index, 1);">
                             {{o.alias?o.alias:o.exp}}
                         </button>
-                        <button type="button" class="btn btn-primary btn-sm dropdown-toggle"
-                                ng-click="editExp(o)">
+                        <button type="button" class="btn btn-primary btn-sm dropdown-toggle" data-toggle="dropdown">
                             <span class="fa fa-edit"></span>
                         </button>
+                        <ul class="dropdown-menu multi-level" role="menu" aria-labelledby="dropdownMenu">
+                            <li>
+                                <input type="text" class="input" ng-model="o.formatter"
+                                       placeholder="{{'CONFIG.WIDGET.FORMATTER'|translate}}">
+                            </li>
+                            <li>
+                                <a href="#" ng-click="editExp(o)">{{'COMMON.EDIT'|translate}}</a>
+                            </li>
+                        </ul>
                     </div>
                     <div ng-switch-default class="btn-group">
                         <button type="button"

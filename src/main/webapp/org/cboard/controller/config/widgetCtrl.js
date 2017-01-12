@@ -168,18 +168,15 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
                 $scope.expressions.push({
                     type: 'exp',
                     exp: data.expression,
-                    alias: data.alias,
-                    formatter: data.formatter
+                    alias: data.alias
                 });
             }
         } else {
             data.expression = col.exp;
             data.alias = col.alias;
-            data.formatter = col.formatter;
             ok = function (data) {
                 col.exp = data.expression;
                 col.alias = data.alias;
-                col.formatter = data.formatter;
             }
         }
 

@@ -74,6 +74,11 @@ Server side framework is Spring+MyBatis and front-end is based on AngularJS1 and
 3 元数据库Setup过程参考下面的英文文档2, 3步
 
 ## How to build project
+Before the start, make sure you have setup environment:
+- JDK version above 1.8
+- MySQL
+- Maven
+- Tomcat
 1 Download or git clone project
 ```
 git clone https://github.com/yzhang921/CBoard.git

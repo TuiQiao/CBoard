@@ -268,9 +268,30 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
         if ($scope.customDs) {
             $scope.expressions = [];
         } else {
-            $scope.expressions = angular.copy(_.find($scope.datasetList, function (ds) {
+            var dsExp = angular.copy(_.find($scope.datasetList, function (ds) {
                 return ds.id == $scope.curWidget.datasetId;
             }).data.expressions);
+
+            if ($scope.optFlag == 'new') {
+                $scope.expressions = dsExp;
+            } else {
+                // de-duplicate expression
+                var colInAxes = [];
+                var axes = $scope.curWidget.config.values;
+                for (var i = 0; i < axes.length; i++) {
+                    colInAxes = colInAxes.concat(axes[i].cols)
+                }
+                colInAxes = colInAxes.filter(function (col) {
+                    return col.type == "exp"
+                });
+
+                $scope.expressions = dsExp.filter(function (exp) {
+                    var dupDefine = _.find(colInAxes, function (col) {
+                        return col.alias == exp.alias;
+                    })
+                    return _.isUndefined(dupDefine) ? true : false;
+                });
+            }
         }
     };
 

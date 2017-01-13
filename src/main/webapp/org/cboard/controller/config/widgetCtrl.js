@@ -224,6 +224,10 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
                     }];
                 };
                 $scope.ok = function () {
+                    if (!$scope.data.alias) {
+                        ModalUtils.alert(translate('CONFIG.WIDGET.ALIAS') + translate('COMMON.NOT_EMPTY'), "modal-warning", "lg");
+                        return;
+                    }
                     ok($scope.data);
                     $uibModalInstance.close();
                 };

@@ -7,6 +7,7 @@ var crossTable = {
         var data = args.data,
             chartConfig = args.chartConfig,
             tall = args.tall,
+            pageDataNum = 20,
             container = args.container;
         var html = "<table class = 'table_wrapper' id='tableWrapper'><thead class='fixedHeader'>",
             colContent = "<tr>";
@@ -73,36 +74,38 @@ var crossTable = {
             colContent += "<th class=" + data[chartConfig.groups.length][k].property + "><div>" + data[chartConfig.groups.length][k].data + "</div></th>";
         }
         html += colContent + "</tr></thead><tbody class='scrollContent'>";
-        var dataPage = this.paginationProcessData(data, chartConfig.groups.length + 1);
+        var dataPage = this.paginationProcessData(data, chartConfig.groups.length + 1, pageDataNum);
         var trDom = this.render(dataPage[0], chartConfig);
         html = html + trDom + "</tbody></table>";
         var PaginationDom = "<div class='page'><ul></ul></div>";
-        var exportBnt = "<div class='exportBnt'><button>export</button></div>";
+        var optionDom = "<select class='optionNum'><option value='20'>20</option><option value='50'>50</option><option value='100'>100</option><option value=''>150</option></select>";
+        var operate = "<div><button class='exportBnt'>export</button>" + optionDom + "</div>";
 
-        $(container).html(exportBnt);
-        $(container).append("<div style='width:99%;max-height:" + tall + "px;overflow:auto'>" + html + "</div>");
+        $(container).html(operate);
+        $(container).append("<div class='tableView' style='width:99%;max-height:" + tall + "px;overflow:auto'>" + html + "</div>");
         $(container).append(PaginationDom);
         dataPage.map(function(d, i){
             $('.page>ul').append('<li><a class="pageLink">' + (i + 1) + '</a></li>');
         });
         this.clickPageNum(dataPage, chartConfig);
+        this.selectDataNum(data, chartConfig.groups.length + 1, chartConfig);
         this.export();
     },
-    paginationProcessData: function (data, num) {
+    paginationProcessData: function (data, num, pageDataNum) {
         var length = data.length - num;
-        var t = length % 20;
-        var rest = parseInt(length / 20);
+        var t = length % pageDataNum;
+        var rest = parseInt(length / pageDataNum);
         var page;
         var pageData = [];
         t == 0 ? page = rest : page = rest + 1;
         for (var i = 1; i < page + 1; i++) {
             var partData = [];
             if (i == page) {
-                for (var j = (i - 1) * 20 + num; j < 20 * (page - 1) + t + num; j++) {
+                for (var j = (i - 1) * pageDataNum + num; j < pageDataNum * (page - 1) + t + num; j++) {
                     partData.push(data[j]);
                 }
             } else {
-                for (var j = (i - 1) * 20 + num; j < 20 * i + num; j++) {
+                for (var j = (i - 1) * pageDataNum + num; j < pageDataNum * i + num; j++) {
                     partData.push(data[j]);
                 }
             }
@@ -165,13 +168,27 @@ var crossTable = {
         }
         return html;
     },
+    selectDataNum: function (data, num, chartConfig) {
+        var _this = this;
+        $('select.optionNum').on('change', function (e) {
+            var pageDataNum = e.target.value;
+            var dataPage =_this.paginationProcessData(data, num, pageDataNum);
+            $('tbody.scrollContent').html(_this.render(dataPage[0], chartConfig));
+            var liStr = '';
+            dataPage.map(function(d, i){
+                liStr += '<li><a class="pageLink">' + (i + 1) + '</a></li>';
+            });
+            $('.page>ul').html(liStr);
+            _this.clickPageNum(dataPage, chartConfig);
+        });
+    },
     clickPageNum: function (data, chartConfig) {
         var _this = this;
         $('a.pageLink').on('click', function (e) {
             var pageNum = e.target.innerText - 1;
 
             $('tbody.scrollContent').html(_this.render(data[pageNum], chartConfig));
-        })
+        });
     },
     export: function() {
         var idTmr;

@@ -5125,3 +5125,9 @@ button >canvas {
   padding: 0 7px;
   box-shadow: 2px 2px 2px rgba(0, 0, 0, 0.2);
 }
+ .optionNum{
+  float: right;
+  height: 26px;
+  width: 80px;
+  margin-right: 20px;
+ }

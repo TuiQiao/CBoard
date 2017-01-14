@@ -5094,11 +5094,16 @@ button >canvas {
 }
 .page {
     margin: 10px auto;
+    width: 620px;
+    overflow: auto;
+    padding: 0 5px 5px 0;
 }
 .page>ul {
+  margin: 10px auto;
   list-style: none;
   padding: 0;
   margin: 0;
+  overflow: auto;
 }
 .page li {
   list-style: none;

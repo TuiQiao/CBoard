@@ -74,17 +74,18 @@ var crossTable = {
         }
         html += colContent + "</tr></thead><tbody class='scrollContent'>";
         var dataPage = this.paginationProcessData(data, chartConfig.groups.length + 1);
-        // console.log(dataPages);
-        var tableDom = this.render(dataPage[0], chartConfig, html);
+        var trDom = this.render(dataPage[0], chartConfig);
+        html = html + trDom + "</tbody></table>";
         var PaginationDom = "<div class='page'><ul></ul></div>";
         var exportBnt = "<div class='exportBnt'><button>export</button></div>";
 
         $(container).html(exportBnt);
-        $(container).append("<div style='width:99%;max-height:" + tall + "px;overflow:auto'>" + tableDom + "</div>");
+        $(container).append("<div style='width:99%;max-height:" + tall + "px;overflow:auto'>" + html + "</div>");
         $(container).append(PaginationDom);
         dataPage.map(function(d, i){
             $('.page>ul').append('<li><a class="pageLink">' + (i + 1) + '</a></li>');
         });
+        this.clickPageNum(dataPage, chartConfig);
         this.export();
     },
     paginationProcessData: function (data, num) {
@@ -109,7 +110,8 @@ var crossTable = {
         }
         return pageData;
     },
-    render: function (data, chartConfig, html) {
+    render: function (data, chartConfig) {
+        var html = '';
         for (var r = 0; r < chartConfig.keys.length; r++) {
             for(var n = 1; n < data.length; n++){
                 var node = data[n][r].data;
@@ -161,8 +163,15 @@ var crossTable = {
             }
             html = html + rowContent + "</tr>";
         }
-        html = html + "</tbody></table>";
         return html;
+    },
+    clickPageNum: function (data, chartConfig) {
+        var _this = this;
+        $('a.pageLink').on('click', function (e) {
+            var pageNum = e.target.innerText - 1;
+
+            $('tbody.scrollContent').html(_this.render(data[pageNum], chartConfig));
+        })
     },
     export: function() {
         var idTmr;

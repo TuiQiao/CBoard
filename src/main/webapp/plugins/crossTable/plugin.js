@@ -8,7 +8,7 @@ var crossTable = {
             chartConfig = args.chartConfig,
             tall = args.tall,
             container = args.container;
-        var html = "<table class = 'table_wrapper' id='tableWrapper'><thead>",
+        var html = "<table class = 'table_wrapper' id='tableWrapper'><thead class='fixedHeader'>",
             colContent = "<tr>";
         for (var i = 0; i < chartConfig.groups.length; i++) {
             var colspan = 1;
@@ -72,9 +72,46 @@ var crossTable = {
         for (var k = 0; k < data[chartConfig.groups.length].length; k++) {
             colContent += "<th class=" + data[chartConfig.groups.length][k].property + "><div>" + data[chartConfig.groups.length][k].data + "</div></th>";
         }
-        html += colContent + "</tr></thead><tbody>";
+        html += colContent + "</tr></thead><tbody class='scrollContent'>";
+        var dataPage = this.paginationProcessData(data, chartConfig.groups.length + 1);
+        // console.log(dataPages);
+        var tableDom = this.render(dataPage[0], chartConfig, html);
+        var PaginationDom = "<div class='page'><ul></ul></div>";
+        var exportBnt = "<div class='exportBnt'><button>export</button></div>";
+
+        $(container).html(exportBnt);
+        $(container).append("<div style='width:99%;max-height:" + tall + "px;overflow:auto'>" + tableDom + "</div>");
+        $(container).append(PaginationDom);
+        dataPage.map(function(d, i){
+            $('.page>ul').append('<li><a class="pageLink">' + (i + 1) + '</a></li>');
+        });
+        this.export();
+    },
+    paginationProcessData: function (data, num) {
+        var length = data.length - num;
+        var t = length % 20;
+        var rest = parseInt(length / 20);
+        var page;
+        var pageData = [];
+        t == 0 ? page = rest : page = rest + 1;
+        for (var i = 1; i < page + 1; i++) {
+            var partData = [];
+            if (i == page) {
+                for (var j = (i - 1) * 20 + num; j < 20 * (page - 1) + t + num; j++) {
+                    partData.push(data[j]);
+                }
+            } else {
+                for (var j = (i - 1) * 20 + num; j < 20 * i + num; j++) {
+                    partData.push(data[j]);
+                }
+            }
+            pageData.push(partData);
+        }
+        return pageData;
+    },
+    render: function (data, chartConfig, html) {
         for (var r = 0; r < chartConfig.keys.length; r++) {
-            for(var  n = chartConfig.groups.length + 1; n < data.length; n++){
+            for(var n = 1; n < data.length; n++){
                 var node = data[n][r].data;
                 if (r > 0) {
                     var parent = data[n][r - 1].data;
@@ -102,9 +139,9 @@ var crossTable = {
                 }
             }
         }
-        for(var  n = chartConfig.groups.length + 1; n < data.length; n++){
+        for(var  n = 0; n < data.length; n++) {
             var rowContent = "<tr>";
-            for (var m = 0; m < chartConfig.keys.length; m++){
+            for (var m = 0; m < chartConfig.keys.length; m++) {
                 if (m > 0) {
                     if (data[n][m].rowSpan == 'row_null' && data[n][m - 1].rowSpan == 'row_null') {
                         rowContent += "<th class=row_null><div></div></th>";
@@ -115,19 +152,17 @@ var crossTable = {
                     if (data[n][m].rowSpan == 'row_null') {
                         rowContent += "<th class=row_null><div></div></th>";
                     } else {
-                        rowContent += "<th class=row><div>"+data[n][m].data+"</div></th>";
+                        rowContent += "<th class=row><div>" + data[n][m].data + "</div></th>";
                     }
                 }
-
             }
-            for(var y = chartConfig.keys.length; y < data[n].length; y++){
+            for (var y = chartConfig.keys.length; y < data[n].length; y++) {
                 rowContent += "<td class=" + data[n][m].property + "><div>"+data[n][y].data+"</div></td>";
             }
             html = html + rowContent + "</tr>";
         }
         html = html + "</tbody></table>";
-        $(container).html("<div class='exportBnt'><button>export</button></div><div style='width: 99%;max-height:" + tall + "px;overflow: auto'>" + html + "</div>");
-        this.export();
+        return html;
     },
     export: function() {
         var idTmr;

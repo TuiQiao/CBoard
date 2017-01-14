@@ -5092,3 +5092,31 @@ button >canvas {
   top: 100%;
   left: 0;
 }
+.page {
+    margin: 10px auto;
+}
+.page>ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+.page li {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  float: left;
+  cursor: pointer;
+}
+ a.pageLink {
+  float: left;
+  color: #333;
+  font-size: 14px;
+  line-height: 24px;
+  font-weight: normal;
+  text-align: center;
+  border: 1px solid #AAA;
+  border-right: none;
+  min-width: 14px;
+  padding: 0 7px;
+  box-shadow: 2px 2px 2px rgba(0, 0, 0, 0.2);
+}

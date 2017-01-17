@@ -49,7 +49,7 @@ public class JdbcDataProvider extends DataProvider {
             list = new LinkedList<>();
             String[] row = new String[columnCount];
             for (int i = 0; i < columnCount; i++) {
-                row[i] = metaData.getColumnName(i + 1);
+                row[i] = metaData.getColumnLabel(i + 1);
             }
             list.add(row);
             while (rs.next()) {

@@ -178,7 +178,7 @@ cBoard.controller('userAdminCtrl', function ($scope, $http, ModalUtils, $filter)
                     three_state: false
                 },
                 version: 1,
-                plugins: ['types', 'checkbox']
+                plugins: ['types', 'checkbox', 'unique']
             };
         });
     }();

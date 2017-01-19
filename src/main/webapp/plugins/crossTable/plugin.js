@@ -20,7 +20,7 @@ var crossTable = {
                 if ((data[i][y + 1]) && (data[i][y].data == data[i][y + 1].data)) {
                     if(i > 0) {
                         var noEqual = false;
-                        for (var s = i - 1; s > -1; i--) {
+                        for (var s = i - 1; s > -1; s--) {
                             if (data[s][y].data != data[s][y + 1].data) {
                                 noEqual = true;
                                 break;

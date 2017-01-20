@@ -49,7 +49,7 @@ public class JdbcDataProvider extends DataProvider {
             list = new LinkedList<>();
             String[] row = new String[columnCount];
             for (int i = 0; i < columnCount; i++) {
-                row[i] = metaData.getColumnName(i + 1);
+                row[i] = metaData.getColumnLabel(i + 1);
             }
             list.add(row);
             while (rs.next()) {
@@ -88,9 +88,13 @@ public class JdbcDataProvider extends DataProvider {
         Connection con = getConnection(dataSource);
         StringBuffer cubeSqlBuffer = new StringBuffer();
         String querySql = query.get(SQL).replace(";", "");
+        String driver = dataSource.get(DRIVER);
+        boolean isOracle = driver.toLowerCase().indexOf("oracle") >= 0;
         cubeSqlBuffer.append("SELECT count(*) AS cnt FROM ( ")
                 .append(querySql)
-                .append(" ) AS cube_query__");
+                .append(" ) ")
+                .append(isOracle ? "" : " AS ")
+                .append("cube_query__");
 
         PreparedStatement ps = null;
         ResultSet rs = null;

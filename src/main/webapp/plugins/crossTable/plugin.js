@@ -131,20 +131,23 @@ var crossTable = {
                 }
             }
         }
-        for(var  n = 0; n < data.length; n++) {
+        for(var n = 0; n < data.length; n++) {
             var rowContent = "<tr>";
+            var isFirstLine = (n == 0) ? true : false;
             for (var m = 0; m < chartConfig.keys.length; m++) {
+                var currentCell = data[n][m];
+                var rowParentCell = data[n][m-1];
                 if (m > 0) {
-                    if (data[n][m].rowSpan == 'row_null' && data[n][m - 1].rowSpan == 'row_null') {
+                    if (currentCell.rowSpan == 'row_null' && rowParentCell.rowSpan == 'row_null' && !isFirstLine) {
                         rowContent += "<th class=row_null><div></div></th>";
                     } else {
-                        rowContent += "<th class=row><div>"+data[n][m].data+"</div></th>";
+                        rowContent += "<th class=row><div>" + currentCell.data+"</div></th>";
                     }
                 } else {
-                    if (data[n][m].rowSpan == 'row_null') {
+                    if (currentCell.rowSpan == 'row_null' && !isFirstLine) {
                         rowContent += "<th class=row_null><div></div></th>";
                     } else {
-                        rowContent += "<th class=row><div>" + data[n][m].data + "</div></th>";
+                        rowContent += "<th class=row><div>" + currentCell.data + "</div></th>";
                     }
                 }
             }

@@ -21,7 +21,7 @@ var crossTable = {
                 if ((data[i][y + 1]) && (data[i][y].data == data[i][y + 1].data)) {
                     if(i > 0) {
                         var noEqual = false;
-                        for (var s = i - 1; s > -1; i--) {
+                        for (var s = i - 1; s > -1; s--) {
                             if (data[s][y].data != data[s][y + 1].data) {
                                 noEqual = true;
                                 break;
@@ -38,17 +38,6 @@ var crossTable = {
                         else {
                             colspan++;
                         }
-                        // if (data[i - 1][y].data == data[i - 1][y + 1].data) {
-                        //     colspan++
-                        // }
-                        // else {
-                        //     colList.push({
-                        //         data: data[i][y].data,
-                        //         colSpan: colspan,
-                        //         property: data[i][y].property
-                        //     });
-                        //     colspan = 1;
-                        // }
                     }
                     else if(i == 0) {
                         colspan++;
@@ -78,15 +67,13 @@ var crossTable = {
         var trDom = this.render(dataPage[0], chartConfig);
         html = html + trDom + "</tbody></table>";
         var PaginationDom = "<div class='page'><ul></ul></div>";
-        var optionDom = "<select class='optionNum'><option value='20'>20</option><option value='50'>50</option><option value='100'>100</option><option value=''>150</option></select>";
-        var operate = "<div><button class='exportBnt'>export</button>" + optionDom + "</div>";
+        var optionDom = "<select><option value='20'>20</option><option value='50'>50</option><option value='100'>100</option><option value='150'>150</option></select>";
+        var operate = "<div><button class='exportBnt'>export</button><div class='optionNum'><span>Show</span>" + optionDom + "<span>entries</span></div></div>";
 
         $(container).html(operate);
         $(container).append("<div class='tableView' style='width:99%;max-height:" + tall + "px;overflow:auto'>" + html + "</div>");
         $(container).append(PaginationDom);
-        dataPage.map(function(d, i){
-            $('.page>ul').append('<li><a class="pageLink">' + (i + 1) + '</a></li>');
-        });
+        this.renderPagination(dataPage.length, 1);
         this.clickPageNum(dataPage, chartConfig);
         this.selectDataNum(data, chartConfig.groups.length + 1, chartConfig);
         this.export();
@@ -170,15 +157,11 @@ var crossTable = {
     },
     selectDataNum: function (data, num, chartConfig) {
         var _this = this;
-        $('select.optionNum').on('change', function (e) {
+        $('.optionNum select').on('change', function (e) {
             var pageDataNum = e.target.value;
             var dataPage =_this.paginationProcessData(data, num, pageDataNum);
             $('tbody.scrollContent').html(_this.render(dataPage[0], chartConfig));
-            var liStr = '';
-            dataPage.map(function(d, i){
-                liStr += '<li><a class="pageLink">' + (i + 1) + '</a></li>';
-            });
-            $('.page>ul').html(liStr);
+            _this.renderPagination(dataPage.length, 1);
             _this.clickPageNum(dataPage, chartConfig);
         });
     },
@@ -188,7 +171,43 @@ var crossTable = {
             var pageNum = e.target.innerText - 1;
 
             $('tbody.scrollContent').html(_this.render(data[pageNum], chartConfig));
+            _this.renderPagination(data.length, parseInt(e.target.innerText));
+            _this.clickPageNum(data, chartConfig);
         });
+    },
+    renderPagination: function (pageCount, pageNumber) {
+        var liStr = '<li><a class="previewLink">Preview</a></li>';
+        if (0 < pageNumber < 6) {
+            for (var a = 0;a < pageNumber + 2; a++) {
+                liStr += '<li><a class="pageLink">' + (a + 1) + '</a></li>';
+            }
+            liStr += '<li class="disable"><span class="ellipse">...</span></li>';
+            for (var i = pageCount - 2;i < pageCount; i++) {
+                liStr += '<li><a class="pageLink">' + (i + 1) + '</a></li>';
+            }
+        } else if (pageNumber <= (pageCount - 5)) {
+            for (var c = 0;c < 2; c++) {
+                liStr += '<li><a class="pageLink">' + (c + 1) + '</a></li>';
+            }
+            liStr += '<li class="disable"><span class="ellipse">...</span></li>';
+            for (var j = pageNumber - 2; j < pageNumber + 3; j++) {
+                liStr += '<li><a class="pageLink">' + j + '</a></li>';
+            }
+            liStr += '<li class="disable"><span class="ellipse">...</span></li>';
+            for (var i = pageCount - 2;i < pageCount; i++) {
+                liStr += '<li><a class="pageLink">' + (i + 1) + '</a></li>';
+            }
+        } else {
+            for (var c = 0;c < 2; c++) {
+                liStr += '<li><a class="pageLink">' + (c + 1) + '</a></li>';
+            }
+            liStr += '<li class="disable"><span class="ellipse">...</span></li>';
+            for (var i = pageNumber - 2; i < pageCount + 1; i++) {
+                liStr += '<li><a class="pageLink">' + i + '</a></li>';
+            }
+        }
+        liStr += '<li><a class="nextLink">Next</a></li>';
+        $('.page>ul').html(liStr);
     },
     export: function() {
         var idTmr;

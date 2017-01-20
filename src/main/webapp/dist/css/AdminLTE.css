@@ -5094,7 +5094,7 @@ button >canvas {
 }
 .page {
     margin: 10px auto;
-    width: 620px;
+    width: 100%;
     overflow: auto;
     padding: 0 5px 5px 0;
 }
@@ -5112,22 +5112,56 @@ button >canvas {
   float: left;
   cursor: pointer;
 }
- a.pageLink {
-  float: left;
-  color: #333;
-  font-size: 14px;
-  line-height: 24px;
-  font-weight: normal;
-  text-align: center;
-  border: 1px solid #AAA;
-  border-right: none;
-  min-width: 14px;
-  padding: 0 7px;
-  box-shadow: 2px 2px 2px rgba(0, 0, 0, 0.2);
+ a.pageLink, a.nextLink, a.previewLink {
+     float: left;
+     color: #666;
+     font-size: 14px;
+     line-height: 24px;
+     font-weight: normal;
+     text-align: center;
+     border: 1px solid #BBB;
+     width: 30px;
+     margin: 0 5px 0 0;
+     border-radius: 3px;
+     box-shadow: 0 1px 2px rgba(0,0,0,0.2);
 }
- .optionNum{
+a.current {
+    background-color: #ccc;
+}
+a.nextLink, a.previewLink{
+    width: 80px;
+}
+a.hide{
+    display: none;
+}
+
+span.ellipse {
+    background: none;
+    border: none;
+    border-radius: 0;
+    box-shadow: none;
+    font-weight: bold;
+    cursor: default;
+    float: left;
+    color: #666;
+    font-size: 14px;
+    line-height: 24px;
+    text-align: center;
+    min-width: 14px;
+    padding: 0 7px;
+    margin: 0 5px 0 0;
+}
+ .optionNum {
   float: right;
   height: 26px;
-  width: 80px;
+  width: 200px;
   margin-right: 20px;
  }
+.optionNum select {
+    margin: 0 6px 0 6px;
+    width: 60px;
+    height: 26px;
+}
+.header_key{
+    font-weight: bold;
+}

@@ -184,7 +184,12 @@ var crossTable = {
     },
     renderPagination: function (pageCount, pageNumber, pageObj) {
         var liStr = '<li><a class="previewLink">Preview</a></li>';
-        if (pageNumber < 6) {
+        if (pageNumber < 3) {
+            for (var a = 0;a < pageCount; a++) {
+                liStr += '<li><a class="pageLink">' + (a + 1) + '</a></li>';
+            }
+        }
+        else if (pageNumber < 6) {
             for (var a = 0;a < pageNumber + 2; a++) {
                 liStr += '<li><a class="pageLink">' + (a + 1) + '</a></li>';
             }

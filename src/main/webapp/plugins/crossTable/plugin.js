@@ -73,7 +73,7 @@ var crossTable = {
         $(container).html(operate);
         $(container).append("<div class='tableView' style='width:99%;max-height:" + tall + "px;overflow:auto'>" + html + "</div>");
         $(container).append(PaginationDom);
-        this.renderPagination(dataPage.length, 1);
+        chartConfig.values[0].cols.length ? this.renderPagination(dataPage.length, 1) : null;
         this.clickPageNum(dataPage, chartConfig);
         this.selectDataNum(data, chartConfig.groups.length + 1, chartConfig);
         this.export();
@@ -177,7 +177,7 @@ var crossTable = {
     },
     renderPagination: function (pageCount, pageNumber) {
         var liStr = '<li><a class="previewLink">Preview</a></li>';
-        if (0 < pageNumber < 6) {
+        if (pageNumber < 6) {
             for (var a = 0;a < pageNumber + 2; a++) {
                 liStr += '<li><a class="pageLink">' + (a + 1) + '</a></li>';
             }
@@ -208,7 +208,21 @@ var crossTable = {
         }
         liStr += '<li><a class="nextLink">Next</a></li>';
         $('.page>ul').html(liStr);
+        if (pageNumber == 1) {
+            $('.page a.previewLink').addClass('hide');
+        } else if (pageNumber == pageCount) {
+            $('.page a.nextLink').addClass('hide');
+        }
+        this.buttonColor(pageNumber);
     },
+    buttonColor: function (pageNum) {
+        var buttons = document.querySelectorAll('.page li>a');
+
+        for (var i =0; i < buttons.length; i++) {
+            buttons[i].innerText == pageNum ? $(buttons[i]).addClass('current') : null;
+        }
+    },
+
     export: function() {
         var idTmr;
         function  getExplorer() {

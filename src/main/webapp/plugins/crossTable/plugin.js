@@ -68,7 +68,7 @@ var crossTable = {
         html = html + trDom + "</tbody></table>";
         var PaginationDom = "<div class='page'><ul></ul></div>";
         var optionDom = "<select><option value='20'>20</option><option value='50'>50</option><option value='100'>100</option><option value='150'>150</option></select>";
-        var operate = "<div><button class='exportBnt'>export</button><div class='optionNum'><span>Show</span>" + optionDom + "<span>entries</span></div></div>";
+        var operate = "<div><span></span><button class='exportBnt'>export</button><div class='optionNum'><span>Show</span>" + optionDom + "<span>entries</span></div></div>";
 
         $(container).html(operate);
         $(container).append("<div class='tableView' style='width:99%;max-height:" + tall + "px;overflow:auto'>" + html + "</div>");

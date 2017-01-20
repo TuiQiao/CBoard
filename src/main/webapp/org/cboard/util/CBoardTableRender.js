@@ -19,7 +19,7 @@ CBoardTableRender.prototype.resize = function (container) {
 CBoardTableRender.prototype.do = function (tall) {
     this.tall = tall;
     tall = _.isUndefined(tall) ? 500 : tall;
-    var divHeight = tall - 40;
+    var divHeight = tall - 80;
     var args = {
         tall: divHeight,
         chartConfig: this.options.chartConfig,
@@ -28,7 +28,7 @@ CBoardTableRender.prototype.do = function (tall) {
     };
     crossTable.table(args);
     $(this.container).css({
-        height: tall + 40 + "px"
+        height: tall + "px"
     });
     this.resize(this.container);
     var _this = this;

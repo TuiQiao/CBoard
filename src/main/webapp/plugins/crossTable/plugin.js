@@ -169,13 +169,17 @@ var crossTable = {
         var _this = this;
         $('a.pageLink').on('click', function (e) {
             var pageNum = e.target.innerText - 1;
+            var pageObj = {
+                data: data,
+                chartConfig: chartConfig
+            };
 
             $('tbody.scrollContent').html(_this.render(data[pageNum], chartConfig));
-            _this.renderPagination(data.length, parseInt(e.target.innerText));
+            _this.renderPagination(data.length, parseInt(e.target.innerText), pageObj);
             _this.clickPageNum(data, chartConfig);
         });
     },
-    renderPagination: function (pageCount, pageNumber) {
+    renderPagination: function (pageCount, pageNumber, pageObj) {
         var liStr = '<li><a class="previewLink">Preview</a></li>';
         if (pageNumber < 6) {
             for (var a = 0;a < pageNumber + 2; a++) {
@@ -214,6 +218,7 @@ var crossTable = {
             $('.page a.nextLink').addClass('hide');
         }
         this.buttonColor(pageNumber);
+        this.clickNextPrev(pageCount, pageObj);
     },
     buttonColor: function (pageNum) {
         var buttons = document.querySelectorAll('.page li>a');
@@ -222,7 +227,24 @@ var crossTable = {
             buttons[i].innerText == pageNum ? $(buttons[i]).addClass('current') : null;
         }
     },
+    clickNextPrev: function(pageCount, pageObj) {
+        var _this = this;
 
+        $('.page a.previewLink').on('click', function(){
+            var pageNum = parseInt($('a.current')[0].text) - 1;
+
+            $('tbody.scrollContent').html(_this.render(pageObj.data[pageNum - 1], pageObj.chartConfig));
+            _this.renderPagination(pageCount, pageNum, pageObj);
+            _this.clickPageNum(pageObj.data, pageObj.chartConfig);
+        });
+        $('.page a.nextLink').on('click', function(){
+            var pageNum = parseInt($('a.current')[0].text) + 1;
+
+            $('tbody.scrollContent').html(_this.render(pageObj.data[pageNum - 1], pageObj.chartConfig));
+            _this.renderPagination(pageCount, pageNum, pageObj);
+            _this.clickPageNum(pageObj.data, pageObj.chartConfig);
+        });
+    },
     export: function() {
         var idTmr;
         function  getExplorer() {

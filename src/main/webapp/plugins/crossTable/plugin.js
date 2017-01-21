@@ -66,9 +66,9 @@ var crossTable = {
         var dataPage = this.paginationProcessData(data, chartConfig.groups.length + 1, pageDataNum);
         var trDom = this.render(dataPage[0], chartConfig);
         html = html + trDom + "</tbody></table>";
-        var PaginationDom = "<div class='page'><ul></ul></div>";
         var optionDom = "<select><option value='20'>20</option><option value='50'>50</option><option value='100'>100</option><option value='150'>150</option></select>";
-        var operate = "<div><span></span><button class='exportBnt'>export</button><div class='optionNum'><span>Show</span>" + optionDom + "<span>entries</span></div></div>";
+        var PaginationDom = "<div><div class='optionNum'><span>Show</span>" + optionDom + "<span>entries</span></div><div class='page'><ul></ul></div></div>";
+        var operate = "<div class='toolbar'><span class='exportBnt' title='export'></span></div>";
 
         $(container).html(operate);
         $(container).append("<div class='tableView' style='width:99%;max-height:" + tall + "px;overflow:auto'>" + html + "</div>");
@@ -184,38 +184,40 @@ var crossTable = {
     },
     renderPagination: function (pageCount, pageNumber, pageObj) {
         var liStr = '<li><a class="previewLink">Preview</a></li>';
-        if (pageNumber < 3) {
+        if (pageCount < 10) {
             for (var a = 0;a < pageCount; a++) {
                 liStr += '<li><a class="pageLink">' + (a + 1) + '</a></li>';
             }
         }
-        else if (pageNumber < 6) {
-            for (var a = 0;a < pageNumber + 2; a++) {
-                liStr += '<li><a class="pageLink">' + (a + 1) + '</a></li>';
-            }
-            liStr += '<li class="disable"><span class="ellipse">...</span></li>';
-            for (var i = pageCount - 2;i < pageCount; i++) {
-                liStr += '<li><a class="pageLink">' + (i + 1) + '</a></li>';
-            }
-        } else if (pageNumber <= (pageCount - 5)) {
-            for (var c = 0;c < 2; c++) {
-                liStr += '<li><a class="pageLink">' + (c + 1) + '</a></li>';
-            }
-            liStr += '<li class="disable"><span class="ellipse">...</span></li>';
-            for (var j = pageNumber - 2; j < pageNumber + 3; j++) {
-                liStr += '<li><a class="pageLink">' + j + '</a></li>';
-            }
-            liStr += '<li class="disable"><span class="ellipse">...</span></li>';
-            for (var i = pageCount - 2;i < pageCount; i++) {
-                liStr += '<li><a class="pageLink">' + (i + 1) + '</a></li>';
-            }
-        } else {
-            for (var c = 0;c < 2; c++) {
-                liStr += '<li><a class="pageLink">' + (c + 1) + '</a></li>';
-            }
-            liStr += '<li class="disable"><span class="ellipse">...</span></li>';
-            for (var i = pageNumber - 2; i < pageCount + 1; i++) {
-                liStr += '<li><a class="pageLink">' + i + '</a></li>';
+        else {
+            if (pageNumber < 6) {
+                for (var a = 0;a < pageNumber + 2; a++) {
+                    liStr += '<li><a class="pageLink">' + (a + 1) + '</a></li>';
+                }
+                liStr += '<li class="disable"><span class="ellipse">...</span></li>';
+                for (var i = pageCount - 2;i < pageCount; i++) {
+                    liStr += '<li><a class="pageLink">' + (i + 1) + '</a></li>';
+                }
+            } else if (pageNumber <= (pageCount - 5)) {
+                for (var c = 0;c < 2; c++) {
+                    liStr += '<li><a class="pageLink">' + (c + 1) + '</a></li>';
+                }
+                liStr += '<li class="disable"><span class="ellipse">...</span></li>';
+                for (var j = pageNumber - 2; j < pageNumber + 3; j++) {
+                    liStr += '<li><a class="pageLink">' + j + '</a></li>';
+                }
+                liStr += '<li class="disable"><span class="ellipse">...</span></li>';
+                for (var i = pageCount - 2;i < pageCount; i++) {
+                    liStr += '<li><a class="pageLink">' + (i + 1) + '</a></li>';
+                }
+            } else {
+                for (var c = 0;c < 2; c++) {
+                    liStr += '<li><a class="pageLink">' + (c + 1) + '</a></li>';
+                }
+                liStr += '<li class="disable"><span class="ellipse">...</span></li>';
+                for (var i = pageNumber - 2; i < pageCount + 1; i++) {
+                    liStr += '<li><a class="pageLink">' + i + '</a></li>';
+                }
             }
         }
         liStr += '<li><a class="nextLink">Next</a></li>';

@@ -19,7 +19,7 @@ CBoardTableRender.prototype.resize = function (container) {
 CBoardTableRender.prototype.do = function (tall) {
     this.tall = tall;
     tall = _.isUndefined(tall) ? 500 : tall;
-    var divHeight = tall - 80;
+    var divHeight = tall - 90;
     var args = {
         tall: divHeight,
         chartConfig: this.options.chartConfig,

@@ -5094,9 +5094,10 @@ button >canvas {
 }
 .page {
     margin: 10px auto;
-    width: 100%;
+    width: 60%;
     overflow: auto;
     padding: 0 5px 5px 0;
+    float: right;
 }
 .page>ul {
   margin: 10px auto;
@@ -5104,6 +5105,7 @@ button >canvas {
   padding: 0;
   margin: 0;
   overflow: auto;
+    float: right;
 }
 .page li {
   list-style: none;
@@ -5152,10 +5154,10 @@ span.ellipse {
     margin: 0 5px 0 0;
 }
  .optionNum {
-  float: right;
+  float: left;
   height: 26px;
   width: 200px;
-  margin-right: 20px;
+  margin: 7px 20px 0 0;
  }
 .optionNum select {
     margin: 0 6px 0 6px;
@@ -5164,4 +5166,29 @@ span.ellipse {
 }
 .header_key{
     font-weight: bold;
+}
+.toolbar{
+    width: 99%;
+    height: 40px;
+    margin: 0 0 10px 0;
+    box-shadow: 1px 1px 5px #ccc;
+}
+.exportBnt, .drillUp, .drillDown{
+    margin:10px 5px 10px 5px;
+    float: right;
+    width: 20px;
+    height: 20px;
+    cursor: pointer;
+}
+.drillUp{
+    background: url("../../imgs/drillup.png");
+    background-size: cover;
+}
+.drillDown{
+    background: url("../../imgs/drilldown.svg");
+    background-size: cover;
+}
+.exportBnt{
+    background: url("../../imgs/excel.svg");
+    background-size: cover;
 }

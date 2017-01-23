@@ -4,28 +4,69 @@
 'use strict';
 cBoard.service('dataService', function ($http, updateService) {
 
-    /**
-     * Get raw data from server side.
-     * @param datasource
-     * @param query
-     * @param callback
-     */
-    this.getData = function (datasource, query, datasetId, callback, fromCache) {
-        $http.post("dashboard/getCachedData.do", {
+    var getDimensionConfig = function (array) {
+        if (array) {
+            return _.map(array, function (e) {
+                return {columnName: e.col, filterType: e.type, values: e.values}
+            });
+        } else {
+            return [];
+        }
+    };
+
+    this.getDimensionValues = function (datasource, query, datasetId, colmunName, chartConfig, callback) {
+        var cfg = {rows: [], columns: [], filters: []};
+        cfg.rows = getDimensionConfig(chartConfig.keys);
+        cfg.columns = getDimensionConfig(chartConfig.groups);
+        cfg.filters = getDimensionConfig(chartConfig.filters);
+
+        $http.post("dashboard/getDimensionValues.do", {
             datasourceId: datasource,
             query: angular.toJson(query),
             datasetId: datasetId,
-            reload: fromCache ? false : true
+            colmunName: colmunName,
+            cfg: angular.toJson(cfg),
+        }).success(function (response) {
+            callback(response[0], response[1]);
+        });
+    };
+
+    this.getData = function (datasource, query, datasetId, chartConfig, callback, reload) {
+        var dataSeries = getDataSeries(chartConfig);
+        var cfg = {rows: [], columns: [], filters: []};
+        cfg.rows = getDimensionConfig(chartConfig.keys);
+        cfg.columns = getDimensionConfig(chartConfig.groups);
+        cfg.filters = getDimensionConfig(chartConfig.filters);
+        cfg.filters = cfg.filters.concat(getDimensionConfig(chartConfig.boardFilters));
+        cfg.values = _.map(dataSeries, function (s) {
+            return {column: s.name, aggType: s.aggregate};
+        });
+        $http.post("dashboard/getAggregateData.do", {
+            datasourceId: datasource,
+            query: angular.toJson(query),
+            datasetId: datasetId,
+            cfg: angular.toJson(cfg),
+            reload: reload
         }).success(function (response) {
             callback(response);
         });
     };
 
-    var getDataSeries = function (rawData, chartConfig) {
+    this.getColumns = function (datasource, query, datasetId, callback) {
+        $http.post("dashboard/getColumns.do", {
+            datasourceId: datasource,
+            query: angular.toJson(query),
+            datasetId: datasetId
+        }).success(function (response) {
+            callback(response);
+        });
+    };
+
+    var getDataSeries = function (chartConfig) {
         var result = [];
         _.each(chartConfig.values, function (v) {
             _.each(v.cols, function (c) {
-                var series = configToDataSeries(rawData, c);
+                var series = configToDataSeries(c);
                 _.each(series, function (s) {
                     if (!_.find(result, function (e) {
                             return JSON.stringify(e) == JSON.stringify(s);
@@ -38,30 +79,28 @@ cBoard.service('dataService', function ($http, updateService) {
         return result;
     };
 
-    var configToDataSeries = function (rawData, config) {
+    var configToDataSeries = function (config) {
         switch (config.type) {
             case 'exp':
-                return getExpSeries(rawData, config.exp);
+                return getExpSeries(config.exp);
                 break;
             default:
                 return [{
                     name: config.col,
-                    aggregate: config.aggregate_type,
-                    index: getHeaderIndex(rawData, [config.col])[0]
+                    aggregate: config.aggregate_type
                 }]
                 break;
         }
     };
 
-    var getExpSeries = function (rawData, exp) {
+    var getExpSeries = function (exp) {
         var result = [];
         exp = exp.trim();
         _.each(exp.match(/(sum|avg|count|max|min)\([\u4e00-\u9fa5_a-zA-Z0-9]+\)/g), function (text) {
             var name = text.substring(text.indexOf('(') + 1, text.indexOf(')'));
             result.push({
                 name: name,
-                aggregate: text.substring(0, text.indexOf('(')),
-                index: getHeaderIndex(rawData, [name])[0]
+                aggregate: text.substring(0, text.indexOf('('))
             });
         });
         return result;
@@ -238,24 +277,8 @@ cBoard.service('dataService', function ($http, updateService) {
      * @param chartConfig
      * @param callback function which is used to transform series data to widgets option
      */
-    this.castRawData2Series = function (rawData, chartConfig, callback) {
+    this.castRawData2Series = function (aggData, chartConfig, callback) {
         updateService.updateConfig(chartConfig);
-        var keysIdx = getHeaderIndex(rawData, _.map(chartConfig.keys, function (e) {
-            return e.col;
-        }));
-        var keysSort = _.map(chartConfig.keys, function (e) {
-            return e.sort;
-        });
-        var groupsIdx = getHeaderIndex(rawData, _.map(chartConfig.groups, function (e) {
-            return e.col;
-        }));
-        var groupsSort = _.map(chartConfig.groups, function (e) {
-            return e.sort;
-        });
-        var filtersIdx = getHeaderIndex(rawData, _.map(chartConfig.filters, function (e) {
-            return e.col;
-        }));
-        var dataSeries = getDataSeries(rawData, chartConfig);
 
         var castedKeys = new Array();
         var castedGroups = new Array();
@@ -263,40 +286,65 @@ cBoard.service('dataService', function ($http, updateService) {
         var joinedGroups = {};
         var newData = {};
 
-        var filter = getFilter(chartConfig, keysIdx, groupsIdx, filtersIdx);
-        for (var i = 1; i < rawData.length; i++) {
-            if (!filter(rawData[i])) {
-                continue;
+        var getIndex = function (columnList, col) {
+            var result = new Array();
+            if (col) {
+                for (var j = 0; j < col.length; j++) {
+                    var idx = _.find(columnList, function (e) {
+                        return e.name == col[j];
+                    });
+                    result.push(idx.index);
+                }
             }
+            return result;
+        };
+
+        var keysIdx = getIndex(aggData.columnList, _.map(chartConfig.keys, function (e) {
+            return e.col;
+        }));
+        var keysSort = _.map(chartConfig.keys, function (e) {
+            return e.sort;
+        });
+        var groupsIdx = getIndex(aggData.columnList, _.map(chartConfig.groups, function (e) {
+            return e.col;
+        }));
+        var groupsSort = _.map(chartConfig.groups, function (e) {
+            return e.sort;
+        });
+
+        var valueSeries = _.filter(aggData.columnList, function (e) {
+            return e.aggType;
+        });
+        for (var i = 0; i < aggData.data.length; i++) {
             //组合keys
-            var newKey = getRowElements(rawData[i], keysIdx);
+            var newKey = getRowElements(aggData.data[i], keysIdx);
             var jk = newKey.join('-');
             if (_.isUndefined(joinedKeys[jk])) {
                 castedKeys.push(newKey);
                 joinedKeys[jk] = true;
             }
             //组合groups
-            var group = getRowElements(rawData[i], groupsIdx);
+            var group = getRowElements(aggData.data[i], groupsIdx);
             var newGroup = group.join('-');
             if (_.isUndefined(joinedGroups[newGroup])) {
                 castedGroups.push(group);
                 joinedGroups[newGroup] = true;
             }
             // pick the raw values into coordinate cell and then use aggregate function to do calculate
-            _.each(dataSeries, function (dSeries) {
+            _.each(valueSeries, function (dSeries) {
                 if (_.isUndefined(newData[newGroup])) {
                     newData[newGroup] = {};
                 }
                 if (_.isUndefined(newData[newGroup][dSeries.name])) {
                     newData[newGroup][dSeries.name] = {};
                 }
-                if (_.isUndefined(newData[newGroup][dSeries.name][dSeries.aggregate])) {
-                    newData[newGroup][dSeries.name][dSeries.aggregate] = {};
+                if (_.isUndefined(newData[newGroup][dSeries.name][dSeries.aggType])) {
+                    newData[newGroup][dSeries.name][dSeries.aggType] = {};
                 }
-                if (_.isUndefined(newData[newGroup][dSeries.name][dSeries.aggregate][jk])) {
-                    newData[newGroup][dSeries.name][dSeries.aggregate][jk] = [];
+                if (_.isUndefined(newData[newGroup][dSeries.name][dSeries.aggType][jk])) {
+                    newData[newGroup][dSeries.name][dSeries.aggType][jk] = [];
                 }
-                newData[newGroup][dSeries.name][dSeries.aggregate][jk].push(rawData[i][dSeries.index]);
+                newData[newGroup][dSeries.name][dSeries.aggType][jk].push(parseFloat(aggData.data[i][dSeries.index]));
             });
         }
         //sort dimension
@@ -322,18 +370,6 @@ cBoard.service('dataService', function ($http, updateService) {
         };
         castedKeys.sort(getSort(keysSort));
         castedGroups.sort(getSort(groupsSort));
-        // do aggregate
-        _.mapObject(newData, function (g) {
-            _.mapObject(g, function (groupSeries) {
-                _.each(_.keys(groupSeries), function (aggregateType) {
-                    for (var k in groupSeries[aggregateType]) {
-                        if (groupSeries[aggregateType][k]) {
-                            groupSeries[aggregateType][k] = aggregate(groupSeries[aggregateType][k], aggregateType);
-                        }
-                    }
-                });
-            });
-        });
         //
         var castedAliasSeriesName = new Array();
         var aliasSeriesConfig = {};
@@ -366,6 +402,7 @@ cBoard.service('dataService', function ($http, updateService) {
             });
         });
         callback(castedKeys, castedAliasSeriesName, aliasData, aliasSeriesConfig);
+
     };
 
     var castSeriesData = function (series, group, castedKeys, newData, iterator) {

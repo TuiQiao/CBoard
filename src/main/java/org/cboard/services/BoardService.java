@@ -53,6 +53,7 @@ public class BoardService {
                 JSONObject widgetJson = (JSONObject) JSONObject.toJSON(new ViewDashboardWidget(widget));
                 //widgetJson.put("queryData", data.getData());
                 ww.put("widget", widgetJson);
+                ww.put("show", false);
             }
         }
         ViewDashboardBoard view = new ViewDashboardBoard(board);

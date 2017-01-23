@@ -36,8 +36,10 @@
             </div>
             <div ng-switch-default>
                 <div ng-repeat="widget in row.widgets track by $index">
-                    <dashboard-widget ng-if="widget.show"></dashboard-widget>
-                    <div ng-if="!widget.show && widget.hasRole != false" class="col-md-{{widget.width}}" style="height: 50px;">
+                    <div ng-if="widget.show">
+                        <dashboard-widget ng-show="widget.loading == false"></dashboard-widget>
+                    </div>
+                    <div ng-if="!widget.show && widget.hasRole != false && widget.loading" class="col-md-{{widget.width}}" style="height: 50px;">
                         <i class="fa fa-spinner fa-spin"></i> {{"COMMON.LOADING" | translate}}
                     </div>
                     <div ng-if="widget.hasRole == false" class="col-md-{{widget.width}}">

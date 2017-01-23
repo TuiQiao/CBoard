@@ -26,6 +26,11 @@ public class HeapCacheManager<T> implements CacheManager<T> {
         }
     }
 
+    @Override
+    public void remove(String key) {
+        cache.remove(key);
+    }
+
     class CacheObject {
         private long t1;
         private long expire;

@@ -4,6 +4,7 @@ import org.cboard.dataprovider.DataProvider;
 import org.cboard.dataprovider.annotation.DatasourceParameter;
 import org.cboard.dataprovider.annotation.ProviderName;
 import org.cboard.dataprovider.annotation.QueryParameter;
+import org.cboard.dataprovider.config.AggConfig;
 
 import java.sql.*;
 import java.util.LinkedList;

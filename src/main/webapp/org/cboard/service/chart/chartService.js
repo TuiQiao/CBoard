@@ -2,29 +2,36 @@
  * Created by yfyuan on 2016/10/28.
  */
 'use strict';
-cBoard.service('chartService', function (chartPieService, chartLineService, chartFunnelService,
-        chartSankeyService, chartTableService, chartKpiService, chartRadarService, chartMapService) {
+cBoard.service('chartService', function ($q, dataService, chartPieService, chartLineService, chartFunnelService,
+                                         chartSankeyService, chartTableService, chartKpiService, chartRadarService, chartMapService) {
 
-        this.render = function (containerDom, chartData, chartConfig, optionFilter, scope) {
-            var chart = getChartServices(chartConfig);
-            var option = chart.parseOption(chartData, chartConfig);
-            if (optionFilter) {
-                optionFilter(option);
-            }
-            return chart.render(containerDom, option, scope);
+        this.render = function (containerDom, widget, optionFilter, scope, reload) {
+            var deferred = $q.defer();
+            var promise = deferred.promise;
+            var chart = getChartServices(widget.config);
+            dataService.getData(widget.datasource, widget.query, widget.datasetId, widget.config, function (data) {
+                var option = chart.parseOption(data, widget.config);
+                if (optionFilter) {
+                    optionFilter(option);
+                }
+                deferred.resolve(chart.render(containerDom, option, scope));
+            }, reload);
+            return promise;
         };
 
 
-        this.realTimeRender = function (realTimeTicket, chartData, chartConfig, optionFilter, scope) {
+        this.realTimeRender = function (realTimeTicket, widget, optionFilter, scope) {
             if (!realTimeTicket) {
                 return;
             }
-            var chart = getChartServices(chartConfig);
-            var option = chart.parseOption(chartData, chartConfig);
-            if (optionFilter) {
-                optionFilter(option);
-            }
-            realTimeTicket(option);
+            var chart = getChartServices(widget.config);
+            dataService.getData(widget.datasource, widget.query, widget.datasetId, widget.config, function (data) {
+                var option = chart.parseOption(data, widget.config);
+                if (optionFilter) {
+                    optionFilter(option);
+                }
+                realTimeTicket(option);
+            });
         };
 
         var getChartServices = function (chartConfig) {

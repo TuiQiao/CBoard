@@ -7,6 +7,8 @@ import org.cboard.dao.DatasetDao;
 import org.cboard.dao.DatasourceDao;
 import org.cboard.dataprovider.DataProvider;
 import org.cboard.dataprovider.DataProviderManager;
+import org.cboard.dataprovider.config.AggConfig;
+import org.cboard.dataprovider.result.AggregateResult;
 import org.cboard.dto.DataProviderResult;
 import org.cboard.pojo.DashboardDataset;
 import org.cboard.pojo.DashboardDatasource;
@@ -30,6 +32,68 @@ public class DataProviderService {
 
     @Autowired
     private DatasetDao datasetDao;
+
+    public AggregateResult queryAggData(Long datasourceId, Map<String, String> query, Long datasetId, AggConfig config, boolean reload) {
+        if (datasetId != null) {
+            Dataset dataset = getDataset(datasetId);
+            datasourceId = dataset.getDatasourceId();
+            query = dataset.getQuery();
+        }
+        DashboardDatasource datasource = datasourceDao.getDatasource(datasourceId);
+        JSONObject datasourceConfig = JSONObject.parseObject(datasource.getConfig());
+        try {
+            DataProvider dataProvider = DataProviderManager.getDataProvider(datasource.getType());
+            Map<String, String> parameterMap = Maps.transformValues(datasourceConfig, Functions.toStringFunction());
+            dataProvider.setDataSource(parameterMap);
+            dataProvider.setQuery(query);
+            return dataProvider.getAggData(config, reload);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    public String[] getColumns(Long datasourceId, Map<String, String> query, Long datasetId) {
+        if (datasetId != null) {
+            Dataset dataset = getDataset(datasetId);
+            datasourceId = dataset.getDatasourceId();
+            query = dataset.getQuery();
+        }
+        DashboardDatasource datasource = datasourceDao.getDatasource(datasourceId);
+        JSONObject datasourceConfig = JSONObject.parseObject(datasource.getConfig());
+        try {
+            DataProvider dataProvider = DataProviderManager.getDataProvider(datasource.getType());
+            Map<String, String> parameterMap = Maps.transformValues(datasourceConfig, Functions.toStringFunction());
+            dataProvider.setDataSource(parameterMap);
+            dataProvider.setQuery(query);
+            String[] result = dataProvider.getColumn();
+            return result;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    public String[][] getDimensionValues(Long datasourceId, Map<String, String> query, Long datasetId, String columnName, AggConfig config) {
+        if (datasetId != null) {
+            Dataset dataset = getDataset(datasetId);
+            datasourceId = dataset.getDatasourceId();
+            query = dataset.getQuery();
+        }
+        DashboardDatasource datasource = datasourceDao.getDatasource(datasourceId);
+        JSONObject datasourceConfig = JSONObject.parseObject(datasource.getConfig());
+        try {
+            DataProvider dataProvider = DataProviderManager.getDataProvider(datasource.getType());
+            Map<String, String> parameterMap = Maps.transformValues(datasourceConfig, Functions.toStringFunction());
+            dataProvider.setDataSource(parameterMap);
+            dataProvider.setQuery(query);
+            String[][] result = dataProvider.getDimVals(columnName, config);
+            return result;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
 
     public ServiceStatus test(JSONObject dataSource, Map<String, String> query) {
         try {
@@ -63,7 +127,7 @@ public class DataProviderService {
                 dataArray = dataProvider.getData(parameterMap, query);
             }
         } catch (Exception e) {
-            msg =  e.getMessage();
+            msg = e.getMessage();
         }
         return new DataProviderResult(dataArray, msg);
     }

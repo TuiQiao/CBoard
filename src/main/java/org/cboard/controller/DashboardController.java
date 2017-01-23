@@ -7,6 +7,8 @@ import com.google.common.collect.Maps;
 import org.cboard.dao.*;
 import org.cboard.dataprovider.DataProviderManager;
 import org.cboard.dataprovider.DataProviderViewManager;
+import org.cboard.dataprovider.config.AggConfig;
+import org.cboard.dataprovider.result.AggregateResult;
 import org.cboard.dto.*;
 import org.cboard.pojo.*;
 import org.cboard.services.*;
@@ -72,27 +74,27 @@ public class DashboardController {
         return dataProviderService.test(datasourceO, Maps.transformValues(queryO, Functions.toStringFunction()));
     }
 
-    @RequestMapping(value = "/getData")
-    public DataProviderResult getData(@RequestParam(name = "datasourceId", required = false) Long datasourceId, @RequestParam(name = "query", required = false) String query, @RequestParam(name = "datasetId", required = false) Long datasetId) {
-        Map<String, String> strParams = null;
-        if (query != null) {
-            JSONObject queryO = JSONObject.parseObject(query);
-            strParams = Maps.transformValues(queryO, Functions.toStringFunction());
-        }
-        DataProviderResult result = dataProviderService.getData(datasourceId, strParams, datasetId);
-        return result;
-    }
-
-    @RequestMapping(value = "/getCachedData")
-    public DataProviderResult getCachedData(@RequestParam(name = "datasourceId", required = false) Long datasourceId, @RequestParam(name = "query", required = false) String query, @RequestParam(name = "datasetId", required = false) Long datasetId, @RequestParam(name = "reload", required = false, defaultValue = "false") Boolean reload) {
-        Map<String, String> strParams = null;
-        if (query != null) {
-            JSONObject queryO = JSONObject.parseObject(query);
-            strParams = Maps.transformValues(queryO, Functions.toStringFunction());
-        }
-        DataProviderResult result = cachedDataProviderService.getData(datasourceId, strParams, datasetId, reload);
-        return result;
-    }
+//    @RequestMapping(value = "/getData")
+//    public DataProviderResult getData(@RequestParam(name = "datasourceId", required = false) Long datasourceId, @RequestParam(name = "query", required = false) String query, @RequestParam(name = "datasetId", required = false) Long datasetId) {
+//        Map<String, String> strParams = null;
+//        if (query != null) {
+//            JSONObject queryO = JSONObject.parseObject(query);
+//            strParams = Maps.transformValues(queryO, Functions.toStringFunction());
+//        }
+//        DataProviderResult result = dataProviderService.getData(datasourceId, strParams, datasetId);
+//        return result;
+//    }
+//
+//    @RequestMapping(value = "/getCachedData")
+//    public DataProviderResult getCachedData(@RequestParam(name = "datasourceId", required = false) Long datasourceId, @RequestParam(name = "query", required = false) String query, @RequestParam(name = "datasetId", required = false) Long datasetId, @RequestParam(name = "reload", required = false, defaultValue = "false") Boolean reload) {
+//        Map<String, String> strParams = null;
+//        if (query != null) {
+//            JSONObject queryO = JSONObject.parseObject(query);
+//            strParams = Maps.transformValues(queryO, Functions.toStringFunction());
+//        }
+//        DataProviderResult result = cachedDataProviderService.getData(datasourceId, strParams, datasetId, reload);
+//        return result;
+//    }
 
     @RequestMapping(value = "/getDatasourceList")
     public List<ViewDashboardDatasource> getDatasourceList() {
@@ -274,6 +276,38 @@ public class DashboardController {
     @RequestMapping(value = "/checkDatasource")
     public ServiceStatus checkDatasource(@RequestParam(name = "id") Long id) {
         return datasourceService.checkDatasource(authenticationService.getCurrentUser().getUserId(), id);
+    }
+
+    @RequestMapping(value = "/getDimensionValues")
+    public String[][] getDimensionValues(@RequestParam(name = "datasourceId", required = false) Long datasourceId, @RequestParam(name = "query", required = false) String query, @RequestParam(name = "datasetId", required = false) Long datasetId, @RequestParam(name = "colmunName", required = true) String colmunName, @RequestParam(name = "cfg", required = false) String cfg) {
+        Map<String, String> strParams = null;
+        if (query != null) {
+            JSONObject queryO = JSONObject.parseObject(query);
+            strParams = Maps.transformValues(queryO, Functions.toStringFunction());
+        }
+        AggConfig config = JSONObject.parseObject(cfg, AggConfig.class);
+        return dataProviderService.getDimensionValues(datasourceId, strParams, datasetId, colmunName, config);
+    }
+
+    @RequestMapping(value = "/getColumns")
+    public String[] getColumns(@RequestParam(name = "datasourceId", required = false) Long datasourceId, @RequestParam(name = "query", required = false) String query, @RequestParam(name = "datasetId", required = false) Long datasetId) {
+        Map<String, String> strParams = null;
+        if (query != null) {
+            JSONObject queryO = JSONObject.parseObject(query);
+            strParams = Maps.transformValues(queryO, Functions.toStringFunction());
+        }
+        return dataProviderService.getColumns(datasourceId, strParams, datasetId);
+    }
+
+    @RequestMapping(value = "/getAggregateData")
+    public AggregateResult getAggregateData(@RequestParam(name = "datasourceId", required = false) Long datasourceId, @RequestParam(name = "query", required = false) String query, @RequestParam(name = "datasetId", required = false) Long datasetId, @RequestParam(name = "cfg") String cfg, @RequestParam(name = "reload", required = false, defaultValue = "false") Boolean reload) {
+        Map<String, String> strParams = null;
+        if (query != null) {
+            JSONObject queryO = JSONObject.parseObject(query);
+            strParams = Maps.transformValues(queryO, Functions.toStringFunction());
+        }
+        AggConfig config = JSONObject.parseObject(cfg, AggConfig.class);
+        return dataProviderService.queryAggData(datasourceId, strParams, datasetId, config, reload);
     }
 
 }

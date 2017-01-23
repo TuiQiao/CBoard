@@ -147,7 +147,7 @@ cBoard.controller('datasetCtrl', function ($scope, $http, dataService, $uibModal
     };
 
     $scope.editExp = function (col) {
-        var selects = angular.copy($scope.widgetData[0]);
+        var selects = angular.copy($scope.selects);
         var aggregate = [
             {name: 'sum', value: 'sum'},
             {name: 'count', value: 'count'},
@@ -232,16 +232,15 @@ cBoard.controller('datasetCtrl', function ($scope, $http, dataService, $uibModal
         cleanPreview();
         $scope.loading = true;
 
-        dataService.getData($scope.datasource.id, $scope.curWidget.query, null, function (widgetData) {
+        dataService.getColumns($scope.datasource.id, $scope.curWidget.query, null, function (columns) {
             $scope.loading = false;
             $scope.toChartDisabled = false;
-            if (widgetData.msg == '1') {
+            if (columns) {
                 $scope.alerts = [];
-                $scope.widgetData = widgetData.data;
-                $scope.selects = angular.copy($scope.widgetData[0]);
+                $scope.selects = columns;
             } else {
                 if (widgetData.msg != null) {
-                    $scope.alerts = [{msg: widgetData.msg, type: 'danger'}];
+                    $scope.alerts = [{msg: 'error', type: 'danger'}];
                 }
             }
 
@@ -256,7 +255,7 @@ cBoard.controller('datasetCtrl', function ($scope, $http, dataService, $uibModal
                 }
                 ]
             };
-            _.each($scope.widgetData[0], function (c) {
+            _.each($scope.selects, function (c) {
                 widget.keys.push({
                     col: c,
                     type: "eq",

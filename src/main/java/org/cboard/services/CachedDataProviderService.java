@@ -3,6 +3,7 @@ package org.cboard.services;
 import org.cboard.cache.CacheManager;
 import org.cboard.dto.DataProviderResult;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Repository;
 
 import java.util.Date;
@@ -17,6 +18,7 @@ import java.util.concurrent.ConcurrentMap;
 public class CachedDataProviderService extends DataProviderService {
 
     @Autowired
+    @Qualifier("dataCache")
     private CacheManager<DataProviderResult> cacheManager;
 
     public DataProviderResult getData(Long datasourceId, Map<String, String> query, Long datasetId, boolean reload) {

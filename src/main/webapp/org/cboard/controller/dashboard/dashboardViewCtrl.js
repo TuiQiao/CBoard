@@ -2,7 +2,7 @@
  * Created by yfyuan on 2016/8/2.
  */
 
-cBoard.controller('dashboardViewCtrl', function ($rootScope, $scope, $state, $stateParams, $http, ModalUtils, chartService, $interval, $uibModal, dataService) {
+cBoard.controller('dashboardViewCtrl', function ($timeout, $rootScope, $scope, $state, $stateParams, $http, ModalUtils, chartService, $interval, $uibModal, dataService) {
 
     $scope.loading = true;
 
@@ -12,6 +12,7 @@ cBoard.controller('dashboardViewCtrl', function ($rootScope, $scope, $state, $st
         $scope.datasetMeta = {};
         $scope.intervals = [];
         $scope.datasetFilters = {};
+        $scope.widgetFilters = {};
         $scope.load(false);
     });
 
@@ -19,13 +20,16 @@ cBoard.controller('dashboardViewCtrl', function ($rootScope, $scope, $state, $st
         $scope.widgetCfg = response;
     });
 
-    var buildRender = function (w) {
+    var buildRender = function (w, reload) {
         w.render = function (content, optionFilter, scope) {
-            w.realTimeTicket = chartService.render(content, w.widget.queryData, w.widget.data.config, optionFilter, scope);
+            chartService.render(content, w.widget.data, optionFilter, scope, reload).then(function (d) {
+                w.realTimeTicket = d;
+                w.loading = false;
+            });
             w.realTimeOption = {optionFilter: optionFilter, scope: scope};
         };
         w.modalRender = function (content, optionFilter, scope) {
-            w.modalRealTimeTicket = chartService.render(content, filterData(w.widget.id, w.widget.queryData), w.widget.data.config, optionFilter, scope);
+            w.modalRealTimeTicket = chartService.render(content, w.widget.data, optionFilter, scope);
             w.modalRealTimeOption = {optionFilter: optionFilter, scope: scope};
         };
     };
@@ -40,53 +44,48 @@ cBoard.controller('dashboardViewCtrl', function ($rootScope, $scope, $state, $st
     );
 
     $scope.load = function (reload) {
+        $scope.loading = true;
         _.each($scope.intervals, function (e) {
             $interval.cancel(e);
         });
         $scope.intervals = [];
+
+        if ($scope.board) {
+            _.each($scope.board.layout.rows, function (row) {
+                _.each(row.widgets, function (widget) {
+                    widget.show = false;
+                });
+            });
+        }
         $http.get("dashboard/getBoardData.do?id=" + $stateParams.id).success(function (response) {
             $scope.loading = false;
             $scope.board = response;
-            var queries = [];
-
             _.each($scope.board.layout.rows, function (row) {
                 _.each(row.widgets, function (widget) {
                     if (!_.isUndefined(widget.hasRole) && !widget.hasRole) {
                         return;
                     }
+                    buildRender(widget, reload);
+                    widget.loading = true;
+                    widget.show = true;
                     var w = widget.widget.data;
-                    var q;
-                    for (var i = 0; i < queries.length; i++) {
-                        if (queries[i].k == angular.toJson({d: w.datasource, q: w.query, s: w.datasetId})) {
-                            q = queries[i];
-                            break;
-                        }
-                    }
-                    if (!q) {
-                        q = {
-                            k: angular.toJson({d: w.datasource, q: w.query, s: w.datasetId}),
-                            datasource: w.datasource,
-                            query: w.query,
-                            datasetId: w.datasetId,
-                            widgets: [widget]
-                        };
-                        queries.push(q);
-                    } else {
-                        q.widgets.push(widget);
-                    }
-
-                    //real time
+                    //real time load task
                     var ds = _.find($scope.datasetList, function (e) {
                         return e.id == w.datasetId;
                     });
                     if (ds && ds.data.interval && ds.data.interval > 0) {
-                        if (!$scope.realtimeDataset[ds.id]) {
-                            $scope.realtimeDataset[ds.id] = [];
-                        }
-                        $scope.realtimeDataset[ds.id].push(widget);
+                        $scope.intervals.push($interval(function () {
+                            try {
+                                chartService.realTimeRender(widget.realTimeTicket, widget.widget.data);
+                                if (widget.modalRealTimeTicket) {
+                                    chartService.realTimeRender(widget.modalRealTimeTicket, widget.widget.data, widget.modalRealTimeOption.optionFilter, null);
+                                }
+                            } catch (e) {
+                                console.error(e);
+                            }
+                        }, ds.data.interval * 1000));
                     }
                 });
-
             });
 
             _.each($scope.board.layout.rows, function (row) {
@@ -97,191 +96,86 @@ cBoard.controller('dashboardViewCtrl', function ($rootScope, $scope, $state, $st
                 });
             });
 
-            _.each(queries, function (q) {
-                $http.post("dashboard/getCachedData.do", {
-                    datasourceId: q.datasource,
-                    query: angular.toJson(q.query),
-                    datasetId: q.datasetId,
-                    reload: reload
-                }).success(function (response) {
-                    _.each(q.widgets, function (w) {
-                        w.widget.queryData = response.data;
-                        buildRender(w);
-                        w.show = true;
-                    });
-
-                    if (!_.isUndefined(q.datasetId)) {
-                        $scope.datasetMeta[q.datasetId] = response.data[0];
-                        var selectsByColumn = {};
-                        _.each($scope.board.layout.rows, function (row) {
-                            _.each(row.params, function (param) {
-                                _.each(param.col, function (c) {
-                                    if (c.datasetId == q.datasetId) {
-                                        if (!selectsByColumn[c.column]) {
-                                            selectsByColumn[c.column] = [];
-                                        }
-                                        selectsByColumn[c.column].push(param.selects);
-                                    }
-                                });
-                            });
-                        });
-                        var selectsByIndex = {};
-                        _.each(_.keys(selectsByColumn), function (column) {
-                            for (var i = 0; i < response.data[0].length; i++) {
-                                if (response.data[0][i] == column) {
-                                    selectsByIndex[i] = selectsByColumn[column];
-                                }
-                            }
-                        });
-                        for (var i = 1; i < response.data.length; i++) {
-                            _.each(_.keys(selectsByIndex), function (index) {
-                                _.each(selectsByIndex[index], function (selects) {
-                                    if (_.indexOf(selects, response.data[i][index]) < 0) {
-                                        selects.push(response.data[i][index]);
-                                    }
-
-                                });
-                            });
-                        }
-                    } else {
-                        _.each(q.widgets, function (w) {
+            _.each($scope.board.layout.rows, function (row) {
+                _.each(row.params, function (param) {
+                    _.each(param.col, function (c) {
+                        var p;
+                        if (_.isUndefined(c.datasetId)) {
                             _.each($scope.board.layout.rows, function (row) {
-                                _.each(row.params, function (param) {
-                                    _.each(param.col, function (c) {
-                                        if (c.widgetId == w.widgetId) {
-                                            var index = _.indexOf(response.data[0], c.column);
-                                            for (var i = 1; i < response.data.length; i++) {
-                                                if (_.indexOf(param.selects, response.data[i][index]) < 0) {
-                                                    param.selects.push(response.data[i][index]);
-                                                }
-                                            }
-                                        }
-                                    });
+                                _.each(row.widgets, function (widget) {
+                                    if (widget.widget.id == c.widgetId) {
+                                        p = {
+                                            datasourceId: widget.widget.data.datasource,
+                                            query: angular.toJson(widget.widget.data.query),
+                                            datasetId: null
+                                        };
+                                    }
                                 });
                             });
-                        });
-                    }
-                }).error(function (data, header, config, status) {
-                    console.log(status);
-                });
-            });
-
-            //real time load task
-            _.each(_.keys($scope.realtimeDataset), function (dsId) {
-                var ds = _.find($scope.datasetList, function (e) {
-                    return e.id == dsId;
-                });
-                $scope.intervals.push($interval(function () {
-                    $http.post("dashboard/getCachedData.do", {
-                        datasetId: ds.id,
-                    }).success(function (response) {
-                        _.each($scope.realtimeDataset[dsId], function (w) {
-                            w.widget.queryData = response.data;
-                            try {
-                                chartService.realTimeRender(w.realTimeTicket, filterData(w.widget.id, w.widget.queryData), w.widget.data.config);
-                                if (w.modalRealTimeTicket) {
-                                    chartService.realTimeRender(w.modalRealTimeTicket, filterData(w.widget.id, w.widget.queryData), w.widget.data.config, w.modalRealTimeOption.optionFilter, null);
+                        } else {
+                            p = {datasourceId: null, query: null, datasetId: c.datasetId};
+                        }
+                        $http.post("dashboard/getDimensionValues.do", {
+                            datasourceId: p.datasourceId,
+                            query: p.query,
+                            datasetId: p.datasetId,
+                            colmunName: c.column
+                        }).success(function (response) {
+                            _.each(response[0], function (s) {
+                                if (_.indexOf(param.selects, s) < 0) {
+                                    param.selects.push(s);
                                 }
-                            } catch (e) {
-                                console.error(e);
-                            }
+                            });
+
                         });
                     });
-                }, ds.data.interval * 1000));
+                });
             });
         });
     };
 
-    var filterData = function (widgetId, data) {
-        var filter = $scope.widgetFilters ? $scope.widgetFilters[widgetId] : undefined;
-        if (filter) {
-            var result = [data[0]];
-            for (var i = 1; i < data.length; i++) {
-                if (filter(data[i])) {
-                    result.push(data[i]);
-                }
-            }
-            return result;
+    var injectFilter = function (widget) {
+        widget.data.config.boardFilters = [];
+        if (_.isUndefined(widget.data.datasetId)) {
+            widget.data.config.boardFilters = $scope.widgetFilters[widget.id];
+        } else {
+            widget.data.config.boardFilters = $scope.datasetFilters[widget.id];
         }
-        return data;
-    };
-
-    var getBoardWidgetByWidgetId = function (widgetId) {
-        for (var i = 0; i < $scope.board.layout.rows.length; i++) {
-            var row = $scope.board.layout.rows[i];
-            for (var j = 0; row.widgets && j < row.widgets.length; j++) {
-                if (row.widgets[j].widget.id == widgetId) {
-                    return row.widgets[j];
-                }
-            }
-        }
-    };
-
-    var getBoardWidgetByDatasetId = function (datasetId) {
-        var result = [];
-        _.each($scope.board.layout.rows, function (row) {
-            _.each(row.widgets, function (w) {
-                if (w.widget.data.datasetId == datasetId) {
-                    result.push(w);
-                }
-            });
-        });
-        return result;
+        return widget;
     };
 
     $scope.applyParamFilter = function () {
         $scope.widgetFilters = [];
-        var widgetRules = {};
-        var pushWidgetRules = function (widgetId, rule) {
-            if (!widgetRules[widgetId]) {
-                widgetRules[widgetId] = [];
-            }
-            widgetRules[widgetId].push(rule);
-        };
         _.each($scope.board.layout.rows, function (row) {
             _.each(row.params, function (param) {
                 if (param.values.length <= 0) {
                     return;
                 }
                 _.each(param.col, function (col) {
+                    var p = {
+                        col: col.column,
+                        type: param.type,
+                        values: param.values
+                    };
                     if (_.isUndefined(col.datasetId)) {
-                        var w = getBoardWidgetByWidgetId(col.widgetId);
-                        var idx = _.indexOf(w.widget.queryData[0], col.column);
-                        var rule = dataService.getRule({
-                            type: param.type,
-                            values: param.values
-                        }, idx);
-                        pushWidgetRules(w.widget.id, rule);
+                        if (!$scope.widgetFilters[col.widgetId]) {
+                            $scope.widgetFilters[col.widgetId] = [];
+                        }
+                        $scope.widgetFilters[col.widgetId].push(p);
                     } else {
-                        var wArr = getBoardWidgetByDatasetId(col.datasetId);
-                        var idx = _.indexOf($scope.datasetMeta[col.datasetId], col.column);
-                        var rule = dataService.getRule({
-                            type: param.type,
-                            values: param.values
-                        }, idx);
-                        _.each(wArr, function (w) {
-                            pushWidgetRules(w.widget.id, rule);
-                        });
+                        if (!$scope.datasetFilters[col.datasetId]) {
+                            $scope.datasetFilters[col.datasetId] = [];
+                        }
+                        $scope.datasetFilters[col.datasetId].push(p);
                     }
                 });
             });
         });
 
-        _.each(_.keys(widgetRules), function (widgetId) {
-            $scope.widgetFilters[widgetId] = function (row) {
-                for (var i = 0; i < widgetRules[widgetId].length; i++) {
-                    if (!widgetRules[widgetId][i](row)) {
-                        return false;
-                    }
-                }
-                return true;
-            };
-        });
-
         _.each($scope.board.layout.rows, function (row) {
             _.each(row.widgets, function (w) {
                 try {
-                    chartService.realTimeRender(w.realTimeTicket, filterData(w.widget.id, w.widget.queryData), w.widget.data.config);
+                    chartService.realTimeRender(w.realTimeTicket, injectFilter(w.widget).data);
                 } catch (e) {
                     console.error(e);
                 }
@@ -352,13 +246,15 @@ cBoard.controller('dashboardViewCtrl', function ($rootScope, $scope, $state, $st
 
     $scope.reload = function (widget) {
         widget.show = false;
-        $http.post("dashboard/getCachedData.do", {
-            datasourceId: widget.widget.data.datasource,
-            query: angular.toJson(widget.widget.data.query),
-            datasetId: widget.widget.data.datasetId,
-            reload: true
-        }).success(function (response) {
-            widget.widget.queryData = response.data;
+        widget.render = function (content, optionFilter, scope) {
+            chartService.render(content, widget.widget.data, optionFilter, scope, true).then(function (d) {
+                widget.realTimeTicket = d;
+                widget.loading = false;
+            });
+            widget.realTimeOption = {optionFilter: optionFilter, scope: scope};
+        };
+        $timeout(function () {
+            widget.loading = true;
             widget.show = true;
         });
     };

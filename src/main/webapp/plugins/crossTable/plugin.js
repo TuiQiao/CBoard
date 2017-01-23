@@ -7,8 +7,9 @@ var crossTable = {
         var data = args.data,
             chartConfig = args.chartConfig,
             tall = args.tall,
+            pageDataNum = 20,
             container = args.container;
-        var html = "<table class = 'table_wrapper' id='tableWrapper'><thead>",
+        var html = "<table class = 'table_wrapper' id='tableWrapper'><thead class='fixedHeader'>",
             colContent = "<tr>";
         for (var i = 0; i < chartConfig.groups.length; i++) {
             var colspan = 1;
@@ -20,7 +21,7 @@ var crossTable = {
                 if ((data[i][y + 1]) && (data[i][y].data == data[i][y + 1].data)) {
                     if(i > 0) {
                         var noEqual = false;
-                        for (var s = i - 1; s > -1; i--) {
+                        for (var s = i - 1; s > -1; s--) {
                             if (data[s][y].data != data[s][y + 1].data) {
                                 noEqual = true;
                                 break;
@@ -37,17 +38,6 @@ var crossTable = {
                         else {
                             colspan++;
                         }
-                        // if (data[i - 1][y].data == data[i - 1][y + 1].data) {
-                        //     colspan++
-                        // }
-                        // else {
-                        //     colList.push({
-                        //         data: data[i][y].data,
-                        //         colSpan: colspan,
-                        //         property: data[i][y].property
-                        //     });
-                        //     colspan = 1;
-                        // }
                     }
                     else if(i == 0) {
                         colspan++;
@@ -72,9 +62,52 @@ var crossTable = {
         for (var k = 0; k < data[chartConfig.groups.length].length; k++) {
             colContent += "<th class=" + data[chartConfig.groups.length][k].property + "><div>" + data[chartConfig.groups.length][k].data + "</div></th>";
         }
-        html += colContent + "</tr></thead><tbody>";
+        html += colContent + "</tr></thead><tbody class='scrollContent'>";
+        var dataPage = this.paginationProcessData(data, chartConfig.groups.length + 1, pageDataNum);
+        var trDom = this.render(dataPage[0], chartConfig);
+        html = html + trDom + "</tbody></table>";
+        var optionDom = "<select><option value='20'>20</option><option value='50'>50</option><option value='100'>100</option><option value='150'>150</option></select>";
+        var PaginationDom = "<div><div class='optionNum'><span>Show</span>" + optionDom + "<span>entries</span></div><div class='page'><ul></ul></div></div>";
+        var operate = "<div class='toolbar'><span class='info'></span><span class='exportBnt' title='export'></span></div>";
+
+        $(container).html(operate);
+        $(container).append("<div class='tableView' style='width:99%;max-height:" + tall + "px;overflow:auto'>" + html + "</div>");
+        $(container).append(PaginationDom);
+        var pageObj = {
+            data: dataPage,
+            chartConfig: chartConfig
+        };
+        chartConfig.values[0].cols.length ? this.renderPagination(dataPage.length, 1, pageObj) : null;
+        this.clickPageNum(dataPage, chartConfig);
+        this.selectDataNum(data, chartConfig.groups.length + 1, chartConfig);
+        this.export();
+    },
+    paginationProcessData: function (data, num, pageDataNum) {
+        var length = data.length - num;
+        var t = length % pageDataNum;
+        var rest = parseInt(length / pageDataNum);
+        var page;
+        var pageData = [];
+        t == 0 ? page = rest : page = rest + 1;
+        for (var i = 1; i < page + 1; i++) {
+            var partData = [];
+            if (i == page) {
+                for (var j = (i - 1) * pageDataNum + num; j < pageDataNum * (page - 1) + t + num; j++) {
+                    partData.push(data[j]);
+                }
+            } else {
+                for (var j = (i - 1) * pageDataNum + num; j < pageDataNum * i + num; j++) {
+                    partData.push(data[j]);
+                }
+            }
+            pageData.push(partData);
+        }
+        return pageData;
+    },
+    render: function (data, chartConfig) {
+        var html = '';
         for (var r = 0; r < chartConfig.keys.length; r++) {
-            for(var  n = chartConfig.groups.length + 1; n < data.length; n++){
+            for(var n = 1; n < data.length; n++){
                 var node = data[n][r].data;
                 if (r > 0) {
                     var parent = data[n][r - 1].data;
@@ -102,32 +135,129 @@ var crossTable = {
                 }
             }
         }
-        for(var  n = chartConfig.groups.length + 1; n < data.length; n++){
+        for(var n = 0; n < data.length; n++) {
             var rowContent = "<tr>";
-            for (var m = 0; m < chartConfig.keys.length; m++){
+            var isFirstLine = (n == 0) ? true : false;
+            for (var m = 0; m < chartConfig.keys.length; m++) {
+                var currentCell = data[n][m];
+                var rowParentCell = data[n][m-1];
                 if (m > 0) {
-                    if (data[n][m].rowSpan == 'row_null' && data[n][m - 1].rowSpan == 'row_null') {
+                    if (currentCell.rowSpan == 'row_null' && rowParentCell.rowSpan == 'row_null' && !isFirstLine) {
                         rowContent += "<th class=row_null><div></div></th>";
                     } else {
-                        rowContent += "<th class=row><div>"+data[n][m].data+"</div></th>";
+                        rowContent += "<th class=row><div>" + currentCell.data+"</div></th>";
                     }
                 } else {
-                    if (data[n][m].rowSpan == 'row_null') {
+                    if (currentCell.rowSpan == 'row_null' && !isFirstLine) {
                         rowContent += "<th class=row_null><div></div></th>";
                     } else {
-                        rowContent += "<th class=row><div>"+data[n][m].data+"</div></th>";
+                        rowContent += "<th class=row><div>" + currentCell.data + "</div></th>";
                     }
                 }
-
             }
-            for(var y = chartConfig.keys.length; y < data[n].length; y++){
+            for (var y = chartConfig.keys.length; y < data[n].length; y++) {
                 rowContent += "<td class=" + data[n][m].property + "><div>"+data[n][y].data+"</div></td>";
             }
             html = html + rowContent + "</tr>";
         }
-        html = html + "</tbody></table>";
-        $(container).html("<div class='exportBnt'><button>export</button></div><div style='width: 99%;max-height:" + tall + "px;overflow: auto'>" + html + "</div>");
-        this.export();
+        return html;
+    },
+    selectDataNum: function (data, num, chartConfig) {
+        var _this = this;
+        $('.optionNum select').on('change', function (e) {
+            var pageDataNum = e.target.value;
+            var dataPage =_this.paginationProcessData(data, num, pageDataNum);
+            $('tbody.scrollContent').html(_this.render(dataPage[0], chartConfig));
+            _this.renderPagination(dataPage.length, 1);
+            _this.clickPageNum(dataPage, chartConfig);
+        });
+    },
+    clickPageNum: function (data, chartConfig) {
+        var _this = this;
+        $('a.pageLink').on('click', function (e) {
+            var pageNum = e.target.innerText - 1;
+            var pageObj = {
+                data: data,
+                chartConfig: chartConfig
+            };
+
+            $('tbody.scrollContent').html(_this.render(data[pageNum], chartConfig));
+            _this.renderPagination(data.length, parseInt(e.target.innerText), pageObj);
+            _this.clickPageNum(data, chartConfig);
+        });
+    },
+    renderPagination: function (pageCount, pageNumber, pageObj) {
+        var liStr = '<li><a class="previewLink">Preview</a></li>';
+        if (pageCount < 10) {
+            for (var a = 0;a < pageCount; a++) {
+                liStr += '<li><a class="pageLink">' + (a + 1) + '</a></li>';
+            }
+        }
+        else {
+            if (pageNumber < 6) {
+                for (var a = 0;a < pageNumber + 2; a++) {
+                    liStr += '<li><a class="pageLink">' + (a + 1) + '</a></li>';
+                }
+                liStr += '<li class="disable"><span class="ellipse">...</span></li>';
+                for (var i = pageCount - 2;i < pageCount; i++) {
+                    liStr += '<li><a class="pageLink">' + (i + 1) + '</a></li>';
+                }
+            } else if (pageNumber <= (pageCount - 5)) {
+                for (var c = 0;c < 2; c++) {
+                    liStr += '<li><a class="pageLink">' + (c + 1) + '</a></li>';
+                }
+                liStr += '<li class="disable"><span class="ellipse">...</span></li>';
+                for (var j = pageNumber - 2; j < pageNumber + 3; j++) {
+                    liStr += '<li><a class="pageLink">' + j + '</a></li>';
+                }
+                liStr += '<li class="disable"><span class="ellipse">...</span></li>';
+                for (var i = pageCount - 2;i < pageCount; i++) {
+                    liStr += '<li><a class="pageLink">' + (i + 1) + '</a></li>';
+                }
+            } else {
+                for (var c = 0;c < 2; c++) {
+                    liStr += '<li><a class="pageLink">' + (c + 1) + '</a></li>';
+                }
+                liStr += '<li class="disable"><span class="ellipse">...</span></li>';
+                for (var i = pageNumber - 2; i < pageCount + 1; i++) {
+                    liStr += '<li><a class="pageLink">' + i + '</a></li>';
+                }
+            }
+        }
+        liStr += '<li><a class="nextLink">Next</a></li>';
+        $('.page>ul').html(liStr);
+        if (pageNumber == 1) {
+            $('.page a.previewLink').addClass('hide');
+        } else if (pageNumber == pageCount) {
+            $('.page a.nextLink').addClass('hide');
+        }
+        this.buttonColor(pageNumber);
+        this.clickNextPrev(pageCount, pageObj);
+    },
+    buttonColor: function (pageNum) {
+        var buttons = document.querySelectorAll('.page li>a');
+
+        for (var i =0; i < buttons.length; i++) {
+            buttons[i].innerText == pageNum ? $(buttons[i]).addClass('current') : null;
+        }
+    },
+    clickNextPrev: function(pageCount, pageObj) {
+        var _this = this;
+
+        $('.page a.previewLink').on('click', function(){
+            var pageNum = parseInt($('a.current')[0].text) - 1;
+
+            $('tbody.scrollContent').html(_this.render(pageObj.data[pageNum - 1], pageObj.chartConfig));
+            _this.renderPagination(pageCount, pageNum, pageObj);
+            _this.clickPageNum(pageObj.data, pageObj.chartConfig);
+        });
+        $('.page a.nextLink').on('click', function(){
+            var pageNum = parseInt($('a.current')[0].text) + 1;
+
+            $('tbody.scrollContent').html(_this.render(pageObj.data[pageNum - 1], pageObj.chartConfig));
+            _this.renderPagination(pageCount, pageNum, pageObj);
+            _this.clickPageNum(pageObj.data, pageObj.chartConfig);
+        });
     },
     export: function() {
         var idTmr;

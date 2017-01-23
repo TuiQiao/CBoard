@@ -198,6 +198,7 @@ th {
   font-size: 10px;
   padding: 3px 0px;
 }
+
 /*! Source: https://github.com/h5bp/html5-boilerplate/blob/master/src/css/main.css */
 @media print {
   *,
@@ -2647,11 +2648,6 @@ div.cubeTree .cube, div.cubeSelected .cube{
 .paramTemplate span.filterParam{
   display: inline-block;
   margin-right: 15px;
-}
-.exportBnt{
-  margin-bottom: 10px;
-  float: right;
-  width: 60px;
 }
 .form-control {
   display: block;
@@ -6863,6 +6859,7 @@ button.close {
     display: none !important;
   }
 }
+
 table th.row {
   border-top: 1px solid #d5d5d5;
   white-space: nowrap;

@@ -5092,3 +5092,103 @@ button >canvas {
   top: 100%;
   left: 0;
 }
+.page {
+    margin: 10px auto;
+    width: 60%;
+    overflow: auto;
+    padding: 0 5px 5px 0;
+    float: right;
+}
+.page>ul {
+  margin: 10px auto;
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  overflow: auto;
+    float: right;
+}
+.page li {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  float: left;
+  cursor: pointer;
+}
+ a.pageLink, a.nextLink, a.previewLink {
+     float: left;
+     color: #666;
+     font-size: 14px;
+     line-height: 24px;
+     font-weight: normal;
+     text-align: center;
+     border: 1px solid #BBB;
+     width: 30px;
+     margin: 0 5px 0 0;
+     border-radius: 3px;
+     box-shadow: 0 1px 2px rgba(0,0,0,0.2);
+}
+a.current {
+    background-color: #ccc;
+}
+a.nextLink, a.previewLink{
+    width: 80px;
+}
+a.hide{
+    display: none;
+}
+
+span.ellipse {
+    background: none;
+    border: none;
+    border-radius: 0;
+    box-shadow: none;
+    font-weight: bold;
+    cursor: default;
+    float: left;
+    color: #666;
+    font-size: 14px;
+    line-height: 24px;
+    text-align: center;
+    min-width: 14px;
+    padding: 0 7px;
+    margin: 0 5px 0 0;
+}
+ .optionNum {
+  float: left;
+  height: 26px;
+  width: 200px;
+  margin: 7px 20px 0 0;
+ }
+.optionNum select {
+    margin: 0 6px 0 6px;
+    width: 60px;
+    height: 26px;
+}
+.header_key{
+    font-weight: bold;
+}
+.toolbar{
+    width: 99%;
+    height: 40px;
+    margin: 0 0 10px 0;
+    box-shadow: 1px 1px 5px #ccc;
+}
+.exportBnt, .drillUp, .drillDown{
+    margin:10px 5px 10px 5px;
+    float: right;
+    width: 20px;
+    height: 20px;
+    cursor: pointer;
+}
+.drillUp{
+    background: url("../../imgs/drillup.png");
+    background-size: cover;
+}
+.drillDown{
+    background: url("../../imgs/drilldown.svg");
+    background-size: cover;
+}
+.exportBnt{
+    background: url("../../imgs/excel.svg");
+    background-size: cover;
+}

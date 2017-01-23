@@ -226,6 +226,10 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
                     }];
                 };
                 $scope.ok = function () {
+                    if (!$scope.data.alias) {
+                        ModalUtils.alert(translate('CONFIG.WIDGET.ALIAS') + translate('COMMON.NOT_EMPTY'), "modal-warning", "lg");
+                        return;
+                    }
                     ok($scope.data);
                     $uibModalInstance.close();
                 };
@@ -269,6 +273,7 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
             var dsExp = angular.copy(_.find($scope.datasetList, function (ds) {
                 return ds.id == $scope.curWidget.datasetId;
             }).data.expressions);
+
             var axes = $scope.curWidget.config.values;
             if ($scope.optFlag == 'new' || _.isUndefined(axes)) {
                 $scope.expressions = dsExp;

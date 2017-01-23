@@ -28,7 +28,7 @@ public class Filter {
 
     public boolean filter(String[] row) {
         boolean result = ruleList.stream().allMatch(rule -> {
-            if (rule.getValues().size() == 0) {
+            if (rule.getValues().size() == 0 || rule.getValues().get(0) == null) {
                 return true;
             }
             String v = row[columnIndex.get(rule.getColumnName())];

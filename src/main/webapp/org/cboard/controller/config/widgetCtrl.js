@@ -420,7 +420,7 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
 
     $scope.newConfig = function () {
         $scope.curWidget.config = {};
-        $scope.curWidget.config.chart_type = 'line';
+        $scope.curWidget.config.chart_type = 'table';
         loadDsExpressions();
         cleanPreview();
         switch ($scope.curWidget.config.chart_type) {
@@ -759,9 +759,9 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
         },
         toKeysGroups: function (list, index, item, type) {
             if (type == 'col') {
-                list[index] = {col: item.col, type: 'eq', values: []};
+                list[index] = {col: item.col, type: 'eq', values: [], sort: 'asc'};
             } else if (type == 'select') {
-                list[index] = {col: item, type: 'eq', values: []};
+                list[index] = {col: item, type: 'eq', values: [], sort: 'asc'};
             }
         }
     };

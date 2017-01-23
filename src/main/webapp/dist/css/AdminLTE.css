@@ -5100,11 +5100,11 @@ button >canvas {
     float: right;
 }
 .page>ul {
-  margin: 10px auto;
-  list-style: none;
-  padding: 0;
-  margin: 0;
-  overflow: auto;
+    margin: 10px auto;
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    overflow: auto;
     float: right;
 }
 .page li {
@@ -5154,30 +5154,36 @@ span.ellipse {
     margin: 0 5px 0 0;
 }
  .optionNum {
-  float: left;
-  height: 26px;
-  width: 200px;
-  margin: 7px 20px 0 0;
+    float: left;
+    height: 26px;
+    width: 200px;
+    margin: 7px 20px 0 0;
  }
 .optionNum select {
     margin: 0 6px 0 6px;
     width: 60px;
     height: 26px;
 }
-.header_key{
+.header_key {
     font-weight: bold;
 }
-.toolbar{
+.toolbar {
     width: 99%;
-    height: 40px;
+    height: 30px;
     margin: 0 0 10px 0;
     box-shadow: 1px 1px 5px #ccc;
+    background-color: #F9F9F9;
+}
+.info {
+    display: inline-block;
+    float: left;
+    margin: 4px 0 0 5px;
 }
 .exportBnt, .drillUp, .drillDown{
-    margin:10px 5px 10px 5px;
+    margin:7px 5px 10px 5px;
     float: right;
-    width: 20px;
-    height: 20px;
+    width: 15px;
+    height: 15px;
     cursor: pointer;
 }
 .drillUp{

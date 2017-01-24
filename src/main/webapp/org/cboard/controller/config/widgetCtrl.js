@@ -239,16 +239,21 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
 
     $scope.loadData = function () {
         $scope.loading = true;
-        dataService.getColumns($scope.datasource ? $scope.datasource.id : null, $scope.curWidget.query, $scope.customDs ? null : $scope.curWidget.datasetId, function (columns) {
-            $scope.loading = false;
-            $scope.alerts = [];
-            if (columns) {
-                $scope.columns = columns;
-                $scope.toChartDisabled = false;
-                $scope.newConfig();
-                $scope.filterSelect = {};
-            } else {
-                $scope.alerts = [{msg: 'There is something wrong.', type: 'danger'}];
+        dataService.getColumns({
+            datasource: $scope.datasource ? $scope.datasource.id : null,
+            query: $scope.curWidget.query,
+            datasetId: $scope.customDs ? null : $scope.curWidget.datasetId,
+            callback: function (dps) {
+                $scope.loading = false;
+                $scope.alerts = [];
+                if (dps.msg == "1") {
+                    $scope.columns = dps.columns;
+                    $scope.toChartDisabled = false;
+                    $scope.newConfig();
+                    $scope.filterSelect = {};
+                } else {
+                    $scope.alerts = [{msg: dps.msg, type: 'danger'}];
+                }
             }
         });
     };
@@ -687,12 +692,17 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
         $scope.customDs = _.isUndefined($scope.curWidget.datasetId);
         loadDsExpressions();
         addWatch();
-        dataService.getColumns($scope.datasource ? $scope.datasource.id : null, $scope.curWidget.query, $scope.customDs ? null : $scope.curWidget.datasetId, function (columns) {
-            $scope.loading = false;
-            if (columns) {
-                $scope.columns = columns;
-            } else {
-                ModalUtils.alert('There is something wrong.', "modal-danger", "lg");
+        dataService.getColumns({
+            datasource: $scope.datasource ? $scope.datasource.id : null,
+            query: $scope.curWidget.query,
+            datasetId: $scope.customDs ? null : $scope.curWidget.datasetId,
+            callback: function (columns) {
+                $scope.loading = false;
+                if (columns) {
+                    $scope.columns = columns;
+                } else {
+                    ModalUtils.alert('There is something wrong.', "modal-danger", "lg");
+                }
             }
         });
     };

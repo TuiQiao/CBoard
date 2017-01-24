@@ -1,5 +1,7 @@
 package org.cboard.dto;
 
+import org.cboard.dataprovider.DataProvider;
+
 import java.io.Serializable;
 
 /**
@@ -8,8 +10,11 @@ import java.io.Serializable;
 public class DataProviderResult implements Serializable{
 
     private String[][] data;
+    private String[] columns;
     private String msg;
     private int resultCount = 0;
+
+    public DataProviderResult() {}
 
     public DataProviderResult(String[][] data, String msg) {
         this.data = data;
@@ -44,5 +49,13 @@ public class DataProviderResult implements Serializable{
 
     public void setResultCount(int resultCount) {
         this.resultCount = resultCount;
+    }
+
+    public String[] getColumns() {
+        return columns;
+    }
+
+    public void setColumns(String[] columns) {
+        this.columns = columns;
     }
 }

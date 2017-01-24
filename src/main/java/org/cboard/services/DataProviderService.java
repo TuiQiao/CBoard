@@ -24,9 +24,6 @@ import java.util.Map;
 @Repository
 public class DataProviderService {
 
-    @Value("${dataprovider.resultLimit:200000}")
-    private int resultLimit;
-
     @Autowired
     private DatasourceDao datasourceDao;
 
@@ -53,7 +50,8 @@ public class DataProviderService {
         return null;
     }
 
-    public String[] getColumns(Long datasourceId, Map<String, String> query, Long datasetId) {
+    public DataProviderResult getColumns(Long datasourceId, Map<String, String> query, Long datasetId) {
+        DataProviderResult dps = new DataProviderResult();
         if (datasetId != null) {
             Dataset dataset = getDataset(datasetId);
             datasourceId = dataset.getDatasourceId();
@@ -67,11 +65,13 @@ public class DataProviderService {
             dataProvider.setDataSource(parameterMap);
             dataProvider.setQuery(query);
             String[] result = dataProvider.getColumn();
-            return result;
+            dps.setColumns(result);
+            dps.setMsg("1");
         } catch (Exception e) {
             e.printStackTrace();
+            dps.setMsg(e.getMessage());
         }
-        return null;
+        return dps;
     }
 
     public String[][] getDimensionValues(Long datasourceId, Map<String, String> query, Long datasetId, String columnName, AggConfig config) {
@@ -120,12 +120,7 @@ public class DataProviderService {
             JSONObject config = JSONObject.parseObject(datasource.getConfig());
             DataProvider dataProvider = DataProviderManager.getDataProvider(datasource.getType());
             Map<String, String> parameterMap = Maps.transformValues(config, Functions.toStringFunction());
-            resultCount = dataProvider.resultCount(parameterMap, query);
-            if (resultCount > resultLimit) {
-                msg = "Cube result count is " + resultCount + ", greater than limit " + resultLimit;
-            } else {
-                dataArray = dataProvider.getData(parameterMap, query);
-            }
+            dataArray = dataProvider.getData(parameterMap, query);
         } catch (Exception e) {
             msg = e.getMessage();
         }

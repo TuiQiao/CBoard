@@ -290,7 +290,9 @@ public class DashboardController {
     }
 
     @RequestMapping(value = "/getColumns")
-    public String[] getColumns(@RequestParam(name = "datasourceId", required = false) Long datasourceId, @RequestParam(name = "query", required = false) String query, @RequestParam(name = "datasetId", required = false) Long datasetId) {
+    public DataProviderResult getColumns(@RequestParam(name = "datasourceId", required = false) Long datasourceId,
+                                         @RequestParam(name = "query", required = false) String query,
+                                         @RequestParam(name = "datasetId", required = false) Long datasetId) {
         Map<String, String> strParams = null;
         if (query != null) {
             JSONObject queryO = JSONObject.parseObject(query);

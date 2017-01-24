@@ -53,13 +53,13 @@ cBoard.service('dataService', function ($http, updateService) {
         });
     };
 
-    this.getColumns = function (datasource, query, datasetId, callback) {
+    this.getColumns = function(option) {
         $http.post("dashboard/getColumns.do", {
-            datasourceId: datasource,
-            query: angular.toJson(query),
-            datasetId: datasetId
+            datasourceId: option.datasource,
+            query: angular.toJson(option.query),
+            datasetId: option.datasetId
         }).success(function (response) {
-            callback(response);
+            option.callback(response);
         });
     };
 

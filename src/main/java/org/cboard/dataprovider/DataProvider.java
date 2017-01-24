@@ -16,6 +16,7 @@ public abstract class DataProvider {
     private Aggregator aggregator;
     private Map<String, String> dataSource;
     private Map<String, String> query;
+    private int resultLimit;
 
     /**
      * get the aggregated data by user's widget designer
@@ -71,13 +72,19 @@ public abstract class DataProvider {
 
     abstract public String[][] getData(Map<String, String> dataSource, Map<String, String> query) throws Exception;
 
-    abstract public int resultCount(Map<String, String> dataSource, Map<String, String> query) throws Exception;
-
     public void setDataSource(Map<String, String> dataSource) {
         this.dataSource = dataSource;
     }
 
     public void setQuery(Map<String, String> query) {
         this.query = query;
+    }
+
+    public void setResultLimit(int resultLimit) {
+        this.resultLimit = resultLimit;
+    }
+
+    public int getResultLimit() {
+        return resultLimit;
     }
 }

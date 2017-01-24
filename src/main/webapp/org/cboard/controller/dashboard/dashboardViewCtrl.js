@@ -146,6 +146,7 @@ cBoard.controller('dashboardViewCtrl', function ($timeout, $rootScope, $scope, $
 
     $scope.applyParamFilter = function () {
         $scope.widgetFilters = [];
+        $scope.datasetFilters = [];
         _.each($scope.board.layout.rows, function (row) {
             _.each(row.params, function (param) {
                 if (param.values.length <= 0) {
@@ -267,7 +268,7 @@ cBoard.controller('dashboardViewCtrl', function ($timeout, $rootScope, $scope, $
             backdrop: false,
             size: 'lg',
             controller: function ($scope, $uibModalInstance, dataService) {
-                var paramSelects = _.sortBy(dataService.toNumber(param.selects));
+                var paramSelects = param.selects;
                 paramSelects.map(function (d, l) {
                     param.values.map(function (i) {
                         d == i ? paramSelects.splice(l, 1) : null;

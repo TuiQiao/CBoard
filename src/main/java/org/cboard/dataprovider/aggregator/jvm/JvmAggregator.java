@@ -2,12 +2,14 @@ package org.cboard.dataprovider.aggregator.jvm;
 
 import com.alibaba.fastjson.JSONObject;
 import com.google.common.base.Charsets;
+import com.google.common.collect.Ordering;
 import com.google.common.hash.Hashing;
 import org.cboard.cache.CacheManager;
 import org.cboard.dataprovider.aggregator.Aggregator;
 import org.cboard.dataprovider.config.AggConfig;
 import org.cboard.dataprovider.result.AggregateResult;
 import org.cboard.dataprovider.result.ColumnIndex;
+import org.cboard.util.NaturalOrderComparator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -59,11 +61,12 @@ public class JvmAggregator implements Aggregator {
         Map<String, Integer> columnIndex = getColumnIndex(data);
         final int fi = columnIndex.get(columnName);
         Filter rowFilter = new Filter(config, columnIndex);
+        NaturalOrderComparator comparator = new NaturalOrderComparator();
         String[] filtered = Arrays.stream(data).parallel().skip(1)
                 .filter(rowFilter::filter)
                 .map(e -> e[fi])
                 .distinct()
-                .sorted()
+                .sorted(comparator)
                 .toArray(String[]::new);
         String[] nofilter = Arrays.stream(data).parallel().skip(1)
                 .map(e -> e[fi])

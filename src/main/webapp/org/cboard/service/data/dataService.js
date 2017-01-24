@@ -53,11 +53,12 @@ cBoard.service('dataService', function ($http, updateService) {
         });
     };
 
-    this.getColumns = function (datasource, query, datasetId, callback) {
+    this.getColumns = function (datasource, query, datasetId, callback, reload) {
         $http.post("dashboard/getColumns.do", {
             datasourceId: datasource,
             query: angular.toJson(query),
-            datasetId: datasetId
+            datasetId: datasetId,
+            reload: reload
         }).success(function (response) {
             callback(response);
         });

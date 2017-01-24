@@ -9,6 +9,7 @@ cBoard.controller('datasetCtrl', function ($scope, $http, dataService, $uibModal
     $scope.curWidget = {};
     $scope.alerts = [];
     $scope.verify = {dsName: true};
+    $scope.loadFromCache = true;
 
     var treeID = 'dataSetTreeID'; // Set to a same value with treeDom
     var originalData = [];
@@ -264,7 +265,7 @@ cBoard.controller('datasetCtrl', function ($scope, $http, dataService, $uibModal
             });
 
             //chartService.render($('#dataset_preview'), $scope.widgetData, widget, null, {myheight: 300});
-        });
+        }, !$scope.loadFromCache);
     };
 
     var cleanPreview = function () {
@@ -355,7 +356,7 @@ cBoard.controller('datasetCtrl', function ($scope, $http, dataService, $uibModal
 
         jstree_ReloadTree(treeID, originalData);
     };
-    
+
     $scope.treeEventsObj = function () {
         var baseEventObj = jstree_baseTreeEventsObj({
             ngScope: $scope, ngHttp: $http, ngTimeout: $timeout,

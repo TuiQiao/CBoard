@@ -53,7 +53,7 @@ public class DataProviderService {
         return null;
     }
 
-    public String[] getColumns(Long datasourceId, Map<String, String> query, Long datasetId) {
+    public String[] getColumns(Long datasourceId, Map<String, String> query, Long datasetId, boolean reload) {
         if (datasetId != null) {
             Dataset dataset = getDataset(datasetId);
             datasourceId = dataset.getDatasourceId();
@@ -66,7 +66,7 @@ public class DataProviderService {
             Map<String, String> parameterMap = Maps.transformValues(datasourceConfig, Functions.toStringFunction());
             dataProvider.setDataSource(parameterMap);
             dataProvider.setQuery(query);
-            String[] result = dataProvider.getColumn();
+            String[] result = dataProvider.getColumn(reload);
             return result;
         } catch (Exception e) {
             e.printStackTrace();
@@ -74,7 +74,7 @@ public class DataProviderService {
         return null;
     }
 
-    public String[][] getDimensionValues(Long datasourceId, Map<String, String> query, Long datasetId, String columnName, AggConfig config) {
+    public String[][] getDimensionValues(Long datasourceId, Map<String, String> query, Long datasetId, String columnName, AggConfig config, boolean reload) {
         if (datasetId != null) {
             Dataset dataset = getDataset(datasetId);
             datasourceId = dataset.getDatasourceId();
@@ -87,7 +87,7 @@ public class DataProviderService {
             Map<String, String> parameterMap = Maps.transformValues(datasourceConfig, Functions.toStringFunction());
             dataProvider.setDataSource(parameterMap);
             dataProvider.setQuery(query);
-            String[][] result = dataProvider.getDimVals(columnName, config);
+            String[][] result = dataProvider.getDimVals(columnName, config, reload);
             return result;
         } catch (Exception e) {
             e.printStackTrace();

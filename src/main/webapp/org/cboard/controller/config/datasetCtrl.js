@@ -9,6 +9,7 @@ cBoard.controller('datasetCtrl', function ($scope, $http, dataService, $uibModal
     $scope.curWidget = {};
     $scope.alerts = [];
     $scope.verify = {dsName: true};
+    $scope.loadFromCache = true;
 
     var treeID = 'dataSetTreeID'; // Set to a same value with treeDom
     var originalData = [];
@@ -236,6 +237,7 @@ cBoard.controller('datasetCtrl', function ($scope, $http, dataService, $uibModal
             datasource: $scope.datasource.id,
             query: $scope.curWidget.query,
             datasetId: null,
+            reload: !$scope.loadFromCache,
             callback: function (dps) {
                 $scope.loading = false;
                 $scope.toChartDisabled = false;

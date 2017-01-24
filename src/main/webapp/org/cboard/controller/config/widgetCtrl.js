@@ -9,6 +9,12 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
     //图表类型初始化
     $scope.chart_types = [
         {
+            name: translate('CONFIG.WIDGET.TABLE'), value: 'table', class: 'cTable',
+            row: translate('CONFIG.WIDGET.TIPS_DIM_NUM_1_MORE'),
+            column: translate('CONFIG.WIDGET.TIPS_DIM_NUM_0_MORE'),
+            measure: translate('CONFIG.WIDGET.TIPS_DIM_NUM_1_MORE')
+        },
+        {
             name: translate('CONFIG.WIDGET.LINE_BAR'), value: 'line', class: 'cLine',
             row: translate('CONFIG.WIDGET.TIPS_DIM_NUM_1_MORE'),
             column: translate('CONFIG.WIDGET.TIPS_DIM_NUM_0_MORE'),
@@ -25,12 +31,6 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
             row: translate('CONFIG.WIDGET.TIPS_DIM_NUM_0'),
             column: translate('CONFIG.WIDGET.TIPS_DIM_NUM_0'),
             measure: translate('CONFIG.WIDGET.TIPS_DIM_NUM_1')
-        },
-        {
-            name: translate('CONFIG.WIDGET.TABLE'), value: 'table', class: 'cTable',
-            row: translate('CONFIG.WIDGET.TIPS_DIM_NUM_1_MORE'),
-            column: translate('CONFIG.WIDGET.TIPS_DIM_NUM_0_MORE'),
-            measure: translate('CONFIG.WIDGET.TIPS_DIM_NUM_1_MORE')
         },
         {
             name: translate('CONFIG.WIDGET.FUNNEL'), value: 'funnel', class: 'cFunnel',
@@ -255,7 +255,7 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
                     $scope.alerts = [{msg: dps.msg, type: 'danger'}];
                 }
             }
-        });
+        }, !$scope.loadFromCache);
     };
 
     $scope.newWgt = function () {
@@ -576,7 +576,7 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
                     $scope.previewDivWidth = 12;
                     break;
             }
-        });
+        }, null, !$scope.loadFromCache);
     };
 
 // $scope.saveChart = function () {

@@ -57,7 +57,8 @@ cBoard.service('dataService', function ($http, updateService) {
         $http.post("dashboard/getColumns.do", {
             datasourceId: option.datasource,
             query: angular.toJson(option.query),
-            datasetId: option.datasetId
+            datasetId: option.datasetId,
+            reload: option.reload
         }).success(function (response) {
             option.callback(response);
         });

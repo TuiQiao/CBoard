@@ -38,23 +38,23 @@ public abstract class DataProvider {
      * @param columnName
      * @return
      */
-    public String[][] getDimVals(String columnName, AggConfig config) throws Exception {
+    public String[][] getDimVals(String columnName, AggConfig config, boolean reload) throws Exception {
         String[][] dimVals = null;
         if (this instanceof AggregateProvider) {
             dimVals = ((AggregateProvider) this).queryDimVals(dataSource, query, columnName, config);
         } else {
-            checkAndLoad(false);
+            checkAndLoad(reload);
             dimVals = aggregator.queryDimVals(dataSource, query, columnName, config);
         }
         return dimVals;
     }
 
-    public String[] getColumn() throws Exception {
+    public String[] getColumn(boolean reload) throws Exception {
         String[] columns = null;
         if (this instanceof AggregateProvider) {
             columns = ((AggregateProvider) this).getColumn(dataSource, query);
         } else {
-            checkAndLoad(false);
+            checkAndLoad(reload);
             columns = aggregator.getColumn(dataSource, query);
         }
         return columns;

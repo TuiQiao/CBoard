@@ -70,7 +70,7 @@ var crossTable = {
         html = html + trDom + "</tbody></table>";
         var optionDom = "<select><option value='20'>20</option><option value='50'>50</option><option value='100'>100</option><option value='150'>150</option></select>";
         var PaginationDom = "<div><div class='optionNum'><span>Show</span>" + optionDom + "<span>entries</span></div><div class='page'><ul></ul></div></div>";
-        var operate = "<div class='toolbar'><span class='info'><b>info: </b>" + colNum + " x " + rowNum + "</span>" +
+        var operate = "<div class='toolbar'><span class='info'><b>info: </b>" + rowNum + " x " + colNum + "</span>" +
             "<span class='exportBnt' title='export'></span></div>";
         $(container).html(operate);
         $(container).append("<div class='tableView' style='width:99%;max-height:" + tall + "px;overflow:auto'>" + html + "</div>");

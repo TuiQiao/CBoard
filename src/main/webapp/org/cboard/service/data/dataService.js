@@ -32,6 +32,7 @@ cBoard.service('dataService', function ($http, updateService) {
     };
 
     this.getData = function (datasource, query, datasetId, chartConfig, callback, reload) {
+        updateService.updateConfig(chartConfig);
         var dataSeries = getDataSeries(chartConfig);
         var cfg = {rows: [], columns: [], filters: []};
         cfg.rows = getDimensionConfig(chartConfig.keys);

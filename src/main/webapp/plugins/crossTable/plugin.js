@@ -64,12 +64,14 @@ var crossTable = {
         }
         html += colContent + "</tr></thead><tbody class='scrollContent'>";
         var dataPage = this.paginationProcessData(data, chartConfig.groups.length + 1, pageDataNum);
+        var colNum = dataPage[0][0].length;
+        var rowNum = colNum ? data.length : 0;
         var trDom = this.render(dataPage[0], chartConfig);
         html = html + trDom + "</tbody></table>";
         var optionDom = "<select><option value='20'>20</option><option value='50'>50</option><option value='100'>100</option><option value='150'>150</option></select>";
         var PaginationDom = "<div><div class='optionNum'><span>Show</span>" + optionDom + "<span>entries</span></div><div class='page'><ul></ul></div></div>";
-        var operate = "<div class='toolbar'><span class='info'></span><span class='exportBnt' title='export'></span></div>";
-
+        var operate = "<div class='toolbar'><span class='info'><b>info: </b>" + colNum + " x " + rowNum + "</span>" +
+            "<span class='exportBnt' title='export'></span></div>";
         $(container).html(operate);
         $(container).append("<div class='tableView' style='width:99%;max-height:" + tall + "px;overflow:auto'>" + html + "</div>");
         $(container).append(PaginationDom);

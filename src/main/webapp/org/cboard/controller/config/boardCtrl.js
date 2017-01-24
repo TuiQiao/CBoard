@@ -43,20 +43,25 @@ cBoard.controller('boardCtrl', function ($scope, $http, ModalUtils, $filter, upd
     };
 
     var getDatasetList = function () {
-        $http.get("dashboard/getDatasetList.do").success(function (response) {
-            $scope.datasetList = response;
-        }).then ($http.get("dashboard/getWidgetList.do").success(function (response) {
-            $scope.widgetList = response;
-            $scope.widgetList = $scope.widgetList.map(function(w) {
-                if (w.data.datasetId != null) {
-                    var dataset = _.find($scope.datasetList, function (ds) { return ds.id == w.data.datasetId; });
-                    w.dataset = dataset == null ? 'Lost DataSet' : dataset.name;
-                } else {
-                    w.dataset = "Query";
+
+        $http.get("dashboard/getDatasetList.do")
+            .then(function (response) {
+                $scope.datasetList = response.data;
+                return $http.get("dashboard/getWidgetList.do");
+            })
+            .then(function (response) {
+                    $scope.widgetList = response.data;
+                    $scope.widgetList = $scope.widgetList.map(function(w) {
+                        if (w.data.datasetId != null) {
+                            var dataset = _.find($scope.datasetList, function (ds) { return ds.id == w.data.datasetId; });
+                            w.dataset = dataset == null ? 'Lost DataSet' : dataset.name;
+                        } else {
+                            w.dataset = "Query";
+                        }
+                        return w;
+                    });
                 }
-                return w;
-            });
-        }));
+            );
     };
 
     var loadBoardDataset = function (status) {

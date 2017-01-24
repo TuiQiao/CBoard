@@ -1,5 +1,8 @@
 package org.cboard.dataprovider;
 
+import com.alibaba.fastjson.JSONObject;
+import com.google.common.base.Charsets;
+import com.google.common.hash.Hashing;
 import org.cboard.dataprovider.aggregator.Aggregator;
 import org.cboard.dataprovider.config.AggConfig;
 import org.cboard.dataprovider.result.AggregateResult;
@@ -61,13 +64,20 @@ public abstract class DataProvider {
     }
 
     private void checkAndLoad(boolean reload) throws Exception {
-        if (reload) {
-            aggregator.cleanExist(dataSource, query);
+        String key = getLockKey(dataSource, query);
+        synchronized (key){
+            if (reload) {
+                aggregator.cleanExist(dataSource, query);
+            }
+            if (!aggregator.checkExist(dataSource, query)) {
+                String[][] data = getData(dataSource, query);
+                aggregator.loadData(dataSource, query, data);
+            }
         }
-        if (!aggregator.checkExist(dataSource, query)) {
-            String[][] data = getData(dataSource, query);
-            aggregator.loadData(dataSource, query, data);
-        }
+    }
+
+    private String getLockKey(Map<String, String> dataSource, Map<String, String> query) {
+        return Hashing.md5().newHasher().putString(JSONObject.toJSON(dataSource).toString() + JSONObject.toJSON(query).toString(), Charsets.UTF_8).hash().toString();
     }
 
     abstract public String[][] getData(Map<String, String> dataSource, Map<String, String> query) throws Exception;

@@ -696,12 +696,13 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
             datasource: $scope.datasource ? $scope.datasource.id : null,
             query: $scope.curWidget.query,
             datasetId: $scope.customDs ? null : $scope.curWidget.datasetId,
-            callback: function (columns) {
+            callback: function (dps) {
                 $scope.loading = false;
-                if (columns) {
-                    $scope.columns = columns;
+                $scope.alerts = [];
+                if (dps.msg == "1") {
+                    $scope.columns = dps.columns;
                 } else {
-                    ModalUtils.alert('There is something wrong.', "modal-danger", "lg");
+                    $scope.alerts = [{msg: dps.msg, type: 'danger'}];
                 }
             }
         });

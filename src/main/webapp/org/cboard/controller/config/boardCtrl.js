@@ -2,7 +2,7 @@
  * Created by yfyuan on 2016/8/2.
  */
 'use strict';
-cBoard.controller('boardCtrl', function ($scope, $http, ModalUtils, $filter, updateService, $uibModal, $timeout) {
+cBoard.controller('boardCtrl', function ($scope, $http, ModalUtils, $filter, updateService, $uibModal, $timeout, dataService) {
 
     var translate = $filter('translate');
 
@@ -20,7 +20,7 @@ cBoard.controller('boardCtrl', function ($scope, $http, ModalUtils, $filter, upd
         $http.get("dashboard/getBoardList.do").success(function (response) {
             $scope.boardList = response;
             originalData = jstree_CvtVPath2TreeData(
-                $scope.boardList.map(function(ds) {
+                $scope.boardList.map(function (ds) {
                     var categoryName = ds.categoryName == null ? translate('CONFIG.DASHBOARD.MY_DASHBOARD') : ds.categoryName;
                     return {
                         "id": ds.id,
@@ -51,9 +51,11 @@ cBoard.controller('boardCtrl', function ($scope, $http, ModalUtils, $filter, upd
             })
             .then(function (response) {
                     $scope.widgetList = response.data;
-                    $scope.widgetList = $scope.widgetList.map(function(w) {
+                    $scope.widgetList = $scope.widgetList.map(function (w) {
                         if (w.data.datasetId != null) {
-                            var dataset = _.find($scope.datasetList, function (ds) { return ds.id == w.data.datasetId; });
+                            var dataset = _.find($scope.datasetList, function (ds) {
+                                return ds.id == w.data.datasetId;
+                            });
                             w.dataset = dataset == null ? 'Lost DataSet' : dataset.name;
                         } else {
                             w.dataset = "Query";
@@ -83,26 +85,41 @@ cBoard.controller('boardCtrl', function ($scope, $http, ModalUtils, $filter, upd
         $scope.boardDataset = [];
         _.each(datasetIdArr, function (d) {
             status.i++;
-            $http.post("dashboard/getCachedData.do", {
-                datasetId: d
-            }).success(function (response) {
-                var dataset = _.find($scope.datasetList, function (ds) {
-                    return ds.id == d;
-                });
-                if (dataset != undefined) {
-                    $scope.boardDataset.push({name: dataset.name, columns: response.data[0], datasetId: dataset.id});
+            dataService.getColumns({
+                datasource: null,
+                query: null,
+                datasetId: d,
+                callback: function (dps) {
+                    $scope.alerts = [];
+                    if (dps.msg == "1") {
+                        var dataset = _.find($scope.datasetList, function (ds) {
+                            return ds.id == d;
+                        });
+                        if (dataset != undefined) {
+                            $scope.boardDataset.push({name: dataset.name, columns: dps.columns, datasetId: dataset.id});
+                        }
+                        status.i--;
+                    } else {
+                        $scope.alerts = [{msg: dps.msg, type: 'danger'}];
+                    }
                 }
-                status.i--;
             });
         });
         _.each(widgetArr, function (w) {
             status.i++;
-            $http.post("dashboard/getCachedData.do", {
-                datasourceId: w.data.datasource,
-                query: angular.toJson(w.data.query),
-            }).success(function (response) {
-                $scope.boardDataset.push({name: w.name, columns: response.data[0], widgetId: w.id});
-                status.i--;
+            dataService.getColumns({
+                datasource: w.data.datasource,
+                query: w.data.query,
+                datasetId: null,
+                callback: function (dps) {
+                    if (dps.msg == "1") {
+                        $scope.boardDataset.push({name: w.name, columns: dps.columns, widgetId: w.id});
+                        status.i--;
+                    } else {
+                        $scope.alerts = [{msg: dps.msg, type: 'danger'}];
+                    }
+
+                }
             });
         });
     };
@@ -308,18 +325,20 @@ cBoard.controller('boardCtrl', function ($scope, $http, ModalUtils, $filter, upd
     $scope.treeConfig = jsTreeConfig1;
     $scope.treeConfig.plugins = ['types', 'unique', 'state', 'sort'];
 
-    $("#" + treeID).keyup(function(e){
-        if(e.keyCode == 46) {
+    $("#" + treeID).keyup(function (e) {
+        if (e.keyCode == 46) {
             $scope.deleteBoard(getSelectedBoard());
         }
     });
 
-    var getSelectedBoard = function() {
+    var getSelectedBoard = function () {
         var selectedNode = jstree_GetSelectedNodes(treeID)[0];
-        return _.find($scope.boardList, function (ds) { return ds.id == selectedNode.id; });
+        return _.find($scope.boardList, function (ds) {
+            return ds.id == selectedNode.id;
+        });
     };
 
-    var checkTreeNode = function(actionType) {
+    var checkTreeNode = function (actionType) {
         return jstree_CheckTreeNode(actionType, treeID, ModalUtils.alert);
     };
 
@@ -330,7 +349,7 @@ cBoard.controller('boardCtrl', function ($scope, $http, ModalUtils, $filter, upd
         dataSetTree.select_node(id);
     };
 
-    $scope.applyModelChanges = function() {
+    $scope.applyModelChanges = function () {
         return !$scope.ignoreChanges;
     };
 
@@ -344,12 +363,12 @@ cBoard.controller('boardCtrl', function ($scope, $http, ModalUtils, $filter, upd
         $scope.editBoard(getSelectedBoard());
     };
 
-    $scope.deleteNode = function(){
+    $scope.deleteNode = function () {
         if (!checkTreeNode("delete")) return;
         $scope.deleteBoard(getSelectedBoard());
     };
 
-    $scope.treeEventsObj = function() {
+    $scope.treeEventsObj = function () {
         var baseEventObj = jstree_baseTreeEventsObj({
             ngScope: $scope, ngHttp: $http, ngTimeout: $timeout,
             treeID: treeID, listName: "boardList"

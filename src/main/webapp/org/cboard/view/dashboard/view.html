@@ -40,7 +40,22 @@
                         <dashboard-widget ng-show="widget.loading == false"></dashboard-widget>
                     </div>
                     <div ng-if="widget.hasRole != false && (widget.loading || !widget.show)" class="col-md-{{widget.width}}" style="height: 50px;">
-                        <i class="fa fa-spinner fa-spin"></i> {{"COMMON.LOADING" | translate}}
+                        <div class="box box-solid">
+                            <div class="box-header">
+                                <i class="fa fa-bar-chart-o"></i>
+                                <h3 class="box-title">{{widget.name}}</h3>
+                                <div class="box-tools pull-right">
+                                    <button type="button" class="btn btn-box-tool" ng-if="widgetCfg" ng-click="config(widget)"><i
+                                            class="fa fa-wrench"></i>
+                                    </button>
+                                    <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="box-body" ng-style="{height:widget.height?widget:300+'px'}">
+                                <i class="fa fa-spinner fa-spin"></i> {{"COMMON.LOADING" | translate}}
+                            </div>
+                        </div>
                     </div>
                     <div ng-if="widget.hasRole == false" class="col-md-{{widget.width}}">
                         <div class="box box-solid">

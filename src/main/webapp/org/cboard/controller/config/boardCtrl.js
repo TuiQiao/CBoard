@@ -2,7 +2,7 @@
  * Created by yfyuan on 2016/8/2.
  */
 'use strict';
-cBoard.controller('boardCtrl', function ($scope, $http, ModalUtils, $filter, updateService, $uibModal, $timeout, dataService) {
+cBoard.controller('boardCtrl', function ($scope, $http, ModalUtils, $filter, updateService, $uibModal, $timeout, dataService, $state) {
 
     var translate = $filter('translate');
 
@@ -148,15 +148,7 @@ cBoard.controller('boardCtrl', function ($scope, $http, ModalUtils, $filter, upd
     $scope.copyBoard = function (board) {
         var o = angular.copy(board);
         o.name = o.name + '_copy';
-        $http.post("dashboard/saveNewBoard.do", {json: angular.toJson(o)}).success(function (serviceStatus) {
-            if (serviceStatus.status == '1') {
-                getBoardList();
-                ModalUtils.alert(serviceStatus.msg, "modal-success", "sm");
-                boardChange();
-            } else {
-                ModalUtils.alert(serviceStatus.msg, "modal-warning", "lg");
-            }
-        });
+        $http.post("dashboard/saveNewBoard.do", {json: angular.toJson(o)}).success(saveBoardCallBack);
     };
 
     $scope.deleteBoard = function (board) {
@@ -200,32 +192,34 @@ cBoard.controller('boardCtrl', function ($scope, $http, ModalUtils, $filter, upd
         return true;
     };
 
+    function saveBoardCallBack(serviceStatus) {
+        if (serviceStatus.status == '1') {
+            getBoardList();
+            $scope.optFlag = 'edit';
+            ModalUtils.alert(serviceStatus.msg, "modal-success", "sm");
+            boardChange();
+        } else {
+            $scope.alerts = [{msg: serviceStatus.msg, type: 'danger'}];
+        }
+    }
+
+    $scope.checkBeforPreview = function (Id) {
+        $scope.isPreview = true;
+        ModalUtils.confirm(translate("COMMON.CONFIRM_SAVE"), "modal-warning", "lg", function () {
+            $scope.saveBoard();
+
+            var url = $state.href('mine.view', {id: Id});
+            window.open(url,'_blank');
+        });
+    };
     $scope.saveBoard = function () {
         if (!validate()) {
             return;
         }
         if ($scope.optFlag == 'new') {
-            $http.post("dashboard/saveNewBoard.do", {json: angular.toJson($scope.curBoard)}).success(function (serviceStatus) {
-                if (serviceStatus.status == '1') {
-                    getBoardList();
-                    $scope.optFlag = 'edit';
-                    ModalUtils.alert(serviceStatus.msg, "modal-success", "sm");
-                    boardChange();
-                } else {
-                    $scope.alerts = [{msg: serviceStatus.msg, type: 'danger'}];
-                }
-            });
+            $http.post("dashboard/saveNewBoard.do", {json: angular.toJson($scope.curBoard)}).success(saveBoardCallBack);
         } else if ($scope.optFlag == 'edit') {
-            $http.post(updateUrl, {json: angular.toJson($scope.curBoard)}).success(function (serviceStatus) {
-                if (serviceStatus.status == '1') {
-                    getBoardList();
-                    $scope.optFlag = 'edit';
-                    ModalUtils.alert(serviceStatus.msg, "modal-success", "sm");
-                    boardChange();
-                } else {
-                    $scope.alerts = [{msg: serviceStatus.msg, type: 'danger'}];
-                }
-            });
+            $http.post(updateUrl, {json: angular.toJson($scope.curBoard)}).success(saveBoardCallBack);
         }
     };
 

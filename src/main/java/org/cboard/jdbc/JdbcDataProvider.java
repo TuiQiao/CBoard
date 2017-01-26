@@ -104,7 +104,7 @@ public class JdbcDataProvider extends DataProvider implements AggregateProvider 
     public String[][] queryDimVals(Map<String, String> dataSource, Map<String, String> query, String columnName, AggConfig config) throws Exception {
         String fsql = null;
         String exec = null;
-        String sql = query.get(SQL);
+        String sql = query.get(SQL).replace(";", "");
         List<String> filtered = new ArrayList<>();
         List<String> nofilter = new ArrayList<>();
         if (config != null) {
@@ -112,9 +112,9 @@ public class JdbcDataProvider extends DataProvider implements AggregateProvider 
             Stream<DimensionConfig> r = config.getRows().stream();
             Stream<DimensionConfig> f = config.getFilters().stream();
             Stream<DimensionConfig> filters = Stream.concat(Stream.concat(c, r), f);
-            String where = "1=1 AND " + filters.map(toWhere).filter(e -> e != null).collect(Collectors.joining(" AND "));
-            fsql = "select distinct  __view__.%s from (%s) __view__ where %s";
-            exec = String.format(fsql, columnName, sql, where);
+            String where = assembleSqlFilter(filters);
+            fsql = "SELECT __view__.%s FROM (%s) __view__ %s GROUP BY __view__.%s";
+            exec = String.format(fsql, columnName, sql, where, columnName);
             LOG.info(exec);
             try (Connection connection = getConnection(dataSource);
                  Statement stat = connection.createStatement();
@@ -127,8 +127,8 @@ public class JdbcDataProvider extends DataProvider implements AggregateProvider 
                 throw new Exception("ERROR:" + e.getMessage(), e);
             }
         }
-        fsql = "select distinct  __view__.%s from (%s) __view__";
-        exec = String.format(fsql, columnName, sql);
+        fsql = "SELECT __view__.%s FROM (%s) __view__ GROUP BY __view__.%s";
+        exec = String.format(fsql, columnName, sql, columnName);
         LOG.info(exec);
         try (Connection connection = getConnection(dataSource);
              Statement stat = connection.createStatement();
@@ -144,7 +144,10 @@ public class JdbcDataProvider extends DataProvider implements AggregateProvider 
     }
 
 
-    private Function<DimensionConfig, String> toWhere = (config) -> {
+    /**
+     * Parser a single filter configuration to sql syntax
+     */
+    private Function<DimensionConfig, String> filter2SqlCondtion = (config) -> {
         if (config.getValues().size() == 0) {
             return null;
         }
@@ -191,11 +194,33 @@ public class JdbcDataProvider extends DataProvider implements AggregateProvider 
         return null;
     };
 
+    /**
+     * Assemble all the filter to a legal sal where script
+     * @param filterStream
+     * @return
+     */
+    private String assembleSqlFilter(Stream<DimensionConfig> filterStream) {
+        StringJoiner where = new StringJoiner(" AND ", "WHERE ", "");
+        where.setEmptyValue("");
+        filterStream.map(filter2SqlCondtion).filter(e -> e != null).forEach(where::add);
+        return where.toString();
+    }
+
+    private String assembleSelectColumns(Stream<ValueConfig> selectStream) {
+        StringJoiner columns = new StringJoiner(", ", "", " ");
+        columns.setEmptyValue("");
+        selectStream.map(toSelect).filter(e -> e != null).forEach(columns::add);
+        return columns.toString();
+    }
+
+
     @Override
     public String[] getColumn(Map<String, String> dataSource, Map<String, String> query) throws Exception {
-        try (Connection connection = getConnection(dataSource);
-             PreparedStatement ps = connection.prepareStatement(query.get(SQL));
-             ResultSet rs = ps.executeQuery()) {
+        try (
+                Connection connection = getConnection(dataSource);
+                Statement stat = connection.createStatement();
+                ResultSet rs = stat.executeQuery(query.get(SQL))
+        ) {
             ResultSetMetaData metaData = rs.getMetaData();
             int columnCount = metaData.getColumnCount();
             String[] row = new String[columnCount];
@@ -215,22 +240,22 @@ public class JdbcDataProvider extends DataProvider implements AggregateProvider 
         Stream<DimensionConfig> r = config.getRows().stream();
         Stream<DimensionConfig> f = config.getFilters().stream();
         Stream<DimensionConfig> filters = Stream.concat(Stream.concat(c, r), f);
-        StringJoiner where = new StringJoiner(" AND ", "WHERE ", "");
-        where.setEmptyValue("");
-        filters.map(toWhere).filter(e -> e != null).forEach(where::add);
-        String select = config.getValues().stream().map(toSelect).collect(Collectors.joining(", "));
+        String where = assembleSqlFilter(filters);
+        String select = assembleSelectColumns(config.getValues().stream());
         Stream<DimensionConfig> group = Stream.concat(config.getColumns().stream(), config.getRows().stream());
         String groupby = group.map(g -> g.getColumnName()).distinct().collect(Collectors.joining(", "));
-        select = String.join(",", groupby, select);
-        groupby = StringUtils.isBlank(groupby) ? "" : "group by " + groupby;
-        String sql = query.get(SQL);
-        String fsql = "select %s from (%s) __view__ %s %s";
+        select = StringUtils.isBlank(groupby) ? select : String.join(",", groupby, select);
+        groupby = StringUtils.isBlank(groupby) ? "" : "GROUP BY " + groupby;
+        String sql = query.get(SQL).replace(";", "");
+        String fsql = "SELECT %s FROM (%s) __view__ %s %s";
         String exec = String.format(fsql, select, sql, where, groupby);
         List<String[]> list = new LinkedList<>();
         LOG.info(exec);
-        try (Connection connection = getConnection(dataSource);
-             PreparedStatement ps = connection.prepareStatement(exec);
-             ResultSet rs = ps.executeQuery()) {
+        try (
+                Connection connection = getConnection(dataSource);
+                Statement stat = connection.createStatement();
+                ResultSet rs = stat.executeQuery(exec)
+        ) {
             ResultSetMetaData metaData = rs.getMetaData();
             int columnCount = metaData.getColumnCount();
             while (rs.next()) {

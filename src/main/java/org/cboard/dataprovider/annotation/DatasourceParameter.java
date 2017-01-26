@@ -13,13 +13,14 @@ import java.lang.annotation.Target;
 public @interface DatasourceParameter {
     // Display name of input in the web page
     String label();
+
     // Input type
     Type type();
 
     int order() default 0;
 
     enum Type {
-        Input("input"), TextArea("textarea"), Password("password");
+        Input("input"), TextArea("textarea"), Password("password"), Checkbox("checkbox");
         private String name;
 
         Type(String name) {

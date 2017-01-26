@@ -4,6 +4,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.google.common.base.Charsets;
 import com.google.common.hash.Hashing;
 import org.cboard.dataprovider.aggregator.Aggregator;
+import org.cboard.dataprovider.annotation.DatasourceParameter;
 import org.cboard.dataprovider.config.AggConfig;
 import org.cboard.dataprovider.result.AggregateResult;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,13 +22,21 @@ public abstract class DataProvider {
     private Map<String, String> query;
     private int resultLimit;
 
+    @DatasourceParameter(label = "AggregateProvider", type = DatasourceParameter.Type.Checkbox, order = 100)
+    private String aggregateProvider = "aggregateProvider";
+
+    private boolean isAggregateProviderActive() {
+        String v = dataSource.get(aggregateProvider);
+        return v != null && "true".equals(v);
+    }
+
     /**
      * get the aggregated data by user's widget designer
      *
      * @return
      */
     public AggregateResult getAggData(AggConfig ac, boolean reload) throws Exception {
-        if (this instanceof AggregateProvider) {
+        if (this instanceof AggregateProvider && isAggregateProviderActive()) {
             return ((AggregateProvider) this).queryAggData(dataSource, query, ac);
         } else {
             checkAndLoad(reload);
@@ -43,7 +52,7 @@ public abstract class DataProvider {
      */
     public String[][] getDimVals(String columnName, AggConfig config, boolean reload) throws Exception {
         String[][] dimVals = null;
-        if (this instanceof AggregateProvider) {
+        if (this instanceof AggregateProvider && isAggregateProviderActive()) {
             dimVals = ((AggregateProvider) this).queryDimVals(dataSource, query, columnName, config);
         } else {
             checkAndLoad(reload);
@@ -54,7 +63,7 @@ public abstract class DataProvider {
 
     public String[] getColumn(boolean reload) throws Exception {
         String[] columns = null;
-        if (this instanceof AggregateProvider) {
+        if (this instanceof AggregateProvider && isAggregateProviderActive()) {
             columns = ((AggregateProvider) this).getColumn(dataSource, query);
         } else {
             checkAndLoad(reload);
@@ -65,7 +74,7 @@ public abstract class DataProvider {
 
     private void checkAndLoad(boolean reload) throws Exception {
         String key = getLockKey(dataSource, query);
-        synchronized (key){
+        synchronized (key) {
             if (reload) {
                 aggregator.cleanExist(dataSource, query);
             }

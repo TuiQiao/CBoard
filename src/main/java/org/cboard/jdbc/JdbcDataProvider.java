@@ -1,6 +1,12 @@
 package org.cboard.jdbc;
 
+import com.alibaba.fastjson.JSONObject;
+import com.google.common.base.Charsets;
+import com.google.common.hash.Hashing;
+import org.apache.commons.collections.map.HashedMap;
 import org.apache.commons.lang.StringUtils;
+import org.cboard.cache.CacheManager;
+import org.cboard.cache.HeapCacheManager;
 import org.cboard.dataprovider.AggregateProvider;
 import org.cboard.dataprovider.DataProvider;
 import org.cboard.dataprovider.annotation.DatasourceParameter;
@@ -48,6 +54,35 @@ public class JdbcDataProvider extends DataProvider implements AggregateProvider 
 
     @QueryParameter(label = "SQL TEXT", type = QueryParameter.Type.TextArea, order = 1)
     private String SQL = "sql";
+
+    private static final CacheManager<Map<String, Integer>> typeCahce = new HeapCacheManager<>();
+
+    private Map<String, Integer> getType(Map<String, String> dataSource, Map<String, String> query) throws Exception {
+        Map<String, Integer> result = null;
+        String key = getKey(dataSource, query);
+        result = typeCahce.get(key);
+        if (result != null) {
+            return result;
+        } else {
+            String sql = query.get(SQL);
+            try (Connection con = getConnection(dataSource)) {
+                Statement ps = con.createStatement();
+                ResultSet rs = ps.executeQuery(sql);
+                ResultSetMetaData metaData = rs.getMetaData();
+                int columnCount = metaData.getColumnCount();
+                result = new HashedMap();
+                for (int i = 0; i < columnCount; i++) {
+                    result.put(metaData.getColumnLabel(i + 1), metaData.getColumnType(i + 1));
+                }
+                typeCahce.put(key, result, 12 * 60 * 60 * 1000);
+            }
+            return result;
+        }
+    }
+
+    private String getKey(Map<String, String> dataSource, Map<String, String> query) {
+        return Hashing.md5().newHasher().putString(JSONObject.toJSON(dataSource).toString() + JSONObject.toJSON(query).toString(), Charsets.UTF_8).hash().toString();
+    }
 
     public String[][] getData(Map<String, String> dataSource, Map<String, String> query) throws Exception {
 
@@ -112,7 +147,9 @@ public class JdbcDataProvider extends DataProvider implements AggregateProvider 
             Stream<DimensionConfig> r = config.getRows().stream();
             Stream<DimensionConfig> f = config.getFilters().stream();
             Stream<DimensionConfig> filters = Stream.concat(Stream.concat(c, r), f);
-            String where = assembleSqlFilter(filters);
+            Map<String, Integer> types = getType(dataSource, query);
+            Stream<DimensionConfigHelper> filterHelpers = filters.map(fe -> new DimensionConfigHelper(fe, types.get(fe.getColumnName())));
+            String where = assembleSqlFilter(filterHelpers);
             fsql = "SELECT __view__.%s FROM (%s) __view__ %s GROUP BY __view__.%s";
             exec = String.format(fsql, columnName, sql, where, columnName);
             LOG.info(exec);
@@ -143,50 +180,49 @@ public class JdbcDataProvider extends DataProvider implements AggregateProvider 
         return new String[][]{config == null ? nofilter.toArray(new String[]{}) : filtered.toArray(new String[]{}), nofilter.toArray(new String[]{})};
     }
 
-
     /**
      * Parser a single filter configuration to sql syntax
      */
-    private Function<DimensionConfig, String> filter2SqlCondtion = (config) -> {
+    private Function<DimensionConfigHelper, String> filter2SqlCondtion = (config) -> {
         if (config.getValues().size() == 0) {
             return null;
         }
         switch (config.getFilterType()) {
             case "=":
             case "eq":
-                return "(" + config.getValues().stream().map(e -> config.getColumnName() + " = '" + e + "'").collect(Collectors.joining(" OR ")) + ")";
+                return config.getColumnName() + " IN (" + IntStream.range(0, config.getValues().size()).boxed().map(i -> config.getValueStr(i)).collect(Collectors.joining(",")) + ")";
             case "≠":
             case "ne":
-                return "(" + config.getValues().stream().map(e -> config.getColumnName() + " <> '" + e + "'").collect(Collectors.joining(" AND ")) + ")";
+                return config.getColumnName() + " NOT IN (" + IntStream.range(0, config.getValues().size()).boxed().map(i -> config.getValueStr(i)).collect(Collectors.joining(",")) + ")";
             case ">":
-                return config.getColumnName() + " > '" + config.getValues().get(0) + "'";
+                return config.getColumnName() + " > " + config.getValueStr(0);
             case "<":
-                return config.getColumnName() + " < '" + config.getValues().get(0) + "'";
+                return config.getColumnName() + " < " + config.getValueStr(0);
             case "≥":
-                return config.getColumnName() + " >= '" + config.getValues().get(0) + "'";
+                return config.getColumnName() + " >= " + config.getValueStr(0);
             case "≤":
-                return config.getColumnName() + " <= '" + config.getValues().get(0) + "'";
+                return config.getColumnName() + " <= " + config.getValueStr(0);
             case "(a,b]":
                 if (config.getValues().size() >= 2) {
-                    return "(" + config.getColumnName() + " > '" + config.getValues().get(0) + "' AND " + config.getColumnName() + " <= '" + config.getValues().get(0) + "')";
+                    return "(" + config.getColumnName() + " > '" + config.getValueStr(0) + "' AND " + config.getColumnName() + " <= " + config.getValueStr(1) + ")";
                 } else {
                     return null;
                 }
             case "[a,b)":
                 if (config.getValues().size() >= 2) {
-                    return "(" + config.getColumnName() + " >= '" + config.getValues().get(0) + "' AND " + config.getColumnName() + " < '" + config.getValues().get(0) + "')";
+                    return "(" + config.getColumnName() + " >= " + config.getValueStr(0) + " AND " + config.getColumnName() + " < " + config.getValueStr(1) + ")";
                 } else {
                     return null;
                 }
             case "(a,b)":
                 if (config.getValues().size() >= 2) {
-                    return "(" + config.getColumnName() + " > '" + config.getValues().get(0) + "' AND " + config.getColumnName() + " < '" + config.getValues().get(0) + "')";
+                    return "(" + config.getColumnName() + " > " + config.getValueStr(0) + " AND " + config.getColumnName() + " < " + config.getValueStr(1) + ")";
                 } else {
                     return null;
                 }
             case "[a,b]":
                 if (config.getValues().size() >= 2) {
-                    return "(" + config.getColumnName() + " >= '" + config.getValues().get(0) + "' AND " + config.getColumnName() + " <= '" + config.getValues().get(0) + "')";
+                    return "(" + config.getColumnName() + " >= " + config.getValueStr(0) + " AND " + config.getColumnName() + " <= " + config.getValueStr(1) + ")";
                 } else {
                     return null;
                 }
@@ -196,10 +232,11 @@ public class JdbcDataProvider extends DataProvider implements AggregateProvider 
 
     /**
      * Assemble all the filter to a legal sal where script
+     *
      * @param filterStream
      * @return
      */
-    private String assembleSqlFilter(Stream<DimensionConfig> filterStream) {
+    private String assembleSqlFilter(Stream<DimensionConfigHelper> filterStream) {
         StringJoiner where = new StringJoiner(" AND ", "WHERE ", "");
         where.setEmptyValue("");
         filterStream.map(filter2SqlCondtion).filter(e -> e != null).forEach(where::add);
@@ -240,7 +277,9 @@ public class JdbcDataProvider extends DataProvider implements AggregateProvider 
         Stream<DimensionConfig> r = config.getRows().stream();
         Stream<DimensionConfig> f = config.getFilters().stream();
         Stream<DimensionConfig> filters = Stream.concat(Stream.concat(c, r), f);
-        String where = assembleSqlFilter(filters);
+        Map<String, Integer> types = getType(dataSource, query);
+        Stream<DimensionConfigHelper> filterHelpers = filters.map(fe -> new DimensionConfigHelper(fe, types.get(fe.getColumnName())));
+        String where = assembleSqlFilter(filterHelpers);
         String select = assembleSelectColumns(config.getValues().stream());
         Stream<DimensionConfig> group = Stream.concat(config.getColumns().stream(), config.getRows().stream());
         String groupby = group.map(g -> g.getColumnName()).distinct().collect(Collectors.joining(", "));
@@ -291,4 +330,60 @@ public class JdbcDataProvider extends DataProvider implements AggregateProvider 
                 return "COUNT(__view__." + config.getColumn() + ") count" + config.getColumn();
         }
     };
+
+    private class DimensionConfigHelper extends DimensionConfig {
+        private DimensionConfig config;
+        private int type;
+
+        public DimensionConfigHelper(DimensionConfig config, int type) {
+            this.config = config;
+            this.type = type;
+        }
+
+        public String getValueStr(int index) {
+            switch (type) {
+                case Types.VARCHAR:
+                case Types.CHAR:
+                case Types.NVARCHAR:
+                case Types.NCHAR:
+                case Types.CLOB:
+                case Types.NCLOB:
+                case Types.LONGVARCHAR:
+                case Types.LONGNVARCHAR:
+                    return "'" + getValues().get(index) + "'";
+                default:
+                    return getValues().get(index);
+            }
+        }
+
+        @Override
+        public String getColumnName() {
+            return config.getColumnName();
+        }
+
+        @Override
+        public void setColumnName(String columnName) {
+            config.setColumnName(columnName);
+        }
+
+        @Override
+        public String getFilterType() {
+            return config.getFilterType();
+        }
+
+        @Override
+        public void setFilterType(String filterType) {
+            config.setFilterType(filterType);
+        }
+
+        @Override
+        public List<String> getValues() {
+            return config.getValues();
+        }
+
+        @Override
+        public void setValues(List<String> values) {
+            config.setValues(values);
+        }
+    }
 }

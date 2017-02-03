@@ -7,14 +7,12 @@ import org.cboard.dao.DatasetDao;
 import org.cboard.dao.DatasourceDao;
 import org.cboard.dataprovider.DataProvider;
 import org.cboard.dataprovider.DataProviderManager;
-import org.cboard.dataprovider.annotation.DatasourceParameter;
 import org.cboard.dataprovider.config.AggConfig;
 import org.cboard.dataprovider.result.AggregateResult;
 import org.cboard.dto.DataProviderResult;
 import org.cboard.pojo.DashboardDataset;
 import org.cboard.pojo.DashboardDatasource;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Repository;
 
 import java.util.Map;
@@ -32,8 +30,9 @@ public class DataProviderService {
     private DatasetDao datasetDao;
 
     public AggregateResult queryAggData(Long datasourceId, Map<String, String> query, Long datasetId, AggConfig config, boolean reload) {
+        Dataset dataset = null;
         if (datasetId != null) {
-            Dataset dataset = getDataset(datasetId);
+            dataset = getDataset(datasetId);
             datasourceId = dataset.getDatasourceId();
             query = dataset.getQuery();
         }
@@ -44,6 +43,9 @@ public class DataProviderService {
             Map<String, String> parameterMap = Maps.transformValues(datasourceConfig, Functions.toStringFunction());
             dataProvider.setDataSource(parameterMap);
             dataProvider.setQuery(query);
+            if (dataset != null && dataset.getInterval() != null && dataset.getInterval() > 0) {
+                dataProvider.setInterval(dataset.getInterval());
+            }
             return dataProvider.getAggData(config, reload);
         } catch (Exception e) {
             e.printStackTrace();
@@ -53,8 +55,9 @@ public class DataProviderService {
 
     public DataProviderResult getColumns(Long datasourceId, Map<String, String> query, Long datasetId, boolean reload) {
         DataProviderResult dps = new DataProviderResult();
+        Dataset dataset = null;
         if (datasetId != null) {
-            Dataset dataset = getDataset(datasetId);
+            dataset = getDataset(datasetId);
             datasourceId = dataset.getDatasourceId();
             query = dataset.getQuery();
         }
@@ -65,6 +68,9 @@ public class DataProviderService {
             Map<String, String> parameterMap = Maps.transformValues(datasourceConfig, Functions.toStringFunction());
             dataProvider.setDataSource(parameterMap);
             dataProvider.setQuery(query);
+            if (dataset != null && dataset.getInterval() != null && dataset.getInterval() > 0) {
+                dataProvider.setInterval(dataset.getInterval());
+            }
             String[] result = dataProvider.getColumn(reload);
             dps.setColumns(result);
             dps.setMsg("1");
@@ -76,8 +82,9 @@ public class DataProviderService {
     }
 
     public String[][] getDimensionValues(Long datasourceId, Map<String, String> query, Long datasetId, String columnName, AggConfig config, boolean reload) {
+        Dataset dataset = null;
         if (datasetId != null) {
-            Dataset dataset = getDataset(datasetId);
+            dataset = getDataset(datasetId);
             datasourceId = dataset.getDatasourceId();
             query = dataset.getQuery();
         }
@@ -88,6 +95,9 @@ public class DataProviderService {
             Map<String, String> parameterMap = Maps.transformValues(datasourceConfig, Functions.toStringFunction());
             dataProvider.setDataSource(parameterMap);
             dataProvider.setQuery(query);
+            if (dataset != null && dataset.getInterval() != null && dataset.getInterval() > 0) {
+                dataProvider.setInterval(dataset.getInterval());
+            }
             String[][] result = dataProvider.getDimVals(columnName, config, reload);
             return result;
         } catch (Exception e) {

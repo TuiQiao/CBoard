@@ -7,6 +7,8 @@ import org.cboard.dataprovider.aggregator.Aggregator;
 import org.cboard.dataprovider.annotation.DatasourceParameter;
 import org.cboard.dataprovider.config.AggConfig;
 import org.cboard.dataprovider.result.AggregateResult;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.Map;
@@ -21,6 +23,9 @@ public abstract class DataProvider {
     private Map<String, String> dataSource;
     private Map<String, String> query;
     private int resultLimit;
+    private long interval = 12;
+
+    private static final Logger logger = LoggerFactory.getLogger(DataProvider.class);
 
     @DatasourceParameter(label = "AggregateProvider", type = DatasourceParameter.Type.Checkbox, order = 100)
     private String aggregateProvider = "aggregateProvider";
@@ -74,13 +79,11 @@ public abstract class DataProvider {
 
     private void checkAndLoad(boolean reload) throws Exception {
         String key = getLockKey(dataSource, query);
-        synchronized (key) {
-            if (reload) {
-                aggregator.cleanExist(dataSource, query);
-            }
-            if (!aggregator.checkExist(dataSource, query)) {
+        synchronized (key.intern()) {
+            if (reload || !aggregator.checkExist(dataSource, query)) {
                 String[][] data = getData(dataSource, query);
-                aggregator.loadData(dataSource, query, data);
+                aggregator.loadData(dataSource, query, data, interval);
+                logger.info("loadData {}", key);
             }
         }
     }
@@ -106,4 +109,9 @@ public abstract class DataProvider {
     public int getResultLimit() {
         return resultLimit;
     }
+
+    public void setInterval(long interval) {
+        this.interval = interval;
+    }
+
 }

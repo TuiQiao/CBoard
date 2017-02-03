@@ -139,7 +139,7 @@ cBoard.controller('dashboardViewCtrl', function ($timeout, $rootScope, $scope, $
         if (_.isUndefined(widget.data.datasetId)) {
             widget.data.config.boardFilters = $scope.widgetFilters[widget.id];
         } else {
-            widget.data.config.boardFilters = $scope.datasetFilters[widget.id];
+            widget.data.config.boardFilters = $scope.datasetFilters[widget.data.datasetId];
         }
         return widget;
     };

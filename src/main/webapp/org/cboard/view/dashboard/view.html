@@ -52,7 +52,7 @@
                                     </button>
                                 </div>
                             </div>
-                            <div class="box-body" ng-style="{height:widget.height?widget:300+'px'}">
+                            <div class="box-body" ng-style="{height:row.height?row.height:300+'px'}">
                                 <i class="fa fa-spinner fa-spin"></i> {{"COMMON.LOADING" | translate}}
                             </div>
                         </div>
@@ -67,7 +67,7 @@
                                     </button>
                                 </div>
                             </div>
-                            <div class="box-body" ng-style="{height:widget.height?widget:300+'px'}">
+                            <div class="box-body" ng-style="{height:row.height?row.height:300+'px'}">
                                 {{'ADMIN.CONTACT_ADMIN' | translate}}：<br>
                                 <ul>
                                     <li ng-repeat="ri in widget.roleInfo"> {{ri.type | translate}}：{{ri.name}}</li>

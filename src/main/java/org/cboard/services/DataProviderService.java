@@ -29,7 +29,7 @@ public class DataProviderService {
     @Autowired
     private DatasetDao datasetDao;
 
-    public AggregateResult queryAggData(Long datasourceId, Map<String, String> query, Long datasetId, AggConfig config, boolean reload) {
+    private DataProvider getDataProvider(Long datasourceId, Map<String, String> query, Long datasetId) throws Exception {
         Dataset dataset = null;
         if (datasetId != null) {
             dataset = getDataset(datasetId);
@@ -38,14 +38,19 @@ public class DataProviderService {
         }
         DashboardDatasource datasource = datasourceDao.getDatasource(datasourceId);
         JSONObject datasourceConfig = JSONObject.parseObject(datasource.getConfig());
+        DataProvider dataProvider = DataProviderManager.getDataProvider(datasource.getType());
+        Map<String, String> parameterMap = Maps.transformValues(datasourceConfig, Functions.toStringFunction());
+        dataProvider.setDataSource(parameterMap);
+        dataProvider.setQuery(query);
+        if (dataset != null && dataset.getInterval() != null && dataset.getInterval() > 0) {
+            dataProvider.setInterval(dataset.getInterval());
+        }
+        return dataProvider;
+    }
+
+    public AggregateResult queryAggData(Long datasourceId, Map<String, String> query, Long datasetId, AggConfig config, boolean reload) {
         try {
-            DataProvider dataProvider = DataProviderManager.getDataProvider(datasource.getType());
-            Map<String, String> parameterMap = Maps.transformValues(datasourceConfig, Functions.toStringFunction());
-            dataProvider.setDataSource(parameterMap);
-            dataProvider.setQuery(query);
-            if (dataset != null && dataset.getInterval() != null && dataset.getInterval() > 0) {
-                dataProvider.setInterval(dataset.getInterval());
-            }
+            DataProvider dataProvider = getDataProvider(datasourceId, query, datasetId);
             return dataProvider.getAggData(config, reload);
         } catch (Exception e) {
             e.printStackTrace();
@@ -55,22 +60,8 @@ public class DataProviderService {
 
     public DataProviderResult getColumns(Long datasourceId, Map<String, String> query, Long datasetId, boolean reload) {
         DataProviderResult dps = new DataProviderResult();
-        Dataset dataset = null;
-        if (datasetId != null) {
-            dataset = getDataset(datasetId);
-            datasourceId = dataset.getDatasourceId();
-            query = dataset.getQuery();
-        }
-        DashboardDatasource datasource = datasourceDao.getDatasource(datasourceId);
-        JSONObject datasourceConfig = JSONObject.parseObject(datasource.getConfig());
         try {
-            DataProvider dataProvider = DataProviderManager.getDataProvider(datasource.getType());
-            Map<String, String> parameterMap = Maps.transformValues(datasourceConfig, Functions.toStringFunction());
-            dataProvider.setDataSource(parameterMap);
-            dataProvider.setQuery(query);
-            if (dataset != null && dataset.getInterval() != null && dataset.getInterval() > 0) {
-                dataProvider.setInterval(dataset.getInterval());
-            }
+            DataProvider dataProvider = getDataProvider(datasourceId, query, datasetId);
             String[] result = dataProvider.getColumn(reload);
             dps.setColumns(result);
             dps.setMsg("1");
@@ -82,22 +73,8 @@ public class DataProviderService {
     }
 
     public String[][] getDimensionValues(Long datasourceId, Map<String, String> query, Long datasetId, String columnName, AggConfig config, boolean reload) {
-        Dataset dataset = null;
-        if (datasetId != null) {
-            dataset = getDataset(datasetId);
-            datasourceId = dataset.getDatasourceId();
-            query = dataset.getQuery();
-        }
-        DashboardDatasource datasource = datasourceDao.getDatasource(datasourceId);
-        JSONObject datasourceConfig = JSONObject.parseObject(datasource.getConfig());
         try {
-            DataProvider dataProvider = DataProviderManager.getDataProvider(datasource.getType());
-            Map<String, String> parameterMap = Maps.transformValues(datasourceConfig, Functions.toStringFunction());
-            dataProvider.setDataSource(parameterMap);
-            dataProvider.setQuery(query);
-            if (dataset != null && dataset.getInterval() != null && dataset.getInterval() > 0) {
-                dataProvider.setInterval(dataset.getInterval());
-            }
+            DataProvider dataProvider = getDataProvider(datasourceId, query, datasetId);
             String[][] result = dataProvider.getDimVals(columnName, config, reload);
             return result;
         } catch (Exception e) {
@@ -114,28 +91,6 @@ public class DataProviderService {
         } catch (Exception e) {
             return new ServiceStatus(ServiceStatus.Status.Fail, e.getMessage());
         }
-    }
-
-    public DataProviderResult getData(Long datasourceId, Map<String, String> query, Long datasetId) {
-        String[][] dataArray = null;
-        int resultCount = 0;
-        String msg = "1";
-
-        if (datasetId != null) {
-            Dataset dataset = getDataset(datasetId);
-            datasourceId = dataset.getDatasourceId();
-            query = dataset.getQuery();
-        }
-        DashboardDatasource datasource = datasourceDao.getDatasource(datasourceId);
-        try {
-            JSONObject config = JSONObject.parseObject(datasource.getConfig());
-            DataProvider dataProvider = DataProviderManager.getDataProvider(datasource.getType());
-            Map<String, String> parameterMap = Maps.transformValues(config, Functions.toStringFunction());
-            dataArray = dataProvider.getData(parameterMap, query);
-        } catch (Exception e) {
-            msg = e.getMessage();
-        }
-        return new DataProviderResult(dataArray, msg);
     }
 
     protected Dataset getDataset(Long datasetId) {

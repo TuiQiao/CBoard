@@ -31,9 +31,10 @@ public class DataProviderRoleService {
     @Value("${admin_user_id}")
     private String adminUserId;
 
-    @Around("execution(* org.cboard.services.DataProviderService.getData(..)) ||" +
-            "execution(* org.cboard.services.CachedDataProviderService.getData(..))")
-    public Object update(ProceedingJoinPoint proceedingJoinPoint) throws Throwable {
+    @Around("execution(* org.cboard.services.DataProviderService.getDimensionValues(..)) ||" +
+            "execution(* org.cboard.services.DataProviderService.getColumns(..)) ||" +
+            "execution(* org.cboard.services.DataProviderService.queryAggData(..))")
+    public Object query(ProceedingJoinPoint proceedingJoinPoint) throws Throwable {
         Long datasourceId = (Long) proceedingJoinPoint.getArgs()[0];
         Long datasetId = (Long) proceedingJoinPoint.getArgs()[2];
         String userid = authenticationService.getCurrentUser().getUserId();

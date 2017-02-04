@@ -74,7 +74,7 @@ public class AggregateCollector<T> implements Collector<T[], Object[], Double[]>
     @Override
     public BinaryOperator<Object[]> combiner() {
         return (a, b) -> {
-            IntStream.range(0, a.length - 1).forEach(i -> a[i] = collectors.get(i).combiner().apply(a[i], b[i]));
+            IntStream.range(0, a.length).forEach(i -> a[i] = collectors.get(i).combiner().apply(a[i], b[i]));
             return a;
         };
     }

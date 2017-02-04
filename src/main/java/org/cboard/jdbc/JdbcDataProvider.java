@@ -1,5 +1,6 @@
 package org.cboard.jdbc;
 
+import com.alibaba.druid.pool.DruidDataSourceFactory;
 import com.alibaba.fastjson.JSONObject;
 import com.google.common.base.Charsets;
 import com.google.common.hash.Hashing;
@@ -22,8 +23,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 
+import javax.sql.DataSource;
 import java.sql.*;
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
@@ -52,10 +56,15 @@ public class JdbcDataProvider extends DataProvider implements AggregateProvider 
     @DatasourceParameter(label = "Password", type = DatasourceParameter.Type.Password, order = 4)
     private String PASSWORD = "password";
 
+    @DatasourceParameter(label = "Pooled Connection", type = DatasourceParameter.Type.Checkbox, order = 5)
+    private String POOLED = "pooled";
+
     @QueryParameter(label = "SQL TEXT", type = QueryParameter.Type.TextArea, order = 1)
     private String SQL = "sql";
 
     private static final CacheManager<Map<String, Integer>> typeCahce = new HeapCacheManager<>();
+
+    private static final ConcurrentMap<String, DataSource> datasourceMap = new ConcurrentHashMap<>();
 
     private Map<String, Integer> getType(Map<String, String> dataSource, Map<String, String> query) throws Exception {
         Map<String, Integer> result = null;
@@ -123,16 +132,35 @@ public class JdbcDataProvider extends DataProvider implements AggregateProvider 
     }
 
     private Connection getConnection(Map<String, String> dataSource) throws Exception {
-        String driver = dataSource.get(DRIVER);
-        String jdbcurl = dataSource.get(JDBC_URL);
-        String username = dataSource.get(USERNAME);
-        String password = dataSource.get(PASSWORD);
-
-        Class.forName(driver);
-        Properties props = new Properties();
-        props.setProperty("user", username);
-        props.setProperty("password", password);
-        return DriverManager.getConnection(jdbcurl, props);
+        String v = dataSource.get(POOLED);
+        if (v != null && "true".equals(v)) {
+            String key = Hashing.md5().newHasher().putString(JSONObject.toJSON(dataSource).toString(), Charsets.UTF_8).hash().toString();
+            DataSource ds = datasourceMap.get(key);
+            if (ds == null) {
+                synchronized (key.intern()) {
+                    ds = datasourceMap.get(key);
+                    if (ds == null) {
+                        Map<String, String> conf = new HashedMap();
+                        conf.put(DruidDataSourceFactory.PROP_URL, dataSource.get(JDBC_URL));
+                        conf.put(DruidDataSourceFactory.PROP_USERNAME, dataSource.get(USERNAME));
+                        conf.put(DruidDataSourceFactory.PROP_PASSWORD, dataSource.get(PASSWORD));
+                        ds = DruidDataSourceFactory.createDataSource(conf);
+                        datasourceMap.put(key, ds);
+                    }
+                }
+            }
+            return ds.getConnection();
+        } else {
+            String driver = dataSource.get(DRIVER);
+            String jdbcurl = dataSource.get(JDBC_URL);
+            String username = dataSource.get(USERNAME);
+            String password = dataSource.get(PASSWORD);
+            Class.forName(driver);
+            Properties props = new Properties();
+            props.setProperty("user", username);
+            props.setProperty("password", password);
+            return DriverManager.getConnection(jdbcurl, props);
+        }
     }
 
     @Override

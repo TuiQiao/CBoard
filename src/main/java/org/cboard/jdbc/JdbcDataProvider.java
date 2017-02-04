@@ -271,10 +271,17 @@ public class JdbcDataProvider extends DataProvider implements AggregateProvider 
         return where.toString();
     }
 
-    private String assembleSelectColumns(Stream<ValueConfig> selectStream) {
+    private String assembleAggValColumns(Stream<ValueConfig> selectStream) {
         StringJoiner columns = new StringJoiner(", ", "", " ");
         columns.setEmptyValue("");
         selectStream.map(toSelect).filter(e -> e != null).forEach(columns::add);
+        return columns.toString();
+    }
+
+    private String assembleDimColumns(Stream<DimensionConfig> columnsStream) {
+        StringJoiner columns = new StringJoiner(", ", "", " ");
+        columns.setEmptyValue("");
+        columnsStream.map(g -> g.getColumnName()).distinct().filter(e -> e != null).forEach(columns::add);
         return columns.toString();
     }
 
@@ -307,15 +314,24 @@ public class JdbcDataProvider extends DataProvider implements AggregateProvider 
         Stream<DimensionConfig> filters = Stream.concat(Stream.concat(c, r), f);
         Map<String, Integer> types = getType(dataSource, query);
         Stream<DimensionConfigHelper> filterHelpers = filters.map(fe -> new DimensionConfigHelper(fe, types.get(fe.getColumnName())));
-        String where = assembleSqlFilter(filterHelpers);
-        String select = assembleSelectColumns(config.getValues().stream());
-        Stream<DimensionConfig> group = Stream.concat(config.getColumns().stream(), config.getRows().stream());
-        String groupby = group.map(g -> g.getColumnName()).distinct().collect(Collectors.joining(", "));
-        select = StringUtils.isBlank(groupby) ? select : String.join(",", groupby, select);
-        groupby = StringUtils.isBlank(groupby) ? "" : "GROUP BY " + groupby;
-        String sql = query.get(SQL).replace(";", "");
-        String fsql = "SELECT %s FROM (%s) __view__ %s %s";
-        String exec = String.format(fsql, select, sql, where, groupby);
+        Stream<DimensionConfig> dimStream = Stream.concat(config.getColumns().stream(), config.getRows().stream());
+
+        String dimColsStr = assembleDimColumns(dimStream);
+        String aggColsStr = assembleAggValColumns(config.getValues().stream());
+        String whereStr = assembleSqlFilter(filterHelpers);
+        String groupByStr = StringUtils.isBlank(dimColsStr) ? "" : "GROUP BY " + dimColsStr;
+
+        StringJoiner selectColsStr = new StringJoiner(",");
+        if (!StringUtils.isBlank(dimColsStr)) {
+            selectColsStr.add(dimColsStr);
+        }
+        if (!StringUtils.isBlank(aggColsStr)) {
+            selectColsStr.add(aggColsStr);
+        }
+
+        String subQuerySql = query.get(SQL).replace(";", "");
+        String fsql = "\nSELECT %s FROM (\n%s\n) __view__ %s %s";
+        String exec = String.format(fsql, selectColsStr, subQuerySql, whereStr, groupByStr);
         List<String[]> list = new LinkedList<>();
         LOG.info(exec);
         try (
@@ -336,8 +352,10 @@ public class JdbcDataProvider extends DataProvider implements AggregateProvider 
             LOG.error("ERROR:" + e.getMessage());
             throw new Exception("ERROR:" + e.getMessage(), e);
         }
-        group = Stream.concat(config.getColumns().stream(), config.getRows().stream());
-        List<ColumnIndex> dimensionList = group.map(ColumnIndex::fromDimensionConfig).collect(Collectors.toList());
+
+        // recreate a dimension stream
+        dimStream = Stream.concat(config.getColumns().stream(), config.getRows().stream());
+        List<ColumnIndex> dimensionList = dimStream.map(ColumnIndex::fromDimensionConfig).collect(Collectors.toList());
         dimensionList.addAll(config.getValues().stream().map(ColumnIndex::fromValueConfig).collect(Collectors.toList()));
         IntStream.range(0, dimensionList.size()).forEach(j -> dimensionList.get(j).setIndex(j));
         String[][] result = list.toArray(new String[][]{});

@@ -268,7 +268,7 @@ cBoard.controller('dashboardViewCtrl', function ($timeout, $rootScope, $scope, $
             backdrop: false,
             size: 'lg',
             controller: function ($scope, $uibModalInstance, dataService) {
-                var paramSelects = param.selects;
+                var paramSelects = angular.copy(param.selects);
                 paramSelects.map(function (d, l) {
                     param.values.map(function (i) {
                         d == i ? paramSelects.splice(l, 1) : null;

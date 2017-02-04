@@ -7,7 +7,7 @@
     "REFRESH": "Refresh",
     "EDIT": "Edit",
     "CONFIRM_DELETE": "Confirm to Delete!!!",
-    "CONFIRM_SAVE": "Confirm to Save!!!",
+    "CONFIRM_SAVE_BEFORE_PREVIEW": "Need save board before preview, confirm to save?",
     "TIP": "Tip",
     "SUCCESS": "Success!",
     "FAIL": "Fail!",

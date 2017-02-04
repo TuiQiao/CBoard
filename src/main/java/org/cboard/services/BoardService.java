@@ -74,9 +74,9 @@ public class BoardService {
         paramMap.put("board_name", board.getName());
         if (boardDao.countExistBoardName(paramMap) <= 0) {
             boardDao.save(board);
-            return new ServiceStatus(ServiceStatus.Status.Success, "success");
+            return new ServiceStatus(ServiceStatus.Status.Success, "success", board.getId());
         } else {
-            return new ServiceStatus(ServiceStatus.Status.Fail, "名称已存在");
+            return new ServiceStatus(ServiceStatus.Status.Fail, "Duplicated name");
         }
     }
 
@@ -97,7 +97,7 @@ public class BoardService {
             boardDao.update(board);
             return new ServiceStatus(ServiceStatus.Status.Success, "success");
         } else {
-            return new ServiceStatus(ServiceStatus.Status.Fail, "名称已存在");
+            return new ServiceStatus(ServiceStatus.Status.Fail, "Duplicated name");
         }
     }
 

@@ -11,7 +11,7 @@ public interface Aggregator extends AggregateProvider {
 
     boolean checkExist(Map<String, String> dataSource, Map<String, String> query);
 
-    void loadData(Map<String, String> dataSource, Map<String, String> query, String[][] data);
+    void loadData(Map<String, String> dataSource, Map<String, String> query, String[][] data, long interval);
 
     void cleanExist(Map<String, String> dataSource, Map<String, String> query);
 }

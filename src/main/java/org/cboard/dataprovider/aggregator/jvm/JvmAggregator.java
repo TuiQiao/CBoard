@@ -2,7 +2,6 @@ package org.cboard.dataprovider.aggregator.jvm;
 
 import com.alibaba.fastjson.JSONObject;
 import com.google.common.base.Charsets;
-import com.google.common.collect.Ordering;
 import com.google.common.hash.Hashing;
 import org.cboard.cache.CacheManager;
 import org.cboard.dataprovider.aggregator.Aggregator;
@@ -15,7 +14,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
-import org.springframework.util.StopWatch;
 
 import java.util.Arrays;
 import java.util.HashMap;
@@ -52,8 +50,8 @@ public class JvmAggregator implements Aggregator {
     }
 
     @Override
-    public void loadData(Map<String, String> dataSource, Map<String, String> query, String[][] data) {
-        rawDataCache.put(getCacheKey(dataSource, query), data, 12 * 60 * 60 * 1000);
+    public void loadData(Map<String, String> dataSource, Map<String, String> query, String[][] data, long interval) {
+        rawDataCache.put(getCacheKey(dataSource, query), data, interval * 1000);
     }
 
     @Override
@@ -93,10 +91,7 @@ public class JvmAggregator implements Aggregator {
 
     @Override
     public AggregateResult queryAggData(Map<String, String> dataSource, Map<String, String> query, AggConfig config) throws Exception {
-        StopWatch sw = new StopWatch();
-        sw.start("get from cache");
         String[][] data = rawDataCache.get(getCacheKey(dataSource, query));
-        sw.stop();
         Map<String, Integer> columnIndex = getColumnIndex(data);
         Filter rowFilter = new Filter(config, columnIndex);
 
@@ -107,14 +102,12 @@ public class JvmAggregator implements Aggregator {
         dimensionList.forEach(e -> e.setIndex(columnIndex.get(e.getName())));
         valuesList.forEach(e -> e.setIndex(columnIndex.get(e.getName())));
 
-        sw.start("agg");
         Map<Dimensions, Double[]> grouped = Arrays.stream(data).parallel().skip(1).filter(rowFilter::filter)
                 .collect(Collectors.groupingBy(row -> {
                     String[] ds = dimensionList.stream().map(d -> row[d.getIndex()]).toArray(String[]::new);
                     return new Dimensions(ds);
                 }, AggregateCollector.getCollector(valuesList)));
 
-        sw.stop();
         String[][] result = new String[grouped.keySet().size()][dimensionList.size() + valuesList.size()];
         int i = 0;
         for (Dimensions d : grouped.keySet()) {
@@ -122,7 +115,6 @@ public class JvmAggregator implements Aggregator {
         }
         dimensionList.addAll(valuesList);
         IntStream.range(0, dimensionList.size()).forEach(j -> dimensionList.get(j).setIndex(j));
-        System.out.println(sw.prettyPrint());
         return new AggregateResult(dimensionList, result);
     }
 

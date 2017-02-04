@@ -2,7 +2,7 @@
  * Created by yfyuan on 2016/8/2.
  */
 'use strict';
-cBoard.controller('boardCtrl', function ($scope, $http, ModalUtils, $filter, updateService, $uibModal, $timeout, dataService, $state) {
+cBoard.controller('boardCtrl', function ($scope, $http, ModalUtils, $filter, updateService, $uibModal, $timeout, dataService, $state, $window) {
 
     var translate = $filter('translate');
 
@@ -195,21 +195,29 @@ cBoard.controller('boardCtrl', function ($scope, $http, ModalUtils, $filter, upd
     function saveBoardCallBack(serviceStatus) {
         if (serviceStatus.status == '1') {
             getBoardList();
+            if(!$scope.curBoard.id){
+                $scope.curBoard.id = serviceStatus.id;
+            }
             $scope.optFlag = 'edit';
             ModalUtils.alert(serviceStatus.msg, "modal-success", "sm");
             boardChange();
         } else {
-            $scope.alerts = [{msg: serviceStatus.msg, type: 'danger'}];
+            ModalUtils.alert(serviceStatus.msg, "modal-warning", "sm");
         }
     }
 
     $scope.checkBeforPreview = function (Id) {
         $scope.isPreview = true;
-        ModalUtils.confirm(translate("COMMON.CONFIRM_SAVE"), "modal-warning", "lg", function () {
-            $scope.saveBoard();
-
-            var url = $state.href('mine.view', {id: Id});
-            window.open(url,'_blank');
+        ModalUtils.confirm(translate("COMMON.CONFIRM_SAVE_BEFORE_PREVIEW"), "modal-warning", "lg", function () {
+            var newTab = $window.open('', '_blank');
+            $scope.saveBoard()
+                .then(function () {
+                    if (!Id) {
+                        Id = $scope.curBoard.id;
+                    }
+                    var url = $state.href('mine.view', {id: Id});
+                    newTab.location.href = url;
+                });
         });
     };
     $scope.saveBoard = function () {
@@ -217,9 +225,9 @@ cBoard.controller('boardCtrl', function ($scope, $http, ModalUtils, $filter, upd
             return;
         }
         if ($scope.optFlag == 'new') {
-            $http.post("dashboard/saveNewBoard.do", {json: angular.toJson($scope.curBoard)}).success(saveBoardCallBack);
+            return $http.post("dashboard/saveNewBoard.do", {json: angular.toJson($scope.curBoard)}).success(saveBoardCallBack);
         } else if ($scope.optFlag == 'edit') {
-            $http.post(updateUrl, {json: angular.toJson($scope.curBoard)}).success(saveBoardCallBack);
+            return $http.post(updateUrl, {json: angular.toJson($scope.curBoard)}).success(saveBoardCallBack);
         }
     };
 

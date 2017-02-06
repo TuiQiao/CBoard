@@ -38,9 +38,6 @@ public class DashboardController {
     private DataProviderService dataProviderService;
 
     @Autowired
-    private CachedDataProviderService cachedDataProviderService;
-
-    @Autowired
     private DatasourceService datasourceService;
 
     @Autowired

@@ -243,6 +243,7 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
             datasource: $scope.datasource ? $scope.datasource.id : null,
             query: $scope.curWidget.query,
             datasetId: $scope.customDs ? null : $scope.curWidget.datasetId,
+            reload: !$scope.loadFromCache,
             callback: function (dps) {
                 $scope.loading = false;
                 $scope.alerts = [];
@@ -255,7 +256,7 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
                     $scope.alerts = [{msg: dps.msg, type: 'danger'}];
                 }
             }
-        }, !$scope.loadFromCache);
+        });
     };
 
     $scope.newWgt = function () {
@@ -696,6 +697,7 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
             datasource: $scope.datasource ? $scope.datasource.id : null,
             query: $scope.curWidget.query,
             datasetId: $scope.customDs ? null : $scope.curWidget.datasetId,
+            reload: !$scope.loadFromCache,
             callback: function (dps) {
                 $scope.loading = false;
                 $scope.alerts = [];
@@ -705,6 +707,7 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
                     $scope.alerts = [{msg: dps.msg, type: 'danger'}];
                 }
             }
+
         });
     };
 

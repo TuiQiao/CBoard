@@ -1,5 +1,6 @@
 package org.cboard.jdbc;
 
+import com.alibaba.druid.pool.DruidDataSourceFactory;
 import com.alibaba.fastjson.JSONObject;
 import com.google.common.base.Charsets;
 import com.google.common.hash.Hashing;
@@ -22,8 +23,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 
+import javax.sql.DataSource;
 import java.sql.*;
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
@@ -40,22 +44,27 @@ public class JdbcDataProvider extends DataProvider implements AggregateProvider 
     @Value("${dataprovider.resultLimit:200000}")
     private int resultLimit;
 
-    @DatasourceParameter(label = "Driver (eg: com.mysql.jdbc.Driver)", type = DatasourceParameter.Type.Input, order = 1)
+    @DatasourceParameter(label = "{{'DATAPROVIDER.JDBC.DRIVER'|translate}}", type = DatasourceParameter.Type.Input, order = 1)
     private String DRIVER = "driver";
 
-    @DatasourceParameter(label = "JDBC Url (eg: jdbc:mysql://hostname:port/db)", type = DatasourceParameter.Type.Input, order = 2)
+    @DatasourceParameter(label = "{{'DATAPROVIDER.JDBC.JDBCURL'|translate}}", type = DatasourceParameter.Type.Input, order = 2)
     private String JDBC_URL = "jdbcurl";
 
-    @DatasourceParameter(label = "User Name", type = DatasourceParameter.Type.Input, order = 3)
+    @DatasourceParameter(label = "{{'DATAPROVIDER.JDBC.USERNAME'|translate}}", type = DatasourceParameter.Type.Input, order = 3)
     private String USERNAME = "username";
 
-    @DatasourceParameter(label = "Password", type = DatasourceParameter.Type.Password, order = 4)
+    @DatasourceParameter(label = "{{'DATAPROVIDER.JDBC.PASSWORD'|translate}}", type = DatasourceParameter.Type.Password, order = 4)
     private String PASSWORD = "password";
 
-    @QueryParameter(label = "SQL TEXT", type = QueryParameter.Type.TextArea, order = 1)
+    @DatasourceParameter(label = "{{'DATAPROVIDER.JDBC.POOLEDCONNECTION'|translate}}", type = DatasourceParameter.Type.Checkbox, order = 5)
+    private String POOLED = "pooled";
+
+    @QueryParameter(label = "{{'DATAPROVIDER.JDBC.SQLTEXT'|translate}}", type = QueryParameter.Type.TextArea, order = 1)
     private String SQL = "sql";
 
     private static final CacheManager<Map<String, Integer>> typeCahce = new HeapCacheManager<>();
+
+    private static final ConcurrentMap<String, DataSource> datasourceMap = new ConcurrentHashMap<>();
 
     private Map<String, Integer> getType(Map<String, String> dataSource, Map<String, String> query) throws Exception {
         Map<String, Integer> result = null;
@@ -123,16 +132,35 @@ public class JdbcDataProvider extends DataProvider implements AggregateProvider 
     }
 
     private Connection getConnection(Map<String, String> dataSource) throws Exception {
-        String driver = dataSource.get(DRIVER);
-        String jdbcurl = dataSource.get(JDBC_URL);
-        String username = dataSource.get(USERNAME);
-        String password = dataSource.get(PASSWORD);
-
-        Class.forName(driver);
-        Properties props = new Properties();
-        props.setProperty("user", username);
-        props.setProperty("password", password);
-        return DriverManager.getConnection(jdbcurl, props);
+        String v = dataSource.get(POOLED);
+        if (v != null && "true".equals(v)) {
+            String key = Hashing.md5().newHasher().putString(JSONObject.toJSON(dataSource).toString(), Charsets.UTF_8).hash().toString();
+            DataSource ds = datasourceMap.get(key);
+            if (ds == null) {
+                synchronized (key.intern()) {
+                    ds = datasourceMap.get(key);
+                    if (ds == null) {
+                        Map<String, String> conf = new HashedMap();
+                        conf.put(DruidDataSourceFactory.PROP_URL, dataSource.get(JDBC_URL));
+                        conf.put(DruidDataSourceFactory.PROP_USERNAME, dataSource.get(USERNAME));
+                        conf.put(DruidDataSourceFactory.PROP_PASSWORD, dataSource.get(PASSWORD));
+                        ds = DruidDataSourceFactory.createDataSource(conf);
+                        datasourceMap.put(key, ds);
+                    }
+                }
+            }
+            return ds.getConnection();
+        } else {
+            String driver = dataSource.get(DRIVER);
+            String jdbcurl = dataSource.get(JDBC_URL);
+            String username = dataSource.get(USERNAME);
+            String password = dataSource.get(PASSWORD);
+            Class.forName(driver);
+            Properties props = new Properties();
+            props.setProperty("user", username);
+            props.setProperty("password", password);
+            return DriverManager.getConnection(jdbcurl, props);
+        }
     }
 
     @Override
@@ -243,10 +271,17 @@ public class JdbcDataProvider extends DataProvider implements AggregateProvider 
         return where.toString();
     }
 
-    private String assembleSelectColumns(Stream<ValueConfig> selectStream) {
+    private String assembleAggValColumns(Stream<ValueConfig> selectStream) {
         StringJoiner columns = new StringJoiner(", ", "", " ");
         columns.setEmptyValue("");
         selectStream.map(toSelect).filter(e -> e != null).forEach(columns::add);
+        return columns.toString();
+    }
+
+    private String assembleDimColumns(Stream<DimensionConfig> columnsStream) {
+        StringJoiner columns = new StringJoiner(", ", "", " ");
+        columns.setEmptyValue("");
+        columnsStream.map(g -> g.getColumnName()).distinct().filter(e -> e != null).forEach(columns::add);
         return columns.toString();
     }
 
@@ -279,15 +314,24 @@ public class JdbcDataProvider extends DataProvider implements AggregateProvider 
         Stream<DimensionConfig> filters = Stream.concat(Stream.concat(c, r), f);
         Map<String, Integer> types = getType(dataSource, query);
         Stream<DimensionConfigHelper> filterHelpers = filters.map(fe -> new DimensionConfigHelper(fe, types.get(fe.getColumnName())));
-        String where = assembleSqlFilter(filterHelpers);
-        String select = assembleSelectColumns(config.getValues().stream());
-        Stream<DimensionConfig> group = Stream.concat(config.getColumns().stream(), config.getRows().stream());
-        String groupby = group.map(g -> g.getColumnName()).distinct().collect(Collectors.joining(", "));
-        select = StringUtils.isBlank(groupby) ? select : String.join(",", groupby, select);
-        groupby = StringUtils.isBlank(groupby) ? "" : "GROUP BY " + groupby;
-        String sql = query.get(SQL).replace(";", "");
-        String fsql = "SELECT %s FROM (%s) __view__ %s %s";
-        String exec = String.format(fsql, select, sql, where, groupby);
+        Stream<DimensionConfig> dimStream = Stream.concat(config.getColumns().stream(), config.getRows().stream());
+
+        String dimColsStr = assembleDimColumns(dimStream);
+        String aggColsStr = assembleAggValColumns(config.getValues().stream());
+        String whereStr = assembleSqlFilter(filterHelpers);
+        String groupByStr = StringUtils.isBlank(dimColsStr) ? "" : "GROUP BY " + dimColsStr;
+
+        StringJoiner selectColsStr = new StringJoiner(",");
+        if (!StringUtils.isBlank(dimColsStr)) {
+            selectColsStr.add(dimColsStr);
+        }
+        if (!StringUtils.isBlank(aggColsStr)) {
+            selectColsStr.add(aggColsStr);
+        }
+
+        String subQuerySql = query.get(SQL).replace(";", "");
+        String fsql = "\nSELECT %s FROM (\n%s\n) __view__ %s %s";
+        String exec = String.format(fsql, selectColsStr, subQuerySql, whereStr, groupByStr);
         List<String[]> list = new LinkedList<>();
         LOG.info(exec);
         try (
@@ -308,8 +352,10 @@ public class JdbcDataProvider extends DataProvider implements AggregateProvider 
             LOG.error("ERROR:" + e.getMessage());
             throw new Exception("ERROR:" + e.getMessage(), e);
         }
-        group = Stream.concat(config.getColumns().stream(), config.getRows().stream());
-        List<ColumnIndex> dimensionList = group.map(ColumnIndex::fromDimensionConfig).collect(Collectors.toList());
+
+        // recreate a dimension stream
+        dimStream = Stream.concat(config.getColumns().stream(), config.getRows().stream());
+        List<ColumnIndex> dimensionList = dimStream.map(ColumnIndex::fromDimensionConfig).collect(Collectors.toList());
         dimensionList.addAll(config.getValues().stream().map(ColumnIndex::fromValueConfig).collect(Collectors.toList()));
         IntStream.range(0, dimensionList.size()).forEach(j -> dimensionList.get(j).setIndex(j));
         String[][] result = list.toArray(new String[][]{});

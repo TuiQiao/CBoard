@@ -23,11 +23,11 @@ public abstract class DataProvider {
     private Map<String, String> dataSource;
     private Map<String, String> query;
     private int resultLimit;
-    private long interval = 12;
+    private long interval = 12 * 60 * 60; // second
 
     private static final Logger logger = LoggerFactory.getLogger(DataProvider.class);
 
-    @DatasourceParameter(label = "AggregateProvider", type = DatasourceParameter.Type.Checkbox, order = 100)
+    @DatasourceParameter(label = "Aggregate Provider", type = DatasourceParameter.Type.Checkbox, order = 100)
     private String aggregateProvider = "aggregateProvider";
 
     private boolean isAggregateProviderActive() {

@@ -9,7 +9,7 @@ import java.util.concurrent.ConcurrentMap;
  */
 public class HeapCacheManager<T> implements CacheManager<T> {
 
-    private static ConcurrentMap<String, HeapCacheManager.CacheObject> cache = new ConcurrentHashMap<>();
+    private static ConcurrentMap<String, CacheObject> cache = new ConcurrentHashMap<>();
 
     @Override
     public void put(String key, T data, long expire) {
@@ -29,42 +29,6 @@ public class HeapCacheManager<T> implements CacheManager<T> {
     @Override
     public void remove(String key) {
         cache.remove(key);
-    }
-
-    class CacheObject {
-        private long t1;
-        private long expire;
-        private Object d;
-
-        public CacheObject(long t1, long expire, Object d) {
-            this.t1 = t1;
-            this.expire = expire;
-            this.d = d;
-        }
-
-        public long getT1() {
-            return t1;
-        }
-
-        public void setT1(long t1) {
-            this.t1 = t1;
-        }
-
-        public long getExpire() {
-            return expire;
-        }
-
-        public void setExpire(long expire) {
-            this.expire = expire;
-        }
-
-        public Object getD() {
-            return d;
-        }
-
-        public void setD(Object d) {
-            this.d = d;
-        }
     }
 
 }

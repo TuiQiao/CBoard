@@ -27,9 +27,6 @@ public class BoardService {
     @Autowired
     private WidgetDao widgetDao;
 
-    @Autowired
-    private CachedDataProviderService dataProviderService;
-
     public List<DashboardBoard> getBoardList(String userId) {
         return boardDao.getBoardList(userId);
     }

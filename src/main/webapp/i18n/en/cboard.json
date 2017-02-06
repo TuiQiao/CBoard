@@ -174,5 +174,25 @@
     "DATASET": "Cube",
     "WIDGET": "Widget",
     "CONTACT_ADMIN": "Please contact the administrator to apply the following resources' access"
+  },
+  "DATAPROVIDER": {
+    "JDBC": {
+      "DRIVER": "Driver (eg: com.mysql.jdbc.Driver)",
+      "JDBCURL": "JDBC Url (eg: jdbc:mysql://hostname:port/db)",
+      "USERNAME": "UserName",
+      "PASSWORD": "Password",
+      "POOLEDCONNECTION": "Pooled Connection",
+      "SQLTEXT": "Sql Text"
+    },
+    "SAIKU": {
+
+    },
+    "TEXTFILE": {
+      "BASE_PATH": "BasePath",
+      "FILE_NAME": "FileName",
+      "ENCODING": "Encoding<UTF-8>",
+      "SEPRATOR": "Seprator<TAB>",
+      "ENCLOSURE": "Enclosure<Empty>"
+    }
   }
 }

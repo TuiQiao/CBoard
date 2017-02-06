@@ -28,16 +28,16 @@ public class FileDataProvider extends DataProvider {
     @Value("${dataprovider.resultLimit:300000}")
     private int resultLimit;
 
-    @DatasourceParameter(label = "BasePath", type = DatasourceParameter.Type.Input, order = 1)
+    @DatasourceParameter(label = "{{'DATAPROVIDER.TEXTFILE.BASE_PATH'|translate}}", type = DatasourceParameter.Type.Input, order = 1)
     private String DS_PARAM_BASE_PATH = "basePath";
 
-    @QueryParameter(label = "FileName", type = QueryParameter.Type.Input, order = 1)
+    @QueryParameter(label = "{{'DATAPROVIDER.TEXTFILE.FILE_NAME'|translate}}", type = QueryParameter.Type.Input, order = 1)
     private String QUERY_PARAM_FILE_NAME = "fileName";
-    @QueryParameter(label = "Encoding", type = QueryParameter.Type.Input, order = 2)
+    @QueryParameter(label = "{{'DATAPROVIDER.TEXTFILE.ENCODING'|translate}}", type = QueryParameter.Type.Input, order = 2)
     private String QUERY_PARAM_ENCODING = "encoding";
-    @QueryParameter(label = "Seprator", type = QueryParameter.Type.Input, order = 3)
+    @QueryParameter(label = "{{'DATAPROVIDER.TEXTFILE.SEPRATOR'|translate}}", type = QueryParameter.Type.Input, order = 3)
     private String QUERY_PARAM_SEPRATOR = "seprator";
-    @QueryParameter(label = "Enclosure", type = QueryParameter.Type.Input, order = 4)
+    @QueryParameter(label = "{{'DATAPROVIDER.TEXTFILE.ENCLOSURE'|translate}}", type = QueryParameter.Type.Input, order = 4)
     private String QUERY_PARAM_ENCLOSURE = "enclosure";
 
     @Override

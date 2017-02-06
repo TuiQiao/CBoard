@@ -44,22 +44,22 @@ public class JdbcDataProvider extends DataProvider implements AggregateProvider 
     @Value("${dataprovider.resultLimit:200000}")
     private int resultLimit;
 
-    @DatasourceParameter(label = "Driver (eg: com.mysql.jdbc.Driver)", type = DatasourceParameter.Type.Input, order = 1)
+    @DatasourceParameter(label = "{{'DATAPROVIDER.JDBC.DRIVER'|translate}}", type = DatasourceParameter.Type.Input, order = 1)
     private String DRIVER = "driver";
 
-    @DatasourceParameter(label = "JDBC Url (eg: jdbc:mysql://hostname:port/db)", type = DatasourceParameter.Type.Input, order = 2)
+    @DatasourceParameter(label = "{{'DATAPROVIDER.JDBC.JDBCURL'|translate}}", type = DatasourceParameter.Type.Input, order = 2)
     private String JDBC_URL = "jdbcurl";
 
-    @DatasourceParameter(label = "User Name", type = DatasourceParameter.Type.Input, order = 3)
+    @DatasourceParameter(label = "{{'DATAPROVIDER.JDBC.USERNAME'|translate}}", type = DatasourceParameter.Type.Input, order = 3)
     private String USERNAME = "username";
 
-    @DatasourceParameter(label = "Password", type = DatasourceParameter.Type.Password, order = 4)
+    @DatasourceParameter(label = "{{'DATAPROVIDER.JDBC.PASSWORD'|translate}}", type = DatasourceParameter.Type.Password, order = 4)
     private String PASSWORD = "password";
 
-    @DatasourceParameter(label = "Pooled Connection", type = DatasourceParameter.Type.Checkbox, order = 5)
+    @DatasourceParameter(label = "{{'DATAPROVIDER.JDBC.POOLEDCONNECTION'|translate}}", type = DatasourceParameter.Type.Checkbox, order = 5)
     private String POOLED = "pooled";
 
-    @QueryParameter(label = "SQL TEXT", type = QueryParameter.Type.TextArea, order = 1)
+    @QueryParameter(label = "{{'DATAPROVIDER.JDBC.SQLTEXT'|translate}}", type = QueryParameter.Type.TextArea, order = 1)
     private String SQL = "sql";
 
     private static final CacheManager<Map<String, Integer>> typeCahce = new HeapCacheManager<>();

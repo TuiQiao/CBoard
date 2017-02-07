@@ -830,6 +830,30 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
         });
     };
 
+    $scope.editVFilter = function (o) {
+        $uibModal.open({
+            templateUrl: 'org/cboard/view/config/modal/vfilter.html',
+            windowTemplateUrl: 'org/cboard/view/util/modal/window.html',
+            backdrop: false,
+            size: 'lg',
+            controller: function ($scope, $uibModalInstance) {
+                $scope.type = ['=', '≠', '>', '<', '≥', '≤', '(a,b]', '[a,b)', '(a,b)', '[a,b]'];
+                $scope.f_type = o.f_type ? o.f_type : '>';
+                $scope.f_values = o.f_values ? o.f_values : [];
+                $scope.f_top = o.f_top ? o.f_top : '';
+                $scope.close = function () {
+                    $uibModalInstance.close();
+                };
+                $scope.ok = function () {
+                    o.f_type = $scope.f_type;
+                    o.f_values = $scope.f_values;
+                    o.f_top = $scope.f_top;
+                    $uibModalInstance.close();
+                };
+            }
+        });
+    };
+
     $scope.editSort = function (o) {
         switch (o.sort) {
             case 'asc':
@@ -842,6 +866,23 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
                 o.sort = 'asc';
                 break;
         }
+    };
+
+    $scope.cleanVSort = function () {
+        _.each($scope.curWidget.config.values, function (v) {
+            _.each(v.cols, function (c) {
+                c.sort = undefined;
+            });
+        });
+    };
+
+    $scope.cleanRowSort = function (o) {
+        var sort = o.sort;
+        _.each($scope.curWidget.config.keys, function (k) {
+            k.sort = undefined;
+        });
+        $scope.cleanVSort();
+        o.sort = sort;
     };
 
     $scope.showTooltip = function (chart, e) {

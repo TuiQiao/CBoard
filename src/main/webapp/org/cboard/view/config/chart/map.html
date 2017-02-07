@@ -19,15 +19,31 @@
                             {{o.alias?o.alias:o.exp}}
                         </button>
                         <button type="button" class="btn btn-primary btn-sm dropdown-toggle"
+                                ng-click="editSort(o);cleanRowSort(o);">
+                            <span class="fa" ng-class="{undefined:'fa-sort','asc':'fa-sort-asc','desc':'fa-sort-desc'}[o.sort]"></span>
+                        </button>
+                        <button type="button" class="btn btn-primary btn-sm dropdown-toggle"
                                 ng-click="editExp(o)">
                             <span class="fa fa-edit"></span>
                         </button>
+                        <ul class="dropdown-menu multi-level" role="menu" aria-labelledby="dropdownMenu">
+                            <li>
+                                <a href="#" ng-click="editExp(o)">{{'COMMON.EDIT'|translate}}</a>
+                            </li>
+                            <li>
+                                <a href="#" ng-click="editVFilter(o)">{{'CONFIG.WIDGET.FILTER'|translate}}</a>
+                            </li>
+                        </ul>
                     </div>
                     <div ng-switch-default class="btn-group">
                         <button type="button"
                                 ng-click="curWidget.config.selects.push(o.col);curWidget.config.values[0].cols.splice($index, 1);"
                                 class="btn btn-default btn-sm" style="cursor: move;">
                             {{o.aggregate_type+'('+o.col+')'+ (o.alias?(' -> '+o.alias):'')}}
+                        </button>
+                        <button type="button" class="btn btn-default btn-sm dropdown-toggle"
+                                ng-click="editSort(o);cleanRowSort(o);">
+                            <span class="fa" ng-class="{undefined:'fa-sort','asc':'fa-sort-asc','desc':'fa-sort-desc'}[o.sort]"></span>
                         </button>
                         <button type="button" class="btn btn-default btn-sm dropdown-toggle"
                                 data-toggle="dropdown">
@@ -37,6 +53,9 @@
                             <li><input class="form-control" ng-model="o.alias" placeholder="{{'CONFIG.WIDGET.ALIAS'|translate}}"></li>
                             <li ng-repeat="a in value_aggregate_types">
                                 <a ng-click="o.aggregate_type=a.value">{{a.name+'('+o.col+')'}}</a>
+                            </li>
+                            <li>
+                                <a href="#" ng-click="editVFilter(o)">{{'CONFIG.WIDGET.FILTER'|translate}}</a>
                             </li>
                         </ul>
                     </div>

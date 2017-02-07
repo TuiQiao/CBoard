@@ -108,118 +108,88 @@ cBoard.service('dataService', function ($http, updateService) {
         return result;
     };
 
-    var getRule = function (cfg, colIdx) {
-        switch (cfg.type) {
+    var filter = function (cfg, iv) {
+        switch (cfg.f_type) {
             case '=':
             case 'eq':
-                return function (row) {
-                    for (var i = 0; i < cfg.values.length; i++) {
-                        if (row[colIdx] == cfg.values[i]) {
-                            return true;
-                        }
+                for (var i = 0; i < cfg.f_values.length; i++) {
+                    if (iv == cfg.f_values[i]) {
+                        return true;
                     }
-                    return cfg.values.length == 0;
-                };
-                break;
+                }
+                return cfg.f_values.length == 0;
             case '≠':
             case 'ne':
-                return function (row) {
-                    for (var i = 0; i < cfg.values.length; i++) {
-                        if (row[colIdx] == cfg.values[i]) {
-                            return false;
-                        }
+                for (var i = 0; i < cfg.f_values.length; i++) {
+                    if (iv == cfg.f_values[i]) {
+                        return false;
                     }
-                    return true;
-                };
-                break;
+                }
+                return true;
             case '>':
-                return function (row) {
-                    var v = cfg.values[0];
-                    var params = toNumber(row[colIdx], v);
-                    if (!_.isUndefined(v) && params[0] <= params[1]) {
-                        return false;
-                    }
-                    return true;
-                };
-                break;
+                var v = cfg.f_values[0];
+                var params = toNumber(iv, v);
+                if (!_.isUndefined(v) && params[0] <= params[1]) {
+                    return false;
+                }
+                return true;
             case '<':
-                return function (row) {
-                    var v = cfg.values[0];
-                    var params = toNumber(row[colIdx], v);
-                    if (!_.isUndefined(v) && params[0] >= params[1]) {
-                        return false;
-                    }
-                    return true;
-                };
-                break;
+                var v = cfg.f_values[0];
+                var params = toNumber(iv, v);
+                if (!_.isUndefined(v) && params[0] >= params[1]) {
+                    return false;
+                }
+                return true;
             case '≥':
-                return function (row) {
-                    var v = cfg.values[0];
-                    var params = toNumber(row[colIdx], v);
-                    if (!_.isUndefined(v) && params[0] < params[1]) {
-                        return false;
-                    }
-                    return true;
-                };
-                break;
+                var v = cfg.f_values[0];
+                var params = toNumber(iv, v);
+                if (!_.isUndefined(v) && params[0] < params[1]) {
+                    return false;
+                }
+                return true;
             case '≤':
-                return function (row) {
-                    var v = cfg.values[0];
-                    var params = toNumber(row[colIdx], v);
-                    if (!_.isUndefined(v) && params[0] > params[1]) {
-                        return false;
-                    }
-                    return true;
-                };
-                break;
+                var v = cfg.f_values[0];
+                var params = toNumber(iv, v);
+                if (!_.isUndefined(v) && params[0] > params[1]) {
+                    return false;
+                }
+                return true;
             case '(a,b]':
-                return function (row) {
-                    var a = cfg.values[0];
-                    var b = cfg.values[1];
-                    var params = toNumber(row[colIdx], a, b);
-                    if (!_.isUndefined(a) && !_.isUndefined(b) && (params[0] <= params[1] || params[0] > params[2])) {
-                        return false;
-                    }
-                    return true;
-                };
-                break;
+                var a = cfg.f_values[0];
+                var b = cfg.f_values[1];
+                var params = toNumber(iv, a, b);
+                if (!_.isUndefined(a) && !_.isUndefined(b) && (params[0] <= params[1] || params[0] > params[2])) {
+                    return false;
+                }
+                return true;
             case '[a,b)':
-                return function (row) {
-                    var a = cfg.values[0];
-                    var b = cfg.values[1];
-                    var params = toNumber(row[colIdx], a, b);
-                    if (!_.isUndefined(a) && !_.isUndefined(b) && (params[0] < params[1] || params[0] >= params[2])) {
-                        return false;
-                    }
-                    return true;
-                };
-                break;
+                var a = cfg.f_values[0];
+                var b = cfg.f_values[1];
+                var params = toNumber(iv, a, b);
+                if (!_.isUndefined(a) && !_.isUndefined(b) && (params[0] < params[1] || params[0] >= params[2])) {
+                    return false;
+                }
+                return true;
             case '(a,b)':
-                return function (row) {
-                    var a = cfg.values[0];
-                    var b = cfg.values[1];
-                    var params = toNumber(row[colIdx], a, b);
-                    if (!_.isUndefined(a) && !_.isUndefined(b) && (params[0] <= params[1] || params[0] >= params[2])) {
-                        return false;
-                    }
-                    return true;
-                };
-                break;
+                var a = cfg.f_values[0];
+                var b = cfg.f_values[1];
+                var params = toNumber(iv, a, b);
+                if (!_.isUndefined(a) && !_.isUndefined(b) && (params[0] <= params[1] || params[0] >= params[2])) {
+                    return false;
+                }
+                return true;
             case '[a,b]':
-                return function (row) {
-                    var a = cfg.values[0];
-                    var b = cfg.values[1];
-                    var params = toNumber(row[colIdx], a, b);
-                    if (!_.isUndefined(a) && !_.isUndefined(b) && (params[0] < params[1] || params[0] > params[2])) {
-                        return false;
-                    }
-                    return true;
-                };
-                break;
+                var a = cfg.f_values[0];
+                var b = cfg.f_values[1];
+                var params = toNumber(iv, a, b);
+                if (!_.isUndefined(a) && !_.isUndefined(b) && (params[0] < params[1] || params[0] > params[2])) {
+                    return false;
+                }
+                return true;
+            default:
+                return true;
         }
     };
-    this.getRule = getRule;
-
 
     var toNumber = function () {
         var arr = _.isArray(arguments[0]) ? arguments[0] : arguments;
@@ -235,43 +205,6 @@ cBoard.service('dataService', function ($http, updateService) {
         return result;
     };
     this.toNumber = toNumber;
-
-    var getFilter = function (chartConfig, keysIdx, groupsIdx, filtersIdx) {
-        var rules = [];
-        _.map(keysIdx, function (v, i) {
-            var cfg = chartConfig.keys[i];
-            rules.push(getRule(cfg, v));
-        });
-        _.map(groupsIdx, function (v, i) {
-            var cfg = chartConfig.groups[i];
-            rules.push(getRule(cfg, v));
-        });
-        _.map(filtersIdx, function (v, i) {
-            var cfg = chartConfig.filters[i];
-            rules.push(getRule(cfg, v));
-        });
-        return function (row) {
-            for (var i = 0; i < rules.length; i++) {
-                if (!rules[i](row)) {
-                    return false;
-                }
-            }
-            return true;
-        };
-    };
-
-    this.getFilterByConfig = function (chartData, chartConfig) {
-        var keysIdx = getHeaderIndex(chartData, _.map(chartConfig.keys, function (e) {
-            return e.col;
-        }));
-        var groupsIdx = getHeaderIndex(chartData, _.map(chartConfig.groups, function (e) {
-            return e.col;
-        }));
-        var filtersIdx = getHeaderIndex(chartData, _.map(chartConfig.filters, function (e) {
-            return e.col;
-        }));
-        return getFilter(chartConfig, keysIdx, groupsIdx, filtersIdx);
-    };
 
     /**
      * Cast the aggregated raw data into data series
@@ -343,10 +276,10 @@ cBoard.service('dataService', function ($http, updateService) {
                 if (_.isUndefined(newData[newGroup][dSeries.name][dSeries.aggType])) {
                     newData[newGroup][dSeries.name][dSeries.aggType] = {};
                 }
-                if (_.isUndefined(newData[newGroup][dSeries.name][dSeries.aggType][jk])) {
-                    newData[newGroup][dSeries.name][dSeries.aggType][jk] = [];
-                }
-                newData[newGroup][dSeries.name][dSeries.aggType][jk].push(parseFloat(aggData.data[i][dSeries.index]));
+                // if (_.isUndefined(newData[newGroup][dSeries.name][dSeries.aggType][jk])) {
+                //     newData[newGroup][dSeries.name][dSeries.aggType][jk] = [];
+                // }
+                newData[newGroup][dSeries.name][dSeries.aggType][jk] = parseFloat(aggData.data[i][dSeries.index]);
             });
         }
         //sort dimension
@@ -376,6 +309,40 @@ cBoard.service('dataService', function ($http, updateService) {
         var castedAliasSeriesName = new Array();
         var aliasSeriesConfig = {};
         var aliasData = new Array();
+
+        var valueSort = undefined;
+        var valueSortArr = [];
+
+        _.each(castedGroups, function (group) {
+            _.each(chartConfig.values, function (value) {
+                _.each(value.cols, function (series) {
+                    if (_.isUndefined(valueSort) && series.sort) {
+                        valueSort = series.sort;
+                        castSeriesData(series, group.join('-'), castedKeys, newData, function (castedData, keyIdx) {
+                            valueSortArr[keyIdx] = {v: castedData, i: keyIdx};
+                        });
+                    }
+                });
+            });
+        });
+
+        if (!_.isUndefined(valueSort)) {
+            valueSortArr.sort(function (a, b) {
+                if (a.v == b.v)return 0;
+                var p = toNumber(a.v, b.v)
+                if ((p[0] < p[1]) ^ valueSort == 'asc') {
+                    return 1;
+                }
+                else {
+                    return -1;
+                }
+            });
+            var tk = angular.copy(castedKeys);
+            _.each(valueSortArr, function (e, i) {
+                castedKeys[i] = tk[e.i];
+            });
+        }
+
         _.each(castedGroups, function (group) {
             _.each(chartConfig.values, function (value, vIdx) {
                 _.each(value.cols, function (series) {
@@ -403,6 +370,33 @@ cBoard.service('dataService', function ($http, updateService) {
                 });
             });
         });
+        for (var i = 0; i < castedKeys.length; i++) {
+            var s = 0;
+            var f = true;
+            _.each(castedGroups, function (group) {
+                _.each(chartConfig.values, function (value) {
+                    _.each(value.cols, function (series) {
+                        if (!f) {
+                            return;
+                        }
+                        if (series.f_top && series.f_top <= i) {
+                            f = false;
+                        }
+                        if (!filter(series, aliasData[s][i])) {
+                            f = false;
+                        }
+                        s++;
+                    });
+                });
+            });
+            if (!f) {
+                castedKeys.splice(i, 1);
+                _.each(aliasData, function (_series) {
+                    _series.splice(i, 1);
+                });
+                i--;
+            }
+        }
         callback(castedKeys, castedAliasSeriesName, aliasData, aliasSeriesConfig);
 
     };

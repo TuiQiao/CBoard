@@ -15,12 +15,12 @@
                 {{o.col}}
             </button>
             <button type="button" class="btn btn-default btn-sm dropdown-toggle"
-                    ng-click="editSort(o)">
+                    ng-click="editSort(o);cleanVSort();">
                 <span class="fa" ng-class="{undefined:'fa-sort','asc':'fa-sort-asc','desc':'fa-sort-desc'}[o.sort]"></span>
             </button>
             <button type="button" class="btn btn-default btn-sm dropdown-toggle"
                     ng-click="editFilter(curWidget.config.keys,$index)">
-                <span class="fa fa-edit"></span>
+                <span class="fa fa-filter"></span>
             </button>
         </div>
     </div>

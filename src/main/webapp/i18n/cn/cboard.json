@@ -7,6 +7,7 @@
     "REFRESH": "刷新",
     "EDIT": "编辑",
     "CONFIRM_DELETE": "真的想好了要删除吗!!!",
+    "CONFIRM_SAVE_BEFORE_PREVIEW": "预览之前需要保存，确定保存？",
     "TIP": "提示",
     "SUCCESS": "成功!",
     "FAIL": "失败!",
@@ -174,5 +175,25 @@
     "DATASET": "数据集",
     "WIDGET": "图表",
     "CONTACT_ADMIN": "请联系管理员申请以下权限"
+  },
+  "DATAPROVIDER": {
+    "JDBC": {
+      "DRIVER": "驱动 (如: com.mysql.jdbc.Driver)",
+      "JDBCURL": "连接串 (如: jdbc:mysql://hostname:port/db)",
+      "USERNAME": "数据库用户名",
+      "PASSWORD": "数据库密码",
+      "POOLEDCONNECTION": "是否使用连接池",
+      "SQLTEXT": "查询语句"
+    },
+    "SAIKU": {
+
+    },
+    "TEXTFILE": {
+      "BASE_PATH": "文件所在目录",
+      "FILE_NAME": "文件名",
+      "ENCODING": "编码<UTF-8>",
+      "SEPRATOR": "分隔符<TAB>",
+      "ENCLOSURE": "列包围字符"
+    }
   }
 }

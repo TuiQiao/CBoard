@@ -2,7 +2,7 @@
  * Created by yfyuan on 2016/8/2.
  */
 'use strict';
-cBoard.controller('boardCtrl', function ($scope, $http, ModalUtils, $filter, updateService, $uibModal, $timeout) {
+cBoard.controller('boardCtrl', function ($scope, $http, ModalUtils, $filter, updateService, $uibModal, $timeout, dataService, $state, $window) {
 
     var translate = $filter('translate');
 
@@ -20,7 +20,7 @@ cBoard.controller('boardCtrl', function ($scope, $http, ModalUtils, $filter, upd
         $http.get("dashboard/getBoardList.do").success(function (response) {
             $scope.boardList = response;
             originalData = jstree_CvtVPath2TreeData(
-                $scope.boardList.map(function(ds) {
+                $scope.boardList.map(function (ds) {
                     var categoryName = ds.categoryName == null ? translate('CONFIG.DASHBOARD.MY_DASHBOARD') : ds.categoryName;
                     return {
                         "id": ds.id,
@@ -43,20 +43,27 @@ cBoard.controller('boardCtrl', function ($scope, $http, ModalUtils, $filter, upd
     };
 
     var getDatasetList = function () {
-        $http.get("dashboard/getDatasetList.do").success(function (response) {
-            $scope.datasetList = response;
-        }).then ($http.get("dashboard/getWidgetList.do").success(function (response) {
-            $scope.widgetList = response;
-            $scope.widgetList = $scope.widgetList.map(function(w) {
-                if (w.data.datasetId != null) {
-                    var dataset = _.find($scope.datasetList, function (ds) { return ds.id == w.data.datasetId; });
-                    w.dataset = dataset == null ? 'Lost DataSet' : dataset.name;
-                } else {
-                    w.dataset = "Query";
+
+        $http.get("dashboard/getDatasetList.do")
+            .then(function (response) {
+                $scope.datasetList = response.data;
+                return $http.get("dashboard/getWidgetList.do");
+            })
+            .then(function (response) {
+                    $scope.widgetList = response.data;
+                    $scope.widgetList = $scope.widgetList.map(function (w) {
+                        if (w.data.datasetId != null) {
+                            var dataset = _.find($scope.datasetList, function (ds) {
+                                return ds.id == w.data.datasetId;
+                            });
+                            w.dataset = dataset == null ? 'Lost DataSet' : dataset.name;
+                        } else {
+                            w.dataset = "Query";
+                        }
+                        return w;
+                    });
                 }
-                return w;
-            });
-        }));
+            );
     };
 
     var loadBoardDataset = function (status) {
@@ -78,26 +85,41 @@ cBoard.controller('boardCtrl', function ($scope, $http, ModalUtils, $filter, upd
         $scope.boardDataset = [];
         _.each(datasetIdArr, function (d) {
             status.i++;
-            $http.post("dashboard/getCachedData.do", {
-                datasetId: d
-            }).success(function (response) {
-                var dataset = _.find($scope.datasetList, function (ds) {
-                    return ds.id == d;
-                });
-                if (dataset != undefined) {
-                    $scope.boardDataset.push({name: dataset.name, columns: response.data[0], datasetId: dataset.id});
+            dataService.getColumns({
+                datasource: null,
+                query: null,
+                datasetId: d,
+                callback: function (dps) {
+                    $scope.alerts = [];
+                    if (dps.msg == "1") {
+                        var dataset = _.find($scope.datasetList, function (ds) {
+                            return ds.id == d;
+                        });
+                        if (dataset != undefined) {
+                            $scope.boardDataset.push({name: dataset.name, columns: dps.columns, datasetId: dataset.id});
+                        }
+                        status.i--;
+                    } else {
+                        $scope.alerts = [{msg: dps.msg, type: 'danger'}];
+                    }
                 }
-                status.i--;
             });
         });
         _.each(widgetArr, function (w) {
             status.i++;
-            $http.post("dashboard/getCachedData.do", {
-                datasourceId: w.data.datasource,
-                query: angular.toJson(w.data.query),
-            }).success(function (response) {
-                $scope.boardDataset.push({name: w.name, columns: response.data[0], widgetId: w.id});
-                status.i--;
+            dataService.getColumns({
+                datasource: w.data.datasource,
+                query: w.data.query,
+                datasetId: null,
+                callback: function (dps) {
+                    if (dps.msg == "1") {
+                        $scope.boardDataset.push({name: w.name, columns: dps.columns, widgetId: w.id});
+                        status.i--;
+                    } else {
+                        $scope.alerts = [{msg: dps.msg, type: 'danger'}];
+                    }
+
+                }
             });
         });
     };
@@ -126,15 +148,7 @@ cBoard.controller('boardCtrl', function ($scope, $http, ModalUtils, $filter, upd
     $scope.copyBoard = function (board) {
         var o = angular.copy(board);
         o.name = o.name + '_copy';
-        $http.post("dashboard/saveNewBoard.do", {json: angular.toJson(o)}).success(function (serviceStatus) {
-            if (serviceStatus.status == '1') {
-                getBoardList();
-                ModalUtils.alert(serviceStatus.msg, "modal-success", "sm");
-                boardChange();
-            } else {
-                ModalUtils.alert(serviceStatus.msg, "modal-warning", "lg");
-            }
-        });
+        $http.post("dashboard/saveNewBoard.do", {json: angular.toJson(o)}).success(saveBoardCallBack);
     };
 
     $scope.deleteBoard = function (board) {
@@ -178,32 +192,42 @@ cBoard.controller('boardCtrl', function ($scope, $http, ModalUtils, $filter, upd
         return true;
     };
 
+    function saveBoardCallBack(serviceStatus) {
+        if (serviceStatus.status == '1') {
+            getBoardList();
+            if(!$scope.curBoard.id){
+                $scope.curBoard.id = serviceStatus.id;
+            }
+            $scope.optFlag = 'edit';
+            ModalUtils.alert(serviceStatus.msg, "modal-success", "sm");
+            boardChange();
+        } else {
+            ModalUtils.alert(serviceStatus.msg, "modal-warning", "sm");
+        }
+    }
+
+    $scope.checkBeforPreview = function (Id) {
+        $scope.isPreview = true;
+        ModalUtils.confirm(translate("COMMON.CONFIRM_SAVE_BEFORE_PREVIEW"), "modal-warning", "lg", function () {
+            var newTab = $window.open('', '_blank');
+            $scope.saveBoard()
+                .then(function () {
+                    if (!Id) {
+                        Id = $scope.curBoard.id;
+                    }
+                    var url = $state.href('mine.view', {id: Id});
+                    newTab.location.href = url;
+                });
+        });
+    };
     $scope.saveBoard = function () {
         if (!validate()) {
             return;
         }
         if ($scope.optFlag == 'new') {
-            $http.post("dashboard/saveNewBoard.do", {json: angular.toJson($scope.curBoard)}).success(function (serviceStatus) {
-                if (serviceStatus.status == '1') {
-                    getBoardList();
-                    $scope.optFlag = 'edit';
-                    ModalUtils.alert(serviceStatus.msg, "modal-success", "sm");
-                    boardChange();
-                } else {
-                    $scope.alerts = [{msg: serviceStatus.msg, type: 'danger'}];
-                }
-            });
+            return $http.post("dashboard/saveNewBoard.do", {json: angular.toJson($scope.curBoard)}).success(saveBoardCallBack);
         } else if ($scope.optFlag == 'edit') {
-            $http.post(updateUrl, {json: angular.toJson($scope.curBoard)}).success(function (serviceStatus) {
-                if (serviceStatus.status == '1') {
-                    getBoardList();
-                    $scope.optFlag = 'edit';
-                    ModalUtils.alert(serviceStatus.msg, "modal-success", "sm");
-                    boardChange();
-                } else {
-                    $scope.alerts = [{msg: serviceStatus.msg, type: 'danger'}];
-                }
-            });
+            return $http.post(updateUrl, {json: angular.toJson($scope.curBoard)}).success(saveBoardCallBack);
         }
     };
 
@@ -303,18 +327,20 @@ cBoard.controller('boardCtrl', function ($scope, $http, ModalUtils, $filter, upd
     $scope.treeConfig = jsTreeConfig1;
     $scope.treeConfig.plugins = ['types', 'unique', 'state', 'sort'];
 
-    $("#" + treeID).keyup(function(e){
-        if(e.keyCode == 46) {
+    $("#" + treeID).keyup(function (e) {
+        if (e.keyCode == 46) {
             $scope.deleteBoard(getSelectedBoard());
         }
     });
 
-    var getSelectedBoard = function() {
+    var getSelectedBoard = function () {
         var selectedNode = jstree_GetSelectedNodes(treeID)[0];
-        return _.find($scope.boardList, function (ds) { return ds.id == selectedNode.id; });
+        return _.find($scope.boardList, function (ds) {
+            return ds.id == selectedNode.id;
+        });
     };
 
-    var checkTreeNode = function(actionType) {
+    var checkTreeNode = function (actionType) {
         return jstree_CheckTreeNode(actionType, treeID, ModalUtils.alert);
     };
 
@@ -325,7 +351,7 @@ cBoard.controller('boardCtrl', function ($scope, $http, ModalUtils, $filter, upd
         dataSetTree.select_node(id);
     };
 
-    $scope.applyModelChanges = function() {
+    $scope.applyModelChanges = function () {
         return !$scope.ignoreChanges;
     };
 
@@ -339,12 +365,12 @@ cBoard.controller('boardCtrl', function ($scope, $http, ModalUtils, $filter, upd
         $scope.editBoard(getSelectedBoard());
     };
 
-    $scope.deleteNode = function(){
+    $scope.deleteNode = function () {
         if (!checkTreeNode("delete")) return;
         $scope.deleteBoard(getSelectedBoard());
     };
 
-    $scope.treeEventsObj = function() {
+    $scope.treeEventsObj = function () {
         var baseEventObj = jstree_baseTreeEventsObj({
             ngScope: $scope, ngHttp: $http, ngTimeout: $timeout,
             treeID: treeID, listName: "boardList"

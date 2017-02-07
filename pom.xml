@@ -229,7 +229,11 @@
             <artifactId>kylin-jdbc</artifactId>
             <version>1.5.3</version>
         </dependency>
-
+        <dependency>
+            <groupId>org.ehcache</groupId>
+            <artifactId>ehcache</artifactId>
+            <version>3.2.0</version>
+        </dependency>
     </dependencies>
 
     <build>

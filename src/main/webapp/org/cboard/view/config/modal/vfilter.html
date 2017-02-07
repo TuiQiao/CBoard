@@ -1,0 +1,38 @@
+<div class="modal-header">
+    <button type="button" class="close" data-dismiss="modal" aria-label="Close" ng-click="close()">
+        <span aria-hidden="true">×</span></button>
+    <h4 class="modal-title">{{'CONFIG.WIDGET.FILTER'|translate}}</h4>
+</div>
+<div class="modal-body">
+    <div class="row">
+        <div class="col-md-12" ng-repeat="alert in alerts">
+            <div uib-alert ng-class="'alert-' + (alert.type || 'warning')"
+                 close="alerts.splice($index, 1)">{{alert.msg}}
+            </div>
+        </div>
+    </div>
+    <div class="row" style="margin-bottom: 10px">
+        <div class="col-md-4">
+            <select class="form-control" ng-model="f_type" ng-options="t as t for t in type">
+            </select>
+        </div>
+        <div class="col-md-4">
+            <input type="number" class="form-control" ng-model="f_values[0]">
+        </div>
+        <div class="col-md-4" ng-show="f_type.length > 1">
+            <input type="number" class="form-control" ng-model="f_values[1]">
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-4">
+            <div class="input-group">
+                <span class="input-group-addon">Top</span>
+                <input type="number" class="form-control" ng-model="f_top">
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal-footer">
+    <button type="button" class="btn btn-default pull-left" data-dismiss="modal" ng-click="close()">{{'COMMON.CANCEL'|translate}}</button>
+    <button type="button" class="btn btn-primary" ng-click="ok()">{{'COMMON.OK'|translate}}</button>
+</div>

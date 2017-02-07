@@ -8,9 +8,17 @@ public class ServiceStatus {
     private Status status;
     private String msg;
 
+    private Long id;
+
     public ServiceStatus(Status status, String msg) {
         this.status = status;
         this.msg = msg;
+    }
+
+    public ServiceStatus(Status status, String msg, Long id) {
+        this.status = status;
+        this.msg = msg;
+        this.id = id;
     }
 
     enum Status {
@@ -46,5 +54,13 @@ public class ServiceStatus {
 
     public void setMsg(String msg) {
         this.msg = msg;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
     }
 }

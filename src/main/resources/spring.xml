@@ -11,7 +11,8 @@ http://www.springframework.org/schema/context/spring-context-3.0.xsd">
 
     <context:component-scan base-package="org.cboard"/>
 
-    <bean name="dataCache" class="org.cboard.cache.HeapCacheManager"/>
-    <bean name="rawDataCache" class="org.cboard.cache.HeapCacheManager"/>
+    <bean name="rawDataCache" class="org.cboard.cache.EhCacheManager">
+        <property name="cacheAlias" value="jvmAggregator"/>
+    </bean>
     <!--<import resource="spring-redis.xml"/>-->
 </beans>

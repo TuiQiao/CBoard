@@ -7,6 +7,8 @@
         <textarea ng-model="curDatasource.config.$param.name" class="form-control input-sm"/>
     #elseif ($param.type == "password")
         <input ng-model="curDatasource.config.$param.name" class="form-control input-sm" type="password"/>
+    #elseif ($param.type == "checkbox")
+        <input ng-model="curDatasource.config.$param.name" type="checkbox"/>
     #end
 </div>
 #end

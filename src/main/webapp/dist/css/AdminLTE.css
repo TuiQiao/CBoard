@@ -5127,6 +5127,10 @@ button >canvas {
      border-radius: 3px;
      box-shadow: 0 1px 2px rgba(0,0,0,0.2);
 }
+a.pageLink:hover, a.nextLink:hover, a.previewLink:hover {
+  background-color: #585858;
+  color: white !important;
+}
 a.current {
     background-color: #ccc;
 }

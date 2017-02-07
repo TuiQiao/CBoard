@@ -9,6 +9,7 @@ cBoard.controller('datasetCtrl', function ($scope, $http, dataService, $uibModal
     $scope.curWidget = {};
     $scope.alerts = [];
     $scope.verify = {dsName: true};
+    $scope.loadFromCache = true;
 
     var treeID = 'dataSetTreeID'; // Set to a same value with treeDom
     var originalData = [];
@@ -232,38 +233,40 @@ cBoard.controller('datasetCtrl', function ($scope, $http, dataService, $uibModal
         cleanPreview();
         $scope.loading = true;
 
-        dataService.getColumns($scope.datasource.id, $scope.curWidget.query, null, function (columns) {
-            $scope.loading = false;
-            $scope.toChartDisabled = false;
-            if (columns) {
-                $scope.alerts = [];
-                $scope.selects = columns;
-            } else {
-                if (widgetData.msg != null) {
-                    $scope.alerts = [{msg: 'error', type: 'danger'}];
+        dataService.getColumns({
+            datasource: $scope.datasource.id,
+            query: $scope.curWidget.query,
+            datasetId: null,
+            reload: !$scope.loadFromCache,
+            callback: function (dps) {
+                $scope.loading = false;
+                $scope.toChartDisabled = false;
+                if (dps.msg == "1") {
+                    $scope.alerts = [];
+                    $scope.selects = dps.columns;
+                } else {
+                    $scope.alerts = [{msg: dps.msg, type: 'danger'}];
                 }
-            }
 
-            var widget = {
-                chart_type: "table",
-                filters: [],
-                groups: [],
-                keys: [],
-                selects: [],
-                values: [{
-                    cols: []
-                }
-                ]
-            };
-            _.each($scope.selects, function (c) {
-                widget.keys.push({
-                    col: c,
-                    type: "eq",
-                    values: []
+                var widget = {
+                    chart_type: "table",
+                    filters: [],
+                    groups: [],
+                    keys: [],
+                    selects: [],
+                    values: [{
+                        cols: []
+                    }
+                    ]
+                };
+                _.each($scope.selects, function (c) {
+                    widget.keys.push({
+                        col: c,
+                        type: "eq",
+                        values: []
+                    });
                 });
-            });
-
-            //chartService.render($('#dataset_preview'), $scope.widgetData, widget, null, {myheight: 300});
+            }
         });
     };
 

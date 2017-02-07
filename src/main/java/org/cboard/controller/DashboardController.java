@@ -38,9 +38,6 @@ public class DashboardController {
     private DataProviderService dataProviderService;
 
     @Autowired
-    private CachedDataProviderService cachedDataProviderService;
-
-    @Autowired
     private DatasourceService datasourceService;
 
     @Autowired
@@ -73,28 +70,6 @@ public class DashboardController {
         JSONObject datasourceO = JSONObject.parseObject(datasource);
         return dataProviderService.test(datasourceO, Maps.transformValues(queryO, Functions.toStringFunction()));
     }
-
-//    @RequestMapping(value = "/getData")
-//    public DataProviderResult getData(@RequestParam(name = "datasourceId", required = false) Long datasourceId, @RequestParam(name = "query", required = false) String query, @RequestParam(name = "datasetId", required = false) Long datasetId) {
-//        Map<String, String> strParams = null;
-//        if (query != null) {
-//            JSONObject queryO = JSONObject.parseObject(query);
-//            strParams = Maps.transformValues(queryO, Functions.toStringFunction());
-//        }
-//        DataProviderResult result = dataProviderService.getData(datasourceId, strParams, datasetId);
-//        return result;
-//    }
-//
-//    @RequestMapping(value = "/getCachedData")
-//    public DataProviderResult getCachedData(@RequestParam(name = "datasourceId", required = false) Long datasourceId, @RequestParam(name = "query", required = false) String query, @RequestParam(name = "datasetId", required = false) Long datasetId, @RequestParam(name = "reload", required = false, defaultValue = "false") Boolean reload) {
-//        Map<String, String> strParams = null;
-//        if (query != null) {
-//            JSONObject queryO = JSONObject.parseObject(query);
-//            strParams = Maps.transformValues(queryO, Functions.toStringFunction());
-//        }
-//        DataProviderResult result = cachedDataProviderService.getData(datasourceId, strParams, datasetId, reload);
-//        return result;
-//    }
 
     @RequestMapping(value = "/getDatasourceList")
     public List<ViewDashboardDatasource> getDatasourceList() {
@@ -279,24 +254,26 @@ public class DashboardController {
     }
 
     @RequestMapping(value = "/getDimensionValues")
-    public String[][] getDimensionValues(@RequestParam(name = "datasourceId", required = false) Long datasourceId, @RequestParam(name = "query", required = false) String query, @RequestParam(name = "datasetId", required = false) Long datasetId, @RequestParam(name = "colmunName", required = true) String colmunName, @RequestParam(name = "cfg", required = false) String cfg) {
+    public String[][] getDimensionValues(@RequestParam(name = "datasourceId", required = false) Long datasourceId, @RequestParam(name = "query", required = false) String query, @RequestParam(name = "datasetId", required = false) Long datasetId, @RequestParam(name = "colmunName", required = true) String colmunName, @RequestParam(name = "cfg", required = false) String cfg, @RequestParam(name = "reload", required = false, defaultValue = "false") Boolean reload) {
         Map<String, String> strParams = null;
         if (query != null) {
             JSONObject queryO = JSONObject.parseObject(query);
             strParams = Maps.transformValues(queryO, Functions.toStringFunction());
         }
         AggConfig config = JSONObject.parseObject(cfg, AggConfig.class);
-        return dataProviderService.getDimensionValues(datasourceId, strParams, datasetId, colmunName, config);
+        return dataProviderService.getDimensionValues(datasourceId, strParams, datasetId, colmunName, config, reload);
     }
 
     @RequestMapping(value = "/getColumns")
-    public String[] getColumns(@RequestParam(name = "datasourceId", required = false) Long datasourceId, @RequestParam(name = "query", required = false) String query, @RequestParam(name = "datasetId", required = false) Long datasetId) {
+    public DataProviderResult getColumns(@RequestParam(name = "datasourceId", required = false) Long datasourceId,
+                                         @RequestParam(name = "query", required = false) String query,
+                                         @RequestParam(name = "datasetId", required = false) Long datasetId, @RequestParam(name = "reload", required = false, defaultValue = "false") Boolean reload) {
         Map<String, String> strParams = null;
         if (query != null) {
             JSONObject queryO = JSONObject.parseObject(query);
             strParams = Maps.transformValues(queryO, Functions.toStringFunction());
         }
-        return dataProviderService.getColumns(datasourceId, strParams, datasetId);
+        return dataProviderService.getColumns(datasourceId, strParams, datasetId, reload);
     }
 
     @RequestMapping(value = "/getAggregateData")

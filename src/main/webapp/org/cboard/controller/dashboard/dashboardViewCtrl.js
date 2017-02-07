@@ -139,13 +139,14 @@ cBoard.controller('dashboardViewCtrl', function ($timeout, $rootScope, $scope, $
         if (_.isUndefined(widget.data.datasetId)) {
             widget.data.config.boardFilters = $scope.widgetFilters[widget.id];
         } else {
-            widget.data.config.boardFilters = $scope.datasetFilters[widget.id];
+            widget.data.config.boardFilters = $scope.datasetFilters[widget.data.datasetId];
         }
         return widget;
     };
 
     $scope.applyParamFilter = function () {
         $scope.widgetFilters = [];
+        $scope.datasetFilters = [];
         _.each($scope.board.layout.rows, function (row) {
             _.each(row.params, function (param) {
                 if (param.values.length <= 0) {
@@ -267,7 +268,7 @@ cBoard.controller('dashboardViewCtrl', function ($timeout, $rootScope, $scope, $
             backdrop: false,
             size: 'lg',
             controller: function ($scope, $uibModalInstance, dataService) {
-                var paramSelects = _.sortBy(dataService.toNumber(param.selects));
+                var paramSelects = angular.copy(param.selects);
                 paramSelects.map(function (d, l) {
                     param.values.map(function (i) {
                         d == i ? paramSelects.splice(l, 1) : null;

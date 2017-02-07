@@ -9,6 +9,12 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
     //图表类型初始化
     $scope.chart_types = [
         {
+            name: translate('CONFIG.WIDGET.TABLE'), value: 'table', class: 'cTable',
+            row: translate('CONFIG.WIDGET.TIPS_DIM_NUM_1_MORE'),
+            column: translate('CONFIG.WIDGET.TIPS_DIM_NUM_0_MORE'),
+            measure: translate('CONFIG.WIDGET.TIPS_DIM_NUM_1_MORE')
+        },
+        {
             name: translate('CONFIG.WIDGET.LINE_BAR'), value: 'line', class: 'cLine',
             row: translate('CONFIG.WIDGET.TIPS_DIM_NUM_1_MORE'),
             column: translate('CONFIG.WIDGET.TIPS_DIM_NUM_0_MORE'),
@@ -25,12 +31,6 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
             row: translate('CONFIG.WIDGET.TIPS_DIM_NUM_0'),
             column: translate('CONFIG.WIDGET.TIPS_DIM_NUM_0'),
             measure: translate('CONFIG.WIDGET.TIPS_DIM_NUM_1')
-        },
-        {
-            name: translate('CONFIG.WIDGET.TABLE'), value: 'table', class: 'cTable',
-            row: translate('CONFIG.WIDGET.TIPS_DIM_NUM_1_MORE'),
-            column: translate('CONFIG.WIDGET.TIPS_DIM_NUM_0_MORE'),
-            measure: translate('CONFIG.WIDGET.TIPS_DIM_NUM_1_MORE')
         },
         {
             name: translate('CONFIG.WIDGET.FUNNEL'), value: 'funnel', class: 'cFunnel',
@@ -239,16 +239,22 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
 
     $scope.loadData = function () {
         $scope.loading = true;
-        dataService.getColumns($scope.datasource ? $scope.datasource.id : null, $scope.curWidget.query, $scope.customDs ? null : $scope.curWidget.datasetId, function (columns) {
-            $scope.loading = false;
-            $scope.alerts = [];
-            if (columns) {
-                $scope.columns = columns;
-                $scope.toChartDisabled = false;
-                $scope.newConfig();
-                $scope.filterSelect = {};
-            } else {
-                $scope.alerts = [{msg: 'There is something wrong.', type: 'danger'}];
+        dataService.getColumns({
+            datasource: $scope.datasource ? $scope.datasource.id : null,
+            query: $scope.curWidget.query,
+            datasetId: $scope.customDs ? null : $scope.curWidget.datasetId,
+            reload: !$scope.loadFromCache,
+            callback: function (dps) {
+                $scope.loading = false;
+                $scope.alerts = [];
+                if (dps.msg == "1") {
+                    $scope.columns = dps.columns;
+                    $scope.toChartDisabled = false;
+                    $scope.newConfig();
+                    $scope.filterSelect = {};
+                } else {
+                    $scope.alerts = [{msg: dps.msg, type: 'danger'}];
+                }
             }
         });
     };
@@ -420,7 +426,7 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
 
     $scope.newConfig = function () {
         $scope.curWidget.config = {};
-        $scope.curWidget.config.chart_type = 'line';
+        $scope.curWidget.config.chart_type = 'table';
         loadDsExpressions();
         cleanPreview();
         switch ($scope.curWidget.config.chart_type) {
@@ -571,7 +577,7 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
                     $scope.previewDivWidth = 12;
                     break;
             }
-        });
+        }, null, !$scope.loadFromCache);
     };
 
 // $scope.saveChart = function () {
@@ -687,13 +693,21 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
         $scope.customDs = _.isUndefined($scope.curWidget.datasetId);
         loadDsExpressions();
         addWatch();
-        dataService.getColumns($scope.datasource ? $scope.datasource.id : null, $scope.curWidget.query, $scope.customDs ? null : $scope.curWidget.datasetId, function (columns) {
-            $scope.loading = false;
-            if (columns) {
-                $scope.columns = columns;
-            } else {
-                ModalUtils.alert('There is something wrong.', "modal-danger", "lg");
+        dataService.getColumns({
+            datasource: $scope.datasource ? $scope.datasource.id : null,
+            query: $scope.curWidget.query,
+            datasetId: $scope.customDs ? null : $scope.curWidget.datasetId,
+            reload: !$scope.loadFromCache,
+            callback: function (dps) {
+                $scope.loading = false;
+                $scope.alerts = [];
+                if (dps.msg == "1") {
+                    $scope.columns = dps.columns;
+                } else {
+                    $scope.alerts = [{msg: dps.msg, type: 'danger'}];
+                }
             }
+
         });
     };
 
@@ -759,9 +773,9 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
         },
         toKeysGroups: function (list, index, item, type) {
             if (type == 'col') {
-                list[index] = {col: item.col, type: 'eq', values: []};
+                list[index] = {col: item.col, type: 'eq', values: [], sort: 'asc'};
             } else if (type == 'select') {
-                list[index] = {col: item, type: 'eq', values: []};
+                list[index] = {col: item, type: 'eq', values: [], sort: 'asc'};
             }
         }
     };
@@ -816,6 +830,30 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
         });
     };
 
+    $scope.editVFilter = function (o) {
+        $uibModal.open({
+            templateUrl: 'org/cboard/view/config/modal/vfilter.html',
+            windowTemplateUrl: 'org/cboard/view/util/modal/window.html',
+            backdrop: false,
+            size: 'lg',
+            controller: function ($scope, $uibModalInstance) {
+                $scope.type = ['=', '≠', '>', '<', '≥', '≤', '(a,b]', '[a,b)', '(a,b)', '[a,b]'];
+                $scope.f_type = o.f_type ? o.f_type : '>';
+                $scope.f_values = o.f_values ? o.f_values : [];
+                $scope.f_top = o.f_top ? o.f_top : '';
+                $scope.close = function () {
+                    $uibModalInstance.close();
+                };
+                $scope.ok = function () {
+                    o.f_type = $scope.f_type;
+                    o.f_values = $scope.f_values;
+                    o.f_top = $scope.f_top;
+                    $uibModalInstance.close();
+                };
+            }
+        });
+    };
+
     $scope.editSort = function (o) {
         switch (o.sort) {
             case 'asc':
@@ -828,6 +866,23 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
                 o.sort = 'asc';
                 break;
         }
+    };
+
+    $scope.cleanVSort = function () {
+        _.each($scope.curWidget.config.values, function (v) {
+            _.each(v.cols, function (c) {
+                c.sort = undefined;
+            });
+        });
+    };
+
+    $scope.cleanRowSort = function (o) {
+        var sort = o.sort;
+        _.each($scope.curWidget.config.keys, function (k) {
+            k.sort = undefined;
+        });
+        $scope.cleanVSort();
+        o.sort = sort;
     };
 
     $scope.showTooltip = function (chart, e) {

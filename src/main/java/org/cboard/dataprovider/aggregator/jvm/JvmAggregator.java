@@ -8,6 +8,7 @@ import org.cboard.dataprovider.aggregator.Aggregator;
 import org.cboard.dataprovider.config.AggConfig;
 import org.cboard.dataprovider.result.AggregateResult;
 import org.cboard.dataprovider.result.ColumnIndex;
+import org.cboard.util.NaturalOrderComparator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -49,8 +50,8 @@ public class JvmAggregator implements Aggregator {
     }
 
     @Override
-    public void loadData(Map<String, String> dataSource, Map<String, String> query, String[][] data) {
-        rawDataCache.put(getCacheKey(dataSource, query), data, 12 * 60 * 60 * 1000);
+    public void loadData(Map<String, String> dataSource, Map<String, String> query, String[][] data, long interval) {
+        rawDataCache.put(getCacheKey(dataSource, query), data, interval * 1000);
     }
 
     @Override
@@ -59,11 +60,12 @@ public class JvmAggregator implements Aggregator {
         Map<String, Integer> columnIndex = getColumnIndex(data);
         final int fi = columnIndex.get(columnName);
         Filter rowFilter = new Filter(config, columnIndex);
+        NaturalOrderComparator comparator = new NaturalOrderComparator();
         String[] filtered = Arrays.stream(data).parallel().skip(1)
                 .filter(rowFilter::filter)
                 .map(e -> e[fi])
                 .distinct()
-                .sorted()
+                .sorted(comparator)
                 .toArray(String[]::new);
         String[] nofilter = Arrays.stream(data).parallel().skip(1)
                 .map(e -> e[fi])
@@ -89,8 +91,6 @@ public class JvmAggregator implements Aggregator {
 
     @Override
     public AggregateResult queryAggData(Map<String, String> dataSource, Map<String, String> query, AggConfig config) throws Exception {
-        logger.info("queryAggData:{}", config);
-
         String[][] data = rawDataCache.get(getCacheKey(dataSource, query));
         Map<String, Integer> columnIndex = getColumnIndex(data);
         Filter rowFilter = new Filter(config, columnIndex);
@@ -102,7 +102,7 @@ public class JvmAggregator implements Aggregator {
         dimensionList.forEach(e -> e.setIndex(columnIndex.get(e.getName())));
         valuesList.forEach(e -> e.setIndex(columnIndex.get(e.getName())));
 
-        Map<Dimensions, Double[]> grouped = Arrays.stream(data).skip(1).filter(rowFilter::filter)
+        Map<Dimensions, Double[]> grouped = Arrays.stream(data).parallel().skip(1).filter(rowFilter::filter)
                 .collect(Collectors.groupingBy(row -> {
                     String[] ds = dimensionList.stream().map(d -> row[d.getIndex()]).toArray(String[]::new);
                     return new Dimensions(ds);

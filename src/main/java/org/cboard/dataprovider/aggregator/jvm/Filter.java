@@ -5,6 +5,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.cboard.dataprovider.config.AggConfig;
 import org.cboard.dataprovider.config.DimensionConfig;
+import org.cboard.util.NaturalOrderComparator;
 
 import java.util.*;
 
@@ -15,6 +16,7 @@ public class Filter {
 
     private List<DimensionConfig> ruleList;
     private Map<String, Integer> columnIndex;
+    private Comparator comparator = new NaturalOrderComparator();
 
     public Filter(AggConfig config, Map<String, Integer> columnIndex) {
         ruleList = new ArrayList<>();
@@ -37,7 +39,6 @@ public class Filter {
             }
             String a = rule.getValues().get(0);
             String b = rule.getValues().size() >= 2 ? rule.getValues().get(1) : null;
-            Comparable[] params = null;
             switch (rule.getFilterType()) {
                 case "=":
                 case "eq":
@@ -46,37 +47,29 @@ public class Filter {
                 case "ne":
                     return rule.getValues().stream().allMatch(e -> !e.equals(v));
                 case ">":
-                    params = tryToNumber(v, a);
-                    return Ordering.natural().compare(params[0], params[1]) > 0;
+                    return comparator.compare(v, a) > 0;
                 case "<":
-                    params = tryToNumber(v, a);
-                    return Ordering.natural().compare(params[0], params[1]) < 0;
+                    return comparator.compare(v, a) < 0;
                 case "≥":
-                    params = tryToNumber(v, a);
-                    return Ordering.natural().compare(params[0], params[1]) >= 0;
+                    return comparator.compare(v, a) >= 0;
                 case "≤":
-                    params = tryToNumber(v, a);
-                    return Ordering.natural().compare(params[0], params[1]) <= 0;
+                    return comparator.compare(v, a) <= 0;
                 case "(a,b]":
-                    params = tryToNumber(v, a, b);
                     return (rule.getValues().size() >= 2) &&
-                            (Ordering.natural().compare(params[0], params[1]) > 0) &&
-                            (Ordering.natural().compare(params[0], params[2]) <= 0);
+                            (comparator.compare(v, a) > 0) &&
+                            (comparator.compare(v, b) <= 0);
                 case "[a,b)":
-                    params = tryToNumber(v, a, b);
                     return (rule.getValues().size() >= 2) &&
-                            (Ordering.natural().compare(params[0], params[1]) >= 0) &&
-                            (Ordering.natural().compare(params[0], params[2]) < 0);
+                            (comparator.compare(v, a) >= 0) &&
+                            (comparator.compare(v, b) < 0);
                 case "(a,b)":
-                    params = tryToNumber(v, a, b);
                     return (rule.getValues().size() >= 2) &&
-                            (Ordering.natural().compare(params[0], params[1]) > 0) &&
-                            (Ordering.natural().compare(params[0], params[2]) < 0);
+                            (comparator.compare(v, a) > 0) &&
+                            (comparator.compare(v, b) < 0);
                 case "[a,b]":
-                    params = tryToNumber(v, a, b);
                     return (rule.getValues().size() >= 2) &&
-                            (Ordering.natural().compare(params[0], params[1]) >= 0) &&
-                            (Ordering.natural().compare(params[0], params[2]) <= 0);
+                            (comparator.compare(v, a) >= 0) &&
+                            (comparator.compare(v, b) <= 0);
             }
             return true;
         });

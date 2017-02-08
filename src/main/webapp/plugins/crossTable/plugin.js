@@ -8,6 +8,7 @@ var crossTable = {
             chartConfig = args.chartConfig,
             tall = args.tall,
             pageDataNum = 20,
+            random = new Date().getTime(),
             container = args.container;
         var html = "<table class = 'table_wrapper' id='tableWrapper'><thead class='fixedHeader'>",
             colContent = "<tr>";
@@ -70,10 +71,10 @@ var crossTable = {
         html = html + trDom + "</tbody></table>";
         var optionDom = "<select><option value='20'>20</option><option value='50'>50</option><option value='100'>100</option><option value='150'>150</option></select>";
         var PaginationDom = "<div><div class='optionNum'><span>Show</span>" + optionDom + "<span>entries</span></div><div class='page'><ul></ul></div></div>";
-        var operate = "<div class='toolbar'><span class='info'><b>info: </b>" + rowNum + " x " + colNum + "</span>" +
+        var operate = "<div class='toolbar" + random  + "'><span class='info'><b>info: </b>" + colNum + " x " + rowNum + "</span>" +
             "<span class='exportBnt' title='export'></span></div>";
         $(container).html(operate);
-        $(container).append("<div class='tableView' style='width:99%;max-height:" + tall + "px;overflow:auto'>" + html + "</div>");
+        $(container).append("<div class='tableView table_" + random  + "' style='width:99%;max-height:" + tall + "px;overflow:auto'>" + html + "</div>");
         $(container).append(PaginationDom);
         var pageObj = {
             data: dataPage,
@@ -169,8 +170,15 @@ var crossTable = {
         $('.optionNum select').on('change', function (e) {
             var pageDataNum = e.target.value;
             var dataPage =_this.paginationProcessData(data, num, pageDataNum);
+            if (e.target.offsetParent.children[0].id == 'preview_widget') {
             $('tbody.scrollContent').html(_this.render(dataPage[0], chartConfig));
             _this.renderPagination(dataPage.length, 1);
+            } else {
+                var dom = e.target.parentNode.nextSibling.childNodes[0];
+                var tableBody = e.target.offsetParent.children[1].children[1].children[0].children[1];
+                tableBody.innerHTML = (_this.render(dataPage[0], chartConfig));
+                _this.renderPagination(dataPage.length, 1, null, dom);
+            }
             _this.clickPageNum(dataPage, chartConfig);
         });
     },
@@ -182,13 +190,19 @@ var crossTable = {
                 data: data,
                 chartConfig: chartConfig
             };
-
+            if (e.target.offsetParent.children[0].id == 'preview_widget') {
             $('tbody.scrollContent').html(_this.render(data[pageNum], chartConfig));
             _this.renderPagination(data.length, parseInt(e.target.innerText), pageObj);
+            } else {
+                var dom = e.target.parentNode.parentNode.parentNode.childNodes[0]; //ul
+                var tbody = e.target.offsetParent.children[1].children[1].children[0].children[1];
+                tbody.innerHTML = _this.render(data[pageNum], chartConfig);
+                _this.renderPagination(data.length, parseInt(e.target.innerText), pageObj, dom);
+            }
             _this.clickPageNum(data, chartConfig);
         });
     },
-    renderPagination: function (pageCount, pageNumber, pageObj) {
+    renderPagination: function (pageCount, pageNumber, pageObj, target) {
         var liStr = '<li><a class="previewLink">Preview</a></li>';
         if (pageCount < 10) {
             for (var a = 0;a < pageCount; a++) {
@@ -227,6 +241,17 @@ var crossTable = {
             }
         }
         liStr += '<li><a class="nextLink">Next</a></li>';
+        if (target) {
+            target.innerHTML = liStr;
+            if (pageNumber == 1) {
+                target.childNodes[0].setAttribute('class', 'hide');
+            } else if (pageNumber == pageCount) {
+                target.childNodes[target.childNodes.length - 1].setAttribute('class', 'hide');
+            }
+            this.buttonColor(pageNumber,target);
+            this.clickNextPrev(pageCount, pageObj);
+        }
+        else {
         $('.page>ul').html(liStr);
         if (pageNumber == 1) {
             $('.page a.previewLink').addClass('hide');
@@ -235,29 +260,52 @@ var crossTable = {
         }
         this.buttonColor(pageNumber);
         this.clickNextPrev(pageCount, pageObj);
+        }
     },
-    buttonColor: function (pageNum) {
+    buttonColor: function (pageNum, target) {
+        console.log($(target));
+        if (target) {
+            var buttons = target.childNodes;
+            for (var i =0; i < buttons.length; i++) {
+                buttons[i].childNodes[0].innerText == pageNum ? $(buttons[i].childNodes[0]).addClass('current') : null;
+            }
+        } else {
         var buttons = document.querySelectorAll('.page li>a');
 
         for (var i =0; i < buttons.length; i++) {
             buttons[i].innerText == pageNum ? $(buttons[i]).addClass('current') : null;
         }
+        }
     },
     clickNextPrev: function(pageCount, pageObj) {
         var _this = this;
 
-        $('.page a.previewLink').on('click', function(){
-            var pageNum = parseInt($('a.current')[0].text) - 1;
+        $('.page a.previewLink').on('click', function(e){
+            var kids = e.target.parentNode.parentNode.childNodes;
+            var dom = e.target.parentNode.parentNode.parentNode.childNodes[0];
+            var tbody = e.target.offsetParent.children[1].children[1].children[0].children[1];
 
-            $('tbody.scrollContent').html(_this.render(pageObj.data[pageNum - 1], pageObj.chartConfig));
-            _this.renderPagination(pageCount, pageNum, pageObj);
+            for (var i = 0; i < kids.length; i++) {
+                if (kids[i].childNodes[0].className.indexOf('current') > -1) {
+                    var pageNum = parseInt(kids[i].childNodes[0].text) - 1;
+                }
+            }
+            tbody.innerHTML = _this.render(pageObj.data[pageNum - 1], pageObj.chartConfig);
+            _this.renderPagination(pageCount, pageNum, pageObj, dom);
             _this.clickPageNum(pageObj.data, pageObj.chartConfig);
         });
-        $('.page a.nextLink').on('click', function(){
-            var pageNum = parseInt($('a.current')[0].text) + 1;
+        $('.page a.nextLink').on('click', function(e){
+            var kids = e.target.parentNode.parentNode.childNodes;
+            var dom = e.target.parentNode.parentNode.parentNode.childNodes[0];
+            var tbody = e.target.offsetParent.children[1].children[1].children[0].children[1];
 
-            $('tbody.scrollContent').html(_this.render(pageObj.data[pageNum - 1], pageObj.chartConfig));
-            _this.renderPagination(pageCount, pageNum, pageObj);
+            for (var i = 0; i < kids.length; i++) {
+                if (kids[i].childNodes[0].className.indexOf('current') > -1) {
+                    var pageNum = parseInt(kids[i].childNodes[0].text) + 1;
+                }
+            }
+            tbody.innerHTML = _this.render(pageObj.data[pageNum - 1], pageObj.chartConfig);
+            _this.renderPagination(pageCount, pageNum, pageObj, dom);
             _this.clickPageNum(pageObj.data, pageObj.chartConfig);
         });
     },

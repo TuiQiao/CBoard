@@ -87,24 +87,16 @@ var crossTable = {
         this.selectDataNum(data, chartConfig.groups.length + 1, chartConfig, p_class);
         this.export(random);
     },
-    paginationProcessData: function (data, num, pageDataNum) {
-        var length = data.length - num;
-        var t = length % pageDataNum;
-        var rest = parseInt(length / pageDataNum);
-        var page;
+    paginationProcessData: function (rawData, headerLines, pageSize) {
+        var dataLength = rawData.length - headerLines;
+        var lastPageLines = dataLength % pageSize;
+        var fullSizePages = parseInt(dataLength / pageSize);
+        var totalPages;
+        lastPageLines == 0 ? totalPages = fullSizePages : totalPages = fullSizePages + 1;
         var pageData = [];
-        t == 0 ? page = rest : page = rest + 1;
-        for (var i = 1; i < page + 1; i++) {
-            var partData = [];
-            if (i == page) {
-                for (var j = (i - 1) * pageDataNum + num; j < pageDataNum * (page - 1) + t + num; j++) {
-                    partData.push(data[j]);
-                }
-            } else {
-                for (var j = (i - 1) * pageDataNum + num; j < pageDataNum * i + num; j++) {
-                    partData.push(data[j]);
-                }
-            }
+        for (var currentPage = 1; currentPage < totalPages + 1; currentPage++) {
+            var startRow = (currentPage - 1) * pageSize + headerLines;
+            var partData = rawData.slice(startRow, startRow + pageSize);
             pageData.push(partData);
         }
         return pageData;

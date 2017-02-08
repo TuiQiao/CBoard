@@ -347,7 +347,6 @@ cBoard.service('dataService', function ($http, updateService) {
             _.each(chartConfig.values, function (value, vIdx) {
                 _.each(value.cols, function (series) {
                     var seriesName = series.alias ? series.alias : series.col;
-                    var formatter = series.formatter;
                     var newSeriesName = seriesName;
                     if (group && group.length > 0) {
                         var a = [].concat(group);
@@ -365,7 +364,7 @@ cBoard.service('dataService', function ($http, updateService) {
                             aliasData[castedAliasSeriesName.length - 1] = new Array();
                         }
                         // Only format decimal
-                        aliasData[castedAliasSeriesName.length - 1][keyIdx] = dataFormat(castedData, formatter);
+                        aliasData[castedAliasSeriesName.length - 1][keyIdx] = castedData;
                     });
                 });
             });
@@ -384,6 +383,9 @@ cBoard.service('dataService', function ($http, updateService) {
                         }
                         if (!filter(series, aliasData[s][i])) {
                             f = false;
+                        }
+                        if(f){
+                            aliasData[s][i] = dataFormat(aliasData[s][i], series.formatter)
                         }
                         s++;
                     });

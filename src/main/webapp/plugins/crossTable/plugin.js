@@ -284,7 +284,7 @@ var crossTable = {
         $('.' + random).on('click', '.page a.previewLink', function (e) {
             var kids = e.target.parentNode.parentNode.childNodes;
             var dom = e.target.parentNode.parentNode.parentNode.childNodes[0];
-            var tbody = e.target.offsetParent.children[1].children[1].children[0].children[1];
+            var tbody = $(e.target.offsetParent).find('tbody')[0];
 
             for (var i = 0; i < kids.length; i++) {
                 if (kids[i].childNodes[0].className.indexOf('current') > -1) {
@@ -298,7 +298,7 @@ var crossTable = {
         $('.' + random).on('click', '.page a.nextLink', function (e) {
             var kids = e.target.parentNode.parentNode.childNodes;
             var dom = e.target.parentNode.parentNode.parentNode.childNodes[0];
-            var tbody = e.target.offsetParent.children[1].children[1].children[0].children[1];
+            var tbody = $(e.target.offsetParent).find('tbody')[0];
 
             for (var i = 0; i < kids.length; i++) {
                 if (kids[i].childNodes[0].className.indexOf('current') > -1) {

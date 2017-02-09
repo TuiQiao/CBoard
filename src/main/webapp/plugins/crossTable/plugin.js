@@ -166,15 +166,11 @@ var crossTable = {
         $('.' + random).on('change', '.optionNum select', function (e) {
             var pageDataNum = e.target.value;
             var dataPage = _this.paginationProcessData(data, num, pageDataNum);
-            if (e.target.offsetParent.children[0].id == 'preview_widget') {
-                $('tbody.scrollContent').html(_this.render(dataPage[0], chartConfig));
-                _this.renderPagination(dataPage.length, 1);
-            } else {
-                var dom = e.target.parentNode.nextSibling.childNodes[0];
-                var tableBody = e.target.offsetParent.children[1].children[1].children[0].children[1];
-                tableBody.innerHTML = (_this.render(dataPage[0], chartConfig));
-                _this.renderPagination(dataPage.length, 1, null, dom);
-            }
+
+            var dom = $(e.target.offsetParent).find('.page>ul')[0];
+            var tbody = $(e.target.offsetParent).find('tbody')[0];
+            tbody.innerHTML = (_this.render(dataPage[0], chartConfig));
+            _this.renderPagination(dataPage.length, 1, null, dom);
             $('.' + random).off('click');
             _this.clickPageNum(dataPage, chartConfig, random);
             var pageObj = {
@@ -192,15 +188,11 @@ var crossTable = {
                 data: data,
                 chartConfig: chartConfig
             };
-            if (e.target.offsetParent.children[0].id == 'preview_widget') {
-                $('tbody.scrollContent').html(_this.render(data[pageNum], chartConfig));
-                _this.renderPagination(data.length, parseInt(e.target.innerText), pageObj);
-            } else {
-                var dom = e.target.parentNode.parentNode.parentNode.childNodes[0]; //ul
-                var tbody = e.target.offsetParent.children[1].children[1].children[0].children[1];
-                tbody.innerHTML = _this.render(data[pageNum], chartConfig);
-                _this.renderPagination(data.length, parseInt(e.target.innerText), pageObj, dom);
-            }
+
+            var dom = $(e.target.offsetParent).find('.page>ul')[0];
+            var tbody = $(e.target.offsetParent).find('tbody')[0];
+            tbody.innerHTML = _this.render(data[pageNum], chartConfig);
+            _this.renderPagination(data.length, parseInt(e.target.innerText), pageObj, dom);
         });
     },
     renderPagination: function (pageCount, pageNumber, pageObj, target) {

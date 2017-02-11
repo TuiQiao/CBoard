@@ -255,7 +255,6 @@ var crossTable = {
         // }
     },
     buttonColor: function (pageNum, target) {
-        console.log($(target));
         if (target) {
             var buttons = target.childNodes;
             for (var i = 0; i < buttons.length; i++) {

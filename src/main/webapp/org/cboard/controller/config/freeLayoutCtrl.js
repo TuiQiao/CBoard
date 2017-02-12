@@ -28,6 +28,8 @@ cBoard.controller('freeLayoutCtrl', function($rootScope, $scope, $http, ModalUti
         freeLayoutService.setHeight();
     });
 
+    freeLayoutService.setHeight();
+
     $http.get("dashboard/getDatasourceList.do").success(function (response) {
         $scope.datasourceList = response;
         getCategoryList();

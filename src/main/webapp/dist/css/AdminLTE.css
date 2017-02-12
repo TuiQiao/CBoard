@@ -5202,3 +5202,34 @@ span.ellipse {
     background: url("../../imgs/excel.svg");
     background-size: cover;
 }
+div.operateBox {
+    position: relative;
+}
+div.newBoard {
+    position: absolute;
+    top: 20px;
+    right: -160px;
+    background: #fff;
+    box-shadow: 1px 1px 5px #ccc;
+    z-index: 100;
+}
+div.newBoard span {
+    display: block;
+    width: 160px;
+    height: 40px;
+    line-height: 40px;
+    text-align: center;
+    cursor: pointer;
+    font-weight: normal;
+}
+.hideOperate {
+    display: none;
+}
+div.newBoard span:hover{
+    font-weight: bold;
+}
+span.returnIcon{
+    display: inline-block;
+    float: right;
+    cursor: pointer;
+}

@@ -1,7 +1,8 @@
 /**
  * Created by Fine on 2017/2/11.
  */
-function chartDataProcess(chartConfig,casted_keys, casted_values, aggregate_data) {
+'user strict';
+var chartDataProcess = function(chartConfig,casted_keys, casted_values, aggregate_data) {
     var keysList = casted_keys,
         keyArr = [],
         emptyList = [],
@@ -72,4 +73,4 @@ function chartDataProcess(chartConfig,casted_keys, casted_values, aggregate_data
     table_data = null;
     column_header = null;
     return chartData;
-}
+};

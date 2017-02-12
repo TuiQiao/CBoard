@@ -1,0 +1,20 @@
+<div ng-controller="freeLayoutCtrl">
+    <div class="col-md-3">
+        <div class="box box-solid">
+            <div class="box-header with-border">
+                <i class="fa fa-dashboard"></i>
+                <h3 class="box-title">{{'CONFIG.WIDGET.WIDGET'|translate}}</h3>
+                <span class="fa fa-reply returnIcon" title="" ng-click="switchLayout()"></span>
+            </div>
+            <div class="panel-body">
+                <div id="widgetTreeID" js-tree="treeConfig" should-apply="applyModelChanges()" ng-model="treeData" tree="treeInstance"
+                     tree-events-obj="treeEventsObj"></div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-9">
+        <div class="box layoutPanel">
+
+        </div>
+    </div>
+</div>

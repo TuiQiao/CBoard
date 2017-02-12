@@ -2,16 +2,16 @@
  * Created by yfyuan on 2016/8/2.
  */
 'use strict';
-cBoard.controller('boardCtrl', function ($scope, $http, ModalUtils, $filter, updateService, $uibModal, $timeout, dataService, $state, $window) {
-
+cBoard.controller('boardCtrl', function ($rootScope, $scope, $http, ModalUtils, $filter, updateService, $uibModal, $timeout, dataService, $state, $window) {
     var translate = $filter('translate');
 
     $scope.optFlag = 'none';
     $scope.curBoard = {layout: {rows: []}};
     $scope.alerts = [];
     $scope.verify = {boardName: true};
-
+    $rootScope.freeLayout = false;
     $scope.treeData = [];
+
     var treeID = "boardTreeID";
     var originalData = [];
     var updateUrl = "dashboard/updateBoard.do";
@@ -43,7 +43,6 @@ cBoard.controller('boardCtrl', function ($scope, $http, ModalUtils, $filter, upd
     };
 
     var getDatasetList = function () {
-
         $http.get("dashboard/getDatasetList.do")
             .then(function (response) {
                 $scope.datasetList = response.data;
@@ -133,11 +132,21 @@ cBoard.controller('boardCtrl', function ($scope, $http, ModalUtils, $filter, upd
     getCategoryList();
     getDatasetList();
 
-    $scope.newBoard = function () {
-        $scope.optFlag = 'new';
-        $scope.curBoard = {layout: {rows: []}};
+    $scope.newOperate = function() {
+        $('div.newBoard').toggleClass('hideOperate');
     };
 
+    $scope.newGridLayout = function () {
+        $rootScope.freeLayout = false;
+        $scope.optFlag = 'new';
+        $scope.curBoard = {layout: {rows: []}};
+        $('div.newBoard').addClass('hideOperate');
+    };
+
+    $scope.newFreeLayout = function () {
+        $rootScope.freeLayout = true;
+        $('div.newBoard').addClass('hideOperate');
+    };
     $scope.editBoard = function (board) {
         var b = angular.copy(board);
         updateService.updateBoard(b);
@@ -378,6 +387,5 @@ cBoard.controller('boardCtrl', function ($scope, $http, ModalUtils, $filter, upd
         });
         return baseEventObj;
     }();
-
     /**  js tree related start **/
 });

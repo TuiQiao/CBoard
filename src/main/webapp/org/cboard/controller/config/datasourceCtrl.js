@@ -1,7 +1,7 @@
 /**
  * Created by yfyuan on 2016/8/19.
  */
-cBoard.controller('datasourceCtrl', function ($scope, $http, ModalUtils, $uibModal, $filter) {
+cBoard.controller('datasourceCtrl', function ($scope, $http, ModalUtils, $uibModal, $filter, $q) {
 
     var translate = $filter('translate');
     $scope.optFlag = 'none';
@@ -33,13 +33,48 @@ cBoard.controller('datasourceCtrl', function ($scope, $http, ModalUtils, $uibMod
         $scope.changeDsView();
     };
     $scope.deleteDs = function (ds) {
-        ModalUtils.confirm(translate("COMMON.CONFIRM_DELETE"), "modal-warning", "lg", function () {
-            $http.post("dashboard/deleteDatasource.do", {id: ds.id}).success(function () {
-                $scope.optFlag = 'none';
-                getDatasourceList();
+        var isDependent = false;
+        var promiseDs = $http.get("dashboard/getAllDatasetList.do").then(function (response) {
+            if (!response) {
+                return false;
+            }
+            var resDs = _.find(response.data, function (obj) {
+                return obj.data.datasource == ds.id;
+            });
+
+            if (resDs) {
+                isDependent = true;
+            }
+        });
+
+        var promiseWdg = $http.get("dashboard/getAllWidgetList.do").then(function (response) {
+            if (!response) {
+                return false;
+            }
+            var resWdg = _.find(response.data, function (obj) {
+                return obj.data.datasource == ds.id;
+            });
+
+            if (resWdg) {
+                isDependent = true;
+            }
+        });
+
+        var p = $q.all([promiseDs, promiseWdg]);
+        p.then(function () {
+            if (isDependent) {
+                ModalUtils.alert(translate("COMMON.NOT_ALLOWED_TO_DELETE_BECAUSE_BE_DEPENDENT"), "modal-warning", "lg");
+                return false;
+            }
+            ModalUtils.confirm(translate("COMMON.CONFIRM_DELETE"), "modal-warning", "lg", function () {
+                $http.post("dashboard/deleteDatasource.do", {id: ds.id}).success(function () {
+                    $scope.optFlag = 'none';
+                    getDatasourceList();
+                });
             });
         });
     };
+
     $scope.copyDs = function (ds) {
         var data = angular.copy(ds);
         data.name = data.name + "_copy";
@@ -72,7 +107,8 @@ cBoard.controller('datasourceCtrl', function ($scope, $http, ModalUtils, $uibMod
             return false;
         }
         return true;
-    }
+    };
+
     $scope.saveNew = function () {
         if(!validate()){
             return;

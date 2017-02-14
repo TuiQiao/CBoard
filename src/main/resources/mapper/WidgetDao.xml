@@ -6,6 +6,16 @@
         SELECT DISTINCT(category_name) category FROM dashboard_widget order by category
     </select>
 
+    <select id="getAllWidgetList" resultType="org.cboard.pojo.DashboardWidget">
+        SELECT
+        widget_id     AS id,
+        user_id       AS userId,
+        widget_name   AS name,
+        data_json     AS data,
+        category_name AS categoryName
+        FROM dashboard_widget
+    </select>
+
     <select id="getWidgetList" resultType="org.cboard.pojo.DashboardWidget">
        SELECT
               widget_id     AS id,

@@ -6,6 +6,16 @@
         SELECT DISTINCT(category_name) category FROM dashboard_dataset order by category
     </select>
 
+    <select id="getAllDatasetList" resultType="org.cboard.pojo.DashboardDataset">
+        SELECT
+        dataset_id    AS id,
+        user_id       AS userId,
+        dataset_name  AS name,
+        data_json     AS data,
+        category_name AS categoryName
+        FROM dashboard_dataset
+    </select>
+
     <select id="getDatasetList" resultType="org.cboard.pojo.DashboardDataset">
        SELECT
               dataset_id    AS id,

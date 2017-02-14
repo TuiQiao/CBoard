@@ -123,6 +123,12 @@ public class DashboardController {
         return widgetService.save(userid, json);
     }
 
+    @RequestMapping(value = "/getAllWidgetList")
+    public List<ViewDashboardWidget> getAllWidgetList() {
+        List<DashboardWidget> list = widgetDao.getAllWidgetList();
+        return Lists.transform(list, ViewDashboardWidget.TO);
+    }
+
     @RequestMapping(value = "/getWidgetList")
     public List<ViewDashboardWidget> getWidgetList() {
 
@@ -214,6 +220,12 @@ public class DashboardController {
 
         String userid = authenticationService.getCurrentUser().getUserId();
         return datasetService.save(userid, json);
+    }
+
+    @RequestMapping(value = "/getAllDatasetList")
+    public List<ViewDashboardDataset> getAllDatasetList() {
+        List<DashboardDataset> list = datasetDao.getAllDatasetList();
+        return Lists.transform(list, ViewDashboardDataset.TO);
     }
 
     @RequestMapping(value = "/getDatasetList")

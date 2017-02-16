@@ -3,10 +3,23 @@ var CBoardKpiRender = function (jqContainer, options) {
     this.options = options;
 };
 
-CBoardKpiRender.prototype.html = function () {
+CBoardKpiRender.prototype.html = function (persist) {
     var self = this;
     var temp = "" + self.template;
     var html = temp.render(self.options);
+    if (persist) {
+        setTimeout(function () {
+            self.container.css('background', '#fff');
+            html2canvas(self.container, {
+                onrendered: function (canvas) {
+                    persist.data = canvas.toDataURL("image/jpeg");
+                    persist.type = "jpg"
+                }
+            });
+        }, 1000);
+        // persist.data = {name: self.options.kpiName, value: self.options.kpiValue};
+        // persist.type = "kpi";
+    }
     return html;
 };
 

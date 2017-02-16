@@ -4,8 +4,8 @@
 'use strict';
 cBoard.service('chartRadarService', function (dataService) {
 
-    this.render = function (containerDom, option, scope) {
-        return new CBoardEChartRender(containerDom, option).chart();
+    this.render = function (containerDom, option, scope, persist) {
+        return new CBoardEChartRender(containerDom, option).chart(null, persist);
     };
 
     this.parseOption = function (chartData, chartConfig) {

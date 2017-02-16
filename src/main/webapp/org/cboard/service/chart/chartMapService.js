@@ -2,10 +2,10 @@
  * Created by Fine on 2016/12/13.
  */
 cBoard.service('chartMapService', function (dataService) {
-    this.render = function (containerDom, option, scope) {
+    this.render = function (containerDom, option, scope, persist) {
         var height;
         scope ? height = scope.myheight - 20 : null;
-        return new CBoardMapRender(containerDom, option).do(height);
+        return new CBoardMapRender(containerDom, option).do(height, persist);
     };
 
     this.parseOption = function (chartData, chartConfig) {
@@ -71,7 +71,7 @@ cBoard.service('chartMapService', function (dataService) {
             }
             for (var j = 0; j < column_header.length; j++) {
                 j == column_header.length - 1 ?
-                    column_header[j] = keyArr. concat(column_header[j]) :
+                    column_header[j] = keyArr.concat(column_header[j]) :
                     column_header[j] = emptyList.concat(column_header[j]);
             }
             mapOption = {

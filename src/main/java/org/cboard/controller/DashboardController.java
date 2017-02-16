@@ -287,4 +287,10 @@ public class DashboardController {
         return dataProviderService.queryAggData(datasourceId, strParams, datasetId, config, reload);
     }
 
+    @RequestMapping(value = "/dashboardWidget")
+    public ViewDashboardWidget dashboardWidget(@RequestParam(name = "id") Long id) {
+        DashboardWidget widget = widgetDao.getWidget(id);
+        return new ViewDashboardWidget(widget);
+    }
+
 }

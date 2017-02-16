@@ -4,10 +4,10 @@
 'use strict';
 cBoard.service('chartTableService', function (dataService) {
 
-    this.render = function (containerDom, option, scope) {
+    this.render = function (containerDom, option, scope, persist) {
         var height;
         scope ? height = scope.myheight - 20 : null;
-        return new CBoardTableRender(containerDom, option).do(height);
+        return new CBoardTableRender(containerDom, option).do(height, persist);
     };
 
     this.parseOption = function (chartData, chartConfig) {
@@ -38,11 +38,15 @@ cBoard.service('chartTableService', function (dataService) {
                 }
             }
             for (var i = 0; i < casted_values.length; i++) {
+                var joined_values = casted_values[i].join('-');
+                var formatter = newValuesConfig[joined_values].formatter;
                 for (var j = 0; j < casted_keys.length; j++) {
                     if (!_.isUndefined(aggregate_data[i][j])) {
+                        var raw = aggregate_data[i][j];
                         table_data[j][i + keyLength] = {
                             property: 'data',
-                            data: aggregate_data[i][j]
+                            data: formatter ? numbro(raw).format(formatter) : raw,
+                            raw: raw
                         };
                     } else {
                         table_data[j][i + keyLength] = {
@@ -73,7 +77,7 @@ cBoard.service('chartTableService', function (dataService) {
             }
             for (var j = 0; j < column_header.length; j++) {
                 j == column_header.length - 1 ?
-                    column_header[j] = keyArr. concat(column_header[j]) :
+                    column_header[j] = keyArr.concat(column_header[j]) :
                     column_header[j] = emptyList.concat(column_header[j]);
             }
             tableOption = {

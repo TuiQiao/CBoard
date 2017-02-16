@@ -1863,10 +1863,9 @@ a:focus {
   margin-right: 5px;
 }
 .box-header > .box-tools {
-  /*position: absolute;
+  position: absolute;
   right: 10px;
-  top: 5px;*/
-  vertical-align: middle;
+  top: 5px;
 }
 .box-header > .box-tools [data-toggle="tooltip"] {
   position: relative;

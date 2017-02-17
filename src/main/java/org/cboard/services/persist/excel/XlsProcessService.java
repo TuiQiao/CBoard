@@ -80,7 +80,7 @@ public class XlsProcessService {
             }
         }
         eachRow = 0;
-        Sheet dataSheet = wb.createSheet(board.getName() + "_data");
+        Sheet dataSheet = wb.createSheet(board.getName() + "_table");
         context.setBoardSheet(dataSheet);
         for (JSONArray rw : arr) {
             int dCol = 0;

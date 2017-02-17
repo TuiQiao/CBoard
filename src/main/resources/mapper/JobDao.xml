@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="org.cboard.dao.JobDao">
+    <insert id="save" parameterType="org.cboard.pojo.DashboardJob">
+        <![CDATA[
+        INSERT INTO dashboard_job(job_name,cron_exp,start_date,end_date,job_type,job_config,user_id) VALUES (#{name},#{cronExp},#{startDate},#{endDate},#{jobType},#{config})
+        ]]>
+    </insert>
+
+    <select id="getJobList" resultType="org.cboard.pojo.DashboardJob">
+        SELECT
+        job_id    AS id,
+        user_id       AS userId,
+        job_name  AS name,
+        start_date     AS startDate,
+        end_date     AS endDate,
+        job_type     AS jobType,
+        job_config     AS config
+        FROM dashboard_job
+        WHERE #{0} = '${admin_user_id}' OR user_id = #{0} OR dataset_id IN (
+        SELECT res_id
+        FROM dashboard_user_role ur
+        LEFT JOIN dashboard_role_res rr ON ur.role_id = rr.role_id
+        WHERE ur.user_id = #{0} AND rr.res_type = 'job'
+        )
+        ORDER BY job_id desc
+    </select>
+</mapper>

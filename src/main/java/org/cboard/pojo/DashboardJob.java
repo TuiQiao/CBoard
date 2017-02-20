@@ -15,6 +15,15 @@ public class DashboardJob {
     private String jobType;
     private String config;
     private String userId;
+    private Date lastExecTime;
+
+    public Date getLastExecTime() {
+        return lastExecTime;
+    }
+
+    public void setLastExecTime(Date lastExecTime) {
+        this.lastExecTime = lastExecTime;
+    }
 
     public String getUserId() {
         return userId;

@@ -6,7 +6,7 @@
                 <div class="box-header">
                     <h3 class="box-title">Job</h3>
                     <div class="box-tools">
-                        <i class="glyphicon glyphicon-plus toolbar-icon" ng-click="new()" title="New"></i>
+                        <i class="glyphicon glyphicon-plus toolbar-icon" ng-click="editJob()" title="New"></i>
                         <div class="input-group input-group-sm" style="width: 150px;">
                             <input type="text" name="table_search" class="form-control pull-right" placeholder="Search">
                             <div class="input-group-btn">
@@ -24,14 +24,17 @@
                             <th>Name</th>
                             <th>Type</th>
                             <th>Last Exec</th>
-                            <th>t</th>
+                            <th></th>
                         </tr>
-                        <tr>
-                            <td>183</td>
-                            <td>John Doe</td>
-                            <td>11-7-2014</td>
-                            <td><span class="label label-success">Approved</span></td>
-                            <td>Bacon ipsum dolor sit amet salami venison chicken flank fatback doner.</td>
+                        <tr ng-repeat="job in jobList">
+                            <td>{{job.id}}</td>
+                            <td>{{job.name}}</td>
+                            <td>{{getName(job.jobType)}}</td>
+                            <td>{{job.lastExecTime}}</td>
+                            <td>
+                                <i class="fa fa-edit toolbar-icon" ng-click="editJob(job)" title="{{'COMMON.EDIT'|translate}}"></i>&nbsp;&nbsp;
+                                <i class="fa fa-trash-o toolbar-icon"  ng-click="deleteJob(job)" title="{{'COMMON.DELETE'|translate}}"></i>
+                            </td>
                         </tr>
                         </tbody>
                     </table>

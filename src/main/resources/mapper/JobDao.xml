@@ -3,9 +3,15 @@
 <mapper namespace="org.cboard.dao.JobDao">
     <insert id="save" parameterType="org.cboard.pojo.DashboardJob">
         <![CDATA[
-        INSERT INTO dashboard_job(job_name,cron_exp,start_date,end_date,job_type,job_config,user_id) VALUES (#{name},#{cronExp},#{startDate},#{endDate},#{jobType},#{config})
+        INSERT INTO dashboard_job(job_name,cron_exp,start_date,end_date,job_type,job_config,user_id) VALUES (#{name},#{cronExp},#{startDate},#{endDate},#{jobType},#{config},#{userId})
         ]]>
     </insert>
+
+    <update id="update" parameterType="org.cboard.pojo.DashboardJob">
+        <![CDATA[
+        UPDATE dashboard_job SET job_name = #{name},cron_exp = #{cronExp},start_date = #{startDate},end_date = #{endDate},job_type = #{jobType},job_config = #{config} WHERE job_id = #{id}
+        ]]>
+    </update>
 
     <select id="getJobList" resultType="org.cboard.pojo.DashboardJob">
         SELECT
@@ -15,9 +21,11 @@
         start_date     AS startDate,
         end_date     AS endDate,
         job_type     AS jobType,
-        job_config     AS config
+        job_config     AS config,
+        cron_exp AS cronExp,
+        last_exec_time AS lastExecTime
         FROM dashboard_job
-        WHERE #{0} = '${admin_user_id}' OR user_id = #{0} OR dataset_id IN (
+        WHERE #{0} = '${admin_user_id}' OR user_id = #{0} OR job_id IN (
         SELECT res_id
         FROM dashboard_user_role ur
         LEFT JOIN dashboard_role_res rr ON ur.role_id = rr.role_id
@@ -25,4 +33,8 @@
         )
         ORDER BY job_id desc
     </select>
+
+    <delete id="delete">
+        DELETE FROM dashboard_job WHERE job_id = #{0}
+    </delete>
 </mapper>

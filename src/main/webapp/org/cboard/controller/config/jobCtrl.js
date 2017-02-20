@@ -4,12 +4,28 @@
 cBoard.controller('jobCtrl', function ($scope, $http, dataService, $uibModal, ModalUtils, $filter, chartService, $timeout) {
     var translate = $filter('translate');
 
-    $scope.new = function () {
+    $scope.jobTypes = [{name: 'Send Mail', type: 'mail'}];
+
+    $scope.loadJobList = function () {
+        $http.get("dashboard/getJobList.do").success(function (response) {
+            $scope.jobList = response;
+        });
+    };
+    $scope.loadJobList();
+
+    $scope.getName = function (type) {
+        return _.find($scope.jobTypes, function (e) {
+            return e.type == type;
+        }).name;
+    };
+
+    $scope.editJob = function (job) {
         $uibModal.open({
             templateUrl: 'org/cboard/view/config/modal/job/edit.html',
             windowTemplateUrl: 'org/cboard/view/util/modal/window.html',
             backdrop: false,
             size: 'lg',
+            scope: $scope,
             controller: function ($scope, $uibModalInstance) {
                 $scope.cronConfig = {
                     quartz: true,
@@ -17,14 +33,44 @@ cBoard.controller('jobCtrl', function ($scope, $http, dataService, $uibModal, Mo
                         allowYear: false
                     }
                 };
-                $scope.jobTypes = [{name: 'Send Mail', type: 'mail'}];
-                $scope.job = {};
-                $scope.job.jobType = 'mail';
+                $scope.dateRangeCfg = {
+                    locale: {
+                        format: "YYYY-MM-DD"
+                    }
+                };
+                if (job) {
+                    $scope.job = angular.copy(job);
+                    $scope.job.daterange.startDate = moment($scope.job.daterange.startDate);
+                    $scope.job.daterange.endDate = moment($scope.job.daterange.endDate);
+                } else {
+                    $scope.job = {daterange: {startDate: null, endDate: null}, jobType: 'mail'};
+
+                }
                 $scope.close = function () {
                     $uibModalInstance.close();
                 };
                 $scope.ok = function () {
-                    $uibModalInstance.close();
+                    if (job) {
+                        $http.post("dashboard/updateJob.do", {json: angular.toJson($scope.job)}).success(function (serviceStatus) {
+                            if (serviceStatus.status == '1') {
+                                ModalUtils.alert(translate("COMMON.SUCCESS"), "modal-success", "sm");
+                                $scope.$parent.loadJobList();
+                                $uibModalInstance.close();
+                            } else {
+                                //$scope.alerts = [{msg: serviceStatus.msg, type: 'danger'}];
+                            }
+                        });
+                    } else {
+                        $http.post("dashboard/saveJob.do", {json: angular.toJson($scope.job)}).success(function (serviceStatus) {
+                            if (serviceStatus.status == '1') {
+                                ModalUtils.alert(translate("COMMON.SUCCESS"), "modal-success", "sm");
+                                $scope.$parent.loadJobList();
+                                $uibModalInstance.close();
+                            } else {
+                                //$scope.alerts = [{msg: serviceStatus.msg, type: 'danger'}];
+                            }
+                        });
+                    }
                 };
                 $scope.config = function () {
                     $uibModal.open({
@@ -37,6 +83,14 @@ cBoard.controller('jobCtrl', function ($scope, $http, dataService, $uibModal, Mo
                     });
                 }
             }
+        });
+    };
+
+    $scope.deleteJob = function (job) {
+        ModalUtils.confirm(translate("COMMON.CONFIRM_DELETE"), "modal-info", "lg", function () {
+            $http.post("dashboard/deleteJob.do", {id: job.id}).success(function () {
+                $scope.loadJobList();
+            });
         });
     };
 });

@@ -14,7 +14,7 @@
         <div class="form-group">
             <label class="col-sm-2 control-label">Job Type</label>
             <div class="col-sm-4">
-                <select class="form-control" ng-model="job.jobType" ng-options="v.type as v.name for v in jobTypes">
+                <select class="form-control" ng-model="job.jobType" ng-options="v.type as v.name for v in $parent.jobTypes">
                 </select>
             </div>
             <div class="col-sm-3">
@@ -28,7 +28,8 @@
         <div class="form-group">
             <label class="col-sm-2 control-label">Active Range</label>
             <div class="col-sm-10">
-                <input type="daterange" class="form-control pull-right" ng-model="job.daterange">
+                <input date-range-picker class="form-control date-picker pull-right" type="text"  ng-model="job.daterange"
+                       options="dateRangeCfg">
             </div>
             <!-- /.input group -->
         </div>

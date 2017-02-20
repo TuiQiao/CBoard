@@ -20,6 +20,7 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
  * Created by yfyuan on 2016/8/9.
@@ -63,6 +64,12 @@ public class DashboardController {
 
     @Autowired
     private DatasetService datasetService;
+
+    @Autowired
+    private JobService jobService;
+
+    @Autowired
+    private JobDao jobDao;
 
     @RequestMapping(value = "/test")
     public ServiceStatus test(@RequestParam(name = "datasource", required = false) String datasource, @RequestParam(name = "query", required = false) String query) {
@@ -293,4 +300,27 @@ public class DashboardController {
         return new ViewDashboardWidget(widget);
     }
 
+    @RequestMapping(value = "/saveJob")
+    public ServiceStatus saveJob(@RequestParam(name = "json") String json) {
+        String userid = authenticationService.getCurrentUser().getUserId();
+        return jobService.save(userid, json);
+    }
+
+    @RequestMapping(value = "/updateJob")
+    public ServiceStatus updateJob(@RequestParam(name = "json") String json) {
+        String userid = authenticationService.getCurrentUser().getUserId();
+        return jobService.update(userid, json);
+    }
+
+    @RequestMapping(value = "/getJobList")
+    public List<ViewDashboardJob> getJobList() {
+        String userid = authenticationService.getCurrentUser().getUserId();
+        return jobDao.getJobList(userid).stream().map(ViewDashboardJob::new).collect(Collectors.toList());
+    }
+
+    @RequestMapping(value = "/deleteJob")
+    public ServiceStatus deleteJob(@RequestParam(name = "id") Long id) {
+        String userid = authenticationService.getCurrentUser().getUserId();
+        return jobService.delete(userid, id);
+    }
 }

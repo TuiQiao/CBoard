@@ -73,9 +73,12 @@ public class JdbcDataProvider extends DataProvider implements AggregateProvider 
         if (result != null) {
             return result;
         } else {
-            String sql = query.get(SQL);
+            String subQuerySql = getAsSubQuery(query.get(SQL));
+            String driver = dataSource.get(DRIVER);
+            boolean isKylin = driver.toLowerCase().indexOf("kylin") >= 0;
             try (Connection con = getConnection(dataSource)) {
                 Statement ps = con.createStatement();
+                String sql = isKylin ? subQuerySql + " limit 100" : subQuerySql;
                 ResultSet rs = ps.executeQuery(sql);
                 ResultSetMetaData metaData = rs.getMetaData();
                 int columnCount = metaData.getColumnCount();
@@ -131,6 +134,18 @@ public class JdbcDataProvider extends DataProvider implements AggregateProvider 
         return list.toArray(new String[][]{});
     }
 
+    /**
+     * Convert the sql text to subquery string:
+     *    remove blank line
+     *    remove end semicolon ;
+     * @param rawQueryText
+     * @return
+     */
+    private String getAsSubQuery(String rawQueryText) {
+        String deletedBlankLine = rawQueryText.replaceAll("(?m)^[\\s\t]*\r?\n", "").trim();
+        return deletedBlankLine.endsWith(";") ? deletedBlankLine.substring(0, deletedBlankLine.length() - 1) : deletedBlankLine;
+    }
+
     private Connection getConnection(Map<String, String> dataSource) throws Exception {
         String v = dataSource.get(POOLED);
         if (v != null && "true".equals(v)) {
@@ -167,7 +182,7 @@ public class JdbcDataProvider extends DataProvider implements AggregateProvider 
     public String[][] queryDimVals(Map<String, String> dataSource, Map<String, String> query, String columnName, AggConfig config) throws Exception {
         String fsql = null;
         String exec = null;
-        String sql = query.get(SQL).replace(";", "");
+        String sql = getAsSubQuery(query.get(SQL));
         List<String> filtered = new ArrayList<>();
         List<String> nofilter = new ArrayList<>();
         if (config != null) {
@@ -177,9 +192,9 @@ public class JdbcDataProvider extends DataProvider implements AggregateProvider 
             Stream<DimensionConfig> filters = Stream.concat(Stream.concat(c, r), f);
             Map<String, Integer> types = getType(dataSource, query);
             Stream<DimensionConfigHelper> filterHelpers = filters.map(fe -> new DimensionConfigHelper(fe, types.get(fe.getColumnName())));
-            String where = assembleSqlFilter(filterHelpers);
+            String whereStr = assembleSqlFilter(filterHelpers, "WHERE");
             fsql = "SELECT __view__.%s FROM (%s) __view__ %s GROUP BY __view__.%s";
-            exec = String.format(fsql, columnName, sql, where, columnName);
+            exec = String.format(fsql, columnName, sql, whereStr, columnName);
             LOG.info(exec);
             try (Connection connection = getConnection(dataSource);
                  Statement stat = connection.createStatement();
@@ -262,10 +277,11 @@ public class JdbcDataProvider extends DataProvider implements AggregateProvider 
      * Assemble all the filter to a legal sal where script
      *
      * @param filterStream
+     * @param prefix HAVING or WHERE
      * @return
      */
-    private String assembleSqlFilter(Stream<DimensionConfigHelper> filterStream) {
-        StringJoiner where = new StringJoiner(" AND ", "WHERE ", "");
+    private String assembleSqlFilter(Stream<DimensionConfigHelper> filterStream, String prefix) {
+        StringJoiner where = new StringJoiner(" AND ", prefix + " ", "");
         where.setEmptyValue("");
         filterStream.map(filter2SqlCondtion).filter(e -> e != null).forEach(where::add);
         return where.toString();
@@ -288,11 +304,16 @@ public class JdbcDataProvider extends DataProvider implements AggregateProvider 
 
     @Override
     public String[] getColumn(Map<String, String> dataSource, Map<String, String> query) throws Exception {
+        String subQuerySql = getAsSubQuery(query.get(SQL));
+        String driver = dataSource.get(DRIVER);
+        boolean isKylin = driver.toLowerCase().indexOf("kylin") >= 0;
         try (
                 Connection connection = getConnection(dataSource);
-                Statement stat = connection.createStatement();
-                ResultSet rs = stat.executeQuery(query.get(SQL))
         ) {
+            Statement stat = connection.createStatement();
+            stat.setMaxRows(100);
+            String sql = isKylin ? subQuerySql + " limit 100" : subQuerySql;
+            ResultSet rs = stat.executeQuery(sql);
             ResultSetMetaData metaData = rs.getMetaData();
             int columnCount = metaData.getColumnCount();
             String[] row = new String[columnCount];
@@ -311,14 +332,16 @@ public class JdbcDataProvider extends DataProvider implements AggregateProvider 
         Stream<DimensionConfig> c = config.getColumns().stream();
         Stream<DimensionConfig> r = config.getRows().stream();
         Stream<DimensionConfig> f = config.getFilters().stream();
-        Stream<DimensionConfig> filters = Stream.concat(Stream.concat(c, r), f);
+        Stream<DimensionConfig> filters = Stream.concat(c, r);
         Map<String, Integer> types = getType(dataSource, query);
         Stream<DimensionConfigHelper> filterHelpers = filters.map(fe -> new DimensionConfigHelper(fe, types.get(fe.getColumnName())));
+        Stream<DimensionConfigHelper> predicates = f.map(fe -> new DimensionConfigHelper(fe, types.get(fe.getColumnName())));
         Stream<DimensionConfig> dimStream = Stream.concat(config.getColumns().stream(), config.getRows().stream());
 
         String dimColsStr = assembleDimColumns(dimStream);
         String aggColsStr = assembleAggValColumns(config.getValues().stream());
-        String whereStr = assembleSqlFilter(filterHelpers);
+        String whereStr = assembleSqlFilter(predicates, "WHERE");
+        String havingStr = assembleSqlFilter(filterHelpers, "HAVING");
         String groupByStr = StringUtils.isBlank(dimColsStr) ? "" : "GROUP BY " + dimColsStr;
 
         StringJoiner selectColsStr = new StringJoiner(",");
@@ -329,9 +352,9 @@ public class JdbcDataProvider extends DataProvider implements AggregateProvider 
             selectColsStr.add(aggColsStr);
         }
 
-        String subQuerySql = query.get(SQL).replace(";", "");
-        String fsql = "\nSELECT %s FROM (\n%s\n) __view__ %s %s";
-        String exec = String.format(fsql, selectColsStr, subQuerySql, whereStr, groupByStr);
+        String subQuerySql = getAsSubQuery(query.get(SQL));
+        String fsql = "\nSELECT %s FROM (\n%s\n) __view__ %s %s %s";
+        String exec = String.format(fsql, selectColsStr, subQuerySql, whereStr, groupByStr, havingStr);
         List<String[]> list = new LinkedList<>();
         LOG.info(exec);
         try (
@@ -431,5 +454,6 @@ public class JdbcDataProvider extends DataProvider implements AggregateProvider 
         public void setValues(List<String> values) {
             config.setValues(values);
         }
+
     }
 }

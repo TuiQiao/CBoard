@@ -66,32 +66,6 @@ public class JdbcDataProvider extends DataProvider implements AggregateProvider 
 
     private static final ConcurrentMap<String, DataSource> datasourceMap = new ConcurrentHashMap<>();
 
-    private Map<String, Integer> getType(Map<String, String> dataSource, Map<String, String> query) throws Exception {
-        Map<String, Integer> result = null;
-        String key = getKey(dataSource, query);
-        result = typeCahce.get(key);
-        if (result != null) {
-            return result;
-        } else {
-            String subQuerySql = getAsSubQuery(query.get(SQL));
-            String driver = dataSource.get(DRIVER);
-            boolean isKylin = driver.toLowerCase().indexOf("kylin") >= 0;
-            try (Connection con = getConnection(dataSource)) {
-                Statement ps = con.createStatement();
-                String sql = isKylin ? subQuerySql + " limit 100" : subQuerySql;
-                ResultSet rs = ps.executeQuery(sql);
-                ResultSetMetaData metaData = rs.getMetaData();
-                int columnCount = metaData.getColumnCount();
-                result = new HashedMap();
-                for (int i = 0; i < columnCount; i++) {
-                    result.put(metaData.getColumnLabel(i + 1), metaData.getColumnType(i + 1));
-                }
-                typeCahce.put(key, result, 12 * 60 * 60 * 1000);
-            }
-            return result;
-        }
-    }
-
     private String getKey(Map<String, String> dataSource, Map<String, String> query) {
         return Hashing.md5().newHasher().putString(JSONObject.toJSON(dataSource).toString() + JSONObject.toJSON(query).toString(), Charsets.UTF_8).hash().toString();
     }
@@ -159,6 +133,7 @@ public class JdbcDataProvider extends DataProvider implements AggregateProvider 
                         conf.put(DruidDataSourceFactory.PROP_URL, dataSource.get(JDBC_URL));
                         conf.put(DruidDataSourceFactory.PROP_USERNAME, dataSource.get(USERNAME));
                         conf.put(DruidDataSourceFactory.PROP_PASSWORD, dataSource.get(PASSWORD));
+                        conf.put(DruidDataSourceFactory.PROP_INITIALSIZE, "3");
                         ds = DruidDataSourceFactory.createDataSource(conf);
                         datasourceMap.put(key, ds);
                     }
@@ -190,7 +165,7 @@ public class JdbcDataProvider extends DataProvider implements AggregateProvider 
             Stream<DimensionConfig> r = config.getRows().stream();
             Stream<DimensionConfig> f = config.getFilters().stream();
             Stream<DimensionConfig> filters = Stream.concat(Stream.concat(c, r), f);
-            Map<String, Integer> types = getType(dataSource, query);
+            Map<String, Integer> types = getColumnType(dataSource, query);
             Stream<DimensionConfigHelper> filterHelpers = filters.map(fe -> new DimensionConfigHelper(fe, types.get(fe.getColumnName())));
             String whereStr = assembleSqlFilter(filterHelpers, "WHERE");
             fsql = "SELECT __view__.%s FROM (%s) __view__ %s GROUP BY __view__.%s";
@@ -301,29 +276,60 @@ public class JdbcDataProvider extends DataProvider implements AggregateProvider 
         return columns.toString();
     }
 
+    private ResultSetMetaData getMetaData(String subQuerySql, Statement stat) throws Exception {
+        ResultSetMetaData metaData;
+        try {
+            stat.setMaxRows(100);
+            String fsql = "\nSELECT * FROM (\n%s\n) __view__ WHERE 1=0";
+            String sql = String.format(fsql, subQuerySql);
+            LOG.info(sql);
+            ResultSet rs = stat.executeQuery(sql);
+            metaData = rs.getMetaData();
+        } catch (Exception e) {
+            LOG.error("ERROR:" + e.getMessage());
+            throw new Exception("ERROR:" + e.getMessage(), e);
+        }
+        return metaData;
+    }
+
+    private Map<String, Integer> getColumnType(Map<String, String> dataSource, Map<String, String> query) throws Exception {
+        Map<String, Integer> result = null;
+        String key = getKey(dataSource, query);
+        String subQuerySql = getAsSubQuery(query.get(SQL));
+        result = typeCahce.get(key);
+        if (result != null) {
+            return result;
+        } else {
+            try (
+                    Connection connection = getConnection(dataSource);
+                    Statement stat = connection.createStatement()
+            ) {
+                ResultSetMetaData metaData = getMetaData(subQuerySql, stat);
+                int columnCount = metaData.getColumnCount();
+                result = new HashedMap();
+                for (int i = 0; i < columnCount; i++) {
+                    result.put(metaData.getColumnLabel(i + 1), metaData.getColumnType(i + 1));
+                }
+                typeCahce.put(key, result, 12 * 60 * 60 * 1000);
+                return result;
+            }
+        }
+    }
 
     @Override
     public String[] getColumn(Map<String, String> dataSource, Map<String, String> query) throws Exception {
         String subQuerySql = getAsSubQuery(query.get(SQL));
-        String driver = dataSource.get(DRIVER);
-        boolean isKylin = driver.toLowerCase().indexOf("kylin") >= 0;
         try (
                 Connection connection = getConnection(dataSource);
+                Statement stat = connection.createStatement()
         ) {
-            Statement stat = connection.createStatement();
-            stat.setMaxRows(100);
-            String sql = isKylin ? subQuerySql + " limit 100" : subQuerySql;
-            ResultSet rs = stat.executeQuery(sql);
-            ResultSetMetaData metaData = rs.getMetaData();
+            ResultSetMetaData metaData = getMetaData(subQuerySql, stat);
             int columnCount = metaData.getColumnCount();
             String[] row = new String[columnCount];
             for (int i = 0; i < columnCount; i++) {
                 row[i] = metaData.getColumnLabel(i + 1);
             }
             return row;
-        } catch (Exception e) {
-            LOG.error("ERROR:" + e.getMessage());
-            throw new Exception("ERROR:" + e.getMessage(), e);
         }
     }
 
@@ -333,7 +339,7 @@ public class JdbcDataProvider extends DataProvider implements AggregateProvider 
         Stream<DimensionConfig> r = config.getRows().stream();
         Stream<DimensionConfig> f = config.getFilters().stream();
         Stream<DimensionConfig> filters = Stream.concat(c, r);
-        Map<String, Integer> types = getType(dataSource, query);
+        Map<String, Integer> types = getColumnType(dataSource, query);
         Stream<DimensionConfigHelper> filterHelpers = filters.map(fe -> new DimensionConfigHelper(fe, types.get(fe.getColumnName())));
         Stream<DimensionConfigHelper> predicates = f.map(fe -> new DimensionConfigHelper(fe, types.get(fe.getColumnName())));
         Stream<DimensionConfig> dimStream = Stream.concat(config.getColumns().stream(), config.getRows().stream());

@@ -22,15 +22,18 @@ public class PersistService {
 
     private static final ConcurrentMap<String, PersistContext> TASK_MAP = new ConcurrentHashMap<>();
 
-    public PersistContext persist(Long dashboardId) {
+    public PersistContext persist(Long dashboardId, String userId) {
         String persistId = UUID.randomUUID().toString().replaceAll("-", "");
         try {
-            Process process = Runtime.getRuntime().exec(String.format("%s %s %s %s", phantomjsPath, scriptPath, dashboardId, persistId));
+            Process process = Runtime.getRuntime().exec(String.format("%s %s %s %s %s", phantomjsPath, scriptPath, dashboardId, persistId, userId));
             TASK_MAP.put(persistId, new PersistContext(dashboardId));
             synchronized (persistId.intern()) {
                 persistId.intern().wait(5 * 60 * 1000);
+                persistId.intern().notify();
             }
-            return TASK_MAP.get(persistId);
+            PersistContext result = TASK_MAP.get(persistId);
+            TASK_MAP.remove(persistId);
+            return result;
         } catch (Exception e) {
             e.printStackTrace();
         }

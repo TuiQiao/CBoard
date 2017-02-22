@@ -6,6 +6,7 @@ import org.apache.commons.mail.EmailAttachment;
 import org.apache.commons.mail.EmailException;
 import org.apache.commons.mail.HtmlEmail;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.cboard.pojo.DashboardJob;
 import org.cboard.services.persist.PersistContext;
 import org.cboard.services.persist.excel.XlsProcessService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -46,11 +47,11 @@ public class MailService {
     @Value("${mail.smtp.from}")
     private String mail_smtp_from;
 
-    public String sendDashboard(String c) {
-        JSONObject config = JSONObject.parseObject(c);
+    public String sendDashboard(DashboardJob job) {
+        JSONObject config = JSONObject.parseObject(job.getConfig());
 
         List<PersistContext> persistContextList = config.getJSONArray("boards").stream()
-                .map(e -> persistService.persist(((JSONObject) e).getLong("id")))
+                .map(e -> persistService.persist(((JSONObject) e).getLong("id"), job.getUserId()))
                 .collect(Collectors.toList());
 
         List<PersistContext> workbookList = config.getJSONArray("boards").stream()

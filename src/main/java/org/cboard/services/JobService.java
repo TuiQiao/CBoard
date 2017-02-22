@@ -43,7 +43,7 @@ public class JobService implements InitializingBean {
                         .withSchedule(CronScheduleBuilder.cronSchedule(job.getCronExp()))
                         .endAt(job.getEndDate())
                         .build();
-                jobDetail.getJobDataMap().put("config", job.getConfig());
+                jobDetail.getJobDataMap().put("job", job);
                 scheduler.scheduleJob(jobDetail, trigger);
             }
         } catch (Exception e) {

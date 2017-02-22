@@ -14,6 +14,8 @@ public interface WidgetDao {
 
     List<String> getCategoryList();
 
+    List<DashboardWidget> getAllWidgetList();
+
     List<DashboardWidget> getWidgetList(String userId);
 
     int save(DashboardWidget dashboardWidget);

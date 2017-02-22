@@ -71,10 +71,23 @@ cBoard.controller('datasetCtrl', function ($scope, $http, dataService, $uibModal
     };
 
     $scope.deleteDs = function (ds) {
-        ModalUtils.confirm(translate("COMMON.CONFIRM_DELETE"), "modal-warning", "lg", function () {
-            $http.post("dashboard/deleteDataset.do", {id: ds.id}).success(function () {
-                $scope.optFlag = 'none';
-                getDatasetList();
+        $http.get("dashboard/getAllWidgetList.do").then(function (response) {
+            if (!response) {
+                return false;
+            }
+            var resDs = _.find(response.data, function (obj) {
+                return obj.data.datasetId == ds.id;
+            });
+
+            if (resDs) {
+                ModalUtils.alert(translate("COMMON.NOT_ALLOWED_TO_DELETE_BECAUSE_BE_DEPENDENT"), "modal-warning", "lg");
+                return false;
+            }
+            ModalUtils.confirm(translate("COMMON.CONFIRM_DELETE"), "modal-warning", "lg", function () {
+                $http.post("dashboard/deleteDataset.do", {id: ds.id}).success(function () {
+                    $scope.optFlag = 'none';
+                    getDatasetList();
+                });
             });
         });
     };

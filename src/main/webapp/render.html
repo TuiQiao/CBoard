@@ -51,6 +51,13 @@
     <script src="plugins/FineMap/d3.tip.js"></script>
     <script src="lib/html2canvas.js"></script>
 
+    <link rel="stylesheet" href="plugins/daterangepicker/daterangepicker.css">
+    <script src="plugins/daterangepicker/moment.js"></script>
+    <script src="plugins/daterangepicker/daterangepicker.js"></script>
+    <script src="lib/angular-daterangepicker.min.js"></script>
+    <link rel="stylesheet" href="css/angular-cron-jobs.min.css">
+    <script src="lib/angular-cron-jobs.min.js"></script>
+
     <link rel="stylesheet" href="css/select.css">
     <style>
         .modal-fit .modal-dialog {
@@ -76,6 +83,11 @@
 </head>
 <body ng-app="cBoard" ng-controller="renderCtrl">
 <div ng-if="persistFinish" class="persistFinish"></div>
+<section class="content-header">
+    <h1>
+        {{board.name}}
+    </h1>
+</section>
 <div id="inner-container" class="content" style="margin-top: 15px;">
     <div class="row" ng-repeat="row in board.layout.rows track by $index" ng-style="{height:row.height+'px'}">
         <ng-switch on="row.type">

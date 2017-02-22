@@ -4,7 +4,7 @@
         <div class="col-xs-12">
             <div class="box">
                 <div class="box-header">
-                    <h3 class="box-title">Job</h3>
+                    <h3 class="box-title">{{'CONFIG.JOB.JOB'|translate}}</h3>
                     <div class="box-tools">
                         <i class="glyphicon glyphicon-plus toolbar-icon" ng-click="editJob()" title="New"></i>
                         <div class="input-group input-group-sm" style="width: 150px;">
@@ -21,17 +21,18 @@
                         <tbody>
                         <tr>
                             <th>ID</th>
-                            <th>Name</th>
-                            <th>Type</th>
-                            <th>Last Exec</th>
+                            <th>{{'CONFIG.JOB.NAME'|translate}}</th>
+                            <th>{{'CONFIG.JOB.TYPE'|translate}}</th>
+                            <th>{{'CONFIG.JOB.LAST_EXEC_TIME'|translate}}</th>
                             <th></th>
                         </tr>
                         <tr ng-repeat="job in jobList">
                             <td>{{job.id}}</td>
                             <td>{{job.name}}</td>
                             <td>{{getName(job.jobType)}}</td>
-                            <td>{{job.lastExecTime}}</td>
+                            <td>{{getTime(job.lastExecTime)}}</td>
                             <td>
+                                <i class="fa fa-play toolbar-icon" ng-click="runJob(job)" title="{{'CONFIG.JOB.EXEC_NOW'|translate}}"></i>&nbsp;&nbsp;
                                 <i class="fa fa-edit toolbar-icon" ng-click="editJob(job)" title="{{'COMMON.EDIT'|translate}}"></i>&nbsp;&nbsp;
                                 <i class="fa fa-trash-o toolbar-icon"  ng-click="deleteJob(job)" title="{{'COMMON.DELETE'|translate}}"></i>
                             </td>

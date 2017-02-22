@@ -19,6 +19,25 @@ cBoard.controller('jobCtrl', function ($scope, $http, dataService, $uibModal, Mo
         }).name;
     };
 
+    $scope.getTime = function (t) {
+        if (t) {
+            return moment(Number(t)).format("YYYY-MM-DD HH:mm:ss");
+        } else {
+            return "N/A"
+        }
+    };
+
+    $scope.runJob = function (job) {
+        $http.post("dashboard/execJob.do", {id: job.id}).success(function (serviceStatus) {
+            if (serviceStatus.status == '1') {
+                ModalUtils.alert(translate("COMMON.SUCCESS"), "modal-success", "sm");
+                $scope.loadJobList();
+            } else {
+                //$scope.alerts = [{msg: serviceStatus.msg, type: 'danger'}];
+            }
+        });
+    };
+
     $scope.editJob = function (job) {
         $uibModal.open({
             templateUrl: 'org/cboard/view/config/modal/job/edit.html',

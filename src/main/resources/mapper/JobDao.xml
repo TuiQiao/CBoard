@@ -37,4 +37,10 @@
     <delete id="delete">
         DELETE FROM dashboard_job WHERE job_id = #{0}
     </delete>
+
+    <update id="updateLastExecTime">
+        <![CDATA[
+        UPDATE dashboard_job SET last_exec_time = #{1} WHERE job_id = #{0}
+        ]]>
+    </update>
 </mapper>

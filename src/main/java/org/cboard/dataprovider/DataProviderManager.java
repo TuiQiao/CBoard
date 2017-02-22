@@ -19,13 +19,11 @@ import java.util.Set;
  * Created by yfyuan on 2016/8/15.
  */
 @Service
-public class DataProviderManager implements ApplicationContextAware, BeanFactoryPostProcessor {
+public class DataProviderManager implements ApplicationContextAware {
 
     private static Map<String, Class<? extends DataProvider>> providers = new HashMap<>();
 
     private static ApplicationContext applicationContext;
-
-    private static ConfigurableListableBeanFactory configurableListableBeanFactory;
 
     static {
         Set<Class<?>> classSet = new Reflections("org.cboard").getTypesAnnotatedWith(ProviderName.class);
@@ -60,10 +58,5 @@ public class DataProviderManager implements ApplicationContextAware, BeanFactory
     @Override
     public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
         this.applicationContext = applicationContext;
-    }
-
-    @Override
-    public void postProcessBeanFactory(ConfigurableListableBeanFactory configurableListableBeanFactory) throws BeansException {
-        this.configurableListableBeanFactory = configurableListableBeanFactory;
     }
 }

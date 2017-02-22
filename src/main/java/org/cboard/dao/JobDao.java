@@ -3,6 +3,7 @@ package org.cboard.dao;
 import org.cboard.pojo.DashboardJob;
 import org.springframework.stereotype.Repository;
 
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -17,4 +18,6 @@ public interface JobDao {
     List<DashboardJob> getJobList(String userId);
 
     int delete(Long jobId);
+
+    int updateLastExecTime(Long jobId, Date date);
 }

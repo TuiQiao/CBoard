@@ -323,4 +323,10 @@ public class DashboardController {
         String userid = authenticationService.getCurrentUser().getUserId();
         return jobService.delete(userid, id);
     }
+
+    @RequestMapping(value = "/execJob")
+    public ServiceStatus execJob(@RequestParam(name = "id") Long id) {
+        String userid = authenticationService.getCurrentUser().getUserId();
+        return jobService.exec(userid, id);
+    }
 }

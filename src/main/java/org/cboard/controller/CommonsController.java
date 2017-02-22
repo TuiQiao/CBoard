@@ -32,9 +32,6 @@ public class CommonsController {
     @Autowired
     private PersistService persistService;
 
-    @Autowired
-    private MailService mailService;
-
     @RequestMapping(value = "/getUserDetail")
     public User getUserDetail() {
         return authenticationService.getCurrentUser();
@@ -56,9 +53,4 @@ public class CommonsController {
         return persistService.persistCallback(data.getString("persistId"), data.getJSONObject("data"));
     }
 
-    @RequestMapping(value = "/test")
-    public String persist() {
-        mailService.test();
-        return null;
-    }
 }

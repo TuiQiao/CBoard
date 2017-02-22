@@ -30,14 +30,19 @@ cBoard.controller('renderCtrl', function ($timeout, $rootScope, $scope, $state, 
                 result[widget.widgetId] = widget.persist;
             });
         });
-        var obj = {
-            persistId: $location.search().pid,
-            data: result
-        };
-        var xmlhttp=new XMLHttpRequest();
-        xmlhttp.open("POST", "commons/persist.do", false);
-        xmlhttp.send(angular.toJson(obj));
-        $scope.persistFinish = true;
+        html2canvas($('body')[0], {
+            onrendered: function (canvas) {
+                result['img'] = canvas.toDataURL("image/jpeg");
+                var obj = {
+                    persistId: $location.search().pid,
+                    data: result
+                };
+                var xmlhttp = new XMLHttpRequest();
+                xmlhttp.open("POST", "commons/persist.do", false);
+                xmlhttp.send(angular.toJson(obj));
+                $scope.persistFinish = true;
+            }
+        });
     };
 
 

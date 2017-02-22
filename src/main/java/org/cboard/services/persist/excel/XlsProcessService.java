@@ -7,10 +7,10 @@ import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.*;
 import org.cboard.dao.BoardDao;
 import org.cboard.pojo.DashboardBoard;
+import org.cboard.services.persist.PersistContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.io.FileOutputStream;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
@@ -27,8 +27,16 @@ public class XlsProcessService {
     private XlsProcesser jpgXlsProcesser = new JpgXlsProcesser();
     private XlsProcesser tableXlsProcesser = new TableXlsProcesser();
 
-    public void dashboardToXls(Long dashboardId, JSONObject data) {
-        DashboardBoard board = boardDao.getBoard(dashboardId);
+    public HSSFWorkbook dashboardToXls(List<PersistContext> contexts) {
+        XlsProcesserContext context = null;
+        for (PersistContext e : contexts) {
+            context = dashboardToXls(e, context);
+        }
+        return (HSSFWorkbook) context.getWb();
+    }
+
+    private XlsProcesserContext dashboardToXls(PersistContext persistContext, XlsProcesserContext context) {
+        DashboardBoard board = boardDao.getBoard(persistContext.getDashboardId());
         JSONArray rows = JSONObject.parseObject(board.getLayout()).getJSONArray("rows");
         List<JSONArray> arr = rows.stream().map(e -> (JSONObject) e).filter(e -> "widget".equals(e.getString("type"))).map(e -> e.getJSONArray("widgets")).collect(Collectors.toList());
 
@@ -36,24 +44,24 @@ public class XlsProcessService {
         int columnWidth = 1700 / columns;
         int column_width12 = 148;
 
-        XlsProcesserContext context = new XlsProcesserContext();
+        if (context == null) {
+            context = new XlsProcesserContext();
+            HSSFWorkbook wb = new HSSFWorkbook();
+            setColorIndex(wb);
+            CellStyle titleStyle = createTitleStyle(wb);
+            CellStyle thStyle = createThStyle(wb);
+            CellStyle tStyle = createTStyle(wb);
+            CellStyle percentStyle = wb.createCellStyle();
+            percentStyle.cloneStyleFrom(tStyle);
+            percentStyle.setDataFormat((short) 0xa);
+            context.setWb(wb);
+            context.setTableStyle(thStyle);
+            context.setTitleStyle(titleStyle);
+            context.settStyle(tStyle);
+            context.setPercentStyle(percentStyle);
+        }
 
-        HSSFWorkbook wb = new HSSFWorkbook();
-
-        setColorIndex(wb);
-        CellStyle titleStyle = createTitleStyle(wb);
-        CellStyle thStyle = createThStyle(wb);
-        CellStyle tStyle = createTStyle(wb);
-        CellStyle percentStyle = wb.createCellStyle();
-        percentStyle.cloneStyleFrom(tStyle);
-        percentStyle.setDataFormat((short) 0xa);
-        context.setWb(wb);
-        context.setTableStyle(thStyle);
-        context.setTitleStyle(titleStyle);
-        context.settStyle(tStyle);
-        context.setPercentStyle(percentStyle);
-
-        Sheet sheet = wb.createSheet(board.getName());
+        Sheet sheet = context.getWb().createSheet(board.getName());
         sheet.setDisplayGridlines(false);
         IntStream.range(0, 180).forEach(i -> sheet.setColumnWidth(i, 365));
         context.setBoardSheet(sheet);
@@ -63,7 +71,7 @@ public class XlsProcessService {
             int dRow = eachRow + 3;
             for (int i = 0; i < rw.size(); i++) {
                 JSONObject widget = rw.getJSONObject(i);
-                JSONObject v = data.getJSONObject(widget.getLong("widgetId").toString());
+                JSONObject v = persistContext.getData().getJSONObject(widget.getLong("widgetId").toString());
                 int widget_cols = Math.round(1.0f * widget.getInteger("width").intValue() / 12 * (148 - (rw.size() - 1) * 2));
                 context.setC1(dCol + 2);
                 context.setC2(dCol + 2 + widget_cols);
@@ -80,15 +88,14 @@ public class XlsProcessService {
             }
         }
         eachRow = 0;
-        Sheet dataSheet = wb.createSheet(board.getName() + "_table");
+        Sheet dataSheet = context.getWb().createSheet(board.getName() + "_table");
         context.setBoardSheet(dataSheet);
         for (JSONArray rw : arr) {
             int dCol = 0;
             int dRow = eachRow + 2;
-            eachRow = 0;
             for (int i = 0; i < rw.size(); i++) {
                 JSONObject widget = rw.getJSONObject(i);
-                JSONObject v = data.getJSONObject(widget.getLong("widgetId").toString());
+                JSONObject v = persistContext.getData().getJSONObject(widget.getLong("widgetId").toString());
                 if (!"table".equals(v.getString("type"))) {
                     continue;
                 }
@@ -107,11 +114,7 @@ public class XlsProcessService {
             }
         }
 
-        try (FileOutputStream fileOut = new FileOutputStream(board.getName() + ".xls")) {
-            wb.write(fileOut);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        return context;
     }
 
     private XlsProcesser getProcesser(String type) {

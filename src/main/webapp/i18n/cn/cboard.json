@@ -31,7 +31,8 @@
     "DASHBOARD_CATEGORY": "看板分类",
     "ADMIN": "管理",
     "USER_ADMIN": "用户管理",
-    "RES_ADMIN": "资源管理"
+    "RES_ADMIN": "资源管理",
+    "JOB": "定时任务"
   },
   "HEADER": {
     "SIGN_OUT": "注销"
@@ -155,6 +156,33 @@
       "ADD": "添加",
       "REAL_TIME_INTERVAL": "实时间隔(秒)",
       "REAL_TIME_TIP": "留空则不做后台刷新"
+    },
+    "JOB": {
+      "CONFIG": "配置",
+      "JOB": "定时任务",
+      "NAME": "名称",
+      "TYPE": "类型",
+      "LAST_EXEC_TIME": "最后执行时间",
+      "EXEC_NOW": "立即执行",
+      "ACTIVE_RANGE": "有效期",
+      "MAIL": "邮件",
+      "TO": "收件人",
+      "CC": "抄送",
+      "BCC": "密送",
+      "SUBJECT": "主题",
+      "ADD_DASHBOARD": "添加看板",
+      "DASHBOARD": "看板",
+      "EVERY": "每",
+      "Minute": "分钟",
+      "Hour": "小时",
+      "Day": "天",
+      "Week": "周",
+      "Month": "月",
+      "ON_THE": "的",
+      "ON": "的",
+      "OF": "的",
+      "AT": "在",
+      "PAST_THE_HOUR": "分"
     }
   },
   "ADMIN": {

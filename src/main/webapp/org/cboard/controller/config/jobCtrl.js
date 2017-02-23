@@ -48,6 +48,7 @@ cBoard.controller('jobCtrl', function ($scope, $http, dataService, $uibModal, Mo
             controller: function ($scope, $uibModalInstance) {
                 $scope.cronConfig = {
                     quartz: true,
+                    allowMultiple: true,
                     options: {
                         allowYear: false
                     }

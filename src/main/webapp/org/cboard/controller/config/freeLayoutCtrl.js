@@ -2,7 +2,8 @@
  * Created by Fine on 2017/2/12.
  */
 'user strict';
-cBoard.controller('freeLayoutCtrl', function($rootScope, $scope, $http, ModalUtils, $timeout, $stateParams, $filter, freeLayoutService){
+cBoard.controller('freeLayoutCtrl', function($rootScope, $scope, $http, ModalUtils, $timeout, $stateParams,
+                                             $filter, freeLayoutService, chartService){
     var treeID = 'widgetTreeID';
     var updateUrl = "dashboard/updateWidget.do";
     var originalData = [];
@@ -113,5 +114,81 @@ cBoard.controller('freeLayoutCtrl', function($rootScope, $scope, $http, ModalUti
     
     $scope.switchLayout = function () {
         $rootScope.freeLayout = false;
-    }
+    };
+
+    document.querySelector('.layoutPanel').ondragover = function (e) {
+        e.preventDefault();
+    };
+    document.querySelector('.layoutPanel').ondrop = function (e) {
+        var data = e.dataTransfer.getData('Text');
+        var reportId = freeLayoutService.widget();
+
+        data = data ? JSON.parse(data) : null;
+        var widget = $scope.widgetList.filter(function (d) {
+            return d.id === JSON.parse(data.id);
+        });
+        var obj = {
+            config: widget[0].data.config,
+            datasetId: widget[0].data.datasetId,
+            datasource: null,
+            query: {}
+        };
+        chartService.render($('.widget_' + reportId), obj, function (option) {
+            switch (widget[0].data.config.chart_type) {
+                case 'line':
+                    $scope.previewDivWidth = 12;
+                    option.toolbox = {
+                        feature: {
+                            dataView: {
+                                show: true,
+                                readOnly: true
+                            }
+                        }
+                    };
+                    break;
+                case 'pie':
+                    $scope.previewDivWidth = 12;
+                    option.toolbox = {
+                        feature: {
+                            dataView: {
+                                show: true,
+                                readOnly: true
+                            }
+                        }
+                    };
+                    break;
+                case 'kpi':
+                    $scope.previewDivWidth = 6;
+                    break;
+                case 'table':
+                    $scope.previewDivWidth = 12;
+                    break;
+                case 'funnel':
+                    $scope.previewDivWidth = 12;
+                    option.toolbox = {
+                        feature: {
+                            dataView: {
+                                show: true,
+                                readOnly: true
+                            }
+                        }
+                    };
+                    break;
+                case 'sankey':
+                    $scope.previewDivWidth = 12;
+                    option.toolbox = {
+                        feature: {
+                            dataView: {
+                                show: true,
+                                readOnly: true
+                            }
+                        }
+                    };
+                    break;
+                case 'map':
+                    $scope.previewDivWidth = 12;
+                    break;
+            }
+        });
+    };
 });

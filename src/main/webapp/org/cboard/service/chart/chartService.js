@@ -3,8 +3,8 @@
  */
 'use strict';
 cBoard.service('chartService', function ($q, dataService, chartPieService, chartLineService, chartFunnelService,
-                                         chartSankeyService, chartTableService, chartKpiService, chartRadarService, chartMapService) {
-
+                                         chartSankeyService, chartTableService, chartKpiService, chartRadarService,
+                                         chartMapService) {
         this.render = function (containerDom, widget, optionFilter, scope, reload) {
             var deferred = $q.defer();
             var promise = deferred.promise;

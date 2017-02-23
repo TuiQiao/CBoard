@@ -4,9 +4,8 @@
 
 'user strict';
 cBoard.service('freeLayoutService', function ($http) {
-    var service = {};
 
-    service.setHeight = function () {
+    this.setHeight = function () {
         var height = $(window).height() + 'px';
 
         $('.layoutPanel').css({
@@ -14,6 +13,12 @@ cBoard.service('freeLayoutService', function ($http) {
         });
     };
 
-    return service;
+    this.widget = function () {
+        var random = new Date().getTime();
+        var template = '<div class="widget_'+ random +'"></div>';
+
+        $('.layoutPanel').append(template);
+        return random;
+    };
 });
 

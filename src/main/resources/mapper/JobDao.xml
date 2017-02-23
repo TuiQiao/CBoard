@@ -9,29 +9,37 @@
 
     <update id="update" parameterType="org.cboard.pojo.DashboardJob">
         <![CDATA[
-        UPDATE dashboard_job SET job_name = #{name},cron_exp = #{cronExp},start_date = #{startDate},end_date = #{endDate},job_type = #{jobType},job_config = #{config} WHERE job_id = #{id}
+        UPDATE dashboard_job
+           SET job_name = #{name},
+               cron_exp = #{cronExp},
+               start_date = #{startDate},
+               end_date = #{endDate},
+               job_type = #{jobType},
+               job_config = #{config}
+         WHERE job_id = #{id}
         ]]>
     </update>
 
     <select id="getJobList" resultType="org.cboard.pojo.DashboardJob">
         SELECT
-        job_id    AS id,
-        user_id       AS userId,
-        job_name  AS name,
-        start_date     AS startDate,
-        end_date     AS endDate,
-        job_type     AS jobType,
-        job_config     AS config,
-        cron_exp AS cronExp,
-        last_exec_time AS lastExecTime
-        FROM dashboard_job
-        WHERE #{0} = '${admin_user_id}' OR user_id = #{0} OR job_id IN (
-        SELECT res_id
-        FROM dashboard_user_role ur
-        LEFT JOIN dashboard_role_res rr ON ur.role_id = rr.role_id
-        WHERE ur.user_id = #{0} AND rr.res_type = 'job'
-        )
-        ORDER BY job_id desc
+               job_id         AS id,
+               user_id        AS userId,
+               job_name       AS name,
+               start_date     AS startDate,
+               end_date       AS endDate,
+               job_type       AS jobType,
+               job_config     AS config,
+               cron_exp       AS cronExp,
+               last_exec_time AS lastExecTime
+          FROM dashboard_job
+         WHERE #{0} = '${admin_user_id}' OR user_id = #{0} 
+               OR job_id IN (
+                  SELECT res_id
+                    FROM dashboard_user_role ur
+                    LEFT JOIN dashboard_role_res rr ON ur.role_id = rr.role_id
+                   WHERE ur.user_id = #{0} AND rr.res_type = 'job'
+               )
+        ORDER BY job_id DESC
     </select>
 
     <delete id="delete">

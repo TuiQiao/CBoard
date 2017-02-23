@@ -26,14 +26,13 @@ public class PersistService {
         String persistId = UUID.randomUUID().toString().replaceAll("-", "");
         try {
             Process process = Runtime.getRuntime().exec(String.format("%s %s %s %s %s", phantomjsPath, scriptPath, dashboardId, persistId, userId));
-            TASK_MAP.put(persistId, new PersistContext(dashboardId));
-            synchronized (persistId.intern()) {
-                persistId.intern().wait(5 * 60 * 1000);
-                persistId.intern().notify();
+            PersistContext context = new PersistContext(dashboardId);
+            TASK_MAP.put(persistId, context);
+            synchronized (context) {
+                context.wait();
             }
-            PersistContext result = TASK_MAP.get(persistId);
             TASK_MAP.remove(persistId);
-            return result;
+            return context;
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -41,9 +40,10 @@ public class PersistService {
     }
 
     public String persistCallback(String persistId, JSONObject data) {
-        synchronized (persistId.intern()) {
-            TASK_MAP.get(persistId).setData(data);
-            persistId.intern().notify();
+        PersistContext context = TASK_MAP.get(persistId);
+        synchronized (context) {
+            context.setData(data);
+            context.notify();
         }
         return "1";
     }

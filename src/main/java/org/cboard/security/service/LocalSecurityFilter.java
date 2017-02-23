@@ -25,9 +25,11 @@ public class LocalSecurityFilter implements Filter {
     public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain) throws IOException, ServletException {
 
         Cookie[] cookies = ((HttpServletRequest) servletRequest).getCookies();
-        for (Cookie c : cookies) {
-            if ("CBLOCALUID".equals(c.getName())) {
-                localUserId.set(c.getValue());
+        if (cookies != null) {
+            for (Cookie c : cookies) {
+                if ("CBLOCALUID".equals(c.getName())) {
+                    localUserId.set(c.getValue());
+                }
             }
         }
         filterChain.doFilter(servletRequest, servletResponse);

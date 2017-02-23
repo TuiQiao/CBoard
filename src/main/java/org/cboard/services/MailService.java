@@ -13,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
+import javax.mail.Authenticator;
 import javax.mail.util.ByteArrayDataSource;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -38,10 +39,10 @@ public class MailService {
     @Value("${mail.smtp.port}")
     private Integer mail_smtp_port;
 
-    @Value("${mail.smtp.username}")
+    @Value("${mail.smtp.username:#{null}}")
     private String mail_smtp_username;
 
-    @Value("${mail.smtp.password}")
+    @Value("${mail.smtp.password:#{null}}")
     private String mail_smtp_password;
 
     @Value("${mail.smtp.from}")
@@ -89,7 +90,9 @@ public class MailService {
             email.attach(ds, "report.xls", EmailAttachment.ATTACHMENT, "test");
             email.setHostName(mail_smtp_host);
             email.setSmtpPort(mail_smtp_port);
-            email.setAuthentication(mail_smtp_username, mail_smtp_password);
+            if (mail_smtp_username != null && mail_smtp_password != null) {
+                email.setAuthentication(mail_smtp_username, mail_smtp_password);
+            }
             email.setFrom(mail_smtp_from);
             email.setSubject(config.getString("subject"));
             String to = config.getString("to");

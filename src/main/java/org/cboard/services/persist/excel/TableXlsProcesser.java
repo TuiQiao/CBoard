@@ -43,7 +43,7 @@ public class TableXlsProcesser extends XlsProcesser {
                     }
                     if (j == colStart) {
                         if ("data".equals(property)) {
-                            if (cData.getString("data").contains("%")) {
+                            if (cData.getString("data") != null && cData.getString("data").contains("%")) {
                                 cell.setCellValue(cData.getDoubleValue("raw"));
                                 cell.setCellStyle(context.getPercentStyle());
                             } else {

@@ -38,7 +38,10 @@ public class XlsProcessService {
     private XlsProcesserContext dashboardToXls(PersistContext persistContext, XlsProcesserContext context) {
         DashboardBoard board = boardDao.getBoard(persistContext.getDashboardId());
         JSONArray rows = JSONObject.parseObject(board.getLayout()).getJSONArray("rows");
-        List<JSONArray> arr = rows.stream().map(e -> (JSONObject) e).filter(e -> "widget".equals(e.getString("type"))).map(e -> e.getJSONArray("widgets")).collect(Collectors.toList());
+        List<JSONArray> arr = rows.stream().map(e -> (JSONObject) e)
+                .filter(e -> e.getString("type") == null || "widget".equals(e.getString("type")))
+                .map(e -> e.getJSONArray("widgets"))
+                .collect(Collectors.toList());
 
         int columns = 170;
         int columnWidth = 1700 / columns;

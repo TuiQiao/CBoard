@@ -12,6 +12,7 @@
         </param-value>
     </context-param>
 
+    <!--
     <filter>
         <filter-name>LogFilter</filter-name>
         <filter-class>org.cboard.security.service.LogFilter</filter-class>
@@ -20,6 +21,7 @@
         <filter-name>LogFilter</filter-name>
         <url-pattern>/*</url-pattern>
     </filter-mapping>
+    -->
 
     <servlet>
         <servlet-name>DruidStatView</servlet-name>

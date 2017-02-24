@@ -24,6 +24,8 @@
                             <th>{{'CONFIG.JOB.NAME'|translate}}</th>
                             <th>{{'CONFIG.JOB.TYPE'|translate}}</th>
                             <th>{{'CONFIG.JOB.LAST_EXEC_TIME'|translate}}</th>
+                            <th>{{'CONFIG.JOB.STATUS'|translate}}</th>
+                            <th>{{'CONFIG.JOB.USERNAME'|translate}}</th>
                             <th></th>
                         </tr>
                         <tr ng-repeat="job in jobList">
@@ -31,6 +33,8 @@
                             <td>{{job.name}}</td>
                             <td>{{getName(job.jobType)}}</td>
                             <td>{{getTime(job.lastExecTime)}}</td>
+                            <td>{{getStatus(job.jobStatus)|translate}}</td>
+                            <td>{{job.userName}}</td>
                             <td>
                                 <i class="fa fa-play toolbar-icon" ng-click="runJob(job)" title="{{'CONFIG.JOB.EXEC_NOW'|translate}}"></i>&nbsp;&nbsp;
                                 <i class="fa fa-edit toolbar-icon" ng-click="editJob(job)" title="{{'COMMON.EDIT'|translate}}"></i>&nbsp;&nbsp;

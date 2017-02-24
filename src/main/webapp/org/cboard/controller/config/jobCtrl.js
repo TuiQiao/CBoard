@@ -27,6 +27,21 @@ cBoard.controller('jobCtrl', function ($scope, $http, dataService, $uibModal, Mo
         }
     };
 
+    $scope.getStatus = function (t) {
+        if (t != null) {
+            switch (t) {
+                case 0:
+                    return "CONFIG.JOB.FAIL";
+                case 1:
+                    return "CONFIG.JOB.FINISH";
+                case 2:
+                    return "CONFIG.JOB.PROCESSING";
+            }
+        } else {
+            return "N/A"
+        }
+    };
+
     $scope.runJob = function (job) {
         $http.post("dashboard/execJob.do", {id: job.id}).success(function (serviceStatus) {
             if (serviceStatus.status == '1') {

@@ -8,5 +8,6 @@ CREATE TABLE dashboard_job (
   job_config text,
   user_id varchar(100) DEFAULT NULL,
   last_exec_time timestamp NULL DEFAULT NULL,
+  job_status bigint(20),
   PRIMARY KEY (job_id)
 );

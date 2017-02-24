@@ -183,7 +183,12 @@
       "ON": "on",
       "OF": "of",
       "AT": "at",
-      "PAST_THE_HOUR": "past the hour"
+      "PAST_THE_HOUR": "past the hour",
+      "USERNAME": "Creator",
+      "FAIL": "Fail",
+      "FINISH": "Finish",
+      "PROCESSING": "Processing",
+      "STATUS": "Status"
     }
   },
   "ADMIN": {

@@ -110,8 +110,9 @@ public class JdbcDataProvider extends DataProvider implements AggregateProvider 
 
     /**
      * Convert the sql text to subquery string:
-     *    remove blank line
-     *    remove end semicolon ;
+     * remove blank line
+     * remove end semicolon ;
+     *
      * @param rawQueryText
      * @return
      */
@@ -252,7 +253,7 @@ public class JdbcDataProvider extends DataProvider implements AggregateProvider 
      * Assemble all the filter to a legal sal where script
      *
      * @param filterStream
-     * @param prefix HAVING or WHERE
+     * @param prefix       HAVING or WHERE
      * @return
      */
     private String assembleSqlFilter(Stream<DimensionConfigHelper> filterStream, String prefix) {

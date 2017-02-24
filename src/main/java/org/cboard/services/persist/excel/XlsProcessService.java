@@ -68,17 +68,29 @@ public class XlsProcessService {
         sheet.setDisplayGridlines(false);
         IntStream.range(0, 180).forEach(i -> sheet.setColumnWidth(i, 365));
         context.setBoardSheet(sheet);
-        int eachRow = 0;
+        int eachRow = -2;
+        int dCol;
+        int dRow;
+        int widthInRow;
         for (JSONArray rw : arr) {
-            int dCol = Math.round(30.0f / 1700 * columns);
-            int dRow = eachRow + 3;
+            dCol = Math.round(30.0f / 1700 * columns);
+            dRow = eachRow + 3;
+            widthInRow = 0;
             for (int i = 0; i < rw.size(); i++) {
+
                 JSONObject widget = rw.getJSONObject(i);
                 JSONObject v = persistContext.getData().getJSONObject(widget.getLong("widgetId").toString());
                 if (v == null) {
                     continue;
                 }
-                int widget_cols = Math.round(1.0f * widget.getInteger("width").intValue() / 12 * (148 - (rw.size() - 1) * 2));
+                int width = widget.getInteger("width").intValue();
+                int widget_cols = Math.round(1.0f * width / 12 * (148 - (rw.size() - 1) * 2));
+                widthInRow += width;
+                if (widthInRow > 12) {
+                    dCol = Math.round(30.0f / 1700 * columns);
+                    dRow = eachRow + 3;
+                    widthInRow = width;
+                }
                 context.setC1(dCol + 2);
                 context.setC2(dCol + 2 + widget_cols);
                 context.setR1(dRow);
@@ -93,30 +105,38 @@ public class XlsProcessService {
                 dCol = context.getC2();
             }
         }
-        eachRow = 0;
+        int tables = 0;
+        for (JSONArray rw : arr) {
+            for (int i = 0; i < rw.size(); i++) {
+                JSONObject widget = rw.getJSONObject(i);
+                JSONObject v = persistContext.getData().getJSONObject(widget.getLong("widgetId").toString());
+                if (v != null && "table".equals(v.getString("type"))) {
+                    tables++;
+                }
+            }
+        }
+        if (tables == 0) {
+            return context;
+        }
+        dRow = 0;
         Sheet dataSheet = context.getWb().createSheet(board.getName() + "_table");
         context.setBoardSheet(dataSheet);
         for (JSONArray rw : arr) {
-            int dCol = 0;
-            int dRow = eachRow + 2;
             for (int i = 0; i < rw.size(); i++) {
                 JSONObject widget = rw.getJSONObject(i);
                 JSONObject v = persistContext.getData().getJSONObject(widget.getLong("widgetId").toString());
                 if (v == null || !"table".equals(v.getString("type"))) {
                     continue;
                 }
-                context.setC1(dCol + 2);
-                context.setC2(dCol + 2 + v.getJSONArray("data").getJSONArray(0).size());
+                context.setC1(0);
+                context.setC2(v.getJSONArray("data").getJSONArray(0).size() - 1);
                 context.setR1(dRow);
                 context.setR2(dRow);
                 context.setWidget(widget);
                 context.setData(v);
                 XlsProcesser processer = getProcesser(v.getString("type"));
                 ClientAnchor anchor = processer.draw(context);
-                if (anchor.getRow2() > eachRow) {
-                    eachRow = anchor.getRow2();
-                }
-                dCol = context.getC2();
+                dRow = anchor.getRow2() + 2;
             }
         }
 

@@ -20,4 +20,7 @@ public interface JobDao {
     int delete(Long jobId);
 
     int updateLastExecTime(Long jobId, Date date);
+
+    int updateStatus(Long jobId, Long status);
+
 }

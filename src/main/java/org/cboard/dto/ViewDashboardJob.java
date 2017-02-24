@@ -3,7 +3,6 @@ package org.cboard.dto;
 import com.alibaba.fastjson.JSONObject;
 import org.apache.commons.collections.map.HashedMap;
 import org.cboard.pojo.DashboardJob;
-import org.cboard.pojo.DashboardWidget;
 
 import java.util.Date;
 import java.util.Map;
@@ -21,6 +20,12 @@ public class ViewDashboardJob {
     private Map<String, Object> config;
     private String userId;
     private Date lastExecTime;
+    private String userName;
+    private Long jobStatus;
+
+    public static final Long STATUS_PROCESSING = 2L;
+    public static final Long STATUS_FINISH = 1L;
+    public static final Long STATUS_FAIL = 0L;
 
     public ViewDashboardJob(DashboardJob job) {
         this.id = job.getId();
@@ -33,6 +38,16 @@ public class ViewDashboardJob {
         this.jobType = job.getJobType();
         this.config = JSONObject.parseObject(job.getConfig());
         this.lastExecTime = job.getLastExecTime();
+        this.userName = job.getUserName();
+        this.jobStatus = job.getJobStatus();
+    }
+
+    public String getUserName() {
+        return userName;
+    }
+
+    public void setUserName(String userName) {
+        this.userName = userName;
     }
 
     public Long getId() {
@@ -97,5 +112,13 @@ public class ViewDashboardJob {
 
     public void setLastExecTime(Date lastExecTime) {
         this.lastExecTime = lastExecTime;
+    }
+
+    public Long getJobStatus() {
+        return jobStatus;
+    }
+
+    public void setJobStatus(Long jobStatus) {
+        this.jobStatus = jobStatus;
     }
 }

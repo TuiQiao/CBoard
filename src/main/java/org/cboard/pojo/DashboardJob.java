@@ -15,7 +15,17 @@ public class DashboardJob {
     private String jobType;
     private String config;
     private String userId;
+    private String userName;
     private Date lastExecTime;
+    private Long jobStatus;
+
+    public Long getJobStatus() {
+        return jobStatus;
+    }
+
+    public void setJobStatus(Long jobStatus) {
+        this.jobStatus = jobStatus;
+    }
 
     public Date getLastExecTime() {
         return lastExecTime;
@@ -87,5 +97,13 @@ public class DashboardJob {
 
     public void setConfig(String config) {
         this.config = config;
+    }
+
+    public String getUserName() {
+        return userName;
+    }
+
+    public void setUserName(String userName) {
+        this.userName = userName;
     }
 }

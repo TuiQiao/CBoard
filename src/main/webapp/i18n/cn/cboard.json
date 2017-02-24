@@ -183,7 +183,12 @@
       "ON": "的",
       "OF": "的",
       "AT": "在",
-      "PAST_THE_HOUR": "分"
+      "PAST_THE_HOUR": "分",
+      "USERNAME": "创建人",
+      "FAIL": "失败",
+      "FINISH": "完成",
+      "PROCESSING": "处理中",
+      "STATUS": "状态"
     }
   },
   "ADMIN": {

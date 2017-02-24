@@ -22,24 +22,26 @@
 
     <select id="getJobList" resultType="org.cboard.pojo.DashboardJob">
         SELECT
-               job_id         AS id,
-               user_id        AS userId,
-               job_name       AS name,
-               start_date     AS startDate,
-               end_date       AS endDate,
-               job_type       AS jobType,
-               job_config     AS config,
-               cron_exp       AS cronExp,
-               last_exec_time AS lastExecTime
-          FROM dashboard_job
-         WHERE #{0} = '${admin_user_id}' OR user_id = #{0} 
-               OR job_id IN (
+               j.job_id         AS id,
+               j.user_id        AS userId,
+               j.job_name       AS name,
+               j.start_date     AS startDate,
+               j.end_date       AS endDate,
+               j.job_type       AS jobType,
+               j.job_config     AS config,
+               j.cron_exp       AS cronExp,
+               j.last_exec_time AS lastExecTime,
+               (select u.user_name from dashboard_user u where u.user_id = j.user_id) as userName,
+               j.job_status AS jobStatus
+          FROM dashboard_job j
+         WHERE #{0} = '${admin_user_id}' OR j.user_id = #{0}
+               OR j.job_id IN (
                   SELECT res_id
                     FROM dashboard_user_role ur
                     LEFT JOIN dashboard_role_res rr ON ur.role_id = rr.role_id
                    WHERE ur.user_id = #{0} AND rr.res_type = 'job'
                )
-        ORDER BY job_id DESC
+        ORDER BY j.job_id DESC
     </select>
 
     <delete id="delete">
@@ -49,6 +51,11 @@
     <update id="updateLastExecTime">
         <![CDATA[
         UPDATE dashboard_job SET last_exec_time = #{1} WHERE job_id = #{0}
+        ]]>
+    </update>
+    <update id="updateStatus">
+        <![CDATA[
+        UPDATE dashboard_job SET job_status = #{1} WHERE job_id = #{0}
         ]]>
     </update>
 </mapper>

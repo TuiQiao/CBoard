@@ -5238,13 +5238,30 @@ span.returnIcon {
     /*background: url("../../imgs/layout.svg") 50% 50% no-repeat;*/
 }
 .drag-preview {
-    border: 1px dashed grey;
+    border: 2px dashed grey;
     position: absolute;
+    -webkit-transition: all .3s linear;
+    transition: all .3s linear;
 }
 .chart_item {
     position: absolute;
     overflow: hidden;
-    border: 1px solid grey;
+    -webkit-transition: all .3s linear;
+    transition: all .3s linear;
+}
+.chart_widget {
+    width: 100%;
+    height: 100%;
+    margin-top: 30px;
+    border: 1px solid #ccc;
+    transition: all .3s linear;
+    -webkit-transition: all .3s linear;
+}
+.chart_item:hover .menu-bar{
+    display: block;
+    top: 0;
+    transition: all .3s linear;
+    -webkit-transition: all .3s linear;
 }
 .box-header.toolbar {
     height: 30px;
@@ -5262,6 +5279,18 @@ span.returnIcon {
   cursor: pointer;
   font-size: 16px;
   color: #999;
+}
+.menu-bar {
+  width: 100%;
+  height: 30px;
+  background-color: #4c4c4c;
+  position: absolute;
+  top: 30px;
+  left: 0;
+  display: none;
+  transition: all .3s linear;
+  z-index: 100;
+  cursor: move;
 }
 
 .u-icn, .u-icn-active {

@@ -3,54 +3,58 @@
  */
 
 'user strict';
-cBoard.service('freeLayoutService', function ($http) {
-    this.setHeight = function () {
-        var height = $(window).height() + 'px';
+cBoard.service('freeLayoutService', function() {
+    this.setHeight = ()=>{
+        const height = $(window).height() + 'px';
 
         $('.layoutPanel').css({
             height: height
         });
     };
 
-    this.widget = function () {
-        var random = new Date().getTime();
-        var template = '<div class="chart_item widget_'+ random +'"></div>';
+    this.widget = ()=>{
+        const random = new Date().getTime();
+        const template = '<div class="chart_item widget_'+ random +'"><div class="menu-bar"></div><div class="chart_widget"></div></div>';
 
         $('.layoutPanel').append(template);
         return random;
     };
 
-    this.widgetDrag = function (panel, $scope, callback) {
-        var _this = this;
+    this.widgetDrag = (panel, $scope, callback)=>{
+        let _this = this;
 
         panel.on({
-            dragover: function (ev) {
+            dragover(ev) {
                 ev.preventDefault();
             },
-            dragenter: function (ev) {
-
+            dragenter(ev) {
+                // $('.drag-preview').removeClass('hideOperate');
+                // $('.drag-preview').css({
+                //     width: panel[0].clientWidth - ev.offsetX + 'px',
+                //     height: '100px',
+                //     left: ev.offsetX + 'px',
+                //     top: ev.offsetY + 'px'
+                // });
             },
-            drop: function (e) {
-                console.log(panel[0].clientWidth);
-                var data = e.originalEvent.dataTransfer.getData('Text');
-                var reportId = _this.widget();
+            drop(e) {
+                // $('.drag-preview').addClass('hideOperate');
+                let data = e.originalEvent.dataTransfer.getData('Text');
+                let reportId = _this.widget();
                 data = data ? JSON.parse(data) : null;
-                var widget = $scope.widgetList.filter(function (d) {
-                    return d.id === JSON.parse(data.id);
-                });
+                let widget = $scope.widgetList.filter(d => d.id === JSON.parse(data.id));
                 $('.widget_' + reportId).css({
                     width: panel[0].clientWidth - e.offsetX + 'px',
-                    height: '150px',
+                    height: '350px',
                     left: e.offsetX + 'px',
                     top: e.offsetY + 'px'
                 });
-                var obj = {
+                let obj = {
                     config: widget[0].data.config,
                     datasetId: widget[0].data.datasetId,
                     datasource: null,
                     query: {}
                 };
-                callback.render($('.widget_' + reportId), obj, function (option) {
+                callback.render($('.widget_' + reportId + ' .chart_widget'), obj, (option)=>{
                     switch (widget[0].data.config.chart_type) {
                         case 'line':
                             $scope.previewDivWidth = 12;
@@ -107,8 +111,21 @@ cBoard.service('freeLayoutService', function ($http) {
                             break;
                     }
                 });
+                _this.widgetMove();
             }
-        })
+        });
+    };
+
+    this.widgetMove = ()=>{
+        $('.menu-bar').on({
+            mousedown(e){
+                console.log($(e.target));
+                console.log(e.offsetX)
+            }
+            // mousemove(e) {
+            //
+            // }
+        });
     }
 });
 

@@ -5228,8 +5228,60 @@ div.newBoard span {
 div.newBoard span:hover{
     font-weight: bold;
 }
-span.returnIcon{
+span.returnIcon {
     display: inline-block;
     float: right;
     cursor: pointer;
+}
+.layoutPanel{
+    position: relative;
+    /*background: url("../../imgs/layout.svg") 50% 50% no-repeat;*/
+}
+.drag-preview {
+    border: 1px dashed grey;
+    position: absolute;
+}
+.chart_item {
+    position: absolute;
+    overflow: hidden;
+    border: 1px solid grey;
+}
+.box-header.toolbar {
+    height: 30px;
+    width: 100%;
+    background: #fff;
+}
+.toolbar .opt {
+  top: 5px;
+  right: 30px;
+  float: right;
+  position: relative;
+}
+
+.toolbar .opt .u-icn {
+  cursor: pointer;
+  font-size: 16px;
+  color: #999;
+}
+
+.u-icn, .u-icn-active {
+  display: inline-block;
+  font-size: 1em;
+  line-height: 1;
+  font-family: bigviz;
+  vertical-align: middle;
+}
+
+.toolbar .line {
+  /*display: inline-block;*/
+  /*margin: 0 10px;*/
+  /*width: 1px;*/
+  /*height: 20px;*/
+  /*background: #ddd;*/
+  /*vertical-align: middle;*/
+}
+
+.toolbar .autoSave {
+  display: inline-block;
+  margin-left: 6px;
 }

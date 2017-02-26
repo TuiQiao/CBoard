@@ -205,6 +205,7 @@ function jstree_baseTreeEventsObj(option) {
                 updateNode(curNode, tarPath);
             },
             dragstart: function (e) {
+                e.originalEvent.dataTransfer.effectAllowed = "move";
                 var myJsTree = jstree_GetWholeTree(option.treeID);
                 var data = JSON.stringify(myJsTree.get_selected(true)[0]);
                 e.originalEvent.dataTransfer.setData('Text', data);

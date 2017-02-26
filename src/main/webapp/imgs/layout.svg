@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="200px" height="118px" viewBox="0 0 200 118" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <defs>
+        <rect id="path-1" x="0" y="24" width="60" height="18"></rect>
+        <mask id="mask-2" maskContentUnits="userSpaceOnUse" maskUnits="objectBoundingBox" x="0" y="0" width="60" height="18" fill="white">
+            <use xlink:href="#path-1"></use>
+        </mask>
+        <rect id="path-3" x="0" y="76" width="60" height="18"></rect>
+        <mask id="mask-4" maskContentUnits="userSpaceOnUse" maskUnits="objectBoundingBox" x="0" y="0" width="60" height="18" fill="white">
+            <use xlink:href="#path-3"></use>
+        </mask>
+        <rect id="path-5" x="0" y="100" width="60" height="18"></rect>
+        <mask id="mask-6" maskContentUnits="userSpaceOnUse" maskUnits="objectBoundingBox" x="0" y="0" width="60" height="18" fill="white">
+            <use xlink:href="#path-5"></use>
+        </mask>
+        <rect id="path-7" x="0" y="0" width="60" height="18"></rect>
+        <mask id="mask-8" maskContentUnits="userSpaceOnUse" maskUnits="objectBoundingBox" x="0" y="0" width="60" height="18" fill="white">
+            <use xlink:href="#path-7"></use>
+        </mask>
+        <rect id="path-9" x="112" y="10" width="88" height="102"></rect>
+        <mask id="mask-10" maskContentUnits="userSpaceOnUse" maskUnits="objectBoundingBox" x="0" y="0" width="88" height="102" fill="white">
+            <use xlink:href="#path-9"></use>
+        </mask>
+        <rect id="path-11" x="0" y="48" width="60" height="22"></rect>
+        <mask id="mask-12" maskContentUnits="userSpaceOnUse" maskUnits="objectBoundingBox" x="0" y="0" width="60" height="22" fill="white">
+            <use xlink:href="#path-11"></use>
+        </mask>
+        <rect id="path-13" x="124" y="42" width="64" height="44"></rect>
+        <mask id="mask-14" maskContentUnits="userSpaceOnUse" maskUnits="objectBoundingBox" x="0" y="0" width="64" height="44" fill="white">
+            <use xlink:href="#path-13"></use>
+        </mask>
+        <rect id="path-15" x="38" y="53" width="64" height="26"></rect>
+        <mask id="mask-16" maskContentUnits="userSpaceOnUse" maskUnits="objectBoundingBox" x="0" y="0" width="64" height="26" fill="white">
+            <use xlink:href="#path-15"></use>
+        </mask>
+        <polygon id="path-17" points="76 61 84 66 76 71"></polygon>
+        <mask id="mask-18" maskContentUnits="userSpaceOnUse" maskUnits="objectBoundingBox" x="0" y="0" width="8" height="10" fill="white">
+            <use xlink:href="#path-17"></use>
+        </mask>
+        <rect id="path-19" x="54" y="65" width="26" height="2"></rect>
+        <mask id="mask-20" maskContentUnits="userSpaceOnUse" maskUnits="objectBoundingBox" x="0" y="0" width="26" height="2" fill="white">
+            <use xlink:href="#path-19"></use>
+        </mask>
+    </defs>
+    <g id="v2.12" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="仪表盘-tab-copy" transform="translate(-720.000000, -606.000000)">
+            <g id="img-ybpzs" transform="translate(720.000000, 606.000000)">
+                <g id="Group-7">
+                    <use id="Rectangle-6" stroke="#AAAAAA" mask="url(#mask-2)" stroke-width="6" xlink:href="#path-1"></use>
+                    <use id="Rectangle-6" stroke="#AAAAAA" mask="url(#mask-4)" stroke-width="6" xlink:href="#path-3"></use>
+                    <use id="Rectangle-6" stroke="#AAAAAA" mask="url(#mask-6)" stroke-width="6" xlink:href="#path-5"></use>
+                    <use id="Rectangle-6" stroke="#AAAAAA" mask="url(#mask-8)" stroke-width="6" xlink:href="#path-7"></use>
+                    <use id="Rectangle-6" stroke="#AAAAAA" mask="url(#mask-10)" stroke-width="8" xlink:href="#path-9"></use>
+                    <use id="Rectangle-6" stroke="#AAAAAA" mask="url(#mask-12)" stroke-width="4" stroke-dasharray="3" xlink:href="#path-11"></use>
+                    <use id="Rectangle-6" stroke="#AAAAAA" mask="url(#mask-14)" stroke-width="2" stroke-dasharray="2" xlink:href="#path-13"></use>
+                    <use id="Rectangle-6" stroke="#AAAAAA" mask="url(#mask-16)" stroke-width="6" fill="#FFFFFF" xlink:href="#path-15"></use>
+                    <rect id="Rectangle-7" fill="#AAAAAA" x="135" y="59" width="8" height="18"></rect>
+                    <rect id="Rectangle-7" fill="#AAAAAA" x="146" y="54" width="8" height="23"></rect>
+                    <rect id="Rectangle-7" fill="#AAAAAA" x="157" y="63" width="8" height="14"></rect>
+                    <rect id="Rectangle-7" fill="#AAAAAA" x="168" y="57" width="8" height="20"></rect>
+                    <use id="Rectangle-8" stroke="#AAAAAA" mask="url(#mask-18)" stroke-width="4" fill="#AAAAAA" xlink:href="#path-17"></use>
+                    <use id="Rectangle-9" stroke="#AAAAAA" mask="url(#mask-20)" stroke-width="4" fill="#AAAAAA" xlink:href="#path-19"></use>
+                    <rect id="Rectangle-18" fill="#AAAAAA" x="183" y="37" width="5" height="5"></rect>
+                </g>
+            </g>
+        </g>
+    </g>
+</svg>

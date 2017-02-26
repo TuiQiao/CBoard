@@ -8,6 +8,15 @@
         http://www.springframework.org/schema/security
         http://www.springframework.org/schema/security/spring-security-4.1.xsd">
 
+    <bean id="local127" class="org.springframework.security.web.util.matcher.ELRequestMatcher">
+        <constructor-arg value="hasHeader('host','127.0.0.1')"/>
+    </bean>
+
+    <sec:http auto-config="true" request-matcher-ref="local127">
+        <sec:intercept-url pattern="/**" access="permitAll"/>
+        <sec:csrf disabled="true"/>
+    </sec:http>
     <import resource="spring-security-jdbc.xml"/>
     <!--<import resource="spring-security-cas.xml"/>-->
+
 </beans>

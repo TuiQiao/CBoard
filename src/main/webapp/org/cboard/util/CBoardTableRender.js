@@ -16,7 +16,7 @@ CBoardTableRender.prototype.resize = function (container) {
     }
 };
 
-CBoardTableRender.prototype.do = function (tall) {
+CBoardTableRender.prototype.do = function (tall, persist) {
     this.tall = tall;
     tall = _.isUndefined(tall) ? 500 : tall;
     var divHeight = tall - 110;
@@ -32,6 +32,10 @@ CBoardTableRender.prototype.do = function (tall) {
     });
     this.resize(this.container);
     var _this = this;
+    if (persist) {
+        persist.data = this.options.data;
+        persist.type = "table"
+    }
     return function (o) {
         _this.options = o;
         _this.do(_this.tall);

@@ -20,6 +20,7 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
  * Created by yfyuan on 2016/8/9.
@@ -63,6 +64,12 @@ public class DashboardController {
 
     @Autowired
     private DatasetService datasetService;
+
+    @Autowired
+    private JobService jobService;
+
+    @Autowired
+    private JobDao jobDao;
 
     @RequestMapping(value = "/test")
     public ServiceStatus test(@RequestParam(name = "datasource", required = false) String datasource, @RequestParam(name = "query", required = false) String query) {
@@ -121,6 +128,12 @@ public class DashboardController {
 
         String userid = authenticationService.getCurrentUser().getUserId();
         return widgetService.save(userid, json);
+    }
+
+    @RequestMapping(value = "/getAllWidgetList")
+    public List<ViewDashboardWidget> getAllWidgetList() {
+        List<DashboardWidget> list = widgetDao.getAllWidgetList();
+        return Lists.transform(list, ViewDashboardWidget.TO);
     }
 
     @RequestMapping(value = "/getWidgetList")
@@ -216,6 +229,12 @@ public class DashboardController {
         return datasetService.save(userid, json);
     }
 
+    @RequestMapping(value = "/getAllDatasetList")
+    public List<ViewDashboardDataset> getAllDatasetList() {
+        List<DashboardDataset> list = datasetDao.getAllDatasetList();
+        return Lists.transform(list, ViewDashboardDataset.TO);
+    }
+
     @RequestMapping(value = "/getDatasetList")
     public List<ViewDashboardDataset> getDatasetList() {
 
@@ -287,4 +306,39 @@ public class DashboardController {
         return dataProviderService.queryAggData(datasourceId, strParams, datasetId, config, reload);
     }
 
+    @RequestMapping(value = "/dashboardWidget")
+    public ViewDashboardWidget dashboardWidget(@RequestParam(name = "id") Long id) {
+        DashboardWidget widget = widgetDao.getWidget(id);
+        return new ViewDashboardWidget(widget);
+    }
+
+    @RequestMapping(value = "/saveJob")
+    public ServiceStatus saveJob(@RequestParam(name = "json") String json) {
+        String userid = authenticationService.getCurrentUser().getUserId();
+        return jobService.save(userid, json);
+    }
+
+    @RequestMapping(value = "/updateJob")
+    public ServiceStatus updateJob(@RequestParam(name = "json") String json) {
+        String userid = authenticationService.getCurrentUser().getUserId();
+        return jobService.update(userid, json);
+    }
+
+    @RequestMapping(value = "/getJobList")
+    public List<ViewDashboardJob> getJobList() {
+        String userid = authenticationService.getCurrentUser().getUserId();
+        return jobDao.getJobList(userid).stream().map(ViewDashboardJob::new).collect(Collectors.toList());
+    }
+
+    @RequestMapping(value = "/deleteJob")
+    public ServiceStatus deleteJob(@RequestParam(name = "id") Long id) {
+        String userid = authenticationService.getCurrentUser().getUserId();
+        return jobService.delete(userid, id);
+    }
+
+    @RequestMapping(value = "/execJob")
+    public ServiceStatus execJob(@RequestParam(name = "id") Long id) {
+        String userid = authenticationService.getCurrentUser().getUserId();
+        return jobService.exec(userid, id);
+    }
 }

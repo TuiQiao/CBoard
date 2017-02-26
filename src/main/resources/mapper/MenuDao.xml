@@ -3,7 +3,10 @@
 <mapper namespace="org.cboard.dao.MenuDao">
 
     <select id="getMenuIdByUserRole" resultType="java.lang.Long">
-        SELECT DISTINCT rr.res_id roleResId FROM dashboard_user_role ur LEFT JOIN dashboard_role_res rr ON ur.role_id = rr.role_id WHERE ur.user_id = #{0} AND rr.res_type = 'menu'
+        SELECT DISTINCT rr.res_id AS roleResId 
+          FROM dashboard_user_role ur 
+          LEFT JOIN dashboard_role_res rr ON ur.role_id = rr.role_id 
+         WHERE ur.user_id = #{0} AND rr.res_type = 'menu'
     </select>
 
 </mapper>

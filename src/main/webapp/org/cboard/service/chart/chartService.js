@@ -3,9 +3,9 @@
  */
 'use strict';
 cBoard.service('chartService', function ($q, dataService, chartPieService, chartLineService, chartFunnelService,
-                                         chartSankeyService, chartTableService, chartKpiService, chartRadarService,
-                                         chartMapService) {
-        this.render = function (containerDom, widget, optionFilter, scope, reload) {
+                                         chartSankeyService, chartTableService, chartKpiService, chartRadarService, chartMapService) {
+
+        this.render = function (containerDom, widget, optionFilter, scope, reload, persist) {
             var deferred = $q.defer();
             var promise = deferred.promise;
             var chart = getChartServices(widget.config);
@@ -14,7 +14,7 @@ cBoard.service('chartService', function ($q, dataService, chartPieService, chart
                 if (optionFilter) {
                     optionFilter(option);
                 }
-                deferred.resolve(chart.render(containerDom, option, scope));
+                deferred.resolve(chart.render(containerDom, option, scope, persist));
             }, reload);
             return promise;
         };

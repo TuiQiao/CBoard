@@ -4,16 +4,16 @@
 'use strict';
 cBoard.service('chartTableService', function (dataService) {
 
-    this.render = function (containerDom, option, scope) {
+    this.render = function (containerDom, option, scope, persist) {
         var height;
         scope ? height = scope.myheight - 20 : null;
-        return new CBoardTableRender(containerDom, option).do(height);
+        return new CBoardTableRender(containerDom, option).do(height, persist);
     };
 
     this.parseOption = function (chartData, chartConfig) {
         var tableOption = null;
         dataService.castRawData2Series(chartData, chartConfig, function (casted_keys, casted_values, aggregate_data, newValuesConfig) {
-            tableOption = chartDataProcess(chartConfig,casted_keys, casted_values, aggregate_data);
+            tableOption = chartDataProcess(chartConfig,casted_keys, casted_values, aggregate_data,newValuesConfig);
         });
         return tableOption;
     };

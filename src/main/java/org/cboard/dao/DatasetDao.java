@@ -14,6 +14,8 @@ public interface DatasetDao {
 
     List<String> getCategoryList();
 
+    List<DashboardDataset> getAllDatasetList();
+
     List<DashboardDataset> getDatasetList(String userId);
 
     int save(DashboardDataset dataset);

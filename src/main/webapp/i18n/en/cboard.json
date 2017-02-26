@@ -8,6 +8,7 @@
     "EDIT": "Edit",
     "CONFIRM_DELETE": "Confirm to Delete!!!",
     "CONFIRM_SAVE_BEFORE_PREVIEW": "Need save board before preview, confirm to save?",
+    "NOT_ALLOWED_TO_DELETE_BECAUSE_BE_DEPENDENT":"Not allowed to delete, because be dependent！",
     "TIP": "Tip",
     "SUCCESS": "Success!",
     "FAIL": "Fail!",
@@ -31,7 +32,8 @@
     "DASHBOARD_CATEGORY": "Dashboard Category",
     "ADMIN": "Admin",
     "USER_ADMIN": "User Admin",
-    "RES_ADMIN": "Resource Admin"
+    "RES_ADMIN": "Resource Admin",
+    "JOB": "Job"
   },
   "HEADER": {
     "SIGN_OUT": "SignOut"
@@ -155,6 +157,38 @@
       "ADD": "Add",
       "REAL_TIME_INTERVAL": "Real Time Interval(s)",
       "REAL_TIME_TIP": "If You don't need refresh, just leave it as BLANK"
+    },
+    "JOB": {
+      "CONFIG": "Config",
+      "JOB": "Job",
+      "NAME": "Name",
+      "TYPE": "Type",
+      "LAST_EXEC_TIME": "Last Execution Time",
+      "EXEC_NOW": "Execute Now",
+      "ACTIVE_RANGE": "Active Range",
+      "MAIL": "Mail",
+      "TO": "To",
+      "CC": "Cc",
+      "BCC": "Bcc",
+      "SUBJECT": "Subject",
+      "ADD_DASHBOARD": "Add Dashboard",
+      "DASHBOARD": "Dashboard",
+      "EVERY": "Every",
+      "Minute": "Minute",
+      "Hour": "Hour",
+      "Day": "Day",
+      "Week": "Week",
+      "Month": "Month",
+      "ON_THE": "on the",
+      "ON": "on",
+      "OF": "of",
+      "AT": "at",
+      "PAST_THE_HOUR": "past the hour",
+      "USERNAME": "Creator",
+      "FAIL": "Fail",
+      "FINISH": "Finish",
+      "PROCESSING": "Processing",
+      "STATUS": "Status"
     }
   },
   "ADMIN": {
@@ -186,7 +220,6 @@
       "SQLTEXT": "Sql Text"
     },
     "SAIKU": {
-
     },
     "TEXTFILE": {
       "BASE_PATH": "BasePath",

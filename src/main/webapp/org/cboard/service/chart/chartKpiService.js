@@ -6,9 +6,9 @@ cBoard.service('chartKpiService', function (dataService, $compile, $filter) {
 
     var translate = $filter('translate');
 
-    this.render = function (containerDom, option, scope) {
+    this.render = function (containerDom, option, scope, persist) {
         var render = new CBoardKpiRender(containerDom, option);
-        var html = render.html();
+        var html = render.html(persist);
         if (scope) {
             containerDom.append($compile(html)(scope));
         } else {

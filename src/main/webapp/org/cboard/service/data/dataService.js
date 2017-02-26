@@ -196,7 +196,7 @@ cBoard.service('dataService', function ($http, updateService) {
         var result = [];
         for (var i = 0; i < arr.length; i++) {
             var a = Number(arr[i]);
-            if (Number.isNaN(a)) {
+            if (isNaN(a)) {
                 return arr;
             } else {
                 result.push(a);
@@ -357,8 +357,11 @@ cBoard.service('dataService', function ($http, updateService) {
                         castedAliasSeriesName.push([seriesName]);
                     }
                     //castedAliasSeriesName.push(newSeriesName);
-                    aliasSeriesConfig[newSeriesName] = {type: value.series_type, valueAxisIndex: vIdx};
-
+                    aliasSeriesConfig[newSeriesName] = {
+                        type: value.series_type,
+                        valueAxisIndex: vIdx,
+                        formatter: series.formatter
+                    };
                     castSeriesData(series, group.join('-'), castedKeys, newData, function (castedData, keyIdx) {
                         if (!aliasData[castedAliasSeriesName.length - 1]) {
                             aliasData[castedAliasSeriesName.length - 1] = new Array();
@@ -385,7 +388,7 @@ cBoard.service('dataService', function ($http, updateService) {
                             f = false;
                         }
                         if(f){
-                            aliasData[s][i] = dataFormat(aliasData[s][i], series.formatter)
+                            aliasData[s][i] = dataFormat(aliasData[s][i]);
                         }
                         s++;
                     });

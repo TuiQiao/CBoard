@@ -62,6 +62,10 @@ angular.module('cBoard').config(['$stateProvider', function ($stateProvider) {
             url: '/dataset',
             templateUrl: 'org/cboard/view/config/dataset.html',
             controller: 'datasetCtrl'
+        }).state('config.job', {
+            url: '/job',
+            templateUrl: 'org/cboard/view/config/job.html',
+            controller: 'jobCtrl'
         }).state('admin', {
             url: '/admin',
             abstract: true,

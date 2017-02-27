@@ -5,17 +5,25 @@
 cBoard.controller('freeLayoutCtrl', function($rootScope, $scope, $http, ModalUtils, $timeout, $stateParams,
                                              $filter, freeLayoutService, chartService){
     var treeID = 'widgetTreeID';
-    var updateUrl = "dashboard/updateWidget.do";
-    var originalData = [];
     var getWidgetList = function (callback) {
         $http.get("dashboard/getWidgetList.do").success(function (response) {
             $scope.widgetList = response;
+            var originalData = jstree_CvtVPath2TreeData(
+                $scope.widgetList.map(function (w) {
+                    return {
+                        "id": w.id,
+                        "name": w.name,
+                        "categoryName": w.categoryName
+                    };
+                })
+            );
             if (callback) {
                 callback();
             }
-            $scope.searchNode();
+            jstree_ReloadTree(treeID, originalData);
         });
     };
+
     var getCategoryList = function () {
         $http.get("dashboard/getWidgetCategoryList.do").success(function (response) {
             $scope.categoryList = response;
@@ -42,75 +50,65 @@ cBoard.controller('freeLayoutCtrl', function($rootScope, $scope, $http, ModalUti
             }
         });
     });
-    
-    $scope.searchNode = function () {
-        var para = {wgtName: '', dsName: '', dsrName: ''};
 
-        //map widgetList to list (add datasetName and datasourceName)
-        var list = $scope.widgetList.map(function (w) {
-            var ds = _.find($scope.datasetList, function (obj) {
-                return obj.id == w.data.datasetId
-            });
-            var dsrName = '';
-            if (ds) {
-                dsrName = _.find($scope.datasourceList, function (obj) {
-                    return obj.id == ds.data.datasource
-                }).name;
-            } else if (w.data.datasource) {
-                _.find($scope.datasourceList, function (obj) {
-                    return obj.id == w.data.datasource
-                }).name
-            }
-            return {
-                "id": w.id,
-                "name": w.name,
-                "categoryName": w.categoryName,
-                "datasetName": ds ? ds.name : '',
-                "datasourceName": dsrName
-            };
-        });
-
-        //split search keywords
-        if ($scope.keywords) {
-            if ($scope.keywords.indexOf(' ') == -1 && $scope.keywords.indexOf(':') == -1) {
-                para.wgtName = $scope.keywords;
-            } else {
-                var keys = $scope.keywords.split(' ');
-                for (var i = 0; i < keys.length; i++) {
-                    var w = keys[i].trim();
-                    if (w.split(':')[0] == 'wg') {
-                        para["wgtName"] = w.split(':')[1];
-                    }
-                    if (w.split(':')[0] == 'ds') {
-                        para["dsName"] = w.split(':')[1];
-                    }
-                    if (w.split(':')[0] == 'dsr') {
-                        para["dsrName"] = w.split(':')[1];
-                    }
-                }
-            }
+    var widgetTreeConfig = angular.copy(jsTreeConfig1);
+    widgetTreeConfig.core.check_callback = function(operation, node, node_parent, node_position, more) {
+        if (operation === "move_node") {
+            return false;
         }
-        //filter data by keywords
-        originalData = jstree_CvtVPath2TreeData(
-            $filter('filter')(list, {name: para.wgtName, datasetName: para.dsName, datasourceName: para.dsrName})
-        );
-
-        jstree_ReloadTree(treeID, originalData);
+        return true;
+         //allow all other operations
     };
 
-    $scope.treeConfig = jsTreeConfig1;
+    $scope.treeConfig = angular.copy(widgetTreeConfig);
+
+    $(document)
+        .on('dnd_move.vakata', function (e, data) {
+            // drap tips icon, ok or error
+            var t = $(data.event.target);
+            if (!t.closest('js-tree').length) {
+                if (t.closest('.layoutPanel').length) {
+                    data.helper.find('.jstree-icon').removeClass('jstree-er').addClass('jstree-ok');
+                }
+                else {
+                    data.helper.find('.jstree-icon').removeClass('jstree-ok').addClass('jstree-er');
+                }
+            }
+        })
+        .on('dnd_stop.vakata', function (e, data) {
+            var t = $(data.event.target);
+            if (!t.closest('js-tree').length) {
+                if (t.closest('.layoutPanel').length) {
+                    $(data.element).clone().appendTo(t.closest('.drop'));
+                    // node data:
+                    console.log(data.data.origin.get_node(data.element));
+                    // if(data.data.jstree && data.data.origin) { console.log(data.data.origin.get_node(data.element); }
+
+                }
+            }
+        });
+
 
     $scope.applyModelChanges = function () {
         return !$scope.ignoreChanges;
     };
 
-    $scope.treeEventsObj = function () {
-        var baseEventObj = jstree_baseTreeEventsObj({
-            ngScope: $scope, ngHttp: $http, ngTimeout: $timeout,
-            treeID: treeID, listName: "widgetList", updateUrl: updateUrl
-        });
-        return baseEventObj;
-    }();
+    $scope.treeEventsObj = {
+        activate_node: function(obj, e) {
+            var myJsTree = jstree_GetWholeTree(treeID);
+            var data = myJsTree.get_selected(true)[0];
+            if (data.children.length > 0) {
+                myJsTree.deselect_node(data);
+                myJsTree.toggle_node(data);
+            }
+        },
+        dragstart: function (e) {
+            e.originalEvent.dataTransfer.effectAllowed = "move";
+            var myJsTree = jstree_GetWholeTree(treeID);
+            var data = JSON.stringify(myJsTree.get_selected(true)[0]);
+            e.originalEvent.dataTransfer.setData('Text', data);
+        }
+    };
     
     $scope.switchLayout = function () {
         $rootScope.freeLayout = false;

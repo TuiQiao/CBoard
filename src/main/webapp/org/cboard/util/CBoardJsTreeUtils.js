@@ -171,6 +171,11 @@ function jstree_baseTreeEventsObj(option) {
                     myJsTree.toggle_node(data);
                 }
             },
+            dblclick: function () {
+                var selectedNodes = jstree_GetSelectedNodes(option.treeID);
+                if (selectedNodes.length == 0) return; // Ignore double click folder action
+                option.ngScope.editNode();
+            },
             move_node: function (e, data) {
 
                 var updateItem = function (nodeid, newCategory) {
@@ -203,12 +208,6 @@ function jstree_baseTreeEventsObj(option) {
                     tarNodeID = data.parent;
                 var tarPath = myJsTree.get_path(tarNodeID, "/").substring(5);
                 updateNode(curNode, tarPath);
-            },
-            dragstart: function (e) {
-                e.originalEvent.dataTransfer.effectAllowed = "move";
-                var myJsTree = jstree_GetWholeTree(option.treeID);
-                var data = JSON.stringify(myJsTree.get_selected(true)[0]);
-                e.originalEvent.dataTransfer.setData('Text', data);
             }
         };
 }

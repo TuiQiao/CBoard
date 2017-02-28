@@ -44,6 +44,10 @@ cBoard.controller('dashboardViewCtrl', function ($timeout, $rootScope, $scope, $
     );
 
     $scope.export = function () {
+        if ($scope.exportStatus) {
+            return;
+        }
+        $scope.exportStatus = true;
         $http({
             url: "dashboard/exportBoard.do?id=" + $stateParams.id,
             method: "POST",
@@ -60,7 +64,9 @@ cBoard.controller('dashboardViewCtrl', function ($timeout, $rootScope, $scope, $
             $("body").append(aForExcel);
             $(".forExcel").click();
             aForExcel.remove();
+            $scope.exportStatus = false;
         }).error(function (data, status, headers, config) {
+            $scope.exportStatus = false;
         });
     };
 

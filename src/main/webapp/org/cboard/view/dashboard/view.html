@@ -4,8 +4,15 @@
         <div ng-show="loading"><i class="fa fa-spinner fa-spin"></i> {{"COMMON.LOADING" | translate}}</div>
         {{board.name}}
     </h1>
-    <div class="breadcrumb" style="cursor: pointer" ng-click="load(true)"><i class="fa fa-refresh"></i>
-        {{"COMMON.REFRESH" | translate}}
+    <div class="breadcrumb" style="cursor: pointer" >
+        <div style="display: inline-block" ng-click="load(true)">
+            <i class="fa fa-refresh"></i>
+            {{"COMMON.REFRESH" | translate}}
+        </div>
+        <div style="display: inline-block" ng-click="export(true)">
+        <i class="fa fa-download"></i>
+            {{"COMMON.EXPORT" | translate}}
+        </div>
     </div>
 </section>
 <div id="inner-container" class="content" style="margin-top: 15px;">

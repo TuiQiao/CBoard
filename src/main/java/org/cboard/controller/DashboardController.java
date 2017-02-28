@@ -13,10 +13,15 @@ import org.cboard.dto.*;
 import org.cboard.pojo.*;
 import org.cboard.services.*;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.servlet.http.HttpServletResponse;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -340,5 +345,15 @@ public class DashboardController {
     public ServiceStatus execJob(@RequestParam(name = "id") Long id) {
         String userid = authenticationService.getCurrentUser().getUserId();
         return jobService.exec(userid, id);
+    }
+
+    @RequestMapping(value = "/exportBoard")
+    public ResponseEntity<byte[]> exportBoard(@RequestParam(name = "id") Long id) {
+        String userid = authenticationService.getCurrentUser().getUserId();
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_OCTET_STREAM);
+        headers.setContentDispositionFormData("attachment", "report.xls");
+        return new ResponseEntity<>(boardService.exportBoard(id, userid), headers, HttpStatus.CREATED);
     }
 }

@@ -43,6 +43,27 @@ cBoard.controller('dashboardViewCtrl', function ($timeout, $rootScope, $scope, $
         }
     );
 
+    $scope.export = function () {
+        $http({
+            url: "dashboard/exportBoard.do?id=" + $stateParams.id,
+            method: "POST",
+            headers: {
+                'Content-type': 'application/json'
+            },
+            responseType: 'arraybuffer'
+        }).success(function (data) {
+            console.log(111);
+            var blob = new Blob([data], {type: "application/vnd.ms-excel"});
+            var objectUrl = URL.createObjectURL(blob);
+            var aForExcel = $("<a><span class='forExcel'>下载excel</span></a>").attr("href",objectUrl);
+            aForExcel.attr("download",$scope.board.name);
+            $("body").append(aForExcel);
+            $(".forExcel").click();
+            aForExcel.remove();
+        }).error(function (data, status, headers, config) {
+        });
+    };
+
     $scope.load = function (reload) {
         $scope.loading = true;
         _.each($scope.intervals, function (e) {

@@ -2,18 +2,26 @@ package org.cboard.services;
 
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.cboard.dao.BoardDao;
 import org.cboard.dao.WidgetDao;
 import org.cboard.dto.ViewDashboardBoard;
 import org.cboard.dto.ViewDashboardWidget;
 import org.cboard.pojo.DashboardBoard;
 import org.cboard.pojo.DashboardWidget;
+import org.cboard.services.persist.PersistContext;
+import org.cboard.services.persist.excel.XlsProcessService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
+import java.io.ByteArrayOutputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * Created by yfyuan on 2016/8/23.
@@ -26,6 +34,12 @@ public class BoardService {
 
     @Autowired
     private WidgetDao widgetDao;
+
+    @Autowired
+    private PersistService persistService;
+
+    @Autowired
+    private XlsProcessService xlsProcessService;
 
     public List<DashboardBoard> getBoardList(String userId) {
         return boardDao.getBoardList(userId);
@@ -102,4 +116,21 @@ public class BoardService {
         boardDao.delete(id, userId);
         return "1";
     }
+
+    public byte[] exportBoard(Long id, String userId) {
+        PersistContext persistContext = persistService.persist(id, userId);
+        List<PersistContext> workbookList = new ArrayList<>();
+        workbookList.add(persistContext);
+        HSSFWorkbook workbook = xlsProcessService.dashboardToXls(workbookList);
+        try {
+            ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+            workbook.write(outputStream);
+            outputStream.close();
+            return outputStream.toByteArray();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
 }

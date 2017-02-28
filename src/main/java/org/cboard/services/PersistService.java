@@ -41,6 +41,7 @@ public class PersistService {
             synchronized (context) {
                 context.wait();
             }
+            process.destroy();
             TASK_MAP.remove(persistId);
             return context;
         } catch (Exception e) {

@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 import java.util.TimeZone;
 
@@ -38,8 +39,9 @@ public class JobService implements InitializingBean {
             List<DashboardJob> jobList = jobDao.getJobList(adminUserId);
             for (DashboardJob job : jobList) {
                 JobDetail jobDetail = JobBuilder.newJob(getJobExecutor(job)).withIdentity(job.getId().toString()).build();
+                long startTimeStamp = job.getStartDate().getTime();
                 CronTrigger trigger = TriggerBuilder.newTrigger()
-                        .startAt(job.getStartDate())
+                        .startAt(new Date().getTime() - startTimeStamp < 0 ? job.getStartDate() : new Date())
                         .withSchedule(CronScheduleBuilder.cronSchedule(job.getCronExp()))
                         .endAt(job.getEndDate())
                         .build();

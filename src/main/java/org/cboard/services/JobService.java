@@ -38,10 +38,15 @@ public class JobService implements InitializingBean {
             scheduler.clear();
             List<DashboardJob> jobList = jobDao.getJobList(adminUserId);
             for (DashboardJob job : jobList) {
-                JobDetail jobDetail = JobBuilder.newJob(getJobExecutor(job)).withIdentity(job.getId().toString()).build();
                 long startTimeStamp = job.getStartDate().getTime();
+                long endTimeStamp = job.getEndDate().getTime();
+                if (endTimeStamp < System.currentTimeMillis()) {
+                    // Skip expired job
+                    continue;
+                }
+                JobDetail jobDetail = JobBuilder.newJob(getJobExecutor(job)).withIdentity(job.getId().toString()).build();
                 CronTrigger trigger = TriggerBuilder.newTrigger()
-                        .startAt(new Date().getTime() - startTimeStamp < 0 ? job.getStartDate() : new Date())
+                        .startAt(new Date().getTime() < startTimeStamp ? job.getStartDate() : new Date())
                         .withSchedule(CronScheduleBuilder.cronSchedule(job.getCronExp()))
                         .endAt(job.getEndDate())
                         .build();

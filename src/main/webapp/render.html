@@ -82,12 +82,13 @@
     </style>
 </head>
 <body ng-app="cBoard" ng-controller="renderCtrl">
-<div ng-if="persistFinish" class="persistFinish"></div>
 <section class="content-header">
     <h1>
         {{board.name}}
     </h1>
 </section>
+<div ng-if="persistFinish" class="persistFinish">
+</div>
 <div id="inner-container" class="content" style="margin-top: 15px;">
     <div class="row" ng-repeat="row in board.layout.rows track by $index" ng-style="{height:row.height+'px'}">
         <ng-switch on="row.type">

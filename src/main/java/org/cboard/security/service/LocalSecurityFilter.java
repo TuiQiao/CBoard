@@ -32,7 +32,11 @@ public class LocalSecurityFilter implements Filter {
                 }
             }
         }
-        filterChain.doFilter(servletRequest, servletResponse);
+        try {
+            filterChain.doFilter(servletRequest, servletResponse);
+        } finally {
+            localUserId.remove();
+        }
     }
 
     @Override

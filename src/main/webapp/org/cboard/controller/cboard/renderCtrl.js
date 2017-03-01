@@ -4,6 +4,7 @@ cBoard.controller('renderCtrl', function ($timeout, $rootScope, $scope, $state, 
     $scope.l = 1;
     $scope.persistFinish = false;
 
+
     var buildRender = function (w, reload) {
         w.render = function (content, optionFilter, scope) {
             w.persist = {};
@@ -30,6 +31,7 @@ cBoard.controller('renderCtrl', function ($timeout, $rootScope, $scope, $state, 
                 result[widget.widgetId] = widget.persist;
             });
         });
+
         html2canvas($('body')[0], {
             onrendered: function (canvas) {
                 result['img'] = canvas.toDataURL("image/jpeg");
@@ -40,7 +42,9 @@ cBoard.controller('renderCtrl', function ($timeout, $rootScope, $scope, $state, 
                 var xmlhttp = new XMLHttpRequest();
                 xmlhttp.open("POST", "commons/persist.do", false);
                 xmlhttp.send(angular.toJson(obj));
-                $scope.persistFinish = true;
+                $scope.$apply(function () {
+                    $scope.persistFinish = true;
+                });
             }
         });
     };

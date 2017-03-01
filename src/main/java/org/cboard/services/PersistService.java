@@ -35,9 +35,9 @@ public class PersistService {
             if (StringUtils.isNotBlank(webContext)) {
                 web += webContext + "/";
             }
-            Process process = Runtime.getRuntime().exec(String.format("%s %s %s %s %s %s", phantomjsPath, scriptPath, dashboardId, persistId, userId, web));
             PersistContext context = new PersistContext(dashboardId);
             TASK_MAP.put(persistId, context);
+            Process process = Runtime.getRuntime().exec(String.format("%s %s %s %s %s %s", phantomjsPath, scriptPath, dashboardId, persistId, userId, web));
             synchronized (context) {
                 context.wait();
             }

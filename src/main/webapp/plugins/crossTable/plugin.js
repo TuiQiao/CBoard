@@ -85,7 +85,7 @@ var crossTable = {
         this.clickPageNum(dataPage, chartConfig, p_class);
         this.clickNextPrev(dataPage.length, pageObj, p_class);
         this.selectDataNum(data, chartConfig.groups.length + 1, chartConfig, p_class);
-        this.export(random);
+        this.export(random,data);
     },
     paginationProcessData: function (rawData, headerLines, pageSize) {
         var dataLength = rawData.length - headerLines;
@@ -293,7 +293,7 @@ var crossTable = {
             //_this.clickPageNum(pageObj.data, pageObj.chartConfig);
         });
     },
-    export: function (random) {
+    export: function (random,data) {
         var idTmr;
 
         function getExplorer() {
@@ -340,6 +340,24 @@ var crossTable = {
         })();
 
         $(".toolbar" + random + " .exportBnt").on('click', function () {
+            var xhr = new XMLHttpRequest();
+            var formData = new FormData();
+            formData.append('data', JSON.stringify({data: data, type: 'table'}));
+            xhr.open('POST', 'dashboard/tableToxls.do');
+            xhr.responseType = 'arraybuffer';
+            xhr.onload = function (e) {
+                var blob = new Blob([this.response], {type: "application/vnd.ms-excel"});
+                var objectUrl = URL.createObjectURL(blob);
+                var aForExcel = $("<a><span class='forExcel'>下载excel</span></a>").attr("href", objectUrl);
+                aForExcel.attr("download", "table.xls");
+                $("body").append(aForExcel);
+                $(".forExcel").click();
+                aForExcel.remove();
+            };
+            xhr.send(formData);
+        });
+
+        $(".toolbar" + random + " .exportBnt2").on('click', function () {
             if (getExplorer() == 'ie') {
                 var curTbl = document.getElementById('tableWrapper' + random);
                 var oXL = new ActiveXObject("Excel.Application");

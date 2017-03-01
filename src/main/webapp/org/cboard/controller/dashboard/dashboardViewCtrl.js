@@ -56,7 +56,6 @@ cBoard.controller('dashboardViewCtrl', function ($timeout, $rootScope, $scope, $
             },
             responseType: 'arraybuffer'
         }).success(function (data) {
-            console.log(111);
             var blob = new Blob([data], {type: "application/vnd.ms-excel"});
             var objectUrl = URL.createObjectURL(blob);
             var aForExcel = $("<a><span class='forExcel'>下载excel</span></a>").attr("href",objectUrl);

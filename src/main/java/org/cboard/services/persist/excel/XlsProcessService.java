@@ -6,11 +6,13 @@ import org.apache.poi.hssf.usermodel.HSSFPalette;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.*;
 import org.cboard.dao.BoardDao;
+import org.cboard.dao.WidgetDao;
 import org.cboard.pojo.DashboardBoard;
 import org.cboard.services.persist.PersistContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Iterator;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
@@ -33,6 +35,33 @@ public class XlsProcessService {
             context = dashboardToXls(e, context);
         }
         return (HSSFWorkbook) context.getWb();
+    }
+
+    public HSSFWorkbook tableToxls(JSONObject data) {
+        XlsProcesserContext context = new XlsProcesserContext();
+        HSSFWorkbook wb = new HSSFWorkbook();
+        setColorIndex(wb);
+        CellStyle titleStyle = createTitleStyle(wb);
+        CellStyle thStyle = createThStyle(wb);
+        CellStyle tStyle = createTStyle(wb);
+        CellStyle percentStyle = wb.createCellStyle();
+        percentStyle.cloneStyleFrom(tStyle);
+        percentStyle.setDataFormat((short) 0xa);
+        context.setWb(wb);
+        context.setTableStyle(thStyle);
+        context.setTitleStyle(titleStyle);
+        context.settStyle(tStyle);
+        context.setPercentStyle(percentStyle);
+        Sheet sheet = context.getWb().createSheet();
+        context.setBoardSheet(sheet);
+        context.setC1(0);
+        context.setC2(data.getJSONArray("data").getJSONArray(0).size() - 1);
+        context.setR1(0);
+        context.setR2(0);
+        context.setData(data);
+        new TableXlsProcesser().drawContent(context);
+        setAutoWidth(sheet);
+        return wb;
     }
 
     private XlsProcesserContext dashboardToXls(PersistContext persistContext, XlsProcesserContext context) {
@@ -139,8 +168,22 @@ public class XlsProcessService {
                 dRow = anchor.getRow2() + 2;
             }
         }
+        setAutoWidth(dataSheet);
 
         return context;
+    }
+
+    private void setAutoWidth(Sheet dataSheet) {
+        int max = 0;
+        Iterator<Row> i = dataSheet.rowIterator();
+        while (i.hasNext()) {
+            if (i.next().getLastCellNum() > max) {
+                max = i.next().getLastCellNum();
+            }
+        }
+        for (int colNum = 0; colNum < max; colNum++) {
+            dataSheet.autoSizeColumn(colNum);
+        }
     }
 
     private XlsProcesser getProcesser(String type) {

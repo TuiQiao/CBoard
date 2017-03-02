@@ -181,7 +181,7 @@ public class XlsProcessService {
             }
         }
         for (int colNum = 0; colNum < max; colNum++) {
-            dataSheet.autoSizeColumn(colNum);
+            dataSheet.autoSizeColumn(colNum, true);
         }
     }
 

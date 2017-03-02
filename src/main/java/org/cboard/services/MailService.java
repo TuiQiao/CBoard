@@ -58,14 +58,17 @@ public class MailService {
         List<PersistContext> workbookList = config.getJSONArray("boards").stream()
                 .filter(e -> ((JSONObject) e).getString("type").contains("xls")).map(e -> persistContextList.stream().filter(f -> f.getDashboardId() == ((JSONObject) e).getLong("id")).findFirst().get()).collect(Collectors.toList());
 
-        HSSFWorkbook workbook = xlsProcessService.dashboardToXls(workbookList);
-
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        try {
-            workbook.write(baos);
-        } catch (IOException e) {
-            e.printStackTrace();
+        ByteArrayOutputStream baos = null;
+        if (workbookList != null && workbookList.size() > 0) {
+            HSSFWorkbook workbook = xlsProcessService.dashboardToXls(workbookList);
+            baos = new ByteArrayOutputStream();
+            try {
+                workbook.write(baos);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
+
 
         List<PersistContext> picList = config.getJSONArray("boards").stream()
                 .filter(e -> ((JSONObject) e).getString("type").contains("img")).map(e -> persistContextList.stream().filter(f -> f.getDashboardId() == ((JSONObject) e).getLong("id")).findFirst().get()).collect(Collectors.toList());
@@ -86,8 +89,10 @@ public class MailService {
             });
             email.setHtmlMsg(sb.append("</html>").toString());
             email.setTextMsg("Your email client does not support HTML messages");
-            ByteArrayDataSource ds = new ByteArrayDataSource(baos.toByteArray(), "application/octet-stream");
-            email.attach(ds, "report.xls", EmailAttachment.ATTACHMENT, "test");
+            if (baos != null) {
+                ByteArrayDataSource ds = new ByteArrayDataSource(baos.toByteArray(), "application/octet-stream");
+                email.attach(ds, "report.xls", EmailAttachment.ATTACHMENT, "test");
+            }
             email.setHostName(mail_smtp_host);
             email.setSmtpPort(mail_smtp_port);
             if (mail_smtp_username != null && mail_smtp_password != null) {

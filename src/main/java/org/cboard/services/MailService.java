@@ -19,6 +19,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.Base64;
 import java.util.List;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 /**
@@ -48,6 +49,15 @@ public class MailService {
     @Value("${mail.smtp.from}")
     private String mail_smtp_from;
 
+    @Value("${mail.smtp.ssl.checkserveridentity:false}")
+    private Boolean mail_smtp_ssl_check;
+
+    private Function<Object, PersistContext> getPersistBoard(List<PersistContext> persistContextList) {
+        return e -> persistContextList.stream()
+                .filter(board -> board.getDashboardId() == ((JSONObject) e).getLong("id"))
+                .findFirst().get();
+    }
+
     public String sendDashboard(DashboardJob job) {
         JSONObject config = JSONObject.parseObject(job.getConfig());
 
@@ -56,7 +66,9 @@ public class MailService {
                 .collect(Collectors.toList());
 
         List<PersistContext> workbookList = config.getJSONArray("boards").stream()
-                .filter(e -> ((JSONObject) e).getString("type").contains("xls")).map(e -> persistContextList.stream().filter(f -> f.getDashboardId() == ((JSONObject) e).getLong("id")).findFirst().get()).collect(Collectors.toList());
+                .filter(e -> ((JSONObject) e).getString("type").contains("xls"))
+                .map(getPersistBoard(persistContextList))
+                .collect(Collectors.toList());
 
         HSSFWorkbook workbook = xlsProcessService.dashboardToXls(workbookList);
 
@@ -68,7 +80,9 @@ public class MailService {
         }
 
         List<PersistContext> picList = config.getJSONArray("boards").stream()
-                .filter(e -> ((JSONObject) e).getString("type").contains("img")).map(e -> persistContextList.stream().filter(f -> f.getDashboardId() == ((JSONObject) e).getLong("id")).findFirst().get()).collect(Collectors.toList());
+                .filter(e -> ((JSONObject) e).getString("type").contains("img"))
+                .map(getPersistBoard(persistContextList))
+                .collect(Collectors.toList());
 
         try {
             HtmlEmail email = new HtmlEmail();
@@ -90,6 +104,7 @@ public class MailService {
             email.attach(ds, "report.xls", EmailAttachment.ATTACHMENT, "test");
             email.setHostName(mail_smtp_host);
             email.setSmtpPort(mail_smtp_port);
+            email.setSSLCheckServerIdentity(mail_smtp_ssl_check);
             if (mail_smtp_username != null && mail_smtp_password != null) {
                 email.setAuthentication(mail_smtp_username, mail_smtp_password);
             }

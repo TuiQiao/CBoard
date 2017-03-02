@@ -6,7 +6,6 @@ import org.apache.poi.hssf.usermodel.HSSFPalette;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.*;
 import org.cboard.dao.BoardDao;
-import org.cboard.dao.WidgetDao;
 import org.cboard.pojo.DashboardBoard;
 import org.cboard.services.persist.PersistContext;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -200,6 +199,7 @@ public class XlsProcessService {
         Font font = wb.createFont();
         font.setFontHeightInPoints((short) 16);
         font.setColor(IndexedColors.WHITE.getIndex());
+        font.setFontName("微软雅黑");
         CellStyle titleStyle = wb.createCellStyle();
         titleStyle.setFillForegroundColor(IndexedColors.BLUE.getIndex());
         titleStyle.setFillPattern(FillPatternType.SOLID_FOREGROUND);

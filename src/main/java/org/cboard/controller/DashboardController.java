@@ -379,4 +379,9 @@ public class DashboardController {
         }
         return null;
     }
+
+    @RequestMapping(value = "/getJobStatus")
+    public ViewDashboardJob getJobStatus(@RequestParam(name = "id") Long id) {
+        return new ViewDashboardJob(jobDao.getJob(id));
+    }
 }

@@ -1,7 +1,7 @@
 /**
  * Created by yfyuan on 2017/02/16.
  */
-cBoard.controller('jobCtrl', function ($scope, $http, dataService, $uibModal, ModalUtils, $filter, chartService, $timeout) {
+cBoard.controller('jobCtrl', function ($scope, $http, dataService, $uibModal, ModalUtils, $filter, $interval) {
     var translate = $filter('translate');
 
     $scope.jobTypes = [{name: 'Send Mail', type: 'mail'}];
@@ -57,10 +57,19 @@ cBoard.controller('jobCtrl', function ($scope, $http, dataService, $uibModal, Mo
     $scope.runJob = function (job) {
         $http.post("dashboard/execJob.do", {id: job.id}).success(function (serviceStatus) {
             if (serviceStatus.status == '1') {
-                ModalUtils.alert(translate("COMMON.SUCCESS"), "modal-success", "sm");
-                $scope.loadJobList();
+                job.jobStatus = 2;
+                var interval = $interval(function () {
+                    $http.post("dashboard/getJobStatus.do", {id: job.id}).success(function (_job) {
+                        job.jobStatus = _job.jobStatus;
+                        job.execLog = _job.execLog;
+                        if (job.jobStatus == 0 || job.jobStatus == 1) {
+                            $interval.cancel(interval);
+                        }
+                    });
+                }, 3000, 100);
+                // $scope.loadJobList();
             } else {
-                //$scope.alerts = [{msg: serviceStatus.msg, type: 'danger'}];
+                $scope.alerts = [{msg: serviceStatus.msg, type: 'danger'}];
             }
         });
     };

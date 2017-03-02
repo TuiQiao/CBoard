@@ -147,8 +147,10 @@ public class JobService implements InitializingBean {
 
     public ServiceStatus exec(String userId, Long id) {
         DashboardJob job = jobDao.getJob(id);
-        sendMail(job);
-        return null;
+        new Thread(() ->
+                sendMail(job)
+        ).start();
+        return new ServiceStatus(ServiceStatus.Status.Success, "success");
     }
 
     @Override

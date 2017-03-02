@@ -14,7 +14,7 @@
                     </div>
                 </div>
                 <div class="box-body">
-                    <input type="text" class="form-control" placeholder="Search" ng-model="keywords" ng-change="searchNode()">
+                    <input type="text" class="form-control" placeholder="Search" ng-model="keywords" ng-change="searchNode()" title="dsr:kylin ds:Bill wg:test">
                 </div>
                 <div class="panel-body">
                     <div id="widgetTreeID" js-tree="treeConfig" should-apply="applyModelChanges()" ng-model="treeData" tree="treeInstance"
@@ -153,19 +153,34 @@
                                     </div>
                                 </div>
                             </div>
-                            <div class="row">
-                                <div class="col-md-{{previewDivWidth}}">
+                            <div class="row" style="margin: 0px 0px;">
+                                <div class="col-md-{{previewDivWidth}} box box-solid">
                                     <div id="preview_widget" style="height: 300px;"></div>
+                                    <div class="overlay fa box box-solid" ng-show="loadingPre">
+                                        <div class="box-header with-border">
+                                            <!--<h3 class="box-title"></h3>-->
+                                            <div class="box-tools pull-right">
+                                                <button type="button" class="btn btn-box-tool" data-widget="remove">
+                                                    <i class="fa fa-times" style="font-size: large"></i></button>
+                                            </div>
+                                        </div>
+                                        <i class="fa fa-spinner fa-spin"></i>
+                                    </div>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
-                <!-- /.box-body -->
                 <div class="box-footer">
                 </div>
-                <!-- /.box-footer-->
-                <div class="overlay" ng-show="loading">
+                <div class="overlay fa box box-solid" ng-show="loading">
+                    <div class="box-header with-border">
+                        <!--<h3 class="box-title"></h3>-->
+                        <div class="box-tools pull-right">
+                            <button type="button" class="btn btn-box-tool" data-widget="remove">
+                                <i class="fa fa-times" style="font-size: large"></i></button>
+                        </div>
+                    </div>
                     <i class="fa fa-spinner fa-spin"></i>
                 </div>
             </div>

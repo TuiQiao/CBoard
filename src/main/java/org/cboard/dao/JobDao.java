@@ -21,6 +21,8 @@ public interface JobDao {
 
     int updateLastExecTime(Long jobId, Date date);
 
-    int updateStatus(Long jobId, Long status);
+    int updateStatus(Long jobId, Long status, String log);
+
+    DashboardJob getJob(Long jobId);
 
 }

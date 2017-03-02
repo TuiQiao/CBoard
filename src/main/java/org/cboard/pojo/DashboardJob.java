@@ -18,6 +18,15 @@ public class DashboardJob {
     private String userName;
     private Date lastExecTime;
     private Long jobStatus;
+    private String execLog;
+
+    public String getExecLog() {
+        return execLog;
+    }
+
+    public void setExecLog(String execLog) {
+        this.execLog = execLog;
+    }
 
     public Long getJobStatus() {
         return jobStatus;

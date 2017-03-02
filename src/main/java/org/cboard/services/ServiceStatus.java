@@ -21,7 +21,7 @@ public class ServiceStatus {
         this.id = id;
     }
 
-    enum Status {
+    public enum Status {
 
         Success(1), Fail(2);
 

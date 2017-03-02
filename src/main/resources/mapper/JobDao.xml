@@ -20,6 +20,24 @@
         ]]>
     </update>
 
+    <select id="getJob" resultType="org.cboard.pojo.DashboardJob">
+        SELECT
+        j.job_id         AS id,
+        j.user_id        AS userId,
+        j.job_name       AS name,
+        j.start_date     AS startDate,
+        j.end_date       AS endDate,
+        j.job_type       AS jobType,
+        j.job_config     AS config,
+        j.cron_exp       AS cronExp,
+        j.last_exec_time AS lastExecTime,
+        j.exec_log AS execLog,
+        (select u.user_name from dashboard_user u where u.user_id = j.user_id) as userName,
+        j.job_status AS jobStatus
+        FROM dashboard_job j
+        WHERE j.job_id = #{0}
+    </select>
+
     <select id="getJobList" resultType="org.cboard.pojo.DashboardJob">
         SELECT
                j.job_id         AS id,
@@ -31,6 +49,7 @@
                j.job_config     AS config,
                j.cron_exp       AS cronExp,
                j.last_exec_time AS lastExecTime,
+               j.exec_log AS execLog,
                (select u.user_name from dashboard_user u where u.user_id = j.user_id) as userName,
                j.job_status AS jobStatus
           FROM dashboard_job j
@@ -55,7 +74,7 @@
     </update>
     <update id="updateStatus">
         <![CDATA[
-        UPDATE dashboard_job SET job_status = #{1} WHERE job_id = #{0}
+        UPDATE dashboard_job SET job_status = #{1},exec_log = #{2} WHERE job_id = #{0}
         ]]>
     </update>
 </mapper>

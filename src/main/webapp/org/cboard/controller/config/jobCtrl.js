@@ -27,6 +27,14 @@ cBoard.controller('jobCtrl', function ($scope, $http, dataService, $uibModal, Mo
         }
     };
 
+    $scope.getDateRange = function (d) {
+        if (d) {
+            return moment(d.startDate).format("YYYY-MM-DD") + ' ~ ' + moment(d.endDate).format("YYYY-MM-DD");
+        } else {
+            return "N/A"
+        }
+    };
+
     $scope.getStatus = function (t) {
         if (t != null) {
             switch (t) {
@@ -40,6 +48,10 @@ cBoard.controller('jobCtrl', function ($scope, $http, dataService, $uibModal, Mo
         } else {
             return "N/A"
         }
+    };
+
+    $scope.showLog = function (job) {
+        ModalUtils.alert(job.execLog ? job.execLog : "N/A", null, "lg");
     };
 
     $scope.runJob = function (job) {

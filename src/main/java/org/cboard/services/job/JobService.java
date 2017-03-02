@@ -1,13 +1,21 @@
-package org.cboard.services;
+package org.cboard.services.job;
 
 import com.alibaba.fastjson.JSONObject;
+import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.cboard.dao.JobDao;
+import org.cboard.dto.ViewDashboardJob;
 import org.cboard.pojo.DashboardJob;
-import org.cboard.services.job.MailJobExecutor;
+import org.cboard.services.MailService;
+import org.cboard.services.ServiceStatus;
 import org.quartz.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.ApplicationContextAware;
 import org.springframework.scheduling.quartz.SchedulerFactoryBean;
 import org.springframework.stereotype.Service;
 
@@ -32,12 +40,22 @@ public class JobService implements InitializingBean {
     @Value("${admin_user_id}")
     private String adminUserId;
 
+    @Autowired
+    private MailService mailService;
+
+    private static Logger logger = LoggerFactory.getLogger(JobService.class);
+
     public void configScheduler() {
         Scheduler scheduler = schedulerFactoryBean.getScheduler();
+
         try {
             scheduler.clear();
-            List<DashboardJob> jobList = jobDao.getJobList(adminUserId);
-            for (DashboardJob job : jobList) {
+        } catch (SchedulerException e) {
+            e.printStackTrace();
+        }
+        List<DashboardJob> jobList = jobDao.getJobList(adminUserId);
+        for (DashboardJob job : jobList) {
+            try {
                 long startTimeStamp = job.getStartDate().getTime();
                 long endTimeStamp = job.getEndDate().getTime();
                 if (endTimeStamp < System.currentTimeMillis()) {
@@ -52,9 +70,11 @@ public class JobService implements InitializingBean {
                         .build();
                 jobDetail.getJobDataMap().put("job", job);
                 scheduler.scheduleJob(jobDetail, trigger);
+            } catch (SchedulerException e) {
+                logger.error("{} Job id: {}", e.getMessage(), job.getId());
+            } catch (Exception e) {
+                e.printStackTrace();
             }
-        } catch (Exception e) {
-            e.printStackTrace();
         }
     }
 
@@ -64,6 +84,17 @@ public class JobService implements InitializingBean {
                 return MailJobExecutor.class;
         }
         return null;
+    }
+
+    protected void sendMail(DashboardJob job) {
+        jobDao.updateLastExecTime(job.getId(), new Date());
+        try {
+            jobDao.updateStatus(job.getId(), ViewDashboardJob.STATUS_PROCESSING, "");
+            mailService.sendDashboard(job);
+            jobDao.updateStatus(job.getId(), ViewDashboardJob.STATUS_FINISH, "");
+        } catch (Exception e) {
+            jobDao.updateStatus(job.getId(), ViewDashboardJob.STATUS_FAIL, ExceptionUtils.getStackTrace(e));
+        }
     }
 
     public ServiceStatus save(String userId, String json) {
@@ -115,14 +146,9 @@ public class JobService implements InitializingBean {
     }
 
     public ServiceStatus exec(String userId, Long id) {
-        Scheduler scheduler = schedulerFactoryBean.getScheduler();
-        try {
-            scheduler.triggerJob(JobKey.jobKey(id.toString()));
-            return new ServiceStatus(ServiceStatus.Status.Success, "success");
-        } catch (SchedulerException e) {
-            e.printStackTrace();
-            return new ServiceStatus(ServiceStatus.Status.Fail, e.getMessage());
-        }
+        DashboardJob job = jobDao.getJob(id);
+        sendMail(job);
+        return null;
     }
 
     @Override

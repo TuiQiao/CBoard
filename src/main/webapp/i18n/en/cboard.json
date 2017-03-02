@@ -17,7 +17,8 @@
     "NEW": "New",
     "COPY": "Copy",
     "DELETE": "Delete",
-    "EXPORT": "Export"
+    "EXPORT": "Export",
+    "LOG": "Log"
   },
   "TIPS": {
     "CAL_EXPR": "Calculate after aggregation. Use assist click input to avoid typo! e.g: Math.log(sum(columnA)/count(columB))"

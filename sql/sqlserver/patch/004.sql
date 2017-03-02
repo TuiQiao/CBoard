@@ -9,5 +9,6 @@ CREATE TABLE dashboard_job (
   user_id varchar(100) DEFAULT NULL,
   last_exec_time datetime NULL DEFAULT NULL,
   job_status bigint,
+  exec_log text,
   PRIMARY KEY CLUSTERED (job_id)
 );

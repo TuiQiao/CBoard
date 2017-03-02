@@ -22,6 +22,7 @@ public class ViewDashboardJob {
     private Date lastExecTime;
     private String userName;
     private Long jobStatus;
+    private String execLog;
 
     public static final Long STATUS_PROCESSING = 2L;
     public static final Long STATUS_FINISH = 1L;
@@ -40,6 +41,15 @@ public class ViewDashboardJob {
         this.lastExecTime = job.getLastExecTime();
         this.userName = job.getUserName();
         this.jobStatus = job.getJobStatus();
+        this.execLog = job.getExecLog();
+    }
+
+    public String getExecLog() {
+        return execLog;
+    }
+
+    public void setExecLog(String execLog) {
+        this.execLog = execLog;
     }
 
     public String getUserName() {

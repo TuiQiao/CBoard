@@ -2,7 +2,7 @@
  * Created by Fine on 2017/2/11.
  */
 'user strict';
-var chartDataProcess = function(chartConfig,casted_keys, casted_values, aggregate_data) {
+var chartDataProcess = function(chartConfig,casted_keys, casted_values, aggregate_data,newValuesConfig) {
     var keysList = casted_keys,
         keyArr = [],
         emptyList = [],
@@ -28,11 +28,15 @@ var chartDataProcess = function(chartConfig,casted_keys, casted_values, aggregat
         }
     }
     for (var i = 0; i < casted_values.length; i++) {
+        var joined_values = casted_values[i].join('-');
+        var formatter = newValuesConfig[joined_values].formatter;
         for (var j = 0; j < casted_keys.length; j++) {
             if (!_.isUndefined(aggregate_data[i][j])) {
+                var raw = aggregate_data[i][j];
                 table_data[j][i + keyLength] = {
                     property: 'data',
-                    data: aggregate_data[i][j]
+                    data: formatter ? numbro(raw).format(formatter) : raw,
+                    raw: raw
                 };
             } else {
                 table_data[j][i + keyLength] = {

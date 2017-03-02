@@ -4,6 +4,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.google.common.base.Functions;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.cboard.dao.*;
 import org.cboard.dataprovider.DataProviderManager;
 import org.cboard.dataprovider.DataProviderViewManager;
@@ -12,14 +13,23 @@ import org.cboard.dataprovider.result.AggregateResult;
 import org.cboard.dto.*;
 import org.cboard.pojo.*;
 import org.cboard.services.*;
+import org.cboard.services.persist.excel.XlsProcessService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.servlet.http.HttpServletResponse;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
  * Created by yfyuan on 2016/8/9.
@@ -63,6 +73,15 @@ public class DashboardController {
 
     @Autowired
     private DatasetService datasetService;
+
+    @Autowired
+    private JobService jobService;
+
+    @Autowired
+    private JobDao jobDao;
+
+    @Autowired
+    private XlsProcessService xlsProcessService;
 
     @RequestMapping(value = "/test")
     public ServiceStatus test(@RequestParam(name = "datasource", required = false) String datasource, @RequestParam(name = "query", required = false) String query) {
@@ -299,4 +318,65 @@ public class DashboardController {
         return dataProviderService.queryAggData(datasourceId, strParams, datasetId, config, reload);
     }
 
+    @RequestMapping(value = "/dashboardWidget")
+    public ViewDashboardWidget dashboardWidget(@RequestParam(name = "id") Long id) {
+        DashboardWidget widget = widgetDao.getWidget(id);
+        return new ViewDashboardWidget(widget);
+    }
+
+    @RequestMapping(value = "/saveJob")
+    public ServiceStatus saveJob(@RequestParam(name = "json") String json) {
+        String userid = authenticationService.getCurrentUser().getUserId();
+        return jobService.save(userid, json);
+    }
+
+    @RequestMapping(value = "/updateJob")
+    public ServiceStatus updateJob(@RequestParam(name = "json") String json) {
+        String userid = authenticationService.getCurrentUser().getUserId();
+        return jobService.update(userid, json);
+    }
+
+    @RequestMapping(value = "/getJobList")
+    public List<ViewDashboardJob> getJobList() {
+        String userid = authenticationService.getCurrentUser().getUserId();
+        return jobDao.getJobList(userid).stream().map(ViewDashboardJob::new).collect(Collectors.toList());
+    }
+
+    @RequestMapping(value = "/deleteJob")
+    public ServiceStatus deleteJob(@RequestParam(name = "id") Long id) {
+        String userid = authenticationService.getCurrentUser().getUserId();
+        return jobService.delete(userid, id);
+    }
+
+    @RequestMapping(value = "/execJob")
+    public ServiceStatus execJob(@RequestParam(name = "id") Long id) {
+        String userid = authenticationService.getCurrentUser().getUserId();
+        return jobService.exec(userid, id);
+    }
+
+    @RequestMapping(value = "/exportBoard")
+    public ResponseEntity<byte[]> exportBoard(@RequestParam(name = "id") Long id) {
+        String userid = authenticationService.getCurrentUser().getUserId();
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_OCTET_STREAM);
+        headers.setContentDispositionFormData("attachment", "report.xls");
+        return new ResponseEntity<>(boardService.exportBoard(id, userid), headers, HttpStatus.CREATED);
+    }
+
+    @RequestMapping(value = "/tableToxls")
+    public ResponseEntity<byte[]> tableToxls(@RequestParam(name = "data") String data) {
+        HSSFWorkbook wb = xlsProcessService.tableToxls(JSONObject.parseObject(data));
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        try {
+            wb.write(out);
+            HttpHeaders headers = new HttpHeaders();
+            headers.setContentType(MediaType.APPLICATION_OCTET_STREAM);
+            headers.setContentDispositionFormData("attachment", "table.xls");
+            return new ResponseEntity<>(out.toByteArray(), headers, HttpStatus.CREATED);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
 }

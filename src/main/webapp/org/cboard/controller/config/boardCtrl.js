@@ -333,7 +333,7 @@ cBoard.controller('boardCtrl', function ($rootScope, $scope, $http, ModalUtils, 
 
 
     /**  js tree related start **/
-    $scope.treeConfig = jsTreeConfig1;
+    $scope.treeConfig = angular.copy(jsTreeConfig1);
     $scope.treeConfig.plugins = ['types', 'unique', 'state', 'sort'];
 
     $("#" + treeID).keyup(function (e) {

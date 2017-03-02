@@ -16,7 +16,6 @@
 
         <property name="initialSize" value="0"/>
         <property name="maxActive" value="20"/>
-        <property name="maxIdle" value="20"/>
         <property name="minIdle" value="0"/>
         <property name="maxWait" value="60000"/>
 

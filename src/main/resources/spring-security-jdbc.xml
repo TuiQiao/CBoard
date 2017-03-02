@@ -61,6 +61,6 @@
           class="org.springframework.security.authentication.encoding.Md5PasswordEncoder"/>
 
     <bean id="dbAuthenticationService"
-          class="org.cboard.security.service.DbAuthenticationService"/>
+          class="org.cboard.security.service.DefaultAuthenticationService"/>
 
 </beans>

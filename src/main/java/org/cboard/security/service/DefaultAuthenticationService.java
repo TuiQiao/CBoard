@@ -6,10 +6,13 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 
+import java.util.ArrayList;
+
 /**
- * Created by yfyuan on 2016/9/29.
+ * Created by yfyuan on 2016/12/14.
  */
-public class InMemAuthenticationService implements AuthenticationService {
+public class DefaultAuthenticationService implements AuthenticationService {
+
     @Override
     public User getCurrentUser() {
         SecurityContext context = SecurityContextHolder.getContext();
@@ -20,11 +23,16 @@ public class InMemAuthenticationService implements AuthenticationService {
         if (authentication == null) {
             return null;
         }
+        if ("anonymousUser".equals(authentication.getPrincipal())) {
+            User user = new User("anonymousUser", "", new ArrayList<>());
+            user.setUserId(LocalSecurityFilter.getLocalUserId());
+            return user;
+        }
         User user = (User) authentication.getPrincipal();
         if (user == null) {
             return null;
         }
-        user.setUserId(user.getUsername());
         return user;
     }
+
 }

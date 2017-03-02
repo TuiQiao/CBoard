@@ -16,7 +16,8 @@
     "NOT_EMPTY": " can not be empty!",
     "NEW": "New",
     "COPY": "Copy",
-    "DELETE": "Delete"
+    "DELETE": "Delete",
+    "EXPORT": "Export"
   },
   "TIPS": {
     "CAL_EXPR": "Calculate after aggregation. Use assist click input to avoid typo! e.g: Math.log(sum(columnA)/count(columB))"
@@ -32,7 +33,8 @@
     "DASHBOARD_CATEGORY": "Dashboard Category",
     "ADMIN": "Admin",
     "USER_ADMIN": "User Admin",
-    "RES_ADMIN": "Resource Admin"
+    "RES_ADMIN": "Resource Admin",
+    "JOB": "Job"
   },
   "HEADER": {
     "SIGN_OUT": "SignOut"
@@ -156,6 +158,38 @@
       "ADD": "Add",
       "REAL_TIME_INTERVAL": "Real Time Interval(s)",
       "REAL_TIME_TIP": "If You don't need refresh, just leave it as BLANK"
+    },
+    "JOB": {
+      "CONFIG": "Config",
+      "JOB": "Job",
+      "NAME": "Name",
+      "TYPE": "Type",
+      "LAST_EXEC_TIME": "Last Execution Time",
+      "EXEC_NOW": "Execute Now",
+      "ACTIVE_RANGE": "Active Range",
+      "MAIL": "Mail",
+      "TO": "To",
+      "CC": "Cc",
+      "BCC": "Bcc",
+      "SUBJECT": "Subject",
+      "ADD_DASHBOARD": "Add Dashboard",
+      "DASHBOARD": "Dashboard",
+      "EVERY": "Every",
+      "Minute": "Minute",
+      "Hour": "Hour",
+      "Day": "Day",
+      "Week": "Week",
+      "Month": "Month",
+      "ON_THE": "on the",
+      "ON": "on",
+      "OF": "of",
+      "AT": "at",
+      "PAST_THE_HOUR": "past the hour",
+      "USERNAME": "Creator",
+      "FAIL": "Fail",
+      "FINISH": "Finish",
+      "PROCESSING": "Processing",
+      "STATUS": "Status"
     }
   },
   "ADMIN": {
@@ -187,7 +221,6 @@
       "SQLTEXT": "Sql Text"
     },
     "SAIKU": {
-
     },
     "TEXTFILE": {
       "BASE_PATH": "BasePath",

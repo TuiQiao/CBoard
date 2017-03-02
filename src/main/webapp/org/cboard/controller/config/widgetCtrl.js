@@ -310,6 +310,7 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
         $scope.$watch('curWidget.config.filters', changeChartStatus, true);
         addValidateWatch();
     };
+
     var addValidateWatch = function () {
         $scope.$watch('widgetName', clearAlert, true);
         $scope.$watch('curWidget.datasetId', clearAlert, true);

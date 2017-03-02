@@ -517,6 +517,8 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
     };
 
     $scope.preview = function () {
+        cleanPreview();
+        $scope.loadingPre = true;
         chartService.render($('#preview_widget'), {
             config: $scope.curWidget.config,
             datasource: $scope.datasource ? $scope.datasource.id : null,
@@ -578,6 +580,7 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
                     $scope.previewDivWidth = 12;
                     break;
             }
+            $scope.loadingPre = false;
         }, null, !$scope.loadFromCache);
     };
 
@@ -781,8 +784,10 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
         }
     };
 
+    $scope.selectsByFilter = [];
+    $scope.selects = [];
     $scope.editFilter = function (setbackArr, setbackIdx) {
-
+        var status = {i:1};
 
         var item = setbackArr[setbackIdx];
         var col;
@@ -792,42 +797,41 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
             col = {col: item, type: 'eq', values: []}
         }
 
-        var selectsByFilter = [];
-        var selects = [];
         var config = angular.copy($scope.curWidget.config);
         var arr = _.findKey($scope.curWidget.config, function (o) {
             return o == setbackArr;
         });
         config[arr].splice(setbackIdx, 1);
         dataService.getDimensionValues($scope.datasource ? $scope.datasource.id : null, $scope.curWidget.query, $scope.customDs ? null : $scope.curWidget.datasetId, col.col, config, function (filtered, nofilter) {
-            selectsByFilter = filtered;
-            selects = nofilter;
-            $uibModal.open({
-                templateUrl: 'org/cboard/view/config/modal/filter.html',
-                windowTemplateUrl: 'org/cboard/view/util/modal/window.html',
-                backdrop: false,
-                size: 'lg',
-                controller: function ($scope, $uibModalInstance) {
-                    $scope.type = ['=', '≠', '>', '<', '≥', '≤', '(a,b]', '[a,b)', '(a,b)', '[a,b]'];
-                    $scope.byFilter = true;
-                    $scope.selects = selects;
-                    $scope.selectsByFilter = selectsByFilter;
-                    $scope.col = col;
-                    $scope.close = function () {
-                        $uibModalInstance.close();
-                    };
-                    $scope.selected = function (v) {
-                        return _.indexOf($scope.col.values, v) == -1
-                    };
-                    $scope.ok = function () {
-                        if ($scope.col.values.length > 100) {
-                            $scope.alerts = [{msg: '条件数量过多>100', type: 'danger'}];
-                        }
-                        setbackArr[setbackIdx] = $scope.col;
-                        $uibModalInstance.close();
-                    };
-                }
-            });
+            $scope.selectsByFilter = filtered;
+            $scope.selects = nofilter;
+            status.i--;
+        });
+        $uibModal.open({
+            templateUrl: 'org/cboard/view/config/modal/filter.html',
+            windowTemplateUrl: 'org/cboard/view/util/modal/window.html',
+            backdrop: false,
+            size: 'lg',
+            scope: $scope,
+            controller: function ($scope, $uibModalInstance) {
+                $scope.status = status;
+                $scope.type = ['=', '≠', '>', '<', '≥', '≤', '(a,b]', '[a,b)', '(a,b)', '[a,b]'];
+                $scope.byFilter = true;
+                $scope.col = col;
+                $scope.close = function () {
+                    $uibModalInstance.close();
+                };
+                $scope.selected = function (v) {
+                    return _.indexOf($scope.col.values, v) == -1
+                };
+                $scope.ok = function () {
+                    if ($scope.col.values.length > 100) {
+                        $scope.alerts = [{msg: '条件数量过多>100', type: 'danger'}];
+                    }
+                    setbackArr[setbackIdx] = $scope.col;
+                    $uibModalInstance.close();
+                };
+            }
         });
     };
 

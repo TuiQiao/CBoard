@@ -55,12 +55,18 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
             row: translate('CONFIG.WIDGET.TIPS_DIM_NUM_1_MORE'),
             column: translate('CONFIG.WIDGET.TIPS_DIM_NUM_0_MORE'),
             measure: translate('CONFIG.WIDGET.TIPS_DIM_NUM_1_MORE')
+        },
+        {
+            name: translate('CONFIG.WIDGET.SCATTER'), value: 'scatter', class: 'cMap',
+            row: translate('CONFIG.WIDGET.TIPS_DIM_NUM_1_MORE'),
+            column: translate('CONFIG.WIDGET.TIPS_DIM_NUM_0_MORE'),
+            measure: translate('CONFIG.WIDGET.TIPS_DIM_NUM_1_MORE')
         }
     ];
 
     $scope.chart_types_status = {
         "line": true, "pie": true, "kpi": true, "table": true,
-        "funnel": true, "sankey": true, "radar": true, "map": true
+        "funnel": true, "sankey": true, "radar": true, "map": true, "scatter": true
     };
 
     $scope.value_series_types = [
@@ -93,6 +99,7 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
         sankey: {keys: 0, groups: 0, filters: 0, values: 1},
         radar: {keys: 0, groups: 0, filters: 0, values: 0},
         map: {keys: 0, groups: 0, filters: 0, values: 0},
+        scatter: {keys: 0, groups: 0, filters: 0, values: 0},
     };
 
     //界面控制
@@ -407,6 +414,27 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
                 _.each($scope.curWidget.config.values, function (v) {
                     v.style = 'bg-aqua';
                 });
+                break;
+            case 'scatter':
+                var i = 0;
+                _.each(oldConfig.values, function (v) {
+                    _.each(v.cols, function (c) {
+                        if (i >= 3) {
+                            $scope.curWidget.config.selects.push(c.col);
+                            return;
+                        }
+                        if(!$scope.curWidget.config.values[i]){
+                            $scope.curWidget.config.values[i] = {name: '', cols: []};
+                        }
+                        $scope.curWidget.config.values[i].cols.push(c);
+                        i++
+                    });
+                });
+                for (var i = 0; i < 3; i++) {
+                    if (!$scope.curWidget.config.values[i]) {
+                        $scope.curWidget.config.values[i] = {name: '', cols: []};
+                    }
+                }
                 break;
             default:
                 $scope.curWidget.config.values.push({name: '', cols: []});
@@ -787,7 +815,7 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
     $scope.selectsByFilter = [];
     $scope.selects = [];
     $scope.editFilter = function (setbackArr, setbackIdx) {
-        var status = {i:1};
+        var status = {i: 1};
 
         var item = setbackArr[setbackIdx];
         var col;

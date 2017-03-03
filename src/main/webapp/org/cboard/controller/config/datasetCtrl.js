@@ -75,12 +75,17 @@ cBoard.controller('datasetCtrl', function ($scope, $http, dataService, $uibModal
             if (!response) {
                 return false;
             }
-            var resDs = _.find(response.data, function (obj) {
-                return obj.data.datasetId == ds.id;
-            });
+            var resDs = [];
 
-            if (resDs) {
-                ModalUtils.alert(translate("COMMON.NOT_ALLOWED_TO_DELETE_BECAUSE_BE_DEPENDENT"), "modal-warning", "lg");
+            for (var i = 0; i < response.data.length; i++) {
+                if (response.data[i].data.datasetId == ds.id) {
+                    resDs.push(response.data[i].name);
+                }
+            }
+
+            if (resDs.length > 0) {
+                var warnStr = translate("CONFIG.WIDGET.WIDGET") + ":[" + resDs.toString() + "]";
+                ModalUtils.alert(translate("COMMON.NOT_ALLOWED_TO_DELETE_BECAUSE_BE_DEPENDENT") + warnStr, "modal-warning", "lg");
                 return false;
             }
             ModalUtils.confirm(translate("COMMON.CONFIRM_DELETE"), "modal-warning", "lg", function () {

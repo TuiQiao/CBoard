@@ -72,6 +72,9 @@ cBoard.directive('dashboardWidget', function ($compile, $templateCache, dataServ
                         case 'map':
                             renderMap(scope, element, attrs);
                             break;
+                        case 'scatter':
+                            renderEchart(scope, element, attrs);
+                            break;
                     }
                 }
             }

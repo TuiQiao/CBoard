@@ -416,17 +416,20 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
                 });
                 break;
             case 'scatter':
-                if (oldConfig.values.length > 3) {
-                    _.each(oldConfig.values, function (v) {
-                        _.each(v.cols, function (c) {
-                            $scope.curWidget.config.values[0].cols.push(c);
-                        });
+                var i = 0;
+                _.each(oldConfig.values, function (v) {
+                    _.each(v.cols, function (c) {
+                        if (i >= 3) {
+                            $scope.curWidget.config.selects.push(c.col);
+                            return;
+                        }
+                        if(!$scope.curWidget.config.values[i]){
+                            $scope.curWidget.config.values[i] = {name: '', cols: []};
+                        }
+                        $scope.curWidget.config.values[i].cols.push(c);
+                        i++
                     });
-                } else {
-                    _.each(oldConfig.values, function (v) {
-                        $scope.curWidget.config.values.push({name: v.name, cols: v.cols});
-                    });
-                }
+                });
                 for (var i = 0; i < 3; i++) {
                     if (!$scope.curWidget.config.values[i]) {
                         $scope.curWidget.config.values[i] = {name: '', cols: []};
@@ -812,7 +815,7 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
     $scope.selectsByFilter = [];
     $scope.selects = [];
     $scope.editFilter = function (setbackArr, setbackIdx) {
-        var status = {i:1};
+        var status = {i: 1};
 
         var item = setbackArr[setbackIdx];
         var col;

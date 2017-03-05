@@ -263,10 +263,10 @@ angular.module( 'treeControl', [])
                 if(!template) {
                     template =
                         '<ul {{options.ulClass}} >' +
-                        '<li ng-repeat="node in node.{{options.nodeChildren}} | filter:filterExpression:filterComparator {{options.orderBy}}" ng-class="headClass(node)" {{options.liClass}}' +
+                        '<li ng-repeat="node in node.{{options.nodeChildren}} | filter:filterExpression:filterComparator {{options.orderBy}}"  ng-class="headClass(node)" {{options.liClass}}' +
                         'set-node-to-data>' +
                         '<i class="tree-branch-head" ng-class="iBranchClass()" ng-click="selectNodeHead(node)"></i>' +
-                        '<i class="tree-leaf-head {{options.iLeafClass}}"></i>' +
+                        '<i class="tree-leaf-head {{options.iLeafClass}}" ng-if="node.name"></i>' +
                         '<div class="tree-label {{options.labelClass}}" ng-click="selectNodeHead(node)" ng-class="[selectedClass(), unselectableClass()]" tree-transclude></div>' +
                         '<treeitem ng-if="nodeExpanded()"></treeitem>' +
                         '</li>' +

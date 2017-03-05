@@ -3,7 +3,7 @@
  */
 
 'user strict';
-cBoard.service('freeLayoutService', function() {
+cBoard.service('freeLayoutService', function($http) {
     this.setHeight = ()=>{
         const height = $(window).height() + 'px';
 
@@ -18,6 +18,21 @@ cBoard.service('freeLayoutService', function() {
 
         $('.layoutPanel').append(template);
         return random;
+    };
+
+    this.widgetData = ()=>{
+        let promise = new Promise((resolve, reject)=>{
+            $http.get("dashboard/getWidgetList.do").success(function (response) {
+                if (response) {
+                    resolve(response);
+                }
+                else {
+                    reject(error);
+                }
+            });
+        });
+
+        return promise;
     };
 
     this.widgetDrag = (panel, $scope, callback)=>{
@@ -38,11 +53,10 @@ cBoard.service('freeLayoutService', function() {
             },
             drop(e) {
                 // $('.drag-preview').addClass('hideOperate');
-                let data = e.originalEvent.dataTransfer.getData('Text');
+                let widget = e.originalEvent.dataTransfer.getData('Text');
                 let reportId = _this.widget();
 
-                data = data ? JSON.parse(data) : null;
-                let widget = $scope.widgetList.filter(d => '/' + d.categoryName + '/' + d.name === data.path + '/' + data.name);
+                widget = widget ? JSON.parse(widget) : null;
                 $('.widget_' + reportId).css({
                     width: panel[0].clientWidth - e.offsetX + 'px',
                     height: '350px',
@@ -50,13 +64,13 @@ cBoard.service('freeLayoutService', function() {
                     top: e.offsetY + 'px'
                 });
                 let obj = {
-                    config: widget[0].data.config,
-                    datasetId: widget[0].data.datasetId,
+                    config: widget.data.config,
+                    datasetId: widget.data.datasetId,
                     datasource: null,
                     query: {}
                 };
                 callback.render($('.widget_' + reportId + ' .chart_widget'), obj, (option)=>{
-                    switch (widget[0].data.config.chart_type) {
+                    switch (widget.data.config.chart_type) {
                         case 'line':
                             $scope.previewDivWidth = 12;
                             option.toolbox = {

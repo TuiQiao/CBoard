@@ -5,18 +5,22 @@
 
 cBoard.controller('freeLayoutCtrl', function($rootScope, $scope, $http, ModalUtils, $timeout, $stateParams,
                                              $filter, freeLayoutService, chartService){
-    $http.get("dashboard/getWidgetList.do").success(function (response) {
-        $scope.widgetList = response;
+
+    freeLayoutService.widgetData().then(data=>{
         let dataFolders = [];
 
-        response.map(d=>{
-           let folder = d.categoryName.split('/');
+        data.map(d=>{
+            let folder = d.categoryName.split('/');
 
-            dataFolders.push(loop(folder, d));
+            dataFolders.push(loopData(folder, d));
         });
-        $scope.dataTree = dataFolders;
-    });
-    let loop = function (arr, file) {
+        return dataFolders;
+    })
+    // .then(data=> uniqueTree(data))
+    .then(data=> $scope.dataTree = data)
+    .catch(e=> console.log(e));
+
+    let loopData = function (arr, file) {
         let map = {
                 name: file.name,
                 data: file.data,
@@ -37,33 +41,33 @@ cBoard.controller('freeLayoutCtrl', function($rootScope, $scope, $http, ModalUti
         }
         return map;
     };
-
-    let uniqueTree = function (data) {
-
-    };
     // let uniqueTree = function (arr) {
-    //     let hashTable = {};
-    //     let data = [];
-    //     for (let i = 0; i < arr.length; i++) {
-    //         let name = arr[i].name;
+    //     // console.log(arr);
+    //     for (let i = 0, l = arr.length; i < l; i++) {
+    //         let filePath = arr[i].path;
+    //         let nextPath = i + 1 < l ? arr[i + 1].path : null;
+    //         let nextName = i + 1 < l ? arr[i + 1].name : null;
     //
-    //         arr[i].name = [name];
-    //         if (!hashTable[arr[i].categoryName]) {
-    //             hashTable[arr[i].categoryName] = true;
-    //             data.push(arr[i]);
+    //         if (filePath + arr[i].name == nextPath + nextName) {
+    //             arr[i + 1].children = arr[i + 1].children ? arr[i + 1].children.concat(arr[i].children) : arr[i].children;
+    //             arr[i] = {};
+    //             if (arr[i + 1].children && arr[i + 1].children.length > 1) {
+    //                 uniqueTree(arr[i + 1].children);
+    //             }
     //         }
-    //         else {
-    //             for (let j = 0; j < data.length; j++) {
-    //                 let categoryName = data[j].categoryName;
-    //
-    //                 if (categoryName === arr[i].categoryName) {
-    //                     data[j].name.push(arr[i].name[0]);
-    //                 }
+    //         else if (filePath === nextPath && arr[i].path != '/') {
+    //             // console.log(arr[i + 1].children);
+    //             arr[i + 1].children = arr[i + 1].children ? arr[i + 1].children.concat(arr[i].children) : arr[i].children;
+    //             arr[i] = {};
+    //             if (arr[i + 1].children && arr[i + 1].children.length > 1) {
+    //                 uniqueTree(arr[i + 1].children);
     //             }
     //         }
     //     }
-    //     console.log(data);
-    //     return data
+    //     // arr.map((d, i)=>{
+    //     //     !d.name ? arr.splice(i, 1) : null;
+    //     // });
+    //     return arr;
     // };
 
     $(window).resize(function () {
@@ -71,8 +75,6 @@ cBoard.controller('freeLayoutCtrl', function($rootScope, $scope, $http, ModalUti
     });
 
     freeLayoutService.setHeight();
-
-    // $scope.dataTree = files.children;
     
     $scope.switchLayout = function () {
         $rootScope.freeLayout = false;

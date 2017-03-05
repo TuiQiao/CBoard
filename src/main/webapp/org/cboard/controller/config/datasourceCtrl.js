@@ -33,17 +33,18 @@ cBoard.controller('datasourceCtrl', function ($scope, $http, ModalUtils, $uibMod
         $scope.changeDsView();
     };
     $scope.deleteDs = function (ds) {
-        var isDependent = false;
+        // var isDependent = false;
+        var resDs = [];
+        var resWdg = [];
         var promiseDs = $http.get("dashboard/getAllDatasetList.do").then(function (response) {
             if (!response) {
                 return false;
             }
-            var resDs = _.find(response.data, function (obj) {
-                return obj.data.datasource == ds.id;
-            });
 
-            if (resDs) {
-                isDependent = true;
+            for (var i = 0; i < response.data.length; i++) {
+                if (response.data[i].data.datasource == ds.id) {
+                    resDs.push(response.data[i].name);
+                }
             }
         });
 
@@ -51,19 +52,25 @@ cBoard.controller('datasourceCtrl', function ($scope, $http, ModalUtils, $uibMod
             if (!response) {
                 return false;
             }
-            var resWdg = _.find(response.data, function (obj) {
-                return obj.data.datasource == ds.id;
-            });
 
-            if (resWdg) {
-                isDependent = true;
+            for (var i = 0; i < response.data.length; i++) {
+                if (response.data[i].data.datasource == ds.id) {
+                    resWdg.push(response.data[i].name);
+                }
             }
         });
 
         var p = $q.all([promiseDs, promiseWdg]);
         p.then(function () {
-            if (isDependent) {
-                ModalUtils.alert(translate("COMMON.NOT_ALLOWED_TO_DELETE_BECAUSE_BE_DEPENDENT"), "modal-warning", "lg");
+            if (resDs.length > 0 || resWdg.length > 0) {
+                var warnStr = '   ';
+                if (resDs.length > 0) {
+                    warnStr += "   " + translate("CONFIG.DATASET.DATASET") + ": [" + resDs.toString() + "]";
+                }
+                if (resWdg.length > 0) {
+                    warnStr += "   " + translate("CONFIG.WIDGET.WIDGET") + ": [" + resWdg.toString() + "]";
+                }
+                ModalUtils.alert(translate("COMMON.NOT_ALLOWED_TO_DELETE_BECAUSE_BE_DEPENDENT") + warnStr, "modal-warning", "lg");
                 return false;
             }
             ModalUtils.confirm(translate("COMMON.CONFIRM_DELETE"), "modal-warning", "lg", function () {

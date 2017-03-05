@@ -1,10 +1,29 @@
 /**
  * Created by yfyuan on 2017/02/16.
  */
-cBoard.controller('jobCtrl', function ($scope, $http, dataService, $uibModal, ModalUtils, $filter, $interval) {
+cBoard.controller('jobCtrl', function ($scope, $rootScope, $http, dataService, $uibModal, ModalUtils, $filter, $interval) {
     var translate = $filter('translate');
 
     $scope.jobTypes = [{name: 'Send Mail', type: 'mail'}];
+
+    $scope.interval = $interval(function () {
+        $http.get("dashboard/getJobList.do").success(function (response) {
+            _.each($scope.jobList, function (e) {
+                var j = _.find(response, function (r) {
+                    return e.id == r.id;
+                });
+                e.jobStatus = j.jobStatus;
+                e.execLog = j.execLog;
+            });
+        });
+    }, 5000);
+
+    $rootScope.$on('$stateChangeSuccess', function (event, toState, toParams, fromState) {
+            if (fromState.controller == 'jobCtrl') {
+                $interval.cancel($scope.interval);
+            }
+        }
+    );
 
     $scope.loadJobList = function () {
         $http.get("dashboard/getJobList.do").success(function (response) {
@@ -58,15 +77,6 @@ cBoard.controller('jobCtrl', function ($scope, $http, dataService, $uibModal, Mo
         $http.post("dashboard/execJob.do", {id: job.id}).success(function (serviceStatus) {
             if (serviceStatus.status == '1') {
                 job.jobStatus = 2;
-                var interval = $interval(function () {
-                    $http.post("dashboard/getJobStatus.do", {id: job.id}).success(function (_job) {
-                        job.jobStatus = _job.jobStatus;
-                        job.execLog = _job.execLog;
-                        if (job.jobStatus == 0 || job.jobStatus == 1) {
-                            $interval.cancel(interval);
-                        }
-                    });
-                }, 3000, 100);
                 // $scope.loadJobList();
             } else {
                 $scope.alerts = [{msg: serviceStatus.msg, type: 'danger'}];

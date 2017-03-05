@@ -40,8 +40,9 @@ cBoard.service('freeLayoutService', function() {
                 // $('.drag-preview').addClass('hideOperate');
                 let data = e.originalEvent.dataTransfer.getData('Text');
                 let reportId = _this.widget();
+
                 data = data ? JSON.parse(data) : null;
-                let widget = $scope.widgetList.filter(d => d.id === JSON.parse(data.id));
+                let widget = $scope.widgetList.filter(d => '/' + d.categoryName + '/' + d.name === data.path + '/' + data.name);
                 $('.widget_' + reportId).css({
                     width: panel[0].clientWidth - e.offsetX + 'px',
                     height: '350px',

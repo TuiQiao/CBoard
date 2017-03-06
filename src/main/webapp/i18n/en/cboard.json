@@ -97,6 +97,7 @@
       "KPI": "KPI",
       "PIE": "Pie",
       "LINE_BAR": "Line/Bar",
+      "SCATTER": "Scatter/Bubble",
       "MAP": "China Map",
       "LINE": "Line",
       "BAR": "Bar",

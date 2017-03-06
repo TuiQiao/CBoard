@@ -90,6 +90,8 @@
 .cLine.disabled{background-image: url(imgs/line.png); }
 /*.cBar{  background-image: url(../imgs/bar-active.png);  }*/
 /*.cBar.disabled{background-image: url(../imgs/bar.png);  }*/
+.cScatter{  background-image: url(../imgs/scatter-active.png);  }
+.cScatter.disabled{  background-image: url(../imgs/scatter.png);  }
 .cPie{  background-image: url(../imgs/pie-active.png);  }
 .cPie.disabled{  background-image: url(../imgs/pie.png);  }
 .cFunnel{  background-image: url(../imgs/funnel-active.png);  }

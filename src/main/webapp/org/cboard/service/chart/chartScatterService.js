@@ -45,13 +45,18 @@ cBoard.service('chartScatterService', function (dataService) {
                     return [string_keys[i], d[s.yIdx], d[s.sizeIdx], d[s.colorIdx]];
                 });
                 s.sizeMax = _.max(data, function (d) {
-                    return d[s.sizeIdx];
+                    return Number(d[s.sizeIdx]);
                 })[s.sizeIdx];
                 s.colorMax = _.max(data, function (d) {
-                    return d[s.colorIdx];
+                    return Number(d[s.colorIdx]);
                 })[s.colorIdx];
             });
-
+            var sizeMax = _.max(series, function (s) {
+                return Number(s.sizeMax);
+            }).sizeMax;
+            var colorMax = _.max(series, function (s) {
+                return Number(s.colorMax);
+            }).colorMax;
             echartOption = {
                 legend: {
                     data: _.map(series, function (v) {
@@ -85,11 +90,15 @@ cBoard.service('chartScatterService', function (dataService) {
                         data: v.data,
                         type: 'scatter',
                         symbolSize: function (data) {
-                            return data[2] / v.sizeMax * 10
+                            if (data[2]) {
+                                return data[2] / sizeMax * 50;
+                            } else {
+                                return 0;
+                            }
                         },
                         itemStyle: {
                             normal: {
-                                opacity: data[3] / v.colorMax * 1.0
+                                opacity: data[3] / colorMax * 1.0
                             }
                         }
                     };

@@ -117,8 +117,8 @@ public class KylinDataProvider extends DataProvider implements AggregateProvider
             Stream<DimensionConfig> filters = Stream.concat(Stream.concat(c, r), f);
             Stream<DimensionConfigHelper> filterHelpers = filters.map(fe -> new DimensionConfigHelper(fe, model.getColumnType(fe.getColumnName())));
             String whereStr = assembleSqlFilter(filterHelpers, "WHERE", model);
-            fsql = "SELECT %s FROM %s %s GROUP BY %s";
-            exec = String.format(fsql, model.getColumnAndAlias(columnName), model.getTableSql(), whereStr, model.getColumnAndAlias(columnName));
+            fsql = "SELECT %s FROM %s %s GROUP BY %s ORDER BY %s";
+            exec = String.format(fsql, model.getColumnAndAlias(columnName), model.getTableSql(), whereStr, model.getColumnAndAlias(columnName), model.getColumnAndAlias(columnName));
             LOG.info(exec);
             try (Connection connection = getConnection(dataSource, query);
                  Statement stat = connection.createStatement();
@@ -131,8 +131,8 @@ public class KylinDataProvider extends DataProvider implements AggregateProvider
                 throw new Exception("ERROR:" + e.getMessage(), e);
             }
         }
-        fsql = "SELECT %s FROM %s GROUP BY %s";
-        exec = String.format(fsql, model.getColumnAndAlias(columnName), model.getTableSql(), model.getColumnAndAlias(columnName));
+        fsql = "SELECT %s FROM %s GROUP BY %s ORDER BY %s";
+        exec = String.format(fsql, model.getColumnAndAlias(columnName), model.getTableSql(), model.getColumnAndAlias(columnName), model.getColumnAndAlias(columnName));
         LOG.info(exec);
         try (Connection connection = getConnection(dataSource, query);
              Statement stat = connection.createStatement();
@@ -260,16 +260,14 @@ public class KylinDataProvider extends DataProvider implements AggregateProvider
         Stream<DimensionConfig> c = config.getColumns().stream();
         Stream<DimensionConfig> r = config.getRows().stream();
         Stream<DimensionConfig> f = config.getFilters().stream();
-        Stream<DimensionConfig> filters = Stream.concat(c, r);
+        Stream<DimensionConfig> filters = Stream.concat(Stream.concat(c, r), f);
         KylinModel model = getModel(dataSource, query);
-        Stream<DimensionConfigHelper> filterHelpers = filters.map(fe -> new DimensionConfigHelper(fe, model.getColumnType(fe.getColumnName())));
-        Stream<DimensionConfigHelper> predicates = f.map(fe -> new DimensionConfigHelper(fe, model.getColumnType(fe.getColumnName())));
+        Stream<DimensionConfigHelper> predicates = filters.map(fe -> new DimensionConfigHelper(fe, model.getColumnType(fe.getColumnName())));
         Stream<DimensionConfig> dimStream = Stream.concat(config.getColumns().stream(), config.getRows().stream());
 
         String dimColsStr = assembleDimColumns(dimStream, model);
         String aggColsStr = assembleAggValColumns(config.getValues().stream(), model);
         String whereStr = assembleSqlFilter(predicates, "WHERE", model);
-        String havingStr = assembleSqlFilter(filterHelpers, "HAVING", model);
         String groupByStr = StringUtils.isBlank(dimColsStr) ? "" : "GROUP BY " + dimColsStr;
 
         StringJoiner selectColsStr = new StringJoiner(",");
@@ -280,8 +278,8 @@ public class KylinDataProvider extends DataProvider implements AggregateProvider
             selectColsStr.add(aggColsStr);
         }
 
-        String fsql = "\nSELECT %s FROM \n%s\n %s %s %s";
-        String exec = String.format(fsql, selectColsStr, model.getTableSql(), whereStr, groupByStr, havingStr);
+        String fsql = "\nSELECT %s FROM \n%s\n %s %s";
+        String exec = String.format(fsql, selectColsStr, model.getTableSql(), whereStr, groupByStr);
         List<String[]> list = new LinkedList<>();
         LOG.info(exec);
         try (
@@ -337,11 +335,10 @@ public class KylinDataProvider extends DataProvider implements AggregateProvider
         }
 
         public String getValueStr(int index) {
-            switch (type) {
-                case "string":
-                    return "'" + getValues().get(index) + "'";
-                default:
-                    return getValues().get(index);
+            if (type.startsWith("varchar")) {
+                return "'" + getValues().get(index) + "'";
+            } else {
+                return getValues().get(index);
             }
         }
 

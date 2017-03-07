@@ -339,16 +339,14 @@ public class JdbcDataProvider extends DataProvider implements AggregateProvider 
         Stream<DimensionConfig> c = config.getColumns().stream();
         Stream<DimensionConfig> r = config.getRows().stream();
         Stream<DimensionConfig> f = config.getFilters().stream();
-        Stream<DimensionConfig> filters = Stream.concat(c, r);
+        Stream<DimensionConfig> filters = Stream.concat(Stream.concat(c, r), f);
         Map<String, Integer> types = getColumnType(dataSource, query);
-        Stream<DimensionConfigHelper> filterHelpers = filters.map(fe -> new DimensionConfigHelper(fe, types.get(fe.getColumnName())));
-        Stream<DimensionConfigHelper> predicates = f.map(fe -> new DimensionConfigHelper(fe, types.get(fe.getColumnName())));
+        Stream<DimensionConfigHelper> predicates = filters.map(fe -> new DimensionConfigHelper(fe, types.get(fe.getColumnName())));
         Stream<DimensionConfig> dimStream = Stream.concat(config.getColumns().stream(), config.getRows().stream());
 
         String dimColsStr = assembleDimColumns(dimStream);
         String aggColsStr = assembleAggValColumns(config.getValues().stream());
         String whereStr = assembleSqlFilter(predicates, "WHERE");
-        String havingStr = assembleSqlFilter(filterHelpers, "HAVING");
         String groupByStr = StringUtils.isBlank(dimColsStr) ? "" : "GROUP BY " + dimColsStr;
 
         StringJoiner selectColsStr = new StringJoiner(",");
@@ -360,8 +358,8 @@ public class JdbcDataProvider extends DataProvider implements AggregateProvider 
         }
 
         String subQuerySql = getAsSubQuery(query.get(SQL));
-        String fsql = "\nSELECT %s FROM (\n%s\n) __view__ %s %s %s";
-        String exec = String.format(fsql, selectColsStr, subQuerySql, whereStr, groupByStr, havingStr);
+        String fsql = "\nSELECT %s FROM (\n%s\n) __view__ %s %s";
+        String exec = String.format(fsql, selectColsStr, subQuerySql, whereStr, groupByStr);
         List<String[]> list = new LinkedList<>();
         LOG.info(exec);
         try (

@@ -2,113 +2,79 @@
  * Created by Fine on 2017/2/12.
  */
 'user strict';
+
 cBoard.controller('freeLayoutCtrl', function($rootScope, $scope, $http, ModalUtils, $timeout, $stateParams,
                                              $filter, freeLayoutService, chartService){
-    var treeID = 'widgetTreeID';
-    var getWidgetList = function (callback) {
-        $http.get("dashboard/getWidgetList.do").success(function (response) {
-            $scope.widgetList = response;
-            var originalData = jstree_CvtVPath2TreeData(
-                $scope.widgetList.map(function (w) {
-                    return {
-                        "id": w.id,
-                        "name": w.name,
-                        "categoryName": w.categoryName
-                    };
-                })
-            );
-            if (callback) {
-                callback();
-            }
-            jstree_ReloadTree(treeID, originalData);
-        });
-    };
 
-    var getCategoryList = function () {
-        $http.get("dashboard/getWidgetCategoryList.do").success(function (response) {
-            $scope.categoryList = response;
-            $("#widgetName").autocomplete({
-                source: $scope.categoryList
-            });
+    freeLayoutService.widgetData().then(data=>{
+        let dataFolders = [];
+
+        data.map(d=>{
+            let folder = d.categoryName.split('/');
+
+            dataFolders.push(loopData(folder, d));
         });
+        return dataFolders;
+    })
+    // .then(data=> uniqueTree(data))
+    .then(data=> $scope.dataTree = data)
+    .catch(e=> console.log(e));
+
+    let loopData = function (arr, file) {
+        let map = {
+                name: file.name,
+                data: file.data,
+                path: '/' + file.categoryName,
+                folder: false
+            },
+            tmp;
+
+        while (tmp = arr.pop()){
+            let obj = {};
+
+            obj.name = tmp;
+            obj.path = '/' + file.categoryName.split(tmp)[0];
+            obj.folder = true;
+            obj.children = [];
+            obj.children.push(map);
+            map = obj;
+        }
+        return map;
     };
+    // let uniqueTree = function (arr) {
+    //     // console.log(arr);
+    //     for (let i = 0, l = arr.length; i < l; i++) {
+    //         let filePath = arr[i].path;
+    //         let nextPath = i + 1 < l ? arr[i + 1].path : null;
+    //         let nextName = i + 1 < l ? arr[i + 1].name : null;
+    //
+    //         if (filePath + arr[i].name == nextPath + nextName) {
+    //             arr[i + 1].children = arr[i + 1].children ? arr[i + 1].children.concat(arr[i].children) : arr[i].children;
+    //             arr[i] = {};
+    //             if (arr[i + 1].children && arr[i + 1].children.length > 1) {
+    //                 uniqueTree(arr[i + 1].children);
+    //             }
+    //         }
+    //         else if (filePath === nextPath && arr[i].path != '/') {
+    //             // console.log(arr[i + 1].children);
+    //             arr[i + 1].children = arr[i + 1].children ? arr[i + 1].children.concat(arr[i].children) : arr[i].children;
+    //             arr[i] = {};
+    //             if (arr[i + 1].children && arr[i + 1].children.length > 1) {
+    //                 uniqueTree(arr[i + 1].children);
+    //             }
+    //         }
+    //     }
+    //     // arr.map((d, i)=>{
+    //     //     !d.name ? arr.splice(i, 1) : null;
+    //     // });
+    //     return arr;
+    // };
 
     $(window).resize(function () {
         freeLayoutService.setHeight();
     });
 
     freeLayoutService.setHeight();
-
-    $http.get("dashboard/getDatasourceList.do").success(function (response) {
-        $scope.datasourceList = response;
-        getCategoryList();
-        getWidgetList(function () {
-            if ($stateParams.id) {
-                $scope.editWgt(_.find($scope.widgetList, function (w) {
-                    return w.id == $stateParams.id;
-                }));
-            }
-        });
-    });
-
-    var widgetTreeConfig = angular.copy(jsTreeConfig1);
-    widgetTreeConfig.core.check_callback = function(operation, node, node_parent, node_position, more) {
-        if (operation === "move_node") {
-            return false;
-        }
-        return true;
-         //allow all other operations
-    };
-
-    $scope.treeConfig = angular.copy(widgetTreeConfig);
-
-    $(document)
-        .on('dnd_move.vakata', function (e, data) {
-            // drap tips icon, ok or error
-            var t = $(data.event.target);
-            if (!t.closest('js-tree').length) {
-                if (t.closest('.layoutPanel').length) {
-                    data.helper.find('.jstree-icon').removeClass('jstree-er').addClass('jstree-ok');
-                }
-                else {
-                    data.helper.find('.jstree-icon').removeClass('jstree-ok').addClass('jstree-er');
-                }
-            }
-        })
-        .on('dnd_stop.vakata', function (e, data) {
-            var t = $(data.event.target);
-            if (!t.closest('js-tree').length) {
-                if (t.closest('.layoutPanel').length) {
-                    $(data.element).clone().appendTo(t.closest('.drop'));
-                    // node data:
-                    console.log(data.data.origin.get_node(data.element));
-                    // if(data.data.jstree && data.data.origin) { console.log(data.data.origin.get_node(data.element); }
-
-                }
-            }
-        });
-
-
-    $scope.applyModelChanges = function () {
-        return !$scope.ignoreChanges;
-    };
-
-    $scope.treeEventsObj = {
-        activate_node: function(obj, e) {
-            var myJsTree = jstree_GetWholeTree(treeID);
-            var data = myJsTree.get_selected(true)[0];
-            if (data.children.length > 0) {
-                myJsTree.deselect_node(data);
-                myJsTree.toggle_node(data);
-            }
-        },
-        dragstart: function (e) {
-            e.originalEvent.dataTransfer.effectAllowed = "move";
-            var myJsTree = jstree_GetWholeTree(treeID);
-            var data = JSON.stringify(myJsTree.get_selected(true)[0]);
-            e.originalEvent.dataTransfer.setData('Text', data);
-        }
-    };
     
     $scope.switchLayout = function () {
         $rootScope.freeLayout = false;

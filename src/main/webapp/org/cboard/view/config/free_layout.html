@@ -7,8 +7,9 @@
                 <span class="fa fa-reply returnIcon" title="" ng-click="switchLayout()"></span>
             </div>
             <div class="panel-body">
-                <div id="widgetTreeID" js-tree="treeConfig" should-apply="applyModelChanges()" ng-model="treeData" tree="treeInstance"
-                     tree-events-obj="treeEventsObj"></div>
+                <treecontrol class="tree-classic" tree-model="dataTree" options="opt">
+                    {{node.name}}
+                </treecontrol>
             </div>
         </div>
     </div>

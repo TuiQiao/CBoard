@@ -21,6 +21,12 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
             measure: translate('CONFIG.WIDGET.TIPS_DIM_NUM_1_MORE')
         },
         {
+            name: translate('CONFIG.WIDGET.SCATTER'), value: 'scatter', class: 'cScatter',
+            row: translate('CONFIG.WIDGET.TIPS_DIM_NUM_1_MORE'),
+            column: translate('CONFIG.WIDGET.TIPS_DIM_NUM_0_MORE'),
+            measure: translate('CONFIG.WIDGET.TIPS_DIM_NUM_1_MORE')
+        },
+        {
             name: translate('CONFIG.WIDGET.PIE'), value: 'pie', class: 'cPie',
             row: translate('CONFIG.WIDGET.TIPS_DIM_NUM_1_MORE'),
             column: translate('CONFIG.WIDGET.TIPS_DIM_NUM_0_MORE'),
@@ -52,12 +58,6 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
         },
         {
             name: translate('CONFIG.WIDGET.MAP'), value: 'map', class: 'cMap',
-            row: translate('CONFIG.WIDGET.TIPS_DIM_NUM_1_MORE'),
-            column: translate('CONFIG.WIDGET.TIPS_DIM_NUM_0_MORE'),
-            measure: translate('CONFIG.WIDGET.TIPS_DIM_NUM_1_MORE')
-        },
-        {
-            name: translate('CONFIG.WIDGET.SCATTER'), value: 'scatter', class: 'cMap',
             row: translate('CONFIG.WIDGET.TIPS_DIM_NUM_1_MORE'),
             column: translate('CONFIG.WIDGET.TIPS_DIM_NUM_0_MORE'),
             measure: translate('CONFIG.WIDGET.TIPS_DIM_NUM_1_MORE')

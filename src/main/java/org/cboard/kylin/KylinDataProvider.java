@@ -68,7 +68,7 @@ public class KylinDataProvider extends DataProvider implements AggregateProvider
 
         try (Connection con = getConnection(dataSource, query)) {
             Statement ps = con.createStatement();
-            ResultSet rs = ps.executeQuery("select * from " + model.getTableSql());
+            ResultSet rs = ps.executeQuery("select * from " + model.geModelSql());
             ResultSetMetaData metaData = rs.getMetaData();
             int columnCount = metaData.getColumnCount();
             list = new LinkedList<>();
@@ -110,15 +110,22 @@ public class KylinDataProvider extends DataProvider implements AggregateProvider
         KylinModel model = getModel(dataSource, query);
         List<String> filtered = new ArrayList<>();
         List<String> nofilter = new ArrayList<>();
+        String tableName = model.getTable(columnName);
+        String columnAliasName = model.getColumnAndAlias(columnName);
+
         if (config != null) {
             Stream<DimensionConfig> c = config.getColumns().stream();
             Stream<DimensionConfig> r = config.getRows().stream();
             Stream<DimensionConfig> f = config.getFilters().stream();
             Stream<DimensionConfig> filters = Stream.concat(Stream.concat(c, r), f);
-            Stream<DimensionConfigHelper> filterHelpers = filters.map(fe -> new DimensionConfigHelper(fe, model.getColumnType(fe.getColumnName())));
+            Stream<DimensionConfigHelper> filterHelpers = filters
+                    //过滤掉其他维表
+                    .filter(e -> tableName.equals(model.getTable(e.getColumnName())))
+                    .map(fe -> new DimensionConfigHelper(fe, model.getColumnType(fe.getColumnName())));
             String whereStr = assembleSqlFilter(filterHelpers, "WHERE", model);
-            fsql = "SELECT %s FROM %s %s GROUP BY %s ORDER BY %s";
-            exec = String.format(fsql, model.getColumnAndAlias(columnName), model.getTableSql(), whereStr, model.getColumnAndAlias(columnName), model.getColumnAndAlias(columnName));
+
+            fsql = "SELECT %s FROM %s %s %s GROUP BY %s ORDER BY %s";
+            exec = String.format(fsql, columnAliasName, tableName, model.getTableAlias(tableName), whereStr, columnAliasName, columnAliasName);
             LOG.info(exec);
             try (Connection connection = getConnection(dataSource, query);
                  Statement stat = connection.createStatement();
@@ -131,8 +138,8 @@ public class KylinDataProvider extends DataProvider implements AggregateProvider
                 throw new Exception("ERROR:" + e.getMessage(), e);
             }
         }
-        fsql = "SELECT %s FROM %s GROUP BY %s ORDER BY %s";
-        exec = String.format(fsql, model.getColumnAndAlias(columnName), model.getTableSql(), model.getColumnAndAlias(columnName), model.getColumnAndAlias(columnName));
+        fsql = "SELECT %s FROM %s %s GROUP BY %s ORDER BY %s";
+        exec = String.format(fsql, columnAliasName, tableName, model.getTableAlias(tableName), columnAliasName, columnAliasName);
         LOG.info(exec);
         try (Connection connection = getConnection(dataSource, query);
              Statement stat = connection.createStatement();
@@ -279,7 +286,7 @@ public class KylinDataProvider extends DataProvider implements AggregateProvider
         }
 
         String fsql = "\nSELECT %s FROM \n%s\n %s %s";
-        String exec = String.format(fsql, selectColsStr, model.getTableSql(), whereStr, groupByStr);
+        String exec = String.format(fsql, selectColsStr, model.geModelSql(), whereStr, groupByStr);
         List<String[]> list = new LinkedList<>();
         LOG.info(exec);
         try (
@@ -376,12 +383,20 @@ public class KylinDataProvider extends DataProvider implements AggregateProvider
 
     private class KylinModel {
         private JSONObject model;
-        private Map<String, String> columnAlias = new HashedMap();
+        private Map<String, String> columnTable = new HashedMap();
         private Map<String, String> tableAlias = new HashedMap();
         private Map<String, String> columnType = new HashedMap();
 
         public String getColumnAndAlias(String column) {
-            return columnAlias.get(column) + ".\"" + column + "\"";
+            return tableAlias.get(columnTable.get(column)) + ".\"" + column + "\"";
+        }
+
+        public String getTable(String column) {
+            return columnTable.get(column);
+        }
+
+        public String getTableAlias(String table) {
+            return tableAlias.get(table);
         }
 
         private Map<String, String> getColumnsType(String table, String serverIp, String username, String password) {
@@ -410,29 +425,30 @@ public class KylinDataProvider extends DataProvider implements AggregateProvider
                                         alias = "_t" + tableAlias.keySet().size() + 1;
                                         tableAlias.put(t, alias);
                                     }
-                                    columnAlias.put(s, alias);
+                                    columnTable.put(s, t);
                                 }
                         );
                     }
             );
             model.getJSONArray("metrics").stream().map(e -> e.toString()).forEach(s ->
                     {
-                        String alias = tableAlias.get(model.getString("fact_table"));
+                        String t = model.getString("fact_table");
+                        String alias = tableAlias.get(t);
                         if (alias == null) {
                             alias = "_t" + tableAlias.keySet().size() + 1;
-                            tableAlias.put(model.getString("fact_table"), alias);
+                            tableAlias.put(t, alias);
                         }
-                        columnAlias.put(s, alias);
+                        columnTable.put(s, t);
                     }
             );
         }
 
-        public String getTableSql() {
+        public String geModelSql() {
             String factTable = model.getString("fact_table");
             return String.format("%s %s %s", factTable, tableAlias.get(factTable), getJoinSql(tableAlias.get(factTable)));
         }
 
-        public String getJoinSql(String factAlias) {
+        private String getJoinSql(String factAlias) {
             String s = model.getJSONArray("lookups").stream().map(e -> {
                 JSONObject j = (JSONObject) e;
                 String[] pk = j.getJSONObject("join").getJSONArray("primary_key").stream().map(p -> p.toString()).toArray(String[]::new);

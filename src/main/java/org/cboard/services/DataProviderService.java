@@ -10,6 +10,7 @@ import org.cboard.dataprovider.DataProviderManager;
 import org.cboard.dataprovider.config.AggConfig;
 import org.cboard.dataprovider.result.AggregateResult;
 import org.cboard.dto.DataProviderResult;
+import org.cboard.exception.CBoardException;
 import org.cboard.pojo.DashboardDataset;
 import org.cboard.pojo.DashboardDatasource;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -54,8 +55,8 @@ public class DataProviderService {
             return dataProvider.getAggData(config, reload);
         } catch (Exception e) {
             e.printStackTrace();
+            throw new CBoardException(e.getMessage());
         }
-        return null;
     }
 
     public DataProviderResult getColumns(Long datasourceId, Map<String, String> query, Long datasetId, boolean reload) {

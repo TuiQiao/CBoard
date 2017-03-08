@@ -17,6 +17,7 @@ import org.cboard.dataprovider.config.DimensionConfig;
 import org.cboard.dataprovider.config.ValueConfig;
 import org.cboard.dataprovider.result.AggregateResult;
 import org.cboard.dataprovider.result.ColumnIndex;
+import org.cboard.exception.CBoardException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
@@ -413,7 +414,10 @@ public class KylinDataProvider extends DataProvider implements AggregateProvider
             return columnType.get(column);
         }
 
-        public KylinModel(JSONObject model, String serverIp, String username, String password) {
+        public KylinModel(JSONObject model, String serverIp, String username, String password) throws Exception {
+            if (model == null) {
+                throw new CBoardException("Model not found");
+            }
             this.model = model;
             model.getJSONArray("dimensions").forEach(e -> {
                         String t = ((JSONObject) e).getString("table");
@@ -455,7 +459,7 @@ public class KylinDataProvider extends DataProvider implements AggregateProvider
                 String[] fk = j.getJSONObject("join").getJSONArray("foreign_key").stream().map(p -> p.toString()).toArray(String[]::new);
                 List<String> on = new ArrayList<>();
                 for (int i = 0; i < pk.length; i++) {
-                    on.add(String.format("%s.%s = %s.%s", tableAlias.get(j.getJSONObject("table")), fk[i], factAlias, pk[i]));
+                    on.add(String.format("%s.%s = %s.%s", tableAlias.get(j.getString("table")), pk[i], factAlias, fk[i]));
                 }
                 String type = j.getJSONObject("join").getString("type");
                 String pTable = j.getString("table");

@@ -286,13 +286,14 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
                 var fg = angular.copy(_.find($scope.datasetList, function (ds) {
                     return ds.id == $scope.curWidget.datasetId;
                 }).data.filters);
-
-                $scope.filterGroups = fg.filter(function (g) {
-                    var dupDefine = _.find($scope.curWidget.config.filters, function (f) {
-                        return g.group == f.group;
+                if (fg) {
+                    $scope.filterGroups = fg.filter(function (g) {
+                        var dupDefine = _.find($scope.curWidget.config.filters, function (f) {
+                            return g.group == f.group;
+                        });
+                        return _.isUndefined(dupDefine);
                     });
-                    return _.isUndefined(dupDefine);
-                });
+                }
             }
         };
 

@@ -101,6 +101,9 @@ public abstract class DataProvider {
     }
 
     private void evalValueExpression(AggConfig ac) {
+        if (ac == null) {
+            return;
+        }
         Consumer<DimensionConfig> evaluator = (e) ->
                 e.setValues(e.getValues().stream().map(v -> getFilterValue(v)).collect(Collectors.toList()));
         ac.getFilters().forEach(evaluator);

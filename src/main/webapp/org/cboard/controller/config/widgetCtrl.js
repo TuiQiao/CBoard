@@ -280,9 +280,8 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
         };
 
         var loadDsFilterGroups = function () {
-            if ($scope.customDs) {
-                $scope.filterGroups = [];
-            } else {
+            $scope.filterGroups = [];
+            if (!$scope.customDs) {
                 var fg = angular.copy(_.find($scope.datasetList, function (ds) {
                     return ds.id == $scope.curWidget.datasetId;
                 }).data.filters);

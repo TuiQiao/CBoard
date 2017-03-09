@@ -424,6 +424,9 @@ public class JdbcDataProvider extends DataProvider implements AggregateProvider 
                 case Types.NCLOB:
                 case Types.LONGVARCHAR:
                 case Types.LONGNVARCHAR:
+                case Types.DATE:
+                case Types.TIMESTAMP:
+                case Types.TIMESTAMP_WITH_TIMEZONE:
                     return "'" + getValues().get(index) + "'";
                 default:
                     return getValues().get(index);

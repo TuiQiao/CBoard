@@ -5,7 +5,7 @@ cBoard.controller('datasetCtrl', function ($scope, $http, dataService, $uibModal
 
     var translate = $filter('translate');
     $scope.optFlag = 'none';
-    $scope.curDataset = {data: {expressions: []}};
+    $scope.curDataset = {data: {expressions: [], filters: []}};
     $scope.curWidget = {};
     $scope.alerts = [];
     $scope.verify = {dsName: true};
@@ -62,6 +62,9 @@ cBoard.controller('datasetCtrl', function ($scope, $http, dataService, $uibModal
         $scope.curDataset.name = $scope.curDataset.categoryName + '/' + $scope.curDataset.name;
         if (!$scope.curDataset.data.expressions) {
             $scope.curDataset.data.expressions = [];
+        }
+        if (!$scope.curDataset.data.filters) {
+            $scope.curDataset.data.filters = [];
         }
         $scope.datasource = _.find($scope.datasourceList, function (ds) {
             return ds.id == $scope.curDataset.data.datasource;
@@ -163,6 +166,62 @@ cBoard.controller('datasetCtrl', function ($scope, $http, dataService, $uibModal
             });
         }
 
+    };
+
+    $scope.editFilterGroup = function (col) {
+        var selects = angular.copy($scope.selects);
+        $uibModal.open({
+            templateUrl: 'org/cboard/view/config/modal/filterGroup.html',
+            windowTemplateUrl: 'org/cboard/view/util/modal/window.html',
+            backdrop: false,
+            scope: $scope,
+            controller: function ($scope, $uibModalInstance) {
+                if (col) {
+                    $scope.data = angular.copy(col);
+                } else {
+                    $scope.data = {group: '', filters: []};
+                }
+                $scope.selects = selects;
+                $scope.close = function () {
+                    $uibModalInstance.close();
+                };
+                $scope.addColumn = function (str) {
+                    $scope.data.filters.push({col: str, type: '=', values: []})
+                };
+                $scope.ok = function () {
+                    if (col) {
+                        col.group = $scope.data.group;
+                        col.filters = $scope.data.filters;
+                    } else {
+                        $scope.$parent.curDataset.data.filters.push($scope.data);
+                    }
+                    $uibModalInstance.close();
+                };
+                $scope.editFilter = function (filter) {
+                    $uibModal.open({
+                        templateUrl: 'org/cboard/view/config/modal/dsFilter.html',
+                        windowTemplateUrl: 'org/cboard/view/util/modal/window.html',
+                        backdrop: false,
+                        size: 'lg',
+                        controller: function ($scope, $uibModalInstance) {
+                            $scope.filter = angular.copy(filter);
+                            $scope.type = ['=', '≠', '>', '<', '≥', '≤', '(a,b]', '[a,b)', '(a,b)', '[a,b]'];
+                            $scope.close = function () {
+                                $uibModalInstance.close();
+                            };
+                            $scope.selected = function (v) {
+                                return _.indexOf($scope.col.values, v) == -1
+                            };
+                            $scope.ok = function () {
+                                filter.type = $scope.filter.type;
+                                filter.values = $scope.filter.values;
+                                $uibModalInstance.close();
+                            };
+                        }
+                    });
+                };
+            }
+        });
     };
 
     $scope.editExp = function (col) {
@@ -376,7 +435,7 @@ cBoard.controller('datasetCtrl', function ($scope, $http, dataService, $uibModal
 
         jstree_ReloadTree(treeID, originalData);
     };
-    
+
     $scope.treeEventsObj = function () {
         var baseEventObj = jstree_baseTreeEventsObj({
             ngScope: $scope, ngHttp: $http, ngTimeout: $timeout,

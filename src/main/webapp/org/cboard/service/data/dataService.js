@@ -5,13 +5,19 @@
 cBoard.service('dataService', function ($http, updateService) {
 
     var getDimensionConfig = function (array) {
+        var result = [];
         if (array) {
-            return _.map(array, function (e) {
-                return {columnName: e.col, filterType: e.type, values: e.values}
+            _.each(array,function (e) {
+                if(_.isUndefined(e.group)){
+                    result.push({columnName: e.col, filterType: e.type, values: e.values});
+                }else{
+                    _.each(e.filters,function (f) {
+                        result.push({columnName: f.col, filterType: f.type, values: f.values});
+                    });
+                }
             });
-        } else {
-            return [];
         }
+        return result;
     };
 
     this.getDimensionValues = function (datasource, query, datasetId, colmunName, chartConfig, callback) {

@@ -3,15 +3,21 @@ package org.cboard.dataprovider;
 import com.alibaba.fastjson.JSONObject;
 import com.google.common.base.Charsets;
 import com.google.common.hash.Hashing;
+import com.googlecode.aviator.AviatorEvaluator;
 import org.cboard.dataprovider.aggregator.Aggregator;
 import org.cboard.dataprovider.annotation.DatasourceParameter;
 import org.cboard.dataprovider.config.AggConfig;
+import org.cboard.dataprovider.config.DimensionConfig;
+import org.cboard.dataprovider.expression.NowFunction;
 import org.cboard.dataprovider.result.AggregateResult;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import java.util.HashMap;
 import java.util.Map;
+import java.util.function.Consumer;
+import java.util.stream.Collectors;
 
 /**
  * Created by zyong on 2017/1/9.
@@ -30,6 +36,10 @@ public abstract class DataProvider {
     @DatasourceParameter(label = "Aggregate Provider", type = DatasourceParameter.Type.Checkbox, order = 100)
     private String aggregateProvider = "aggregateProvider";
 
+    static {
+        AviatorEvaluator.addFunction(new NowFunction());
+    }
+
     private boolean isAggregateProviderActive() {
         String v = dataSource.get(aggregateProvider);
         return v != null && "true".equals(v);
@@ -41,6 +51,7 @@ public abstract class DataProvider {
      * @return
      */
     public AggregateResult getAggData(AggConfig ac, boolean reload) throws Exception {
+        evalValueExpression(ac);
         if (this instanceof AggregateProvider && isAggregateProviderActive()) {
             return ((AggregateProvider) this).queryAggData(dataSource, query, ac);
         } else {
@@ -57,6 +68,7 @@ public abstract class DataProvider {
      */
     public String[][] getDimVals(String columnName, AggConfig config, boolean reload) throws Exception {
         String[][] dimVals = null;
+        evalValueExpression(config);
         if (this instanceof AggregateProvider && isAggregateProviderActive()) {
             dimVals = ((AggregateProvider) this).queryDimVals(dataSource, query, columnName, config);
         } else {
@@ -86,6 +98,21 @@ public abstract class DataProvider {
                 logger.info("loadData {}", key);
             }
         }
+    }
+
+    private void evalValueExpression(AggConfig ac) {
+        Consumer<DimensionConfig> evaluator = (e) ->
+                e.setValues(e.getValues().stream().map(v -> getFilterValue(v)).collect(Collectors.toList()));
+        ac.getFilters().forEach(evaluator);
+        ac.getColumns().forEach(evaluator);
+        ac.getRows().forEach(evaluator);
+    }
+
+    private String getFilterValue(String value) {
+        if (value == null || !(value.startsWith("{") && value.endsWith("}"))) {
+            return value;
+        }
+        return AviatorEvaluator.compile(value.substring(1, value.length() - 1), true).execute().toString();
     }
 
     private String getLockKey(Map<String, String> dataSource, Map<String, String> query) {

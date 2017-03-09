@@ -1,9 +1,13 @@
 /**
  * Created by yfyuan on 2016/7/19.
  */
-cBoard.controller('cBoardCtrl', function ($scope, $location, $http, $q, $filter, $uibModal, ModalUtils) {
+cBoard.controller('cBoardCtrl', function ($rootScope, $scope, $location, $http, $q, $filter, $uibModal, ModalUtils) {
 
     var translate = $filter('translate');
+
+    $rootScope.alert = function (msg) {
+        ModalUtils.alert(msg);
+    };
 
     $http.get("commons/getUserDetail.do").success(function (response) {
         $scope.user = response;
@@ -72,7 +76,6 @@ cBoard.controller('cBoardCtrl', function ($scope, $location, $http, $q, $filter,
                     });
                 };
             }
-        })
-        ;
+        });
     }
 });

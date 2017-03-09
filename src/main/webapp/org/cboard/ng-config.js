@@ -81,8 +81,8 @@ angular.module('cBoard').config(['$stateProvider', function ($stateProvider) {
 angular.module('cBoard').factory('sessionHelper', ["$rootScope", function ($rootScope) {
     var sessionHelper = {
         responseError: function (response) {
-            if (response.status == -1) {
-                window.location.href = "/";
+            if (response.data.status == 2) {
+                $rootScope.alert(response.data.msg);
             } else {
                 return response;
             }

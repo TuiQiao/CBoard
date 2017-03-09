@@ -15,6 +15,7 @@ cBoard.service('chartScatterService', function (dataService) {
                 return key.join('-');
             });
             var series = [];
+            var valueName = [];
 
             for (var i = 0; i < casted_values.length; i++) {
                 var joined_values = casted_values[i].join('-');
@@ -37,6 +38,7 @@ cBoard.service('chartScatterService', function (dataService) {
                 if (valueAxisIndex == 2) {
                     s.colorIdx = i;
                 }
+                valueName[valueAxisIndex] = casted_values[i][casted_values[i].length - 1];
             }
             var data = _.unzip(aggregate_data);
 
@@ -62,6 +64,16 @@ cBoard.service('chartScatterService', function (dataService) {
                     data: _.map(series, function (v) {
                         return v.name;
                     })
+                },
+                tooltip: {
+                    trigger: 'item',
+                    formatter: function (params) {
+                        var s = params.seriesName + " " + params.value[0] + "</br>";
+                        for (var i = 1; i < params.value.length; i++) {
+                            s += valueName[i - 1] + " : " + params.value[i] + "<br>"
+                        }
+                        return s;
+                    }
                 },
                 xAxis: {
                     data: string_keys,

@@ -14,7 +14,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
@@ -57,6 +56,15 @@ public abstract class DataProvider {
         } else {
             checkAndLoad(reload);
             return aggregator.queryAggData(dataSource, query, ac);
+        }
+    }
+
+    public String viewAggDataQuery(AggConfig config) throws Exception {
+        evalValueExpression(config);
+        if (this instanceof AggregateProvider && isAggregateProviderActive()) {
+            return ((AggregateProvider) this).viewAggDataQuery(dataSource, query, config);
+        } else {
+            return "Not Support";
         }
     }
 

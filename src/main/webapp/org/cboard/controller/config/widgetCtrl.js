@@ -565,6 +565,20 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
             $('#preview_widget').html("");
         };
 
+        $scope.previewQuery = function () {
+            cleanPreview();
+            $scope.loadingPre = true;
+            dataService.viewQuery({
+                config: $scope.curWidget.config,
+                datasource: $scope.datasource ? $scope.datasource.id : null,
+                query: $scope.curWidget.query,
+                datasetId: $scope.customDs ? null : $scope.curWidget.datasetId
+            },function (query) {
+                $('#preview_widget').html("<div class='alert alert-info' role='alert' style='text-align: left;'>"+query+"</div>");
+                $scope.loadingPre = false;
+            });
+        };
+
         $scope.preview = function () {
             cleanPreview();
             $scope.loadingPre = true;

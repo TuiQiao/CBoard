@@ -33,7 +33,8 @@ public class DataProviderRoleService {
 
     @Around("execution(* org.cboard.services.DataProviderService.getDimensionValues(..)) ||" +
             "execution(* org.cboard.services.DataProviderService.getColumns(..)) ||" +
-            "execution(* org.cboard.services.DataProviderService.queryAggData(..))")
+            "execution(* org.cboard.services.DataProviderService.queryAggData(..)) ||" +
+            "execution(* org.cboard.services.DataProviderService.viewAggDataQuery(..))")
     public Object query(ProceedingJoinPoint proceedingJoinPoint) throws Throwable {
         Long datasourceId = (Long) proceedingJoinPoint.getArgs()[0];
         Long datasetId = (Long) proceedingJoinPoint.getArgs()[2];

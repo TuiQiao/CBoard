@@ -48,7 +48,7 @@ public class KylinDataProvider extends DataProvider implements AggregateProvider
     @DatasourceParameter(label = "Password", type = DatasourceParameter.Type.Password, order = 3)
     private String PASSWORD = "password";
 
-    @QueryParameter(label = "Project", type = QueryParameter.Type.Input)
+    @QueryParameter(label = "Kylin Project", type = QueryParameter.Type.Input)
     private String PROJECT = "project";
 
     @QueryParameter(label = "Data Model", type = QueryParameter.Type.Input)
@@ -265,6 +265,38 @@ public class KylinDataProvider extends DataProvider implements AggregateProvider
 
     @Override
     public AggregateResult queryAggData(Map<String, String> dataSource, Map<String, String> query, AggConfig config) throws Exception {
+        String exec = getQueryAggDataSql(dataSource, query, config);
+        List<String[]> list = new LinkedList<>();
+        LOG.info(exec);
+        try (
+                Connection connection = getConnection(dataSource, query);
+                Statement stat = connection.createStatement();
+                ResultSet rs = stat.executeQuery(exec)
+        ) {
+            ResultSetMetaData metaData = rs.getMetaData();
+            int columnCount = metaData.getColumnCount();
+            while (rs.next()) {
+                String[] row = new String[columnCount];
+                for (int j = 0; j < columnCount; j++) {
+                    row[j] = rs.getString(j + 1);
+                }
+                list.add(row);
+            }
+        } catch (Exception e) {
+            LOG.error("ERROR:" + e.getMessage());
+            throw new Exception("ERROR:" + e.getMessage(), e);
+        }
+
+        // recreate a dimension stream
+        Stream<DimensionConfig> dimStream = Stream.concat(config.getColumns().stream(), config.getRows().stream());
+        List<ColumnIndex> dimensionList = dimStream.map(ColumnIndex::fromDimensionConfig).collect(Collectors.toList());
+        dimensionList.addAll(config.getValues().stream().map(ColumnIndex::fromValueConfig).collect(Collectors.toList()));
+        IntStream.range(0, dimensionList.size()).forEach(j -> dimensionList.get(j).setIndex(j));
+        String[][] result = list.toArray(new String[][]{});
+        return new AggregateResult(dimensionList, result);
+    }
+
+    private String getQueryAggDataSql(Map<String, String> dataSource, Map<String, String> query, AggConfig config) throws Exception {
         Stream<DimensionConfig> c = config.getColumns().stream();
         Stream<DimensionConfig> r = config.getRows().stream();
         Stream<DimensionConfig> f = config.getFilters().stream();
@@ -288,34 +320,12 @@ public class KylinDataProvider extends DataProvider implements AggregateProvider
 
         String fsql = "\nSELECT %s FROM \n%s\n %s %s";
         String exec = String.format(fsql, selectColsStr, model.geModelSql(), whereStr, groupByStr);
-        List<String[]> list = new LinkedList<>();
-        LOG.info(exec);
-        try (
-                Connection connection = getConnection(dataSource, query);
-                Statement stat = connection.createStatement();
-                ResultSet rs = stat.executeQuery(exec)
-        ) {
-            ResultSetMetaData metaData = rs.getMetaData();
-            int columnCount = metaData.getColumnCount();
-            while (rs.next()) {
-                String[] row = new String[columnCount];
-                for (int j = 0; j < columnCount; j++) {
-                    row[j] = rs.getString(j + 1);
-                }
-                list.add(row);
-            }
-        } catch (Exception e) {
-            LOG.error("ERROR:" + e.getMessage());
-            throw new Exception("ERROR:" + e.getMessage(), e);
-        }
+        return exec;
+    }
 
-        // recreate a dimension stream
-        dimStream = Stream.concat(config.getColumns().stream(), config.getRows().stream());
-        List<ColumnIndex> dimensionList = dimStream.map(ColumnIndex::fromDimensionConfig).collect(Collectors.toList());
-        dimensionList.addAll(config.getValues().stream().map(ColumnIndex::fromValueConfig).collect(Collectors.toList()));
-        IntStream.range(0, dimensionList.size()).forEach(j -> dimensionList.get(j).setIndex(j));
-        String[][] result = list.toArray(new String[][]{});
-        return new AggregateResult(dimensionList, result);
+    @Override
+    public String viewAggDataQuery(Map<String, String> dataSource, Map<String, String> query, AggConfig config) throws Exception {
+        return getQueryAggDataSql(dataSource, query, config);
     }
 
     private BiFunction<ValueConfig, KylinModel, String> toSelect = (config, model) -> {

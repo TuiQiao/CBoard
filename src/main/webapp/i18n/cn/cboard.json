@@ -22,7 +22,7 @@
     "LAST1M": "最近一月",
     "LAST1W": "最近一周",
     "LAST10D": "最近10天",
-    "FILTER_GROUP": "过滤器"
+    "FILTER_GROUP": "可选过滤"
   },
   "TIPS": {
     "CAL_EXPR": "用于聚合后再计算. 使用上面的点击辅助输入避免输入错误! 如: Math.log(sum(columnA)/count(columB))"
@@ -57,7 +57,7 @@
   },
   "CONFIG": {
     "COMMON": {
-      "CUSTOM_EXPRESSION": "自定义表达式"
+      "CUSTOM_EXPRESSION": "可选表达式"
     },
     "DATA_SOURCE": {
       "DATA_SOURCE_HEADER": "数据源",
@@ -131,7 +131,8 @@
       "TIPS_DIM_NUM_1_MORE": "1个或多个",
       "FROM_CACHE": "从缓存加载",
       "SIZE": "大小",
-      "COLOR": "透明度"
+      "COLOR": "透明度",
+      "PREVIEW_QUERY": "预览查询"
     },
     "DASHBOARD": {
       "DASHBOARD": "看板",

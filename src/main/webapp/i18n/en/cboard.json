@@ -131,7 +131,8 @@
       "TIPS_DIM_NUM_1_MORE": "1 or more",
       "FROM_CACHE": "From Cache",
       "SIZE": "Size",
-      "COLOR": "Opacity"
+      "COLOR": "Opacity",
+      "PREVIEW_QUERY": "View Query"
     },
     "DASHBOARD": {
       "CATEGORY": "Category",

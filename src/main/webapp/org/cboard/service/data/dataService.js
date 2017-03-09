@@ -7,11 +7,11 @@ cBoard.service('dataService', function ($http, updateService) {
     var getDimensionConfig = function (array) {
         var result = [];
         if (array) {
-            _.each(array,function (e) {
-                if(_.isUndefined(e.group)){
+            _.each(array, function (e) {
+                if (_.isUndefined(e.group)) {
                     result.push({columnName: e.col, filterType: e.type, values: e.values});
-                }else{
-                    _.each(e.filters,function (f) {
+                } else {
+                    _.each(e.filters, function (f) {
                         result.push({columnName: f.col, filterType: f.type, values: f.values});
                     });
                 }
@@ -56,6 +56,27 @@ cBoard.service('dataService', function ($http, updateService) {
             reload: reload
         }).success(function (response) {
             callback(response);
+        });
+    };
+
+    this.viewQuery = function (params, callback) {
+        updateService.updateConfig(params.config);
+        var dataSeries = getDataSeries(params.config);
+        var cfg = {rows: [], columns: [], filters: []};
+        cfg.rows = getDimensionConfig(params.config.keys);
+        cfg.columns = getDimensionConfig(params.config.groups);
+        cfg.filters = getDimensionConfig(params.config.filters);
+        cfg.filters = cfg.filters.concat(getDimensionConfig(params.config.boardFilters));
+        cfg.values = _.map(dataSeries, function (s) {
+            return {column: s.name, aggType: s.aggregate};
+        });
+        $http.post("dashboard/viewAggDataQuery.do", {
+            datasourceId: params.datasource,
+            query: angular.toJson(params.query),
+            datasetId: params.datasetId,
+            cfg: angular.toJson(cfg),
+        }).success(function (response) {
+            callback(response[0]);
         });
     };
 
@@ -393,7 +414,7 @@ cBoard.service('dataService', function ($http, updateService) {
                         if (!filter(series, aliasData[s][i])) {
                             f = false;
                         }
-                        if(f){
+                        if (f) {
                             aliasData[s][i] = dataFormat(aliasData[s][i]);
                         }
                         s++;

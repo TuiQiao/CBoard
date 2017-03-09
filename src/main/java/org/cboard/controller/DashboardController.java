@@ -320,6 +320,17 @@ public class DashboardController {
         return dataProviderService.queryAggData(datasourceId, strParams, datasetId, config, reload);
     }
 
+    @RequestMapping(value = "/viewAggDataQuery")
+    public String[] viewAggDataQuery(@RequestParam(name = "datasourceId", required = false) Long datasourceId, @RequestParam(name = "query", required = false) String query, @RequestParam(name = "datasetId", required = false) Long datasetId, @RequestParam(name = "cfg") String cfg) {
+        Map<String, String> strParams = null;
+        if (query != null) {
+            JSONObject queryO = JSONObject.parseObject(query);
+            strParams = Maps.transformValues(queryO, Functions.toStringFunction());
+        }
+        AggConfig config = JSONObject.parseObject(cfg, AggConfig.class);
+        return new String[]{dataProviderService.viewAggDataQuery(datasourceId, strParams, datasetId, config)};
+    }
+
     @RequestMapping(value = "/dashboardWidget")
     public ViewDashboardWidget dashboardWidget(@RequestParam(name = "id") Long id) {
         DashboardWidget widget = widgetDao.getWidget(id);

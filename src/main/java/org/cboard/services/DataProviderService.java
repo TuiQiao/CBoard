@@ -84,6 +84,16 @@ public class DataProviderService {
         return null;
     }
 
+    public String viewAggDataQuery(Long datasourceId, Map<String, String> query, Long datasetId, AggConfig config) {
+        try {
+            DataProvider dataProvider = getDataProvider(datasourceId, query, datasetId);
+            return dataProvider.viewAggDataQuery(config);
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new CBoardException(e.getMessage());
+        }
+    }
+
     public ServiceStatus test(JSONObject dataSource, Map<String, String> query) {
         try {
             DataProvider dataProvider = DataProviderManager.getDataProvider(dataSource.getString("type"));

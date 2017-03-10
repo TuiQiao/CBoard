@@ -72,7 +72,8 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
         $scope.value_series_types = [
             {name: translate('CONFIG.WIDGET.LINE'), value: 'line'},
             {name: translate('CONFIG.WIDGET.BAR'), value: 'bar'},
-            {name: translate('CONFIG.WIDGET.STACKED_BAR'), value: 'stackbar'}
+            {name: translate('CONFIG.WIDGET.STACKED_BAR'), value: 'stackbar'},
+            {name: translate('CONFIG.WIDGET.PERCENT_BAR'), value: 'percentbar'}
         ];
 
         $scope.value_aggregate_types = [

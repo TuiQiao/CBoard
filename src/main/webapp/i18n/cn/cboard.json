@@ -132,7 +132,8 @@
       "FROM_CACHE": "从缓存加载",
       "SIZE": "大小",
       "COLOR": "透明度",
-      "PREVIEW_QUERY": "预览查询"
+      "PREVIEW_QUERY": "预览查询",
+      "PERCENT_BAR": "百分比堆叠"
     },
     "DASHBOARD": {
       "DASHBOARD": "看板",

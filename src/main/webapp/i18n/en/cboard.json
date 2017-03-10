@@ -132,7 +132,8 @@
       "FROM_CACHE": "From Cache",
       "SIZE": "Size",
       "COLOR": "Opacity",
-      "PREVIEW_QUERY": "View Query"
+      "PREVIEW_QUERY": "View Query",
+      "PERCENT_BAR": "Stacked Percent"
     },
     "DASHBOARD": {
       "CATEGORY": "Category",

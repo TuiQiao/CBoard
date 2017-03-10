@@ -16,12 +16,27 @@ cBoard.service('chartLineService', function (dataService) {
                 return key.join('-');
             });
 
+            var sum_data = [];
+            for (var j = 0; j < aggregate_data[0].length; j++) {
+                var sum = 0;
+                for (var i = 0; i < aggregate_data.length; i++) {
+                    sum += aggregate_data[i][j] ? Number(aggregate_data[i][j]) : 0;
+                }
+                sum_data[j] = sum;
+            }
+
             for (var i = 0; i < aggregate_data.length; i++) {
                 var joined_values = casted_values[i].join('-');
                 var s = angular.copy(newValuesConfig[joined_values]);
                 s.name = joined_values;
                 s.data = aggregate_data[i];
                 if (s.type == 'stackbar') {
+                    s.type = 'bar';
+                    s.stack = s.valueAxisIndex.toString();
+                } else if (s.type == 'percentbar') {
+                    s.data = _.map(aggregate_data[i], function (e, i) {
+                        return [i, (e / sum_data[i] * 100).toFixed(2), e];
+                    });
                     s.type = 'bar';
                     s.stack = s.valueAxisIndex.toString();
                 }
@@ -54,6 +69,21 @@ cBoard.service('chartLineService', function (dataService) {
                     data: _.map(casted_values, function (v) {
                         return v.join('-');
                     })
+                },
+                tooltip: {
+                    formatter: function (params) {
+                        var name = params[0].name;
+                        var s = name + "</br>";
+                        for (var i = 0; i < params.length; i++) {
+                            s += '<span style="display:inline-block;margin-right:5px;border-radius:10px;width:9px;height:9px;background-color:' + params[i].color + '"></span>';
+                            if (params[i].value instanceof Array) {
+                                s += params[i].seriesName + " : " + params[i].value[1] + "% (" + params[i].value[2] + ")<br>";
+                            } else {
+                                s += params[i].seriesName + " : " + params[i].value + "<br>";
+                            }
+                        }
+                        return s;
+                    }
                 },
                 xAxis: chartConfig.valueAxis == 'horizontal' ? valueAxis : categoryAxis,
                 yAxis: chartConfig.valueAxis == 'horizontal' ? categoryAxis : valueAxis,

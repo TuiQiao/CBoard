@@ -50,7 +50,7 @@ public class PersistService {
             LOG.info("Run phantomjs command: {}", cmd);
             process = Runtime.getRuntime().exec(cmd);
             synchronized (context) {
-                context.wait();
+                context.wait(10 * 60 * 1000);
             }
             process.destroy();
             TASK_MAP.remove(persistId);

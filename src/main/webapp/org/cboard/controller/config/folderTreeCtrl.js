@@ -345,7 +345,6 @@ angular.module( 'treeControl', [])
         return {
             restrict: 'A',
             link: function($scope, $element, $attrs) {
-                let node = $scope.node;
 
                 $element.data('node', $scope.node);
                 $element.data('scope-id', $scope.$id);

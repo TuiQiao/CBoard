@@ -574,7 +574,8 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
                 query: $scope.curWidget.query,
                 datasetId: $scope.customDs ? null : $scope.curWidget.datasetId
             },function (query) {
-                $('#preview_widget').html("<div class='alert alert-info' role='alert' style='text-align: left;'>"+query+"</div>");
+                var querybr = query.trim().replace(/\n/g,'<br/>');
+                $('#preview_widget').html("<div class='alert alert-info' role='alert' style='text-align: left;'>" + querybr + "</div>");
                 $scope.loadingPre = false;
             });
         };

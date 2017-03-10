@@ -213,7 +213,7 @@ public class KylinDataProvider extends DataProvider implements AggregateProvider
      * @return
      */
     private String assembleSqlFilter(Stream<DimensionConfigHelper> filterStream, String prefix, KylinModel model) {
-        StringJoiner where = new StringJoiner(" AND ", prefix + " ", "");
+        StringJoiner where = new StringJoiner("\nAND ", prefix + " ", "");
         where.setEmptyValue("");
         filterStream.map(s -> filter2SqlCondtion.apply(s, model)).filter(e -> e != null).forEach(where::add);
         return where.toString();
@@ -318,7 +318,7 @@ public class KylinDataProvider extends DataProvider implements AggregateProvider
             selectColsStr.add(aggColsStr);
         }
 
-        String fsql = "\nSELECT %s FROM \n%s\n %s %s";
+        String fsql = "\nSELECT %s \nFROM %s\n %s \n %s";
         String exec = String.format(fsql, selectColsStr, model.geModelSql(), whereStr, groupByStr);
         return exec;
     }
@@ -331,15 +331,15 @@ public class KylinDataProvider extends DataProvider implements AggregateProvider
     private BiFunction<ValueConfig, KylinModel, String> toSelect = (config, model) -> {
         switch (config.getAggType()) {
             case "sum":
-                return "SUM(" + model.getColumnAndAlias(config.getColumn()) + ") sum" + config.getColumn();
+                return "SUM(" + model.getColumnAndAlias(config.getColumn()) + ") AS sum_" + config.getColumn();
             case "avg":
-                return "AVG(" + model.getColumnAndAlias(config.getColumn()) + ") avg" + config.getColumn();
+                return "AVG(" + model.getColumnAndAlias(config.getColumn()) + ") AS avg_" + config.getColumn();
             case "max":
-                return "MAX(" + model.getColumnAndAlias(config.getColumn()) + ") max" + config.getColumn();
+                return "MAX(" + model.getColumnAndAlias(config.getColumn()) + ") AS max_" + config.getColumn();
             case "min":
-                return "MIN(" + model.getColumnAndAlias(config.getColumn()) + ") min" + config.getColumn();
+                return "MIN(" + model.getColumnAndAlias(config.getColumn()) + ") AS min_" + config.getColumn();
             default:
-                return "COUNT(" + model.getColumnAndAlias(config.getColumn()) + ") count" + config.getColumn();
+                return "COUNT(" + model.getColumnAndAlias(config.getColumn()) + ") AS count_" + config.getColumn();
         }
     };
 
@@ -471,10 +471,10 @@ public class KylinDataProvider extends DataProvider implements AggregateProvider
                 for (int i = 0; i < pk.length; i++) {
                     on.add(String.format("%s.%s = %s.%s", tableAlias.get(j.getString("table")), pk[i], factAlias, fk[i]));
                 }
-                String type = j.getJSONObject("join").getString("type");
+                String type = j.getJSONObject("join").getString("type").toUpperCase();
                 String pTable = j.getString("table");
                 String onStr = on.stream().collect(Collectors.joining(" "));
-                return String.format("%s join %s %s ON %s", type, pTable, tableAlias.get(pTable), onStr);
+                return String.format("\n %s JOIN %s %s ON %s", type, pTable, tableAlias.get(pTable), onStr);
             }).collect(Collectors.joining(" "));
             return s;
         }

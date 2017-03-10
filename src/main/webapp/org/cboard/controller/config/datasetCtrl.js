@@ -193,6 +193,9 @@ cBoard.controller('datasetCtrl', function ($scope, $http, dataService, $uibModal
                         col.group = $scope.data.group;
                         col.filters = $scope.data.filters;
                     } else {
+                        if ($scope.$parent.curDataset.data.filters == null) {
+                            $scope.$parent.curDataset.data.filters = [];
+                        }
                         $scope.$parent.curDataset.data.filters.push($scope.data);
                     }
                     $uibModalInstance.close();

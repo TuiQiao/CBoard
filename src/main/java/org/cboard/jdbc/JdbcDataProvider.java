@@ -257,7 +257,7 @@ public class JdbcDataProvider extends DataProvider implements AggregateProvider 
      * @return
      */
     private String assembleSqlFilter(Stream<DimensionConfigHelper> filterStream, String prefix) {
-        StringJoiner where = new StringJoiner(" AND ", prefix + " ", "");
+        StringJoiner where = new StringJoiner("\nAND ", prefix + " ", "");
         where.setEmptyValue("");
         filterStream.map(filter2SqlCondtion).filter(e -> e != null).forEach(where::add);
         return where.toString();
@@ -390,7 +390,7 @@ public class JdbcDataProvider extends DataProvider implements AggregateProvider 
         }
 
         String subQuerySql = getAsSubQuery(query.get(SQL));
-        String fsql = "\nSELECT %s FROM (\n%s\n) __view__ %s %s";
+        String fsql = "\nSELECT %s \n FROM (\n%s\n) __view__ \n %s \n %s";
         String exec = String.format(fsql, selectColsStr, subQuerySql, whereStr, groupByStr);
         return exec;
     }
@@ -403,15 +403,15 @@ public class JdbcDataProvider extends DataProvider implements AggregateProvider 
     private Function<ValueConfig, String> toSelect = (config) -> {
         switch (config.getAggType()) {
             case "sum":
-                return "SUM(__view__." + config.getColumn() + ") sum" + config.getColumn();
+                return "SUM(__view__." + config.getColumn() + ") AS sum_" + config.getColumn();
             case "avg":
-                return "AVG(__view__." + config.getColumn() + ") avg" + config.getColumn();
+                return "AVG(__view__." + config.getColumn() + ") AS avg_" + config.getColumn();
             case "max":
-                return "MAX(__view__." + config.getColumn() + ") max" + config.getColumn();
+                return "MAX(__view__." + config.getColumn() + ") AS max_" + config.getColumn();
             case "min":
-                return "MIN(__view__." + config.getColumn() + ") min" + config.getColumn();
+                return "MIN(__view__." + config.getColumn() + ") AS min_" + config.getColumn();
             default:
-                return "COUNT(__view__." + config.getColumn() + ") count" + config.getColumn();
+                return "COUNT(__view__." + config.getColumn() + ") AS count_" + config.getColumn();
         }
     };
 

@@ -228,6 +228,12 @@
             <groupId>org.apache.kylin</groupId>
             <artifactId>kylin-jdbc</artifactId>
             <version>1.5.3</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.apache.httpcomponents</groupId>
+                    <artifactId>httpclient</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <dependency>
             <groupId>org.ehcache</groupId>
@@ -254,6 +260,12 @@
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-email</artifactId>
             <version>1.4</version>
+        </dependency>
+
+        <dependency>
+            <groupId>ru.yandex.clickhouse</groupId>
+            <artifactId>clickhouse-jdbc</artifactId>
+            <version>0.1.17</version>
         </dependency>
     </dependencies>
 

@@ -131,6 +131,7 @@ public class JdbcDataProvider extends DataProvider implements AggregateProvider 
                     ds = datasourceMap.get(key);
                     if (ds == null) {
                         Map<String, String> conf = new HashedMap();
+                        conf.put(DruidDataSourceFactory.PROP_DRIVERCLASSNAME, dataSource.get(DRIVER));
                         conf.put(DruidDataSourceFactory.PROP_URL, dataSource.get(JDBC_URL));
                         conf.put(DruidDataSourceFactory.PROP_USERNAME, dataSource.get(USERNAME));
                         conf.put(DruidDataSourceFactory.PROP_PASSWORD, dataSource.get(PASSWORD));

@@ -8,7 +8,7 @@
     "EDIT": "Edit",
     "CONFIRM_DELETE": "Confirm to Delete!!!",
     "CONFIRM_SAVE_BEFORE_PREVIEW": "Need save board before preview, confirm to save?",
-    "NOT_ALLOWED_TO_DELETE_BECAUSE_BE_DEPENDENT":"Not allowed to delete, because be dependent！",
+    "NOT_ALLOWED_TO_DELETE_BECAUSE_BE_DEPENDENT": "Not allowed to delete, because be dependent！",
     "TIP": "Tip",
     "SUCCESS": "Success!",
     "FAIL": "Fail!",
@@ -18,7 +18,11 @@
     "COPY": "Copy",
     "DELETE": "Delete",
     "EXPORT": "Export",
-    "LOG": "Log"
+    "LOG": "Log",
+    "LAST1M": "Last 1 Month",
+    "LAST1W": "Last 1 Week",
+    "LAST10D": "Last 10 Days",
+    "FILTER_GROUP": "Filter Group"
   },
   "TIPS": {
     "CAL_EXPR": "Calculate after aggregation. Use assist click input to avoid typo! e.g: Math.log(sum(columnA)/count(columB))"
@@ -127,7 +131,9 @@
       "TIPS_DIM_NUM_1_MORE": "1 or more",
       "FROM_CACHE": "From Cache",
       "SIZE": "Size",
-      "COLOR": "Opacity"
+      "COLOR": "Opacity",
+      "PREVIEW_QUERY": "View Query",
+      "PERCENT_BAR": "Stacked Percent"
     },
     "DASHBOARD": {
       "CATEGORY": "Category",

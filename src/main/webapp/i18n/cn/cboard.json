@@ -8,7 +8,7 @@
     "EDIT": "编辑",
     "CONFIRM_DELETE": "真的想好了要删除吗!!!",
     "CONFIRM_SAVE_BEFORE_PREVIEW": "预览之前需要保存，确定保存？",
-    "NOT_ALLOWED_TO_DELETE_BECAUSE_BE_DEPENDENT":"不允许删除，因为被依赖！",
+    "NOT_ALLOWED_TO_DELETE_BECAUSE_BE_DEPENDENT": "不允许删除，因为被依赖！",
     "TIP": "提示",
     "SUCCESS": "成功!",
     "FAIL": "失败!",
@@ -18,7 +18,11 @@
     "COPY": "复制",
     "DELETE": "删除",
     "EXPORT": "导出",
-    "LOG": "日志"
+    "LOG": "日志",
+    "LAST1M": "最近一月",
+    "LAST1W": "最近一周",
+    "LAST10D": "最近10天",
+    "FILTER_GROUP": "可选过滤"
   },
   "TIPS": {
     "CAL_EXPR": "用于聚合后再计算. 使用上面的点击辅助输入避免输入错误! 如: Math.log(sum(columnA)/count(columB))"
@@ -53,7 +57,7 @@
   },
   "CONFIG": {
     "COMMON": {
-      "CUSTOM_EXPRESSION": "自定义表达式"
+      "CUSTOM_EXPRESSION": "可选表达式"
     },
     "DATA_SOURCE": {
       "DATA_SOURCE_HEADER": "数据源",
@@ -127,7 +131,9 @@
       "TIPS_DIM_NUM_1_MORE": "1个或多个",
       "FROM_CACHE": "从缓存加载",
       "SIZE": "大小",
-      "COLOR": "透明度"
+      "COLOR": "透明度",
+      "PREVIEW_QUERY": "预览查询",
+      "PERCENT_BAR": "百分比堆叠"
     },
     "DASHBOARD": {
       "DASHBOARD": "看板",
@@ -225,7 +231,6 @@
       "SQLTEXT": "查询语句"
     },
     "SAIKU": {
-
     },
     "TEXTFILE": {
       "BASE_PATH": "文件所在目录",

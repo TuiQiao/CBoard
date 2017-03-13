@@ -9,7 +9,7 @@ import java.util.concurrent.ConcurrentMap;
  */
 public class HeapCacheManager<T> implements CacheManager<T> {
 
-    private static ConcurrentMap<String, CacheObject> cache = new ConcurrentHashMap<>();
+    private ConcurrentMap<String, CacheObject> cache = new ConcurrentHashMap<>();
 
     @Override
     public void put(String key, T data, long expire) {

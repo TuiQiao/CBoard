@@ -20,10 +20,12 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.servlet.http.HttpServletResponse;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.List;
@@ -318,6 +320,17 @@ public class DashboardController {
         return dataProviderService.queryAggData(datasourceId, strParams, datasetId, config, reload);
     }
 
+    @RequestMapping(value = "/viewAggDataQuery")
+    public String[] viewAggDataQuery(@RequestParam(name = "datasourceId", required = false) Long datasourceId, @RequestParam(name = "query", required = false) String query, @RequestParam(name = "datasetId", required = false) Long datasetId, @RequestParam(name = "cfg") String cfg) {
+        Map<String, String> strParams = null;
+        if (query != null) {
+            JSONObject queryO = JSONObject.parseObject(query);
+            strParams = Maps.transformValues(queryO, Functions.toStringFunction());
+        }
+        AggConfig config = JSONObject.parseObject(cfg, AggConfig.class);
+        return new String[]{dataProviderService.viewAggDataQuery(datasourceId, strParams, datasetId, config)};
+    }
+
     @RequestMapping(value = "/dashboardWidget")
     public ViewDashboardWidget dashboardWidget(@RequestParam(name = "id") Long id) {
         DashboardWidget widget = widgetDao.getWidget(id);
@@ -383,5 +396,11 @@ public class DashboardController {
     @RequestMapping(value = "/getJobStatus")
     public ViewDashboardJob getJobStatus(@RequestParam(name = "id") Long id) {
         return new ViewDashboardJob(jobDao.getJob(id));
+    }
+
+    @ExceptionHandler
+    public ServiceStatus exp(HttpServletResponse response, Exception ex) {
+        response.setStatus(500);
+        return new ServiceStatus(ServiceStatus.Status.Fail, ex.getMessage());
     }
 }

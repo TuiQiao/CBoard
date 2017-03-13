@@ -32,4 +32,8 @@ public interface AggregateProvider {
      * @return
      */
     AggregateResult queryAggData(Map<String, String> dataSource, Map<String, String> query, AggConfig ac) throws Exception;
+
+    default String viewAggDataQuery(Map<String, String> dataSource, Map<String, String> query, AggConfig ac) throws Exception {
+        return "Not Support";
+    }
 }

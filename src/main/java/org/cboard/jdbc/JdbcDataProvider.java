@@ -258,7 +258,7 @@ public class JdbcDataProvider extends DataProvider implements AggregateProvider 
      * @return
      */
     private String assembleSqlFilter(Stream<DimensionConfigHelper> filterStream, String prefix) {
-        StringJoiner where = new StringJoiner(" AND ", prefix + " ", "");
+        StringJoiner where = new StringJoiner("\nAND ", prefix + " ", "");
         where.setEmptyValue("");
         filterStream.map(filter2SqlCondtion).filter(e -> e != null).forEach(where::add);
         return where.toString();
@@ -337,30 +337,7 @@ public class JdbcDataProvider extends DataProvider implements AggregateProvider 
 
     @Override
     public AggregateResult queryAggData(Map<String, String> dataSource, Map<String, String> query, AggConfig config) throws Exception {
-        Stream<DimensionConfig> c = config.getColumns().stream();
-        Stream<DimensionConfig> r = config.getRows().stream();
-        Stream<DimensionConfig> f = config.getFilters().stream();
-        Stream<DimensionConfig> filters = Stream.concat(Stream.concat(c, r), f);
-        Map<String, Integer> types = getColumnType(dataSource, query);
-        Stream<DimensionConfigHelper> predicates = filters.map(fe -> new DimensionConfigHelper(fe, types.get(fe.getColumnName())));
-        Stream<DimensionConfig> dimStream = Stream.concat(config.getColumns().stream(), config.getRows().stream());
-
-        String dimColsStr = assembleDimColumns(dimStream);
-        String aggColsStr = assembleAggValColumns(config.getValues().stream());
-        String whereStr = assembleSqlFilter(predicates, "WHERE");
-        String groupByStr = StringUtils.isBlank(dimColsStr) ? "" : "GROUP BY " + dimColsStr;
-
-        StringJoiner selectColsStr = new StringJoiner(",");
-        if (!StringUtils.isBlank(dimColsStr)) {
-            selectColsStr.add(dimColsStr);
-        }
-        if (!StringUtils.isBlank(aggColsStr)) {
-            selectColsStr.add(aggColsStr);
-        }
-
-        String subQuerySql = getAsSubQuery(query.get(SQL));
-        String fsql = "\nSELECT %s FROM (\n%s\n) __view__ %s %s";
-        String exec = String.format(fsql, selectColsStr, subQuerySql, whereStr, groupByStr);
+        String exec = getQueryAggDataSql(dataSource, query, config);
         List<String[]> list = new LinkedList<>();
         LOG.info(exec);
         try (
@@ -383,7 +360,7 @@ public class JdbcDataProvider extends DataProvider implements AggregateProvider 
         }
 
         // recreate a dimension stream
-        dimStream = Stream.concat(config.getColumns().stream(), config.getRows().stream());
+        Stream<DimensionConfig> dimStream = Stream.concat(config.getColumns().stream(), config.getRows().stream());
         List<ColumnIndex> dimensionList = dimStream.map(ColumnIndex::fromDimensionConfig).collect(Collectors.toList());
         dimensionList.addAll(config.getValues().stream().map(ColumnIndex::fromValueConfig).collect(Collectors.toList()));
         IntStream.range(0, dimensionList.size()).forEach(j -> dimensionList.get(j).setIndex(j));
@@ -391,18 +368,51 @@ public class JdbcDataProvider extends DataProvider implements AggregateProvider 
         return new AggregateResult(dimensionList, result);
     }
 
+    private String getQueryAggDataSql(Map<String, String> dataSource, Map<String, String> query, AggConfig config) throws Exception {
+        Stream<DimensionConfig> c = config.getColumns().stream();
+        Stream<DimensionConfig> r = config.getRows().stream();
+        Stream<DimensionConfig> f = config.getFilters().stream();
+        Stream<DimensionConfig> filters = Stream.concat(Stream.concat(c, r), f);
+        Map<String, Integer> types = getColumnType(dataSource, query);
+        Stream<DimensionConfigHelper> predicates = filters.map(fe -> new DimensionConfigHelper(fe, types.get(fe.getColumnName())));
+        Stream<DimensionConfig> dimStream = Stream.concat(config.getColumns().stream(), config.getRows().stream());
+
+        String dimColsStr = assembleDimColumns(dimStream);
+        String aggColsStr = assembleAggValColumns(config.getValues().stream());
+        String whereStr = assembleSqlFilter(predicates, "WHERE");
+        String groupByStr = StringUtils.isBlank(dimColsStr) ? "" : "GROUP BY " + dimColsStr;
+
+        StringJoiner selectColsStr = new StringJoiner(",");
+        if (!StringUtils.isBlank(dimColsStr)) {
+            selectColsStr.add(dimColsStr);
+        }
+        if (!StringUtils.isBlank(aggColsStr)) {
+            selectColsStr.add(aggColsStr);
+        }
+
+        String subQuerySql = getAsSubQuery(query.get(SQL));
+        String fsql = "\nSELECT %s \n FROM (\n%s\n) __view__ \n %s \n %s";
+        String exec = String.format(fsql, selectColsStr, subQuerySql, whereStr, groupByStr);
+        return exec;
+    }
+
+    @Override
+    public String viewAggDataQuery(Map<String, String> dataSource, Map<String, String> query, AggConfig config) throws Exception {
+        return getQueryAggDataSql(dataSource, query, config);
+    }
+
     private Function<ValueConfig, String> toSelect = (config) -> {
         switch (config.getAggType()) {
             case "sum":
-                return "SUM(__view__." + config.getColumn() + ") sum" + config.getColumn();
+                return "SUM(__view__." + config.getColumn() + ") AS sum_" + config.getColumn();
             case "avg":
-                return "AVG(__view__." + config.getColumn() + ") avg" + config.getColumn();
+                return "AVG(__view__." + config.getColumn() + ") AS avg_" + config.getColumn();
             case "max":
-                return "MAX(__view__." + config.getColumn() + ") max" + config.getColumn();
+                return "MAX(__view__." + config.getColumn() + ") AS max_" + config.getColumn();
             case "min":
-                return "MIN(__view__." + config.getColumn() + ") min" + config.getColumn();
+                return "MIN(__view__." + config.getColumn() + ") AS min_" + config.getColumn();
             default:
-                return "COUNT(__view__." + config.getColumn() + ") count" + config.getColumn();
+                return "COUNT(__view__." + config.getColumn() + ") AS count_" + config.getColumn();
         }
     };
 
@@ -425,6 +435,9 @@ public class JdbcDataProvider extends DataProvider implements AggregateProvider 
                 case Types.NCLOB:
                 case Types.LONGVARCHAR:
                 case Types.LONGNVARCHAR:
+                case Types.DATE:
+                case Types.TIMESTAMP:
+                case Types.TIMESTAMP_WITH_TIMEZONE:
                     return "'" + getValues().get(index) + "'";
                 default:
                     return getValues().get(index);

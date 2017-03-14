@@ -108,7 +108,7 @@ public class XlsProcessService {
 
                 JSONObject widget = rw.getJSONObject(i);
                 JSONObject v = persistContext.getData().getJSONObject(widget.getLong("widgetId").toString());
-                if (v == null) {
+                if (v == null || v.keySet().size() == 0) {
                     continue;
                 }
                 int width = widget.getInteger("width").intValue();

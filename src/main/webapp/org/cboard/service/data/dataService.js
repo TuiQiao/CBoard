@@ -56,6 +56,8 @@ cBoard.service('dataService', function ($http, updateService) {
             reload: reload
         }).success(function (response) {
             callback(response);
+        }).error(function (data) {
+            callback(null);
         });
     };
 

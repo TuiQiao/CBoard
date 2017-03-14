@@ -9,13 +9,19 @@ cBoard.service('chartService', function ($q, dataService, chartPieService, chart
             var deferred = $q.defer();
             var promise = deferred.promise;
             var chart = getChartServices(widget.config);
-            dataService.getData(widget.datasource, widget.query, widget.datasetId, widget.config, function (data) {
-                var option = chart.parseOption(data, widget.config);
-                if (optionFilter) {
-                    optionFilter(option);
-                }
-                deferred.resolve(chart.render(containerDom, option, scope, persist));
-            }, reload);
+
+                dataService.getData(widget.datasource, widget.query, widget.datasetId, widget.config, function (data) {
+                    try {
+                        var option = chart.parseOption(data, widget.config);
+                        if (optionFilter) {
+                            optionFilter(option);
+                        }
+                        deferred.resolve(chart.render(containerDom, option, scope, persist));
+                    } catch (e) {
+                        deferred.reject(chart.render(containerDom, option, scope, persist));
+                    }
+                }, reload);
+
             return promise;
         };
 

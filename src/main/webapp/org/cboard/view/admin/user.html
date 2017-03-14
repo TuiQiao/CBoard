@@ -12,28 +12,35 @@
             <div class="row" style="margin-bottom: 10px">
                 <div class="col-md-12">
                     <div class="input-group">
-                        <span class="input-group-addon">{{'CONFIG.WIDGET.FIND'|translate}}</span>
-                        <input type="text" class="form-control" ng-model="userKeyword">
+                        <span class="input-group-addon" style="cursor:pointer" ng-click="filterByRole=!filterByRole">{{filterByRole?'ADMIN.BY_ROLE':'ADMIN.BY_NAME'|translate}}</span>
+                        <input ng-show="!filterByRole" type="text" class="form-control" ng-model="userKeyword">
+                        <ui-select ng-show="filterByRole" ng-model="selectedRoleFilter" on-select="onRoleFilter($item)">
+                            <ui-select-match>
+                                {{$select.selected.roleName}}
+                            </ui-select-match>
+                            <ui-select-choices repeat="r in roleList | filter:{roleName : $select.search}">
+                                {{r.roleName}}
+                            </ui-select-choices>
+                        </ui-select>
                     </div>
                 </div>
             </div>
             <div class="row">
                 <div class="col-md-12" >
                     <select multiple class="form-control" ng-model="selectUser" ng-change="changeRoleSelect()"
-                            ng-options="u.loginName+'('+u.userName+')' for u in userList | filter:{loginName:userKeyword}" 
+                            ng-options="u.loginName+'('+u.userName+')' for u in userList | filter:{loginName:userKeyword} | filter:userByRole"
                             style="height: 500px; overflow: auto;">
                     </select>
                 </div>
             </div>
-            <div class="row">
+            <div class="row" style="padding-top: 5px">
                 <div class="col-md-12">
-                    <div class="form-group">
-                        <div class="col-sm-offset-2 col-sm-10" style="padding-right: 0px; padding-top: 5px">
-                            <button type="submit" ng-click="grantRole()" class="btn btn-success pull-right">
-                                Grant
-                            </button>
-                        </div>
-                    </div>
+                    <button type="submit" ng-click="revokeRole()" class="btn btn-danger">
+                        Revoke
+                    </button>
+                    <button type="submit" ng-click="grantRole()" class="btn btn-success pull-right">
+                        Grant
+                    </button>
                 </div>
             </div>
         </div>

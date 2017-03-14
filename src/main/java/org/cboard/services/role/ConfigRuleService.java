@@ -161,7 +161,8 @@ public class ConfigRuleService {
         return null;
     }
 
-    @Around("execution(* org.cboard.services.AdminSerivce.updateUserRole(..))")
+    @Around("execution(* org.cboard.services.AdminSerivce.updateUserRole(..)) ||"+
+            "execution(* org.cboard.services.AdminSerivce.deleteUserRoles(..))")
     public Object updateUserRole(ProceedingJoinPoint proceedingJoinPoint) throws Throwable {
         String userid = authenticationService.getCurrentUser().getUserId();
         if (userid.equals(adminUserId)) {

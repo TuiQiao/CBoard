@@ -97,6 +97,15 @@ public class AdminController {
         );
     }
 
+    @RequestMapping(value = "/deleteUserRole")
+    public String deleteUserRole(@RequestParam(name = "userIdArr") String userIdArr, @RequestParam(name = "roleIdArr") String roleIdArr) {
+        return adminSerivce.deleteUserRoles(
+                JSONArray.parseArray(userIdArr).toArray(new String[]{}),
+                JSONArray.parseArray(roleIdArr).toArray(new String[]{}),
+                authenticationService.getCurrentUser().getUserId()
+        );
+    }
+
     @RequestMapping(value = "/getUserRoleList")
     public List<DashboardUserRole> getUserRoleList() {
         List<DashboardUserRole> list = userDao.getUserRoleList();

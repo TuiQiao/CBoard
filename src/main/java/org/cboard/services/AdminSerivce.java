@@ -108,6 +108,17 @@ public class AdminSerivce {
         return "1";
     }
 
+    public String deleteUserRoles(String[] userId, String[] roleId, final String curUid) {
+
+        Map<String, Object> params = new HashedMap();
+        params.put("userIds", userId);
+        params.put("roleIds", roleId);
+        params.put("curUid", curUid);
+        params.put("adminUid", adminUid);
+        userDao.deleteUserRoles(params);
+        return "1";
+    }
+
     public String updateRoleRes(String[] roleId, String resIdArr) {
 
         JSONArray arr = JSONArray.parseArray(resIdArr);

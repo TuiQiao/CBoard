@@ -6,6 +6,8 @@ cBoard.controller('userAdminCtrl', function ($scope, $http, ModalUtils, $filter)
     var translate = $filter('translate');
     $scope.optFlag;
     $scope.curUser;
+    $scope.filterByRole = false;
+    $scope.userKeyword = '';
 
     $http.get("admin/isAdmin.do").success(function (response) {
         $scope.isAdmin = response;
@@ -190,6 +192,23 @@ cBoard.controller('userAdminCtrl', function ($scope, $http, ModalUtils, $filter)
     };
     getRoleResList();
 
+    $scope.onRoleFilter = function (item) {
+        $scope.roleFilter = _.map(_.filter($scope.userRoleList, function (e) {
+            return e.roleId == item.roleId;
+        }), function (u) {
+            return u.userId;
+        });
+    };
+
+    $scope.userByRole = function (user) {
+        if (!$scope.filterByRole) {
+            return true;
+        }
+        return !_.isUndefined(_.find($scope.roleFilter, function (e) {
+            return e == user.userId;
+        }))
+    };
+
     $scope.changeRoleSelect = function () {
         if ($scope.selectUser && $scope.selectUser.length == 1) {
             var userRole = _.filter($scope.userRoleList, function (e) {
@@ -292,6 +311,28 @@ cBoard.controller('userAdminCtrl', function ($scope, $http, ModalUtils, $filter)
             return e.roleId;
         });
         $http.post("admin/updateUserRole.do", {
+            userIdArr: angular.toJson(userIds),
+            roleIdArr: angular.toJson(roleIds)
+        }).success(function (serviceStatus) {
+            if (serviceStatus == '1') {
+                $scope.selectUser = null;
+                $scope.selectRole = null;
+                getUserRoleList();
+                ModalUtils.alert(translate("COMMON.SUCCESS"), "modal-success", "sm");
+            } else {
+                $scope.alerts = [{msg: serviceStatus.msg, type: 'danger'}];
+            }
+        });
+    };
+
+    $scope.revokeRole = function () {
+        var userIds = _.map($scope.selectUser, function (e) {
+            return e.userId;
+        });
+        var roleIds = _.map($scope.selectRole, function (e) {
+            return e.roleId;
+        });
+        $http.post("admin/deleteUserRole.do", {
             userIdArr: angular.toJson(userIds),
             roleIdArr: angular.toJson(roleIds)
         }).success(function (serviceStatus) {

@@ -17,15 +17,27 @@
     </select>
 
     <select id="getWidgetList" resultType="org.cboard.pojo.DashboardWidget">
-       SELECT
+      SELECT
               widget_id     AS id,
               user_id       AS userId,
               widget_name   AS name,
               data_json     AS data,
-              category_name AS categoryName
-         FROM dashboard_widget
-        WHERE (#{0} = '${admin_user_id}' OR user_id = #{0} OR widget_id IN (SELECT res_id FROM dashboard_user_role ur LEFT JOIN dashboard_role_res rr ON ur.role_id = rr.role_id WHERE ur.user_id = #{0} AND rr.res_type = 'widget'))
-        ORDER BY widget_name
+              category_name AS categoryName,
+              permission as permission from (
+      select w.*,'11' permission from dashboard_widget w where #{0} = '${admin_user_id}' OR user_id = #{0}
+        union ALL
+        SELECT a.*  FROM (
+	   select w1.*,r.permission
+	     from dashboard_widget w1 join (
+	        SELECT res_id,permission
+	          FROM dashboard_user_role ur
+	          LEFT JOIN dashboard_role_res rr ON ur.role_id = rr.role_id
+	         WHERE ur.user_id = #{0} AND rr.res_type = 'widget'
+	     ) r on w1.widget_id = r.res_id
+        ) a LEFT JOIN (
+		select widget_id from dashboard_widget w where #{0} = '${admin_user_id}' OR user_id = #{0}
+        ) b ON a.widget_id = b.widget_id
+         WHERE b.widget_id is NULL) t ORDER BY widget_name
     </select>
 
     <select id="getWidget" resultType="org.cboard.pojo.DashboardWidget">

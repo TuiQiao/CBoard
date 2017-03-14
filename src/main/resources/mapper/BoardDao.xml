@@ -7,21 +7,28 @@
     </select>
 
     <select id="getBoardList" resultType="org.cboard.pojo.DashboardBoard">
-        SELECT
-               board_id        AS id,
-               a.user_id       AS userId,
-               board_name      AS NAME,
-               layout_json     AS layout,
-               a.category_id   AS categoryId,
-               b.category_name AS categoryName
-          FROM dashboard_board a
-          LEFT JOIN dashboard_category b ON a.category_id = b.category_id
-         WHERE #{0} = '${admin_user_id}' OR a.user_id = #{0} OR a.board_id IN (
-             SELECT res_id
-               FROM dashboard_user_role ur
-               LEFT JOIN dashboard_role_res rr ON ur.role_id = rr.role_id
-              WHERE ur.user_id = #{0} AND rr.res_type = 'board'
-          ) ORDER BY a.board_name
+      SELECT
+               t.board_id        AS id,
+               t.user_id       AS userId,
+               t.board_name      AS NAME,
+               t.layout_json     AS layout,
+               t.category_id   AS categoryId,
+               b.category_name AS categoryName,
+               t.permission as permission from (
+      select w.*,'11' permission from dashboard_board w where #{0} = '${admin_user_id}' OR user_id = #{0}
+        union ALL
+        SELECT a.*  FROM (
+	   select w1.*,r.permission
+	     from dashboard_board w1 join (
+	        SELECT res_id,permission
+	          FROM dashboard_user_role ur
+	          LEFT JOIN dashboard_role_res rr ON ur.role_id = rr.role_id
+	         WHERE ur.user_id = #{0} AND rr.res_type = 'board'
+	     ) r on w1.board_id = r.res_id
+        ) a LEFT JOIN (
+		select board_id from dashboard_board w where #{0} = '${admin_user_id}' OR user_id = #{0}
+        ) b ON a.board_id = b.board_id
+         WHERE b.board_id is NULL) t LEFT JOIN dashboard_category b ON t.category_id = b.category_id ORDER BY board_name
     </select>
 
     <insert id="save" useGeneratedKeys="true" keyProperty="id" keyColumn="board_id" parameterType="org.cboard.pojo.DashboardBoard">

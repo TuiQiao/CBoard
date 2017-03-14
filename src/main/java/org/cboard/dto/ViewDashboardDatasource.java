@@ -17,6 +17,8 @@ public class ViewDashboardDatasource {
     private String name;
     private String type;
     private Map<String, Object> config;
+    private boolean edit;
+    private boolean delete;
 
     public static final Function TO = new Function<DashboardDatasource, ViewDashboardDatasource>() {
         @Nullable
@@ -32,6 +34,24 @@ public class ViewDashboardDatasource {
         this.name = datasource.getName();
         this.type = datasource.getType();
         this.config = JSONObject.parseObject(datasource.getConfig());
+        this.edit = ViewPermission.isEdit(datasource.getPermission());
+        this.delete = ViewPermission.isDelete(datasource.getPermission());
+    }
+
+    public boolean isEdit() {
+        return edit;
+    }
+
+    public void setEdit(boolean edit) {
+        this.edit = edit;
+    }
+
+    public boolean isDelete() {
+        return delete;
+    }
+
+    public void setDelete(boolean delete) {
+        this.delete = delete;
     }
 
     public Long getId() {

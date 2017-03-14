@@ -132,6 +132,9 @@ public class AdminSerivce {
                     roleRes.setRoleId(rid);
                     roleRes.setResId(jo.getLong("resId"));
                     roleRes.setResType(jo.getString("resType"));
+                    boolean edit = jo.getBooleanValue("edit");
+                    boolean delete = jo.getBooleanValue("delete");
+                    roleRes.setPermission("" + (edit ? 1 : 0) + (delete ? 1 : 0));
                     list.add(roleRes);
                 }
                 roleDao.saveRoleRes(list);

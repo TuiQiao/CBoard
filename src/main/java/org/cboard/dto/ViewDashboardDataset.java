@@ -16,6 +16,8 @@ public class ViewDashboardDataset {
     private String name;
     private String categoryName;
     private Map<String, Object> data;
+    private boolean edit;
+    private boolean delete;
 
 
     public static final Function TO = new Function<DashboardDataset, ViewDashboardDataset>() {
@@ -32,6 +34,24 @@ public class ViewDashboardDataset {
         this.name = dataset.getName();
         this.categoryName = dataset.getCategoryName();
         this.data = JSONObject.parseObject(dataset.getData());
+        this.edit = ViewPermission.isEdit(dataset.getPermission());
+        this.delete = ViewPermission.isDelete(dataset.getPermission());
+    }
+
+    public boolean isEdit() {
+        return edit;
+    }
+
+    public void setEdit(boolean edit) {
+        this.edit = edit;
+    }
+
+    public boolean isDelete() {
+        return delete;
+    }
+
+    public void setDelete(boolean delete) {
+        this.delete = delete;
     }
 
     public Long getId() {

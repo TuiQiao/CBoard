@@ -78,14 +78,15 @@ angular.module('cBoard').config(['$stateProvider', function ($stateProvider) {
 
 }]);
 
-angular.module('cBoard').factory('sessionHelper', ["$rootScope", function ($rootScope) {
+angular.module('cBoard').factory('sessionHelper', ["$rootScope","$q", function ($rootScope,$q) {
     var sessionHelper = {
         responseError: function (response) {
             if (response.data.status == 2) {
-                $rootScope.alert(response.data.msg);
-            } else {
-                return response;
+                if ($rootScope.alert) {
+                    $rootScope.alert(response.data.msg);
+                }
             }
+            return $q.reject(response);
         }
     };
     return sessionHelper;

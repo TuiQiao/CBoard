@@ -7,6 +7,7 @@ import org.cboard.dao.DatasourceDao;
 import org.cboard.dao.WidgetDao;
 import org.cboard.pojo.DashboardDataset;
 import org.cboard.pojo.DashboardWidget;
+import org.cboard.services.role.RolePermission;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
@@ -88,7 +89,7 @@ public class WidgetService {
         JSONObject object = (JSONObject) JSONObject.parse(widget.getData());
         Long datasetId = object.getLong("datasetId");
         if (datasetId != null) {
-            if (datasetDao.checkDatasetRole(userId, datasetId, "%") == 1) {
+            if (datasetDao.checkDatasetRole(userId, datasetId, RolePermission.PATTERN_READ) == 1) {
                 return new ServiceStatus(ServiceStatus.Status.Success, "success");
             } else {
                 DashboardDataset ds = datasetDao.getDataset(datasetId);
@@ -96,7 +97,7 @@ public class WidgetService {
             }
         } else {
             Long datasourceId = object.getLong("datasource");
-            if (datasourceDao.checkDatasourceRole(userId, datasourceId, "%") == 1) {
+            if (datasourceDao.checkDatasourceRole(userId, datasourceId, RolePermission.PATTERN_READ) == 1) {
                 return new ServiceStatus(ServiceStatus.Status.Success, "success");
             } else {
                 return new ServiceStatus(ServiceStatus.Status.Fail, datasourceDao.getDatasource(datasourceId).getName());

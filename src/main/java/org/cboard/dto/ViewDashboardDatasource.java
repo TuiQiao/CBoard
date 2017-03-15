@@ -3,6 +3,7 @@ package org.cboard.dto;
 import com.alibaba.fastjson.JSONObject;
 import org.cboard.pojo.DashboardDatasource;
 import com.google.common.base.Function;
+import org.cboard.services.role.RolePermission;
 
 import javax.annotation.Nullable;
 import java.util.Map;
@@ -34,8 +35,8 @@ public class ViewDashboardDatasource {
         this.name = datasource.getName();
         this.type = datasource.getType();
         this.config = JSONObject.parseObject(datasource.getConfig());
-        this.edit = ViewPermission.isEdit(datasource.getPermission());
-        this.delete = ViewPermission.isDelete(datasource.getPermission());
+        this.edit = RolePermission.isEdit(datasource.getPermission());
+        this.delete = RolePermission.isDelete(datasource.getPermission());
     }
 
     public boolean isEdit() {

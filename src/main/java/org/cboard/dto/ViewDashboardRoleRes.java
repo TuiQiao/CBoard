@@ -1,6 +1,7 @@
 package org.cboard.dto;
 
 import org.cboard.pojo.DashboardRoleRes;
+import org.cboard.services.role.RolePermission;
 
 /**
  * Created by yfyuan on 2017/3/14.
@@ -20,8 +21,8 @@ public class ViewDashboardRoleRes {
         this.roleId = dashboardRoleRes.getRoleId();
         this.resId = dashboardRoleRes.getResId();
         this.resType = dashboardRoleRes.getResType();
-        this.edit = ViewPermission.isEdit(dashboardRoleRes.getPermission());
-        this.delete = ViewPermission.isDelete(dashboardRoleRes.getPermission());
+        this.edit = RolePermission.isEdit(dashboardRoleRes.getPermission());
+        this.delete = RolePermission.isDelete(dashboardRoleRes.getPermission());
     }
 
     public boolean isEdit() {

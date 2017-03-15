@@ -1,11 +1,15 @@
-package org.cboard.dto;
+package org.cboard.services.role;
 
 import org.apache.commons.lang.StringUtils;
 
 /**
  * Created by yfyuan on 2017/3/14.
  */
-public class ViewPermission {
+public class RolePermission {
+
+    public static final String PATTERN_EDIT = "1_";
+    public static final String PATTERN_DELETE = "_1";
+    public static final String PATTERN_READ = "%";
 
     public static boolean isEdit(String permission) {
         return get(permission, 0);

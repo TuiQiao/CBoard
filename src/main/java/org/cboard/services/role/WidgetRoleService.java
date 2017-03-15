@@ -29,7 +29,7 @@ public class WidgetRoleService {
         String json = (String) proceedingJoinPoint.getArgs()[1];
         JSONObject jsonObject = JSONObject.parseObject(json);
         String userid = authenticationService.getCurrentUser().getUserId();
-        if (widgetDao.checkWidgetRole(userid, jsonObject.getLong("id"), "1_") > 0) {
+        if (widgetDao.checkWidgetRole(userid, jsonObject.getLong("id"), RolePermission.PATTERN_EDIT) > 0) {
             Object value = proceedingJoinPoint.proceed();
             return value;
         } else {
@@ -41,7 +41,7 @@ public class WidgetRoleService {
     public Object delete(ProceedingJoinPoint proceedingJoinPoint) throws Throwable {
         Long id = (Long) proceedingJoinPoint.getArgs()[1];
         String userid = authenticationService.getCurrentUser().getUserId();
-        if (widgetDao.checkWidgetRole(userid, id, "_1") > 0) {
+        if (widgetDao.checkWidgetRole(userid, id, RolePermission.PATTERN_DELETE) > 0) {
             Object value = proceedingJoinPoint.proceed();
             return value;
         } else {

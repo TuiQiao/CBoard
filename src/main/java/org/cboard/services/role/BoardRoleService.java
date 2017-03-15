@@ -45,7 +45,7 @@ public class BoardRoleService {
     public Object getBoardData(ProceedingJoinPoint proceedingJoinPoint) throws Throwable {
         Long id = (Long) proceedingJoinPoint.getArgs()[0];
         String userid = authenticationService.getCurrentUser().getUserId();
-        if (boardDao.checkBoardRole(userid, id, "%") > 0) {
+        if (boardDao.checkBoardRole(userid, id, RolePermission.PATTERN_READ) > 0) {
             ViewDashboardBoard value = (ViewDashboardBoard) proceedingJoinPoint.proceed();
             JSONArray rows = (JSONArray) value.getLayout().get("rows");
             for (Object row : rows) {
@@ -59,16 +59,16 @@ public class BoardRoleService {
                     Long datasetId = vw.getJSONObject("data").getLong("datasetId");
                     Long datasourceId = vw.getJSONObject("data").getLong("datasource");
                     List<Res> roleInfo = new ArrayList<>();
-                    if (widgetDao.checkWidgetRole(userid, widgetId, "%") <= 0) {
+                    if (widgetDao.checkWidgetRole(userid, widgetId, RolePermission.PATTERN_READ) <= 0) {
                         ((JSONObject) widget).put("hasRole", false);
                         roleInfo.add(new Res("ADMIN.WIDGET", vw.getString("categoryName") + "/" + vw.getString("name")));
                     }
-                    if (datasetId != null && datasetDao.checkDatasetRole(userid, datasetId, "%") <= 0) {
+                    if (datasetId != null && datasetDao.checkDatasetRole(userid, datasetId, RolePermission.PATTERN_READ) <= 0) {
                         ((JSONObject) widget).put("hasRole", false);
                         DashboardDataset ds = datasetDao.getDataset(datasetId);
                         roleInfo.add(new Res("ADMIN.DATASET", ds.getCategoryName() + "/" + ds.getName()));
                     }
-                    if (datasourceId != null && datasourceDao.checkDatasourceRole(userid, datasourceId, "%") <= 0) {
+                    if (datasourceId != null && datasourceDao.checkDatasourceRole(userid, datasourceId, RolePermission.PATTERN_READ) <= 0) {
                         ((JSONObject) widget).put("hasRole", false);
                         roleInfo.add(new Res("ADMIN.DATASOURCE", datasourceDao.getDatasource(datasourceId).getName()));
                     }
@@ -86,7 +86,7 @@ public class BoardRoleService {
         String json = (String) proceedingJoinPoint.getArgs()[1];
         JSONObject jsonObject = JSONObject.parseObject(json);
         String userid = authenticationService.getCurrentUser().getUserId();
-        if (boardDao.checkBoardRole(userid, jsonObject.getLong("id"), "1_") > 0) {
+        if (boardDao.checkBoardRole(userid, jsonObject.getLong("id"), RolePermission.PATTERN_EDIT) > 0) {
             Object value = proceedingJoinPoint.proceed();
             return value;
         } else {
@@ -98,7 +98,7 @@ public class BoardRoleService {
     public Object delete(ProceedingJoinPoint proceedingJoinPoint) throws Throwable {
         Long id = (Long) proceedingJoinPoint.getArgs()[1];
         String userid = authenticationService.getCurrentUser().getUserId();
-        if (boardDao.checkBoardRole(userid, id, "_1") > 0) {
+        if (boardDao.checkBoardRole(userid, id, RolePermission.PATTERN_DELETE) > 0) {
             Object value = proceedingJoinPoint.proceed();
             return value;
         } else {

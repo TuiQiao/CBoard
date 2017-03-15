@@ -162,10 +162,14 @@ cBoard.controller('boardCtrl', function ($rootScope, $scope, $http, ModalUtils, 
 
     $scope.deleteBoard = function (board) {
         ModalUtils.confirm(translate("COMMON.CONFIRM_DELETE"), "modal-warning", "lg", function () {
-            $http.post("dashboard/deleteBoard.do", {id: board.id}).success(function () {
-                getBoardList();
+            $http.post("dashboard/deleteBoard.do", {id: board.id}).success(function (serviceStatus) {
+                if (serviceStatus.status == '1') {
+                    getBoardList();
+                    boardChange();
+                } else {
+                    ModalUtils.alert(serviceStatus.msg, "modal-warning", "lg");
+                }
                 $scope.optFlag == 'none';
-                boardChange();
             });
         });
     };

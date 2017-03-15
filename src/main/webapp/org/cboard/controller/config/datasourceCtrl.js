@@ -74,9 +74,13 @@ cBoard.controller('datasourceCtrl', function ($scope, $http, ModalUtils, $uibMod
                 return false;
             }
             ModalUtils.confirm(translate("COMMON.CONFIRM_DELETE"), "modal-warning", "lg", function () {
-                $http.post("dashboard/deleteDatasource.do", {id: ds.id}).success(function () {
+                $http.post("dashboard/deleteDatasource.do", {id: ds.id}).success(function (serviceStatus) {
+                    if (serviceStatus.status == '1') {
+                        getDatasourceList();
+                    } else {
+                        ModalUtils.alert(serviceStatus.msg, "modal-warning", "lg");
+                    }
                     $scope.optFlag = 'none';
-                    getDatasourceList();
                 });
             });
         });

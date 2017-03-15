@@ -6,14 +6,14 @@
     "LOADING": "玩命加载中...",
     "REFRESH": "刷新",
     "EDIT": "编辑",
-    "CONFIRM_DELETE": "真的想好了要删除吗!!!",
+    "CONFIRM_DELETE": "真的想好了要删除吗?",
     "CONFIRM_SAVE_BEFORE_PREVIEW": "预览之前需要保存，确定保存？",
     "NOT_ALLOWED_TO_DELETE_BECAUSE_BE_DEPENDENT": "不允许删除，因为被依赖！",
     "TIP": "提示",
-    "SUCCESS": "成功!",
-    "FAIL": "失败!",
+    "SUCCESS": "成功",
+    "FAIL": "失败",
     "DEFAULT_CATEGORY": "默认分类",
-    "NOT_EMPTY": "不能为空!",
+    "NOT_EMPTY": "不能为空.",
     "NEW": "新建",
     "COPY": "复制",
     "DELETE": "删除",
@@ -25,7 +25,7 @@
     "FILTER_GROUP": "可选过滤"
   },
   "TIPS": {
-    "CAL_EXPR": "用于聚合后再计算. 使用上面的点击辅助输入避免输入错误! 如: Math.log(sum(columnA)/count(columB))"
+    "CAL_EXPR": "用于聚合后再计算. 使用上面的点击辅助输入避免输入错误. 如: Math.log(sum(columnA)/count(columB))"
   },
   "SIDEBAR": {
     "C_DASHBOARD": "看板",
@@ -219,6 +219,7 @@
     "DATASOURCE": "数据源",
     "DATASET": "数据集",
     "WIDGET": "图表",
+    "JOB": "定时任务",
     "CONTACT_ADMIN": "请联系管理员申请以下权限",
     "BY_NAME": "按名称",
     "BY_ROLE": "按角色"

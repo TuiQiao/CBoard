@@ -88,7 +88,7 @@ public class WidgetService {
         JSONObject object = (JSONObject) JSONObject.parse(widget.getData());
         Long datasetId = object.getLong("datasetId");
         if (datasetId != null) {
-            if (datasetDao.checkDatasetRole(userId, datasetId) == 1) {
+            if (datasetDao.checkDatasetRole(userId, datasetId, "%") == 1) {
                 return new ServiceStatus(ServiceStatus.Status.Success, "success");
             } else {
                 DashboardDataset ds = datasetDao.getDataset(datasetId);
@@ -96,7 +96,7 @@ public class WidgetService {
             }
         } else {
             Long datasourceId = object.getLong("datasource");
-            if (datasourceDao.checkDatasourceRole(userId, datasourceId) == 1) {
+            if (datasourceDao.checkDatasourceRole(userId, datasourceId, "%") == 1) {
                 return new ServiceStatus(ServiceStatus.Status.Success, "success");
             } else {
                 return new ServiceStatus(ServiceStatus.Status.Fail, datasourceDao.getDatasource(datasourceId).getName());

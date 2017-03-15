@@ -59,6 +59,12 @@ cBoard.controller('userAdminCtrl', function ($scope, $http, ModalUtils, $filter)
         parent: '#',
         icon: 'fa fa-fw fa-folder-o',
         state: {disabled: true}
+    }, {
+        id: 'Job',
+        text: translate('ADMIN.JOB'),
+        parent: '#',
+        icon: 'fa fa-fw fa-folder-o',
+        state: {disabled: true}
     }];
 
     var getBoardList = function () {
@@ -110,6 +116,14 @@ cBoard.controller('userAdminCtrl', function ($scope, $http, ModalUtils, $filter)
         });
     };
 
+    var getJobList = function () {
+        return $http.get("dashboard/getJobList.do").success(function (response) {
+            _.each(buildNodeByCategory(response, 'Job', 'job', 'fa fa-clock-o'), function (e) {
+                $scope.resList.push(e);
+            });
+        });
+    };
+
     var getCUDRlabel = function (e, d) {
         var a = ['R'];
         if (e) {
@@ -151,8 +165,6 @@ cBoard.controller('userAdminCtrl', function ($scope, $http, ModalUtils, $filter)
                             resId: listIn[i].id,
                             type: type,
                             icon: icon,
-                            edit: listIn[i].edit,
-                            delete: listIn[i].delete,
                             name: a
                         });
                     } else {
@@ -181,7 +193,7 @@ cBoard.controller('userAdminCtrl', function ($scope, $http, ModalUtils, $filter)
         return {
             edit: {
                 label: function () {
-                    return $node.original.edit ? '√ Edit' : '× Edit';
+                    return $node.original.edit ? '√ Update' : '× Update';
                 },
                 action: function (obj) {
                     $node.original.edit = !$node.original.edit;
@@ -209,6 +221,8 @@ cBoard.controller('userAdminCtrl', function ($scope, $http, ModalUtils, $filter)
             return getDatasetList();
         }).then(function () {
             return getWidgetList();
+        }).then(function () {
+            return getJobList();
         }).then(function () {
             $scope.treeConfig = {
                 core: {

@@ -25,4 +25,6 @@ public interface JobDao {
 
     DashboardJob getJob(Long jobId);
 
+    long checkJobRole(String userId, Long jobId, String permissionPattern);
+
 }

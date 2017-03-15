@@ -40,11 +40,11 @@ public class DataProviderRoleService {
         Long datasetId = (Long) proceedingJoinPoint.getArgs()[2];
         String userid = authenticationService.getCurrentUser().getUserId();
         if (datasetId != null) {
-            if (datasetDao.checkDatasetRole(userid, datasetId) > 0) {
+            if (datasetDao.checkDatasetRole(userid, datasetId, "%") > 0) {
                 return proceedingJoinPoint.proceed();
             }
         } else {
-            if (datasourceDao.checkDatasourceRole(userid, datasourceId) > 0) {
+            if (datasourceDao.checkDatasourceRole(userid, datasourceId, "%") > 0) {
                 return proceedingJoinPoint.proceed();
             }
         }

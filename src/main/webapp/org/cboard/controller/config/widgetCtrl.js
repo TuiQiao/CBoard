@@ -786,8 +786,12 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
 
         $scope.deleteWgt = function (widget) {
             ModalUtils.confirm(translate("COMMON.CONFIRM_DELETE"), "modal-info", "lg", function () {
-                $http.post("dashboard/deleteWidget.do", {id: widget.id}).success(function () {
-                    getWidgetList();
+                $http.post("dashboard/deleteWidget.do", {id: widget.id}).success(function (serviceStatus) {
+                    if (serviceStatus.status == '1') {
+                        getWidgetList();
+                    } else {
+                        ModalUtils.alert(serviceStatus.msg, "modal-warning", "lg");
+                    }
                     $scope.optFlag == 'none';
                 });
             });

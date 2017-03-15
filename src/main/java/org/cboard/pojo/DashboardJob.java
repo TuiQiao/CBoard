@@ -19,6 +19,15 @@ public class DashboardJob {
     private Date lastExecTime;
     private Long jobStatus;
     private String execLog;
+    private String permission;
+
+    public String getPermission() {
+        return permission;
+    }
+
+    public void setPermission(String permission) {
+        this.permission = permission;
+    }
 
     public String getExecLog() {
         return execLog;

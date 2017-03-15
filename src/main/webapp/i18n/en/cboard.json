@@ -6,14 +6,14 @@
     "LOADING": "Loading...",
     "REFRESH": "Refresh",
     "EDIT": "Edit",
-    "CONFIRM_DELETE": "Confirm to Delete!!!",
+    "CONFIRM_DELETE": "Confirm to Delete",
     "CONFIRM_SAVE_BEFORE_PREVIEW": "Need save board before preview, confirm to save?",
-    "NOT_ALLOWED_TO_DELETE_BECAUSE_BE_DEPENDENT": "Not allowed to delete, because be dependent！",
+    "NOT_ALLOWED_TO_DELETE_BECAUSE_BE_DEPENDENT": "Not allowed to delete, because be dependent",
     "TIP": "Tip",
-    "SUCCESS": "Success!",
-    "FAIL": "Fail!",
+    "SUCCESS": "Success",
+    "FAIL": "Fail",
     "DEFAULT_CATEGORY": "Default Category",
-    "NOT_EMPTY": " can not be empty!",
+    "NOT_EMPTY": " can not be empty.",
     "NEW": "New",
     "COPY": "Copy",
     "DELETE": "Delete",
@@ -25,7 +25,7 @@
     "FILTER_GROUP": "Filter Group"
   },
   "TIPS": {
-    "CAL_EXPR": "Calculate after aggregation. Use assist click input to avoid typo! e.g: Math.log(sum(columnA)/count(columB))"
+    "CAL_EXPR": "Calculate after aggregation. Use assist click input to avoid typo. e.g: Math.log(sum(columnA)/count(columB))"
   },
   "SIDEBAR": {
     "C_DASHBOARD": "Dashboard",
@@ -219,6 +219,7 @@
     "DATASOURCE": "Datasource",
     "DATASET": "Cube",
     "WIDGET": "Widget",
+    "JOB": "Job",
     "CONTACT_ADMIN": "Please contact the administrator to apply the following resources' access",
     "BY_NAME": "By Name",
     "BY_ROLE": "By Role"

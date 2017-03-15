@@ -92,9 +92,13 @@ cBoard.controller('datasetCtrl', function ($scope, $http, dataService, $uibModal
                 return false;
             }
             ModalUtils.confirm(translate("COMMON.CONFIRM_DELETE"), "modal-warning", "lg", function () {
-                $http.post("dashboard/deleteDataset.do", {id: ds.id}).success(function () {
+                $http.post("dashboard/deleteDataset.do", {id: ds.id}).success(function (serviceStatus) {
+                    if (serviceStatus.status == '1') {
+                        getDatasetList();
+                    } else {
+                        ModalUtils.alert(serviceStatus.msg, "modal-warning", "lg");
+                    }
                     $scope.optFlag = 'none';
-                    getDatasetList();
                 });
             });
         });

@@ -65,7 +65,7 @@ public class DatasourceService {
 
     public ServiceStatus checkDatasource(String userId, Long id) {
         DashboardDatasource datasource = datasourceDao.getDatasource(id);
-        if (datasourceDao.checkDatasourceRole(userId, id) == 1) {
+        if (datasourceDao.checkDatasourceRole(userId, id,"%") == 1) {
             return new ServiceStatus(ServiceStatus.Status.Success, "success");
         } else {
             return new ServiceStatus(ServiceStatus.Status.Fail, datasource.getName());

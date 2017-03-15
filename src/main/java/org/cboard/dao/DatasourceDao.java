@@ -26,5 +26,5 @@ public interface DatasourceDao {
 
     int delete(Long id, String userId);
 
-    long checkDatasourceRole(String userId, Long datasourceId);
+    long checkDatasourceRole(String userId, Long datasourceId, String permissionPattern);
 }

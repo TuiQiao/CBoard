@@ -28,5 +28,5 @@ public interface WidgetDao {
 
     DashboardWidget getWidget(Long id);
 
-    long checkWidgetRole(String userId, Long widgetId);
+    long checkWidgetRole(String userId, Long widgetId, String permissionPattern);
 }

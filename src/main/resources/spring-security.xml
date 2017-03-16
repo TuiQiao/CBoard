@@ -2,20 +2,9 @@
 
 <beans xmlns="http://www.springframework.org/schema/beans"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-       xmlns:sec="http://www.springframework.org/schema/security"
        xsi:schemaLocation="http://www.springframework.org/schema/beans
-        http://www.springframework.org/schema/beans/spring-beans-4.2.xsd
-        http://www.springframework.org/schema/security
-        http://www.springframework.org/schema/security/spring-security-4.1.xsd">
+        http://www.springframework.org/schema/beans/spring-beans-4.2.xsd">
 
-    <bean id="local127" class="org.springframework.security.web.util.matcher.ELRequestMatcher">
-        <constructor-arg value="hasHeader('host','127.0.0.1')"/>
-    </bean>
-
-    <sec:http auto-config="true" request-matcher-ref="local127">
-        <sec:intercept-url pattern="/**" access="permitAll"/>
-        <sec:csrf disabled="true"/>
-    </sec:http>
     <import resource="spring-security-jdbc.xml"/>
     <!--<import resource="spring-security-cas.xml"/>-->
 

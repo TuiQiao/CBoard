@@ -5,6 +5,7 @@ import org.apache.commons.collections.map.HashedMap;
 import org.apache.commons.lang.text.StrSubstitutor;
 import org.apache.commons.lang3.StringUtils;
 import org.cboard.jdbc.JdbcDataProvider;
+import org.cboard.security.service.LocalSecurityFilter;
 import org.cboard.services.persist.PersistContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -46,7 +47,9 @@ public class PersistService {
             }
             PersistContext context = new PersistContext(dashboardId);
             TASK_MAP.put(persistId, context);
-            String cmd = String.format("%s %s %s %s %s %s", phantomjsPath, scriptPath, dashboardId, persistId, userId, web);
+            String uuid = UUID.randomUUID().toString().replaceAll("-", "");
+            LocalSecurityFilter.put(uuid, userId);
+            String cmd = String.format("%s %s %s %s %s %s", phantomjsPath, scriptPath, dashboardId, persistId, uuid, web);
             LOG.info("Run phantomjs command: {}", cmd);
             process = Runtime.getRuntime().exec(cmd);
             synchronized (context) {

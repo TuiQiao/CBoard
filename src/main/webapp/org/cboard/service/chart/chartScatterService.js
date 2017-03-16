@@ -44,21 +44,33 @@ cBoard.service('chartScatterService', function (dataService) {
 
             _.each(series, function (s) {
                 s.data = _.map(data, function (d, i) {
-                    return [string_keys[i], d[s.yIdx], d[s.sizeIdx], d[s.colorIdx]];
+                    return [string_keys[i], d[s.yIdx], d[s.sizeIdx] ? d[s.sizeIdx] : 1, d[s.colorIdx] ? d[s.colorIdx] : 1];
                 });
-                s.sizeMax = _.max(data, function (d) {
-                    return Number(d[s.sizeIdx]);
-                })[s.sizeIdx];
-                s.colorMax = _.max(data, function (d) {
-                    return Number(d[s.colorIdx]);
-                })[s.colorIdx];
+                s.sizeMax = _.max(s.data, function (d) {
+                    return Number(d[2]);
+                })[2];
+                s.sizeMin = _.min(s.data, function (d) {
+                    return Number(d[2]);
+                })[2];
+                s.colorMax = _.max(s.data, function (d) {
+                    return Number(d[3]);
+                })[3];
+                s.colorMin = _.min(s.data, function (d) {
+                    return Number(d[3]);
+                })[3];
             });
             var sizeMax = _.max(series, function (s) {
                 return Number(s.sizeMax);
             }).sizeMax;
+            var sizeMin = _.min(series, function (s) {
+                return Number(s.sizeMin);
+            }).sizeMin;
             var colorMax = _.max(series, function (s) {
                 return Number(s.colorMax);
             }).colorMax;
+            var colorMin = _.max(series, function (s) {
+                return Number(s.colorMin);
+            }).colorMin;
             echartOption = {
                 legend: {
                     data: _.map(series, function (v) {
@@ -70,6 +82,7 @@ cBoard.service('chartScatterService', function (dataService) {
                     formatter: function (params) {
                         var s = params.seriesName + " " + params.value[0] + "</br>";
                         for (var i = 1; i < params.value.length; i++) {
+                            if (valueName[i - 1] == undefined) continue;
                             s += valueName[i - 1] + " : " + params.value[i] + "<br>"
                         }
                         return s;
@@ -96,23 +109,36 @@ cBoard.service('chartScatterService', function (dataService) {
                     },
                     scale: true
                 },
+                visualMap: [
+                    {
+                        dimension: 2,
+                        show: false,
+                        min: sizeMin * 0.8,
+                        max: sizeMax * 1.5,
+                        calculable: true,
+                        precision: 0.1,
+                        textStyle: {
+                            color: 'white'
+                        },
+                        inRange: {
+                            symbolSize: [5, 70]
+                        }
+                    },
+                    {
+                        dimension: 3,
+                        show: false,
+                        min: colorMin * 0.8,
+                        max: colorMax * 1.5,
+                        inRange: {
+                            opacity: [0.5, 1]
+                        }
+
+                    }],
                 series: _.map(series, function (v) {
                     return {
                         name: v.name,
                         data: v.data,
-                        type: 'scatter',
-                        symbolSize: function (data) {
-                            if (data[2]) {
-                                return data[2] / sizeMax * 50;
-                            } else {
-                                return 0;
-                            }
-                        },
-                        itemStyle: {
-                            normal: {
-                                opacity: data[3] / colorMax * 1.0
-                            }
-                        }
+                        type: 'scatter'
                     };
                 })
             };

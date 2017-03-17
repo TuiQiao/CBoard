@@ -12,3 +12,5 @@ CREATE TABLE dashboard_job (
   exec_log text,
   PRIMARY KEY CLUSTERED (job_id)
 );
+
+ALTER TABLE dashboard_role_res ADD permission varchar(20);

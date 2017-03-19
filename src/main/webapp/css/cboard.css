@@ -63,8 +63,8 @@
     border-top: 1px solid #d5d5d5;
 }
 .tableView th.all_null{
-    background:none;
-    border:0;
+    background: none;
+    border: 0;
 }
 .tableView th.row_null{
     border-left: 1px solid #d5d5d5;

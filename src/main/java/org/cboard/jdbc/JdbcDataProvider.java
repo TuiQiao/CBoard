@@ -73,7 +73,7 @@ public class JdbcDataProvider extends DataProvider implements AggregateProvider 
     public String[][] getData(Map<String, String> dataSource, Map<String, String> query) throws Exception {
 
         LOG.debug("Execute JdbcDataProvider.getData() Start!");
-        String sql = query.get(SQL);
+        String sql = getAsSubQuery(query.get(SQL));
         List<String[]> list = null;
         LOG.info("SQL String: " + sql);
 
@@ -123,6 +123,8 @@ public class JdbcDataProvider extends DataProvider implements AggregateProvider 
 
     private Connection getConnection(Map<String, String> dataSource) throws Exception {
         String v = dataSource.get(POOLED);
+        String username = dataSource.get(USERNAME);
+        String password = dataSource.get(PASSWORD);
         if (v != null && "true".equals(v)) {
             String key = Hashing.md5().newHasher().putString(JSONObject.toJSON(dataSource).toString(), Charsets.UTF_8).hash().toString();
             DataSource ds = datasourceMap.get(key);
@@ -134,7 +136,9 @@ public class JdbcDataProvider extends DataProvider implements AggregateProvider 
                         conf.put(DruidDataSourceFactory.PROP_DRIVERCLASSNAME, dataSource.get(DRIVER));
                         conf.put(DruidDataSourceFactory.PROP_URL, dataSource.get(JDBC_URL));
                         conf.put(DruidDataSourceFactory.PROP_USERNAME, dataSource.get(USERNAME));
-                        conf.put(DruidDataSourceFactory.PROP_PASSWORD, dataSource.get(PASSWORD));
+                        if (StringUtils.isNotBlank(password)) {
+                            conf.put(DruidDataSourceFactory.PROP_PASSWORD, dataSource.get(PASSWORD));
+                        }
                         conf.put(DruidDataSourceFactory.PROP_INITIALSIZE, "3");
                         ds = DruidDataSourceFactory.createDataSource(conf);
                         datasourceMap.put(key, ds);
@@ -145,12 +149,13 @@ public class JdbcDataProvider extends DataProvider implements AggregateProvider 
         } else {
             String driver = dataSource.get(DRIVER);
             String jdbcurl = dataSource.get(JDBC_URL);
-            String username = dataSource.get(USERNAME);
-            String password = dataSource.get(PASSWORD);
+
             Class.forName(driver);
             Properties props = new Properties();
             props.setProperty("user", username);
-            props.setProperty("password", password);
+            if (StringUtils.isNotBlank(password)) {
+                props.setProperty("password", password);
+            }
             return DriverManager.getConnection(jdbcurl, props);
         }
     }

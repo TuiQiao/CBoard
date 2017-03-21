@@ -575,7 +575,7 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
                 query: $scope.curWidget.query,
                 datasetId: $scope.customDs ? null : $scope.curWidget.datasetId
             },function (query) {
-                var querybr = query.trim().replace(/\n/g,'<br/>');
+                var querybr = query.trim().replace(/\n/g,'<br/>').replace(/\t/g, "&nbsp;&nbsp;&nbsp;&nbsp;");
                 $('#preview_widget').html("<div class='alert alert-info' role='alert' style='text-align: left;'>" + querybr + "</div>");
                 $scope.loadingPre = false;
             });

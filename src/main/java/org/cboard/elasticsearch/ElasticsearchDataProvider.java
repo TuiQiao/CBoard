@@ -1,5 +1,6 @@
 package org.cboard.elasticsearch;
 
+import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.google.common.base.Charsets;
@@ -321,6 +322,8 @@ public class ElasticsearchDataProvider extends DataProvider implements Aggregate
 
     @Override
     public String viewAggDataQuery(Map<String, String> dataSource, Map<String, String> query, AggConfig ac) throws Exception {
-        return getQueryAggDataRequest(dataSource, query, ac).toJSONString();
+        String format = "curl -XPOST '%s?pretty' -d '\n%s'";
+        String dsl = JSON.toJSONString(getQueryAggDataRequest(dataSource, query, ac), true);
+        return String.format(format, getSearchUrl(dataSource, query), dsl);
     }
 }

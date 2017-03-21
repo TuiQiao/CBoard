@@ -15,6 +15,7 @@
         <mybatisspring.version>1.1.1</mybatisspring.version>
         <jackson.version>1.9.10</jackson.version>
         <jdk.version>1.8</jdk.version>
+        <presto.version>0.161</presto.version>
     </properties>
     <dependencies>
         <dependency>
@@ -283,6 +284,13 @@
             <artifactId>commons-email</artifactId>
             <version>1.4</version>
         </dependency>
+        <!-- Presto JDBC Start -->
+        <dependency>
+            <groupId>com.facebook.presto</groupId>
+            <artifactId>presto-jdbc</artifactId>
+            <version>${presto.version}</version>
+        </dependency>
+        <!-- Presto JDBC End -->
 
         <dependency>
             <groupId>org.apache.httpcomponents</groupId>

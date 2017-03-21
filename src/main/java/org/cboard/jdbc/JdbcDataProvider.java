@@ -1,5 +1,6 @@
 package org.cboard.jdbc;
 
+import com.alibaba.druid.pool.DruidDataSource;
 import com.alibaba.druid.pool.DruidDataSourceFactory;
 import com.alibaba.fastjson.JSONObject;
 import com.google.common.base.Charsets;
@@ -122,10 +123,11 @@ public class JdbcDataProvider extends DataProvider implements AggregateProvider 
     }
 
     private Connection getConnection(Map<String, String> dataSource) throws Exception {
-        String v = dataSource.get(POOLED);
+        String usePool = dataSource.get(POOLED);
         String username = dataSource.get(USERNAME);
         String password = dataSource.get(PASSWORD);
-        if (v != null && "true".equals(v)) {
+        Connection conn = null;
+        if (usePool != null && "true".equals(usePool)) {
             String key = Hashing.md5().newHasher().putString(JSONObject.toJSON(dataSource).toString(), Charsets.UTF_8).hash().toString();
             DataSource ds = datasourceMap.get(key);
             if (ds == null) {
@@ -140,12 +142,21 @@ public class JdbcDataProvider extends DataProvider implements AggregateProvider 
                             conf.put(DruidDataSourceFactory.PROP_PASSWORD, dataSource.get(PASSWORD));
                         }
                         conf.put(DruidDataSourceFactory.PROP_INITIALSIZE, "3");
-                        ds = DruidDataSourceFactory.createDataSource(conf);
-                        datasourceMap.put(key, ds);
+                        DruidDataSource druidDS = (DruidDataSource) DruidDataSourceFactory.createDataSource(conf);
+                        druidDS.setBreakAfterAcquireFailure(true);
+                        druidDS.setConnectionErrorRetryAttempts(5);
+                        datasourceMap.put(key, druidDS);
                     }
                 }
             }
-            return ds.getConnection();
+            try {
+                conn = ds.getConnection();
+            } catch (SQLException e) {
+                e.printStackTrace();
+                datasourceMap.remove(key);
+                throw e;
+            }
+            return conn;
         } else {
             String driver = dataSource.get(DRIVER);
             String jdbcurl = dataSource.get(JDBC_URL);

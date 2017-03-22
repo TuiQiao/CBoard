@@ -1,5 +1,6 @@
 package org.cboard.elasticsearch;
 
+import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.google.common.base.Charsets;
@@ -9,7 +10,7 @@ import org.apache.http.client.fluent.Request;
 import org.apache.http.entity.ContentType;
 import org.cboard.cache.CacheManager;
 import org.cboard.cache.HeapCacheManager;
-import org.cboard.dataprovider.AggregateProvider;
+import org.cboard.dataprovider.aggregator.Aggregatable;
 import org.cboard.dataprovider.DataProvider;
 import org.cboard.dataprovider.annotation.DatasourceParameter;
 import org.cboard.dataprovider.annotation.ProviderName;
@@ -35,7 +36,7 @@ import java.util.stream.Stream;
  * Created by yfyuan on 2017/3/17.
  */
 @ProviderName(name = "Elasticsearch")
-public class ElasticsearchDataProvider extends DataProvider implements AggregateProvider {
+public class ElasticsearchDataProvider extends DataProvider implements Aggregatable {
 
     private static final Logger LOG = LoggerFactory.getLogger(ElasticsearchDataProvider.class);
 
@@ -50,12 +51,21 @@ public class ElasticsearchDataProvider extends DataProvider implements Aggregate
 
     private static final CacheManager<Map<String, String>> typesCache = new HeapCacheManager<>();
 
+
+    public ElasticsearchDataProvider() {
+
+    }
+
+    public ElasticsearchDataProvider(Map<String, String> dataSource, Map<String, String> query) {
+        super(dataSource, query);
+    }
+
     @Override
-    public String[][] queryDimVals(Map<String, String> dataSource, Map<String, String> query, String columnName, AggConfig config) throws Exception {
+    public String[][] queryDimVals(String columnName, AggConfig config) throws Exception {
         JSONObject request = new JSONObject();
         request.put("size", 0);
         request.put("aggregations", getTermsAggregation(columnName));
-        JSONObject response = post(getSearchUrl(dataSource, query), request);
+        JSONObject response = post(getSearchUrl(), request);
         String[] nofilter = response.getJSONObject("aggregations").getJSONObject(columnName).getJSONArray("buckets").stream()
                 .map(e -> ((JSONObject) e).getString("key")).toArray(String[]::new);
         JSONArray filter = getFilter(config);
@@ -63,7 +73,7 @@ public class ElasticsearchDataProvider extends DataProvider implements Aggregate
             request.put("query", new JSONObject());
             request.getJSONObject("query").put("bool", new JSONObject());
             request.getJSONObject("query").getJSONObject("bool").put("filter", getFilter(config));
-            response = post(getSearchUrl(dataSource, query), request);
+            response = post(getSearchUrl(), request);
             String[] filtered = response.getJSONObject("aggregations").getJSONObject(columnName).getJSONArray("buckets").stream()
                     .map(e -> ((JSONObject) e).getString("key")).toArray(String[]::new);
             return new String[][]{filtered, nofilter};
@@ -170,28 +180,28 @@ public class ElasticsearchDataProvider extends DataProvider implements Aggregate
         return aggregation;
     }
 
-    private String getMappingUrl(Map<String, String> dataSource, Map<String, String> query) {
+    private String getMappingUrl() {
         return String.format("http://%s/%s/_mapping/%s", dataSource.get(SERVERIP), query.get(INDEX), query.get(TYPE));
     }
 
-    private String getSearchUrl(Map<String, String> dataSource, Map<String, String> query) {
+    private String getSearchUrl() {
         return String.format("http://%s/%s/_search", dataSource.get(SERVERIP), query.get(INDEX));
     }
 
     @Override
-    public String[] getColumn(Map<String, String> dataSource, Map<String, String> query) throws Exception {
-        Map<String, String> types = getTypes(dataSource, query);
+    public String[] getColumn() throws Exception {
+        Map<String, String> types = getTypes();
         return types.keySet().toArray(new String[0]);
     }
 
-    private Map<String, String> getTypes(Map<String, String> dataSource, Map<String, String> query) throws Exception {
-        String key = getKey(dataSource, query);
+    private Map<String, String> getTypes() throws Exception {
+        String key = getKey();
         Map<String, String> types = typesCache.get(key);
         if (types == null) {
             synchronized (key.intern()) {
                 types = typesCache.get(key);
                 if (types == null) {
-                    String mappingJson = Request.Get(getMappingUrl(dataSource, query)).execute().returnContent().asString();
+                    String mappingJson = Request.Get(getMappingUrl()).execute().returnContent().asString();
                     JSONObject mapping = JSONObject.parseObject(mappingJson);
                     mapping = mapping.getJSONObject(query.get(INDEX)).getJSONObject("mappings").getJSONObject(query.get(TYPE));
                     types = new HashMap<>();
@@ -204,9 +214,9 @@ public class ElasticsearchDataProvider extends DataProvider implements Aggregate
     }
 
     @Override
-    public AggregateResult queryAggData(Map<String, String> dataSource, Map<String, String> query, AggConfig config) throws Exception {
-        JSONObject request = getQueryAggDataRequest(dataSource, query, config);
-        JSONObject response = post(getSearchUrl(dataSource, query), request);
+    public AggregateResult queryAggData(AggConfig config) throws Exception {
+        JSONObject request = getQueryAggDataRequest(config);
+        JSONObject response = post(getSearchUrl(), request);
         Stream<DimensionConfig> dimStream = Stream.concat(config.getColumns().stream(), config.getRows().stream());
         List<ColumnIndex> dimensionList = dimStream.map(ColumnIndex::fromDimensionConfig).collect(Collectors.toList());
         List<ColumnIndex> valueList = config.getValues().stream().map(ColumnIndex::fromValueConfig).collect(Collectors.toList());
@@ -221,7 +231,7 @@ public class ElasticsearchDataProvider extends DataProvider implements Aggregate
         return new AggregateResult(columnList, _result);
     }
 
-    private JSONObject getQueryAggDataRequest(Map<String, String> dataSource, Map<String, String> query, AggConfig config) throws Exception {
+    private JSONObject getQueryAggDataRequest(AggConfig config) throws Exception {
         JSONObject request = new JSONObject();
         Stream<DimensionConfig> c = config.getColumns().stream();
         Stream<DimensionConfig> r = config.getRows().stream();
@@ -306,11 +316,11 @@ public class ElasticsearchDataProvider extends DataProvider implements Aggregate
     }
 
     @Override
-    public String[][] getData(Map<String, String> dataSource, Map<String, String> query) throws Exception {
+    public String[][] getData() throws Exception {
         return new String[0][];
     }
 
-    private String getKey(Map<String, String> dataSource, Map<String, String> query) {
+    private String getKey() {
         return Hashing.md5().newHasher().putString(JSONObject.toJSON(dataSource).toString() + JSONObject.toJSON(query).toString(), Charsets.UTF_8).hash().toString();
     }
 
@@ -330,7 +340,9 @@ public class ElasticsearchDataProvider extends DataProvider implements Aggregate
     }
 
     @Override
-    public String viewAggDataQuery(Map<String, String> dataSource, Map<String, String> query, AggConfig ac) throws Exception {
-        return getQueryAggDataRequest(dataSource, query, ac).toJSONString();
+    public String viewAggDataQuery(AggConfig ac) throws Exception {
+        String format = "curl -XPOST '%s?pretty' -d '\n%s'";
+        String dsl = JSON.toJSONString(getQueryAggDataRequest(ac), true);
+        return String.format(format, getSearchUrl(), dsl);
     }
 }

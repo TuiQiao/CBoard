@@ -1,4 +1,4 @@
-package org.cboard.dataprovider;
+package org.cboard.dataprovider.aggregator;
 
 import org.cboard.dataprovider.config.AggConfig;
 import org.cboard.dataprovider.result.AggregateResult;
@@ -8,7 +8,7 @@ import java.util.Map;
 /**
  * Created by yfyuan on 2017/1/13.
  */
-public interface AggregateProvider {
+public interface Aggregatable {
 
     /**
      * The data provider that support DataSource side Aggregation must implement this method.
@@ -16,14 +16,14 @@ public interface AggregateProvider {
      * @param columnName
      * @return
      */
-    String[][] queryDimVals(Map<String, String> dataSource, Map<String, String> query, String columnName, AggConfig config) throws Exception;
+    String[][] queryDimVals(String columnName, AggConfig config) throws Exception;
 
     /**
      * The data provider that support DataSource side Aggregation must implement this method.
      *
      * @return
      */
-    String[] getColumn(Map<String, String> dataSource, Map<String, String> query) throws Exception;
+    String[] getColumn() throws Exception;
 
     /**
      * The data provider that support DataSource side Aggregation must implement this method.
@@ -31,9 +31,9 @@ public interface AggregateProvider {
      * @param ac aggregate configuration
      * @return
      */
-    AggregateResult queryAggData(Map<String, String> dataSource, Map<String, String> query, AggConfig ac) throws Exception;
+    AggregateResult queryAggData(AggConfig ac) throws Exception;
 
-    default String viewAggDataQuery(Map<String, String> dataSource, Map<String, String> query, AggConfig ac) throws Exception {
+    default String viewAggDataQuery(AggConfig ac) throws Exception {
         return "Not Support";
     }
 }

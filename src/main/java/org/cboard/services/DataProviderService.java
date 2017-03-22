@@ -39,10 +39,8 @@ public class DataProviderService {
         }
         DashboardDatasource datasource = datasourceDao.getDatasource(datasourceId);
         JSONObject datasourceConfig = JSONObject.parseObject(datasource.getConfig());
-        DataProvider dataProvider = DataProviderManager.getDataProvider(datasource.getType());
-        Map<String, String> parameterMap = Maps.transformValues(datasourceConfig, Functions.toStringFunction());
-        dataProvider.setDataSource(parameterMap);
-        dataProvider.setQuery(query);
+        Map<String, String> dataSource = Maps.transformValues(datasourceConfig, Functions.toStringFunction());
+        DataProvider dataProvider = DataProviderManager.getDataProvider(datasource.getType(), dataSource, query);
         if (dataset != null && dataset.getInterval() != null && dataset.getInterval() > 0) {
             dataProvider.setInterval(dataset.getInterval());
         }
@@ -96,8 +94,9 @@ public class DataProviderService {
 
     public ServiceStatus test(JSONObject dataSource, Map<String, String> query) {
         try {
-            DataProvider dataProvider = DataProviderManager.getDataProvider(dataSource.getString("type"));
-            dataProvider.getData(Maps.transformValues(dataSource.getJSONObject("config"), Functions.toStringFunction()), query);
+            DataProvider dataProvider = DataProviderManager.getDataProvider(dataSource.getString("type"),
+                    Maps.transformValues(dataSource.getJSONObject("config"), Functions.toStringFunction()), query);
+            dataProvider.getData();
             return new ServiceStatus(ServiceStatus.Status.Success, null);
         } catch (Exception e) {
             return new ServiceStatus(ServiceStatus.Status.Fail, e.getMessage());

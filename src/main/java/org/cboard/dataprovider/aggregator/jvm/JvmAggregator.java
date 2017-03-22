@@ -4,7 +4,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.google.common.base.Charsets;
 import com.google.common.hash.Hashing;
 import org.cboard.cache.CacheManager;
-import org.cboard.dataprovider.aggregator.Aggregator;
+import org.cboard.dataprovider.aggregator.InnerAggregator;
 import org.cboard.dataprovider.config.AggConfig;
 import org.cboard.dataprovider.result.AggregateResult;
 import org.cboard.dataprovider.result.ColumnIndex;
@@ -13,6 +13,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
 
 import java.util.Arrays;
@@ -27,7 +28,8 @@ import java.util.stream.Stream;
  * Created by yfyuan on 2017/1/18.
  */
 @Service
-public class JvmAggregator implements Aggregator {
+@Scope("prototype")
+public class JvmAggregator extends InnerAggregator {
 
     private Logger logger = LoggerFactory.getLogger(this.getClass());
 
@@ -35,28 +37,24 @@ public class JvmAggregator implements Aggregator {
     @Qualifier("rawDataCache")
     private CacheManager<String[][]> rawDataCache;
 
-    private String getCacheKey(Map<String, String> dataSource, Map<String, String> query) {
+    private String getCacheKey() {
         return Hashing.md5().newHasher().putString(JSONObject.toJSON(dataSource).toString() + JSONObject.toJSON(query).toString(), Charsets.UTF_8).hash().toString();
     }
 
-    @Override
-    public boolean checkExist(Map<String, String> dataSource, Map<String, String> query) {
-        return rawDataCache.get(getCacheKey(dataSource, query)) != null;
+    public boolean checkExist() {
+        return rawDataCache.get(getCacheKey()) != null;
     }
 
-    @Override
-    public void cleanExist(Map<String, String> dataSource, Map<String, String> query) {
-        rawDataCache.remove(getCacheKey(dataSource, query));
+    public void cleanExist() {
+        rawDataCache.remove(getCacheKey());
     }
 
-    @Override
-    public void loadData(Map<String, String> dataSource, Map<String, String> query, String[][] data, long interval) {
-        rawDataCache.put(getCacheKey(dataSource, query), data, interval * 1000);
+    public void loadData(String[][] data, long interval) {
+        rawDataCache.put(getCacheKey(), data, interval * 1000);
     }
 
-    @Override
-    public String[][] queryDimVals(Map<String, String> dataSource, Map<String, String> query, String columnName, AggConfig config) throws Exception {
-        String[][] data = rawDataCache.get(getCacheKey(dataSource, query));
+    public String[][] queryDimVals(String columnName, AggConfig config) throws Exception {
+        String[][] data = rawDataCache.get(getCacheKey());
         Map<String, Integer> columnIndex = getColumnIndex(data);
         final int fi = columnIndex.get(columnName);
         Filter rowFilter = new Filter(config, columnIndex);
@@ -84,14 +82,14 @@ public class JvmAggregator implements Aggregator {
     }
 
     @Override
-    public String[] getColumn(Map<String, String> dataSource, Map<String, String> query) throws Exception {
-        String[][] data = rawDataCache.get(getCacheKey(dataSource, query));
+    public String[] getColumn() throws Exception {
+        String[][] data = rawDataCache.get(getCacheKey());
         return data[0];
     }
 
     @Override
-    public AggregateResult queryAggData(Map<String, String> dataSource, Map<String, String> query, AggConfig config) throws Exception {
-        String[][] data = rawDataCache.get(getCacheKey(dataSource, query));
+    public AggregateResult queryAggData(AggConfig config) throws Exception {
+        String[][] data = rawDataCache.get(getCacheKey());
         Map<String, Integer> columnIndex = getColumnIndex(data);
         Filter rowFilter = new Filter(config, columnIndex);
 

@@ -35,7 +35,16 @@ public class SaikuDataProvider extends DataProvider {
     @QueryParameter(label = "Repo Path of Report", type = QueryParameter.Type.Input)
     private String FILE = "file";
 
-    public String[][] getData(Map<String, String> dataSource, Map<String, String> query) throws Exception {
+    public SaikuDataProvider() {
+
+    }
+
+    public SaikuDataProvider(Map<String, String> dataSource, Map<String, String> query) {
+        super(dataSource, query);
+    }
+
+    @Override
+    public String[][] getData() throws Exception {
         String serverIp = dataSource.get(SERVERIP);
         String username = dataSource.get(USERNAME);
         String password = dataSource.get(PASSWORD);

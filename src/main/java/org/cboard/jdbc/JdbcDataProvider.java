@@ -9,7 +9,7 @@ import org.apache.commons.collections.map.HashedMap;
 import org.apache.commons.lang.StringUtils;
 import org.cboard.cache.CacheManager;
 import org.cboard.cache.HeapCacheManager;
-import org.cboard.dataprovider.AggregateProvider;
+import org.cboard.dataprovider.aggregator.Aggregatable;
 import org.cboard.dataprovider.DataProvider;
 import org.cboard.dataprovider.annotation.DatasourceParameter;
 import org.cboard.dataprovider.annotation.ProviderName;
@@ -38,7 +38,7 @@ import java.util.stream.Stream;
  * Created by yfyuan on 2016/8/17.
  */
 @ProviderName(name = "jdbc")
-public class JdbcDataProvider extends DataProvider implements AggregateProvider {
+public class JdbcDataProvider extends DataProvider implements Aggregatable {
 
     private static final Logger LOG = LoggerFactory.getLogger(JdbcDataProvider.class);
 
@@ -67,18 +67,27 @@ public class JdbcDataProvider extends DataProvider implements AggregateProvider 
 
     private static final ConcurrentMap<String, DataSource> datasourceMap = new ConcurrentHashMap<>();
 
+    public JdbcDataProvider() {
+
+    }
+
+    public JdbcDataProvider(Map<String, String> dataSource, Map<String, String> query) {
+        super(dataSource, query);
+    }
+
     private String getKey(Map<String, String> dataSource, Map<String, String> query) {
         return Hashing.md5().newHasher().putString(JSONObject.toJSON(dataSource).toString() + JSONObject.toJSON(query).toString(), Charsets.UTF_8).hash().toString();
     }
 
-    public String[][] getData(Map<String, String> dataSource, Map<String, String> query) throws Exception {
+    @Override
+    public String[][] getData() throws Exception {
 
         LOG.debug("Execute JdbcDataProvider.getData() Start!");
         String sql = getAsSubQuery(query.get(SQL));
         List<String[]> list = null;
         LOG.info("SQL String: " + sql);
 
-        try (Connection con = getConnection(dataSource)) {
+        try (Connection con = getConnection()) {
             Statement ps = con.createStatement();
             ResultSet rs = ps.executeQuery(sql);
             ResultSetMetaData metaData = rs.getMetaData();
@@ -122,7 +131,7 @@ public class JdbcDataProvider extends DataProvider implements AggregateProvider 
         return deletedBlankLine.endsWith(";") ? deletedBlankLine.substring(0, deletedBlankLine.length() - 1) : deletedBlankLine;
     }
 
-    private Connection getConnection(Map<String, String> dataSource) throws Exception {
+    private Connection getConnection() throws Exception {
         String usePool = dataSource.get(POOLED);
         String username = dataSource.get(USERNAME);
         String password = dataSource.get(PASSWORD);
@@ -172,7 +181,7 @@ public class JdbcDataProvider extends DataProvider implements AggregateProvider 
     }
 
     @Override
-    public String[][] queryDimVals(Map<String, String> dataSource, Map<String, String> query, String columnName, AggConfig config) throws Exception {
+    public String[][] queryDimVals(String columnName, AggConfig config) throws Exception {
         String fsql = null;
         String exec = null;
         String sql = getAsSubQuery(query.get(SQL));
@@ -183,13 +192,13 @@ public class JdbcDataProvider extends DataProvider implements AggregateProvider 
             Stream<DimensionConfig> r = config.getRows().stream();
             Stream<DimensionConfig> f = config.getFilters().stream();
             Stream<DimensionConfig> filters = Stream.concat(Stream.concat(c, r), f);
-            Map<String, Integer> types = getColumnType(dataSource, query);
+            Map<String, Integer> types = getColumnType();
             Stream<DimensionConfigHelper> filterHelpers = filters.map(fe -> new DimensionConfigHelper(fe, types.get(fe.getColumnName())));
             String whereStr = assembleSqlFilter(filterHelpers, "WHERE");
             fsql = "SELECT __view__.%s FROM (%s) __view__ %s GROUP BY __view__.%s";
             exec = String.format(fsql, columnName, sql, whereStr, columnName);
             LOG.info(exec);
-            try (Connection connection = getConnection(dataSource);
+            try (Connection connection = getConnection();
                  Statement stat = connection.createStatement();
                  ResultSet rs = stat.executeQuery(exec)) {
                 while (rs.next()) {
@@ -203,7 +212,7 @@ public class JdbcDataProvider extends DataProvider implements AggregateProvider 
         fsql = "SELECT __view__.%s FROM (%s) __view__ GROUP BY __view__.%s";
         exec = String.format(fsql, columnName, sql, columnName);
         LOG.info(exec);
-        try (Connection connection = getConnection(dataSource);
+        try (Connection connection = getConnection();
              Statement stat = connection.createStatement();
              ResultSet rs = stat.executeQuery(exec)) {
             while (rs.next()) {
@@ -310,7 +319,7 @@ public class JdbcDataProvider extends DataProvider implements AggregateProvider 
         return metaData;
     }
 
-    private Map<String, Integer> getColumnType(Map<String, String> dataSource, Map<String, String> query) throws Exception {
+    private Map<String, Integer> getColumnType() throws Exception {
         Map<String, Integer> result = null;
         String key = getKey(dataSource, query);
         String subQuerySql = getAsSubQuery(query.get(SQL));
@@ -319,7 +328,7 @@ public class JdbcDataProvider extends DataProvider implements AggregateProvider 
             return result;
         } else {
             try (
-                    Connection connection = getConnection(dataSource);
+                    Connection connection = getConnection();
                     Statement stat = connection.createStatement()
             ) {
                 ResultSetMetaData metaData = getMetaData(subQuerySql, stat);
@@ -335,10 +344,10 @@ public class JdbcDataProvider extends DataProvider implements AggregateProvider 
     }
 
     @Override
-    public String[] getColumn(Map<String, String> dataSource, Map<String, String> query) throws Exception {
+    public String[] getColumn() throws Exception {
         String subQuerySql = getAsSubQuery(query.get(SQL));
         try (
-                Connection connection = getConnection(dataSource);
+                Connection connection = getConnection();
                 Statement stat = connection.createStatement()
         ) {
             ResultSetMetaData metaData = getMetaData(subQuerySql, stat);
@@ -352,12 +361,12 @@ public class JdbcDataProvider extends DataProvider implements AggregateProvider 
     }
 
     @Override
-    public AggregateResult queryAggData(Map<String, String> dataSource, Map<String, String> query, AggConfig config) throws Exception {
-        String exec = getQueryAggDataSql(dataSource, query, config);
+    public AggregateResult queryAggData(AggConfig config) throws Exception {
+        String exec = getQueryAggDataSql(config);
         List<String[]> list = new LinkedList<>();
         LOG.info(exec);
         try (
-                Connection connection = getConnection(dataSource);
+                Connection connection = getConnection();
                 Statement stat = connection.createStatement();
                 ResultSet rs = stat.executeQuery(exec)
         ) {
@@ -384,12 +393,12 @@ public class JdbcDataProvider extends DataProvider implements AggregateProvider 
         return new AggregateResult(dimensionList, result);
     }
 
-    private String getQueryAggDataSql(Map<String, String> dataSource, Map<String, String> query, AggConfig config) throws Exception {
+    private String getQueryAggDataSql(AggConfig config) throws Exception {
         Stream<DimensionConfig> c = config.getColumns().stream();
         Stream<DimensionConfig> r = config.getRows().stream();
         Stream<DimensionConfig> f = config.getFilters().stream();
         Stream<DimensionConfig> filters = Stream.concat(Stream.concat(c, r), f);
-        Map<String, Integer> types = getColumnType(dataSource, query);
+        Map<String, Integer> types = getColumnType();
         Stream<DimensionConfigHelper> predicates = filters.map(fe -> new DimensionConfigHelper(fe, types.get(fe.getColumnName())));
         Stream<DimensionConfig> dimStream = Stream.concat(config.getColumns().stream(), config.getRows().stream());
 
@@ -413,8 +422,8 @@ public class JdbcDataProvider extends DataProvider implements AggregateProvider 
     }
 
     @Override
-    public String viewAggDataQuery(Map<String, String> dataSource, Map<String, String> query, AggConfig config) throws Exception {
-        return getQueryAggDataSql(dataSource, query, config);
+    public String viewAggDataQuery(AggConfig config) throws Exception {
+        return getQueryAggDataSql(config);
     }
 
     private Function<ValueConfig, String> toSelect = (config) -> {

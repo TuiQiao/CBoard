@@ -237,7 +237,7 @@ public class ElasticsearchDataProvider extends DataProvider implements Aggregata
         Stream<DimensionConfig> r = config.getRows().stream();
         Stream<DimensionConfig> aggregationStream = Stream.concat(c, r);
         List<JSONObject> termAggregations = aggregationStream.map(e -> getTermsAggregation(e.getColumnName())).collect(Collectors.toList());
-        JSONObject metricAggregations = getMetricAggregation(config.getValues(), getTypes(dataSource, query));
+        JSONObject metricAggregations = getMetricAggregation(config.getValues(), getTypes());
         termAggregations.add(metricAggregations);
         for (int i = termAggregations.size() - 1; i > 0; i--) {
             JSONObject pre = termAggregations.get(i - 1);

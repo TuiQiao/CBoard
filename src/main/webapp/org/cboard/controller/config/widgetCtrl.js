@@ -564,6 +564,8 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
 
         var cleanPreview = function () {
             $('#preview_widget').html("");
+            $('#viewQuery_widget').html("");
+            $scope.viewQueryMoal = false;
         };
 
         $scope.previewQuery = function () {
@@ -576,8 +578,9 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
                 datasetId: $scope.customDs ? null : $scope.curWidget.datasetId
             },function (query) {
                 var querybr = query.trim().replace(/\n/g,'<br/>').replace(/\t/g, "&nbsp;&nbsp;&nbsp;&nbsp;");
-                $('#preview_widget').html("<div class='alert alert-info' role='alert' style='text-align: left;'>" + querybr + "</div>");
+                $('#viewQuery_widget').html("<div class='alert alert-info' role='alert' style='text-align: left;'>" + querybr + "</div>");
                 $scope.loadingPre = false;
+                $scope.viewQueryMoal = true;
             });
         };
 
@@ -746,6 +749,7 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
         };
 
         var doEditWgt = function (widget) {
+            cleanPreview();
             $timeout(function () {
                 switchNode(widget.id)
             }, 500);

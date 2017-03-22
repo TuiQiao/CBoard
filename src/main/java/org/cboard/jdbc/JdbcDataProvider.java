@@ -29,6 +29,7 @@ import java.sql.*;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
+import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
@@ -280,10 +281,10 @@ public class JdbcDataProvider extends DataProvider implements AggregateProvider 
         return where.toString();
     }
 
-    private String assembleAggValColumns(Stream<ValueConfig> selectStream) {
+    private String assembleAggValColumns(Stream<ValueConfig> selectStream, Map<String, Integer> types) {
         StringJoiner columns = new StringJoiner(", ", "", " ");
         columns.setEmptyValue("");
-        selectStream.map(toSelect).filter(e -> e != null).forEach(columns::add);
+        selectStream.map(m -> toSelect.apply(m, types)).filter(e -> e != null).forEach(columns::add);
         return columns.toString();
     }
 
@@ -394,7 +395,7 @@ public class JdbcDataProvider extends DataProvider implements AggregateProvider 
         Stream<DimensionConfig> dimStream = Stream.concat(config.getColumns().stream(), config.getRows().stream());
 
         String dimColsStr = assembleDimColumns(dimStream);
-        String aggColsStr = assembleAggValColumns(config.getValues().stream());
+        String aggColsStr = assembleAggValColumns(config.getValues().stream(), types);
         String whereStr = assembleSqlFilter(predicates, "WHERE");
         String groupByStr = StringUtils.isBlank(dimColsStr) ? "" : "GROUP BY " + dimColsStr;
 
@@ -417,18 +418,27 @@ public class JdbcDataProvider extends DataProvider implements AggregateProvider 
         return getQueryAggDataSql(dataSource, query, config);
     }
 
-    private Function<ValueConfig, String> toSelect = (config) -> {
+    private BiFunction<ValueConfig, Map<String, Integer>, String> toSelect = (config, types) -> {
+        String aggExp;
+        if (config.getColumn().contains(" ")) {
+            aggExp = config.getColumn();
+            for (String column : types.keySet()) {
+                aggExp = aggExp.replaceAll(" " + column + " ", " __view__." + column + " ");
+            }
+        } else {
+            aggExp = "__view__." + config.getColumn();
+        }
         switch (config.getAggType()) {
             case "sum":
-                return "SUM(__view__." + config.getColumn() + ") AS sum_" + config.getColumn();
+                return "SUM(" + aggExp + ")";
             case "avg":
-                return "AVG(__view__." + config.getColumn() + ") AS avg_" + config.getColumn();
+                return "AVG(" + aggExp + ")";
             case "max":
-                return "MAX(__view__." + config.getColumn() + ") AS max_" + config.getColumn();
+                return "MAX(" + aggExp + ")";
             case "min":
-                return "MIN(__view__." + config.getColumn() + ") AS min_" + config.getColumn();
+                return "MIN(" + aggExp + ")";
             default:
-                return "COUNT(__view__." + config.getColumn() + ") AS count_" + config.getColumn();
+                return "COUNT(" + aggExp + ")";
         }
     };
 

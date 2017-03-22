@@ -221,13 +221,13 @@ public class ElasticsearchDataProvider extends DataProvider implements Aggregate
         return new AggregateResult(columnList, _result);
     }
 
-    private JSONObject getQueryAggDataRequest(Map<String, String> dataSource, Map<String, String> query, AggConfig config) {
+    private JSONObject getQueryAggDataRequest(Map<String, String> dataSource, Map<String, String> query, AggConfig config) throws Exception {
         JSONObject request = new JSONObject();
         Stream<DimensionConfig> c = config.getColumns().stream();
         Stream<DimensionConfig> r = config.getRows().stream();
         Stream<DimensionConfig> aggregationStream = Stream.concat(c, r);
         List<JSONObject> termAggregations = aggregationStream.map(e -> getTermsAggregation(e.getColumnName())).collect(Collectors.toList());
-        JSONObject metricAggregations = getMetricAggregation(config.getValues());
+        JSONObject metricAggregations = getMetricAggregation(config.getValues(), getTypes(dataSource, query));
         termAggregations.add(metricAggregations);
         for (int i = termAggregations.size() - 1; i > 0; i--) {
             JSONObject pre = termAggregations.get(i - 1);
@@ -252,7 +252,7 @@ public class ElasticsearchDataProvider extends DataProvider implements Aggregate
         }
         if (dimensionLevel >= dimensionList.size()) {
             for (ColumnIndex value : valueList) {
-                String valueKey = value.getAggType() + "_" + value.getName();
+                String valueKey = getAggregationName(value.getAggType(), value.getName());
                 String _value = object.getJSONObject(valueKey).getString("value");
                 keys.add(_value);
             }
@@ -266,23 +266,27 @@ public class ElasticsearchDataProvider extends DataProvider implements Aggregate
         }
     }
 
-    private JSONObject getMetricAggregation(List<ValueConfig> configList) {
+    private String getAggregationName(String aggregationType, String columnName) {
+        return Hashing.crc32().newHasher().putString(aggregationType + columnName, Charsets.UTF_8).hash().toString();
+    }
+
+    private JSONObject getMetricAggregation(List<ValueConfig> configList, Map<String, String> typesCache) {
         JSONObject aggregation = new JSONObject();
         configList.stream().forEach(config -> {
-            String aggregationName = config.getAggType() + "_" + config.getColumn();
+            String aggregationName = getAggregationName(config.getAggType(), config.getColumn());
             String type;
             switch (config.getAggType()) {
                 case "sum":
                     type = "sum";
                     break;
                 case "avg":
-                    type = "sum";
+                    type = "avg";
                     break;
                 case "max":
-                    type = "sum";
+                    type = "max";
                     break;
                 case "min":
-                    type = "sum";
+                    type = "min";
                     break;
                 default:
                     type = "value_count";
@@ -290,7 +294,13 @@ public class ElasticsearchDataProvider extends DataProvider implements Aggregate
             }
             aggregation.put(aggregationName, new JSONObject());
             aggregation.getJSONObject(aggregationName).put(type, new JSONObject());
-            aggregation.getJSONObject(aggregationName).getJSONObject(type).put("field", config.getColumn());
+            if (typesCache.containsKey(config.getColumn())) {
+                aggregation.getJSONObject(aggregationName).getJSONObject(type).put("field", config.getColumn());
+            } else {
+                JSONObject script = new JSONObject();
+                script.put("inline", config.getColumn());
+                aggregation.getJSONObject(aggregationName).getJSONObject(type).put("script", script);
+            }
         });
         return aggregation;
     }

@@ -85,7 +85,7 @@ public class DataProviderService {
     public String viewAggDataQuery(Long datasourceId, Map<String, String> query, Long datasetId, AggConfig config) {
         try {
             DataProvider dataProvider = getDataProvider(datasourceId, query, datasetId);
-            return dataProvider.viewAggDataQuery(config);
+            return dataProvider.getViewAggDataQuery(config);
         } catch (Exception e) {
             e.printStackTrace();
             throw new CBoardException(e.getMessage());

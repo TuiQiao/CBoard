@@ -40,14 +40,6 @@ public class FileDataProvider extends DataProvider {
     @QueryParameter(label = "{{'DATAPROVIDER.TEXTFILE.ENCLOSURE'|translate}}", type = QueryParameter.Type.Input, order = 4)
     private String QUERY_PARAM_ENCLOSURE = "enclosure";
 
-    public FileDataProvider() {
-
-    }
-
-    public FileDataProvider(Map<String, String> dataSource, Map<String, String> query) {
-        super(dataSource, query);
-    }
-
     @Override
     public String[][] getData() throws Exception {
         String basePath = dataSource.get(DS_PARAM_BASE_PATH);

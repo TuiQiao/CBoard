@@ -68,14 +68,6 @@ public class JdbcDataProvider extends DataProvider implements Aggregatable {
 
     private static final ConcurrentMap<String, DataSource> datasourceMap = new ConcurrentHashMap<>();
 
-    public JdbcDataProvider() {
-
-    }
-
-    public JdbcDataProvider(Map<String, String> dataSource, Map<String, String> query) {
-        super(dataSource, query);
-    }
-
     private String getKey(Map<String, String> dataSource, Map<String, String> query) {
         return Hashing.md5().newHasher().putString(JSONObject.toJSON(dataSource).toString() + JSONObject.toJSON(query).toString(), Charsets.UTF_8).hash().toString();
     }

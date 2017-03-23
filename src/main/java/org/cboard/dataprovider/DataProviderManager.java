@@ -45,7 +45,12 @@ public class DataProviderManager implements ApplicationContextAware {
         Class c = providers.get(type);
         ProviderName providerName = (ProviderName) c.getAnnotation(ProviderName.class);
         if (providerName.name().equals(type)) {
-            DataProvider provider = (DataProvider) c.getConstructor(Map.class, Map.class).newInstance(dataSource, query);
+            DataProvider provider = (DataProvider) c.newInstance();
+            provider.setQuery(query);
+            provider.setDataSource(dataSource);
+            if (provider instanceof Initializing) {
+                ((Initializing) provider).afterPropertiesSet();
+            }
             applicationContext.getAutowireCapableBeanFactory().autowireBean(provider);
             InnerAggregator innerAggregator = applicationContext.getBean(InnerAggregator.class);
             innerAggregator.setDataSource(dataSource);

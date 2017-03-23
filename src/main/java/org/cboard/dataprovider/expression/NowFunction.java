@@ -2,6 +2,7 @@ package org.cboard.dataprovider.expression;
 
 import com.googlecode.aviator.runtime.function.AbstractFunction;
 import com.googlecode.aviator.runtime.function.FunctionUtils;
+import com.googlecode.aviator.runtime.type.AviatorLong;
 import com.googlecode.aviator.runtime.type.AviatorObject;
 import com.googlecode.aviator.runtime.type.AviatorString;
 
@@ -21,7 +22,11 @@ public class NowFunction extends AbstractFunction {
         String format = FunctionUtils.getStringValue(arg3, env);
         Calendar c = Calendar.getInstance();
         c.add(getUnit(unit), interval.intValue());
-        return new AviatorString(new SimpleDateFormat(format).format(c.getTime()));
+        if ("timestamp".equals(format)) {
+            return new AviatorLong(c.getTime().getTime());
+        } else {
+            return new AviatorString(new SimpleDateFormat(format).format(c.getTime()));
+        }
     }
 
     private int getUnit(String unit) {
@@ -34,6 +39,10 @@ public class NowFunction extends AbstractFunction {
                 return Calendar.MONTH;
             case "W":
                 return Calendar.WEEK_OF_YEAR;
+            case "h":
+                return Calendar.HOUR;
+            case "m":
+                return Calendar.MINUTE;
             default:
                 return Calendar.DAY_OF_YEAR;
         }

@@ -34,13 +34,6 @@ public abstract class DataProvider {
     @DatasourceParameter(label = "Aggregate Provider", type = DatasourceParameter.Type.Checkbox, order = 100)
     private String aggregateProvider = "aggregateProvider";
 
-    public DataProvider(){}
-
-    public DataProvider(Map<String, String> dataSource, Map<String, String> query) {
-        this.dataSource = dataSource;
-        this.query = query;
-    }
-
     static {
         AviatorEvaluator.addFunction(new NowFunction());
     }
@@ -55,7 +48,7 @@ public abstract class DataProvider {
      *
      * @return
      */
-    public AggregateResult getAggData(AggConfig ac, boolean reload) throws Exception {
+    public final AggregateResult getAggData(AggConfig ac, boolean reload) throws Exception {
         evalValueExpression(ac);
         if (this instanceof Aggregatable && isAggregateProviderActive()) {
             return ((Aggregatable) this).queryAggData(ac);
@@ -65,7 +58,7 @@ public abstract class DataProvider {
         }
     }
 
-    public String viewAggDataQuery(AggConfig config) throws Exception {
+    public final String getViewAggDataQuery(AggConfig config) throws Exception {
         evalValueExpression(config);
         if (this instanceof Aggregatable && isAggregateProviderActive()) {
             return ((Aggregatable) this).viewAggDataQuery(config);
@@ -80,7 +73,7 @@ public abstract class DataProvider {
      * @param columnName
      * @return
      */
-    public String[][] getDimVals(String columnName, AggConfig config, boolean reload) throws Exception {
+    public final String[][] getDimVals(String columnName, AggConfig config, boolean reload) throws Exception {
         String[][] dimVals = null;
         evalValueExpression(config);
         if (this instanceof Aggregatable && isAggregateProviderActive()) {
@@ -92,7 +85,7 @@ public abstract class DataProvider {
         return dimVals;
     }
 
-    public String[] getColumn(boolean reload) throws Exception {
+    public final String[] getColumn(boolean reload) throws Exception {
         String[] columns = null;
         if (this instanceof Aggregatable && isAggregateProviderActive()) {
             columns = ((Aggregatable) this).getColumn();
@@ -161,4 +154,5 @@ public abstract class DataProvider {
     public void setInnerAggregator(InnerAggregator innerAggregator) {
         this.innerAggregator = innerAggregator;
     }
+
 }

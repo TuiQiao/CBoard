@@ -22,15 +22,6 @@ public class MyDataProvider  extends DataProvider {
     @QueryParameter(label = "查询参数", type = QueryParameter.Type.Input, order = 1)
     private String QUERY_PARAM_KEY = "query";
 
-    public MyDataProvider() {
-
-    }
-
-    public MyDataProvider(Map<String, String> dataSource, Map<String, String> query) {
-        super(dataSource, query);
-    }
-
-
     /**
      *
      * @return

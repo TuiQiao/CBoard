@@ -6,12 +6,14 @@ import com.alibaba.fastjson.JSONObject;
 import com.google.common.base.Charsets;
 import com.google.common.hash.Hashing;
 import org.apache.commons.collections.keyvalue.DefaultMapEntry;
+import org.apache.http.HttpResponse;
 import org.apache.http.client.fluent.Request;
 import org.apache.http.entity.ContentType;
+import org.apache.http.util.EntityUtils;
 import org.cboard.cache.CacheManager;
 import org.cboard.cache.HeapCacheManager;
-import org.cboard.dataprovider.aggregator.Aggregatable;
 import org.cboard.dataprovider.DataProvider;
+import org.cboard.dataprovider.aggregator.Aggregatable;
 import org.cboard.dataprovider.annotation.DatasourceParameter;
 import org.cboard.dataprovider.annotation.ProviderName;
 import org.cboard.dataprovider.annotation.QueryParameter;
@@ -23,7 +25,6 @@ import org.cboard.dataprovider.result.ColumnIndex;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -41,24 +42,15 @@ public class ElasticsearchDataProvider extends DataProvider implements Aggregata
     private static final Logger LOG = LoggerFactory.getLogger(ElasticsearchDataProvider.class);
 
     @DatasourceParameter(label = "Elasticsearch Server (domain:port)", type = DatasourceParameter.Type.Input, order = 1)
-    private String SERVERIP = "serverIp";
+    protected String SERVERIP = "serverIp";
 
     @QueryParameter(label = "Index", type = QueryParameter.Type.Input, order = 2)
-    private String INDEX = "index";
+    protected String INDEX = "index";
 
     @QueryParameter(label = "Type", type = QueryParameter.Type.Input, order = 3)
-    private String TYPE = "type";
+    protected String TYPE = "type";
 
     private static final CacheManager<Map<String, String>> typesCache = new HeapCacheManager<>();
-
-
-    public ElasticsearchDataProvider() {
-
-    }
-
-    public ElasticsearchDataProvider(Map<String, String> dataSource, Map<String, String> query) {
-        super(dataSource, query);
-    }
 
     @Override
     public String[][] queryDimVals(String columnName, AggConfig config) throws Exception {
@@ -166,12 +158,22 @@ public class ElasticsearchDataProvider extends DataProvider implements Aggregata
         return result;
     }
 
-    private JSONObject post(String url, JSONObject request) throws IOException {
-        String response = Request.Post(url).bodyString(request.toString(), ContentType.APPLICATION_JSON).execute().returnContent().asString();
+    protected JSONObject post(String url, JSONObject request) throws Exception {
+        HttpResponse httpResponse = Request.Post(url).bodyString(request.toString(), ContentType.APPLICATION_JSON).execute().returnResponse();
+        String response = EntityUtils.toString(httpResponse.getEntity());
+        if (httpResponse.getStatusLine().getStatusCode() == 200) {
+            return JSONObject.parseObject(response);
+        } else {
+            throw new Exception(response);
+        }
+    }
+
+    protected JSONObject get(String url) throws Exception {
+        String response = Request.Get(url).execute().returnContent().asString();
         return JSONObject.parseObject(response);
     }
 
-    private JSONObject getTermsAggregation(String columnName) {
+    protected JSONObject getTermsAggregation(String columnName) {
         JSONObject aggregation = new JSONObject();
         aggregation.put(columnName, new JSONObject());
         aggregation.getJSONObject(columnName).put("terms", new JSONObject());
@@ -180,11 +182,11 @@ public class ElasticsearchDataProvider extends DataProvider implements Aggregata
         return aggregation;
     }
 
-    private String getMappingUrl() {
+    protected String getMappingUrl() {
         return String.format("http://%s/%s/_mapping/%s", dataSource.get(SERVERIP), query.get(INDEX), query.get(TYPE));
     }
 
-    private String getSearchUrl() {
+    protected String getSearchUrl() {
         return String.format("http://%s/%s/_search", dataSource.get(SERVERIP), query.get(INDEX));
     }
 
@@ -201,9 +203,8 @@ public class ElasticsearchDataProvider extends DataProvider implements Aggregata
             synchronized (key.intern()) {
                 types = typesCache.get(key);
                 if (types == null) {
-                    String mappingJson = Request.Get(getMappingUrl()).execute().returnContent().asString();
-                    JSONObject mapping = JSONObject.parseObject(mappingJson);
-                    mapping = mapping.getJSONObject(query.get(INDEX)).getJSONObject("mappings").getJSONObject(query.get(TYPE));
+                    JSONObject mapping = get(getMappingUrl());
+                    mapping = mapping.getJSONObject(mapping.keySet().iterator().next()).getJSONObject("mappings").getJSONObject(query.get(TYPE));
                     types = new HashMap<>();
                     getField(types, new DefaultMapEntry(null, mapping), null);
                     typesCache.put(key, types, 1 * 60 * 60 * 1000);
@@ -258,7 +259,7 @@ public class ElasticsearchDataProvider extends DataProvider implements Aggregata
             keys.addAll(parentKeys);
         }
         if (dimensionLevel > 0) {
-            keys.add(object.getString("key"));
+            keys.add(object.getOrDefault("key_as_string", object.getString("key")).toString());
         }
         if (dimensionLevel >= dimensionList.size()) {
             for (ColumnIndex value : valueList) {

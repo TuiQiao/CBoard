@@ -38,7 +38,6 @@
                 <span>{{'DASHBOARD.PARAM.VALUE_LIST'|translate}}</span>
                 <select multiple class="form-control" style="height: 300px">
                     <option ng-repeat="v in param.values" ng-click="deleteSelected($event)" style="overflow: hidden;white-space: nowrap;text-overflow: ellipsis;" title="{{v}}">{{v}}</option>
-                    <option ng-repeat="v in param.values" ng-click="deleteSelected($event)">{{v}}</option>
                 </select>
             </div>
             <div class="doubleValues" ng-if="operate.closeInterval">

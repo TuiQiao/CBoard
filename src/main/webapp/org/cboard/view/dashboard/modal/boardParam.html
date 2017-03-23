@@ -25,7 +25,7 @@
             <div class="SelectsOption">
                 <span>{{'DASHBOARD.PARAM.OPT_VALUE'|translate}}</span>
                 <select multiple class="form-control selectsOption" style="height: 300px">
-                    <option ng-repeat="v in selects | filter:keyword" ng-click="selectedValues($event)">{{v}}</option>
+                    <option ng-repeat="v in selects | filter:keyword" ng-click="selectedValues($event)" style="overflow: hidden;white-space: nowrap;text-overflow: ellipsis;" title="{{v}}">{{v}}</option>
                 </select>
             </div>
         </div>
@@ -37,6 +37,7 @@
             <div class="multiValues" ng-if="operate.equal">
                 <span>{{'DASHBOARD.PARAM.VALUE_LIST'|translate}}</span>
                 <select multiple class="form-control" style="height: 300px">
+                    <option ng-repeat="v in param.values" ng-click="deleteSelected($event)" style="overflow: hidden;white-space: nowrap;text-overflow: ellipsis;" title="{{v}}">{{v}}</option>
                     <option ng-repeat="v in param.values" ng-click="deleteSelected($event)">{{v}}</option>
                 </select>
             </div>

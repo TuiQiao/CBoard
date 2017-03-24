@@ -38,7 +38,7 @@ public class LocalSecurityFilter implements Filter {
 
     @Override
     public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain) throws IOException, ServletException {
-        if ("/render.html".equals(((HttpServletRequest) servletRequest).getRequestURI())) {
+        if ("/render.html".equals(((HttpServletRequest) servletRequest).getServletPath())) {
             String sid = ((HttpServletRequest) servletRequest).getParameter("sid");
             try {
                 String uid = sidCache.get(sid);

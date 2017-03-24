@@ -126,7 +126,7 @@ cBoard.service('dataService', function ($http, updateService) {
 
     var getExpSeries = function (exp) {
         var result = [];
-        exp = exp.trim();
+        exp = exp.trim().replace(/[\n|\s]/g, '');
         var _temp = [];
         _.each(exp.match(/".*?"/g), function (text) {
             exp = exp.replace(text, '_#' + _temp.length);
@@ -460,22 +460,25 @@ cBoard.service('dataService', function ($http, updateService) {
     };
 
     var compileExp = function (exp) {
-        exp = exp.trim();
+        exp = exp.trim().replace(/[\n|\s]/g, '');
         var _temp = [];
         _.each(exp.match(/".*?"/g), function (text) {
             exp = exp.replace(text, '_#' + _temp.length);
             _temp.push(text);
         });
+        var names = [];
         _.each(exp.match(/(sum|avg|count|max|min)\("?.*?"?\)/g), function (text) {
             var name = text.substring(text.indexOf('(') + 1, text.indexOf(')'));
             if (name.match("_#")) {
                 name = _temp[name.replace("_#", "")].replace(/\"/g, "");
-                name = name.replace(/\'/g, "\\'");
+                //name = name.replace(/\'/g, "\\'");
             }
             var aggregate = text.substring(0, text.indexOf('('));
-            exp = exp.replace(text, "groupData['" + name + "']['" + aggregate + "'][key]");
+            exp = exp.replace(text, "groupData[_names[" + names.length + "]]['" + aggregate + "'][key]");
+            names.push(name);
         });
         return function (groupData, key) {
+            var _names = names;
             return eval(exp);
         };
     };

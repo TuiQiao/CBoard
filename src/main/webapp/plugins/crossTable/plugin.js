@@ -85,7 +85,7 @@ var crossTable = {
         this.clickPageNum(dataPage, chartConfig, p_class);
         this.clickNextPrev(dataPage.length, pageObj, p_class);
         this.selectDataNum(data, chartConfig.groups.length + 1, chartConfig, p_class);
-        this.export(random,data);
+        this.export(random, data);
     },
     paginationProcessData: function (rawData, headerLines, pageSize) {
         var dataLength = rawData.length - headerLines;
@@ -140,17 +140,18 @@ var crossTable = {
             for (var m = 0; m < chartConfig.keys.length; m++) {
                 var currentCell = data[n][m];
                 var rowParentCell = data[n][m - 1];
+                var cur_data = currentCell.data ? currentCell.data : "";
                 if (m > 0) {
                     if (currentCell.rowSpan == 'row_null' && rowParentCell.rowSpan == 'row_null' && !isFirstLine) {
                         rowContent += "<th class=row_null><div></div></th>";
                     } else {
-                        rowContent += "<th class=row><div>" + currentCell.data + "</div></th>";
+                        rowContent += "<th class=row><div>" + cur_data + "</div></th>";
                     }
                 } else {
                     if (currentCell.rowSpan == 'row_null' && !isFirstLine) {
                         rowContent += "<th class=row_null><div></div></th>";
                     } else {
-                        rowContent += "<th class=row><div>" + currentCell.data + "</div></th>";
+                        rowContent += "<th class=row><div>" + cur_data + "</div></th>";
                     }
                 }
             }
@@ -293,7 +294,7 @@ var crossTable = {
             //_this.clickPageNum(pageObj.data, pageObj.chartConfig);
         });
     },
-    export: function (random,data) {
+    export: function (random, data) {
         $(".toolbar" + random + " .exportBnt").on('click', function () {
             var xhr = new XMLHttpRequest();
             var formData = new FormData();

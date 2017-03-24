@@ -12,7 +12,9 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.InputStreamReader;
 import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
@@ -52,6 +54,12 @@ public class PersistService {
             String cmd = String.format("%s %s %s %s %s %s", phantomjsPath, scriptPath, dashboardId, persistId, uuid, web);
             LOG.info("Run phantomjs command: {}", cmd);
             process = Runtime.getRuntime().exec(cmd);
+            BufferedReader input = new BufferedReader(new InputStreamReader(process.getInputStream()));
+            String line;
+            while ((line = input.readLine()) != null) {
+                LOG.info(line);
+            }
+            input.close();
             synchronized (context) {
                 context.wait(10 * 60 * 1000);
             }

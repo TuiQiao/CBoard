@@ -26,7 +26,17 @@ cBoard.service('chartPieService', function (dataService) {
                     type: 'pie',
                     center: [5 * b + i * 9 * b + '%', '50%'],
                     data: [],
-                    roseType: 'angle'
+                    //roseType: 'angle'
+                    itemStyle: {
+                        normal: {
+                            label: {
+                                show: true,
+                                //position:'inside',
+                                formatter: '{b}: {d}%'
+                            }
+                        },
+                        labelLine: {show: true}
+                    }
                 };
                 titles.push({
                     textAlign: 'center', textStyle: {

@@ -39,34 +39,28 @@
     </select>
 
     <select id="getJobList" resultType="org.cboard.pojo.DashboardJob">
-      SELECT
-               t.job_id         AS id,
-               t.user_id        AS userId,
-               t.job_name       AS name,
-               t.start_date     AS startDate,
-               t.end_date       AS endDate,
-               t.job_type       AS jobType,
-               t.job_config     AS config,
-               t.cron_exp       AS cronExp,
-               t.last_exec_time AS lastExecTime,
-               t.exec_log AS execLog,
-               (select u.user_name from dashboard_user u where u.user_id = t.user_id) as userName,
-               t.job_status AS jobStatus,
-               t.permission as permission from (
-      select w.*,'11' permission from dashboard_job w where #{0} = '${admin_user_id}' OR user_id = #{0}
-        union ALL
-        SELECT a.*  FROM (
-	   select w1.*,r.permission
-	     from dashboard_job w1 join (
-	        SELECT res_id,permission
-	          FROM dashboard_user_role ur
-	          LEFT JOIN dashboard_role_res rr ON ur.role_id = rr.role_id
-	         WHERE ur.user_id = #{0} AND rr.res_type = 'job'
-	     ) r on w1.job_id = r.res_id
-        ) a LEFT JOIN (
-		select job_id from dashboard_job w where #{0} = '${admin_user_id}' OR user_id = #{0}
-        ) b ON a.job_id = b.job_id
-         WHERE b.job_id is NULL) t ORDER BY t.job_id DESC
+       SELECT
+               j.job_id         AS id,
+               j.user_id        AS userId,
+               j.job_name       AS name,
+               j.start_date     AS startDate,
+               j.end_date       AS endDate,
+               j.job_type       AS jobType,
+               j.job_config     AS config,
+               j.cron_exp       AS cronExp,
+               j.last_exec_time AS lastExecTime,
+               j.exec_log AS execLog,
+               (select u.user_name from dashboard_user u where u.user_id = j.user_id) as userName,
+               j.job_status AS jobStatus
+          FROM dashboard_job j
+         WHERE #{0} = '${admin_user_id}' OR j.user_id = #{0}
+               OR j.job_id IN (
+                  SELECT res_id
+                    FROM dashboard_user_role ur
+                    LEFT JOIN dashboard_role_res rr ON ur.role_id = rr.role_id
+                   WHERE ur.user_id = #{0} AND rr.res_type = 'job'
+               )
+        ORDER BY j.job_id DESC
     </select>
 
     <delete id="delete">

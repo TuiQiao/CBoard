@@ -17,27 +17,20 @@
     </select>
 
     <select id="getDatasetList" resultType="org.cboard.pojo.DashboardDataset">
-              SELECT
+      SELECT
               dataset_id    AS id,
               user_id       AS userId,
               dataset_name  AS name,
               data_json     AS data,
-              category_name AS categoryName,
-              permission as permission from (
-      select w.*,'11' permission from dashboard_dataset w where #{0} = '${admin_user_id}' OR user_id = #{0}
-        union ALL
-        SELECT a.*  FROM (
-	   select w1.*,r.permission
-	     from dashboard_dataset w1 join (
-	        SELECT res_id,permission
-	          FROM dashboard_user_role ur
-	          LEFT JOIN dashboard_role_res rr ON ur.role_id = rr.role_id
-	         WHERE ur.user_id = #{0} AND rr.res_type = 'dataset'
-	     ) r on w1.dataset_id = r.res_id
-        ) a LEFT JOIN (
-		select dataset_id from dashboard_dataset w where #{0} = '${admin_user_id}' OR user_id = #{0}
-        ) b ON a.dataset_id = b.dataset_id
-         WHERE b.dataset_id is NULL) t ORDER BY dataset_name
+              category_name AS categoryName
+         FROM dashboard_dataset
+               WHERE #{0} = '${admin_user_id}' OR user_id = #{0} OR dataset_id IN (
+             SELECT res_id
+               FROM dashboard_user_role ur
+               LEFT JOIN dashboard_role_res rr ON ur.role_id = rr.role_id
+              WHERE ur.user_id = #{0} AND rr.res_type = 'dataset'
+          )
+        ORDER BY dataset_name
     </select>
 
     <select id="getDataset" resultType="org.cboard.pojo.DashboardDataset">

@@ -14,22 +14,15 @@
               user_id       AS userId,
               source_name   AS name,
               source_type   AS type,
-              config        AS config,
-              permission as permission from (
-      select w.*,'11' permission from dashboard_datasource w where #{0} = '${admin_user_id}' OR user_id = #{0}
-        union ALL
-        SELECT a.*  FROM (
-	   select w1.*,r.permission
-	     from dashboard_datasource w1 join (
-	        SELECT res_id,permission
-	          FROM dashboard_user_role ur
-	          LEFT JOIN dashboard_role_res rr ON ur.role_id = rr.role_id
-	         WHERE ur.user_id = #{0} AND rr.res_type = 'datasource'
-	     ) r on w1.datasource_id = r.res_id
-        ) a LEFT JOIN (
-		select datasource_id from dashboard_datasource w where #{0} = '${admin_user_id}' OR user_id = #{0}
-        ) b ON a.datasource_id = b.datasource_id
-         WHERE b.datasource_id is NULL) t ORDER BY source_name
+              config        AS config
+         FROM dashboard_datasource
+        WHERE #{0} = '${admin_user_id}' OR user_id = #{0} OR datasource_id IN (
+             SELECT res_id
+               FROM dashboard_user_role ur
+               LEFT JOIN dashboard_role_res rr ON ur.role_id = rr.role_id
+              WHERE ur.user_id = #{0} AND rr.res_type = 'datasource'
+          )
+        ORDER BY source_name
     </select>
 
     <select id="getDatasource" resultType="org.cboard.pojo.DashboardDatasource">

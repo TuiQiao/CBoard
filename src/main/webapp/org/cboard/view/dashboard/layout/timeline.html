@@ -1,0 +1,128 @@
+<!-- Content Wrapper. Contains page content -->
+<section class="content-header">
+    <h1>
+        <div ng-show="loading"><i class="fa fa-spinner fa-spin"></i> {{"COMMON.LOADING" | translate}}</div>
+        {{board.name}}
+    </h1>
+    <div class="breadcrumb" style="cursor: pointer">
+        <div style="display: inline-block" ng-click="load(true)">
+            <button class="btn btn-primary btn-sm">
+                <span><i class="fa fa-refresh"></i>&nbsp;{{"COMMON.REFRESH" | translate}}</span>
+            </button>
+        </div>
+        <div style="display: inline-block" ng-click="export(true)">
+            <button class="btn btn-primary btn-sm">
+                <span ng-show="!exportStatus"><i class="fa fa-download"></i>&nbsp;{{"COMMON.EXPORT" | translate}}</span>
+                <span ng-show="exportStatus"><i class="fa fa-spinner fa-spin"></i> Loading</span>
+            </button>
+        </div>
+    </div>
+</section>
+<div id="inner-container" class="content" style="margin-top: 15px;">
+    <div class="n_fixed_area box box-solid" style="border-left: 1px solid #d2d6de; border-right: 1px solid #d2d6de">
+        <div class="box-body">
+            <div class="col-sm-12">
+                <div style="min-height: 35px;height: auto;padding: 0px">
+                    <div ng-repeat="param in timelineFilter.params" class="btn-group"
+                         style="cursor: move;margin: 3px 3px;">
+                        <button type="button" class="btn btn-default btn-sm">
+                            {{param.name}}
+                        </button>
+                        <button type="button" class="btn btn-default btn-sm dropdown-toggle"
+                                ng-click="editParam(param)">
+                            <span class="fa fa-edit"></span>
+                        </button>
+                    </div>
+                </div>
+                <div class="paramTemplate"></div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-12">
+            <div class="n_maptree_area">
+                <div class="n_maptree_wrap" ng-repeat="group in timeline">
+                    <!-- S 主节点 -->
+                    <div class="n_maptree_item" ng-repeat="row in group"
+                         ng-class="{'leaf':'n_maptree_item_s'}[row.node]" ng-switch="row.node">
+                        <span ng-switch-when="parent"
+                              class="n_btn_n3 {{timelineColor[$parent.$parent.$index % timelineColor.length]}}">{{row.nodeName}}</span>
+                        <i ng-switch-default
+                           class="n_btn_n2 fa fa-envelope {{timelineColor[$index % timelineColor.length]}}"
+                           title="{{row.title}}"></i>
+                        <div class="timeline-item">
+                            <div class="arrow-left"></div>
+                            <span class="n_on_off">
+                                <i class="n_btn_n1 fa text-yellow fa-chevron-circle-up" title="收起"></i>
+                            </span>
+                            <h3 class="timeline-header">{{row.title}}</h3>
+                            <div class="timeline-body row">
+                                <ng-switch on="row.type">
+                                    <div ng-switch-default>
+                                        <div ng-repeat="widget in row.widgets track by $index">
+                                            <div ng-if="widget.show">
+                                                <dashboard-widget ng-show="widget.loading == false"></dashboard-widget>
+                                            </div>
+                                            <div ng-if="widget.hasRole != false && (widget.loading || !widget.show)"
+                                                 class="col-md-{{widget.width}}" style="height: 50px;">
+                                                <div class="box box-solid">
+                                                    <div class="box-header">
+                                                        <i class="fa fa-bar-chart-o"></i>
+                                                        <h3 class="box-title">{{widget.name}}</h3>
+                                                        <div class="box-tools pull-right">
+                                                            <button type="button" class="btn btn-box-tool"
+                                                                    ng-if="widgetCfg"
+                                                                    ng-click="config(widget)"><i
+                                                                    class="fa fa-wrench"></i>
+                                                            </button>
+                                                            <button type="button" class="btn btn-box-tool"
+                                                                    data-widget="collapse"><i
+                                                                    class="fa fa-minus"></i>
+                                                            </button>
+                                                        </div>
+                                                    </div>
+                                                    <div class="box-body"
+                                                         ng-style="{height:row.height?row.height:300+'px'}">
+                                                        <i class="fa fa-spinner fa-spin"></i> {{"COMMON.LOADING" |
+                                                        translate}}
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div ng-if="widget.hasRole == false" class="col-md-{{widget.width}}">
+                                                <div class="box box-solid">
+                                                    <div class="box-header">
+                                                        <i class="fa fa-bar-chart-o"></i>
+                                                        <h3 class="box-title">{{widget.name}}</h3>
+                                                        <div class="box-tools pull-right">
+                                                            <button type="button" class="btn btn-box-tool"
+                                                                    data-widget="collapse"><i
+                                                                    class="fa fa-minus"></i>
+                                                            </button>
+                                                        </div>
+                                                    </div>
+                                                    <div class="box-body"
+                                                         ng-style="{height:row.height?row.height:300+'px'}">
+                                                        {{'ADMIN.CONTACT_ADMIN' | translate}}：<br>
+                                                        <ul>
+                                                            <li ng-repeat="ri in widget.roleInfo"> {{ri.type |
+                                                                translate}}：{{ri.name}}
+                                                            </li>
+                                                        </ul>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </ng-switch>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- /.col -->
+    </div>
+    <div class="row" ng-repeat="row in board.layout.rows track by $index" ng-style="{height:row.height+'px'}">
+
+    </div>
+</div>

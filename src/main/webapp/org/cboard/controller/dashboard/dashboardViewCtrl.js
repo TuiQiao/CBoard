@@ -16,6 +16,27 @@ cBoard.controller('dashboardViewCtrl', function ($timeout, $rootScope, $scope, $
         $scope.load(false);
     });
 
+    $scope.timelineColor = ['bg-light-blue', 'bg-red', 'bg-aqua', 'bg-green', 'bg-yellow', 'bg-gray', 'bg-navy', 'bg-teal', 'bg-purple', 'bg-orange', 'bg-maroon', 'bg-black'];
+
+    var groupTimeline = function () {
+        $scope.timeline = [];
+        var group = undefined;
+        _.each($scope.board.layout.rows, function (row, idx) {
+            if (idx == 0) {
+                $scope.timelineFilter = row;
+                return;
+            }
+            if (row.node == 'parent') {
+                if (group) {
+                    $scope.timeline.push(group);
+                }
+                group = [];
+            }
+            group.push(row);
+        });
+        $scope.timeline.push(group);
+    };
+
     $http.post("admin/isConfig.do", {type: 'widget'}).success(function (response) {
         $scope.widgetCfg = response;
     });
@@ -58,8 +79,8 @@ cBoard.controller('dashboardViewCtrl', function ($timeout, $rootScope, $scope, $
         }).success(function (data) {
             var blob = new Blob([data], {type: "application/vnd.ms-excel"});
             var objectUrl = URL.createObjectURL(blob);
-            var aForExcel = $("<a><span class='forExcel'>下载excel</span></a>").attr("href",objectUrl);
-            aForExcel.attr("download",$scope.board.name);
+            var aForExcel = $("<a><span class='forExcel'>下载excel</span></a>").attr("href", objectUrl);
+            aForExcel.attr("download", $scope.board.name);
             $("body").append(aForExcel);
             $(".forExcel").click();
             aForExcel.remove();
@@ -86,6 +107,9 @@ cBoard.controller('dashboardViewCtrl', function ($timeout, $rootScope, $scope, $
         $http.get("dashboard/getBoardData.do?id=" + $stateParams.id).success(function (response) {
             $scope.loading = false;
             $scope.board = response;
+            if ($scope.board.layout.type == 'timeline') {
+                groupTimeline();
+            }
             _.each($scope.board.layout.rows, function (row) {
                 _.each(row.widgets, function (widget) {
                     if (!_.isUndefined(widget.hasRole) && !widget.hasRole) {
@@ -412,4 +436,5 @@ cBoard.controller('dashboardViewCtrl', function ($timeout, $rootScope, $scope, $
             },
         });
     };
+
 });

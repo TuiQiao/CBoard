@@ -132,7 +132,7 @@ cBoard.controller('boardCtrl', function ($rootScope, $scope, $http, ModalUtils, 
     getCategoryList();
     getDatasetList();
 
-    $scope.newOperate = function() {
+    $scope.newOperate = function () {
         $('div.newBoard').toggleClass('hideOperate');
     };
 
@@ -140,6 +140,21 @@ cBoard.controller('boardCtrl', function ($rootScope, $scope, $http, ModalUtils, 
         $rootScope.freeLayout = false;
         $scope.optFlag = 'new';
         $scope.curBoard = {layout: {rows: []}};
+        $('div.newBoard').addClass('hideOperate');
+    };
+
+    $scope.newTimelineLayout = function () {
+        $rootScope.freeLayout = false;
+        $scope.optFlag = 'new';
+        $scope.curBoard = {
+            layout: {
+                type: 'timeline', rows: [{
+                    height: '',
+                    params: [],
+                    type: 'param'
+                }]
+            }
+        };
         $('div.newBoard').addClass('hideOperate');
     };
 
@@ -190,6 +205,10 @@ cBoard.controller('boardCtrl', function ($rootScope, $scope, $http, ModalUtils, 
         $scope.curBoard.layout.rows.push({type: 'widget', widgets: []});
     };
 
+    $scope.addNode = function (node) {
+        $scope.curBoard.layout.rows.push({node: node, type: 'widget', widgets: []});
+    };
+
     $scope.addPramRow = function () {
         $scope.curBoard.layout.rows.unshift({type: 'param', params: []});
     };
@@ -208,7 +227,7 @@ cBoard.controller('boardCtrl', function ($rootScope, $scope, $http, ModalUtils, 
     function saveBoardCallBack(serviceStatus) {
         if (serviceStatus.status == '1') {
             getBoardList();
-            if(!$scope.curBoard.id){
+            if (!$scope.curBoard.id) {
                 $scope.curBoard.id = serviceStatus.id;
             }
             $scope.optFlag = 'edit';

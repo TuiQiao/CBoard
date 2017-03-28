@@ -1,0 +1,78 @@
+<div class="row form-horizontal" style="margin-bottom: 10px">
+    <div class="col-md-4">
+        <div class="form-group">
+            <label class="col-sm-4 control-label">交互类型</label>
+            <div class="col-sm-8">
+                <select class="form-control" ng-model="param.paramType" ng-options="d.value as d.name for d in param_types"></select>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="form-group">
+            <label class="col-sm-4 control-label">宽度</label>
+            <div class="col-sm-8">
+                <input type="text" ng-model="param.cfg.width" class="form-control">
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="form-group">
+            <label class="col-sm-4 control-label">显示格式</label>
+            <div class="col-sm-8">
+                <input type="text" ng-model="param.cfg.formatter" class="form-control">
+            </div>
+        </div>
+    </div>
+</div>
+<div class="row form-horizontal" style="margin-bottom: 10px">
+    <div class="col-md-4">
+        <div class="form-group">
+            <label class="col-sm-4 control-label">最小值</label>
+            <div class="col-sm-8">
+                <input type="text" ng-model="param.cfg.min" class="form-control">
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="form-group">
+            <label class="col-sm-4 control-label">最大值</label>
+            <div class="col-sm-8">
+                <input type="text" ng-model="param.cfg.max" class="form-control">
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="form-group">
+            <label class="col-sm-4 control-label">值类型</label>
+            <div class="col-sm-8">
+                <input type="text" ng-model="param.cfg.valueType" class="form-control">
+            </div>
+        </div>
+    </div>
+</div>
+<div class="row form-horizontal" style="margin-bottom: 10px">
+    <div class="col-md-4">
+        <div class="form-group">
+            <label class="col-sm-4 control-label">最大范围</label>
+            <div class="col-sm-8">
+                <input type="text" ng-model="param.cfg.maxRange" class="form-control">
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="form-group">
+            <label class="col-sm-4 control-label">默认范围</label>
+            <div class="col-sm-8">
+                <input type="text" ng-model="param.cfg.range" class="form-control">
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="form-group">
+            <label class="col-sm-4 control-label">单位大小</label>
+            <div class="col-sm-8">
+                <input type="text" ng-model="param.cfg.step" class="form-control">
+            </div>
+        </div>
+    </div>
+</div>

@@ -20,7 +20,7 @@
         </div>
         <br/>
     </div>
-    <div class="row">
+    <div class="row" style="margin-bottom: 10px">
         <div class="col-md-5">
             <div class="cubeTree">
                 <div class="title"><i class="fa fa-cube"></i><span>{{'CONFIG.DASHBOARD.CUBE_TREE'|translate}}</span></div>
@@ -47,6 +47,15 @@
             </div>
         </div>
     </div>
+    <div ng-switch="param.paramType">
+        <div ng-switch-when="slider">
+            <div ng-include="'org/cboard/view/config/board/modal/param/slider.html'"></div>
+        </div>
+        <div ng-switch-default>
+            <div ng-include="'org/cboard/view/config/board/modal/param/selector.html'"></div>
+        </div>
+    </div>
+
 </div>
 <div class="modal-footer">
     <button type="button" class="btn btn-default pull-left" data-dismiss="modal" ng-click="close()">{{'COMMON.CANCEL'|translate}}</button>

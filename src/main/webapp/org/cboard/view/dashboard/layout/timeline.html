@@ -23,15 +23,13 @@
         <div class="box-body">
             <div class="col-sm-12">
                 <div style="min-height: 35px;height: auto;padding: 0px">
-                    <div ng-repeat="param in timelineFilter.params" class="btn-group"
-                         style="cursor: move;margin: 3px 3px;">
-                        <button type="button" class="btn btn-default btn-sm">
-                            {{param.name}}
-                        </button>
-                        <button type="button" class="btn btn-default btn-sm dropdown-toggle"
-                                ng-click="editParam(param)">
-                            <span class="fa fa-edit"></span>
-                        </button>
+                    <div ng-repeat="param in timelineFilter.params" ng-switch="param.paramType" ng-controller="paramCtrl">
+                        <div ng-switch-when="slider">
+                            <ng-include src="'org/cboard/view/dashboard/param/slider.html'"/>
+                        </div>
+                        <div ng-switch-default>
+                            <ng-include src="'org/cboard/view/dashboard/param/selector.html'"/>
+                        </div>
                     </div>
                 </div>
                 <div class="paramTemplate"></div>

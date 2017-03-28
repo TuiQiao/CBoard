@@ -284,11 +284,15 @@ cBoard.controller('boardCtrl', function ($rootScope, $scope, $http, ModalUtils, 
             };
         }
         $uibModal.open({
-            templateUrl: 'org/cboard/view/config/modal/param.html',
+            templateUrl: 'org/cboard/view/config/board/modal/param.html',
             windowTemplateUrl: 'org/cboard/view/util/modal/window.html',
             backdrop: false,
             size: 'lg',
             controller: function ($scope, $uibModalInstance) {
+                $scope.param_types = [
+                    {name: 'selector', value: 'selector'},
+                    {name: 'slider', value: 'slider'}
+                ];
                 $scope.status = status;
                 $scope.param = param;
                 $scope.boardDataset = parent.boardDataset;

@@ -12,7 +12,9 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.InputStreamReader;
 import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
@@ -49,7 +51,14 @@ public class PersistService {
             TASK_MAP.put(persistId, context);
             String uuid = UUID.randomUUID().toString().replaceAll("-", "");
             LocalSecurityFilter.put(uuid, userId);
-            String cmd = String.format("%s %s %s %s %s %s", phantomjsPath, scriptPath, dashboardId, persistId, uuid, web);
+            String phantomUrl = new StringBuffer("http://127.0.0.1:")
+                    .append(web)
+                    .append("render.html")
+                    .append("?sid=").append(uuid)
+                    .append("#?id=").append(dashboardId)
+                    .append("&pid=").append(persistId)
+                    .toString();
+            String cmd = String.format("%s %s %s", phantomjsPath, scriptPath, phantomUrl);
             LOG.info("Run phantomjs command: {}", cmd);
             process = Runtime.getRuntime().exec(cmd);
             synchronized (context) {

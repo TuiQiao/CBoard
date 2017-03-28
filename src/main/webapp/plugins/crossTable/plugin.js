@@ -81,7 +81,7 @@ var crossTable = {
             data: dataPage,
             chartConfig: chartConfig
         };
-        chartConfig.values[0].cols.length ? this.renderPagination(dataPage.length, 1, pageObj, $('.' + p_class + ' .page>ul')[0]) : null;
+        data.length ? this.renderPagination(dataPage.length, 1, pageObj, $('.' + p_class + ' .page>ul')[0]) : null;
         this.clickPageNum(dataPage, chartConfig, p_class);
         this.clickNextPrev(dataPage.length, pageObj, p_class);
         this.selectDataNum(data, chartConfig.groups.length + 1, chartConfig, p_class);

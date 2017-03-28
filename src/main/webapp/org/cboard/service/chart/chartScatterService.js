@@ -127,10 +127,10 @@ cBoard.service('chartScatterService', function (dataService) {
                     {
                         dimension: 3,
                         show: false,
-                        min: colorMin * 0.8,
-                        max: colorMax * 1.5,
+                        min: colorMin,
+                        max: colorMax,
                         inRange: {
-                            opacity: [0.5, 1]
+                            opacity: [0.2, 1]
                         }
 
                     }],

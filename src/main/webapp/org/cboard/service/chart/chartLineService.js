@@ -30,6 +30,7 @@ cBoard.service('chartLineService', function (dataService) {
                 var s = angular.copy(newValuesConfig[joined_values]);
                 s.name = joined_values;
                 s.data = aggregate_data[i];
+                s.barMaxWidth = 20;
                 if (s.type == 'stackbar') {
                     s.type = 'bar';
                     s.stack = s.valueAxisIndex.toString();
@@ -49,16 +50,20 @@ cBoard.service('chartLineService', function (dataService) {
             }
 
             var valueAxis = angular.copy(chartConfig.values);
-            _.each(valueAxis, function (e, i) {
-                e.axisLabel = {
+            _.each(valueAxis, function (axis, index) {
+                axis.axisLabel = {
                     formatter: function (value) {
                         return numbro(value).format("0a.[0000]");
                     }
                 };
-                if (i > 0) {
-                    e.splitLine = false;
+                if (axis.series_type == "percentbar") {
+                    axis.min = 0;
+                    axis.max = 100;
                 }
-                e.scale = true;
+                if (index > 0) {
+                    axis.splitLine = false;
+                }
+                axis.scale = true;
             });
             var categoryAxis = {
                 type: 'category',

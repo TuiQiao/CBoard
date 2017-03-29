@@ -23,7 +23,7 @@
         <div class="box-body">
             <div class="col-sm-12">
                 <div style="min-height: 35px;height: auto;padding: 0px">
-                    <div ng-repeat="param in timelineFilter.params" ng-switch="param.paramType" ng-controller="paramCtrl">
+                    <div ng-repeat="param in timelineFilter.params" ng-switch="param.paramType" ng-controller="paramCtrl" ng-init="init()">
                         <div ng-switch-when="slider">
                             <ng-include src="'org/cboard/view/dashboard/param/slider.html'"/>
                         </div>

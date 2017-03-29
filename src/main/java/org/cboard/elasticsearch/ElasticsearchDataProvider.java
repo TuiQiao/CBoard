@@ -70,18 +70,19 @@ public class ElasticsearchDataProvider extends DataProvider implements Aggregata
         JSONObject response = post(getSearchUrl(), request);
         String[] nofilter = response.getJSONObject("aggregations").getJSONObject(columnName).getJSONArray("buckets").stream()
                 .map(e -> ((JSONObject) e).getString("key")).toArray(String[]::new);
-        JSONArray filter = getFilter(config);
-        if (filter.size() > 0) {
-            request.put("query", new JSONObject());
-            request.getJSONObject("query").put("bool", new JSONObject());
-            request.getJSONObject("query").getJSONObject("bool").put("filter", getFilter(config));
-            response = post(getSearchUrl(), request);
-            String[] filtered = response.getJSONObject("aggregations").getJSONObject(columnName).getJSONArray("buckets").stream()
-                    .map(e -> ((JSONObject) e).getString("key")).toArray(String[]::new);
-            return new String[][]{filtered, nofilter};
-        } else {
-            return new String[][]{nofilter, nofilter};
+        if (config != null) {
+            JSONArray filter = getFilter(config);
+            if (filter.size() > 0) {
+                request.put("query", new JSONObject());
+                request.getJSONObject("query").put("bool", new JSONObject());
+                request.getJSONObject("query").getJSONObject("bool").put("filter", getFilter(config));
+                response = post(getSearchUrl(), request);
+                String[] filtered = response.getJSONObject("aggregations").getJSONObject(columnName).getJSONArray("buckets").stream()
+                        .map(e -> ((JSONObject) e).getString("key")).toArray(String[]::new);
+                return new String[][]{filtered, nofilter};
+            }
         }
+        return new String[][]{nofilter, nofilter};
     }
 
     private JSONArray getFilter(AggConfig config) {

@@ -7,17 +7,24 @@ cBoard.controller('paramCtrl', function ($scope, $uibModal, $http) {
     var getMaxMin = function (value) {
         if (isNaN(Number(value))) {
             var now = function (i, key) {
-                return +moment().add(i, key)
-            }
+                if (i == undefined) {
+                    return +moment();
+                }
+                return +moment().add(i, key);
+            };
             return eval(value);
         } else {
             return value;
         }
     };
 
-    var init = function () {
-        if ($scope.$parent.param.paramType == 'slider') {
-            var cfg = $scope.$parent.param.cfg;
+    $scope.init = function () {
+        $scope.param = $scope.$parent.param;
+        $scope.param.selects = [];
+        $scope.param.type = '=';
+        $scope.param.values = [];
+        if ($scope.param.paramType == 'slider') {
+            var cfg = $scope.param.cfg;
             var _max = getMaxMin(_.result(cfg, 'max', null));
             var _min = getMaxMin(_.result(cfg, 'min', null));
             var apply = _.debounce($scope.$parent.applyParamFilter, 1500);
@@ -28,15 +35,15 @@ cBoard.controller('paramCtrl', function ($scope, $uibModal, $http) {
                     floor: _min,
                     ceil: _max,
                     draggableRange: true,
+                    enforceStep: false,
                     maxRange: Number(_.result(cfg, 'maxRange', null)),
-                    step: _.result(cfg, 'step', 30 * 60 * 1000),
+                    step: _.result(cfg, 'step', 1 * 60 * 1000),
                     translate: function (value) {
                         if (_.isUndefined(cfg.formatter)) {
                             return value;
                         } else {
                             return moment(value).format(cfg.formatter);
                         }
-
                     },
                     onChange: function (sliderId, modelValue, highValue, pointerType) {
                         $scope.param.type = '[a,b]';
@@ -44,10 +51,24 @@ cBoard.controller('paramCtrl', function ($scope, $uibModal, $http) {
                         apply();
                     }
                 }
+            };
+            $scope.param.type = '[a,b]';
+            $scope.param.values = [$scope.slider.minValue, $scope.slider.maxValue];
+            $scope.param.refresh = function () {
+                if ($scope.slider.maxValue == $scope.slider.options.ceil) {
+                    var _range = $scope.slider.maxValue - $scope.slider.minValue;
+                    var cfg = $scope.param.cfg;
+                    var max = getMaxMin(_.result(cfg, 'max', null));
+                    var min = getMaxMin(_.result(cfg, 'min', null));
+                    $scope.slider.maxValue = max;
+                    $scope.slider.minValue = max - _range;
+                    $scope.slider.options.floor = min;
+                    $scope.slider.options.ceil = max;
+                    $scope.param.type = '[a,b]';
+                    $scope.param.values = [$scope.slider.minValue, $scope.slider.maxValue];
+                }
             }
-            ;
         } else {
-            $scope.param = $scope.$parent.param;
             _.each($scope.param.col, function (c) {
                 var p;
                 if (_.isUndefined(c.datasetId)) {
@@ -80,7 +101,8 @@ cBoard.controller('paramCtrl', function ($scope, $uibModal, $http) {
                 });
             });
         }
-    }();
+        $scope.$emit('paramInitFinish', $scope.param);
+    };
 
     var paramArr = [];
     $scope.editParam = function () {

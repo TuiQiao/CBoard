@@ -62,14 +62,15 @@ public class DataProviderViewManager {
         List<Field> fieldList = fieldOrdering.sortedCopy(fieldSet);
         try {
             Object o = clz.newInstance();
-            List<Map<String, String>> lists = new ArrayList<>();
+            List<Map<String, Object>> lists = new ArrayList<>();
             for (Field field : fieldList) {
                 field.setAccessible(true);
                 DatasourceParameter datasourceParameter = field.getAnnotation(DatasourceParameter.class);
-                Map<String, String> param = new HashMap<>();
+                Map<String, Object> param = new HashMap<>();
                 param.put("label", datasourceParameter.label());
                 param.put("type", datasourceParameter.type().toString());
                 param.put("name", (String) field.get(o));
+                param.put("options", datasourceParameter.options());
                 lists.add(param);
             }
             VelocityContext context = new VelocityContext();

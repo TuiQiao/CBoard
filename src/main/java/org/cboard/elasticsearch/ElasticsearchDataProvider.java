@@ -201,7 +201,7 @@ public class ElasticsearchDataProvider extends DataProvider implements Aggregata
             JSONObject aggregation = new JSONObject();
             aggregation.put(columnName, new JSONObject());
             aggregation.getJSONObject(columnName).put("terms", new JSONObject());
-            aggregation.getJSONObject(columnName).getJSONObject("terms").put("field", columnName);
+            aggregation.getJSONObject(columnName).getJSONObject("terms").put("field", getRealUsedField(columnName));
             aggregation.getJSONObject(columnName).getJSONObject("terms").put("size", 1000);
             return aggregation;
         }
@@ -212,7 +212,7 @@ public class ElasticsearchDataProvider extends DataProvider implements Aggregata
     }
 
     protected String getSearchUrl() {
-        return String.format("http://%s/%s/_search", dataSource.get(SERVERIP), query.get(INDEX));
+        return String.format("http://%s/%s/%s/_search", dataSource.get(SERVERIP), query.get(INDEX), query.get(TYPE));
     }
 
     @Override
@@ -333,7 +333,7 @@ public class ElasticsearchDataProvider extends DataProvider implements Aggregata
             aggregation.put(aggregationName, new JSONObject());
             if (typesCache.containsKey(config.getColumn())) {
                 aggregation.getJSONObject(aggregationName).put(type, new JSONObject());
-                aggregation.getJSONObject(aggregationName).getJSONObject(type).put("field", config.getColumn());
+                aggregation.getJSONObject(aggregationName).getJSONObject(type).put("field", getRealUsedField(config.getColumn()));
             } else {
                 JSONObject extend = JSONObject.parseObject(config.getColumn());
                 String column = extend.getString("column");
@@ -396,4 +396,17 @@ public class ElasticsearchDataProvider extends DataProvider implements Aggregata
             overrideAggregations = JSONObject.parseObject(query.get(OVERRIDE));
         }
     }
+
+    private String getRealUsedField(String field) {
+        StringBuffer columnUsedAgg = new StringBuffer(field);
+        try {
+            if ("text".equals(getTypes().get(field))) {
+                columnUsedAgg.append(".keyword");
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return columnUsedAgg.toString();
+    }
+
 }

@@ -81,7 +81,8 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
             {name: 'count', value: 'count'},
             {name: 'avg', value: 'avg'},
             {name: 'max', value: 'max'},
-            {name: 'min', value: 'min'}
+            {name: 'min', value: 'min'},
+            {name: 'distinct', value: 'distinct'}
         ];
 
         $scope.kpi_styles = [

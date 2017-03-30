@@ -326,6 +326,9 @@ public class ElasticsearchDataProvider extends DataProvider implements Aggregata
                 case "min":
                     type = "min";
                     break;
+                case "distinct":
+                    type = "cardinality";
+                    break;
                 default:
                     type = "value_count";
                     break;
@@ -374,11 +377,17 @@ public class ElasticsearchDataProvider extends DataProvider implements Aggregata
                 getField(types, e, field.getKey());
             }
         } else {
+            String key = null;
+            String type = value.getString("type");
             if (parent == null) {
-                types.put(field.getKey(), value.getString("type"));
+                key = field.getKey();
             } else {
-                types.put(parent + "." + field.getKey(), value.getString("type"));
+                key = parent + "." + field.getKey();
             }
+            if ("text".equals(type)) {
+                key += ".keyword";
+            }
+            types.put(key, type);
         }
     }
 

@@ -217,6 +217,8 @@ public class ElasticsearchDataProvider extends DataProvider implements Aggregata
 
     @Override
     public String[] getColumn() throws Exception {
+        String key = getKey();
+        typesCache.remove(key);
         Map<String, String> types = getTypes();
         return types.keySet().toArray(new String[0]);
     }

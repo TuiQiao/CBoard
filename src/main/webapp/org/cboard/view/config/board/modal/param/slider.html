@@ -86,7 +86,17 @@
         <div class="form-group">
             <label class="col-sm-4 control-label">步长</label>
             <div class="col-sm-8">
-                <input type="text" ng-model="param.cfg.step" class="form-control" title="{{param.cfg.step/60000+ '分钟'}}">
+                <div class="input-group">
+                    <input type="text" class="form-control" ng-model="param.cfg.step">
+                    <div class="input-group-btn">
+                        <button type="button" class="btn dropdown-toggle" data-toggle="dropdown">
+                            <span class="fa fa-caret-down"></span></button>
+                        <ul class="dropdown-menu">
+                            <li><a>{{param.cfg.step/60000+ '分钟'}}</a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
@@ -94,8 +104,17 @@
         <div class="form-group">
             <label class="col-sm-4 control-label">最大范围</label>
             <div class="col-sm-8">
-                <input type="text" ng-model="param.cfg.maxRange" class="form-control"
-                       title="{{param.cfg.maxRange/60000+ '分钟'}}">
+                <div class="input-group">
+                    <input type="text" class="form-control" ng-model="param.cfg.maxRange">
+                    <div class="input-group-btn">
+                        <button type="button" class="btn dropdown-toggle" data-toggle="dropdown">
+                            <span class="fa fa-caret-down"></span></button>
+                        <ul class="dropdown-menu">
+                            <li><a>{{param.cfg.maxRange/60000+ '分钟'}}</a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
@@ -103,7 +122,17 @@
         <div class="form-group">
             <label class="col-sm-4 control-label">默认范围</label>
             <div class="col-sm-8">
-                <input type="text" ng-model="param.cfg.range" class="form-control" title="{{param.cfg.range/60000+ '分钟'}}">
+                <div class="input-group">
+                    <input type="text" class="form-control" ng-model="param.cfg.range">
+                    <div class="input-group-btn">
+                        <button type="button" class="btn dropdown-toggle" data-toggle="dropdown">
+                            <span class="fa fa-caret-down"></span></button>
+                        <ul class="dropdown-menu">
+                            <li><a>{{param.cfg.range/60000+ '分钟'}}</a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
             </div>
         </div>
     </div>

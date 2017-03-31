@@ -124,12 +124,15 @@
     bottom: 16px;
     padding: 1px 3px;
     color: #55637d;
-    cursor: default
+    cursor: default;
+    font-size: smaller;
+}
+.rzslider .rz-bubble.rz-limit {
+    color: #55637d;
+    font-size: smaller;
+    font-weight: bold;
 }
 
-.rzslider .rz-bubble.rz-limit {
-    color: #55637d
-}
 
 .rzslider .rz-ticks {
     position: absolute;

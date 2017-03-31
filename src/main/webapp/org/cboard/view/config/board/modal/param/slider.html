@@ -1,7 +1,7 @@
 <div class="row form-horizontal" style="margin-bottom: 10px">
     <div class="col-md-4">
         <div class="form-group">
-            <label class="col-sm-4 control-label">交互类型</label>
+            <label class="col-sm-4 control-label-compact">{{'CONFIG.DASHBOARD.PARAM_TYPE'|translate}}</label>
             <div class="col-sm-8">
                 <select class="form-control" ng-model="param.paramType"
                         ng-options="d.value as d.name for d in param_types"></select>
@@ -10,7 +10,7 @@
     </div>
     <div class="col-md-4">
         <div class="form-group">
-            <label class="col-sm-4 control-label">宽度</label>
+            <label class="col-sm-4 control-label-compact">{{'CONFIG.DASHBOARD.WIDTH'|translate}}</label>
             <div class="col-sm-8">
                 <input type="text" ng-model="param.cfg.width" class="form-control">
             </div>
@@ -18,7 +18,7 @@
     </div>
     <div class="col-md-4">
         <div class="form-group">
-            <label class="col-sm-4 control-label">显示格式化</label>
+            <label class="col-sm-4 control-label-compact">{{'CONFIG.DASHBOARD.VIEW_FORMMAT'|translate}}</label>
             <div class="col-sm-8">
                 <input type="text" ng-model="param.cfg.formatter" class="form-control">
             </div>
@@ -28,7 +28,7 @@
 <div class="row form-horizontal" style="margin-bottom: 10px">
     <div class="col-md-4">
         <div class="form-group">
-            <label class="col-sm-4 control-label">最小值</label>
+            <label class="col-sm-4 control-label-compact">{{'CONFIG.DASHBOARD.MIN'|translate}}</label>
             <div class="col-sm-8">
                 <div class="input-group">
                     <input type="text" class="form-control" ng-model="param.cfg.min">
@@ -36,11 +36,11 @@
                         <button type="button" class="btn dropdown-toggle" data-toggle="dropdown">
                             <span class="fa fa-caret-down"></span></button>
                         <ul class="dropdown-menu">
-                            <li ng-click="param.cfg.min='now(-1,\'h\')'"><a>一小时前</a>
+                            <li ng-click="param.cfg.min='now(-1,\'h\')'"><a>{{'CONFIG.DASHBOARD.ONE_HOUR_AGO'|translate}}</a>
                             </li>
-                            <li ng-click="param.cfg.min='now(-1,\'d\')'"><a>一天前</a>
+                            <li ng-click="param.cfg.min='now(-1,\'d\')'"><a>{{'CONFIG.DASHBOARD.ONE_DAY_AGO'|translate}}</a>
                             </li>
-                            <li ng-click="param.cfg.min='now(-1,\'M\')'"><a>一月前</a>
+                            <li ng-click="param.cfg.min='now(-1,\'M\')'"><a>{{'CONFIG.DASHBOARD.ONE_MONTH_AGO'|translate}}</a>
                             </li>
                         </ul>
                     </div>
@@ -50,7 +50,7 @@
     </div>
     <div class="col-md-4">
         <div class="form-group">
-            <label class="col-sm-4 control-label">最大值</label>
+            <label class="col-sm-4 control-label-compact">{{'CONFIG.DASHBOARD.MAX'|translate}}</label>
             <div class="col-sm-8">
                 <div class="input-group">
                     <input type="text" class="form-control" ng-model="param.cfg.max">
@@ -58,13 +58,13 @@
                         <button type="button" class="btn dropdown-toggle" data-toggle="dropdown">
                             <span class="fa fa-caret-down"></span></button>
                         <ul class="dropdown-menu">
-                            <li ng-click="param.cfg.max='now()'"><a>现在</a>
+                            <li ng-click="param.cfg.max='now()'"><a>{{'CONFIG.DASHBOARD.NOW'|translate}}</a>
                             </li>
-                            <li ng-click="param.cfg.max='now(-1,\'h\')'"><a>一小时前</a>
+                            <li ng-click="param.cfg.max='now(-1,\'h\')'"><a>{{'CONFIG.DASHBOARD.ONE_HOUR_AGO'|translate}}</a>
                             </li>
-                            <li ng-click="param.cfg.max='now(-1,\'d\')'"><a>一天前</a>
+                            <li ng-click="param.cfg.max='now(-1,\'d\')'"><a>{{'CONFIG.DASHBOARD.ONE_DAY_AGO'|translate}}</a>
                             </li>
-                            <li ng-click="param.cfg.max='now(-1,\'M\')'"><a>一月前</a>
+                            <li ng-click="param.cfg.max='now(-1,\'M\')'"><a>{{'CONFIG.DASHBOARD.ONE_MONTH_AGO'|translate}}</a>
                             </li>
                         </ul>
                     </div>
@@ -74,7 +74,7 @@
     </div>
     <div class="col-md-4">
         <div class="form-group">
-            <label class="col-sm-4 control-label">值格式化</label>
+            <label class="col-sm-4 control-label-compact">{{'CONFIG.DASHBOARD.VALUE_FORMMAT'|translate}}</label>
             <div class="col-sm-8">
                 <input type="text" ng-model="param.cfg.value_fmt" class="form-control">
             </div>
@@ -84,7 +84,7 @@
 <div class="row form-horizontal" style="margin-bottom: 10px">
     <div class="col-md-4">
         <div class="form-group">
-            <label class="col-sm-4 control-label">步长</label>
+            <label class="col-sm-4 control-label-compact">{{'CONFIG.DASHBOARD.STEP'|translate}}</label>
             <div class="col-sm-8">
                 <div class="input-group">
                     <input type="text" class="form-control" ng-model="param.cfg.step">
@@ -92,14 +92,10 @@
                         <button type="button" class="btn dropdown-toggle" data-toggle="dropdown">
                             <span class="fa fa-clock-o"></span></button>
                         <ul class="dropdown-menu">
-                            <li ng-click="param.cfg.step='interval(1,\'s\')'"><a>一秒钟</a>
-                            </li>
-                            <li ng-click="param.cfg.step='interval(1,\'m\')'"><a>一分钟</a>
-                            </li>
-                            <li ng-click="param.cfg.step='interval(1,\'h\')'"><a>一小时</a>
-                            </li>
-                            <li ng-click="param.cfg.step='interval(1,\'d\')'"><a>一天</a>
-                            </li>
+                            <li ng-click="param.cfg.step='interval(1,\'s\')'"><a>{{'CONFIG.DASHBOARD.ONE_SECOND'|translate}}</a></li>
+                            <li ng-click="param.cfg.step='interval(1,\'m\')'"><a>{{'CONFIG.DASHBOARD.ONE_MINUT'|translate}}</a></li>
+                            <li ng-click="param.cfg.step='interval(1,\'h\')'"><a>{{'CONFIG.DASHBOARD.ONE_HOUR'|translate}}</a></li>
+                            <li ng-click="param.cfg.step='interval(1,\'d\')'"><a>{{'CONFIG.DASHBOARD.ONE_DAY'|translate}}</a></li>
                         </ul>
                     </div>
                 </div>
@@ -108,7 +104,7 @@
     </div>
     <div class="col-md-4">
         <div class="form-group">
-            <label class="col-sm-4 control-label">最大范围</label>
+            <label class="col-sm-4 control-label-compact">{{'CONFIG.DASHBOARD.MAX_RANGE'|translate}}</label>
             <div class="col-sm-8">
                 <div class="input-group">
                     <input type="text" class="form-control" ng-model="param.cfg.maxRange">
@@ -116,14 +112,10 @@
                         <button type="button" class="btn dropdown-toggle" data-toggle="dropdown">
                             <span class="fa fa-clock-o"></span></button>
                         <ul class="dropdown-menu">
-                            <li ng-click="param.cfg.maxRange='interval(1,\'s\')'"><a>一秒钟</a>
-                            </li>
-                            <li ng-click="param.cfg.maxRange='interval(1,\'m\')'"><a>一分钟</a>
-                            </li>
-                            <li ng-click="param.cfg.maxRange='interval(1,\'h\')'"><a>一小时</a>
-                            </li>
-                            <li ng-click="param.cfg.maxRange='interval(1,\'d\')'"><a>一天</a>
-                            </li>
+                            <li ng-click="param.cfg.maxRange='interval(1,\'s\')'"><a>{{'CONFIG.DASHBOARD.ONE_SECOND'|translate}}</a></li>
+                            <li ng-click="param.cfg.maxRange='interval(1,\'m\')'"><a>{{'CONFIG.DASHBOARD.ONE_MINUT'|translate}}</a></li>
+                            <li ng-click="param.cfg.maxRange='interval(1,\'h\')'"><a>{{'CONFIG.DASHBOARD.ONE_HOUR'|translate}}</a></li>
+                            <li ng-click="param.cfg.maxRange='interval(1,\'d\')'"><a>{{'CONFIG.DASHBOARD.ONE_DAY'|translate}}</a></li>
                         </ul>
                     </div>
                 </div>
@@ -132,7 +124,7 @@
     </div>
     <div class="col-md-4">
         <div class="form-group">
-            <label class="col-sm-4 control-label">默认范围</label>
+            <label class="col-sm-4 control-label-compact">{{'CONFIG.DASHBOARD.DEFAUT_RANGE'|translate}}</label>
             <div class="col-sm-8">
                 <div class="input-group">
                     <input type="text" class="form-control" ng-model="param.cfg.range">
@@ -140,14 +132,10 @@
                         <button type="button" class="btn dropdown-toggle" data-toggle="dropdown">
                             <span class="fa fa-clock-o"></span></button>
                         <ul class="dropdown-menu">
-                            <li ng-click="param.cfg.range='interval(1,\'s\')'"><a>一秒钟</a>
-                            </li>
-                            <li ng-click="param.cfg.range='interval(1,\'m\')'"><a>一分钟</a>
-                            </li>
-                            <li ng-click="param.cfg.range='interval(1,\'h\')'"><a>一小时</a>
-                            </li>
-                            <li ng-click="param.cfg.range='interval(1,\'d\')'"><a>一天</a>
-                            </li>
+                            <li ng-click="param.cfg.range='interval(1,\'s\')'"><a>{{'CONFIG.DASHBOARD.ONE_SECOND'|translate}}</a></li>
+                            <li ng-click="param.cfg.range='interval(1,\'m\')'"><a>{{'CONFIG.DASHBOARD.ONE_MINUT'|translate}}</a></li>
+                            <li ng-click="param.cfg.range='interval(1,\'h\')'"><a>{{'CONFIG.DASHBOARD.ONE_HOUR'|translate}}</a></li>
+                            <li ng-click="param.cfg.range='interval(1,\'d\')'"><a>{{'CONFIG.DASHBOARD.ONE_DAY'|translate}}</a></li>
                         </ul>
                     </div>
                 </div>

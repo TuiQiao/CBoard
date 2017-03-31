@@ -27,12 +27,14 @@
                         <div class="box-body">
                             <div class="col-sm-12">
                                 <div style="min-height: 35px;height: auto;padding: 0px">
-                                    <div ng-repeat="param in row.params" ng-switch="param.paramType" ng-controller="paramCtrl" ng-init="init()">
-                                        <div ng-switch-when="slider">
-                                            <ng-include src="'org/cboard/view/dashboard/param/slider.html'"/>
+                                    <div class="row">
+                                        <div ng-repeat="param in row.params | filter:{'!slider':strict}" ng-controller="paramCtrl" ng-init="init()">
+                                            <ng-include src="'org/cboard/view/dashboard/param/selector.html'" style="float: left"/>
                                         </div>
-                                        <div ng-switch-default>
-                                            <ng-include src="'org/cboard/view/dashboard/param/selector.html'"/>
+                                    </div>
+                                    <div class="row">
+                                        <div ng-repeat="param in row.params | filter:'slider':strict" ng-controller="paramCtrl" ng-init="init()">
+                                            <ng-include src="'org/cboard/view/dashboard/param/slider.html'" class="col-md-{{param.cfg.width}}"/>
                                         </div>
                                     </div>
                                 </div>

@@ -1,3 +1,9 @@
+.control-label-compact {
+    padding: 7px 2px;
+    font-size: small;
+    text-align: right;
+}
+
 .tableView table {
     border-bottom: 1px solid #d5d5d5;
     border-right: 1px solid #d5d5d5;

@@ -92,7 +92,13 @@
                         <button type="button" class="btn dropdown-toggle" data-toggle="dropdown">
                             <span class="fa fa-clock-o"></span></button>
                         <ul class="dropdown-menu">
-                            <li><a>{{param.cfg.step/60000+ '分钟'}}</a>
+                            <li ng-click="param.cfg.step='interval(1,\'s\')'"><a>一秒钟</a>
+                            </li>
+                            <li ng-click="param.cfg.step='interval(1,\'m\')'"><a>一分钟</a>
+                            </li>
+                            <li ng-click="param.cfg.step='interval(1,\'h\')'"><a>一小时</a>
+                            </li>
+                            <li ng-click="param.cfg.step='interval(1,\'d\')'"><a>一天</a>
                             </li>
                         </ul>
                     </div>
@@ -110,7 +116,13 @@
                         <button type="button" class="btn dropdown-toggle" data-toggle="dropdown">
                             <span class="fa fa-clock-o"></span></button>
                         <ul class="dropdown-menu">
-                            <li><a>{{param.cfg.maxRange/60000+ '分钟'}}</a>
+                            <li ng-click="param.cfg.maxRange='interval(1,\'s\')'"><a>一秒钟</a>
+                            </li>
+                            <li ng-click="param.cfg.maxRange='interval(1,\'m\')'"><a>一分钟</a>
+                            </li>
+                            <li ng-click="param.cfg.maxRange='interval(1,\'h\')'"><a>一小时</a>
+                            </li>
+                            <li ng-click="param.cfg.maxRange='interval(1,\'d\')'"><a>一天</a>
                             </li>
                         </ul>
                     </div>
@@ -128,7 +140,13 @@
                         <button type="button" class="btn dropdown-toggle" data-toggle="dropdown">
                             <span class="fa fa-clock-o"></span></button>
                         <ul class="dropdown-menu">
-                            <li><a>{{param.cfg.range/60000+ '分钟'}}</a>
+                            <li ng-click="param.cfg.range='interval(1,\'s\')'"><a>一秒钟</a>
+                            </li>
+                            <li ng-click="param.cfg.range='interval(1,\'m\')'"><a>一分钟</a>
+                            </li>
+                            <li ng-click="param.cfg.range='interval(1,\'h\')'"><a>一小时</a>
+                            </li>
+                            <li ng-click="param.cfg.range='interval(1,\'d\')'"><a>一天</a>
                             </li>
                         </ul>
                     </div>

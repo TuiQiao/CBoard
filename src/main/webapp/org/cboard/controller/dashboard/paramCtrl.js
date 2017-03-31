@@ -4,13 +4,34 @@
 'user strict';
 cBoard.controller('paramCtrl', function ($scope, $uibModal, $http) {
 
-    var getMaxMin = function (value) {
+    var evalValue = function (value) {
         if (isNaN(Number(value))) {
             var now = function (i, key) {
                 if (i == undefined) {
                     return +moment();
                 }
                 return +moment().add(i, key);
+            };
+            var interval = function (i, key) {
+                if (i == undefined) {
+                    i == 1
+                }
+                var y = 0;
+                switch (key) {
+                    case 'h':
+                        y = 60 * 60 * 1000;
+                        break;
+                    case 'd':
+                        y = 24 * 60 * 60 * 1000;
+                        break;
+                    case 'm':
+                        y = 60 * 1000;
+                        break;
+                    case 's':
+                        y = 1000;
+                        break;
+                }
+                return i * y;
             };
             return eval(value);
         } else {
@@ -33,19 +54,19 @@ cBoard.controller('paramCtrl', function ($scope, $uibModal, $http) {
         $scope.param.values = [];
         if ($scope.param.paramType == 'slider') {
             var cfg = $scope.param.cfg;
-            var _max = getMaxMin(_.result(cfg, 'max', null));
-            var _min = getMaxMin(_.result(cfg, 'min', null));
+            var _max = evalValue(_.result(cfg, 'max', null));
+            var _min = evalValue(_.result(cfg, 'min', null));
             var apply = _.debounce($scope.$parent.applyParamFilter, 800);
             $scope.slider = {
-                minValue: _max - Number(_.result(cfg, 'range', 0)),
+                minValue: _max - Number(evalValue(_.result(cfg, 'range', 0))),
                 maxValue: _max,
                 options: {
                     floor: _min,
                     ceil: _max,
                     draggableRange: true,
                     enforceStep: false,
-                    maxRange: Number(_.result(cfg, 'maxRange', null)),
-                    step: _.result(cfg, 'step', 1 * 60 * 1000),
+                    maxRange: Number(evalValue(_.result(cfg, 'maxRange', null))),
+                    step: evalValue(_.result(cfg, 'step', 1 * 60 * 1000)),
                     translate: function (value) {
                         return formatter(value, cfg.formatter);
                     },
@@ -62,8 +83,8 @@ cBoard.controller('paramCtrl', function ($scope, $uibModal, $http) {
                 if ($scope.slider.maxValue == $scope.slider.options.ceil) {
                     var _range = $scope.slider.maxValue - $scope.slider.minValue;
                     var cfg = $scope.param.cfg;
-                    var max = getMaxMin(_.result(cfg, 'max', null));
-                    var min = getMaxMin(_.result(cfg, 'min', null));
+                    var max = evalValue(_.result(cfg, 'max', null));
+                    var min = evalValue(_.result(cfg, 'min', null));
                     $scope.slider.maxValue = max;
                     $scope.slider.minValue = max - _range;
                     $scope.slider.options.floor = min;

@@ -18,6 +18,14 @@ cBoard.controller('paramCtrl', function ($scope, $uibModal, $http) {
         }
     };
 
+    var formatter = function (d, f) {
+        if (_.isUndefined(f)) {
+            return d;
+        } else {
+            return moment(d).format(f);
+        }
+    };
+
     $scope.init = function () {
         $scope.param = $scope.$parent.param;
         $scope.param.selects = [];
@@ -39,15 +47,11 @@ cBoard.controller('paramCtrl', function ($scope, $uibModal, $http) {
                     maxRange: Number(_.result(cfg, 'maxRange', null)),
                     step: _.result(cfg, 'step', 1 * 60 * 1000),
                     translate: function (value) {
-                        if (_.isUndefined(cfg.formatter)) {
-                            return value;
-                        } else {
-                            return moment(value).format(cfg.formatter);
-                        }
+                        return formatter(value, cfg.formatter);
                     },
                     onChange: function (sliderId, modelValue, highValue, pointerType) {
                         $scope.param.type = '[a,b]';
-                        $scope.param.values = [modelValue, highValue];
+                        $scope.param.values = [formatter(modelValue, cfg.value_fmt), formatter(highValue, cfg.value_fmt)];
                         apply();
                     }
                 }

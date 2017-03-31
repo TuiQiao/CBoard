@@ -158,17 +158,12 @@ cBoard.controller('dashboardViewCtrl', function ($timeout, $rootScope, $scope, $
             });
         }
         $http.get("dashboard/getBoardData.do?id=" + $stateParams.id).success(function (response) {
+            $scope.intervalGroup = {};
             $scope.loading = false;
             $scope.board = response;
             if (paramInitListener) {
                 paramInitListener(reload);
             }
-            paramInitListener = $scope.$on('paramInitFinish', function (e, d) {
-                $scope.paramInit--;
-                if ($scope.paramInit == 0) {
-                    loadWidget(reload)
-                }
-            });
             _.each($scope.board.layout.rows, function (row) {
                 _.each(row.params, function (param) {
                     $scope.paramInit++;
@@ -180,7 +175,12 @@ cBoard.controller('dashboardViewCtrl', function ($timeout, $rootScope, $scope, $
             if ($scope.board.layout.type == 'timeline') {
                 groupTimeline();
             }
-            $scope.intervalGroup = {};
+            paramInitListener = $scope.$on('paramInitFinish', function (e, d) {
+                $scope.paramInit--;
+                if ($scope.paramInit == 0) {
+                    loadWidget(reload)
+                }
+            });
         });
     };
 

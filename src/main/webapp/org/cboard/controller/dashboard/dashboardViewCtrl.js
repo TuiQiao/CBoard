@@ -101,8 +101,49 @@ cBoard.controller('dashboardViewCtrl', function ($timeout, $rootScope, $scope, $
         paramToFilter();
     };
 
+    var loadWidget = function (reload) {
+        paramToFilter();
+        _.each($scope.board.layout.rows, function (row) {
+            _.each(row.widgets, function (widget) {
+                if (!_.isUndefined(widget.hasRole) && !widget.hasRole) {
+                    return;
+                }
+                buildRender(widget, reload);
+                widget.loading = true;
+                widget.show = true;
+                //real time load task
+                var w = widget.widget.data;
+                var ds = _.find($scope.datasetList, function (e) {
+                    return e.id == w.datasetId;
+                });
+                if (ds && ds.data.interval && ds.data.interval > 0) {
+                    if (!$scope.intervalGroup[w.datasetId]) {
+                        $scope.intervalGroup[w.datasetId] = [];
+                        $scope.intervals.push($interval(function () {
+                            refreshParam();
+                            _.each($scope.intervalGroup[w.datasetId], function (e) {
+                                e();
+                            });
+                        }, ds.data.interval * 1000));
+                    }
+                    $scope.intervalGroup[w.datasetId].push(function () {
+                        try {
+                            chartService.realTimeRender(widget.realTimeTicket, injectFilter(widget.widget).data);
+                            if (widget.modalRealTimeTicket) {
+                                chartService.realTimeRender(widget.modalRealTimeTicket, injectFilter(widget.widget).data, widget.modalRealTimeOption.optionFilter, null);
+                            }
+                        } catch (e) {
+                            console.error(e);
+                        }
+                    });
+                }
+            });
+        });
+    };
+
     var paramInitListener;
     $scope.load = function (reload) {
+        $scope.paramInit = 0;
         $scope.loading = true;
         _.each($scope.intervals, function (e) {
             $interval.cancel(e);
@@ -120,48 +161,12 @@ cBoard.controller('dashboardViewCtrl', function ($timeout, $rootScope, $scope, $
             $scope.loading = false;
             $scope.board = response;
             if (paramInitListener) {
-                paramInitListener();
+                paramInitListener(reload);
             }
             paramInitListener = $scope.$on('paramInitFinish', function (e, d) {
                 $scope.paramInit--;
                 if ($scope.paramInit == 0) {
-                    paramToFilter();
-                    _.each($scope.board.layout.rows, function (row) {
-                        _.each(row.widgets, function (widget) {
-                            if (!_.isUndefined(widget.hasRole) && !widget.hasRole) {
-                                return;
-                            }
-                            buildRender(widget, reload);
-                            widget.loading = true;
-                            widget.show = true;
-                            //real time load task
-                            var w = widget.widget.data;
-                            var ds = _.find($scope.datasetList, function (e) {
-                                return e.id == w.datasetId;
-                            });
-                            if (ds && ds.data.interval && ds.data.interval > 0) {
-                                if (!$scope.intervalGroup[w.datasetId]) {
-                                    $scope.intervalGroup[w.datasetId] = [];
-                                    $scope.intervals.push($interval(function () {
-                                        refreshParam();
-                                        _.each($scope.intervalGroup[w.datasetId], function (e) {
-                                            e();
-                                        });
-                                    }, ds.data.interval * 1000));
-                                }
-                                $scope.intervalGroup[w.datasetId].push(function () {
-                                    try {
-                                        chartService.realTimeRender(widget.realTimeTicket, injectFilter(widget.widget).data);
-                                        if (widget.modalRealTimeTicket) {
-                                            chartService.realTimeRender(widget.modalRealTimeTicket, injectFilter(widget.widget).data, widget.modalRealTimeOption.optionFilter, null);
-                                        }
-                                    } catch (e) {
-                                        console.error(e);
-                                    }
-                                });
-                            }
-                        });
-                    });
+                    loadWidget(reload)
                 }
             });
             _.each($scope.board.layout.rows, function (row) {
@@ -169,6 +174,9 @@ cBoard.controller('dashboardViewCtrl', function ($timeout, $rootScope, $scope, $
                     $scope.paramInit++;
                 });
             });
+            if ($scope.paramInit == 0) {
+                loadWidget();
+            }
             if ($scope.board.layout.type == 'timeline') {
                 groupTimeline();
             }

@@ -27,7 +27,7 @@ cBoard.controller('paramCtrl', function ($scope, $uibModal, $http) {
             var cfg = $scope.param.cfg;
             var _max = getMaxMin(_.result(cfg, 'max', null));
             var _min = getMaxMin(_.result(cfg, 'min', null));
-            var apply = _.debounce($scope.$parent.applyParamFilter, 1500);
+            var apply = _.debounce($scope.$parent.applyParamFilter, 800);
             $scope.slider = {
                 minValue: _max - Number(_.result(cfg, 'range', 0)),
                 maxValue: _max,

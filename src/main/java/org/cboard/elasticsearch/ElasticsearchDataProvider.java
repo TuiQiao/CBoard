@@ -201,7 +201,7 @@ public class ElasticsearchDataProvider extends DataProvider implements Aggregata
             JSONObject aggregation = new JSONObject();
             aggregation.put(columnName, new JSONObject());
             aggregation.getJSONObject(columnName).put("terms", new JSONObject());
-            aggregation.getJSONObject(columnName).getJSONObject("terms").put("field", getRealUsedField(columnName));
+            aggregation.getJSONObject(columnName).getJSONObject("terms").put("field", columnName);
             aggregation.getJSONObject(columnName).getJSONObject("terms").put("size", 1000);
             return aggregation;
         }
@@ -217,6 +217,7 @@ public class ElasticsearchDataProvider extends DataProvider implements Aggregata
 
     @Override
     public String[] getColumn() throws Exception {
+        typesCache.remove(getKey());
         Map<String, String> types = getTypes();
         return types.keySet().toArray(new String[0]);
     }
@@ -336,7 +337,7 @@ public class ElasticsearchDataProvider extends DataProvider implements Aggregata
             aggregation.put(aggregationName, new JSONObject());
             if (typesCache.containsKey(config.getColumn())) {
                 aggregation.getJSONObject(aggregationName).put(type, new JSONObject());
-                aggregation.getJSONObject(aggregationName).getJSONObject(type).put("field", getRealUsedField(config.getColumn()));
+                aggregation.getJSONObject(aggregationName).getJSONObject(type).put("field", config.getColumn());
             } else {
                 JSONObject extend = JSONObject.parseObject(config.getColumn());
                 String column = extend.getString("column");
@@ -371,24 +372,37 @@ public class ElasticsearchDataProvider extends DataProvider implements Aggregata
     }
 
     private void getField(Map<String, String> types, Map.Entry<String, Object> field, String parent) {
-        JSONObject value = (JSONObject) field.getValue();
-        if (value.keySet().contains("properties")) {
-            for (Map.Entry e : value.getJSONObject("properties").entrySet()) {
+        JSONObject property = (JSONObject) field.getValue();
+        if (property.keySet().contains("properties")) {
+            for (Map.Entry e : property.getJSONObject("properties").entrySet()) {
                 getField(types, e, field.getKey());
             }
         } else {
             String key = null;
-            String type = value.getString("type");
+            String type = property.getString("type");
             if (parent == null) {
                 key = field.getKey();
             } else {
                 key = parent + "." + field.getKey();
             }
-            if ("text".equals(type)) {
+            if (isTextWithoutKeywordField(property)) {
+                return;
+            }
+            if (isTextWithKeywordField(property)) {
                 key += ".keyword";
             }
             types.put(key, type);
         }
+    }
+
+    private boolean isTextWithKeywordField(JSONObject property) {
+        String type = property.getString("type");
+        return "text".equals(type) && JSONPath.containsValue(property, "$.fields..type", "keyword");
+    }
+
+    private boolean isTextWithoutKeywordField(JSONObject property) {
+        String type = property.getString("type");
+        return "text".equals(type) && !JSONPath.containsValue(property, "$.fields..type", "keyword");
     }
 
     @Override
@@ -404,18 +418,6 @@ public class ElasticsearchDataProvider extends DataProvider implements Aggregata
         if (StringUtils.isNotBlank(query.get(OVERRIDE))) {
             overrideAggregations = JSONObject.parseObject(query.get(OVERRIDE));
         }
-    }
-
-    private String getRealUsedField(String field) {
-        StringBuffer columnUsedAgg = new StringBuffer(field);
-        try {
-            if ("text".equals(getTypes().get(field))) {
-                columnUsedAgg.append(".keyword");
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return columnUsedAgg.toString();
     }
 
 }

@@ -12,7 +12,7 @@
         <div class="form-group">
             <label class="col-sm-4 control-label-compact">{{'CONFIG.DASHBOARD.WIDTH'|translate}}</label>
             <div class="col-sm-8">
-                <input type="text" ng-model="param.cfg.width" class="form-control">
+                <input type="text" ng-model="param.cfg.width" class="form-control" placeholder="1-12">
             </div>
         </div>
     </div>
@@ -20,7 +20,17 @@
         <div class="form-group">
             <label class="col-sm-4 control-label-compact">{{'CONFIG.DASHBOARD.VIEW_FORMMAT'|translate}}</label>
             <div class="col-sm-8">
-                <input type="text" ng-model="param.cfg.formatter" class="form-control">
+                <div class="input-group">
+                    <input type="text" ng-model="param.cfg.formatter" class="form-control">
+                    <div class="input-group-btn">
+                        <button type="button" class="btn dropdown-toggle" data-toggle="dropdown">
+                            <span class="fa fa-caret-down"></span></button>
+                        <ul class="dropdown-menu">
+                            <li ng-click="param.cfg.formatter='YYYY-MM-DD HH:mm:ss'"><a>YYYY-MM-DD HH:mm:ss</a></li>
+                            <li ng-click="param.cfg.formatter='YYYY-MM-DD'"><a>YYYY-MM-DD</a></li>
+                        </ul>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
@@ -76,7 +86,16 @@
         <div class="form-group">
             <label class="col-sm-4 control-label-compact">{{'CONFIG.DASHBOARD.VALUE_FORMMAT'|translate}}</label>
             <div class="col-sm-8">
-                <input type="text" ng-model="param.cfg.value_fmt" class="form-control">
+                <div class="input-group">
+                    <input type="text" ng-model="param.cfg.value_fmt" class="form-control">
+                    <div class="input-group-btn">
+                        <button type="button" class="btn dropdown-toggle" data-toggle="dropdown">
+                            <span class="fa fa-question"></span></button>
+                        <ul class="dropdown-menu">
+                            <li ng-click="param.cfg.value_fmt='YYYY-MM-DD'"><a>Only date type need format 'YYYY-MM-DD'</a></li>
+                        </ul>
+                    </div>
+                </div>
             </div>
         </div>
     </div>

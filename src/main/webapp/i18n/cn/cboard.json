@@ -22,6 +22,7 @@
     "LAST1M": "最近一月",
     "LAST1W": "最近一周",
     "LAST10D": "最近10天",
+    "LAST10D_TIMESTAMP": "最近10天, 时间戳",
     "FILTER_GROUP": "可选过滤"
   },
   "TIPS": {

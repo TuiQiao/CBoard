@@ -242,6 +242,7 @@
     "BY_ROLE": "按角色"
   },
   "DATAPROVIDER": {
+    "AGGREGATABLE_PROVIDER": "数据源聚合",
     "JDBC": {
       "DRIVER": "驱动 (如: com.mysql.jdbc.Driver)",
       "JDBCURL": "连接串 (如: jdbc:mysql://hostname:port/db)",

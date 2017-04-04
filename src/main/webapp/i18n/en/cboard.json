@@ -242,6 +242,7 @@
     "BY_ROLE": "By Role"
   },
   "DATAPROVIDER": {
+    "AGGREGATABLE_PROVIDER": "Aggregatable DataProvider",
     "JDBC": {
       "DRIVER": "Driver (eg: com.mysql.jdbc.Driver)",
       "JDBCURL": "JDBC Url (eg: jdbc:mysql://hostname:port/db)",

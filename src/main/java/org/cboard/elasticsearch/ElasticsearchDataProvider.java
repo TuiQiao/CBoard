@@ -63,6 +63,11 @@ public class ElasticsearchDataProvider extends DataProvider implements Aggregata
     private static final JSONPath jsonPath_value = JSONPath.compile("$..value");
 
     @Override
+    public boolean doAggregationInDataSource() {
+        return true;
+    }
+
+    @Override
     public String[][] queryDimVals(String columnName, AggConfig config) throws Exception {
         JSONObject request = new JSONObject();
         request.put("size", 0);

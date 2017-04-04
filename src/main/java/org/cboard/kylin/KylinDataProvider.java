@@ -61,6 +61,11 @@ public class KylinDataProvider extends DataProvider implements Aggregatable {
     }
 
     @Override
+    public boolean doAggregationInDataSource() {
+        return true;
+    }
+
+    @Override
     public String[][] getData() throws Exception {
 
         LOG.debug("Execute JdbcDataProvider.getData() Start!");

@@ -41,6 +41,11 @@ public class FileDataProvider extends DataProvider {
     private String QUERY_PARAM_ENCLOSURE = "enclosure";
 
     @Override
+    public boolean doAggregationInDataSource() {
+        return false;
+    }
+
+    @Override
     public String[][] getData() throws Exception {
         String basePath = dataSource.get(DS_PARAM_BASE_PATH);
         String fileName = query.get(QUERY_PARAM_FILE_NAME);

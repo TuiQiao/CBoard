@@ -6,7 +6,6 @@ import com.google.common.hash.Hashing;
 import com.googlecode.aviator.AviatorEvaluator;
 import org.cboard.dataprovider.aggregator.Aggregatable;
 import org.cboard.dataprovider.aggregator.InnerAggregator;
-import org.cboard.dataprovider.annotation.DatasourceParameter;
 import org.cboard.dataprovider.config.AggConfig;
 import org.cboard.dataprovider.config.DimensionConfig;
 import org.cboard.dataprovider.expression.NowFunction;
@@ -31,17 +30,11 @@ public abstract class DataProvider {
 
     private static final Logger logger = LoggerFactory.getLogger(DataProvider.class);
 
-    @DatasourceParameter(label = "Aggregate Provider", type = DatasourceParameter.Type.Checkbox, order = 100)
-    private String aggregateProvider = "aggregateProvider";
-
     static {
         AviatorEvaluator.addFunction(new NowFunction());
     }
 
-    private boolean isAggregateProviderActive() {
-        String v = dataSource.get(aggregateProvider);
-        return v != null && "true".equals(v);
-    }
+    public abstract boolean doAggregationInDataSource();
 
     /**
      * get the aggregated data by user's widget designer
@@ -50,7 +43,7 @@ public abstract class DataProvider {
      */
     public final AggregateResult getAggData(AggConfig ac, boolean reload) throws Exception {
         evalValueExpression(ac);
-        if (this instanceof Aggregatable && isAggregateProviderActive()) {
+        if (this instanceof Aggregatable && doAggregationInDataSource()) {
             return ((Aggregatable) this).queryAggData(ac);
         } else {
             checkAndLoad(reload);
@@ -60,7 +53,7 @@ public abstract class DataProvider {
 
     public final String getViewAggDataQuery(AggConfig config) throws Exception {
         evalValueExpression(config);
-        if (this instanceof Aggregatable && isAggregateProviderActive()) {
+        if (this instanceof Aggregatable && doAggregationInDataSource()) {
             return ((Aggregatable) this).viewAggDataQuery(config);
         } else {
             return "Not Support";
@@ -76,7 +69,7 @@ public abstract class DataProvider {
     public final String[][] getDimVals(String columnName, AggConfig config, boolean reload) throws Exception {
         String[][] dimVals = null;
         evalValueExpression(config);
-        if (this instanceof Aggregatable && isAggregateProviderActive()) {
+        if (this instanceof Aggregatable && doAggregationInDataSource()) {
             dimVals = ((Aggregatable) this).queryDimVals(columnName, config);
         } else {
             checkAndLoad(reload);
@@ -87,7 +80,7 @@ public abstract class DataProvider {
 
     public final String[] getColumn(boolean reload) throws Exception {
         String[] columns = null;
-        if (this instanceof Aggregatable && isAggregateProviderActive()) {
+        if (this instanceof Aggregatable && doAggregationInDataSource()) {
             columns = ((Aggregatable) this).getColumn();
         } else {
             checkAndLoad(reload);

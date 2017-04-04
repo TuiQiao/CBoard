@@ -148,6 +148,7 @@ public class JdbcDataProvider extends DataProvider implements Aggregatable {
                         druidDS.setBreakAfterAcquireFailure(true);
                         druidDS.setConnectionErrorRetryAttempts(5);
                         datasourceMap.put(key, druidDS);
+                        ds = datasourceMap.get(key);
                     }
                 }
             }

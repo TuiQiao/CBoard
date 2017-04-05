@@ -67,7 +67,7 @@ public class ElasticsearchDataProvider extends DataProvider implements Aggregata
         JSONObject request = new JSONObject();
         request.put("size", 0);
         request.put("aggregations", getTermsAggregation(columnName));
-        JSONObject response = post(getSearchUrl(), request);
+        JSONObject response = post(getSearchUrl(request), request);
         String[] nofilter = response.getJSONObject("aggregations").getJSONObject(columnName).getJSONArray("buckets").stream()
                 .map(e -> ((JSONObject) e).getString("key")).toArray(String[]::new);
         if (config != null) {
@@ -76,7 +76,7 @@ public class ElasticsearchDataProvider extends DataProvider implements Aggregata
                 request.put("query", new JSONObject());
                 request.getJSONObject("query").put("bool", new JSONObject());
                 request.getJSONObject("query").getJSONObject("bool").put("filter", getFilter(config));
-                response = post(getSearchUrl(), request);
+                response = post(getSearchUrl(request), request);
                 String[] filtered = response.getJSONObject("aggregations").getJSONObject(columnName).getJSONArray("buckets").stream()
                         .map(e -> ((JSONObject) e).getString("key")).toArray(String[]::new);
                 return new String[][]{filtered, nofilter};
@@ -211,7 +211,7 @@ public class ElasticsearchDataProvider extends DataProvider implements Aggregata
         return String.format("http://%s/%s/_mapping/%s", dataSource.get(SERVERIP), query.get(INDEX), query.get(TYPE));
     }
 
-    protected String getSearchUrl() {
+    protected String getSearchUrl(JSONObject request) {
         return String.format("http://%s/%s/%s/_search", dataSource.get(SERVERIP), query.get(INDEX), query.get(TYPE));
     }
 
@@ -244,7 +244,7 @@ public class ElasticsearchDataProvider extends DataProvider implements Aggregata
     public AggregateResult queryAggData(AggConfig config) throws Exception {
         LOG.info("queryAggData");
         JSONObject request = getQueryAggDataRequest(config);
-        JSONObject response = post(getSearchUrl(), request);
+        JSONObject response = post(getSearchUrl(request), request);
         Stream<DimensionConfig> dimStream = Stream.concat(config.getColumns().stream(), config.getRows().stream());
         List<ColumnIndex> dimensionList = dimStream.map(ColumnIndex::fromDimensionConfig).collect(Collectors.toList());
         List<ColumnIndex> valueList = config.getValues().stream().map(ColumnIndex::fromValueConfig).collect(Collectors.toList());
@@ -409,7 +409,7 @@ public class ElasticsearchDataProvider extends DataProvider implements Aggregata
     public String viewAggDataQuery(AggConfig ac) throws Exception {
         String format = "curl -XPOST '%s?pretty' -d '\n%s'";
         String dsl = JSON.toJSONString(getQueryAggDataRequest(ac), true);
-        return String.format(format, getSearchUrl(), dsl);
+        return String.format(format, getSearchUrl(null), dsl);
     }
 
 

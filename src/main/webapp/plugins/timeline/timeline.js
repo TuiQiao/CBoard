@@ -26,13 +26,13 @@ $(function () {
         unfold: '展开'
     };
 
-    $(el.win).on('scroll', function () {
-        if ($(this).scrollTop() >= 106) {
-            $(el.nav).addClass(cls.nFixedNav);
-        } else {
-            $(el.nav).removeClass(cls.nFixedNav);
-        }
-    });
+    // $(el.win).on('scroll', function () {
+    //     if ($(this).scrollTop() >= 106) {
+    //         $(el.nav).addClass(cls.nFixedNav);
+    //     } else {
+    //         $(el.nav).removeClass(cls.nFixedNav);
+    //     }
+    // });
 
     $(document).on('click', el.nBtnN1, function (ev) {
         ev.preventDefault();

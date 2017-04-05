@@ -161,6 +161,13 @@ cBoard.controller('dashboardViewCtrl', function ($timeout, $rootScope, $scope, $
             $scope.intervalGroup = {};
             $scope.loading = false;
             $scope.board = response;
+            _.each($scope.board.layout.rows, function (row) {
+                _.each(row.params, function (param) {
+                    if (!param.paramType) {
+                        param.paramType = 'selector';
+                    }
+                });
+            });
             if (paramInitListener) {
                 paramInitListener(reload);
             }

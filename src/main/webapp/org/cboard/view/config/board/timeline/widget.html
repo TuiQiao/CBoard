@@ -1,13 +1,13 @@
-<div class="box box-success"
+<div class="box {{row.node=='parent'?'box-success':'box-primary'}}"
      style="border-left: 1px solid #d2d6de; border-right: 1px solid #d2d6de">
     <div class="box-header" dnd-draggable="row" dnd-type="'r'"
          nd-effect-allowed="move"
          dnd-moved="curBoard.layout.rows.splice($index, 1)" style="cursor:move">
-        {{row.node=='parent'?'节点':'子节点'}}
-        <input ng-if="row.node=='parent'" type="text" ng-model="row.nodeName" style="width: 100px;"
-               class="form-control" placeholder="节点名称">
+        {{row.node=='parent'?'CONFIG.DASHBOARD.MAIN_NODE':'CONFIG.DASHBOARD.SUB_NODE'|translate}}
+        <input ng-if="row.node=='parent'" type="text" ng-model="row.nodeName" style="width: 300px;"
+               class="form-control" placeholder="{{'CONFIG.DASHBOARD.NODE_NAME'|translate}}">
         <input type="text" ng-model="row.title" style="width: 300px;"
-               class="form-control" placeholder="标题">
+               class="form-control" placeholder="{{'CONFIG.DASHBOARD.TITLE'|translate}}">
         <div class="box-tools pull-right">
             <div class="input-group input-group-sm" style="width: 300px;">
                 <input type="text" name="table_search" ng-model="row.height"

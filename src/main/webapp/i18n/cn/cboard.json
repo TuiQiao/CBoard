@@ -170,7 +170,13 @@
       "ONE_SECOND": "1秒种",
       "ONE_MINUT": "1分钟",
       "ONE_HOUR": "1小时",
-      "ONE_DAY": "1天"
+      "ONE_DAY": "1天",
+      "MAIN_NODE": "主节点",
+      "SUB_NODE": "子节点",
+      "ADD_MAIN_NODE": "添加主节点",
+      "ADD_SUB_NODE": "添加子节点",
+      "NODE_NAME": "节点名称",
+      "TITLE": "标题"
     },
     "CATEGORY": {
       "NAME": "看板分类名称",

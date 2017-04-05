@@ -170,7 +170,13 @@
       "ONE_SECOND": "1 Second",
       "ONE_MINUT": "1 Minute",
       "ONE_HOUR": "1 Hour",
-      "ONE_DAY": "1 Day"
+      "ONE_DAY": "1 Day",
+      "MAIN_NODE": "Main Node",
+      "SUB_NODE": "Sub Node",
+      "ADD_MAIN_NODE": "Add Main Node",
+      "ADD_SUB_NODE": "Add Sub Node",
+      "NODE_NAME": "Node Name",
+      "TITLE": "Title"
     },
     "CATEGORY": {
       "NAME": "Category Name",
@@ -242,6 +248,7 @@
     "BY_ROLE": "By Role"
   },
   "DATAPROVIDER": {
+    "AGGREGATABLE_PROVIDER": "Aggregatable DataProvider",
     "JDBC": {
       "DRIVER": "Driver (eg: com.mysql.jdbc.Driver)",
       "JDBCURL": "JDBC Url (eg: jdbc:mysql://hostname:port/db)",

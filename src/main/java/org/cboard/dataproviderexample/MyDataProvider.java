@@ -22,6 +22,11 @@ public class MyDataProvider  extends DataProvider {
     @QueryParameter(label = "查询参数", type = QueryParameter.Type.Input, order = 1)
     private String QUERY_PARAM_KEY = "query";
 
+    @Override
+    public boolean doAggregationInDataSource() {
+        return false;
+    }
+
     /**
      *
      * @return

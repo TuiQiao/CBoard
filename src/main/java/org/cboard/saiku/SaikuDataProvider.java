@@ -36,6 +36,11 @@ public class SaikuDataProvider extends DataProvider {
     private String FILE = "file";
 
     @Override
+    public boolean doAggregationInDataSource() {
+        return false;
+    }
+
+    @Override
     public String[][] getData() throws Exception {
         String serverIp = dataSource.get(SERVERIP);
         String username = dataSource.get(USERNAME);

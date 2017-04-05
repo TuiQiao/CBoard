@@ -61,6 +61,9 @@ public class JdbcDataProvider extends DataProvider implements Aggregatable {
     @DatasourceParameter(label = "{{'DATAPROVIDER.JDBC.POOLEDCONNECTION'|translate}}", type = DatasourceParameter.Type.Checkbox, order = 5)
     private String POOLED = "pooled";
 
+    @DatasourceParameter(label = "{{'DATAPROVIDER.AGGREGATABLE_PROVIDER'|translate}}", type = DatasourceParameter.Type.Checkbox, order = 100)
+    private String aggregateProvider = "aggregateProvider";
+
     @QueryParameter(label = "{{'DATAPROVIDER.JDBC.SQLTEXT'|translate}}", type = QueryParameter.Type.TextArea, order = 1)
     private String SQL = "sql";
 
@@ -68,7 +71,13 @@ public class JdbcDataProvider extends DataProvider implements Aggregatable {
 
     private static final ConcurrentMap<String, DataSource> datasourceMap = new ConcurrentHashMap<>();
 
-    private String getKey(Map<String, String> dataSource, Map<String, String> query) {
+    @Override
+    public boolean doAggregationInDataSource() {
+        String v = dataSource.get(aggregateProvider);
+        return v != null && "true".equals(v);
+    }
+
+    private String getKey() {
         return Hashing.md5().newHasher().putString(JSONObject.toJSON(dataSource).toString() + JSONObject.toJSON(query).toString(), Charsets.UTF_8).hash().toString();
     }
 
@@ -148,6 +157,7 @@ public class JdbcDataProvider extends DataProvider implements Aggregatable {
                         druidDS.setBreakAfterAcquireFailure(true);
                         druidDS.setConnectionErrorRetryAttempts(5);
                         datasourceMap.put(key, druidDS);
+                        ds = datasourceMap.get(key);
                     }
                 }
             }
@@ -314,7 +324,7 @@ public class JdbcDataProvider extends DataProvider implements Aggregatable {
 
     private Map<String, Integer> getColumnType() throws Exception {
         Map<String, Integer> result = null;
-        String key = getKey(dataSource, query);
+        String key = getKey();
         String subQuerySql = getAsSubQuery(query.get(SQL));
         result = typeCahce.get(key);
         if (result != null) {

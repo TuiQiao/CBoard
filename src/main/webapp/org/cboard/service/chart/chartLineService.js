@@ -17,7 +17,7 @@ cBoard.service('chartLineService', function (dataService) {
             });
 
             var sum_data = [];
-            for (var j = 0; j < aggregate_data[0].length; j++) {
+            for (var j = 0; aggregate_data[0] && j < aggregate_data[0].length; j++) {
                 var sum = 0;
                 for (var i = 0; i < aggregate_data.length; i++) {
                     sum += aggregate_data[i][j] ? Number(aggregate_data[i][j]) : 0;

@@ -413,8 +413,9 @@ public class ElasticsearchDataProvider extends DataProvider implements Aggregata
     @Override
     public String viewAggDataQuery(AggConfig ac) throws Exception {
         String format = "curl -XPOST '%s?pretty' -d '\n%s'";
-        String dsl = JSON.toJSONString(getQueryAggDataRequest(ac), true);
-        return String.format(format, getSearchUrl(null), dsl);
+        JSONObject request = getQueryAggDataRequest(ac);
+        String dsl = JSON.toJSONString(request, true);
+        return String.format(format, getSearchUrl(request), dsl);
     }
 
 

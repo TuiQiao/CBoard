@@ -26,15 +26,56 @@ cBoard.controller('dashboardViewCtrl', function ($timeout, $rootScope, $scope, $
                 $scope.timelineFilter = row;
                 return;
             }
+            row.show = false;
             if (row.node == 'parent') {
                 if (group) {
                     $scope.timeline.push(group);
                 }
                 group = [];
+                row.show = true;
             }
             group.push(row);
         });
         $scope.timeline.push(group);
+    };
+
+    $scope.openCloseParentNode = function (group) {
+        var find = _.find(group, function (row) {
+            return row.node != 'parent' && row.show;
+        });
+        if (find) {
+            _.each(group, function (row) {
+                if (row.node != 'parent') {
+                    row.show = false;
+                    _.each(row.widgets, function (widget) {
+                        widget.show = false;
+                    });
+                }
+            });
+        } else {
+            _.each(group, function (row) {
+                if (row.node != 'parent') {
+                    row.show = true;
+                    _.each(row.widgets, function (widget) {
+                        widget.show = true;
+                    });
+                }
+            });
+        }
+    };
+
+    $scope.openCloseNode = function (row) {
+        if (row.show) {
+            row.show = false;
+            _.each(row.widgets, function (widget) {
+                widget.show = false;
+            });
+        } else {
+            row.show = true;
+            _.each(row.widgets, function (widget) {
+                widget.show = true;
+            });
+        }
     };
 
     $http.post("admin/isConfig.do", {type: 'widget'}).success(function (response) {
@@ -110,7 +151,13 @@ cBoard.controller('dashboardViewCtrl', function ($timeout, $rootScope, $scope, $
                 }
                 buildRender(widget, reload);
                 widget.loading = true;
-                widget.show = true;
+                if ($scope.board.layout.type == 'timeline') {
+                    if (row.show) {
+                        widget.show = true;
+                    }
+                } else {
+                    widget.show = true;
+                }
                 //real time load task
                 var w = widget.widget.data;
                 var ds = _.find($scope.datasetList, function (e) {
@@ -128,9 +175,11 @@ cBoard.controller('dashboardViewCtrl', function ($timeout, $rootScope, $scope, $
                     }
                     $scope.intervalGroup[w.datasetId].push(function () {
                         try {
-                            chartService.realTimeRender(widget.realTimeTicket, injectFilter(widget.widget).data);
-                            if (widget.modalRealTimeTicket) {
-                                chartService.realTimeRender(widget.modalRealTimeTicket, injectFilter(widget.widget).data, widget.modalRealTimeOption.optionFilter, null);
+                            if (widget.show) {
+                                chartService.realTimeRender(widget.realTimeTicket, injectFilter(widget.widget).data);
+                                if (widget.modalRealTimeTicket) {
+                                    chartService.realTimeRender(widget.modalRealTimeTicket, injectFilter(widget.widget).data, widget.modalRealTimeOption.optionFilter, null);
+                                }
                             }
                         } catch (e) {
                             console.error(e);

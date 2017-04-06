@@ -43,14 +43,14 @@
             <div class="n_maptree_area">
                 <div class="n_maptree_wrap" ng-repeat="group in timeline">
                     <!-- S 主节点 -->
-                    <div class="n_maptree_item" ng-repeat="row in group"
+                    <div class="n_maptree_item" ng-style="{clear:row.show?'both':'none'}" ng-repeat="row in group"
                          ng-class="{'leaf':'n_maptree_item_s'}[row.node]" ng-switch="row.node">
                         <span ng-switch-when="parent"
-                              class="n_btn_n3 {{timelineColor[$parent.$parent.$index % timelineColor.length]}}">{{row.nodeName}}</span>
+                              class="n_btn_n3 {{timelineColor[$parent.$parent.$index % timelineColor.length]}}" ng-click="openCloseParentNode(group)">{{row.nodeName}}</span>
                         <i ng-switch-default
-                           class="n_btn_n2 fa fa-envelope {{timelineColor[$index % timelineColor.length]}}"
-                           title="{{row.title}}"></i>
-                        <div class="timeline-item">
+                           class="fa fa-envelope {{timelineColor[$index % timelineColor.length]}}"
+                           title="{{row.title}}" ng-click="openCloseNode(row)"></i>
+                        <div class="timeline-item" ng-style="{display:row.show?'block':'none'}">
                             <div class="arrow-left"></div>
                             <span class="n_on_off">
                                 <i class="n_btn_n1 fa text-yellow fa-chevron-circle-up" title="收起"></i>

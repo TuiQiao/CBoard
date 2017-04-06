@@ -57,59 +57,59 @@ $(function () {
         }
     });
 
-    $(document).on('click', el.nBtnN2, function (ev) {
-        ev.preventDefault();
-        var self = $(this),
-            selfItemTreeS = self.parents(el.itemTreeS),
-            selfTimeItem = selfItemTreeS.find(el.timeItem);
-
-        if (!!selfItemTreeS.data(status.data)) {
-            selfTimeItem.hide();
-            selfItemTreeS.css('clear', 'none')
-                .data(status.data, false);
-        } else {
-            selfTimeItem.show();
-            selfItemTreeS.css('clear', 'both')
-                .data(status.data, true);
-        }
-    });
-
-    $(document).on('click', el.nBtnN3, function (ev) {
-        ev.preventDefault();
-        var self = $(this),
-            selfWrapTree = self.parents(el.wrapTree),
-            selfItemTree = self.parents(el.itemTree),
-            selfTimeBody = selfItemTree.find(el.timeBody),
-            selfTimeLine = selfItemTree.find(el.timeItem),
-            selfArrowBtn = selfItemTree.find(el.nBtnN1),
-            selfItemTreeS = selfWrapTree.find(el.itemTreeS),
-            selfTimeItem = selfItemTreeS.find(el.timeItem),
-            itemTreeData = [];
-
-        // 收集所有次节点的展开状态
-        selfItemTreeS.each(function (key, val) {
-            itemTreeData.push(!!$(this).data(status.data));
-        });
-
-        // 如果有一个次节点是展开的，点击主节点收起所有次节点
-        if ($.inArray(true, itemTreeData) === -1) {
-            selfTimeItem.show();
-            selfItemTreeS.css('clear', 'both')
-                .data(status.data, true);
-            // 设置主节点展开状态：是
-            selfWrapTree.data(status.data, true);
-        } else {
-            selfTimeItem.hide();
-            selfItemTreeS.css('clear', 'none')
-                .data(status.data, false);
-            // 设置主节点展开状态：否
-            selfWrapTree.data(status.data, false);
-        }
-
-        selfTimeBody.show();
-        selfArrowBtn.removeClass(cls.faDown)
-            .addClass(cls.faUp)
-            .attr('title', status.fold);
-        selfTimeLine.data(status.data, false);
-    });
+    // $(document).on('click', el.nBtnN2, function (ev) {
+    //     ev.preventDefault();
+    //     var self = $(this),
+    //         selfItemTreeS = self.parents(el.itemTreeS),
+    //         selfTimeItem = selfItemTreeS.find(el.timeItem);
+    //
+    //     if (!!selfItemTreeS.data(status.data)) {
+    //         selfTimeItem.hide();
+    //         selfItemTreeS.css('clear', 'none')
+    //             .data(status.data, false);
+    //     } else {
+    //         selfTimeItem.show();
+    //         selfItemTreeS.css('clear', 'both')
+    //             .data(status.data, true);
+    //     }
+    // });
+    //
+    // $(document).on('click', el.nBtnN3, function (ev) {
+    //     ev.preventDefault();
+    //     var self = $(this),
+    //         selfWrapTree = self.parents(el.wrapTree),
+    //         selfItemTree = self.parents(el.itemTree),
+    //         selfTimeBody = selfItemTree.find(el.timeBody),
+    //         selfTimeLine = selfItemTree.find(el.timeItem),
+    //         selfArrowBtn = selfItemTree.find(el.nBtnN1),
+    //         selfItemTreeS = selfWrapTree.find(el.itemTreeS),
+    //         selfTimeItem = selfItemTreeS.find(el.timeItem),
+    //         itemTreeData = [];
+    //
+    //     // 收集所有次节点的展开状态
+    //     selfItemTreeS.each(function (key, val) {
+    //         itemTreeData.push(!!$(this).data(status.data));
+    //     });
+    //
+    //     // 如果有一个次节点是展开的，点击主节点收起所有次节点
+    //     if ($.inArray(true, itemTreeData) === -1) {
+    //         selfTimeItem.show();
+    //         selfItemTreeS.css('clear', 'both')
+    //             .data(status.data, true);
+    //         // 设置主节点展开状态：是
+    //         selfWrapTree.data(status.data, true);
+    //     } else {
+    //         selfTimeItem.hide();
+    //         selfItemTreeS.css('clear', 'none')
+    //             .data(status.data, false);
+    //         // 设置主节点展开状态：否
+    //         selfWrapTree.data(status.data, false);
+    //     }
+    //
+    //     selfTimeBody.show();
+    //     selfArrowBtn.removeClass(cls.faDown)
+    //         .addClass(cls.faUp)
+    //         .attr('title', status.fold);
+    //     selfTimeLine.data(status.data, false);
+    // });
 });

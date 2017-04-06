@@ -1,5 +1,7 @@
 package org.cboard.dataprovider;
 
+import org.apache.velocity.app.Velocity;
+import org.apache.velocity.runtime.RuntimeConstants;
 import org.cboard.dataprovider.annotation.DatasourceParameter;
 import org.cboard.dataprovider.annotation.QueryParameter;
 import com.google.common.collect.Ordering;
@@ -20,8 +22,13 @@ public class DataProviderViewManager {
 
     static {
         Properties props = new Properties();
-        props.setProperty("resource.loader", "class");
-        props.setProperty("class.resource.loader.class", "org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader");
+        String fileDir = DataProviderViewManager.class.getResource("/template/config").getPath();
+        props.setProperty(RuntimeConstants.RUNTIME_LOG_LOGSYSTEM_CLASS, "org.apache.velocity.runtime.log.Log4JLogChute");
+        props.setProperty(velocityEngine.FILE_RESOURCE_LOADER_PATH, fileDir);
+        props.setProperty(Velocity.OUTPUT_ENCODING, "UTF-8");
+        props.setProperty(Velocity.INPUT_ENCODING, "UTF-8");
+        props.setProperty("runtime.log.logsystem.log4j.logger", "velocity");
+        props.setProperty("log4j.logger.org.apache.velocity", "ERROR");
         velocityEngine = new VelocityEngine(props);
     }
 
@@ -47,7 +54,7 @@ public class DataProviderViewManager {
             VelocityContext context = new VelocityContext();
             context.put("params", lists);
             StringBuilderWriter stringBuilderWriter = new StringBuilderWriter();
-            velocityEngine.mergeTemplate("template/config/query.vm", "utf-8", context, stringBuilderWriter);
+            velocityEngine.mergeTemplate("query.vm", "utf-8", context, stringBuilderWriter);
             return stringBuilderWriter.toString();
         } catch (Exception e) {
             e.printStackTrace();
@@ -76,7 +83,7 @@ public class DataProviderViewManager {
             VelocityContext context = new VelocityContext();
             context.put("params", lists);
             StringBuilderWriter stringBuilderWriter = new StringBuilderWriter();
-            velocityEngine.mergeTemplate("template/config/datasource.vm", "utf-8", context, stringBuilderWriter);
+            velocityEngine.mergeTemplate("datasource.vm", "utf-8", context, stringBuilderWriter);
             return stringBuilderWriter.toString();
         } catch (Exception e) {
             e.printStackTrace();

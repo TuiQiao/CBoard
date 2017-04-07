@@ -1,45 +1,43 @@
 package org.cboard.dataprovider.aggregator.jvm;
 
-import java.util.ArrayList;
 import java.util.Collections;
-import java.util.List;
+import java.util.HashSet;
 import java.util.Set;
-import java.util.function.*;
+import java.util.function.BiConsumer;
+import java.util.function.BinaryOperator;
+import java.util.function.Function;
+import java.util.function.Supplier;
 import java.util.stream.Collector;
 
 /**
  * Created by yfyuan on 2017/3/30.
  */
-public class CardinalityCollector<T> implements Collector<T, List<T>, Integer> {
+public class CardinalityCollector<T> implements Collector<T, Set<T>, Integer> {
 
     @Override
-    public Supplier<List<T>> supplier() {
+    public Supplier<Set<T>> supplier() {
         return () -> {
-            List<T> container = new ArrayList<>();
+            Set<T> container = new HashSet<>();
             return container;
         };
     }
 
     @Override
-    public BiConsumer<List<T>, T> accumulator() {
-        return (array, e) -> {
-            if (!array.contains(e)) {
-                array.add(e);
-            }
-        };
+    public BiConsumer<Set<T>, T> accumulator() {
+        return (set, e) -> set.add(e);
     }
 
     @Override
-    public BinaryOperator<List<T>> combiner() {
+    public BinaryOperator<Set<T>> combiner() {
         return (a, b) -> {
-            b.stream().filter(e -> !a.contains(e)).forEach(a::add);
+            a.addAll(b);
             return a;
         };
     }
 
     @Override
-    public Function<List<T>, Integer> finisher() {
-        return (array) -> array.size();
+    public Function<Set<T>, Integer> finisher() {
+        return (set) -> set.size();
     }
 
     @Override

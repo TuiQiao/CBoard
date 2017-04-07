@@ -7,6 +7,8 @@
     #elseif ($param.type == "textarea")
         <div ui-ace="{
             useWrapMode : false,
+            newLineMode : 'unix',
+            showInvisibles: true,
             mode: 'sql',
             advanced: {
                 autoScrollEditorIntoView: true

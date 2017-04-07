@@ -3,6 +3,7 @@ package org.cboard.services;
 import com.alibaba.fastjson.JSONObject;
 import org.cboard.dao.DatasourceDao;
 import org.cboard.pojo.DashboardDatasource;
+import org.cboard.services.role.RolePermission;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
@@ -65,7 +66,7 @@ public class DatasourceService {
 
     public ServiceStatus checkDatasource(String userId, Long id) {
         DashboardDatasource datasource = datasourceDao.getDatasource(id);
-        if (datasourceDao.checkDatasourceRole(userId, id) == 1) {
+        if (datasourceDao.checkDatasourceRole(userId, id, RolePermission.PATTERN_READ) == 1) {
             return new ServiceStatus(ServiceStatus.Status.Success, "success");
         } else {
             return new ServiceStatus(ServiceStatus.Status.Fail, datasource.getName());

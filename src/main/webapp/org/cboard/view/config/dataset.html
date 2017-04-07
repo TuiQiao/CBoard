@@ -1,5 +1,5 @@
 <!-- Content Wrapper. Contains page content -->
-<div id="inner-container">
+<div id="inner-container" class="content">
     <div class="row">
         <div class="col-md-3">
             <div class="box box-solid">
@@ -13,7 +13,7 @@
                     </div>
                 </div>
                 <div class="box-body">
-                    <input type="text" class="form-control" placeholder="Search" ng-model="keywords" ng-change="searchNode()">
+                    <input type="text" class="form-control" placeholder="Search" ng-model="keywords" ng-change="searchNode()" title="dsr:kylin ds:Bill">
                 </div>
                 <div class="panel-body">
                     <div id="dataSetTreeID" js-tree="treeConfig" should-apply="applyModelChanges()" ng-model="treeData" tree="treeInstance"
@@ -70,10 +70,15 @@
                                                     ng-click="loadData()">{{'CONFIG.DATASET.LOAD_DATA'|translate}}
                                             </button>
                                         </div>
+                                        <div class="col-xs-12 col-sm-5 col-md-3 col-lg-2">
+                                            <label>
+                                                <input type="checkbox" ng-model="loadFromCache"> {{'CONFIG.WIDGET.FROM_CACHE'|translate}}
+                                            </label>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
-                            <div class="row" ng-show="widgetData">
+                            <div class="row" ng-show="selects">
                                 <div class="col-md-12">
                                     <div class="form-group">
                                         <label class="col-sm-2 control-label">
@@ -85,17 +90,17 @@
                                                      style="min-height: 38px;height: auto;padding: 0px">
                                                     <div ng-repeat="o in curDataset.data.expressions" class="btn-group"
                                                          style="margin: 3px 3px;">
-                                                        <button type="button" class="btn btn-default btn-sm"
+                                                        <button type="button" class="btn btn-primary btn-sm"
                                                                 style="cursor: move;">
                                                             {{o.alias?o.alias:o.exp}}
                                                         </button>
                                                         <button type="button"
-                                                                class="btn btn-default btn-sm dropdown-toggle"
+                                                                class="btn btn-primary btn-sm dropdown-toggle"
                                                                 ng-click="editExp(o)">
                                                             <span class="fa fa-edit"></span>
                                                         </button>
                                                         <button type="button"
-                                                                class="btn btn-default btn-sm dropdown-toggle"
+                                                                class="btn btn-primary btn-sm dropdown-toggle"
                                                                 ng-click="curDataset.data.expressions.splice($index, 1)">
                                                             <span class="fa fa-trash-o"></span>
                                                         </button>
@@ -111,7 +116,45 @@
                                     </div>
                                 </div>
                             </div>
-                            <div class="row" ng-show="widgetData">
+                            <div class="row" ng-show="selects">
+                                <div class="col-md-12">
+                                    <div class="form-group">
+                                        <label class="col-sm-2 control-label">
+                                            {{'COMMON.FILTER_GROUP'|translate}}
+                                        </label>
+                                        <div class="col-sm-10">
+                                            <div class="input-group">
+                                                <div class="form-control"
+                                                     style="min-height: 38px;height: auto;padding: 0px">
+                                                    <div ng-repeat="o in curDataset.data.filters" class="btn-group"
+                                                         style="margin: 3px 3px;">
+                                                        <button type="button" class="btn btn-warning btn-sm"
+                                                                style="cursor: move;">
+                                                            {{o.group}}
+                                                        </button>
+                                                        <button type="button"
+                                                                class="btn btn-warning btn-sm dropdown-toggle"
+                                                                ng-click="editFilterGroup(o)">
+                                                            <span class="fa fa-edit"></span>
+                                                        </button>
+                                                        <button type="button"
+                                                                class="btn btn-warning btn-sm dropdown-toggle"
+                                                                ng-click="curDataset.data.filters.splice($index, 1)">
+                                                            <span class="fa fa-trash-o"></span>
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                                <div class="input-group-btn">
+                                                    <button type="button" class="btn btn-info" ng-click="editFilterGroup()"
+                                                            style="min-height: 38px;">{{'CONFIG.DATASET.ADD'|translate}}
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row" ng-show="selects">
                                 <div class="col-md-12">
                                     <div class="form-group">
                                         <label class="col-sm-2 control-label">

@@ -148,7 +148,6 @@ body.hold-transition .main-header .logo {
 /* Content */
 .content {
   min-height: 250px;
-  margin-top:50px;
   padding: 15px;
   margin-right: auto;
   margin-left: auto;
@@ -232,8 +231,7 @@ a:focus {
  * ----------------------
  */
 .main-header {
-  position: fixed;
-  width:100%;
+  position: relative;
   max-height: 100px;
   z-index: 1030;
 }
@@ -457,7 +455,7 @@ a:focus {
  */
 .main-sidebar,
 .left-side {
-  position: fixed;
+  position: absolute;
   top: 0;
   left: 0;
   padding-top: 50px;
@@ -1863,10 +1861,9 @@ a:focus {
   margin-right: 5px;
 }
 .box-header > .box-tools {
-  /*position: absolute;
+  position: absolute;
   right: 10px;
-  top: 5px;*/
-  vertical-align: middle;
+  top: 5px;
 }
 .box-header > .box-tools [data-toggle="tooltip"] {
   position: relative;
@@ -5060,35 +5057,4 @@ button >canvas {
     float: left;
     width: 33.3333333%;
   }
-}
-#preview_widget {
-  text-align: center;
-}
-.d3-tip {
-  line-height: 1;
-  font-weight: normal;
-  padding: 12px;
-  background: rgba(0, 0, 0, 0.8);
-  color: #fff;
-  border-radius: 3px;
-  z-index: 10000;
-}
-
-/* Creates a small triangle extender for the tooltip */
-.d3-tip:after {
-  box-sizing: border-box;
-  display: inline;
-  font-size: 10px;
-  width: 100%;
-  line-height: 1;
-  color: rgba(0, 0, 0, 0.8);
-  content: "\25BC";
-  position: absolute;
-  text-align: center;
-}
-
-.d3-tip.n:after {
-  margin: -1px 0 0 0;
-  top: 100%;
-  left: 0;
 }

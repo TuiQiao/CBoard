@@ -6,8 +6,18 @@
         SELECT DISTINCT(category_name) category FROM dashboard_widget order by category
     </select>
 
+    <select id="getAllWidgetList" resultType="org.cboard.pojo.DashboardWidget">
+        SELECT
+        widget_id     AS id,
+        user_id       AS userId,
+        widget_name   AS name,
+        data_json     AS data,
+        category_name AS categoryName
+        FROM dashboard_widget
+    </select>
+
     <select id="getWidgetList" resultType="org.cboard.pojo.DashboardWidget">
-       SELECT
+      SELECT
               widget_id     AS id,
               user_id       AS userId,
               widget_name   AS name,
@@ -53,7 +63,7 @@
 
     <select id="checkWidgetRole" resultType="java.lang.Long">
         SELECT count(1) FROM dashboard_widget WHERE widget_id = #{1}
-        and (#{0} = '${admin_user_id}' OR user_id = #{0} OR widget_id IN (SELECT res_id FROM dashboard_user_role ur LEFT JOIN dashboard_role_res rr ON ur.role_id = rr.role_id WHERE ur.user_id = #{0} AND rr.res_type = 'widget'))
+        and (#{0} = '${admin_user_id}' OR user_id = #{0} OR widget_id IN (SELECT res_id FROM dashboard_user_role ur LEFT JOIN dashboard_role_res rr ON ur.role_id = rr.role_id WHERE ur.user_id = #{0} AND rr.res_type = 'widget' AND rr.permission LIKE #{2}))
     </select>
 
 </mapper>

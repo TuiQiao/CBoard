@@ -44,7 +44,7 @@
                 <span class="pull-right-container"><i class="fa fa-angle-left pull-right"></i></span>
             </a>
             <ul class="treeview-menu">
-                <li ui-sref-active="active" ng-repeat="b in boardList | filter:{userId:user.userId}">
+                <li ui-sref-active="active" ng-repeat="b in boardList | filter:{userId:user.userId}:true">
                     <a ui-sref="mine.view({id:b.id})"><i class="fa fa-dashboard"></i>{{b.name}}</a>
                 </li>
             </ul>
@@ -73,6 +73,9 @@
                 </li>
                 <li ui-sref-active="active" ng-if="isShowMenu('config.category')">
                     <a ui-sref="config.category"><i class="fa fa-folder"></i>{{'SIDEBAR.DASHBOARD_CATEGORY'|translate}}</a>
+                </li>
+                <li ui-sref-active="active" ng-if="isShowMenu('config.job')">
+                    <a ui-sref="config.job"><i class="fa fa-clock-o"></i>{{'SIDEBAR.JOB'|translate}}</a>
                 </li>
             </ul>
         </li>

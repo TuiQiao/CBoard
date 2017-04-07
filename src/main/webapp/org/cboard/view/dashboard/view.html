@@ -1,65 +1,8 @@
-<!-- Content Wrapper. Contains page content -->
-<section class="content-header">
-    <h1>
-        <div ng-show="loading"><i class="fa fa-spinner fa-spin"></i> {{"COMMON.LOADING" | translate}}</div>
-        {{board.name}}
-    </h1>
-    <div class="breadcrumb" style="cursor: pointer" ng-click="load(true)"><i class="fa fa-refresh"></i>
-        {{"COMMON.REFRESH" | translate}}
+<ng-switch on="board.layout.type">
+    <div ng-switch-when="timeline">
+        <div ng-include="'org/cboard/view/dashboard/layout/timeline.html'"></div>
     </div>
-</section>
-<div id="inner-container" class="content" style="margin-top: 15px;">
-    <div class="row" ng-repeat="row in board.layout.rows track by $index" ng-style="{height:row.height+'px'}">
-        <ng-switch on="row.type">
-            <div ng-switch-when="param">
-                <div class="col-sm-12">
-                    <div class="box box-solid" style="border-left: 1px solid #d2d6de; border-right: 1px solid #d2d6de">
-                        <div class="box-body">
-                            <div class="col-sm-12">
-                                <div style="min-height: 35px;height: auto;padding: 0px">
-                                    <div ng-repeat="param in row.params" class="btn-group"
-                                         style="cursor: move;margin: 3px 3px;">
-                                        <button type="button" class="btn btn-default btn-sm">
-                                            {{param.name}}
-                                        </button>
-                                        <button type="button" class="btn btn-default btn-sm dropdown-toggle"
-                                                ng-click="editParam(param)">
-                                            <span class="fa fa-edit"></span>
-                                        </button>
-                                    </div>
-                                </div>
-                                <div class="paramTemplate"></div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div ng-switch-default>
-                <div ng-repeat="widget in row.widgets track by $index">
-                    <dashboard-widget ng-if="widget.show"></dashboard-widget>
-                    <div ng-if="!widget.show && widget.hasRole != false" class="col-md-{{widget.width}}" style="height: 50px;">
-                        <i class="fa fa-spinner fa-spin"></i> {{"COMMON.LOADING" | translate}}
-                    </div>
-                    <div ng-if="widget.hasRole == false" class="col-md-{{widget.width}}">
-                        <div class="box box-solid">
-                            <div class="box-header">
-                                <i class="fa fa-bar-chart-o"></i>
-                                <h3 class="box-title">{{widget.name}}</h3>
-                                <div class="box-tools pull-right">
-                                    <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i>
-                                    </button>
-                                </div>
-                            </div>
-                            <div class="box-body" ng-style="{height:widget.height?widget:300+'px'}">
-                                {{'ADMIN.CONTACT_ADMIN' | translate}}：<br>
-                                <ul>
-                                    <li ng-repeat="ri in widget.roleInfo"> {{ri.type | translate}}：{{ri.name}}</li>
-                                </ul>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </ng-switch>
+    <div ng-switch-default>
+        <div ng-include="'org/cboard/view/dashboard/layout/grid.html'"></div>
     </div>
-</div>
+</ng-switch>

@@ -1,7 +1,7 @@
 /**
  * Created by yfyuan on 2016/8/19.
  */
-cBoard.controller('datasourceCtrl', function ($scope, $http, ModalUtils, $uibModal, $filter) {
+cBoard.controller('datasourceCtrl', function ($scope, $http, ModalUtils, $uibModal, $filter, $q) {
 
     var translate = $filter('translate');
     $scope.optFlag = 'none';
@@ -33,13 +33,59 @@ cBoard.controller('datasourceCtrl', function ($scope, $http, ModalUtils, $uibMod
         $scope.changeDsView();
     };
     $scope.deleteDs = function (ds) {
-        ModalUtils.confirm(translate("COMMON.CONFIRM_DELETE"), "modal-warning", "lg", function () {
-            $http.post("dashboard/deleteDatasource.do", {id: ds.id}).success(function () {
-                $scope.optFlag = 'none';
-                getDatasourceList();
+        // var isDependent = false;
+        var resDs = [];
+        var resWdg = [];
+        var promiseDs = $http.get("dashboard/getAllDatasetList.do").then(function (response) {
+            if (!response) {
+                return false;
+            }
+
+            for (var i = 0; i < response.data.length; i++) {
+                if (response.data[i].data.datasource == ds.id) {
+                    resDs.push(response.data[i].name);
+                }
+            }
+        });
+
+        var promiseWdg = $http.get("dashboard/getAllWidgetList.do").then(function (response) {
+            if (!response) {
+                return false;
+            }
+
+            for (var i = 0; i < response.data.length; i++) {
+                if (response.data[i].data.datasource == ds.id) {
+                    resWdg.push(response.data[i].name);
+                }
+            }
+        });
+
+        var p = $q.all([promiseDs, promiseWdg]);
+        p.then(function () {
+            if (resDs.length > 0 || resWdg.length > 0) {
+                var warnStr = '   ';
+                if (resDs.length > 0) {
+                    warnStr += "   " + translate("CONFIG.DATASET.DATASET") + ": [" + resDs.toString() + "]";
+                }
+                if (resWdg.length > 0) {
+                    warnStr += "   " + translate("CONFIG.WIDGET.WIDGET") + ": [" + resWdg.toString() + "]";
+                }
+                ModalUtils.alert(translate("COMMON.NOT_ALLOWED_TO_DELETE_BECAUSE_BE_DEPENDENT") + warnStr, "modal-warning", "lg");
+                return false;
+            }
+            ModalUtils.confirm(translate("COMMON.CONFIRM_DELETE"), "modal-warning", "lg", function () {
+                $http.post("dashboard/deleteDatasource.do", {id: ds.id}).success(function (serviceStatus) {
+                    if (serviceStatus.status == '1') {
+                        getDatasourceList();
+                    } else {
+                        ModalUtils.alert(serviceStatus.msg, "modal-warning", "lg");
+                    }
+                    $scope.optFlag = 'none';
+                });
             });
         });
     };
+
     $scope.copyDs = function (ds) {
         var data = angular.copy(ds);
         data.name = data.name + "_copy";
@@ -72,7 +118,8 @@ cBoard.controller('datasourceCtrl', function ($scope, $http, ModalUtils, $uibMod
             return false;
         }
         return true;
-    }
+    };
+
     $scope.saveNew = function () {
         if(!validate()){
             return;

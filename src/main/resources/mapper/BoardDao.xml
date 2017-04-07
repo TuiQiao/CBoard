@@ -7,7 +7,7 @@
     </select>
 
     <select id="getBoardList" resultType="org.cboard.pojo.DashboardBoard">
-        SELECT
+          SELECT
                board_id        AS id,
                a.user_id       AS userId,
                board_name      AS NAME,
@@ -24,11 +24,11 @@
           ) ORDER BY a.board_name
     </select>
 
-    <update id="save">
+    <insert id="save" useGeneratedKeys="true" keyProperty="id" keyColumn="board_id" parameterType="org.cboard.pojo.DashboardBoard">
         <![CDATA[
         INSERT INTO dashboard_board(user_id,board_name,layout_json,category_id) VALUES (#{userId},#{name},#{layout},#{categoryId})
         ]]>
-    </update>
+    </insert>
 
     <update id="update" parameterType="org.cboard.pojo.DashboardBoard">
         <![CDATA[
@@ -60,7 +60,7 @@
                     SELECT res_id
                       FROM dashboard_user_role AS ur
                       LEFT JOIN dashboard_role_res AS rr ON ur.role_id = rr.role_id
-                     WHERE ur.user_id = #{0} AND rr.res_type = 'board')
+                     WHERE ur.user_id = #{0} AND rr.res_type = 'board' AND rr.permission LIKE #{2})
                  )
     </select>
 

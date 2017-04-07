@@ -108,6 +108,17 @@ public class AdminSerivce {
         return "1";
     }
 
+    public String deleteUserRoles(String[] userId, String[] roleId, final String curUid) {
+
+        Map<String, Object> params = new HashedMap();
+        params.put("userIds", userId);
+        params.put("roleIds", roleId);
+        params.put("curUid", curUid);
+        params.put("adminUid", adminUid);
+        userDao.deleteUserRoles(params);
+        return "1";
+    }
+
     public String updateRoleRes(String[] roleId, String resIdArr) {
 
         JSONArray arr = JSONArray.parseArray(resIdArr);
@@ -121,6 +132,9 @@ public class AdminSerivce {
                     roleRes.setRoleId(rid);
                     roleRes.setResId(jo.getLong("resId"));
                     roleRes.setResType(jo.getString("resType"));
+                    boolean edit = jo.getBooleanValue("edit");
+                    boolean delete = jo.getBooleanValue("delete");
+                    roleRes.setPermission("" + (edit ? 1 : 0) + (delete ? 1 : 0));
                     list.add(roleRes);
                 }
                 roleDao.saveRoleRes(list);

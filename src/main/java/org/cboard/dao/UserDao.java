@@ -31,4 +31,7 @@ public interface UserDao {
     int updateUserPassword(String userId, String passowrd, String newPassword);
 
     int deleteUserRoleByRoleId(String roleId);
+
+    int deleteUserRoles(Map<String, Object> param);
+
 }

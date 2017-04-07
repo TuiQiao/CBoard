@@ -4,20 +4,34 @@ import com.alibaba.fastjson.JSONObject;
 import com.google.common.base.Functions;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.cboard.dao.*;
 import org.cboard.dataprovider.DataProviderManager;
 import org.cboard.dataprovider.DataProviderViewManager;
+import org.cboard.dataprovider.config.AggConfig;
+import org.cboard.dataprovider.result.AggregateResult;
 import org.cboard.dto.*;
 import org.cboard.pojo.*;
 import org.cboard.services.*;
+import org.cboard.services.job.JobService;
+import org.cboard.services.persist.excel.XlsProcessService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.servlet.http.HttpServletResponse;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
  * Created by yfyuan on 2016/8/9.
@@ -34,9 +48,6 @@ public class DashboardController {
 
     @Autowired
     private DataProviderService dataProviderService;
-
-    @Autowired
-    private CachedDataProviderService cachedDataProviderService;
 
     @Autowired
     private DatasourceService datasourceService;
@@ -65,33 +76,20 @@ public class DashboardController {
     @Autowired
     private DatasetService datasetService;
 
+    @Autowired
+    private JobService jobService;
+
+    @Autowired
+    private JobDao jobDao;
+
+    @Autowired
+    private XlsProcessService xlsProcessService;
+
     @RequestMapping(value = "/test")
     public ServiceStatus test(@RequestParam(name = "datasource", required = false) String datasource, @RequestParam(name = "query", required = false) String query) {
         JSONObject queryO = JSONObject.parseObject(query);
         JSONObject datasourceO = JSONObject.parseObject(datasource);
         return dataProviderService.test(datasourceO, Maps.transformValues(queryO, Functions.toStringFunction()));
-    }
-
-    @RequestMapping(value = "/getData")
-    public DataProviderResult getData(@RequestParam(name = "datasourceId", required = false) Long datasourceId, @RequestParam(name = "query", required = false) String query, @RequestParam(name = "datasetId", required = false) Long datasetId) {
-        Map<String, String> strParams = null;
-        if (query != null) {
-            JSONObject queryO = JSONObject.parseObject(query);
-            strParams = Maps.transformValues(queryO, Functions.toStringFunction());
-        }
-        DataProviderResult result = dataProviderService.getData(datasourceId, strParams, datasetId);
-        return result;
-    }
-
-    @RequestMapping(value = "/getCachedData")
-    public DataProviderResult getCachedData(@RequestParam(name = "datasourceId", required = false) Long datasourceId, @RequestParam(name = "query", required = false) String query, @RequestParam(name = "datasetId", required = false) Long datasetId, @RequestParam(name = "reload", required = false, defaultValue = "false") Boolean reload) {
-        Map<String, String> strParams = null;
-        if (query != null) {
-            JSONObject queryO = JSONObject.parseObject(query);
-            strParams = Maps.transformValues(queryO, Functions.toStringFunction());
-        }
-        DataProviderResult result = cachedDataProviderService.getData(datasourceId, strParams, datasetId, reload);
-        return result;
     }
 
     @RequestMapping(value = "/getDatasourceList")
@@ -144,6 +142,12 @@ public class DashboardController {
 
         String userid = authenticationService.getCurrentUser().getUserId();
         return widgetService.save(userid, json);
+    }
+
+    @RequestMapping(value = "/getAllWidgetList")
+    public List<ViewDashboardWidget> getAllWidgetList() {
+        List<DashboardWidget> list = widgetDao.getAllWidgetList();
+        return Lists.transform(list, ViewDashboardWidget.TO);
     }
 
     @RequestMapping(value = "/getWidgetList")
@@ -239,6 +243,12 @@ public class DashboardController {
         return datasetService.save(userid, json);
     }
 
+    @RequestMapping(value = "/getAllDatasetList")
+    public List<ViewDashboardDataset> getAllDatasetList() {
+        List<DashboardDataset> list = datasetDao.getAllDatasetList();
+        return Lists.transform(list, ViewDashboardDataset.TO);
+    }
+
     @RequestMapping(value = "/getDatasetList")
     public List<ViewDashboardDataset> getDatasetList() {
 
@@ -276,4 +286,121 @@ public class DashboardController {
         return datasourceService.checkDatasource(authenticationService.getCurrentUser().getUserId(), id);
     }
 
+    @RequestMapping(value = "/getDimensionValues")
+    public String[][] getDimensionValues(@RequestParam(name = "datasourceId", required = false) Long datasourceId, @RequestParam(name = "query", required = false) String query, @RequestParam(name = "datasetId", required = false) Long datasetId, @RequestParam(name = "colmunName", required = true) String colmunName, @RequestParam(name = "cfg", required = false) String cfg, @RequestParam(name = "reload", required = false, defaultValue = "false") Boolean reload) {
+        Map<String, String> strParams = null;
+        if (query != null) {
+            JSONObject queryO = JSONObject.parseObject(query);
+            strParams = Maps.transformValues(queryO, Functions.toStringFunction());
+        }
+        AggConfig config = JSONObject.parseObject(cfg, AggConfig.class);
+        return dataProviderService.getDimensionValues(datasourceId, strParams, datasetId, colmunName, config, reload);
+    }
+
+    @RequestMapping(value = "/getColumns")
+    public DataProviderResult getColumns(@RequestParam(name = "datasourceId", required = false) Long datasourceId,
+                                         @RequestParam(name = "query", required = false) String query,
+                                         @RequestParam(name = "datasetId", required = false) Long datasetId, @RequestParam(name = "reload", required = false, defaultValue = "false") Boolean reload) {
+        Map<String, String> strParams = null;
+        if (query != null) {
+            JSONObject queryO = JSONObject.parseObject(query);
+            strParams = Maps.transformValues(queryO, Functions.toStringFunction());
+        }
+        return dataProviderService.getColumns(datasourceId, strParams, datasetId, reload);
+    }
+
+    @RequestMapping(value = "/getAggregateData")
+    public AggregateResult getAggregateData(@RequestParam(name = "datasourceId", required = false) Long datasourceId, @RequestParam(name = "query", required = false) String query, @RequestParam(name = "datasetId", required = false) Long datasetId, @RequestParam(name = "cfg") String cfg, @RequestParam(name = "reload", required = false, defaultValue = "false") Boolean reload) {
+        Map<String, String> strParams = null;
+        if (query != null) {
+            JSONObject queryO = JSONObject.parseObject(query);
+            strParams = Maps.transformValues(queryO, Functions.toStringFunction());
+        }
+        AggConfig config = JSONObject.parseObject(cfg, AggConfig.class);
+        return dataProviderService.queryAggData(datasourceId, strParams, datasetId, config, reload);
+    }
+
+    @RequestMapping(value = "/viewAggDataQuery")
+    public String[] viewAggDataQuery(@RequestParam(name = "datasourceId", required = false) Long datasourceId, @RequestParam(name = "query", required = false) String query, @RequestParam(name = "datasetId", required = false) Long datasetId, @RequestParam(name = "cfg") String cfg) {
+        Map<String, String> strParams = null;
+        if (query != null) {
+            JSONObject queryO = JSONObject.parseObject(query);
+            strParams = Maps.transformValues(queryO, Functions.toStringFunction());
+        }
+        AggConfig config = JSONObject.parseObject(cfg, AggConfig.class);
+        return new String[]{dataProviderService.viewAggDataQuery(datasourceId, strParams, datasetId, config)};
+    }
+
+    @RequestMapping(value = "/dashboardWidget")
+    public ViewDashboardWidget dashboardWidget(@RequestParam(name = "id") Long id) {
+        DashboardWidget widget = widgetDao.getWidget(id);
+        return new ViewDashboardWidget(widget);
+    }
+
+    @RequestMapping(value = "/saveJob")
+    public ServiceStatus saveJob(@RequestParam(name = "json") String json) {
+        String userid = authenticationService.getCurrentUser().getUserId();
+        return jobService.save(userid, json);
+    }
+
+    @RequestMapping(value = "/updateJob")
+    public ServiceStatus updateJob(@RequestParam(name = "json") String json) {
+        String userid = authenticationService.getCurrentUser().getUserId();
+        return jobService.update(userid, json);
+    }
+
+    @RequestMapping(value = "/getJobList")
+    public List<ViewDashboardJob> getJobList() {
+        String userid = authenticationService.getCurrentUser().getUserId();
+        return jobDao.getJobList(userid).stream().map(ViewDashboardJob::new).collect(Collectors.toList());
+    }
+
+    @RequestMapping(value = "/deleteJob")
+    public ServiceStatus deleteJob(@RequestParam(name = "id") Long id) {
+        String userid = authenticationService.getCurrentUser().getUserId();
+        return jobService.delete(userid, id);
+    }
+
+    @RequestMapping(value = "/execJob")
+    public ServiceStatus execJob(@RequestParam(name = "id") Long id) {
+        String userid = authenticationService.getCurrentUser().getUserId();
+        return jobService.exec(userid, id);
+    }
+
+    @RequestMapping(value = "/exportBoard")
+    public ResponseEntity<byte[]> exportBoard(@RequestParam(name = "id") Long id) {
+        String userid = authenticationService.getCurrentUser().getUserId();
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_OCTET_STREAM);
+        headers.setContentDispositionFormData("attachment", "report.xls");
+        return new ResponseEntity<>(boardService.exportBoard(id, userid), headers, HttpStatus.CREATED);
+    }
+
+    @RequestMapping(value = "/tableToxls")
+    public ResponseEntity<byte[]> tableToxls(@RequestParam(name = "data") String data) {
+        HSSFWorkbook wb = xlsProcessService.tableToxls(JSONObject.parseObject(data));
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        try {
+            wb.write(out);
+            HttpHeaders headers = new HttpHeaders();
+            headers.setContentType(MediaType.APPLICATION_OCTET_STREAM);
+            headers.setContentDispositionFormData("attachment", "table.xls");
+            return new ResponseEntity<>(out.toByteArray(), headers, HttpStatus.CREATED);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    @RequestMapping(value = "/getJobStatus")
+    public ViewDashboardJob getJobStatus(@RequestParam(name = "id") Long id) {
+        return new ViewDashboardJob(jobDao.getJob(id));
+    }
+
+    @ExceptionHandler
+    public ServiceStatus exp(HttpServletResponse response, Exception ex) {
+        response.setStatus(500);
+        return new ServiceStatus(ServiceStatus.Status.Fail, ex.getMessage());
+    }
 }

@@ -21,6 +21,11 @@ public class RedisCacheManager<T> implements CacheManager<T> {
         return redisTemplate.boundValueOps(key).get();
     }
 
+    @Override
+    public void remove(String key) {
+        redisTemplate.delete(key);
+    }
+
     public void setRedisTemplate(RedisTemplate<String, T> redisTemplate) {
         this.redisTemplate = redisTemplate;
     }

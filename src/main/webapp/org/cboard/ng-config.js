@@ -62,6 +62,10 @@ angular.module('cBoard').config(['$stateProvider', function ($stateProvider) {
             url: '/dataset',
             templateUrl: 'org/cboard/view/config/dataset.html',
             controller: 'datasetCtrl'
+        }).state('config.job', {
+            url: '/job',
+            templateUrl: 'org/cboard/view/config/job.html',
+            controller: 'jobCtrl'
         }).state('admin', {
             url: '/admin',
             abstract: true,
@@ -74,14 +78,15 @@ angular.module('cBoard').config(['$stateProvider', function ($stateProvider) {
 
 }]);
 
-angular.module('cBoard').factory('sessionHelper', ["$rootScope", function ($rootScope) {
+angular.module('cBoard').factory('sessionHelper', ["$rootScope","$q", function ($rootScope,$q) {
     var sessionHelper = {
         responseError: function (response) {
-            if (response.status == -1) {
-                window.location.href = "/";
-            } else {
-                return response;
+            if (response.data.status == 2) {
+                if ($rootScope.alert) {
+                    $rootScope.alert(response.data.msg);
+                }
             }
+            return $q.reject(response);
         }
     };
     return sessionHelper;

@@ -36,11 +36,12 @@ public class SaikuDataProvider extends DataProvider {
     private String FILE = "file";
 
     @Override
-    public int resultCount(Map<String, String> dataSource, Map<String, String> query) throws Exception {
-        return 0;
+    public boolean doAggregationInDataSource() {
+        return false;
     }
 
-    public String[][] getData(Map<String, String> dataSource, Map<String, String> query) throws Exception {
+    @Override
+    public String[][] getData() throws Exception {
         String serverIp = dataSource.get(SERVERIP);
         String username = dataSource.get(USERNAME);
         String password = dataSource.get(PASSWORD);

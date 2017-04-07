@@ -6,18 +6,27 @@
     "LOADING": "Loading...",
     "REFRESH": "Refresh",
     "EDIT": "Edit",
-    "CONFIRM_DELETE": "Confirm to Delete!!!",
+    "CONFIRM_DELETE": "Confirm to Delete",
+    "CONFIRM_SAVE_BEFORE_PREVIEW": "Need save board before preview, confirm to save?",
+    "NOT_ALLOWED_TO_DELETE_BECAUSE_BE_DEPENDENT": "Not allowed to delete, because be dependent",
     "TIP": "Tip",
-    "SUCCESS": "Success!",
-    "FAIL": "Fail!",
+    "SUCCESS": "Success",
+    "FAIL": "Fail",
     "DEFAULT_CATEGORY": "Default Category",
-    "NOT_EMPTY": " can not be empty!",
+    "NOT_EMPTY": " can not be empty.",
     "NEW": "New",
     "COPY": "Copy",
-    "DELETE": "Delete"
+    "DELETE": "Delete",
+    "EXPORT": "Export",
+    "LOG": "Log",
+    "LAST1M": "Last 1 Month",
+    "LAST1W": "Last 1 Week",
+    "LAST10D": "Last 10 Days",
+    "LAST10D_TIMESTAMP": "Last 10 Days, Timestamp",
+    "FILTER_GROUP": "Filter Group"
   },
   "TIPS": {
-    "CAL_EXPR": "Calculate after aggregation. Use assist click input to avoid typo! e.g: Math.log(sum(columnA)/count(columB))"
+    "CAL_EXPR": "Calculate after aggregation. Use assist click input to avoid typo. e.g: Math.log(sum(columnA)/count(columB))"
   },
   "SIDEBAR": {
     "C_DASHBOARD": "Dashboard",
@@ -30,7 +39,8 @@
     "DASHBOARD_CATEGORY": "Dashboard Category",
     "ADMIN": "Admin",
     "USER_ADMIN": "User Admin",
-    "RES_ADMIN": "Resource Admin"
+    "RES_ADMIN": "Resource Admin",
+    "JOB": "Job"
   },
   "HEADER": {
     "SIGN_OUT": "SignOut"
@@ -92,6 +102,7 @@
       "KPI": "KPI",
       "PIE": "Pie",
       "LINE_BAR": "Line/Bar",
+      "SCATTER": "Scatter/Bubble",
       "MAP": "China Map",
       "LINE": "Line",
       "BAR": "Bar",
@@ -119,7 +130,11 @@
       "TIPS_DIM_NUM_1": "1",
       "TIPS_DIM_NUM_0_MORE": "0 or more",
       "TIPS_DIM_NUM_1_MORE": "1 or more",
-      "FROM_CACHE": "From Cache"
+      "FROM_CACHE": "From Cache",
+      "SIZE": "Size",
+      "COLOR": "Opacity",
+      "PREVIEW_QUERY": "View Query",
+      "PERCENT_BAR": "Stacked Percent"
     },
     "DASHBOARD": {
       "CATEGORY": "Category",
@@ -139,7 +154,29 @@
       "PARAM": "Param",
       "PARAM_NAME": "Param Name",
       "CUBE_TREE": "Cube/Query in dashboard",
-      "LINKED_COLUMN": "Columns linked with this param"
+      "LINKED_COLUMN": "Columns linked with this param",
+      "PARAM_TYPE": "Param Type",
+      "VALUE_FORMMAT": "Value Format",
+      "VIEW_FORMMAT": "View Format",
+      "MIN": "Min",
+      "MAX": "Max",
+      "Now": "Now",
+      "ONE_HOUR_AGO": "One hour ago",
+      "ONE_DAY_AGO": "One day ago",
+      "ONE_MONTH_AGO": "One month ago",
+      "STEP": "Step",
+      "MAX_RANGE": "Max Range",
+      "DEFAUT_RANGE": "Default Range",
+      "ONE_SECOND": "1 Second",
+      "ONE_MINUT": "1 Minute",
+      "ONE_HOUR": "1 Hour",
+      "ONE_DAY": "1 Day",
+      "MAIN_NODE": "Main Node",
+      "SUB_NODE": "Sub Node",
+      "ADD_MAIN_NODE": "Add Main Node",
+      "ADD_SUB_NODE": "Add Sub Node",
+      "NODE_NAME": "Node Name",
+      "TITLE": "Title"
     },
     "CATEGORY": {
       "NAME": "Category Name",
@@ -154,6 +191,38 @@
       "ADD": "Add",
       "REAL_TIME_INTERVAL": "Real Time Interval(s)",
       "REAL_TIME_TIP": "If You don't need refresh, just leave it as BLANK"
+    },
+    "JOB": {
+      "CONFIG": "Config",
+      "JOB": "Job",
+      "NAME": "Name",
+      "TYPE": "Type",
+      "LAST_EXEC_TIME": "Last Execution Time",
+      "EXEC_NOW": "Execute Now",
+      "ACTIVE_RANGE": "Active Range",
+      "MAIL": "Mail",
+      "TO": "To",
+      "CC": "Cc",
+      "BCC": "Bcc",
+      "SUBJECT": "Subject",
+      "ADD_DASHBOARD": "Add Dashboard",
+      "DASHBOARD": "Dashboard",
+      "EVERY": "Every",
+      "Minute": "Minute",
+      "Hour": "Hour",
+      "Day": "Day",
+      "Week": "Week",
+      "Month": "Month",
+      "ON_THE": "on the",
+      "ON": "on",
+      "OF": "of",
+      "AT": "at",
+      "PAST_THE_HOUR": "past the hour",
+      "USERNAME": "Creator",
+      "FAIL": "Fail",
+      "FINISH": "Finish",
+      "PROCESSING": "Processing",
+      "STATUS": "Status"
     }
   },
   "ADMIN": {
@@ -173,6 +242,29 @@
     "DATASOURCE": "Datasource",
     "DATASET": "Cube",
     "WIDGET": "Widget",
-    "CONTACT_ADMIN": "Please contact the administrator to apply the following resources' access"
+    "JOB": "Job",
+    "CONTACT_ADMIN": "Please contact the administrator to apply the following resources' access",
+    "BY_NAME": "By Name",
+    "BY_ROLE": "By Role"
+  },
+  "DATAPROVIDER": {
+    "AGGREGATABLE_PROVIDER": "Aggregatable DataProvider",
+    "JDBC": {
+      "DRIVER": "Driver (eg: com.mysql.jdbc.Driver)",
+      "JDBCURL": "JDBC Url (eg: jdbc:mysql://hostname:port/db)",
+      "USERNAME": "UserName",
+      "PASSWORD": "Password",
+      "POOLEDCONNECTION": "Pooled Connection",
+      "SQLTEXT": "Sql Text"
+    },
+    "SAIKU": {
+    },
+    "TEXTFILE": {
+      "BASE_PATH": "BasePath",
+      "FILE_NAME": "FileName",
+      "ENCODING": "Encoding<UTF-8>",
+      "SEPRATOR": "Seprator<TAB>",
+      "ENCLOSURE": "Enclosure<Empty>"
+    }
   }
 }

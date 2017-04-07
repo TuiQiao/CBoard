@@ -18,6 +18,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
     <link rel="stylesheet" href="css/ionicons.min.css">
     <!-- Theme style -->
     <link rel="stylesheet" href="dist/css/AdminLTE.css">
+    <link rel="stylesheet" href="css/cboard.css">
     <!-- ngJsTree -->
     <link rel="stylesheet" href="plugins/ngJsTree/style.css">
     <link rel="stylesheet" href="plugins/jQueryUI/theme.css">
@@ -67,17 +68,30 @@ scratch. This page gets rid of all links and provides the needed markup only.
     <!--<script src="plugins/echart/world.json"></script>-->
     <!--<script src="plugins/echart/world.js"></script>-->
     <!--<script src="plugins/echart/china.json"></script>-->
-    <script src="plugins/echart/china.js"></script>
+    <!--<script src="plugins/echart/china.js"></script>-->
     <script src="plugins/ace/ace.js"></script>
     <script src="plugins/ui-ace/ui-ace.min.js"></script>
     <script src="plugins/FineMap/d3.v3.js"></script>
     <script src="plugins/FineMap/d3.tip.js"></script>
+
+    <link rel="stylesheet" href="plugins/rzslider/rzslider.min.css">
+    <script src="plugins/rzslider/rzslider.min.js"></script>
+
+    <link rel="stylesheet" href="plugins/daterangepicker/daterangepicker.css">
+    <script src="plugins/daterangepicker/moment.js"></script>
+    <script src="plugins/daterangepicker/daterangepicker.js"></script>
+    <script src="lib/angular-daterangepicker.min.js"></script>
+    <link rel="stylesheet" href="css/angular-cron-jobs.min.css">
+    <script src="lib/angular-cron-jobs.min.js"></script>
 
     <!--<script src="plugins/datatables/jquery.dataTables.js"></script>-->
     <!--<script src="plugins/datatables/dataTables.bootstrap.min.js"></script>-->
     <!--<link rel="stylesheet" href="plugins/datatables/dataTables.bootstrap.css">-->
     <!--<link rel="stylesheet" href="css/ui-select.min.css">-->
     <link rel="stylesheet" href="css/select.css">
+
+    <link rel="stylesheet" href="plugins/timeline/map_tree.css">
+    <script src="plugins/timeline/timeline.js"></script>
     <style>
         .modal-fit .modal-dialog {
             left: 0;
@@ -130,6 +144,9 @@ desired effect
 
     <!-- Content Wrapper. Contains page content -->
     <div class="content-wrapper">
+        <ui-view>
+
+        </ui-view>
         <!-- Content Header (Page header) -->
         <!--<section class="content-header">-->
         <!--<h1>-->
@@ -143,7 +160,6 @@ desired effect
         <!--</section>-->
 
         <!-- Main content -->
-        <section ui-view class="content"></section>
         <!-- /.content -->
     </div>
     <!-- /.content-wrapper -->
@@ -171,14 +187,22 @@ desired effect
 <script src="org/cboard/controller/config/widgetCtrl.js"></script>
 <script src="org/cboard/controller/config/datasourceCtrl.js"></script>
 <script src="org/cboard/controller/config/boardCtrl.js"></script>
+<script src="org/cboard/controller/config/freeLayoutCtrl.js"></script>
+<script src="org/cboard/controller/config/folderTreeCtrl.js"></script>
 <script src="org/cboard/controller/config/categoryCtrl.js"></script>
 <script src="org/cboard/controller/config/datasetCtrl.js"></script>
 <script src="org/cboard/controller/admin/userAdminCtrl.js"></script>
+<script src="org/cboard/controller/config/jobCtrl.js"></script>
+<script src="org/cboard/controller/config/job/mailJobCtrl.js"></script>
+<script src="org/cboard/controller/dashboard/paramCtrl.js"></script>
+
 
 <script src="org/cboard/service/dashboard/dashboardService.js"></script>
+<script src="org/cboard/service/dashboard/freeLayoutService.js"></script>
 <script src="org/cboard/service/data/dataService.js"></script>
 <script src="org/cboard/service/util/ModalUtils.js"></script>
 <script src="org/cboard/service/updater/updateService.js"></script>
+<script src="org/cboard/service/chart/chartDataProcess.js"></script>
 <script src="org/cboard/service/chart/chartFunnelService.js"></script>
 <script src="org/cboard/service/chart/chartKpiService.js"></script>
 <script src="org/cboard/service/chart/chartLineService.js"></script>
@@ -188,6 +212,7 @@ desired effect
 <script src="org/cboard/service/chart/chartService.js"></script>
 <script src="org/cboard/service/chart/chartMapService.js"></script>
 <script src="org/cboard/service/chart/chartTableService.js"></script>
+<script src="org/cboard/service/chart/chartScatterService.js"></script>
 <script src="org/cboard/directive/dashboard/dashboardWidget.js"></script>
 
 <script src="plugins/crossTable/plugin.js"></script>

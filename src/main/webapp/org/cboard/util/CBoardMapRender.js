@@ -8,11 +8,11 @@ var CBoardMapRender = function (jqContainer, options) {
     var _this = this;
     $(jqContainer).html("<div class='map_wrapper'></div>");
     $('.map_wrapper').resize(function () {
-         _this.do(_this.tall);
+        _this.do(_this.tall);
     });
 };
 
-CBoardMapRender.prototype.do = function (tall) {
+CBoardMapRender.prototype.do = function (tall, persist) {
     this.tall = tall;
     this.container = $('.map_wrapper');
     tall = _.isUndefined(tall) ? 500 : tall;
@@ -33,6 +33,16 @@ CBoardMapRender.prototype.do = function (tall) {
         width: '100%'
     });
     var _this = this;
+    if (persist) {
+        setTimeout(function () {
+            html2canvas(_this.container[0], {
+                onrendered: function (canvas) {
+                    persist.data = canvas.toDataURL("image/jpeg");
+                    persist.type = "jpg"
+                }
+            });
+        }, 1000);
+    }
     return function (o) {
         _this.options = o;
         _this.do(_this.tall);

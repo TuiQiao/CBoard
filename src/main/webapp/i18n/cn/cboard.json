@@ -6,18 +6,27 @@
     "LOADING": "玩命加载中...",
     "REFRESH": "刷新",
     "EDIT": "编辑",
-    "CONFIRM_DELETE": "真的想好了要删除吗!!!",
+    "CONFIRM_DELETE": "真的想好了要删除吗?",
+    "CONFIRM_SAVE_BEFORE_PREVIEW": "预览之前需要保存，确定保存？",
+    "NOT_ALLOWED_TO_DELETE_BECAUSE_BE_DEPENDENT": "不允许删除，因为被依赖！",
     "TIP": "提示",
-    "SUCCESS": "成功!",
-    "FAIL": "失败!",
+    "SUCCESS": "成功",
+    "FAIL": "失败",
     "DEFAULT_CATEGORY": "默认分类",
-    "NOT_EMPTY": "不能为空!",
+    "NOT_EMPTY": "不能为空.",
     "NEW": "新建",
     "COPY": "复制",
-    "DELETE": "删除"
+    "DELETE": "删除",
+    "EXPORT": "导出",
+    "LOG": "日志",
+    "LAST1M": "最近一月",
+    "LAST1W": "最近一周",
+    "LAST10D": "最近10天",
+    "LAST10D_TIMESTAMP": "最近10天, 时间戳",
+    "FILTER_GROUP": "可选过滤"
   },
   "TIPS": {
-    "CAL_EXPR": "用于聚合后再计算. 使用上面的点击辅助输入避免输入错误! 如: Math.log(sum(columnA)/count(columB))"
+    "CAL_EXPR": "用于聚合后再计算. 使用上面的点击辅助输入避免输入错误. 如: Math.log(sum(columnA)/count(columB))"
   },
   "SIDEBAR": {
     "C_DASHBOARD": "看板",
@@ -30,7 +39,8 @@
     "DASHBOARD_CATEGORY": "看板分类",
     "ADMIN": "管理",
     "USER_ADMIN": "用户管理",
-    "RES_ADMIN": "资源管理"
+    "RES_ADMIN": "资源管理",
+    "JOB": "定时任务"
   },
   "HEADER": {
     "SIGN_OUT": "注销"
@@ -48,7 +58,7 @@
   },
   "CONFIG": {
     "COMMON": {
-      "CUSTOM_EXPRESSION": "自定义表达式"
+      "CUSTOM_EXPRESSION": "可选表达式"
     },
     "DATA_SOURCE": {
       "DATA_SOURCE_HEADER": "数据源",
@@ -71,10 +81,10 @@
       "EXIST_QUERY": "已有查询",
       "NEW_QUERY": "新建查询",
       "SWITCH": "切换",
-      "ROW": "行",
-      "GROUP": "列",
-      "VALUE": "值",
-      "VALUE_AXIS": "值轴",
+      "ROW": "行维",
+      "GROUP": "列维",
+      "VALUE": "度量",
+      "VALUE_AXIS": "轴",
       "FILTER": "过滤",
       "LABEL": "文字",
       "FORMATTER": "格式化",
@@ -92,6 +102,7 @@
       "KPI": "KPI",
       "PIE": "饼图",
       "LINE_BAR": "折线/柱状图",
+      "SCATTER": "散点图/气泡图",
       "MAP": "中国地图",
       "LINE": "折线",
       "BAR": "柱状",
@@ -119,7 +130,11 @@
       "TIPS_DIM_NUM_1": "1",
       "TIPS_DIM_NUM_0_MORE": "0个或多个",
       "TIPS_DIM_NUM_1_MORE": "1个或多个",
-      "FROM_CACHE": "从缓存加载"
+      "FROM_CACHE": "从缓存加载",
+      "SIZE": "大小",
+      "COLOR": "透明度",
+      "PREVIEW_QUERY": "预览查询",
+      "PERCENT_BAR": "百分比堆叠"
     },
     "DASHBOARD": {
       "DASHBOARD": "看板",
@@ -139,7 +154,29 @@
       "PARAM": "查询参数",
       "PARAM_NAME": "参数名称",
       "CUBE_TREE": "看板中的数据集/查询",
-      "LINKED_COLUMN": "参数关联上的列"
+      "LINKED_COLUMN": "参数关联上的列",
+      "PARAM_TYPE": "交互类型",
+      "VALUE_FORMMAT": "值格式化",
+      "VIEW_FORMMAT": "显示格式化",
+      "MIN": "最小值",
+      "MAX": "最大值",
+      "NOW": "现在",
+      "ONE_HOUR_AGO": "一小时前",
+      "ONE_DAY_AGO": "一天前",
+      "ONE_MONTH_AGO": "一月前",
+      "STEP": "步长",
+      "MAX_RANGE": "最大间距",
+      "DEFAUT_RANGE": "默认间距",
+      "ONE_SECOND": "1秒种",
+      "ONE_MINUT": "1分钟",
+      "ONE_HOUR": "1小时",
+      "ONE_DAY": "1天",
+      "MAIN_NODE": "主节点",
+      "SUB_NODE": "子节点",
+      "ADD_MAIN_NODE": "添加主节点",
+      "ADD_SUB_NODE": "添加子节点",
+      "NODE_NAME": "节点名称",
+      "TITLE": "标题"
     },
     "CATEGORY": {
       "NAME": "看板分类名称",
@@ -154,6 +191,38 @@
       "ADD": "添加",
       "REAL_TIME_INTERVAL": "实时间隔(秒)",
       "REAL_TIME_TIP": "留空则不做后台刷新"
+    },
+    "JOB": {
+      "CONFIG": "配置",
+      "JOB": "定时任务",
+      "NAME": "名称",
+      "TYPE": "类型",
+      "LAST_EXEC_TIME": "最后执行时间",
+      "EXEC_NOW": "立即执行",
+      "ACTIVE_RANGE": "有效期",
+      "MAIL": "邮件",
+      "TO": "收件人",
+      "CC": "抄送",
+      "BCC": "密送",
+      "SUBJECT": "主题",
+      "ADD_DASHBOARD": "添加看板",
+      "DASHBOARD": "看板",
+      "EVERY": "每",
+      "Minute": "分钟",
+      "Hour": "小时",
+      "Day": "天",
+      "Week": "周",
+      "Month": "月",
+      "ON_THE": "的",
+      "ON": "的",
+      "OF": "的",
+      "AT": "在",
+      "PAST_THE_HOUR": "分",
+      "USERNAME": "创建人",
+      "FAIL": "失败",
+      "FINISH": "完成",
+      "PROCESSING": "处理中",
+      "STATUS": "状态"
     }
   },
   "ADMIN": {
@@ -173,6 +242,29 @@
     "DATASOURCE": "数据源",
     "DATASET": "数据集",
     "WIDGET": "图表",
-    "CONTACT_ADMIN": "请联系管理员申请以下权限"
+    "JOB": "定时任务",
+    "CONTACT_ADMIN": "请联系管理员申请以下权限",
+    "BY_NAME": "按名称",
+    "BY_ROLE": "按角色"
+  },
+  "DATAPROVIDER": {
+    "AGGREGATABLE_PROVIDER": "数据源聚合",
+    "JDBC": {
+      "DRIVER": "驱动 (如: com.mysql.jdbc.Driver)",
+      "JDBCURL": "连接串 (如: jdbc:mysql://hostname:port/db)",
+      "USERNAME": "数据库用户名",
+      "PASSWORD": "数据库密码",
+      "POOLEDCONNECTION": "是否使用连接池",
+      "SQLTEXT": "查询语句"
+    },
+    "SAIKU": {
+    },
+    "TEXTFILE": {
+      "BASE_PATH": "文件所在目录",
+      "FILE_NAME": "文件名",
+      "ENCODING": "编码<UTF-8>",
+      "SEPRATOR": "分隔符<TAB>",
+      "ENCLOSURE": "列包围字符"
+    }
   }
 }

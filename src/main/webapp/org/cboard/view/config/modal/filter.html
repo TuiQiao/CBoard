@@ -23,7 +23,7 @@
     <div class="row">
         <div class="col-md-5">
             <select multiple class="form-control" style="height: 300px">
-                <option ng-repeat="v in byFilter?selectsByFilter:selects|filter:selected|filter:keyword" ng-click="col.values.push(v)">{{v}}</option>
+                <option ng-repeat="v in byFilter?$parent.selectsByFilter:$parent.selects|filter:selected|filter:keyword" ng-click="col.values.push(v)">{{v}}</option>
             </select>
         </div>
         <div class="col-md-2">
@@ -47,4 +47,14 @@
 <div class="modal-footer">
     <button type="button" class="btn btn-default pull-left" data-dismiss="modal" ng-click="close()">{{'COMMON.CANCEL'|translate}}</button>
     <button type="button" class="btn btn-primary" ng-click="ok()">{{'COMMON.OK'|translate}}</button>
+</div>
+<div class="overlay fa box box-solid" ng-show="status.i!=0">
+    <div class="box-header with-border">
+        <!--<h3 class="box-title"></h3>-->
+        <div class="box-tools pull-right">
+            <button type="button" class="btn btn-box-tool" data-widget="remove">
+                <i class="fa fa-times" style="font-size: large"></i></button>
+        </div>
+    </div>
+    <i class="fa fa-spinner fa-spin"></i>
 </div>

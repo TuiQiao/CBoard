@@ -24,5 +24,5 @@ public interface BoardDao {
 
     DashboardBoard getBoard(Long id);
 
-    long checkBoardRole(String userId, Long boardId);
+    long checkBoardRole(String userId, Long boardId, String permissionPattern);
 }

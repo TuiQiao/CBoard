@@ -7,11 +7,13 @@ import org.cboard.dao.DatasetDao;
 import org.cboard.dao.DatasourceDao;
 import org.cboard.dataprovider.DataProvider;
 import org.cboard.dataprovider.DataProviderManager;
+import org.cboard.dataprovider.config.AggConfig;
+import org.cboard.dataprovider.result.AggregateResult;
 import org.cboard.dto.DataProviderResult;
+import org.cboard.exception.CBoardException;
 import org.cboard.pojo.DashboardDataset;
 import org.cboard.pojo.DashboardDatasource;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Repository;
 
 import java.util.Map;
@@ -22,50 +24,83 @@ import java.util.Map;
 @Repository
 public class DataProviderService {
 
-    @Value("${dataprovider.resultLimit:200000}")
-    private int resultLimit;
-
     @Autowired
     private DatasourceDao datasourceDao;
 
     @Autowired
     private DatasetDao datasetDao;
 
-    public ServiceStatus test(JSONObject dataSource, Map<String, String> query) {
-        try {
-            DataProvider dataProvider = DataProviderManager.getDataProvider(dataSource.getString("type"));
-            dataProvider.getData(Maps.transformValues(dataSource.getJSONObject("config"), Functions.toStringFunction()), query);
-            return new ServiceStatus(ServiceStatus.Status.Success, null);
-        } catch (Exception e) {
-            return new ServiceStatus(ServiceStatus.Status.Fail, e.getMessage());
-        }
-    }
-
-    public DataProviderResult getData(Long datasourceId, Map<String, String> query, Long datasetId) {
-        String[][] dataArray = null;
-        int resultCount = 0;
-        String msg = "1";
-
+    private DataProvider getDataProvider(Long datasourceId, Map<String, String> query, Long datasetId) throws Exception {
+        Dataset dataset = null;
         if (datasetId != null) {
-            Dataset dataset = getDataset(datasetId);
+            dataset = getDataset(datasetId);
             datasourceId = dataset.getDatasourceId();
             query = dataset.getQuery();
         }
         DashboardDatasource datasource = datasourceDao.getDatasource(datasourceId);
-        try {
-            JSONObject config = JSONObject.parseObject(datasource.getConfig());
-            DataProvider dataProvider = DataProviderManager.getDataProvider(datasource.getType());
-            Map<String, String> parameterMap = Maps.transformValues(config, Functions.toStringFunction());
-            resultCount = dataProvider.resultCount(parameterMap, query);
-            if (resultCount > resultLimit) {
-                msg = "Cube result count is " + resultCount + ", greater than limit " + resultLimit;
-            } else {
-                dataArray = dataProvider.getData(parameterMap, query);
-            }
-        } catch (Exception e) {
-            msg =  e.getMessage();
+        JSONObject datasourceConfig = JSONObject.parseObject(datasource.getConfig());
+        Map<String, String> dataSource = Maps.transformValues(datasourceConfig, Functions.toStringFunction());
+        DataProvider dataProvider = DataProviderManager.getDataProvider(datasource.getType(), dataSource, query);
+        if (dataset != null && dataset.getInterval() != null && dataset.getInterval() > 0) {
+            dataProvider.setInterval(dataset.getInterval());
         }
-        return new DataProviderResult(dataArray, msg);
+        return dataProvider;
+    }
+
+    public AggregateResult queryAggData(Long datasourceId, Map<String, String> query, Long datasetId, AggConfig config, boolean reload) {
+        try {
+            DataProvider dataProvider = getDataProvider(datasourceId, query, datasetId);
+            return dataProvider.getAggData(config, reload);
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new CBoardException(e.getMessage());
+        }
+    }
+
+    public DataProviderResult getColumns(Long datasourceId, Map<String, String> query, Long datasetId, boolean reload) {
+        DataProviderResult dps = new DataProviderResult();
+        try {
+            DataProvider dataProvider = getDataProvider(datasourceId, query, datasetId);
+            String[] result = dataProvider.getColumn(reload);
+            dps.setColumns(result);
+            dps.setMsg("1");
+        } catch (Exception e) {
+            e.printStackTrace();
+            dps.setMsg(e.getMessage());
+        }
+        return dps;
+    }
+
+    public String[][] getDimensionValues(Long datasourceId, Map<String, String> query, Long datasetId, String columnName, AggConfig config, boolean reload) {
+        try {
+            DataProvider dataProvider = getDataProvider(datasourceId, query, datasetId);
+            String[][] result = dataProvider.getDimVals(columnName, config, reload);
+            return result;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    public String viewAggDataQuery(Long datasourceId, Map<String, String> query, Long datasetId, AggConfig config) {
+        try {
+            DataProvider dataProvider = getDataProvider(datasourceId, query, datasetId);
+            return dataProvider.getViewAggDataQuery(config);
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new CBoardException(e.getMessage());
+        }
+    }
+
+    public ServiceStatus test(JSONObject dataSource, Map<String, String> query) {
+        try {
+            DataProvider dataProvider = DataProviderManager.getDataProvider(dataSource.getString("type"),
+                    Maps.transformValues(dataSource.getJSONObject("config"), Functions.toStringFunction()), query);
+            dataProvider.getData();
+            return new ServiceStatus(ServiceStatus.Status.Success, null);
+        } catch (Exception e) {
+            return new ServiceStatus(ServiceStatus.Status.Fail, e.getMessage());
+        }
     }
 
     protected Dataset getDataset(Long datasetId) {

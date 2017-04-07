@@ -5,10 +5,11 @@ cBoard.controller('datasetCtrl', function ($scope, $http, dataService, $uibModal
 
     var translate = $filter('translate');
     $scope.optFlag = 'none';
-    $scope.curDataset = {data: {expressions: []}};
+    $scope.curDataset = {data: {expressions: [], filters: []}};
     $scope.curWidget = {};
     $scope.alerts = [];
     $scope.verify = {dsName: true};
+    $scope.loadFromCache = true;
 
     var treeID = 'dataSetTreeID'; // Set to a same value with treeDom
     var originalData = [];
@@ -40,7 +41,7 @@ cBoard.controller('datasetCtrl', function ($scope, $http, dataService, $uibModal
 
     $scope.newDs = function () {
         $scope.optFlag = 'new';
-        $scope.curDataset = {data: {expressions: []}};
+        $scope.curDataset = {data: {expressions: [], filters: []}};
         $scope.curWidget = {};
         cleanPreview();
     };
@@ -62,6 +63,9 @@ cBoard.controller('datasetCtrl', function ($scope, $http, dataService, $uibModal
         if (!$scope.curDataset.data.expressions) {
             $scope.curDataset.data.expressions = [];
         }
+        if (!$scope.curDataset.data.filters) {
+            $scope.curDataset.data.filters = [];
+        }
         $scope.datasource = _.find($scope.datasourceList, function (ds) {
             return ds.id == $scope.curDataset.data.datasource;
         });
@@ -70,10 +74,32 @@ cBoard.controller('datasetCtrl', function ($scope, $http, dataService, $uibModal
     };
 
     $scope.deleteDs = function (ds) {
-        ModalUtils.confirm(translate("COMMON.CONFIRM_DELETE"), "modal-warning", "lg", function () {
-            $http.post("dashboard/deleteDataset.do", {id: ds.id}).success(function () {
-                $scope.optFlag = 'none';
-                getDatasetList();
+        $http.get("dashboard/getAllWidgetList.do").then(function (response) {
+            if (!response) {
+                return false;
+            }
+            var resDs = [];
+
+            for (var i = 0; i < response.data.length; i++) {
+                if (response.data[i].data.datasetId == ds.id) {
+                    resDs.push(response.data[i].name);
+                }
+            }
+
+            if (resDs.length > 0) {
+                var warnStr = translate("CONFIG.WIDGET.WIDGET") + ":[" + resDs.toString() + "]";
+                ModalUtils.alert(translate("COMMON.NOT_ALLOWED_TO_DELETE_BECAUSE_BE_DEPENDENT") + warnStr, "modal-warning", "lg");
+                return false;
+            }
+            ModalUtils.confirm(translate("COMMON.CONFIRM_DELETE"), "modal-warning", "lg", function () {
+                $http.post("dashboard/deleteDataset.do", {id: ds.id}).success(function (serviceStatus) {
+                    if (serviceStatus.status == '1') {
+                        getDatasetList();
+                    } else {
+                        ModalUtils.alert(serviceStatus.msg, "modal-warning", "lg");
+                    }
+                    $scope.optFlag = 'none';
+                });
             });
         });
     };
@@ -146,8 +172,67 @@ cBoard.controller('datasetCtrl', function ($scope, $http, dataService, $uibModal
 
     };
 
+    $scope.editFilterGroup = function (col) {
+        var selects = angular.copy($scope.selects);
+        $uibModal.open({
+            templateUrl: 'org/cboard/view/config/modal/filterGroup.html',
+            windowTemplateUrl: 'org/cboard/view/util/modal/window.html',
+            backdrop: false,
+            scope: $scope,
+            controller: function ($scope, $uibModalInstance) {
+                if (col) {
+                    $scope.data = angular.copy(col);
+                } else {
+                    $scope.data = {group: '', filters: []};
+                }
+                $scope.selects = selects;
+                $scope.close = function () {
+                    $uibModalInstance.close();
+                };
+                $scope.addColumn = function (str) {
+                    $scope.data.filters.push({col: str, type: '=', values: []})
+                };
+                $scope.ok = function () {
+                    if (col) {
+                        col.group = $scope.data.group;
+                        col.filters = $scope.data.filters;
+                    } else {
+                        if ($scope.$parent.curDataset.data.filters == null) {
+                            $scope.$parent.curDataset.data.filters = [];
+                        }
+                        $scope.$parent.curDataset.data.filters.push($scope.data);
+                    }
+                    $uibModalInstance.close();
+                };
+                $scope.editFilter = function (filter) {
+                    $uibModal.open({
+                        templateUrl: 'org/cboard/view/config/modal/dsFilter.html',
+                        windowTemplateUrl: 'org/cboard/view/util/modal/window.html',
+                        backdrop: false,
+                        size: 'lg',
+                        controller: function ($scope, $uibModalInstance) {
+                            $scope.filter = angular.copy(filter);
+                            $scope.type = ['=', '≠', '>', '<', '≥', '≤', '(a,b]', '[a,b)', '(a,b)', '[a,b]'];
+                            $scope.close = function () {
+                                $uibModalInstance.close();
+                            };
+                            $scope.selected = function (v) {
+                                return _.indexOf($scope.col.values, v) == -1
+                            };
+                            $scope.ok = function () {
+                                filter.type = $scope.filter.type;
+                                filter.values = $scope.filter.values;
+                                $uibModalInstance.close();
+                            };
+                        }
+                    });
+                };
+            }
+        });
+    };
+
     $scope.editExp = function (col) {
-        var selects = angular.copy($scope.widgetData[0]);
+        var selects = angular.copy($scope.selects);
         var aggregate = [
             {name: 'sum', value: 'sum'},
             {name: 'count', value: 'count'},
@@ -232,39 +317,40 @@ cBoard.controller('datasetCtrl', function ($scope, $http, dataService, $uibModal
         cleanPreview();
         $scope.loading = true;
 
-        dataService.getData($scope.datasource.id, $scope.curWidget.query, null, function (widgetData) {
-            $scope.loading = false;
-            $scope.toChartDisabled = false;
-            if (widgetData.msg == '1') {
-                $scope.alerts = [];
-                $scope.widgetData = widgetData.data;
-                $scope.selects = angular.copy($scope.widgetData[0]);
-            } else {
-                if (widgetData.msg != null) {
-                    $scope.alerts = [{msg: widgetData.msg, type: 'danger'}];
+        dataService.getColumns({
+            datasource: $scope.datasource.id,
+            query: $scope.curWidget.query,
+            datasetId: null,
+            reload: !$scope.loadFromCache,
+            callback: function (dps) {
+                $scope.loading = false;
+                $scope.toChartDisabled = false;
+                if (dps.msg == "1") {
+                    $scope.alerts = [];
+                    $scope.selects = dps.columns;
+                } else {
+                    $scope.alerts = [{msg: dps.msg, type: 'danger'}];
                 }
-            }
 
-            var widget = {
-                chart_type: "table",
-                filters: [],
-                groups: [],
-                keys: [],
-                selects: [],
-                values: [{
-                    cols: []
-                }
-                ]
-            };
-            _.each($scope.widgetData[0], function (c) {
-                widget.keys.push({
-                    col: c,
-                    type: "eq",
-                    values: []
+                var widget = {
+                    chart_type: "table",
+                    filters: [],
+                    groups: [],
+                    keys: [],
+                    selects: [],
+                    values: [{
+                        cols: []
+                    }
+                    ]
+                };
+                _.each($scope.selects, function (c) {
+                    widget.keys.push({
+                        col: c,
+                        type: "eq",
+                        values: []
+                    });
                 });
-            });
-
-            //chartService.render($('#dataset_preview'), $scope.widgetData, widget, null, {myheight: 300});
+            }
         });
     };
 
@@ -356,7 +442,7 @@ cBoard.controller('datasetCtrl', function ($scope, $http, dataService, $uibModal
 
         jstree_ReloadTree(treeID, originalData);
     };
-    
+
     $scope.treeEventsObj = function () {
         var baseEventObj = jstree_baseTreeEventsObj({
             ngScope: $scope, ngHttp: $http, ngTimeout: $timeout,

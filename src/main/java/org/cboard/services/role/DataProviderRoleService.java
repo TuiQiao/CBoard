@@ -31,18 +31,20 @@ public class DataProviderRoleService {
     @Value("${admin_user_id}")
     private String adminUserId;
 
-    @Around("execution(* org.cboard.services.DataProviderService.getData(..)) ||" +
-            "execution(* org.cboard.services.CachedDataProviderService.getData(..))")
-    public Object update(ProceedingJoinPoint proceedingJoinPoint) throws Throwable {
+    @Around("execution(* org.cboard.services.DataProviderService.getDimensionValues(..)) ||" +
+            "execution(* org.cboard.services.DataProviderService.getColumns(..)) ||" +
+            "execution(* org.cboard.services.DataProviderService.queryAggData(..)) ||" +
+            "execution(* org.cboard.services.DataProviderService.viewAggDataQuery(..))")
+    public Object query(ProceedingJoinPoint proceedingJoinPoint) throws Throwable {
         Long datasourceId = (Long) proceedingJoinPoint.getArgs()[0];
         Long datasetId = (Long) proceedingJoinPoint.getArgs()[2];
         String userid = authenticationService.getCurrentUser().getUserId();
         if (datasetId != null) {
-            if (datasetDao.checkDatasetRole(userid, datasetId) > 0) {
+            if (datasetDao.checkDatasetRole(userid, datasetId, RolePermission.PATTERN_READ) > 0) {
                 return proceedingJoinPoint.proceed();
             }
         } else {
-            if (datasourceDao.checkDatasourceRole(userid, datasourceId) > 0) {
+            if (datasourceDao.checkDatasourceRole(userid, datasourceId, RolePermission.PATTERN_READ) > 0) {
                 return proceedingJoinPoint.proceed();
             }
         }

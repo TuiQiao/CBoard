@@ -2,12 +2,10 @@
 
 <beans xmlns="http://www.springframework.org/schema/beans"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-       xmlns:sec="http://www.springframework.org/schema/security"
        xsi:schemaLocation="http://www.springframework.org/schema/beans
-        http://www.springframework.org/schema/beans/spring-beans-4.2.xsd
-        http://www.springframework.org/schema/security
-        http://www.springframework.org/schema/security/spring-security-4.1.xsd">
+        http://www.springframework.org/schema/beans/spring-beans-4.2.xsd">
 
     <import resource="spring-security-jdbc.xml"/>
     <!--<import resource="spring-security-cas.xml"/>-->
+
 </beans>

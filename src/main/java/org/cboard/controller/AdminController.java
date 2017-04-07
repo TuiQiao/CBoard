@@ -7,6 +7,7 @@ import com.google.common.collect.Lists;
 import org.cboard.dao.MenuDao;
 import org.cboard.dao.RoleDao;
 import org.cboard.dao.UserDao;
+import org.cboard.dto.ViewDashboardRoleRes;
 import org.cboard.pojo.DashboardRole;
 import org.cboard.pojo.DashboardRoleRes;
 import org.cboard.pojo.DashboardUser;
@@ -21,6 +22,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 /**
  * Created by yfyuan on 2016/12/2.
@@ -97,6 +99,15 @@ public class AdminController {
         );
     }
 
+    @RequestMapping(value = "/deleteUserRole")
+    public String deleteUserRole(@RequestParam(name = "userIdArr") String userIdArr, @RequestParam(name = "roleIdArr") String roleIdArr) {
+        return adminSerivce.deleteUserRoles(
+                JSONArray.parseArray(userIdArr).toArray(new String[]{}),
+                JSONArray.parseArray(roleIdArr).toArray(new String[]{}),
+                authenticationService.getCurrentUser().getUserId()
+        );
+    }
+
     @RequestMapping(value = "/getUserRoleList")
     public List<DashboardUserRole> getUserRoleList() {
         List<DashboardUserRole> list = userDao.getUserRoleList();
@@ -104,9 +115,9 @@ public class AdminController {
     }
 
     @RequestMapping(value = "/getRoleResList")
-    public List<DashboardRoleRes> getRoleResList() {
+    public List<ViewDashboardRoleRes> getRoleResList() {
         List<DashboardRoleRes> list = roleDao.getRoleResList();
-        return list;
+        return list.stream().map(ViewDashboardRoleRes::new).collect(Collectors.toList());
     }
 
     @RequestMapping(value = "/updateRoleRes")

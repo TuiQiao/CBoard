@@ -23,19 +23,17 @@ public class MyDataProvider  extends DataProvider {
     private String QUERY_PARAM_KEY = "query";
 
     @Override
-    public int resultCount(Map<String, String> dataSource, Map<String, String> query) throws Exception {
-        return 0;
+    public boolean doAggregationInDataSource() {
+        return false;
     }
 
     /**
      *
-     * @param dataSource 参数Map
-     * @param query 参数Map
      * @return
      * @throws Exception
      */
     @Override
-    public String[][] getData(Map<String, String> dataSource, Map<String, String> query) throws Exception {
+    public String[][] getData() throws Exception {
         // 获取data source 参数创建数据连接
         String param = dataSource.get(DS_PARAM_KEY);
         // TODO 利用接收到的DataSource配置参数创建DataSource连接，如：JDBC Connection，这个演示从内存返回数据，就不用创建连接了

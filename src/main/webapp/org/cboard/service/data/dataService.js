@@ -4,28 +4,100 @@
 'use strict';
 cBoard.service('dataService', function ($http, updateService) {
 
-    /**
-     * Get raw data from server side.
-     * @param datasource
-     * @param query
-     * @param callback
-     */
-    this.getData = function (datasource, query, datasetId, callback, fromCache) {
-        $http.post("dashboard/getCachedData.do", {
+    var getDimensionConfig = function (array) {
+        var result = [];
+        if (array) {
+            _.each(array, function (e) {
+                if (_.isUndefined(e.group)) {
+                    result.push({columnName: e.col, filterType: e.type, values: e.values});
+                } else {
+                    _.each(e.filters, function (f) {
+                        result.push({columnName: f.col, filterType: f.type, values: f.values});
+                    });
+                }
+            });
+        }
+        return result;
+    };
+
+    this.getDimensionValues = function (datasource, query, datasetId, colmunName, chartConfig, callback) {
+        var cfg = {rows: [], columns: [], filters: []};
+        cfg.rows = getDimensionConfig(chartConfig.keys);
+        cfg.columns = getDimensionConfig(chartConfig.groups);
+        cfg.filters = getDimensionConfig(chartConfig.filters);
+
+        $http.post("dashboard/getDimensionValues.do", {
             datasourceId: datasource,
             query: angular.toJson(query),
             datasetId: datasetId,
-            reload: fromCache ? false : true
+            colmunName: colmunName,
+            cfg: angular.toJson(cfg),
         }).success(function (response) {
-            callback(response);
+            callback(response[0], response[1]);
         });
     };
 
-    var getDataSeries = function (rawData, chartConfig) {
+    this.getData = function (datasource, query, datasetId, chartConfig, callback, reload) {
+        updateService.updateConfig(chartConfig);
+        var dataSeries = getDataSeries(chartConfig);
+        var cfg = {rows: [], columns: [], filters: []};
+        cfg.rows = getDimensionConfig(chartConfig.keys);
+        cfg.columns = getDimensionConfig(chartConfig.groups);
+        cfg.filters = getDimensionConfig(chartConfig.filters);
+        cfg.filters = cfg.filters.concat(getDimensionConfig(chartConfig.boardFilters));
+        cfg.values = _.map(dataSeries, function (s) {
+            return {column: s.name, aggType: s.aggregate};
+        });
+        $http.post("dashboard/getAggregateData.do", {
+            datasourceId: datasource,
+            query: angular.toJson(query),
+            datasetId: datasetId,
+            cfg: angular.toJson(cfg),
+            reload: reload
+        }).success(function (response) {
+            callback(response);
+        }).error(function (data) {
+            callback(null);
+        });
+    };
+
+    this.viewQuery = function (params, callback) {
+        updateService.updateConfig(params.config);
+        var dataSeries = getDataSeries(params.config);
+        var cfg = {rows: [], columns: [], filters: []};
+        cfg.rows = getDimensionConfig(params.config.keys);
+        cfg.columns = getDimensionConfig(params.config.groups);
+        cfg.filters = getDimensionConfig(params.config.filters);
+        cfg.filters = cfg.filters.concat(getDimensionConfig(params.config.boardFilters));
+        cfg.values = _.map(dataSeries, function (s) {
+            return {column: s.name, aggType: s.aggregate};
+        });
+        $http.post("dashboard/viewAggDataQuery.do", {
+            datasourceId: params.datasource,
+            query: angular.toJson(params.query),
+            datasetId: params.datasetId,
+            cfg: angular.toJson(cfg),
+        }).success(function (response) {
+            callback(response[0]);
+        });
+    };
+
+    this.getColumns = function (option) {
+        $http.post("dashboard/getColumns.do", {
+            datasourceId: option.datasource,
+            query: option.query ? angular.toJson(option.query) : null,
+            datasetId: option.datasetId,
+            reload: option.reload
+        }).success(function (response) {
+            option.callback(response);
+        });
+    };
+
+    var getDataSeries = function (chartConfig) {
         var result = [];
         _.each(chartConfig.values, function (v) {
             _.each(v.cols, function (c) {
-                var series = configToDataSeries(rawData, c);
+                var series = configToDataSeries(c);
                 _.each(series, function (s) {
                     if (!_.find(result, function (e) {
                             return JSON.stringify(e) == JSON.stringify(s);
@@ -38,154 +110,113 @@ cBoard.service('dataService', function ($http, updateService) {
         return result;
     };
 
-    var configToDataSeries = function (rawData, config) {
+    var configToDataSeries = function (config) {
         switch (config.type) {
             case 'exp':
-                return getExpSeries(rawData, config.exp);
+                return getExpSeries(config.exp);
                 break;
             default:
                 return [{
                     name: config.col,
-                    aggregate: config.aggregate_type,
-                    index: getHeaderIndex(rawData, [config.col])[0]
-                }]
+                    aggregate: config.aggregate_type
+                }];
                 break;
         }
     };
 
-    var getExpSeries = function (rawData, exp) {
-        var result = [];
-        exp = exp.trim();
-        _.each(exp.match(/(sum|avg|count|max|min)\([\u4e00-\u9fa5_a-zA-Z0-9]+\)/g), function (text) {
-            var name = text.substring(text.indexOf('(') + 1, text.indexOf(')'));
-            result.push({
-                name: name,
-                aggregate: text.substring(0, text.indexOf('(')),
-                index: getHeaderIndex(rawData, [name])[0]
-            });
-        });
-        return result;
+    var getExpSeries = function (exp) {
+        return parserExp(exp).aggs;
     };
 
-    var getRule = function (cfg, colIdx) {
-        switch (cfg.type) {
+    var filter = function (cfg, iv) {
+        switch (cfg.f_type) {
             case '=':
             case 'eq':
-                return function (row) {
-                    for (var i = 0; i < cfg.values.length; i++) {
-                        if (row[colIdx] == cfg.values[i]) {
-                            return true;
-                        }
+                for (var i = 0; i < cfg.f_values.length; i++) {
+                    if (iv == cfg.f_values[i]) {
+                        return true;
                     }
-                    return cfg.values.length == 0;
-                };
-                break;
+                }
+                return cfg.f_values.length == 0;
             case '≠':
             case 'ne':
-                return function (row) {
-                    for (var i = 0; i < cfg.values.length; i++) {
-                        if (row[colIdx] == cfg.values[i]) {
-                            return false;
-                        }
+                for (var i = 0; i < cfg.f_values.length; i++) {
+                    if (iv == cfg.f_values[i]) {
+                        return false;
                     }
-                    return true;
-                };
-                break;
+                }
+                return true;
             case '>':
-                return function (row) {
-                    var v = cfg.values[0];
-                    var params = toNumber(row[colIdx], v);
-                    if (!_.isUndefined(v) && params[0] <= params[1]) {
-                        return false;
-                    }
-                    return true;
-                };
-                break;
+                var v = cfg.f_values[0];
+                var params = toNumber(iv, v);
+                if (!_.isUndefined(v) && params[0] <= params[1]) {
+                    return false;
+                }
+                return true;
             case '<':
-                return function (row) {
-                    var v = cfg.values[0];
-                    var params = toNumber(row[colIdx], v);
-                    if (!_.isUndefined(v) && params[0] >= params[1]) {
-                        return false;
-                    }
-                    return true;
-                };
-                break;
+                var v = cfg.f_values[0];
+                var params = toNumber(iv, v);
+                if (!_.isUndefined(v) && params[0] >= params[1]) {
+                    return false;
+                }
+                return true;
             case '≥':
-                return function (row) {
-                    var v = cfg.values[0];
-                    var params = toNumber(row[colIdx], v);
-                    if (!_.isUndefined(v) && params[0] < params[1]) {
-                        return false;
-                    }
-                    return true;
-                };
-                break;
+                var v = cfg.f_values[0];
+                var params = toNumber(iv, v);
+                if (!_.isUndefined(v) && params[0] < params[1]) {
+                    return false;
+                }
+                return true;
             case '≤':
-                return function (row) {
-                    var v = cfg.values[0];
-                    var params = toNumber(row[colIdx], v);
-                    if (!_.isUndefined(v) && params[0] > params[1]) {
-                        return false;
-                    }
-                    return true;
-                };
-                break;
+                var v = cfg.f_values[0];
+                var params = toNumber(iv, v);
+                if (!_.isUndefined(v) && params[0] > params[1]) {
+                    return false;
+                }
+                return true;
             case '(a,b]':
-                return function (row) {
-                    var a = cfg.values[0];
-                    var b = cfg.values[1];
-                    var params = toNumber(row[colIdx], a, b);
-                    if (!_.isUndefined(a) && !_.isUndefined(b) && (params[0] <= params[1] || params[0] > params[2])) {
-                        return false;
-                    }
-                    return true;
-                };
-                break;
+                var a = cfg.f_values[0];
+                var b = cfg.f_values[1];
+                var params = toNumber(iv, a, b);
+                if (!_.isUndefined(a) && !_.isUndefined(b) && (params[0] <= params[1] || params[0] > params[2])) {
+                    return false;
+                }
+                return true;
             case '[a,b)':
-                return function (row) {
-                    var a = cfg.values[0];
-                    var b = cfg.values[1];
-                    var params = toNumber(row[colIdx], a, b);
-                    if (!_.isUndefined(a) && !_.isUndefined(b) && (params[0] < params[1] || params[0] >= params[2])) {
-                        return false;
-                    }
-                    return true;
-                };
-                break;
+                var a = cfg.f_values[0];
+                var b = cfg.f_values[1];
+                var params = toNumber(iv, a, b);
+                if (!_.isUndefined(a) && !_.isUndefined(b) && (params[0] < params[1] || params[0] >= params[2])) {
+                    return false;
+                }
+                return true;
             case '(a,b)':
-                return function (row) {
-                    var a = cfg.values[0];
-                    var b = cfg.values[1];
-                    var params = toNumber(row[colIdx], a, b);
-                    if (!_.isUndefined(a) && !_.isUndefined(b) && (params[0] <= params[1] || params[0] >= params[2])) {
-                        return false;
-                    }
-                    return true;
-                };
-                break;
+                var a = cfg.f_values[0];
+                var b = cfg.f_values[1];
+                var params = toNumber(iv, a, b);
+                if (!_.isUndefined(a) && !_.isUndefined(b) && (params[0] <= params[1] || params[0] >= params[2])) {
+                    return false;
+                }
+                return true;
             case '[a,b]':
-                return function (row) {
-                    var a = cfg.values[0];
-                    var b = cfg.values[1];
-                    var params = toNumber(row[colIdx], a, b);
-                    if (!_.isUndefined(a) && !_.isUndefined(b) && (params[0] < params[1] || params[0] > params[2])) {
-                        return false;
-                    }
-                    return true;
-                };
-                break;
+                var a = cfg.f_values[0];
+                var b = cfg.f_values[1];
+                var params = toNumber(iv, a, b);
+                if (!_.isUndefined(a) && !_.isUndefined(b) && (params[0] < params[1] || params[0] > params[2])) {
+                    return false;
+                }
+                return true;
+            default:
+                return true;
         }
     };
-    this.getRule = getRule;
-
 
     var toNumber = function () {
         var arr = _.isArray(arguments[0]) ? arguments[0] : arguments;
         var result = [];
         for (var i = 0; i < arr.length; i++) {
             var a = Number(arr[i]);
-            if (Number.isNaN(a)) {
+            if (isNaN(a)) {
                 return arr;
             } else {
                 result.push(a);
@@ -195,67 +226,14 @@ cBoard.service('dataService', function ($http, updateService) {
     };
     this.toNumber = toNumber;
 
-    var getFilter = function (chartConfig, keysIdx, groupsIdx, filtersIdx) {
-        var rules = [];
-        _.map(keysIdx, function (v, i) {
-            var cfg = chartConfig.keys[i];
-            rules.push(getRule(cfg, v));
-        });
-        _.map(groupsIdx, function (v, i) {
-            var cfg = chartConfig.groups[i];
-            rules.push(getRule(cfg, v));
-        });
-        _.map(filtersIdx, function (v, i) {
-            var cfg = chartConfig.filters[i];
-            rules.push(getRule(cfg, v));
-        });
-        return function (row) {
-            for (var i = 0; i < rules.length; i++) {
-                if (!rules[i](row)) {
-                    return false;
-                }
-            }
-            return true;
-        };
-    };
-
-    this.getFilterByConfig = function (chartData, chartConfig) {
-        var keysIdx = getHeaderIndex(chartData, _.map(chartConfig.keys, function (e) {
-            return e.col;
-        }));
-        var groupsIdx = getHeaderIndex(chartData, _.map(chartConfig.groups, function (e) {
-            return e.col;
-        }));
-        var filtersIdx = getHeaderIndex(chartData, _.map(chartConfig.filters, function (e) {
-            return e.col;
-        }));
-        return getFilter(chartConfig, keysIdx, groupsIdx, filtersIdx);
-    };
-
     /**
      * Cast the aggregated raw data into data series
      * @param rawData
      * @param chartConfig
      * @param callback function which is used to transform series data to widgets option
      */
-    this.castRawData2Series = function (rawData, chartConfig, callback) {
+    this.castRawData2Series = function (aggData, chartConfig, callback) {
         updateService.updateConfig(chartConfig);
-        var keysIdx = getHeaderIndex(rawData, _.map(chartConfig.keys, function (e) {
-            return e.col;
-        }));
-        var keysSort = _.map(chartConfig.keys, function (e) {
-            return e.sort;
-        });
-        var groupsIdx = getHeaderIndex(rawData, _.map(chartConfig.groups, function (e) {
-            return e.col;
-        }));
-        var groupsSort = _.map(chartConfig.groups, function (e) {
-            return e.sort;
-        });
-        var filtersIdx = getHeaderIndex(rawData, _.map(chartConfig.filters, function (e) {
-            return e.col;
-        }));
-        var dataSeries = getDataSeries(rawData, chartConfig);
 
         var castedKeys = new Array();
         var castedGroups = new Array();
@@ -263,40 +241,65 @@ cBoard.service('dataService', function ($http, updateService) {
         var joinedGroups = {};
         var newData = {};
 
-        var filter = getFilter(chartConfig, keysIdx, groupsIdx, filtersIdx);
-        for (var i = 1; i < rawData.length; i++) {
-            if (!filter(rawData[i])) {
-                continue;
+        var getIndex = function (columnList, col) {
+            var result = new Array();
+            if (col) {
+                for (var j = 0; j < col.length; j++) {
+                    var idx = _.find(columnList, function (e) {
+                        return e.name == col[j];
+                    });
+                    result.push(idx.index);
+                }
             }
+            return result;
+        };
+
+        var keysIdx = getIndex(aggData.columnList, _.map(chartConfig.keys, function (e) {
+            return e.col;
+        }));
+        var keysSort = _.map(chartConfig.keys, function (e) {
+            return e.sort;
+        });
+        var groupsIdx = getIndex(aggData.columnList, _.map(chartConfig.groups, function (e) {
+            return e.col;
+        }));
+        var groupsSort = _.map(chartConfig.groups, function (e) {
+            return e.sort;
+        });
+
+        var valueSeries = _.filter(aggData.columnList, function (e) {
+            return e.aggType;
+        });
+        for (var i = 0; i < aggData.data.length; i++) {
             //组合keys
-            var newKey = getRowElements(rawData[i], keysIdx);
+            var newKey = getRowElements(aggData.data[i], keysIdx);
             var jk = newKey.join('-');
             if (_.isUndefined(joinedKeys[jk])) {
                 castedKeys.push(newKey);
                 joinedKeys[jk] = true;
             }
             //组合groups
-            var group = getRowElements(rawData[i], groupsIdx);
+            var group = getRowElements(aggData.data[i], groupsIdx);
             var newGroup = group.join('-');
             if (_.isUndefined(joinedGroups[newGroup])) {
                 castedGroups.push(group);
                 joinedGroups[newGroup] = true;
             }
             // pick the raw values into coordinate cell and then use aggregate function to do calculate
-            _.each(dataSeries, function (dSeries) {
+            _.each(valueSeries, function (dSeries) {
                 if (_.isUndefined(newData[newGroup])) {
                     newData[newGroup] = {};
                 }
                 if (_.isUndefined(newData[newGroup][dSeries.name])) {
                     newData[newGroup][dSeries.name] = {};
                 }
-                if (_.isUndefined(newData[newGroup][dSeries.name][dSeries.aggregate])) {
-                    newData[newGroup][dSeries.name][dSeries.aggregate] = {};
+                if (_.isUndefined(newData[newGroup][dSeries.name][dSeries.aggType])) {
+                    newData[newGroup][dSeries.name][dSeries.aggType] = {};
                 }
-                if (_.isUndefined(newData[newGroup][dSeries.name][dSeries.aggregate][jk])) {
-                    newData[newGroup][dSeries.name][dSeries.aggregate][jk] = [];
-                }
-                newData[newGroup][dSeries.name][dSeries.aggregate][jk].push(rawData[i][dSeries.index]);
+                // if (_.isUndefined(newData[newGroup][dSeries.name][dSeries.aggType][jk])) {
+                //     newData[newGroup][dSeries.name][dSeries.aggType][jk] = [];
+                // }
+                newData[newGroup][dSeries.name][dSeries.aggType][jk] = parseFloat(aggData.data[i][dSeries.index]);
             });
         }
         //sort dimension
@@ -322,27 +325,48 @@ cBoard.service('dataService', function ($http, updateService) {
         };
         castedKeys.sort(getSort(keysSort));
         castedGroups.sort(getSort(groupsSort));
-        // do aggregate
-        _.mapObject(newData, function (g) {
-            _.mapObject(g, function (groupSeries) {
-                _.each(_.keys(groupSeries), function (aggregateType) {
-                    for (var k in groupSeries[aggregateType]) {
-                        if (groupSeries[aggregateType][k]) {
-                            groupSeries[aggregateType][k] = aggregate(groupSeries[aggregateType][k], aggregateType);
-                        }
-                    }
-                });
-            });
-        });
         //
         var castedAliasSeriesName = new Array();
         var aliasSeriesConfig = {};
         var aliasData = new Array();
+
+        var valueSort = undefined;
+        var valueSortArr = [];
+
+        _.each(castedGroups, function (group) {
+            _.each(chartConfig.values, function (value) {
+                _.each(value.cols, function (series) {
+                    if (_.isUndefined(valueSort) && series.sort) {
+                        valueSort = series.sort;
+                        castSeriesData(series, group.join('-'), castedKeys, newData, function (castedData, keyIdx) {
+                            valueSortArr[keyIdx] = {v: castedData, i: keyIdx};
+                        });
+                    }
+                });
+            });
+        });
+
+        if (!_.isUndefined(valueSort)) {
+            valueSortArr.sort(function (a, b) {
+                if (a.v == b.v)return 0;
+                var p = toNumber(a.v, b.v)
+                if ((p[0] < p[1]) ^ valueSort == 'asc') {
+                    return 1;
+                }
+                else {
+                    return -1;
+                }
+            });
+            var tk = angular.copy(castedKeys);
+            _.each(valueSortArr, function (e, i) {
+                castedKeys[i] = tk[e.i];
+            });
+        }
+
         _.each(castedGroups, function (group) {
             _.each(chartConfig.values, function (value, vIdx) {
                 _.each(value.cols, function (series) {
                     var seriesName = series.alias ? series.alias : series.col;
-                    var formatter = series.formatter;
                     var newSeriesName = seriesName;
                     if (group && group.length > 0) {
                         var a = [].concat(group);
@@ -353,19 +377,53 @@ cBoard.service('dataService', function ($http, updateService) {
                         castedAliasSeriesName.push([seriesName]);
                     }
                     //castedAliasSeriesName.push(newSeriesName);
-                    aliasSeriesConfig[newSeriesName] = {type: value.series_type, valueAxisIndex: vIdx};
-
+                    aliasSeriesConfig[newSeriesName] = {
+                        type: value.series_type,
+                        valueAxisIndex: vIdx,
+                        formatter: series.formatter
+                    };
                     castSeriesData(series, group.join('-'), castedKeys, newData, function (castedData, keyIdx) {
                         if (!aliasData[castedAliasSeriesName.length - 1]) {
                             aliasData[castedAliasSeriesName.length - 1] = new Array();
                         }
                         // Only format decimal
-                        aliasData[castedAliasSeriesName.length - 1][keyIdx] = dataFormat(castedData, formatter);
+                        aliasData[castedAliasSeriesName.length - 1][keyIdx] = castedData;
                     });
                 });
             });
         });
+        for (var i = 0; i < castedKeys.length; i++) {
+            var s = 0;
+            var f = true;
+            _.each(castedGroups, function (group) {
+                _.each(chartConfig.values, function (value) {
+                    _.each(value.cols, function (series) {
+                        if (!f) {
+                            return;
+                        }
+                        if (series.f_top && series.f_top <= i) {
+                            f = false;
+                        }
+                        if (!filter(series, aliasData[s][i])) {
+                            f = false;
+                        }
+                        if (f) {
+                            aliasData[s][i] = dataFormat(aliasData[s][i]);
+                        }
+                        s++;
+                    });
+                });
+            });
+            if (!f) {
+                castedKeys.splice(i, 1);
+                _.each(aliasData, function (_series) {
+                    _series.splice(i, 1);
+                });
+                i--;
+            }
+        }
         callback(castedKeys, castedAliasSeriesName, aliasData, aliasSeriesConfig);
+
     };
 
     var castSeriesData = function (series, group, castedKeys, newData, iterator) {
@@ -385,14 +443,10 @@ cBoard.service('dataService', function ($http, updateService) {
     };
 
     var compileExp = function (exp) {
-        exp = exp.trim();
-        _.each(exp.match(/(sum|avg|count|max|min)\([\u4e00-\u9fa5_a-zA-Z0-9]+\)/g), function (text) {
-            var name = text.substring(text.indexOf('(') + 1, text.indexOf(')'));
-            var aggregate = text.substring(0, text.indexOf('('));
-            exp = exp.replace(text, "groupData['" + name + "']['" + aggregate + "'][key]");
-        });
+        var parseredExp = parserExp(exp);
         return function (groupData, key) {
-            return eval(exp);
+            var _names = parseredExp.names;
+            return eval(parseredExp.evalExp);
         };
     };
 
@@ -466,4 +520,31 @@ cBoard.service('dataService', function ($http, updateService) {
         return arr;
     };
 
+    function parserExp(rawExp) {
+        var evalExp = rawExp;
+        var _temp = [];
+        var aggs = [];
+        evalExp = evalExp.trim().replace(/[\n]/g, '');
+
+        _.each(evalExp.match(/".*?"/g), function (qutaText) {
+            evalExp = evalExp.replace(qutaText, '_#' + _temp.length);
+            _temp.push(qutaText);
+        });
+
+        var names = []; // expression text in aggreagtion function, could be a columnName or script
+        _.each(evalExp.match(/(sum|avg|count|max|min)\("?.*?"?\)/g), function (aggUnit) {
+            var aggregate = aggUnit.substring(0, aggUnit.indexOf('('));
+            var name = aggUnit.substring(aggUnit.indexOf('(') + 1, aggUnit.indexOf(')'));
+            if (name.match("_#")) {
+                name = _temp[name.replace("_#", "")].replace(/\"/g, "");
+            }
+            evalExp = evalExp.replace(aggUnit, "groupData[_names[" + names.length + "]]['" + aggregate + "'][key]");
+            names.push(name);
+            aggs.push({
+                name: name,
+                aggregate: aggregate
+            });
+        });
+        return {evalExp: evalExp, aggs: aggs, names: names};
+    }
 });

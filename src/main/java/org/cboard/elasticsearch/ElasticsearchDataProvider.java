@@ -71,6 +71,7 @@ public class ElasticsearchDataProvider extends DataProvider implements Aggregata
     public String[][] queryDimVals(String columnName, AggConfig config) throws Exception {
         JSONObject request = new JSONObject();
         request.put("size", 0);
+        request.put("query", buildFilterDSL(config));
         request.put("aggregations", getTermsAggregation(columnName));
         JSONObject response = post(getSearchUrl(request), request);
         String[] nofilter = response.getJSONObject("aggregations").getJSONObject(columnName).getJSONArray("buckets").stream()
@@ -278,11 +279,16 @@ public class ElasticsearchDataProvider extends DataProvider implements Aggregata
             pre.getJSONObject(key).put("aggregations", termAggregations.get(i));
         }
         request.put("size", 0);
-        request.put("query", new JSONObject());
-        request.getJSONObject("query").put("bool", new JSONObject());
-        request.getJSONObject("query").getJSONObject("bool").put("filter", getFilter(config));
+        request.put("query", buildFilterDSL(config));
         request.put("aggregations", termAggregations.get(0));
         return request;
+    }
+
+    public JSONObject buildFilterDSL(AggConfig config) {
+        JSONObject filter = new JSONObject();
+        filter.put("bool", new JSONObject());
+        filter.getJSONObject("bool").put("filter", getFilter(config));
+        return filter;
     }
 
     private void getAggregationResponse(JSONObject object, List<String[]> result, List<String> parentKeys, int dimensionLevel, List<ColumnIndex> dimensionList, List<ColumnIndex> valueList) {

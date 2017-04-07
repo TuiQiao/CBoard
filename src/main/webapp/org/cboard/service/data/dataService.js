@@ -524,7 +524,7 @@ cBoard.service('dataService', function ($http, updateService) {
         var evalExp = rawExp;
         var _temp = [];
         var aggs = [];
-        evalExp = evalExp.trim().replace(/[\n]/g, '');
+        evalExp = evalExp.trim().replace(/[\n|\r|\r\n]/g, '');
 
         _.each(evalExp.match(/".*?"/g), function (qutaText) {
             evalExp = evalExp.replace(qutaText, '_#' + _temp.length);

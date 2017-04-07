@@ -380,7 +380,11 @@ public class ElasticsearchDataProvider extends DataProvider implements Aggregata
         JSONObject property = (JSONObject) field.getValue();
         if (property.keySet().contains("properties")) {
             for (Map.Entry e : property.getJSONObject("properties").entrySet()) {
-                getField(types, e, field.getKey());
+                String key = field.getKey();
+                if (parent != null) {
+                    key = parent + "." + field.getKey();
+                }
+                getField(types, e, key);
             }
         } else {
             String key = null;

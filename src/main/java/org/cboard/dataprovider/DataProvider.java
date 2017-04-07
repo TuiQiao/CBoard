@@ -13,6 +13,7 @@ import org.cboard.dataprovider.result.AggregateResult;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.Arrays;
 import java.util.Map;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
@@ -86,6 +87,7 @@ public abstract class DataProvider {
             checkAndLoad(reload);
             columns = innerAggregator.getColumn();
         }
+        Arrays.sort(columns);
         return columns;
     }
 

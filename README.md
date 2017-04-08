@@ -22,6 +22,7 @@ Server side framework is Spring+MyBatis and front-end is based on AngularJS1 and
 <div align="center">
 ![image](https://cloud.githubusercontent.com/assets/6037522/20123306/429b8f8c-a659-11e6-9954-8f9352d3d9ef.png)
 </div>
+
 * Supports OLAP slice filter operation
 * Supports sort multiple columns/rows at the sametime
 * Global query cache, to avoid repeated query requests for data

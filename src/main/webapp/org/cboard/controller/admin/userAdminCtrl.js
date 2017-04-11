@@ -68,7 +68,7 @@ cBoard.controller('userAdminCtrl', function ($scope, $http, ModalUtils, $filter)
     }];
 
     var getBoardList = function () {
-        return $http.get("dashboard/getBoardList.do").success(function (response) {
+        return $http.get("admin/getBoardList.do").success(function (response) {
             _.each(buildNodeByCategory(_.filter(response, function (e) {
                 return e.categoryId;
             }), 'Dashboard', 'board', 'fa fa-puzzle-piece'), function (e) {
@@ -78,7 +78,7 @@ cBoard.controller('userAdminCtrl', function ($scope, $http, ModalUtils, $filter)
     };
 
     var getMenuList = function () {
-        return $http.get("commons/getMenuList.do").success(function (response) {
+        return $http.get("admin/getMenuList.do").success(function (response) {
             $scope.menuList = response;
             _.each(response, function (e) {
                 $scope.resList.push({
@@ -93,7 +93,7 @@ cBoard.controller('userAdminCtrl', function ($scope, $http, ModalUtils, $filter)
     };
 
     var getDatasourceList = function () {
-        return $http.get("dashboard/getDatasourceList.do").success(function (response) {
+        return $http.get("admin/getDatasourceList.do").success(function (response) {
             _.each(buildNodeByCategory(response, 'Datasource', 'datasource', 'fa fa-database'), function (e) {
                 $scope.resList.push(e);
             });
@@ -101,7 +101,7 @@ cBoard.controller('userAdminCtrl', function ($scope, $http, ModalUtils, $filter)
     };
 
     var getDatasetList = function () {
-        return $http.get("dashboard/getDatasetList.do").success(function (response) {
+        return $http.get("admin/getDatasetList.do").success(function (response) {
             _.each(buildNodeByCategory(response, 'Dataset', 'dataset', 'fa fa-table'), function (e) {
                 $scope.resList.push(e);
             });
@@ -109,7 +109,7 @@ cBoard.controller('userAdminCtrl', function ($scope, $http, ModalUtils, $filter)
     };
 
     var getWidgetList = function () {
-        return $http.get("dashboard/getWidgetList.do").success(function (response) {
+        return $http.get("admin/getWidgetList.do").success(function (response) {
             _.each(buildNodeByCategory(response, 'Widget', 'widget', 'fa fa-line-chart'), function (e) {
                 $scope.resList.push(e);
             });
@@ -117,7 +117,7 @@ cBoard.controller('userAdminCtrl', function ($scope, $http, ModalUtils, $filter)
     };
 
     var getJobList = function () {
-        return $http.get("dashboard/getJobList.do").success(function (response) {
+        return $http.get("admin/getJobList.do").success(function (response) {
             _.each(buildNodeByCategory(response, 'Job', 'job', 'fa fa-clock-o'), function (e) {
                 $scope.resList.push(e);
             });

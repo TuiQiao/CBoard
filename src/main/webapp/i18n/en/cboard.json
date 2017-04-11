@@ -40,7 +40,8 @@
     "ADMIN": "Admin",
     "USER_ADMIN": "User Admin",
     "RES_ADMIN": "Resource Admin",
-    "JOB": "Job"
+    "JOB": "Job",
+    "ROLE": "Role"
   },
   "HEADER": {
     "SIGN_OUT": "SignOut"

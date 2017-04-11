@@ -17,6 +17,11 @@
         order by role_name
     </select>
 
+    <select id="getRoleListAll" resultType="org.cboard.pojo.DashboardRole">
+        SELECT role_id roleId,role_name roleName,user_id userId FROM dashboard_role
+        order by role_name
+    </select>
+
     <update id="update" parameterType="org.cboard.pojo.DashboardUser">
         <![CDATA[
         update dashboard_role set role_name = #{roleName},user_id = #{userId} where role_id = #{roleId}
@@ -40,8 +45,16 @@
         delete from dashboard_role_res where role_id = #{0}
     </delete>
 
+    <delete id="deleteRoleResByResId">
+        delete from dashboard_role_res where res_id = #{0} and res_type = #{1}
+    </delete>
+
     <delete id="deleteRole">
         delete from dashboard_role where role_id = #{0}
     </delete>
+
+    <select id="getUserRoleResList" resultType="org.cboard.pojo.DashboardRoleRes">
+        select rr.role_res_id roleResId,rr.role_id roleId,rr.res_id resId,rr.res_type resType,rr.permission permission FROM dashboard_user_role ur LEFT JOIN dashboard_role_res rr ON ur.role_id = rr.role_id WHERE ur.user_id = #{0} AND rr.res_type = #{1}
+    </select>
 
 </mapper>

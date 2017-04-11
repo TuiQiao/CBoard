@@ -25,6 +25,23 @@
         ORDER BY source_name
     </select>
 
+    <select id="getDatasourceListAdmin" resultType="org.cboard.pojo.DashboardDatasource">
+        SELECT
+        datasource_id AS id,
+        user_id       AS userId,
+        source_name   AS name,
+        source_type   AS type,
+        config        AS config
+        FROM dashboard_datasource
+        WHERE #{0} = '${admin_user_id}' OR datasource_id IN (
+        SELECT res_id
+        FROM dashboard_role r
+        LEFT JOIN dashboard_role_res rr ON r.role_id = rr.role_id
+        WHERE r.user_id = #{0} AND rr.res_type = 'datasource'
+        )
+        ORDER BY source_name
+    </select>
+
     <select id="getDatasource" resultType="org.cboard.pojo.DashboardDatasource">
         SELECT datasource_id id,user_id userId,source_name name,source_type type ,config FROM dashboard_datasource WHERE datasource_id = #{0}
     </select>

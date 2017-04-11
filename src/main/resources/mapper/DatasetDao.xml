@@ -33,6 +33,23 @@
         ORDER BY dataset_name
     </select>
 
+    <select id="getDatasetListAdmin" resultType="org.cboard.pojo.DashboardDataset">
+        SELECT
+        dataset_id    AS id,
+        user_id       AS userId,
+        dataset_name  AS name,
+        data_json     AS data,
+        category_name AS categoryName
+        FROM dashboard_dataset
+        WHERE #{0} = '${admin_user_id}' OR user_id = #{0} OR dataset_id IN (
+        SELECT res_id
+        FROM dashboard_role r
+        LEFT JOIN dashboard_role_res rr ON r.role_id = rr.role_id
+        WHERE r.user_id = #{0} AND rr.res_type = 'dataset'
+        )
+        ORDER BY dataset_name
+    </select>
+
     <select id="getDataset" resultType="org.cboard.pojo.DashboardDataset">
        SELECT dataset_id id,user_id userId,dataset_name name,data_json data,category_name categoryName FROM dashboard_dataset WHERE dataset_id = #{0}
     </select>

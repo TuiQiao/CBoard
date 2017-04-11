@@ -40,7 +40,8 @@
     "ADMIN": "管理",
     "USER_ADMIN": "用户管理",
     "RES_ADMIN": "资源管理",
-    "JOB": "定时任务"
+    "JOB": "定时任务",
+    "ROLE": "权限组"
   },
   "HEADER": {
     "SIGN_OUT": "注销"

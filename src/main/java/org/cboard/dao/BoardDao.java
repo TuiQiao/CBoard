@@ -16,6 +16,8 @@ public interface BoardDao {
 
     List<DashboardBoard> getBoardList(String userId);
 
+    List<DashboardBoard> getBoardListAdmin(String userId);
+
     long countExistBoardName(Map<String, Object> map);
 
     int update(DashboardBoard board);

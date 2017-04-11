@@ -18,6 +18,8 @@ public interface WidgetDao {
 
     List<DashboardWidget> getWidgetList(String userId);
 
+    List<DashboardWidget> getWidgetListAdmin(String userId);
+
     int save(DashboardWidget dashboardWidget);
 
     long countExistWidgetName(Map<String, Object> map);

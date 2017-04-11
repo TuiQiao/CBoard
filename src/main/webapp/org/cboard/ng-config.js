@@ -66,6 +66,10 @@ angular.module('cBoard').config(['$stateProvider', function ($stateProvider) {
             url: '/job',
             templateUrl: 'org/cboard/view/config/job.html',
             controller: 'jobCtrl'
+        }).state('config.role', {
+            url: '/role',
+            templateUrl: 'org/cboard/view/config/role.html',
+            controller: 'roleCtrl'
         }).state('admin', {
             url: '/admin',
             abstract: true,

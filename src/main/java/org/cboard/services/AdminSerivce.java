@@ -130,7 +130,7 @@ public class AdminSerivce {
         JSONArray arr = JSONArray.parseArray(resIdArr);
         for (Object res : arr) {
             JSONObject jo = (JSONObject) res;
-            roleDao.deleteRoleResByResId(jo.getLong("resId"),jo.getString("resType"));
+            roleDao.deleteRoleResByResId(jo.getLong("resId"), jo.getString("resType"));
             List<DashboardRoleRes> list = new ArrayList<>();
             for (String rid : roleId) {
                 DashboardRoleRes roleRes = new DashboardRoleRes();
@@ -186,13 +186,9 @@ public class AdminSerivce {
             return boardDao.getBoardList(userId);
         } else {
             List<DashboardRoleRes> resList = roleDao.getUserRoleResList(userId, "board");
-            return boardDao.getBoardList(userId).stream().filter(e -> {
-                if (e.getUserId().equals(userId)) {
-                    return true;
-                }
-                return resList.stream().anyMatch(r -> r.getResId().equals(e.getId()) && RolePermission.isEdit(e.getPermission()));
 
-            }).collect(Collectors.toList());
+            List<Long> resIdList = resList.stream().filter(e -> RolePermission.isEdit(e.getPermission())).map(e -> e.getResId()).distinct().collect(Collectors.toList());
+            return boardDao.getBoardList(userId).stream().filter(e -> resIdList.contains(e.getId())).collect(Collectors.toList());
         }
     }
 
@@ -201,13 +197,8 @@ public class AdminSerivce {
             return datasetDao.getDatasetList(userId);
         } else {
             List<DashboardRoleRes> resList = roleDao.getUserRoleResList(userId, "dataset");
-            return datasetDao.getDatasetList(userId).stream().filter(e -> {
-                if (e.getUserId().equals(userId)) {
-                    return true;
-                }
-                return resList.stream().anyMatch(r -> r.getResId().equals(e.getId()) && RolePermission.isEdit(e.getPermission()));
-
-            }).collect(Collectors.toList());
+            List<Long> resIdList = resList.stream().filter(e -> RolePermission.isEdit(e.getPermission())).map(e -> e.getResId()).distinct().collect(Collectors.toList());
+            return datasetDao.getDatasetList(userId).stream().filter(e -> resIdList.contains(e.getId())).collect(Collectors.toList());
         }
     }
 
@@ -216,13 +207,8 @@ public class AdminSerivce {
             return widgetDao.getWidgetList(userId);
         } else {
             List<DashboardRoleRes> resList = roleDao.getUserRoleResList(userId, "widget");
-            return widgetDao.getWidgetList(userId).stream().filter(e -> {
-                if (e.getUserId().equals(userId)) {
-                    return true;
-                }
-                return resList.stream().anyMatch(r -> r.getResId().equals(e.getId()) && RolePermission.isEdit(e.getPermission()));
-
-            }).collect(Collectors.toList());
+            List<Long> resIdList = resList.stream().filter(e -> RolePermission.isEdit(e.getPermission())).map(e -> e.getResId()).distinct().collect(Collectors.toList());
+            return widgetDao.getWidgetList(userId).stream().filter(e -> resIdList.contains(e.getId())).collect(Collectors.toList());
         }
     }
 

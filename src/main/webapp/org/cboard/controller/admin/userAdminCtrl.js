@@ -187,7 +187,7 @@ cBoard.controller('userAdminCtrl', function ($scope, $http, ModalUtils, $filter)
     };
 
     var getContextMenu = function ($node) {
-        if (_.isUndefined($node.original.resId)) {
+        if (_.isUndefined($node.original.resId) || $node.original.type =='menu') {
             return;
         }
         return {

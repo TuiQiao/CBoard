@@ -24,6 +24,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.http.client.support.BasicAuthorizationInterceptor;
 import org.springframework.web.client.RestTemplate;
 
+import java.io.Serializable;
 import java.sql.*;
 import java.util.*;
 import java.util.function.BiFunction;
@@ -400,7 +401,7 @@ public class KylinDataProvider extends DataProvider implements Aggregatable {
 
     }
 
-    private class KylinModel {
+    private class KylinModel implements Serializable {
         private JSONObject model;
         private Map<String, String> columnTable = new HashedMap();
         private Map<String, String> tableAlias = new HashedMap();

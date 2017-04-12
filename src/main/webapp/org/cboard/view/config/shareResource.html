@@ -1,12 +1,20 @@
 <!-- Content Wrapper. Contains page content -->
 <div id="inner-container" class="content">
     <div class="row">
-        <div class="col-md-5">
-            <div class="col-md-12">
-                <div js-tree="treeConfig" ng-model="resList" tree="treeInstance" tree-events="changed:changed;" style="height: 590px; overflow: auto;" ></div>
+        <div class="col-md-4">
+            <div class="box box-solid">
+                <div class="box-header with-border">
+                    <i class="fa fa-share-alt"></i> <h3 class="box-title">{{'CONFIG.SHARE_RES.YOUR_RES'|translate}}</h3>
+                </div>
+                <!--<div class="box-body">
+                    <input type="text" class="form-control" placeholder="Search">
+                </div>-->
+                <div class="panel-body">
+                    <div js-tree="treeConfig" ng-model="resList" tree="treeInstance" tree-events="changed:changed;" style="height: 510px; overflow: auto;" ></div>
+                </div>
             </div>
         </div>
-        <div class="col-md-3">
+        <div class="col-md-3" style="height: 590px; overflow: auto;">
             <div class="row" style="margin-bottom: 10px">
                 <div class="col-md-12">
                     <div class="input-group">
@@ -27,7 +35,7 @@
                     <div class="form-group">
                         <div class="col-sm-offset-2 col-sm-10" style="padding-right: 0px; padding-top: 5px">
                             <button type="submit" ng-click="grantRes()" class="btn btn-success pull-right">
-                                Grant
+                                {{'CONFIG.SHARE_RES.SHARE'|translate}}
                             </button>
                         </div>
                     </div>

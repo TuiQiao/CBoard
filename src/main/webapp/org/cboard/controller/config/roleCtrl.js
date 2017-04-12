@@ -17,16 +17,15 @@ cBoard.controller('roleCtrl', function ($scope, $http, ModalUtils, $filter) {
     $scope.resList = [{
         id: 'Dashboard',
         text: translate('ADMIN.BOARD'),
-        parent: '#', icon: 'fa fa-fw fa-folder-o',
+        parent: '#',
         state: {disabled: true}
     }, {
-        id: 'Dataset', text: translate('ADMIN.DATASET'), parent: '#', icon: 'fa fa-fw fa-folder-o',
+        id: 'Dataset', text: translate('ADMIN.DATASET'), parent: '#',
         state: {disabled: true}
     }, {
         id: 'Widget',
         text: translate('ADMIN.WIDGET'),
         parent: '#',
-        icon: 'fa fa-fw fa-folder-o',
         state: {disabled: true}
     }];
 

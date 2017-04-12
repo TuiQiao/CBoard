@@ -41,7 +41,7 @@
     "USER_ADMIN": "User Admin",
     "RES_ADMIN": "Resource Admin",
     "JOB": "Job",
-    "ROLE": "Role"
+    "SHARE_RESOURCE": "Share Resource"
   },
   "HEADER": {
     "SIGN_OUT": "SignOut"
@@ -224,6 +224,10 @@
       "FINISH": "Finish",
       "PROCESSING": "Processing",
       "STATUS": "Status"
+    },
+    "SHARE_RES": {
+      "YOUR_RES": "Your Resources",
+      "SHARE": "Share"
     }
   },
   "ADMIN": {

@@ -225,11 +225,11 @@ cBoard.controller('dashboardViewCtrl', function ($timeout, $rootScope, $scope, $
                     $scope.paramInit++;
                 });
             });
-            if ($scope.paramInit == 0) {
-                loadWidget();
-            }
             if ($scope.board.layout.type == 'timeline') {
                 groupTimeline();
+            }
+            if ($scope.paramInit == 0) {
+                loadWidget(reload);
             }
             paramInitListener = $scope.$on('paramInitFinish', function (e, d) {
                 $scope.paramInit--;

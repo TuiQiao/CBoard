@@ -5,7 +5,7 @@ cBoard.controller('datasetCtrl', function ($scope, $http, dataService, $uibModal
 
     var translate = $filter('translate');
     $scope.optFlag = 'none';
-    $scope.curDataset = {data: {expressions: [], filters: []}};
+    $scope.curDataset = {data: {expressions: [], filters: [], schema: {dimension: [], measure: []}}};
     $scope.curWidget = {};
     $scope.alerts = [];
     $scope.verify = {dsName: true};
@@ -14,6 +14,34 @@ cBoard.controller('datasetCtrl', function ($scope, $http, dataService, $uibModal
     var treeID = 'dataSetTreeID'; // Set to a same value with treeDom
     var originalData = [];
     var updateUrl = "dashboard/updateDataset.do";
+
+    $(function () {
+        $('.tree').on('click', 'li.parent_li > span', function (e) {
+            var children = $(this).parent('li.parent_li').find(' > ul > li');
+            if (children.is(":visible")) {
+                children.hide('fast');
+                $(this).attr('title', 'Expand this branch').find(' > i').addClass('icon-plus-sign').removeClass('icon-minus-sign');
+            } else {
+                children.show('fast');
+                $(this).attr('title', 'Collapse this branch').find(' > i').addClass('icon-minus-sign').removeClass('icon-plus-sign');
+            }
+            e.stopPropagation();
+        });
+    });
+
+    $scope.schema = {dimension: [], measure: []};
+    $scope.dndTransfer = {
+        dimension: function (list, index, item, type) {
+            if (type == 'column') {
+                list[index] = {type: 'column', column: item};
+            }
+        },
+        measure: function (list, index, item, type) {
+            if (type == 'column') {
+                list[index] = {type: 'column', column: item};
+            }
+        }
+    };
 
     $http.get("dashboard/getDatasourceList.do").success(function (response) {
         $scope.datasourceList = response;
@@ -41,7 +69,7 @@ cBoard.controller('datasetCtrl', function ($scope, $http, dataService, $uibModal
 
     $scope.newDs = function () {
         $scope.optFlag = 'new';
-        $scope.curDataset = {data: {expressions: [], filters: []}};
+        $scope.curDataset = {data: {expressions: [], filters: [], schema: {dimension: [], measure: []}}};
         $scope.curWidget = {};
         cleanPreview();
     };
@@ -65,6 +93,9 @@ cBoard.controller('datasetCtrl', function ($scope, $http, dataService, $uibModal
         }
         if (!$scope.curDataset.data.filters) {
             $scope.curDataset.data.filters = [];
+        }
+        if (!$scope.curDataset.data.schema) {
+            $scope.curDataset.data.schema = {dimension: [], measure: []};
         }
         $scope.datasource = _.find($scope.datasourceList, function (ds) {
             return ds.id == $scope.curDataset.data.datasource;

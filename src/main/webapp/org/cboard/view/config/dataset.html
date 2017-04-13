@@ -166,6 +166,51 @@
                                     </div>
                                 </div>
                             </div>
+                            <div class="row" ng-show="selects">
+                                <div class="col-md-4">
+                                    <div class="tree">
+                                        <ul style="padding-left: 5px">
+                                            <li class="parent_li">
+                                                <span class="btn btn-default btn-sm" dnd-list="curDataset.data.schema.dimension"
+                                                      dnd-allowed-types="['column','level']">维度</span>
+                                                <ul>
+                                                    <li ng-repeat="o in curDataset.data.schema.dimension" ng-switch="o.type" ng-class="{'level':'parent_li'}[o.type]">
+                                                        <span ng-switch-when="level" class="btn btn-default btn-sm" dnd-list="o.columns"
+                                                              dnd-allowed-types="['column']" dnd-draggable="o" dnd-type="o.type" dnd-moved="curDataset.data.schema.dimension.splice($index, 1)">{{o.alias}}</span>
+                                                        <span ng-switch-when="column" class="btn btn-default btn-sm" dnd-draggable="o" dnd-type="o.type" dnd-moved="curDataset.data.schema.dimension.splice($index, 1)">{{o.alias?o.alias+'('+o.column+')':o.column}}</span>
+                                                        <i class="fa fa-edit" ng-init="show=false" ng-click="show=true"><input ng-show="show" type="text" ng-model="o.alias" ng-blur="show=false"/></i>
+                                                        <ul ng-switch-when="level">
+                                                            <li ng-repeat="c in o.columns" >
+                                                                <span class="btn btn-default btn-sm" dnd-draggable="c" dnd-type="c.type" dnd-moved="o.columns.splice($index, 1)">{{c.alias?c.alias+'('+c.column+')':c.column}}</span>
+                                                                <i class="fa fa-edit" ng-init="show=false" ng-click="show=true"><input ng-show="show" type="text" ng-model="c.alias" ng-blur="show=false"/></i>
+                                                            </li>
+                                                        </ul>
+                                                    </li>
+                                                </ul>
+                                            </li>
+                                        </ul>
+                                        <ul style="padding-left: 5px">
+                                            <li class="parent_li">
+                                                <span class="btn btn-default btn-sm" dnd-list="curDataset.data.schema.measure" dnd-allowed-types="['column']" >指标</span>
+                                                <ul>
+                                                    <li ng-repeat="o in curDataset.data.schema.measure">
+                                                        <span class="btn btn-default btn-sm" dnd-draggable="o" dnd-type="o.type" dnd-moved="curDataset.data.schema.measure.splice($index, 1)">{{o.alias?o.alias+'('+o.column+')':o.column}}</span>
+                                                        <i class="fa fa-edit" ng-init="show=false" ng-click="show=true"><input ng-show="show" type="text" ng-model="o.alias" ng-blur="show=false"/></i>
+                                                    </li>
+                                                </ul>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </div>
+                                <div class="col-md-8">
+                                    <div class="form-control" style="min-height: 35px;height: auto;padding: 0px">
+                                        <span ng-repeat="o in selects"
+                                              class="btn btn-default btn-sm" style="margin: 3px 3px;"
+                                              dnd-draggable="{type: 'column', column: o}" dnd-type="'column'">{{o}}</span>
+                                    </div>
+                                    <span class="btn btn-default btn-sm" style="margin: 3px 3px;" dnd-draggable="{type: 'level', alias: '维度层级', columns: []}" dnd-type="'level'">维度层级</span>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>

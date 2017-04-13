@@ -31,20 +31,7 @@
             <div class="form-group">
                 <label class="col-sm-2 control-label">{{'CONFIG.WIDGET.EXPRESSION_TEXT'|translate}}</label>
                 <div class="col-sm-10">
-                    <div id="expression_area" ui-ace="{
-                            useWrapMode : false,
-                            newLineMode : 'unix',
-                            showInvisibles: true,
-                            mode: 'sql',
-                            advanced: {
-                                autoScrollEditorIntoView: true
-                            },
-                            rendererOptions:{
-                              fontSize: '14px',
-                                minLines: 5,
-                                maxLines: 20
-                            }
-                        }" ng-model="data.expression" class="form-control" title="{{'TIPS.CAL_EXPR'|translate}}"></div>
+                    <div id="expression_area" ui-ace="expAceOpt" ng-model="data.expression" class="form-control" title="{{'TIPS.CAL_EXPR'|translate}}"></div>
                     <!--<textarea ng-model="data.expression" id="expression_area" class="form-control" placeholder="{{'TIPS.CAL_EXPR'|translate}}"></textarea>-->
                 </div>
             </div>

@@ -1140,6 +1140,10 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
             return baseEventObj;
         }();
         /** js tree related End... **/
+
+
+        /** Ace Editor Starer... **/
+        $scope.queryAceOpt = widgetEditorOptions;
     }
 )
 ;

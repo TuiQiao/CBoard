@@ -169,7 +169,7 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
         };
 
         $scope.editExp = function (col) {
-            var selects = angular.copy($scope.columns);
+            var selects = angular.copy($scope.schema.measure ? $scope.schema.measure : $scope.schema.selects);
             var aggregate = $scope.value_aggregate_types;
             var curWidget = $scope.curWidget;
             var ok;
@@ -273,11 +273,13 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
             $scope.curWidget.config = {};
             $scope.curWidget.query = {};
             $scope.datasource = null;
+            $scope.dataset = null;
             $scope.widgetName = null;
             $scope.widgetCategory = null;
             $scope.widgetId = null;
             $scope.optFlag = 'new';
             $scope.customDs = false;
+            $scope.schema = null;
             addValidateWatch();
         };
 
@@ -577,8 +579,8 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
                 datasource: $scope.datasource ? $scope.datasource.id : null,
                 query: $scope.curWidget.query,
                 datasetId: $scope.customDs ? null : $scope.curWidget.datasetId
-            },function (query) {
-                var querybr = query.trim().replace(/\n/g,'<br/>').replace(/\t/g, "&nbsp;&nbsp;&nbsp;&nbsp;");
+            }, function (query) {
+                var querybr = query.trim().replace(/\n/g, '<br/>').replace(/\t/g, "&nbsp;&nbsp;&nbsp;&nbsp;");
                 $('#viewQuery_widget').html("<div class='alert alert-info' role='alert' style='text-align: left;'>" + querybr + "</div>");
                 $scope.loadingPre = false;
                 $scope.viewQueryMoal = true;
@@ -761,6 +763,9 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
             $scope.datasource = _.find($scope.datasourceList, function (ds) {
                 return ds.id == widget.data.datasource;
             });
+            $scope.dataset = _.find($scope.datasetList, function (ds) {
+                return ds.id == widget.data.datasetId;
+            });
 
             $scope.widgetName = angular.copy(widget.categoryName + "/" + widget.name);
 
@@ -771,22 +776,44 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
             loadDsExpressions();
             loadDsFilterGroups();
             addWatch();
-            dataService.getColumns({
-                datasource: $scope.datasource ? $scope.datasource.id : null,
-                query: $scope.curWidget.query,
-                datasetId: $scope.customDs ? null : $scope.curWidget.datasetId,
-                reload: !$scope.loadFromCache,
-                callback: function (dps) {
-                    $scope.loading = false;
-                    $scope.alerts = [];
-                    if (dps.msg == "1") {
-                        $scope.columns = dps.columns;
-                    } else {
-                        $scope.alerts = [{msg: dps.msg, type: 'danger'}];
-                    }
-                }
+            buildSchema();
+        };
 
+        $scope.filterDimension = function (e) {
+            var keys = _.find($scope.curWidget.config.keys,function (k) {
+                return k.col == e.column;
             });
+            var groups = _.find($scope.curWidget.config.groups,function (k) {
+                return k.col == e.column;
+            });
+            return !(keys||groups);
+        };
+
+        var buildSchema = function () {
+            if ($scope.dataset && $scope.dataset.data.schema) {
+                $scope.schema = $scope.dataset.data.schema;
+                $scope.loading = false;
+                $scope.alerts = [];
+            } else {
+                dataService.getColumns({
+                    datasource: $scope.datasource ? $scope.datasource.id : null,
+                    query: $scope.curWidget.query,
+                    datasetId: $scope.customDs ? null : $scope.curWidget.datasetId,
+                    reload: !$scope.loadFromCache,
+                    callback: function (dps) {
+                        $scope.loading = false;
+                        $scope.alerts = [];
+                        if (dps.msg == "1") {
+                            $scope.schema = {selects: []};
+                            _.each(dps.columns, function (e) {
+                                $scope.schema.selects.push({column: e});
+                            });
+                        } else {
+                            $scope.alerts = [{msg: dps.msg, type: 'danger'}];
+                        }
+                    }
+                });
+            }
         };
 
         $scope.deleteWgt = function (widget) {
@@ -842,8 +869,8 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
             toCol: function (list, index, item, type) {
                 if (type == 'key' || type == 'group' || type == 'filter') {
                     list[index] = {col: item.col, aggregate_type: 'sum'};
-                } else if (type == 'select') {
-                    list[index] = {col: item, aggregate_type: 'sum'};
+                } else if (type == 'select'||type == 'measure') {
+                    list[index] = {col: item.column, aggregate_type: 'sum'};
                 }
             },
             toSelect: function (list, index, item, type) {
@@ -856,8 +883,8 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
             toKeysGroups: function (list, index, item, type) {
                 if (type == 'col') {
                     list[index] = {col: item.col, type: 'eq', values: [], sort: 'asc'};
-                } else if (type == 'select') {
-                    list[index] = {col: item, type: 'eq', values: [], sort: 'asc'};
+                } else if (type == 'dimension' || type == 'select') {
+                    list[index] = {alias: item.alias, col: item.column, type: 'eq', values: [], sort: 'asc'};
                 }
             }
         };
@@ -938,7 +965,7 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
         };
 
         $scope.editFilterGroup = function (col) {
-            var selects = angular.copy($scope.columns);
+            var selects = angular.copy($scope.schema.measure ? $scope.schema.measure : $scope.schema.selects);
             $uibModal.open({
                 templateUrl: 'org/cboard/view/config/modal/filterGroup.html',
                 windowTemplateUrl: 'org/cboard/view/util/modal/window.html',

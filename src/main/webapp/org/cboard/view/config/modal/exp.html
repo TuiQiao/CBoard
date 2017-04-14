@@ -13,7 +13,7 @@
                          style="min-height: 35px;height: auto;padding: 0px">
                 <span ng-repeat="o in selects"
                       class="btn btn-default btn-sm" style="margin: 3px 3px;"
-                      ng-click="addToken(o)">{{o}}</span>
+                      ng-click="addToken(o.column)">{{o.alias?o.alias:o.column}}</span>
                     </div>
                 </div>
             </div>

@@ -269,7 +269,7 @@ cBoard.controller('datasetCtrl', function ($scope, $http, dataService, $uibModal
                 $scope.selects = selects;
                 $scope.aggregate = aggregate;
                 $scope.alerts = [];
-                $scope.expAceOpt = expEditorOptions(selects);
+                $scope.expAceOpt = expEditorOptions(selects, aggregate);
 
                 $scope.close = function () {
                     $uibModalInstance.close();

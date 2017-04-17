@@ -20,16 +20,68 @@ var cbAcebaseOption = {
     }
 };
 
+var cbAceStringify = function(obj, surround) {
+    surround ? surround : surround = "";
+    return surround + JSON.stringify(obj, null, 2).replace(/"/g, '\'') + surround;
+};
+
+var cbAceCmpEsBucketObj = {
+    dateHist: {
+        date_histogram: {
+            field: '<columnname>',
+            format: 'yyyy-MM-dd HH:mm:ss',
+            interval: '10m',
+            time_zone: '+08:00'
+        }
+    },
+    numRange: {
+        range: {
+            field: '<columnname>',
+            ranges: [
+                {to: 10000},
+                {from: 10000, to: 30000},
+                {from: 30000}
+            ]
+        }
+    },
+    termFilterAgg: {
+        column: '<agg_column>',
+        filter: {
+            term: {
+                '<filter_column>': '<value>'
+            }
+        }
+    },
+    termsFilterAgg: {
+        column: '<agg_column>',
+        filter: {
+            terms: {
+                '<filter_column>': ['<value1>', '<value2>']
+            }
+        }
+    },
+    boolFilterAgg: {
+        column: '<agg_column>',
+        filter: {
+            bool: {
+                must: [{}],
+                must_not: [{}],
+                should: [{}]
+            }
+        }
+    }
+};
+
 var cbAceCmpEsBucket = [
     {
-        meta: "cboard",
+        meta: "es",
         caption: "date_hist",
-        value: "  '<columnname>': {\n    'date_histogram': {\n      'field': '<columnname>',\n      'format': 'yyyy-MM-dd HH:mm:ss',\n      'interval': '10m',\n      'time_zone': '+08:00'\n    }\n  }"
+        value: "'<columnname>': " + cbAceStringify(cbAceCmpEsBucketObj.dateHist)
     },
     {
-        meta: "cboard",
+        meta: "es",
         caption: "number_range",
-        value: "  '<columnname>': {\n    'range': {\n      'field': '<columnname>',\n      'ranges': [\n        {'to': 10000}, \n        {'from': 10000, 'to': 30000},\n        {'from': 30000}\n      ]\n    }\n  }"
+        value: "'<columnname>': " + cbAceStringify(cbAceCmpEsBucketObj.numRange)
     }
 ];
 
@@ -40,8 +92,8 @@ var cbEsQueryCompleter = {
 };
 
 var widgetEditorOptions = function () {
-    var result = cbAcebaseOption;
-    cbAcebaseOption.onLoad = function(_editor) {
+    var result = angular.copy(cbAcebaseOption);
+    result.onLoad = function(_editor) {
         _editor.completers = [];
         _editor.completers.push(cbEsQueryCompleter);
     };
@@ -51,32 +103,32 @@ var widgetEditorOptions = function () {
 
 var cbAceCmpEsExp = [
     {
-        meta: "cboard",
-        caption: "Term Filter on Agg",
-        value: "\"{\n  'column': '<agg_column>',\n  'filter': {\n    'term': {\n      '<filter_column>': '<value>'\n    }\n  }\n}\""
+        meta: "es",
+        caption: "Term Filter Agg",
+        value: cbAceStringify(cbAceCmpEsBucketObj.termFilterAgg, '"')
     },
     {
-        meta: "cboard",
-        caption: "Terms Filter on Agg",
-        value: "\"{\n  'column': '<agg_column>',\n  'filter': {\n    'terms': {\n      '<filter_column>': '[<value>, <value>]'\n    }\n  }\n}\""
+        meta: "es",
+        caption: "Terms Filter Agg",
+        value: cbAceStringify(cbAceCmpEsBucketObj.termsFilterAgg, '"')
     },
     {
-        meta: "cboard",
-        caption: "Bool Filter on Agg",
-        value: "\"{\n  'column': '<agg_column>',\n  'filter': {\n     'bool': {\n       'must': <filter>,\n       'must_not': <filter>,\n       'should': <filter>\n     }\n  }\n}\""
+        meta: "es",
+        caption: "Bool Filter Agg",
+        value: cbAceStringify(cbAceCmpEsBucketObj.boolFilterAgg, '"')
     },
     {
-        meta: "cboard",
+        meta: "es",
         caption: "Term Filter",
         value: "'term': { '<filter_column>': '<value>' }"
     },
     {
-        meta: "cboard",
+        meta: "es",
         caption: "Terms Filter",
         value: "'terms': { '<filter_column>': [<value>, <value>] }"
     },
     {
-        meta: "cboard",
+        meta: "es",
         caption: "Range Filter",
         value: "'range': { '<filter_column>': [ 10 TO  *] }"
     }
@@ -88,8 +140,8 @@ var cbEsExpCompleter = {
     }
 };
 
-var expEditorOptions = function (selects) {
-    var result = cbAcebaseOption;
+var expEditorOptions = function (selects, aggs) {
+    var result = angular.copy(cbAcebaseOption);
     var selectsCompleter = {
         getCompletions: function(editor, session, pos, prefix, callback) {
             callback(null, selects.map(function(word) {
@@ -101,10 +153,27 @@ var expEditorOptions = function (selects) {
             }));
         }
     };
-    cbAcebaseOption.onLoad = function(_editor) {
+
+    var aggsCompleter;
+    if (aggs) {
+        aggsCompleter = {
+            getCompletions: function(editor, session, pos, prefix, callback) {
+                callback(null, aggs.map(function(agg) {
+                    return {
+                        caption: agg.name,
+                        value: agg.name + "()",
+                        meta: "aggregate"
+                    };
+                }));
+            }
+        }
+    }
+
+    result.onLoad = function(_editor) {
         _editor.completers = [];
         _editor.completers.push(cbEsExpCompleter);
         _editor.completers.push(selectsCompleter);
+        _editor.completers.push(aggsCompleter);
     };
     return result;
 };

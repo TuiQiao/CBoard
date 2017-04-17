@@ -247,25 +247,12 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
         };
 
         $scope.loadData = function () {
-            $scope.loading = true;
-            dataService.getColumns({
-                datasource: $scope.datasource ? $scope.datasource.id : null,
-                query: $scope.curWidget.query,
-                datasetId: $scope.customDs ? null : $scope.curWidget.datasetId,
-                reload: !$scope.loadFromCache,
-                callback: function (dps) {
-                    $scope.loading = false;
-                    $scope.alerts = [];
-                    if (dps.msg == "1") {
-                        $scope.columns = dps.columns;
-                        $scope.toChartDisabled = false;
-                        $scope.newConfig();
-                        $scope.filterSelect = {};
-                    } else {
-                        $scope.alerts = [{msg: dps.msg, type: 'danger'}];
-                    }
-                }
-            });
+            $scope.toChartDisabled = false;
+            $scope.newConfig();
+            $scope.filterSelect = {};
+            loadDsExpressions();
+            loadDsFilterGroups();
+            buildSchema();
         };
 
         $scope.newWgt = function () {
@@ -273,7 +260,6 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
             $scope.curWidget.config = {};
             $scope.curWidget.query = {};
             $scope.datasource = null;
-            $scope.dataset = null;
             $scope.widgetName = null;
             $scope.widgetCategory = null;
             $scope.widgetId = null;
@@ -480,8 +466,6 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
         $scope.newConfig = function () {
             $scope.curWidget.config = {};
             $scope.curWidget.config.chart_type = 'table';
-            loadDsExpressions();
-            loadDsFilterGroups();
             cleanPreview();
             switch ($scope.curWidget.config.chart_type) {
                 case 'line':
@@ -763,15 +747,11 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
             $scope.datasource = _.find($scope.datasourceList, function (ds) {
                 return ds.id == widget.data.datasource;
             });
-            $scope.dataset = _.find($scope.datasetList, function (ds) {
-                return ds.id == widget.data.datasetId;
-            });
 
             $scope.widgetName = angular.copy(widget.categoryName + "/" + widget.name);
 
             $scope.widgetId = widget.id;
             $scope.optFlag = 'edit';
-            $scope.loading = true;
             $scope.customDs = _.isUndefined($scope.curWidget.datasetId);
             loadDsExpressions();
             loadDsFilterGroups();
@@ -780,21 +760,30 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
         };
 
         $scope.filterDimension = function (e) {
-            var keys = _.find($scope.curWidget.config.keys,function (k) {
+            var keys = _.find($scope.curWidget.config.keys, function (k) {
                 return k.col == e.column;
             });
-            var groups = _.find($scope.curWidget.config.groups,function (k) {
+            var groups = _.find($scope.curWidget.config.groups, function (k) {
                 return k.col == e.column;
             });
-            return !(keys||groups);
+            return !(keys || groups);
         };
 
         var buildSchema = function () {
-            if ($scope.dataset && $scope.dataset.data.schema) {
+            var loadFromDataset = false;
+            if (!$scope.customDs) {
+                $scope.dataset = _.find($scope.datasetList, function (ds) {
+                    return ds.id == $scope.curWidget.datasetId;
+                });
+                if ($scope.dataset.data.schema) {
+                    loadFromDataset = true;
+                }
+            }
+            if (loadFromDataset) {
                 $scope.schema = $scope.dataset.data.schema;
-                $scope.loading = false;
                 $scope.alerts = [];
             } else {
+                $scope.loading = true;
                 dataService.getColumns({
                     datasource: $scope.datasource ? $scope.datasource.id : null,
                     query: $scope.curWidget.query,
@@ -869,7 +858,7 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
             toCol: function (list, index, item, type) {
                 if (type == 'key' || type == 'group' || type == 'filter') {
                     list[index] = {col: item.col, aggregate_type: 'sum'};
-                } else if (type == 'select'||type == 'measure') {
+                } else if (type == 'select' || type == 'measure') {
                     list[index] = {col: item.column, aggregate_type: 'sum'};
                 }
             },

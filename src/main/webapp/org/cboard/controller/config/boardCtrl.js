@@ -181,6 +181,7 @@ cBoard.controller('boardCtrl', function ($rootScope, $scope, $http, ModalUtils, 
                 if (serviceStatus.status == '1') {
                     getBoardList();
                     boardChange();
+                    ModalUtils.alert(serviceStatus.msg, "modal-success", "sm");
                 } else {
                     ModalUtils.alert(serviceStatus.msg, "modal-warning", "lg");
                 }

@@ -16,7 +16,6 @@ cBoard.controller('datasetCtrl', function ($scope, $http, dataService, $uibModal
     var originalData = [];
     var updateUrl = "dashboard/updateDataset.do";
 
-    $scope.schema = {dimension: [], measure: []};
     $scope.dndTransfer = {
         dimension: function (list, index, item, type) {
             if (type == 'column') {
@@ -191,7 +190,7 @@ cBoard.controller('datasetCtrl', function ($scope, $http, dataService, $uibModal
     };
 
     $scope.editFilterGroup = function (col) {
-        var selects = angular.copy($scope.selects);
+        var selects = angular.copy($scope.curDataset.data.schema.measure);
         $uibModal.open({
             templateUrl: 'org/cboard/view/config/modal/filterGroup.html',
             windowTemplateUrl: 'org/cboard/view/util/modal/window.html',
@@ -250,7 +249,7 @@ cBoard.controller('datasetCtrl', function ($scope, $http, dataService, $uibModal
     };
 
     $scope.editExp = function (col) {
-        var selects = angular.copy($scope.selects);
+        var selects = angular.copy($scope.curDataset.data.schema.measure);
         var aggregate = [
             {name: 'sum', value: 'sum'},
             {name: 'count', value: 'count'},

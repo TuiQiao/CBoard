@@ -144,10 +144,11 @@ var expEditorOptions = function (selects, aggs) {
     var result = angular.copy(cbAcebaseOption);
     var selectsCompleter = {
         getCompletions: function(editor, session, pos, prefix, callback) {
-            callback(null, selects.map(function(word) {
+            callback(null, selects.map(function (word) {
+                var value = word.column ? word.column : word;
                 return {
-                    caption: word,
-                    value: word,
+                    caption: word.alias ? word.alias : value,
+                    value: value,
                     meta: "selects"
                 };
             }));

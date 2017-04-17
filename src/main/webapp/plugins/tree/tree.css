@@ -3,6 +3,9 @@
     margin-bottom:20px;
     border:1px solid #d2d6de;
 }
+.tree ul{
+    min-height:10px;
+}
 .tree li {
     list-style-type:none;
     margin:0;

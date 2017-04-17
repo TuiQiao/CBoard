@@ -5,20 +5,7 @@
     #if ($param.get("type") == "input")
         <input ng-model="curWidget.query.$param.get("name")" class="form-control"/>
     #elseif ($param.type == "textarea")
-        <div ui-ace="{
-            useWrapMode : false,
-            newLineMode : 'unix',
-            showInvisibles: true,
-            mode: 'sql',
-            advanced: {
-                autoScrollEditorIntoView: true
-            },
-            rendererOptions:{
-              fontSize: '14px',
-                minLines: 10,
-                maxLines: 100
-            }
-        }" ng-model="curWidget.query.$param.get("name")" class="form-control" ></div>
+        <div ui-ace="queryAceOpt" ng-model="curWidget.query.$param.get("name")" class="form-control" ></div>
     #end
     </div>
 </div>

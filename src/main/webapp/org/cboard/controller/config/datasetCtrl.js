@@ -10,6 +10,7 @@ cBoard.controller('datasetCtrl', function ($scope, $http, dataService, $uibModal
     $scope.alerts = [];
     $scope.verify = {dsName: true};
     $scope.loadFromCache = true;
+    $scope.queryAceOpt = cbAcebaseOption;
 
     var treeID = 'dataSetTreeID'; // Set to a same value with treeDom
     var originalData = [];
@@ -285,6 +286,8 @@ cBoard.controller('datasetCtrl', function ($scope, $http, dataService, $uibModal
                 $scope.selects = selects;
                 $scope.aggregate = aggregate;
                 $scope.alerts = [];
+                $scope.expAceOpt = expEditorOptions(selects, aggregate);
+
                 $scope.close = function () {
                     $uibModalInstance.close();
                 };
@@ -469,4 +472,8 @@ cBoard.controller('datasetCtrl', function ($scope, $http, dataService, $uibModal
     }();
 
     /**  js tree related end **/
+
+
+    /** Ace Editor Starer... **/
+    $scope.queryAceOpt = widgetEditorOptions;
 });

@@ -204,6 +204,7 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
                     $scope.close = function () {
                         $uibModalInstance.close();
                     };
+                    $scope.expAceOpt = expEditorOptions(selects, aggregate);
                     $scope.addToken = function (str, agg) {
                         var tc = document.getElementById("expression_area");
                         var tclen = $scope.data.expression.length;
@@ -1156,6 +1157,10 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
             return baseEventObj;
         }();
         /** js tree related End... **/
+
+
+        /** Ace Editor Starer... **/
+        $scope.queryAceOpt = widgetEditorOptions;
     }
 )
 ;

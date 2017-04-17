@@ -195,8 +195,7 @@ public class DashboardController {
     }
 
     @RequestMapping(value = "/deleteBoard")
-    public String deleteBoard(@RequestParam(name = "id") Long id) {
-
+    public ServiceStatus deleteBoard(@RequestParam(name = "id") Long id) {
         String userid = authenticationService.getCurrentUser().getUserId();
         return boardService.delete(userid, id);
     }

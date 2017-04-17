@@ -112,9 +112,14 @@ public class BoardService {
         }
     }
 
-    public String delete(String userId, Long id) {
-        boardDao.delete(id, userId);
-        return "1";
+    public ServiceStatus delete(String userId, Long id) {
+        try {
+            boardDao.delete(id, userId);
+            return new ServiceStatus(ServiceStatus.Status.Success, "success");
+        } catch (Exception e) {
+            e.printStackTrace();
+            return new ServiceStatus(ServiceStatus.Status.Fail, e.getMessage());
+        }
     }
 
     public byte[] exportBoard(Long id, String userId) {

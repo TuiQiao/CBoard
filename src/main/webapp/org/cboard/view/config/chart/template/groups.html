@@ -2,7 +2,7 @@
 <div class="col-sm-10">
     <div dnd-list="curWidget.config.groups"
          dnd-inserted="dndTransfer.toKeysGroups(curWidget.config.groups,index,item,type)"
-         dnd-allowed-types="['select','col','group','key','filter']"
+         dnd-allowed-types="['dimension','select','group','key','filter']"
          class="form-control" style="min-height: 35px;height: auto;padding: 0px">
         <div class="dndPlaceholder sort-highlight"
              style="height: 24px; width: 93px;margin: 3px 3px;display: inline-block;vertical-align: middle;">
@@ -11,8 +11,8 @@
              dnd-moved="curWidget.config.groups.splice($index, 1)" dnd-type="'group'"
              class="btn-group" style="cursor: move;margin: 3px 3px;">
             <button type="button" class="btn btn-default btn-sm" style="cursor: move;"
-                    ng-click="curWidget.config.selects.push(o.col);curWidget.config.groups.splice($index, 1);">
-                {{o.col}}
+                    ng-click="curWidget.config.groups.splice($index, 1);">
+                {{o.alias?o.alias:o.col}}
             </button>
             <button type="button" class="btn btn-default btn-sm dropdown-toggle"
                     ng-click="editSort(o)">

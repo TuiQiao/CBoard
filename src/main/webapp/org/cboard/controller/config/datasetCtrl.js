@@ -5,7 +5,7 @@ cBoard.controller('datasetCtrl', function ($scope, $http, dataService, $uibModal
 
     var translate = $filter('translate');
     $scope.optFlag = 'none';
-    $scope.curDataset = {data: {expressions: [], filters: []}};
+    $scope.curDataset = {data: {expressions: [], filters: [], schema: {dimension: [], measure: []}}};
     $scope.curWidget = {};
     $scope.alerts = [];
     $scope.verify = {dsName: true};
@@ -15,6 +15,20 @@ cBoard.controller('datasetCtrl', function ($scope, $http, dataService, $uibModal
     var treeID = 'dataSetTreeID'; // Set to a same value with treeDom
     var originalData = [];
     var updateUrl = "dashboard/updateDataset.do";
+
+    $scope.schema = {dimension: [], measure: []};
+    $scope.dndTransfer = {
+        dimension: function (list, index, item, type) {
+            if (type == 'column') {
+                list[index] = {type: 'column', column: item};
+            }
+        },
+        measure: function (list, index, item, type) {
+            if (type == 'column') {
+                list[index] = {type: 'column', column: item};
+            }
+        }
+    };
 
     $http.get("dashboard/getDatasourceList.do").success(function (response) {
         $scope.datasourceList = response;
@@ -42,7 +56,7 @@ cBoard.controller('datasetCtrl', function ($scope, $http, dataService, $uibModal
 
     $scope.newDs = function () {
         $scope.optFlag = 'new';
-        $scope.curDataset = {data: {expressions: [], filters: []}};
+        $scope.curDataset = {data: {expressions: [], filters: [], schema: {dimension: [], measure: []}}};
         $scope.curWidget = {};
         cleanPreview();
     };
@@ -66,6 +80,9 @@ cBoard.controller('datasetCtrl', function ($scope, $http, dataService, $uibModal
         }
         if (!$scope.curDataset.data.filters) {
             $scope.curDataset.data.filters = [];
+        }
+        if (!$scope.curDataset.data.schema) {
+            $scope.curDataset.data.schema = {dimension: [], measure: []};
         }
         $scope.datasource = _.find($scope.datasourceList, function (ds) {
             return ds.id == $scope.curDataset.data.datasource;

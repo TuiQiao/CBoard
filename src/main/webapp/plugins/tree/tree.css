@@ -6,7 +6,7 @@
 .tree li {
     list-style-type:none;
     margin:0;
-    padding:10px 5px 0 5px;
+    padding:5px 5px 0 5px;
     position:relative
 }
 .tree li::before, .tree li::after {
@@ -25,7 +25,7 @@
 .tree li::after {
     border-top:1px solid #999;
     height:20px;
-    top:25px;
+    top:20px;
     width:25px
 }
 .tree li.parent_li>span {

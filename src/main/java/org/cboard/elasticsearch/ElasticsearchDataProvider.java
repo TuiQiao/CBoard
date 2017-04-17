@@ -71,7 +71,6 @@ public class ElasticsearchDataProvider extends DataProvider implements Aggregata
     public String[][] queryDimVals(String columnName, AggConfig config) throws Exception {
         JSONObject request = new JSONObject();
         request.put("size", 0);
-        request.put("query", buildFilterDSL(config));
         request.put("aggregations", getTermsAggregation(columnName));
         JSONObject response = post(getSearchUrl(request), request);
         String[] nofilter = response.getJSONObject("aggregations").getJSONObject(columnName).getJSONArray("buckets").stream()

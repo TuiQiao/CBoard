@@ -78,9 +78,7 @@ public class ElasticsearchDataProvider extends DataProvider implements Aggregata
         if (config != null) {
             JSONArray filter = getFilter(config);
             if (filter.size() > 0) {
-                request.put("query", new JSONObject());
-                request.getJSONObject("query").put("bool", new JSONObject());
-                request.getJSONObject("query").getJSONObject("bool").put("filter", getFilter(config));
+                request.put("query", buildFilterDSL(config));
                 response = post(getSearchUrl(request), request);
                 String[] filtered = response.getJSONObject("aggregations").getJSONObject(columnName).getJSONArray("buckets").stream()
                         .map(e -> ((JSONObject) e).getString("key")).toArray(String[]::new);

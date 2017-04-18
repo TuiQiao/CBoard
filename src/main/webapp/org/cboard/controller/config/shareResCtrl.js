@@ -1,7 +1,7 @@
 /**
  * Created by yfyuan on 2017/04/10.
  */
-cBoard.controller('roleCtrl', function ($scope, $http, ModalUtils, $filter) {
+cBoard.controller('shareResCtrl', function ($scope, $http, ModalUtils, $filter) {
 
     var translate = $filter('translate');
     $scope.curUser;

@@ -72,7 +72,7 @@ angular.module('cBoard').config(['$stateProvider', function ($stateProvider) {
         .state('config.role', {
             url: '/role',
             templateUrl: 'org/cboard/view/config/shareResource.html',
-            controller: 'roleCtrl'
+            controller: 'shareResCtrl'
         })
         .state('admin', {
             url: '/admin',

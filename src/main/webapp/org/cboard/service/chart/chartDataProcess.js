@@ -58,7 +58,7 @@ var chartDataProcess = function(chartConfig,casted_keys, casted_values, aggregat
     for (var y = 0; y < keyLength; y++) {
         keyArr.push({
             property: 'header_key',
-            data: chartConfig.keys[y].col
+            data: chartConfig.keys[y].alias ? chartConfig.keys[y].alias : chartConfig.keys[y].col
         });
         emptyList.push({
             property: 'header_empty',

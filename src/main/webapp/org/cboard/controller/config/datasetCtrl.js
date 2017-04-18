@@ -475,5 +475,5 @@ cBoard.controller('datasetCtrl', function ($scope, $http, dataService, $uibModal
 
 
     /** Ace Editor Starer... **/
-    $scope.queryAceOpt = widgetEditorOptions;
+    $scope.queryAceOpt = datasetEditorOptions();
 });

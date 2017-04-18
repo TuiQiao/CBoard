@@ -12,7 +12,8 @@
     list-style-type: none;
     margin: 0;
     padding: 2px 5px 2px 5px;
-    position: relative
+    position: relative;
+    white-space:nowrap;
 }
 
 .tree li::before, .tree li::after {

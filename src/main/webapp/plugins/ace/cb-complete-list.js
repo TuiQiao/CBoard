@@ -20,9 +20,16 @@ var cbAcebaseOption = {
     }
 };
 
-var cbAceStringify = function(obj, surround) {
+var cbAceStringify = function(obj, surround, replace) {
     surround ? surround : surround = "";
-    return surround + JSON.stringify(obj, null, 2).replace(/"/g, '\'') + surround;
+    var jsonStr = JSON.stringify(obj, null, 2);
+    if (replace != false) {
+        jsonStr = jsonStr.replace(/"/g, '\'');
+    }
+    if (surround != "") {
+        jsonStr = surround + jsonStr + surround;
+    }
+    return jsonStr;
 };
 
 var cbAceCmpEsBucketObj = {
@@ -76,12 +83,12 @@ var cbAceCmpEsBucket = [
     {
         meta: "es",
         caption: "date_hist",
-        value: "'<columnname>': " + cbAceStringify(cbAceCmpEsBucketObj.dateHist)
+        value: "\"<columnname>\": " + cbAceStringify(cbAceCmpEsBucketObj.dateHist, null, false)
     },
     {
         meta: "es",
         caption: "number_range",
-        value: "'<columnname>': " + cbAceStringify(cbAceCmpEsBucketObj.numRange)
+        value: "\"<columnname>\": " + cbAceStringify(cbAceCmpEsBucketObj.numRange, null, false)
     }
 ];
 

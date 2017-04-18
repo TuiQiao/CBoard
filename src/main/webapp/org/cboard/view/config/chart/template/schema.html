@@ -4,10 +4,10 @@
             <span><b>{{'CONFIG.DATASET.DIMENSION'|translate}}</b></span>
             <ul>
                 <li ng-repeat="o in schema.dimension|filter:filterDimension" ng-switch="o.type" ng-class="{'level':'parent_li'}[o.type]">
-                    <span ng-switch-when="level" dnd-list="o.columns" dnd-allowed-types="['column']" dnd-draggable="o" dnd-type="'dimension'" dnd-moved="schema.dimension.splice($index, 1)">{{o.alias}}</span>
+                    <span ng-switch-when="level">{{o.alias}}</span>
                     <span ng-switch-when="column" dnd-draggable="o" dnd-type="'dimension'">{{o.alias?o.alias:o.column}}</span>
                     <ul ng-switch-when="level">
-                        <li ng-repeat="c in o.columns" >
+                        <li ng-repeat="c in o.columns|filter:filterDimension" >
                             <span dnd-draggable="c" dnd-type="'dimension'">{{c.alias?c.alias:c.column}}</span>
                         </li>
                     </ul>

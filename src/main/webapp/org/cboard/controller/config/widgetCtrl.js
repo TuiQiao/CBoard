@@ -761,6 +761,9 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
         };
 
         $scope.filterDimension = function (e) {
+            if(e.type == 'level'){
+                return true;
+            }
             var keys = _.find($scope.curWidget.config.keys, function (k) {
                 return k.col == e.column;
             });
@@ -874,7 +877,13 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
                 if (type == 'col') {
                     list[index] = {col: item.col, type: 'eq', values: [], sort: 'asc'};
                 } else if (type == 'dimension' || type == 'select') {
-                    list[index] = {alias: item.alias, col: item.column, type: 'eq', values: [], sort: 'asc'};
+                    list[index] = {
+                        alias: item.alias,
+                        col: item.column,
+                        type: 'eq',
+                        values: [],
+                        sort: 'asc'
+                    };
                 }
             }
         };

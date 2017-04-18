@@ -1,11 +1,11 @@
 <div class="tree">
     <ul style="padding-left: 5px" ng-if="schema.dimension">
         <li class="parent_li">
-            <span class="btn btn-default btn-sm">维度</span>
+            <span><b>{{'CONFIG.DATASET.DIMENSION'|translate}}</b></span>
             <ul>
                 <li ng-repeat="o in schema.dimension|filter:filterDimension" ng-switch="o.type" ng-class="{'level':'parent_li'}[o.type]">
-                    <span ng-switch-when="level" class="btn btn-default btn-sm" dnd-list="o.columns" dnd-allowed-types="['column']" dnd-draggable="o" dnd-type="'dimension'" dnd-moved="schema.dimension.splice($index, 1)">{{o.alias}}</span>
-                    <span ng-switch-when="column" class="btn btn-default btn-sm" dnd-draggable="o" dnd-type="'dimension'">{{o.alias?o.alias:o.column}}</span>
+                    <span ng-switch-when="level" dnd-list="o.columns" dnd-allowed-types="['column']" dnd-draggable="o" dnd-type="'dimension'" dnd-moved="schema.dimension.splice($index, 1)">{{o.alias}}</span>
+                    <span ng-switch-when="column" dnd-draggable="o" dnd-type="'dimension'">{{o.alias?o.alias:o.column}}</span>
                     <ul ng-switch-when="level">
                         <li ng-repeat="c in o.columns" >
                             <span dnd-draggable="c" dnd-type="'dimension'">{{c.alias?c.alias:c.column}}</span>
@@ -17,20 +17,20 @@
     </ul>
     <ul style="padding-left: 5px" ng-if="schema.measure">
         <li class="parent_li">
-            <span class="btn btn-default btn-sm" >指标</span>
+            <span><b>{{'CONFIG.DATASET.MEASURE'|translate}}</b></span>
             <ul>
                 <li ng-repeat="o in schema.measure">
-                    <span class="btn btn-default btn-sm" dnd-draggable="o" dnd-type="'measure'">{{o.alias?o.alias:o.column}}</span>
+                    <span dnd-draggable="o" dnd-type="'measure'">{{o.alias?o.alias:o.column}}</span>
                 </li>
             </ul>
         </li>
     </ul>
     <ul style="padding-left: 5px" ng-if="schema.selects">
         <li class="parent_li">
-            <span class="btn btn-default btn-sm" >可选</span>
+            <span><b>{{'CONFIG.DATASET.UNCLASSIFY'|translate}}</b></span>
             <ul>
                 <li ng-repeat="o in schema.selects|filter:filterDimension">
-                    <span class="btn btn-default btn-sm" dnd-draggable="o" dnd-type="'select'">{{o.column}}</span>
+                    <span dnd-draggable="o" dnd-type="'select'">{{o.column}}</span>
                 </li>
             </ul>
         </li>

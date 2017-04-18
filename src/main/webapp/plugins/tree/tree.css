@@ -1,47 +1,64 @@
 .tree {
-    min-height:20px;
-    margin-bottom:20px;
-    border:1px solid #d2d6de;
+    min-height: 20px;
+    margin-bottom: 20px;
+    border: 1px solid #d2d6de;
 }
-.tree ul{
-    min-height:10px;
+
+.tree ul {
+    min-height: 10px;
 }
+
 .tree li {
-    list-style-type:none;
-    margin:0;
-    padding:5px 5px 0 5px;
-    position:relative
+    list-style-type: none;
+    margin: 0;
+    padding: 2px 5px 2px 5px;
+    position: relative
 }
+
 .tree li::before, .tree li::after {
-    content:'';
-    left:-20px;
-    position:absolute;
-    right:auto
+    content: '';
+    left: -20px;
+    position: absolute;
+    right: auto
 }
+
 .tree li::before {
-    border-left:1px solid #999;
-    bottom:50px;
-    height:100%;
-    top:0;
-    width:1px
+    border-left: 1px solid #999;
+    bottom: 50px;
+    height: 100%;
+    top: 0;
+    width: 1px
 }
+
 .tree li::after {
-    border-top:1px solid #999;
-    height:20px;
-    top:20px;
-    width:25px
+    border-top: 1px solid #999;
+    height: 20px;
+    top: 13px;
+    width: 18px
 }
-.tree li.parent_li>span {
-    cursor:pointer
+
+.tree li.parent_li > span {
+    cursor: pointer
 }
-.tree>ul>li::before, .tree>ul>li::after {
-    border:0
+
+.tree > ul > li::before, .tree > ul > li::after {
+    border: 0
 }
+
 .tree li:last-child::before {
-    height:30px
+    height: 14px
 }
-.tree li.parent_li>span:hover, .tree li.parent_li>span:hover+ul li span {
-    background:#eee;
-    border:1px solid #94a0b4;
-    color:#000
+
+/*.tree li.parent_li > span:hover, .tree li.parent_li > span:hover + ul li span {
+    background: #eee;
+    border: 1px solid #94a0b4;
+    color: #000
+}*/
+
+.tree span > i {
+    margin-right: 3px;
+}
+
+.tree li > span:hover {
+    cursor:pointer
 }

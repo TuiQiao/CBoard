@@ -191,7 +191,15 @@
       "DATASOURCE": "数据源",
       "ADD": "添加",
       "REAL_TIME_INTERVAL": "实时间隔(秒)",
-      "REAL_TIME_TIP": "留空则不做后台刷新"
+      "REAL_TIME_TIP": "留空则不做后台刷新",
+      "DIMENSION": "维度列",
+      "HIERARCHY": "维度层级",
+      "MEASURE": "指标列",
+      "UNCLASSIFY": "未分类列",
+      "TIP_EDIT_ALIAS": "编辑别名",
+      "TIP_ADD_HIERARCHY": "添加层级",
+      "TIP_SWITCH_TO_MEASURE": "转换为指标",
+      "TIP_SWITCH_TO_DIMENSION": "转换为维度"
     },
     "JOB": {
       "CONFIG": "配置",

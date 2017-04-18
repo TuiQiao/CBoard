@@ -191,7 +191,15 @@
       "DATASOURCE": "Datasource",
       "ADD": "Add",
       "REAL_TIME_INTERVAL": "Real Time Interval(s)",
-      "REAL_TIME_TIP": "If You don't need refresh, just leave it as BLANK"
+      "REAL_TIME_TIP": "If You don't need refresh, just leave it as BLANK",
+      "DIMENSION": "Dimension",
+      "HIERARCHY": "Hierarchy",
+      "MEASURE": "Measure",
+      "UNCLASSIFY": "Selects",
+      "TIP_EDIT_ALIAS": "Alias",
+      "TIP_ADD_HIERARCHY": "Add Hierarchy",
+      "TIP_SWITCH_TO_MEASURE": "Switch to Measure",
+      "TIP_SWITCH_TO_DIMENSION": "Switch to Dimension"
     },
     "JOB": {
       "CONFIG": "Config",

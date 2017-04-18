@@ -11,6 +11,7 @@ cBoard.controller('datasetCtrl', function ($scope, $http, dataService, $uibModal
     $scope.verify = {dsName: true};
     $scope.loadFromCache = true;
     $scope.queryAceOpt = cbAcebaseOption;
+    $scope.hierarchy = translate("CONFIG.DATASET.HIERARCHY");
 
     var treeID = 'dataSetTreeID'; // Set to a same value with treeDom
     var originalData = [];

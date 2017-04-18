@@ -1,14 +1,16 @@
-<div class="tree">
+<div class="tree" style="min-height: 600px; max-height: 1024px;overflow:auto; overflow-x: auto; border:none;">
     <ul style="padding-left: 5px" ng-if="schema.dimension">
         <li class="parent_li">
-            <span><b>{{'CONFIG.DATASET.DIMENSION'|translate}}</b></span>
+            <span><img src="imgs/schema/dimension.gif"><b>{{'CONFIG.DATASET.DIMENSION'|translate}}</b></span>
             <ul>
                 <li ng-repeat="o in schema.dimension|filter:filterDimension" ng-switch="o.type" ng-class="{'level':'parent_li'}[o.type]">
-                    <span ng-switch-when="level">{{o.alias}}</span>
-                    <span ng-switch-when="column" dnd-draggable="o" dnd-type="'dimension'">{{o.alias?o.alias:o.column}}</span>
+                    <span ng-switch-when="level"><img src="imgs/schema/hierarchy.gif">{{o.alias}}</span>
+                    <span ng-switch-when="column" dnd-draggable="o" dnd-type="'dimension'">
+                        <img src="imgs/schema/bullet_blue.png">{{o.alias?o.alias:o.column}}
+                    </span>
                     <ul ng-switch-when="level">
                         <li ng-repeat="c in o.columns|filter:filterDimension" >
-                            <span dnd-draggable="c" dnd-type="'dimension'">{{c.alias?c.alias:c.column}}</span>
+                            <span dnd-draggable="c" dnd-type="'dimension'"><img src="imgs/schema/bullet_blue.png">{{c.alias?c.alias:c.column}}</span>
                         </li>
                     </ul>
                 </li>
@@ -17,10 +19,10 @@
     </ul>
     <ul style="padding-left: 5px" ng-if="schema.measure">
         <li class="parent_li">
-            <span><b>{{'CONFIG.DATASET.MEASURE'|translate}}</b></span>
+            <span><img src="imgs/schema/measure.gif"><b>{{'CONFIG.DATASET.MEASURE'|translate}}</b></span>
             <ul>
                 <li ng-repeat="o in schema.measure">
-                    <span dnd-draggable="o" dnd-type="'measure'">{{o.alias?o.alias:o.column}}</span>
+                    <span dnd-draggable="o" dnd-type="'measure'"><img src="imgs/schema/bullet_red.png">{{o.alias?o.alias:o.column}}</span>
                 </li>
             </ul>
         </li>
@@ -30,7 +32,7 @@
             <span><b>{{'CONFIG.DATASET.UNCLASSIFY'|translate}}</b></span>
             <ul>
                 <li ng-repeat="o in schema.selects|filter:filterDimension">
-                    <span dnd-draggable="o" dnd-type="'select'">{{o.column}}</span>
+                    <span dnd-draggable="o" dnd-type="'select'"><img src="imgs/schema/bullet_red.png">{{o.column}}</span>
                 </li>
             </ul>
         </li>

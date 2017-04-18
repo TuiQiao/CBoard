@@ -167,11 +167,21 @@
                                 </div>
                             </div>
                             <div class="row" ng-show="selects">
+                                <div class="col-md-7">
+                                    <div class="form-control" style="min-height: 35px;height: auto;padding: 0px">
+                                        <span ng-repeat="o in selects"
+                                              class="btn btn-default btn-sm" style="margin: 3px 3px;"
+                                              dnd-draggable="{type: 'column', column: o}" dnd-type="'column'" ng-click="curDataset.data.schema.dimension.push({type: 'column', column: o})">{{o}}</span>
+                                    </div>
+                                </div>
                                 <div class="col-md-5">
                                     <div class="tree">
                                         <ul style="padding-left: 5px">
                                             <li class="parent_li">
-                                                <span><b>{{'CONFIG.DATASET.DIMENSION'|translate}}</b></span>
+                                                <span>
+                                                    <img src="imgs/schema/dimension.gif">
+                                                    <b>{{'CONFIG.DATASET.DIMENSION'|translate}}</b>
+                                                </span>
                                                 <i class="glyphicon glyphicon-plus"
                                                    ng-click="curDataset.data.schema.dimension.push({type: 'level', alias: hierarchy, columns: []})"
                                                    title="{{'CONFIG.DATASET.TIP_ADD_HIERARCHY'|translate}}">
@@ -184,11 +194,14 @@
                                                         <span ng-switch-when="level"  dnd-draggable="o"
                                                               dnd-type="o.type"
                                                               dnd-moved="curDataset.data.schema.dimension.splice($index, 1)">
-                                                            <i class="fa fa-plus-circle"/>{{o.alias}}
+                                                            <i class="fa fa-caret-down"/>
+                                                            <img src="imgs/schema/hierarchy.gif">
+                                                            {{o.alias}}
                                                         </span>
                                                         <span ng-switch-when="column"  dnd-draggable="o"
                                                               dnd-type="o.type"
                                                               dnd-moved="curDataset.data.schema.dimension.splice($index, 1)">
+                                                            <img src="imgs/schema/bullet_blue.png">
                                                             {{o.alias?o.alias+' ('+o.column+')':o.column}}
                                                         </span>
                                                         <i class="fa fa-edit" ng-init="show=false" ng-click="show=true" title="{{'CONFIG.DATASET.TIP_EDIT_ALIAS'|translate}}">
@@ -203,7 +216,10 @@
                                                                 <span class="sort-highlight btn btn-default btn-xs">+</span></li>
                                                             <li ng-repeat="c in o.columns">
                                                                 <span dnd-draggable="c" dnd-type="c.type"
-                                                                      dnd-moved="o.columns.splice($index, 1)">{{c.alias?c.alias+' ('+c.column+')':c.column}}</span>
+                                                                      dnd-moved="o.columns.splice($index, 1)">
+                                                                    <img src="imgs/schema/bullet_blue.png">
+                                                                    {{c.alias?c.alias+' ('+c.column+')':c.column}}
+                                                                </span>
                                                                 <i class="fa fa-edit" ng-init="show=false" ng-click="show=true" title="{{'CONFIG.DATASET.TIP_EDIT_ALIAS'|translate}}">
                                                                     <input ng-show="show" type="text" ng-model="c.alias" ng-blur="show=false"/></i>
                                                                 <i class="fa fa-trash-o" ng-click="o.columns.splice($index, 1)"></i>
@@ -217,13 +233,19 @@
                                         </ul>
                                         <ul style="padding-left: 5px">
                                             <li class="parent_li">
-                                                <span><b>{{'CONFIG.DATASET.MEASURE'|translate}}</b></span>
+                                                <span>
+                                                    <img src="imgs/schema/measure.gif">
+                                                    <b>{{'CONFIG.DATASET.MEASURE'|translate}}</b>
+                                                </span>
                                                 <ul dnd-list="curDataset.data.schema.measure" dnd-allowed-types="['column']">
                                                     <li class="dndPlaceholder"><span class="sort-highlight btn btn-default btn-sm">+</span>
                                                     </li>
                                                     <li ng-repeat="o in curDataset.data.schema.measure">
                                                         <span  dnd-draggable="o" dnd-type="o.type"
-                                                              dnd-moved="curDataset.data.schema.measure.splice($index, 1)">{{o.alias?o.alias+'('+o.column+')':o.column}}</span>
+                                                              dnd-moved="curDataset.data.schema.measure.splice($index, 1)">
+                                                            <img src="imgs/schema/bullet_red.png">
+                                                            {{o.alias?o.alias+'('+o.column+')':o.column}}
+                                                        </span>
                                                         <i class="fa fa-edit" ng-init="show=false" ng-click="show=true" title="{{'CONFIG.DATASET.TIP_EDIT_ALIAS'|translate}}">
                                                             <input ng-show="show" type="text" ng-model="o.alias" ng-blur="show=false"/></i>
                                                         <i class="fa fa-trash-o"
@@ -234,13 +256,6 @@
                                                 </ul>
                                             </li>
                                         </ul>
-                                    </div>
-                                </div>
-                                <div class="col-md-7">
-                                    <div class="form-control" style="min-height: 35px;height: auto;padding: 0px">
-                                        <span ng-repeat="o in selects"
-                                              class="btn btn-default btn-sm" style="margin: 3px 3px;"
-                                              dnd-draggable="{type: 'column', column: o}" dnd-type="'column'" ng-click="curDataset.data.schema.dimension.push({type: 'column', column: o})">{{o}}</span>
                                     </div>
                                 </div>
                             </div>

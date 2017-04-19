@@ -20,131 +20,116 @@ var cbAcebaseOption = {
     }
 };
 
-var cbAceStringify = function(obj, surround, replace) {
+var cbAceStringify = function(obj, surround, replace, format) {
     surround ? surround : surround = "";
-    var jsonStr = JSON.stringify(obj, null, 2);
+    var jsonStr = format != false ? JSON.stringify(obj, null, 2) : JSON.stringify(obj);
     if (replace != false) {
         jsonStr = jsonStr.replace(/"/g, '\'');
     }
-    if (surround != "") {
-        jsonStr = surround + jsonStr + surround;
-    }
+    jsonStr = surround + jsonStr + surround;
     return jsonStr;
 };
 
-var cbAceCmpEsBucketObj = {
-    dateHist: {
-        date_histogram: {
-            field: '<columnname>',
-            format: 'yyyy-MM-dd HH:mm:ss',
-            interval: '10m',
-            time_zone: '+08:00'
-        }
-    },
-    numRange: {
-        range: {
-            field: '<columnname>',
-            ranges: [
-                {to: 10000},
-                {from: 10000, to: 30000},
-                {from: 30000}
-            ]
-        }
-    },
-    termFilterAgg: {
-        column: '<agg_column>',
-        filter: {
-            term: {
-                '<filter_column>': '<value>'
-            }
-        }
-    },
-    termsFilterAgg: {
-        column: '<agg_column>',
-        filter: {
-            terms: {
-                '<filter_column>': ['<value1>', '<value2>']
-            }
-        }
-    },
-    boolFilterAgg: {
-        column: '<agg_column>',
-        filter: {
-            bool: {
-                must: [{}],
-                must_not: [{}],
-                should: [{}]
-            }
-        }
-    }
+var cbObj2Array = function (obj) {
+    return Object.keys(obj).map(function (key) {
+        return {name: key, body: obj[key]};
+    })
 };
 
-var cbAceCmpEsBucket = [
+var esBuckets = [
     {
-        meta: "es",
-        caption: "date_hist",
-        value: "\"<columnname>\": " + cbAceStringify(cbAceCmpEsBucketObj.dateHist, null, false)
+        name: "date_hist",
+        body: {
+            date_histogram: {field: '<columnname>', format: 'yyyy-MM-dd HH:mm:ss', interval: '10m', time_zone: '+08:00'}
+        }
     },
     {
-        meta: "es",
-        caption: "number_range",
-        value: "\"<columnname>\": " + cbAceStringify(cbAceCmpEsBucketObj.numRange, null, false)
+        name: "number_range",
+        body: {
+            range: { field: '<columnname>', ranges: [{to: 10000}, {from: 10000, to: 30000}, {from: 30000}] }
+        }
     }
 ];
 
 var cbEsQueryCompleter = {
     getCompletions: function(editor, session, pos, prefix, callback) {
-        callback(null, cbAceCmpEsBucket);
+        callback(null, esBuckets.map(function(aggObj) {
+            return {
+                meta: "es-bucket",
+                caption: aggObj.name,
+                value: "\"<columnname>\": " + cbAceStringify(aggObj.body, null, false)
+            };
+        }));
     }
 };
 
-var widgetEditorOptions = function () {
+var esFilter = {
+    termFilter: {
+        term: {'<filter_column>': '<value>'}
+    },
+    termsFilter: {
+        terms: {'<filter_column>': ['<value1>', '<value2>']}
+    },
+    rangeFilter: {
+        range: {'<filter_column>': {gte: 10, lte: 20}}
+    },
+    boolFilter: {
+        bool: {must: [{}], must_not: [{}], should: [{}]}
+    }
+};
+
+var cbEsExpAggCompleter = {
+    getCompletions: function(editor, session, pos, prefix, callback) {
+
+        var cbEsAggComList = cbObj2Array(esFilter).map(function(filter) {
+            return {
+                meta: "es-agg",
+                caption: filter.name + " Agg",
+                value: cbAceStringify({
+                    column: '<agg_column>',
+                    filter: filter.body
+                }, '"')
+            };
+        });
+
+        cbEsAggComList.push({
+                meta: "es-agg",
+                caption: "Not Equal Agg",
+                value: cbAceStringify({
+                    column: '<agg_column>',
+                    filter: {
+                        bool: {
+                            must_not: esFilter.termFilter
+                        }
+                    }
+                }, '"')
+        });
+        callback(null, cbEsAggComList);
+    }
+};
+
+var cbEsExpFilterCompleter = {
+    getCompletions: function(editor, session, pos, prefix, callback) {
+        var cbEsFilterComList = cbObj2Array(esFilter).map(function(filter) {
+            return {
+                meta: "es-filter",
+                caption: filter.name,
+                value: cbAceStringify(filter.body, null, null, false)
+            };
+        });
+        callback(null, cbEsFilterComList);
+    }
+};
+
+
+// Below functions return options for ace ui
+var datasetEditorOptions = function () {
     var result = angular.copy(cbAcebaseOption);
     result.onLoad = function(_editor) {
         _editor.completers = [];
         _editor.completers.push(cbEsQueryCompleter);
     };
     return result;
-}();
-
-
-var cbAceCmpEsExp = [
-    {
-        meta: "es",
-        caption: "Term Filter Agg",
-        value: cbAceStringify(cbAceCmpEsBucketObj.termFilterAgg, '"')
-    },
-    {
-        meta: "es",
-        caption: "Terms Filter Agg",
-        value: cbAceStringify(cbAceCmpEsBucketObj.termsFilterAgg, '"')
-    },
-    {
-        meta: "es",
-        caption: "Bool Filter Agg",
-        value: cbAceStringify(cbAceCmpEsBucketObj.boolFilterAgg, '"')
-    },
-    {
-        meta: "es",
-        caption: "Term Filter",
-        value: "'term': { '<filter_column>': '<value>' }"
-    },
-    {
-        meta: "es",
-        caption: "Terms Filter",
-        value: "'terms': { '<filter_column>': [<value>, <value>] }"
-    },
-    {
-        meta: "es",
-        caption: "Range Filter",
-        value: "'range': { '<filter_column>': [ 10 TO  *] }"
-    }
-];
-
-var cbEsExpCompleter = {
-    getCompletions: function(editor, session, pos, prefix, callback) {
-        callback(null, cbAceCmpEsExp);
-    }
 };
 
 var expEditorOptions = function (selects, aggs) {
@@ -179,7 +164,8 @@ var expEditorOptions = function (selects, aggs) {
 
     result.onLoad = function(_editor) {
         _editor.completers = [];
-        _editor.completers.push(cbEsExpCompleter);
+        _editor.completers.push(cbEsExpAggCompleter);
+        _editor.completers.push(cbEsExpFilterCompleter);
         _editor.completers.push(selectsCompleter);
         _editor.completers.push(aggsCompleter);
     };

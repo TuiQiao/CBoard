@@ -1189,7 +1189,7 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
 
 
         /** Ace Editor Starer... **/
-        $scope.queryAceOpt = widgetEditorOptions;
+        $scope.queryAceOpt = datasetEditorOptions();
     }
 )
 ;

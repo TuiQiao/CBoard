@@ -23,20 +23,36 @@
                         <ng-switch on="o.type">
                             <div ng-switch-when="exp" class="btn-group">
                                 <button type="button" class="btn btn-primary btn-sm" style="cursor: move;" ng-click="expressions.push(o);v.cols.splice($index, 1);">
-                                    {{o.alias?o.alias:o.exp}}
+                                    {{o.alias}}
                                 </button>
                                 <button type="button" class="btn btn-primary btn-sm dropdown-toggle"
                                         ng-click="editSort(o);cleanRowSort(o);">
                                     <span class="fa" ng-class="{undefined:'fa-sort','asc':'fa-sort-asc','desc':'fa-sort-desc'}[o.sort]"></span>
                                 </button>
-                                <button type="button" class="btn btn-primary btn-sm dropdown-toggle"
-                                        ng-click="editExp(o)">
+                                <button type="button" class="btn btn-primary btn-sm dropdown-toggle" data-toggle="dropdown">
                                     <span class="fa fa-edit"></span>
                                 </button>
                                 <ul class="dropdown-menu multi-level" role="menu" aria-labelledby="dropdownMenu">
                                     <li>
                                         <a href="#" ng-click="editExp(o)">{{'COMMON.EDIT'|translate}}</a>
                                     </li>
+                                    <li>
+                                        <a href="#" ng-click="editVFilter(o)">{{'CONFIG.WIDGET.FILTER'|translate}}</a>
+                                    </li>
+                                </ul>
+                            </div>
+                            <div ng-switch-when="exp_link" class="btn-group">
+                                <button type="button" class="btn btn-primary btn-sm" style="cursor: move;" ng-click="expressions.push(o);v.cols.splice($index, 1);">
+                                    {{o.alias}}
+                                </button>
+                                <button type="button" class="btn btn-primary btn-sm dropdown-toggle"
+                                        ng-click="editSort(o);cleanRowSort(o);">
+                                    <span class="fa" ng-class="{undefined:'fa-sort','asc':'fa-sort-asc','desc':'fa-sort-desc'}[o.sort]"></span>
+                                </button>
+                                <button type="button" class="btn btn-primary btn-sm dropdown-toggle" data-toggle="dropdown">
+                                    <span class="fa fa-edit"></span>
+                                </button>
+                                <ul class="dropdown-menu multi-level" role="menu" aria-labelledby="dropdownMenu">
                                     <li>
                                         <a href="#" ng-click="editVFilter(o)">{{'CONFIG.WIDGET.FILTER'|translate}}</a>
                                     </li>

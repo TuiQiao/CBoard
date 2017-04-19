@@ -15,11 +15,6 @@
                         ng-click="filterGroups.push(o);curWidget.config.filters.splice($index, 1);">
                     {{o.group}}
                 </button>
-                <button type="button"
-                        class="btn btn-warning btn-sm dropdown-toggle"
-                        ng-click="editFilterGroup(o)">
-                    <span class="fa fa-edit"></span>
-                </button>
             </div>
             <div ng-if="!o.group" class="btn-group">
                 <button type="button" class="btn btn-default btn-sm" style="cursor: move;"

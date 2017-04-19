@@ -276,6 +276,9 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
                 var fg = angular.copy(_.find($scope.datasetList, function (ds) {
                     return ds.id == $scope.curWidget.datasetId;
                 }).data.filters);
+                _.each(fg, function (e) {
+                    delete e.filters;
+                });
                 if (fg) {
                     $scope.filterGroups = fg.filter(function (g) {
                         var dupDefine = _.find($scope.curWidget.config.filters, function (f) {
@@ -294,27 +297,25 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
                 var dsExp = angular.copy(_.find($scope.datasetList, function (ds) {
                     return ds.id == $scope.curWidget.datasetId;
                 }).data.expressions);
-
-                var axes = $scope.curWidget.config.values;
-                if ($scope.optFlag == 'new' || _.isUndefined(axes)) {
-                    $scope.expressions = dsExp;
-                } else {
-                    // de-duplicate expression
-                    var colInAxes = [];
-                    for (var i = 0; i < axes.length; i++) {
-                        colInAxes = colInAxes.concat(axes[i].cols)
-                    }
-                    colInAxes = colInAxes.filter(function (col) {
-                        return col.type == "exp"
-                    });
-
-                    $scope.expressions = dsExp.filter(function (exp) {
-                        var dupDefine = _.find(colInAxes, function (col) {
-                            return col.alias == exp.alias;
-                        })
-                        return _.isUndefined(dupDefine) ? true : false;
+                _.each(dsExp, function (e) {
+                    e.type = 'exp_link';
+                    delete e.exp;
+                });
+                if (dsExp) {
+                    $scope.expressions = dsExp.filter(function (g) {
+                        var dupDefine = true;
+                        _.each($scope.curWidget.config.values, function (v) {
+                            if (!dupDefine) {
+                                return;
+                            }
+                            dupDefine = _.isUndefined(_.find(v.cols, function (f) {
+                                return g.alias == f.alias && f.type == 'exp_link';
+                            }));
+                        });
+                        return dupDefine;
                     });
                 }
+
             }
         };
 
@@ -761,7 +762,7 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
         };
 
         $scope.filterDimension = function (e) {
-            if(e.type == 'level'){
+            if (e.type == 'level') {
                 return true;
             }
             var keys = _.find($scope.curWidget.config.keys, function (k) {

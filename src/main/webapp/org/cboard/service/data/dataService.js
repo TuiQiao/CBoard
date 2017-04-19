@@ -2,7 +2,61 @@
  * Created by yfyuan on 2016/8/12.
  */
 'use strict';
-cBoard.service('dataService', function ($http, updateService) {
+cBoard.service('dataService', function ($http, $q, updateService) {
+
+    var datasetList;
+    var getDatasetList = function () {
+        var deferred = $q.defer();
+        if (datasetList) {
+            deferred.resolve(angular.copy(datasetList));
+        } else {
+            $http.get("dashboard/getDatasetList.do").success(function (data) {
+                deferred.resolve(data);
+            });
+        }
+        return deferred.promise;
+    };
+
+    var linkDataset = function (datasetId, chartConfig) {
+        if (_.isUndefined(datasetId)) {
+            var deferred = $q.defer();
+            deferred.resolve();
+            return deferred.promise;
+        } else {
+            return getDatasetList().then(function (dsList) {
+                var deferred = $q.defer();
+
+                var dataset = _.find(dsList, function (e) {
+                    return e.id == datasetId;
+                });
+                //link filter group
+                _.each(chartConfig.filters, function (f) {
+                    if (f.group) {
+                        var group = _.find(dataset.data.filters, function (e) {
+                            return e.group == f.group;
+                        });
+                        if(group){
+                            f.filters = group.filters;
+                        }
+                    }
+                });
+                //link exp
+                _.each(chartConfig.values, function (v) {
+                    _.each(v.cols, function (c) {
+                        if (c.type == 'exp_link') {
+                            var exp = _.find(dataset.data.expressions, function (e) {
+                                return c.alias == e.alias;
+                            });
+                            c.type = exp.type;
+                            c.exp = exp.exp;
+                        }
+                    });
+                });
+                deferred.resolve();
+                return deferred.promise;
+            });
+        }
+    };
 
     var getDimensionConfig = function (array) {
         var result = [];
@@ -21,64 +75,73 @@ cBoard.service('dataService', function ($http, updateService) {
     };
 
     this.getDimensionValues = function (datasource, query, datasetId, colmunName, chartConfig, callback) {
-        var cfg = {rows: [], columns: [], filters: []};
-        cfg.rows = getDimensionConfig(chartConfig.keys);
-        cfg.columns = getDimensionConfig(chartConfig.groups);
-        cfg.filters = getDimensionConfig(chartConfig.filters);
+        chartConfig = angular.copy(chartConfig);
+        linkDataset(datasetId, chartConfig).then(function () {
+            var cfg = {rows: [], columns: [], filters: []};
+            cfg.rows = getDimensionConfig(chartConfig.keys);
+            cfg.columns = getDimensionConfig(chartConfig.groups);
+            cfg.filters = getDimensionConfig(chartConfig.filters);
 
-        $http.post("dashboard/getDimensionValues.do", {
-            datasourceId: datasource,
-            query: angular.toJson(query),
-            datasetId: datasetId,
-            colmunName: colmunName,
-            cfg: angular.toJson(cfg),
-        }).success(function (response) {
-            callback(response[0], response[1]);
+            $http.post("dashboard/getDimensionValues.do", {
+                datasourceId: datasource,
+                query: angular.toJson(query),
+                datasetId: datasetId,
+                colmunName: colmunName,
+                cfg: angular.toJson(cfg),
+            }).success(function (response) {
+                callback(response[0], response[1]);
+            });
         });
     };
 
-    this.getData = function (datasource, query, datasetId, chartConfig, callback, reload) {
+    this.getDataSeries = function (datasource, query, datasetId, chartConfig, callback, reload) {
+        chartConfig = angular.copy(chartConfig);
         updateService.updateConfig(chartConfig);
-        var dataSeries = getDataSeries(chartConfig);
-        var cfg = {rows: [], columns: [], filters: []};
-        cfg.rows = getDimensionConfig(chartConfig.keys);
-        cfg.columns = getDimensionConfig(chartConfig.groups);
-        cfg.filters = getDimensionConfig(chartConfig.filters);
-        cfg.filters = cfg.filters.concat(getDimensionConfig(chartConfig.boardFilters));
-        cfg.values = _.map(dataSeries, function (s) {
-            return {column: s.name, aggType: s.aggregate};
-        });
-        $http.post("dashboard/getAggregateData.do", {
-            datasourceId: datasource,
-            query: angular.toJson(query),
-            datasetId: datasetId,
-            cfg: angular.toJson(cfg),
-            reload: reload
-        }).success(function (response) {
-            callback(response);
-        }).error(function (data) {
-            callback(null);
+        linkDataset(datasetId, chartConfig).then(function () {
+            var dataSeries = getDataSeries(chartConfig);
+            var cfg = {rows: [], columns: [], filters: []};
+            cfg.rows = getDimensionConfig(chartConfig.keys);
+            cfg.columns = getDimensionConfig(chartConfig.groups);
+            cfg.filters = getDimensionConfig(chartConfig.filters);
+            cfg.filters = cfg.filters.concat(getDimensionConfig(chartConfig.boardFilters));
+            cfg.values = _.map(dataSeries, function (s) {
+                return {column: s.name, aggType: s.aggregate};
+            });
+            $http.post("dashboard/getAggregateData.do", {
+                datasourceId: datasource,
+                query: angular.toJson(query),
+                datasetId: datasetId,
+                cfg: angular.toJson(cfg),
+                reload: reload
+            }).success(function (data) {
+                var result = castRawData2Series(data, chartConfig);
+                result.chartConfig = chartConfig;
+                callback(result);
+            });
         });
     };
 
     this.viewQuery = function (params, callback) {
+        params.config = angular.copy(params.config);
         updateService.updateConfig(params.config);
-        var dataSeries = getDataSeries(params.config);
-        var cfg = {rows: [], columns: [], filters: []};
-        cfg.rows = getDimensionConfig(params.config.keys);
-        cfg.columns = getDimensionConfig(params.config.groups);
-        cfg.filters = getDimensionConfig(params.config.filters);
-        cfg.filters = cfg.filters.concat(getDimensionConfig(params.config.boardFilters));
-        cfg.values = _.map(dataSeries, function (s) {
-            return {column: s.name, aggType: s.aggregate};
-        });
-        $http.post("dashboard/viewAggDataQuery.do", {
-            datasourceId: params.datasource,
-            query: angular.toJson(params.query),
-            datasetId: params.datasetId,
-            cfg: angular.toJson(cfg),
-        }).success(function (response) {
-            callback(response[0]);
+        linkDataset(params.datasetId, params.config).then(function () {
+            var dataSeries = getDataSeries(params.config);
+            var cfg = {rows: [], columns: [], filters: []};
+            cfg.rows = getDimensionConfig(params.config.keys);
+            cfg.columns = getDimensionConfig(params.config.groups);
+            cfg.filters = getDimensionConfig(params.config.filters);
+            cfg.filters = cfg.filters.concat(getDimensionConfig(params.config.boardFilters));
+            cfg.values = _.map(dataSeries, function (s) {
+                return {column: s.name, aggType: s.aggregate};
+            });
+            $http.post("dashboard/viewAggDataQuery.do", {
+                datasourceId: params.datasource,
+                query: angular.toJson(params.query),
+                datasetId: params.datasetId,
+                cfg: angular.toJson(cfg),
+            }).success(function (response) {
+                callback(response[0]);
+            });
         });
     };
 
@@ -230,11 +293,8 @@ cBoard.service('dataService', function ($http, updateService) {
      * Cast the aggregated raw data into data series
      * @param rawData
      * @param chartConfig
-     * @param callback function which is used to transform series data to widgets option
      */
-    this.castRawData2Series = function (aggData, chartConfig, callback) {
-        updateService.updateConfig(chartConfig);
-
+    var castRawData2Series = function (aggData, chartConfig) {
         var castedKeys = new Array();
         var castedGroups = new Array();
         var joinedKeys = {};
@@ -422,8 +482,12 @@ cBoard.service('dataService', function ($http, updateService) {
                 i--;
             }
         }
-        callback(castedKeys, castedAliasSeriesName, aliasData, aliasSeriesConfig);
-
+        return {
+            keys: castedKeys,
+            series: castedAliasSeriesName,
+            data: aliasData,
+            seriesConfig: aliasSeriesConfig
+        };
     };
 
     var castSeriesData = function (series, group, castedKeys, newData, iterator) {

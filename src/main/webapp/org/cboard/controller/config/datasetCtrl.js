@@ -254,8 +254,8 @@ cBoard.controller('datasetCtrl', function ($scope, $http, dataService, $uibModal
             return angular.copy(schema.selects);
         } else {
             var selects = [];
-            selects = selects.concat($scope.schema.measure);
-            _.each($scope.schema.dimension, function (e) {
+            selects = selects.concat(schema.measure);
+            _.each(schema.dimension, function (e) {
                 if (e.type == 'level') {
                     _.each(e.columns, function (c) {
                         selects.push(c);

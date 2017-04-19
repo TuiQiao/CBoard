@@ -168,14 +168,14 @@
                             </div>
                             <div class="row" ng-show="selects">
                                 <div class="col-md-7">
-                                    <div class="form-control" style="min-height: 35px;height: auto;padding: 0px">
+                                    <div class="form-control" style="min-height: 200px;height: auto;padding: 0px; border: 2px dashed #d2d6de">
                                         <span ng-repeat="o in selects"
                                               class="btn btn-default btn-sm" style="margin: 3px 3px;"
                                               dnd-draggable="{type: 'column', column: o}" dnd-type="'column'" ng-click="curDataset.data.schema.dimension.push({type: 'column', column: o})">{{o}}</span>
                                     </div>
                                 </div>
                                 <div class="col-md-5">
-                                    <div class="tree">
+                                    <div class="tree tree-bg-dragin">
                                         <ul style="padding-left: 5px">
                                             <li class="parent_li">
                                                 <span>

@@ -1,7 +1,17 @@
 .tree {
-    min-height: 20px;
+    min-height: 200px;
     margin-bottom: 20px;
-    border: 1px solid #d2d6de;
+    border: 2px dashed #d2d6de;
+}
+
+.tree-bg-dragin {
+    background:url(../../imgs/schema/drag-in.png) no-repeat center ;
+    background-size:150px 150px;
+}
+
+.tree-bg-dragout {
+    background:url(../../imgs/schema/drag-out.png) no-repeat center;
+    background-size:150px 150px;
 }
 
 .tree ul {
@@ -24,7 +34,7 @@
 }
 
 .tree li::before {
-    border-left: 1px solid #999;
+    border-left: 1px dotted black;
     bottom: 50px;
     height: 100%;
     top: 0;
@@ -32,7 +42,7 @@
 }
 
 .tree li::after {
-    border-top: 1px solid #999;
+    border-top: 1px dotted black;
     height: 20px;
     top: 13px;
     width: 18px
@@ -62,4 +72,8 @@
 
 .tree li > span:hover {
     cursor:move;
+}
+
+.tree img {
+    padding-right: 4px;
 }

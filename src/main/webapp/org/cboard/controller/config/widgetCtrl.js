@@ -169,7 +169,7 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
         };
 
         $scope.editExp = function (col) {
-            var selects = angular.copy($scope.schema.measure ? $scope.schema.measure : $scope.schema.selects);
+            var selects = schemaToSelect($scope.schema);
             var aggregate = $scope.value_aggregate_types;
             var curWidget = $scope.curWidget;
             var ok;
@@ -964,8 +964,27 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
             });
         };
 
+        var schemaToSelect = function (schema) {
+            if (schema.selects) {
+                return angular.copy(schema.selects);
+            } else {
+                var selects = [];
+                selects = selects.concat($scope.schema.measure);
+                _.each($scope.schema.dimension, function (e) {
+                    if (e.type == 'level') {
+                        _.each(e.columns, function (c) {
+                            selects.push(c);
+                        });
+                    } else {
+                        selects.push(e);
+                    }
+                });
+                return angular.copy(selects);
+            }
+        };
+
         $scope.editFilterGroup = function (col) {
-            var selects = angular.copy($scope.schema.measure ? $scope.schema.measure : $scope.schema.selects);
+            var selects = schemaToSelect($scope.schema);
             $uibModal.open({
                 templateUrl: 'org/cboard/view/config/modal/filterGroup.html',
                 windowTemplateUrl: 'org/cboard/view/util/modal/window.html',

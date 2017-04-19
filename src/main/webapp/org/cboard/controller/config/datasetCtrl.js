@@ -191,7 +191,7 @@ cBoard.controller('datasetCtrl', function ($scope, $http, dataService, $uibModal
     };
 
     $scope.editFilterGroup = function (col) {
-        var selects = angular.copy($scope.curDataset.data.schema.measure);
+        var selects = schemaToSelect($scope.curDataset.data.schema);
         $uibModal.open({
             templateUrl: 'org/cboard/view/config/modal/filterGroup.html',
             windowTemplateUrl: 'org/cboard/view/util/modal/window.html',
@@ -249,8 +249,27 @@ cBoard.controller('datasetCtrl', function ($scope, $http, dataService, $uibModal
         });
     };
 
+    var schemaToSelect = function (schema) {
+        if (schema.selects) {
+            return angular.copy(schema.selects);
+        } else {
+            var selects = [];
+            selects = selects.concat($scope.schema.measure);
+            _.each($scope.schema.dimension, function (e) {
+                if (e.type == 'level') {
+                    _.each(e.columns, function (c) {
+                        selects.push(c);
+                    });
+                } else {
+                    selects.push(e);
+                }
+            });
+            return angular.copy(selects);
+        }
+    };
+
     $scope.editExp = function (col) {
-        var selects = angular.copy($scope.curDataset.data.schema.measure);
+        var selects = schemaToSelect($scope.curDataset.data.schema);
         var aggregate = [
             {name: 'sum', value: 'sum'},
             {name: 'count', value: 'count'},

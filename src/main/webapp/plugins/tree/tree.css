@@ -61,5 +61,5 @@
 }
 
 .tree li > span:hover {
-    cursor:pointer
+    cursor:move;
 }

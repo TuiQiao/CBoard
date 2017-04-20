@@ -37,7 +37,7 @@
             #{item}
         </foreach>
         <if test="curUid != adminUid">
-            AND role_id IN (select role_id from dashboard_role where user_id = #{curUid} and rold_id in
+            AND role_id IN (select role_id from dashboard_role where user_id = #{curUid} and role_id in
             <foreach item="item" index="index" collection="roleIds" open="(" separator="," close=")">
             #{item}
             </foreach>)

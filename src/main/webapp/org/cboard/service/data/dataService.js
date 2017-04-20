@@ -43,12 +43,13 @@ cBoard.service('dataService', function ($http, $q, updateService) {
                 //link exp
                 _.each(chartConfig.values, function (v) {
                     _.each(v.cols, function (c) {
-                        if (c.type == 'exp_link') {
+                        if (c.type == 'exp') {
                             var exp = _.find(dataset.data.expressions, function (e) {
                                 return c.alias == e.alias;
                             });
-                            c.type = exp.type;
-                            c.exp = exp.exp;
+                            if(exp){
+                                c.exp = exp.exp;
+                            }
                         }
                     });
                 });

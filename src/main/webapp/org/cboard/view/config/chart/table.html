@@ -17,7 +17,7 @@
                                 dnd-draggable="o" dnd-type="'exp'"
                                 dnd-effect-allowed="move"
                                 dnd-moved="curWidget.config.values[0].cols.splice($index, 1)"
-                                ng-click="expressions.push(o);curWidget.config.values[0].cols.splice($index, 1);">
+                                ng-click="curWidget.config.values[0].cols.splice($index, 1);">
                             {{o.alias}}
                         </button>
                         <button type="button" class="btn btn-primary btn-sm dropdown-toggle"
@@ -32,33 +32,8 @@
                                 <input type="text" class="input" ng-model="o.formatter"
                                        placeholder="{{'CONFIG.WIDGET.FORMATTER'|translate}}">
                             </li>
-                            <li>
+                            <li ng-if="!isDsExpression(o)">
                                 <a href="#" ng-click="editExp(o)">{{'COMMON.EDIT'|translate}}</a>
-                            </li>
-                            <li>
-                                <a href="#" ng-click="editVFilter(o)">{{'CONFIG.WIDGET.FILTER'|translate}}</a>
-                            </li>
-                        </ul>
-                    </div>
-                    <div ng-switch-when="exp_link" class="btn-group">
-                        <button type="button" class="btn btn-primary btn-sm" style="cursor: move;"
-                                dnd-draggable="o" dnd-type="'exp'"
-                                dnd-effect-allowed="move"
-                                dnd-moved="curWidget.config.values[0].cols.splice($index, 1)"
-                                ng-click="expressions.push(o);curWidget.config.values[0].cols.splice($index, 1);">
-                            {{o.alias}}
-                        </button>
-                        <button type="button" class="btn btn-primary btn-sm dropdown-toggle"
-                                ng-click="editSort(o);cleanRowSort(o);">
-                            <span class="fa" ng-class="{undefined:'fa-sort','asc':'fa-sort-asc','desc':'fa-sort-desc'}[o.sort]"></span>
-                        </button>
-                        <button type="button" class="btn btn-primary btn-sm dropdown-toggle" data-toggle="dropdown">
-                            <span class="fa fa-edit"></span>
-                        </button>
-                        <ul class="dropdown-menu multi-level" role="menu" aria-labelledby="dropdownMenu">
-                            <li>
-                                <input type="text" class="input" ng-model="o.formatter"
-                                       placeholder="{{'CONFIG.WIDGET.FORMATTER'|translate}}">
                             </li>
                             <li>
                                 <a href="#" ng-click="editVFilter(o)">{{'CONFIG.WIDGET.FILTER'|translate}}</a>

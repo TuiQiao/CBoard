@@ -12,8 +12,12 @@
              class="btn-group" style="cursor: move;margin: 3px 3px;">
             <div ng-if="o.group" class="btn-group">
                 <button type="button" class="btn btn-warning btn-sm" style="cursor: move;"
-                        ng-click="filterGroups.push(o);curWidget.config.filters.splice($index, 1);">
+                        ng-click="curWidget.config.filters.splice($index, 1);">
                     {{o.group}}
+                </button>
+                <button type="button" class="btn btn-warning btn-sm dropdown-toggle" ng-if="!isDsFilter(o)"
+                        ng-click="editFilterGroup(o)">
+                    <span class="fa fa-edit"></span>
                 </button>
             </div>
             <div ng-if="!o.group" class="btn-group">

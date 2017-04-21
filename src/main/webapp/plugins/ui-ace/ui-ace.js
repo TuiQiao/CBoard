@@ -146,6 +146,7 @@ angular.module('ui.ace', [])
          * @type object
          */
         var acee = window.ace.edit(elm[0]);
+        acee.$blockScrolling = Infinity;
 
         /**
          * ACE editor session.

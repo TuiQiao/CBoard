@@ -22,7 +22,7 @@ var cbAcebaseOption = {
 
 var cbAceStringify = function(obj, surround, replace, format) {
     surround ? surround : surround = "";
-    var jsonStr = format != false ? JSON.stringify(obj, null, 2) : JSON.stringify(obj);
+    var jsonStr = format != false ? JSON.stringify(obj, null, 2).replace(/\\\\/g, "\\") : JSON.stringify(obj, null).replace(/\\\\/g, "\\");
     if (replace != false) {
         jsonStr = jsonStr.replace(/"/g, '\'');
     }
@@ -47,6 +47,17 @@ var esBuckets = [
         name: "number_range",
         body: {
             range: { field: '<columnname>', ranges: [{to: 10000}, {from: 10000, to: 30000}, {from: 30000}] }
+        }
+    },
+    {
+        name: "number_hist",
+        body: {
+            histogram : {
+                field: '<columnname>',
+                interval: 50,
+                min_doc_count: 1,
+                missing: 0
+            }
         }
     }
 ];
@@ -78,32 +89,43 @@ var esFilter = {
     }
 };
 
+var cbEsAggComList = cbObj2Array(esFilter).map(function(filter) {
+    return {
+        meta: "es-agg",
+        caption: filter.name + " Agg",
+        value: cbAceStringify({
+            column: '<agg_column>',
+            filter: filter.body
+        }, '"')
+    };
+});
+
+cbEsAggComList.push({
+    meta: "es-agg",
+    caption: "Not Equal Agg",
+    value: cbAceStringify({
+        column: '<agg_column>',
+        filter: {
+            bool: {
+                must_not: esFilter.termFilter
+            }
+        }
+    }, '"')
+});
+
+cbEsAggComList.push({
+    meta: "es-agg",
+    caption: "Inline Script Agg",
+    value: cbAceStringify({
+        column: '<agg_column>',
+        script: {
+            inline: 'if(doc[\\\'column_name\'].value==\\\'F\\\') {1} else {0}'
+        }
+    }, '"')
+});
+
 var cbEsExpAggCompleter = {
     getCompletions: function(editor, session, pos, prefix, callback) {
-
-        var cbEsAggComList = cbObj2Array(esFilter).map(function(filter) {
-            return {
-                meta: "es-agg",
-                caption: filter.name + " Agg",
-                value: cbAceStringify({
-                    column: '<agg_column>',
-                    filter: filter.body
-                }, '"')
-            };
-        });
-
-        cbEsAggComList.push({
-                meta: "es-agg",
-                caption: "Not Equal Agg",
-                value: cbAceStringify({
-                    column: '<agg_column>',
-                    filter: {
-                        bool: {
-                            must_not: esFilter.termFilter
-                        }
-                    }
-                }, '"')
-        });
         callback(null, cbEsAggComList);
     }
 };

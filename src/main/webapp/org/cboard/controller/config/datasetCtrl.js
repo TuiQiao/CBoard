@@ -300,6 +300,7 @@ cBoard.controller('datasetCtrl', function ($scope, $http, dataService, $uibModal
             templateUrl: 'org/cboard/view/config/modal/exp.html',
             windowTemplateUrl: 'org/cboard/view/util/modal/window.html',
             backdrop: false,
+            size: 'lg',
             controller: function ($scope, $uibModalInstance) {
                 $scope.data = data;
                 $scope.selects = selects;

@@ -91,25 +91,26 @@
                                 </div>
                             </div>
                             <div class="row" ng-show="selects">
-                                <div class="col-md-7">
+                                <div class="col-md-6">
                                     <div class="form-control" style="min-height: 200px;height: auto;padding: 0px; border: 2px dashed #d2d6de">
                                         <span ng-repeat="o in selects"
                                               class="btn btn-default btn-sm" style="margin: 3px 3px;"
                                               dnd-draggable="{type: 'column', column: o}" dnd-type="'column'" ng-click="curDataset.data.schema.dimension.push({type: 'column', column: o})">{{o}}</span>
                                     </div>
                                 </div>
-                                <div class="col-md-5">
-                                    <div class="tree tree-bg-dragin">
+                                <div class="col-md-6">
+                                    <div class="tree tree-bg-dragin" style="max-height: 700px; overflow: auto;">
                                         <ul style="padding-left: 5px">
                                             <li class="parent_li">
                                                 <span>
                                                     <img src="imgs/schema/dimension.gif">
                                                     <b>{{'CONFIG.DATASET.DIMENSION'|translate}}</b>
                                                 </span>
-                                                <i class="glyphicon glyphicon-plus"
-                                                   ng-click="curDataset.data.schema.dimension.push({type: 'level', alias: hierarchy, columns: []})"
-                                                   title="{{'CONFIG.DATASET.TIP_ADD_HIERARCHY'|translate}}">
-                                                </i>
+                                                <img src="imgs/schema/hierarchy_add.png"
+                                                     ng-click="curDataset.data.schema.dimension.push({type: 'level', alias: hierarchy, columns: []})"
+                                                     title="{{'CONFIG.DATASET.TIP_ADD_HIERARCHY'|translate}}"
+                                                     style="cursor: pointer"
+                                                     />
                                                 <ul dnd-list="curDataset.data.schema.dimension"
                                                     dnd-allowed-types="['column','level']">
                                                     <li class="dndPlaceholder"><span class="sort-highlight btn btn-default btn-xs">+</span></li>
@@ -182,7 +183,10 @@
                                         </ul>
                                         <ul style="padding-left: 5px">
                                             <li class="parent_li">
-                                                <span><b>{{'CONFIG.COMMON.CUSTOM_EXPRESSION'|translate}}</b></span>
+                                                <span>
+                                                    <img src="imgs/schema/measure.gif"/>
+                                                    <b>{{'CONFIG.COMMON.CUSTOM_EXPRESSION'|translate}}</b>
+                                                </span>
                                                 <i class="glyphicon glyphicon-plus" ng-click="editExp()"></i>
                                                 <ul>
                                                     <li ng-repeat="o in curDataset.data.expressions">
@@ -195,11 +199,14 @@
                                         </ul>
                                         <ul style="padding-left: 5px">
                                             <li class="parent_li">
-                                                <span><b>{{'COMMON.FILTER_GROUP'|translate}}</b></span>
+                                                <span>
+                                                    <img src="imgs/schema/filter.png"/>
+                                                    <b>{{'COMMON.FILTER_GROUP'|translate}}</b>
+                                                </span>
                                                 <i class="glyphicon glyphicon-plus" ng-click="editFilterGroup()"></i>
                                                 <ul>
                                                     <li ng-repeat="o in curDataset.data.filters">
-                                                        <span dnd-draggable="o" dnd-type="'filterGroup'"><img src="imgs/schema/bullet_red.png">{{o.group}}</span>
+                                                        <span dnd-draggable="o" dnd-type="'filterGroup'"><img src="imgs/schema/bullet_green.png">{{o.group}}</span>
                                                         <i class="fa fa-edit" ng-click="editFilterGroup(o)"></i>
                                                         <i class="fa fa-trash-o"  ng-click="curDataset.data.filters.splice($index, 1)"></i>
                                                     </li>
@@ -231,6 +238,4 @@
             </div>
         </div>
     </div>
-</div>
-
 </div>

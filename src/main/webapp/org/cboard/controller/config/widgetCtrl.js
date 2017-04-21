@@ -279,7 +279,7 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
                     return ds.id == $scope.curWidget.datasetId;
                 }).data.filters;
                 if (fg) {
-                    _.each(fg,function(e){
+                    _.each(fg, function (e) {
                         $scope.curWidget.filterGroups.push(e);
                     });
                 }
@@ -287,13 +287,13 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
         };
 
         $scope.isDsExpression = function (o) {
-            if ($scope.customDs){
+            if ($scope.customDs) {
                 return false;
-            }else{
+            } else {
                 var dsExp = angular.copy(_.find($scope.datasetList, function (ds) {
                     return ds.id == $scope.curWidget.datasetId;
                 }).data.expressions);
-                var exp = _.find(dsExp,function(e){
+                var exp = _.find(dsExp, function (e) {
                     return o.alias == e.alias;
                 });
                 return !_.isUndefined(exp);
@@ -301,13 +301,13 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
         };
 
         $scope.isDsFilter = function (o) {
-            if ($scope.customDs){
+            if ($scope.customDs) {
                 return false;
-            }else{
+            } else {
                 var fg = angular.copy(_.find($scope.datasetList, function (ds) {
                     return ds.id == $scope.curWidget.datasetId;
                 }).data.filters);
-                var f = _.find(fg,function(e){
+                var f = _.find(fg, function (e) {
                     return o.group == e.group;
                 });
                 return !_.isUndefined(f);
@@ -320,7 +320,7 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
                     return ds.id == $scope.curWidget.datasetId;
                 }).data.expressions;
                 if (dsExp) {
-                    _.each(dsExp,function(e){
+                    _.each(dsExp, function (e) {
                         $scope.curWidget.expressions.push(e);
                     });
                 }
@@ -794,13 +794,35 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
             return !(keys || groups);
         };
 
+        $scope.filterExpressions = function (e) {
+            var result = false;
+            _.each($scope.curWidget.config.values, function (v) {
+                _.each(v.cols, function (c) {
+                    if (c.type == 'exp' && e.alias == c.alias) {
+                        result = true;
+                    }
+                });
+            });
+            return !result;
+        };
+
+        $scope.filterFilterGroup = function (e) {
+            var result = false;
+            _.each($scope.curWidget.config.filters, function (f) {
+                if (f.group && e.group == f.group) {
+                    result = true;
+                }
+            });
+            return !result;
+        };
+
         var buildSchema = function () {
             var loadFromDataset = false;
             if (!$scope.customDs) {
                 $scope.dataset = _.find($scope.datasetList, function (ds) {
                     return ds.id == $scope.curWidget.datasetId;
                 });
-                if ($scope.dataset.data.schema) {
+                if ($scope.dataset.data.schema && ($scope.dataset.data.schema.measure.length > 0 || $scope.dataset.data.schema.dimension.length > 0)) {
                     loadFromDataset = true;
                 }
             }

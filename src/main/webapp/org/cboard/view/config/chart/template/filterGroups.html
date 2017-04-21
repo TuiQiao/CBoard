@@ -4,7 +4,7 @@
         <div class="form-control" style="min-height: 35px;height: auto;padding: 0px">
             <div ng-repeat="o in curWidget.filterGroups" dnd-draggable="o" dnd-effect-allowed="move" dnd-type="'filterGroup'"
                  class="btn-group" style="cursor: move;margin: 3px 3px;">
-                <button type="button" class="btn btn-warning btn-sm" >
+                <button type="button" class="btn btn-warning btn-sm">
                     {{o.group}}
                 </button>
                 <button type="button" class="btn btn-warning btn-sm dropdown-toggle" ng-click="editFilterGroup(o)" ng-if="!isDsFilter(o)">

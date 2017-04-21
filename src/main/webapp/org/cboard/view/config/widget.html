@@ -4,13 +4,14 @@
     <div class="row">
         <div class="col-md-3">
             <div class="box box-solid" ng-class="{true:'collapsed-box'}[schema?true:false]">
-                <div class="box-header with-border" data-widget="collapse" style="cursor: pointer;">
+                <div class="box-header with-border" style="cursor: pointer;">
                     <i class="fa fa-bar-chart-o"></i> <h3 class="box-title"> {{'CONFIG.WIDGET.WIDGET'|translate}}</h3>
                     <div class="box-tools pull-right">
                         <i class="glyphicon glyphicon-plus toolbar-icon" ng-click="newWgt()" title="{{'COMMON.NEW'|translate}}"></i>&nbsp;&nbsp;
                         <i class="fa fa-copy toolbar-icon" ng-click="copyNode()" title="{{'COMMON.COPY'|translate}}"></i>&nbsp;&nbsp;
                         <i class="fa fa-edit toolbar-icon" ng-click="editNode()" title="{{'COMMON.EDIT'|translate}}"></i>&nbsp;&nbsp;
-                        <i class="fa fa-trash-o toolbar-icon"  ng-click="deleteNode()" title="{{'COMMON.DELETE'|translate}}"></i>
+                        <i class="fa fa-trash-o toolbar-icon"  ng-click="deleteNode()" title="{{'COMMON.DELETE'|translate}}"></i>&nbsp;&nbsp;
+                        <i class="fa fa-reorder toolbar-icon" data-widget="collapse"></i>
                     </div>
                 </div>
                 <div class="box-body">

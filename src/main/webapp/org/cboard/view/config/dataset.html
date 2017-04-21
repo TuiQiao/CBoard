@@ -82,82 +82,6 @@
                                 <div class="col-md-12">
                                     <div class="form-group">
                                         <label class="col-sm-2 control-label">
-                                            {{'CONFIG.COMMON.CUSTOM_EXPRESSION'|translate}}
-                                        </label>
-                                        <div class="col-sm-10">
-                                            <div class="input-group">
-                                                <div class="form-control"
-                                                     style="min-height: 38px;height: auto;padding: 0px">
-                                                    <div ng-repeat="o in curDataset.data.expressions" class="btn-group"
-                                                         style="margin: 3px 3px;">
-                                                        <button type="button" class="btn btn-primary btn-sm"
-                                                                style="cursor: move;">
-                                                            {{o.alias?o.alias:o.exp}}
-                                                        </button>
-                                                        <button type="button"
-                                                                class="btn btn-primary btn-sm dropdown-toggle"
-                                                                ng-click="editExp(o)">
-                                                            <span class="fa fa-edit"></span>
-                                                        </button>
-                                                        <button type="button"
-                                                                class="btn btn-primary btn-sm dropdown-toggle"
-                                                                ng-click="curDataset.data.expressions.splice($index, 1)">
-                                                            <span class="fa fa-trash-o"></span>
-                                                        </button>
-                                                    </div>
-                                                </div>
-                                                <div class="input-group-btn">
-                                                    <button type="button" class="btn btn-info" ng-click="editExp()"
-                                                            style="min-height: 38px;">{{'CONFIG.DATASET.ADD'|translate}}
-                                                    </button>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="row" ng-show="selects">
-                                <div class="col-md-12">
-                                    <div class="form-group">
-                                        <label class="col-sm-2 control-label">
-                                            {{'COMMON.FILTER_GROUP'|translate}}
-                                        </label>
-                                        <div class="col-sm-10">
-                                            <div class="input-group">
-                                                <div class="form-control"
-                                                     style="min-height: 38px;height: auto;padding: 0px">
-                                                    <div ng-repeat="o in curDataset.data.filters" class="btn-group"
-                                                         style="margin: 3px 3px;">
-                                                        <button type="button" class="btn btn-warning btn-sm"
-                                                                style="cursor: move;">
-                                                            {{o.group}}
-                                                        </button>
-                                                        <button type="button"
-                                                                class="btn btn-warning btn-sm dropdown-toggle"
-                                                                ng-click="editFilterGroup(o)">
-                                                            <span class="fa fa-edit"></span>
-                                                        </button>
-                                                        <button type="button"
-                                                                class="btn btn-warning btn-sm dropdown-toggle"
-                                                                ng-click="curDataset.data.filters.splice($index, 1)">
-                                                            <span class="fa fa-trash-o"></span>
-                                                        </button>
-                                                    </div>
-                                                </div>
-                                                <div class="input-group-btn">
-                                                    <button type="button" class="btn btn-info" ng-click="editFilterGroup()"
-                                                            style="min-height: 38px;">{{'CONFIG.DATASET.ADD'|translate}}
-                                                    </button>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="row" ng-show="selects">
-                                <div class="col-md-12">
-                                    <div class="form-group">
-                                        <label class="col-sm-2 control-label">
                                             {{'CONFIG.DATASET.REAL_TIME_INTERVAL'|translate}}
                                         </label>
                                         <div class="col-sm-10">
@@ -252,6 +176,32 @@
                                                            ng-click="curDataset.data.schema.measure.splice($index, 1)"></i>
                                                         <i class="fa fa-exchange" title="{{'CONFIG.DATASET.TIP_SWITCH_TO_DIMENSION'|translate}}"
                                                            ng-click="curDataset.data.schema.measure.splice($index, 1);curDataset.data.schema.dimension.push(o)"></i>
+                                                    </li>
+                                                </ul>
+                                            </li>
+                                        </ul>
+                                        <ul style="padding-left: 5px">
+                                            <li class="parent_li">
+                                                <span><b>{{'CONFIG.COMMON.CUSTOM_EXPRESSION'|translate}}</b></span>
+                                                <i class="glyphicon glyphicon-plus" ng-click="editExp()"></i>
+                                                <ul>
+                                                    <li ng-repeat="o in curDataset.data.expressions">
+                                                        <span dnd-draggable="o" dnd-type="'exp'"><img src="imgs/schema/bullet_red.png">{{o.alias}}</span>
+                                                        <i class="fa fa-edit" ng-click="editExp(o)"></i>
+                                                        <i class="fa fa-trash-o"  ng-click="curDataset.data.expressions.splice($index, 1)"></i>
+                                                    </li>
+                                                </ul>
+                                            </li>
+                                        </ul>
+                                        <ul style="padding-left: 5px">
+                                            <li class="parent_li">
+                                                <span><b>{{'COMMON.FILTER_GROUP'|translate}}</b></span>
+                                                <i class="glyphicon glyphicon-plus" ng-click="editFilterGroup()"></i>
+                                                <ul>
+                                                    <li ng-repeat="o in curDataset.data.filters">
+                                                        <span dnd-draggable="o" dnd-type="'filterGroup'"><img src="imgs/schema/bullet_red.png">{{o.group}}</span>
+                                                        <i class="fa fa-edit" ng-click="editFilterGroup(o)"></i>
+                                                        <i class="fa fa-trash-o"  ng-click="curDataset.data.filters.splice($index, 1)"></i>
                                                     </li>
                                                 </ul>
                                             </li>

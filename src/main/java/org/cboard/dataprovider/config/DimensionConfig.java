@@ -5,7 +5,7 @@ import java.util.List;
 /**
  * Created by yfyuan on 2017/1/17.
  */
-public class DimensionConfig {
+public class DimensionConfig extends ConfigComponent {
     private String columnName;
     private String filterType;
     private List<String> values;

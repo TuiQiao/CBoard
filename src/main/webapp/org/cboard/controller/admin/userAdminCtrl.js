@@ -41,37 +41,40 @@ cBoard.controller('userAdminCtrl', function ($scope, $http, ModalUtils, $filter)
         id: 'Menu',
         text: translate('ADMIN.MENU'),
         parent: '#',
-        icon: 'fa fa-fw fa-folder-o',
+        /*icon: 'fa fa-fw fa-folder-o',*/
         state: {disabled: true}
     }];
     $scope.tree.board.resList = [{
         id: 'Dashboard',
         text: translate('ADMIN.BOARD'),
-        parent: '#', icon: 'fa fa-fw fa-folder-o',
+        parent: '#',
+        /*icon: 'fa fa-fw fa-folder-o',*/
         state: {disabled: true}
     }];
     $scope.tree.datasource.resList = [{
         id: 'Datasource',
         text: translate('ADMIN.DATASOURCE'),
-        parent: '#', icon: 'fa fa-fw fa-folder-o',
+        parent: '#',
+        /*icon: 'fa fa-fw fa-folder-o',*/
         state: {disabled: true}
     }];
     $scope.tree.dataset.resList = [{
-        id: 'Dataset', text: translate('ADMIN.DATASET'), parent: '#', icon: 'fa fa-fw fa-folder-o',
+        id: 'Dataset', text: translate('ADMIN.DATASET'), parent: '#',
+        /*icon: 'fa fa-fw fa-folder-o',*/
         state: {disabled: true}
     }];
     $scope.tree.widget.resList = [{
         id: 'Widget',
         text: translate('ADMIN.WIDGET'),
         parent: '#',
-        icon: 'fa fa-fw fa-folder-o',
+        /*icon: 'fa fa-fw fa-folder-o',*/
         state: {disabled: true}
     }];
     $scope.tree.job.resList = [{
         id: 'Job',
         text: translate('ADMIN.JOB'),
         parent: '#',
-        icon: 'fa fa-fw fa-folder-o',
+        /*icon: 'fa fa-fw fa-folder-o',*/
         state: {disabled: true}
     }];
 
@@ -180,7 +183,7 @@ cBoard.controller('userAdminCtrl', function ($scope, $http, ModalUtils, $filter)
                             "id": 'parent' + '_' + type + '_' + newParentId,
                             "parent": parent,
                             "text": a,
-                            icon: 'fa fa-fw fa-folder-o'
+                            /*icon: 'fa fa-fw fa-folder-o'*/
                         });
                     }
                     parent = 'parent' + '_' + type + '_' + newParentId;

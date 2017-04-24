@@ -92,7 +92,7 @@ cBoard.controller('shareResCtrl', function ($scope, $http, ModalUtils, $filter) 
                             "id": 'parent' + '_' + type + '_' + newParentId,
                             "parent": parent,
                             "text": a,
-                            icon: 'fa fa-fw fa-folder-o',
+                            /*icon: 'fa fa-fw fa-folder-o',*/
                             state: {disabled: true}
                         });
                     }

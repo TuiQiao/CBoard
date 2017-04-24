@@ -143,7 +143,36 @@
                 <!-- /.box-footer-->
             </div>
             <div class="col-md-12" ng-show="optFlag == 'selectRes'">
-                <div js-tree="treeConfig" ng-model="resList" tree="treeInstance" style="height: 590px; overflow: auto;" ></div>
+                <div class="nav-tabs-custom">
+                    <ul class="nav nav-tabs">
+                        <li class="active"><a ng-click="tab='menu'" data-toggle="tab" aria-expanded="true">{{'ADMIN.MENU'|translate}}</a></li>
+                        <li class=""><a ng-click="tab='board'" data-toggle="tab" aria-expanded="false">{{'ADMIN.BOARD'|translate}}</a></li>
+                        <li class=""><a ng-click="tab='datasource'" data-toggle="tab" aria-expanded="false">{{'ADMIN.DATASOURCE'|translate}}</a></li>
+                        <li class=""><a ng-click="tab='dataset'" data-toggle="tab" aria-expanded="false">{{'ADMIN.DATASET'|translate}}</a></li>
+                        <li class=""><a ng-click="tab='widget'" data-toggle="tab" aria-expanded="false">{{'ADMIN.WIDGET'|translate}}</a></li>
+                        <li class=""><a ng-click="tab='job'" data-toggle="tab" aria-expanded="false">{{'ADMIN.JOB'|translate}}</a></li>
+                    </ul>
+                    <div class="tab-content">
+                        <div class="tab-pane" ng-class="{'menu': 'active'}[tab]">
+                            <div js-tree="treeMenuConfig" ng-model="tree.menu.resList" tree="tree.menu.treeInstance" style="height: 590px; overflow: auto;" ></div>
+                        </div>
+                        <div class="tab-pane" ng-class="{'board': 'active'}[tab]">
+                            <div js-tree="treeConfig" ng-model="tree.board.resList" tree="tree.board.treeInstance" style="height: 590px; overflow: auto;" ></div>
+                        </div>
+                        <div class="tab-pane" ng-class="{'datasource': 'active'}[tab]">
+                            <div js-tree="treeConfig" ng-model="tree.datasource.resList" tree="tree.datasource.treeInstance" style="height: 590px; overflow: auto;" ></div>
+                        </div>
+                        <div class="tab-pane" ng-class="{'dataset': 'active'}[tab]">
+                            <div js-tree="treeConfig" ng-model="tree.dataset.resList" tree="tree.dataset.treeInstance" style="height: 590px; overflow: auto;" ></div>
+                        </div>
+                        <div class="tab-pane" ng-class="{'widget': 'active'}[tab]">
+                            <div js-tree="treeConfig" ng-model="tree.widget.resList" tree="tree.widget.treeInstance" style="height: 590px; overflow: auto;" ></div>
+                        </div>
+                        <div class="tab-pane" ng-class="{'job': 'active'}[tab]">
+                            <div js-tree="treeConfig" ng-model="tree.job.resList" tree="tree.job.treeInstance" style="height: 590px; overflow: auto;" ></div>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>

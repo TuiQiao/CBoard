@@ -39,7 +39,7 @@
     </ul>
     <ul style="padding-left: 5px">
         <li class="parent_li">
-            <span><b>表达式指标</b></span>
+            <span><img src="imgs/schema/measure.gif"/><b>{{'CONFIG.COMMON.CUSTOM_EXPRESSION'|translate}}</b></span>
             <i class="glyphicon glyphicon-plus" ng-click="editExp()"></i>
             <ul>
                 <li ng-repeat="o in curWidget.expressions|filter:filterExpressions">
@@ -52,11 +52,11 @@
     </ul>
     <ul style="padding-left: 5px">
         <li class="parent_li">
-            <span><b>过滤器</b></span>
+            <span><img src="imgs/schema/filter.png"/><b>{{'CONFIG.DATASET.FILTER'|translate}}</b></span>
             <i class="glyphicon glyphicon-plus" ng-click="editFilterGroup()"></i>
             <ul>
                 <li ng-repeat="o in curWidget.filterGroups|filter:filterFilterGroup">
-                    <span dnd-draggable="o" dnd-type="'filterGroup'"><img src="imgs/schema/bullet_red.png">{{o.group}}</span>
+                    <span dnd-draggable="o" dnd-type="'filterGroup'"><img src="imgs/schema/bullet_green.png">{{o.group}}</span>
                     <i class="fa fa-edit" ng-click="editFilterGroup(o)" ng-if="!isDsFilter(o)"></i>
                     <i class="fa fa-trash-o"  ng-click="curWidget.filterGroups.splice($index, 1)" ng-if="!isDsFilter(o)"></i>
                 </li>

@@ -195,6 +195,7 @@
       "DIMENSION": "Dimension",
       "HIERARCHY": "Hierarchy",
       "MEASURE": "Measure",
+      "FILTER": "Filter",
       "UNCLASSIFY": "Selects",
       "TIP_EDIT_ALIAS": "Alias",
       "TIP_ADD_HIERARCHY": "Add Hierarchy",

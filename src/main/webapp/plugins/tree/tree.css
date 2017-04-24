@@ -18,6 +18,10 @@
     min-height: 10px;
 }
 
+.tree i {
+    cursor: pointer;
+}
+
 .tree li {
     list-style-type: none;
     margin: 0;

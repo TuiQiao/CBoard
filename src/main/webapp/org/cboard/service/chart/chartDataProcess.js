@@ -6,7 +6,8 @@ var chartDataProcess = function(chartConfig,casted_keys, casted_values, aggregat
     var keysList = casted_keys,
         keyArr = [],
         emptyList = [],
-        keyLength = chartConfig.keys.length;
+        keyLength = chartConfig.keys.length,
+        rowHeaderLength = keysList[0] ? keysList[0].length : 0;
     Array.matrix = function (numrows, numcols, initial) {
         var arr = [];
         for (var a = 0; a < numrows; ++a) {
@@ -18,8 +19,8 @@ var chartDataProcess = function(chartConfig,casted_keys, casted_values, aggregat
         }
         return arr;
     };
-    var table_data = Array.matrix(keysList.length, keysList[0].length, 0);
-    for (var h = 0; h < keysList[0].length; h++) {
+    var table_data = Array.matrix(keysList.length, rowHeaderLength, 0);
+    for (var h = 0; h < rowHeaderLength; h++) {
         for (var k = 0; k < keysList.length; k++) {
             table_data[k][h] = {
                 property: 'header_key',

@@ -7,6 +7,7 @@ import com.googlecode.aviator.AviatorEvaluator;
 import org.cboard.dataprovider.aggregator.Aggregatable;
 import org.cboard.dataprovider.aggregator.InnerAggregator;
 import org.cboard.dataprovider.config.AggConfig;
+import org.cboard.dataprovider.config.ConfigComponent;
 import org.cboard.dataprovider.config.DimensionConfig;
 import org.cboard.dataprovider.expression.NowFunction;
 import org.cboard.dataprovider.result.AggregateResult;
@@ -106,8 +107,12 @@ public abstract class DataProvider {
         if (ac == null) {
             return;
         }
-        Consumer<DimensionConfig> evaluator = (e) ->
-                e.setValues(e.getValues().stream().map(v -> getFilterValue(v)).collect(Collectors.toList()));
+        Consumer<ConfigComponent> evaluator = (e) -> {
+            if (e instanceof DimensionConfig) {
+                DimensionConfig dc = (DimensionConfig) e;
+                dc.setValues(dc.getValues().stream().map(v -> getFilterValue(v)).collect(Collectors.toList()));
+            }
+        };
         ac.getFilters().forEach(evaluator);
         ac.getColumns().forEach(evaluator);
         ac.getRows().forEach(evaluator);

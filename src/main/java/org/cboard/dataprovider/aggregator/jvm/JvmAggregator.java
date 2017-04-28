@@ -100,7 +100,7 @@ public class JvmAggregator extends InnerAggregator {
         dimensionList.forEach(e -> e.setIndex(columnIndex.get(e.getName())));
         valuesList.forEach(e -> e.setIndex(columnIndex.get(e.getName())));
 
-        Map<Dimensions, Double[]> grouped = Arrays.stream(data).parallel().skip(1).filter(rowFilter::filter)
+        Map<Dimensions, Double[]> grouped = Arrays.stream(data).skip(1).filter(rowFilter::filter)
                 .collect(Collectors.groupingBy(row -> {
                     String[] ds = dimensionList.stream().map(d -> row[d.getIndex()]).toArray(String[]::new);
                     return new Dimensions(ds);

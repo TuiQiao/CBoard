@@ -20,9 +20,7 @@ import org.cboard.dataprovider.aggregator.Aggregatable;
 import org.cboard.dataprovider.annotation.DatasourceParameter;
 import org.cboard.dataprovider.annotation.ProviderName;
 import org.cboard.dataprovider.annotation.QueryParameter;
-import org.cboard.dataprovider.config.AggConfig;
-import org.cboard.dataprovider.config.DimensionConfig;
-import org.cboard.dataprovider.config.ValueConfig;
+import org.cboard.dataprovider.config.*;
 import org.cboard.dataprovider.result.AggregateResult;
 import org.cboard.dataprovider.result.ColumnIndex;
 import org.slf4j.Logger;
@@ -91,11 +89,32 @@ public class ElasticsearchDataProvider extends DataProvider implements Aggregata
     private JSONArray getFilter(AggConfig config) {
         Stream<DimensionConfig> c = config.getColumns().stream();
         Stream<DimensionConfig> r = config.getRows().stream();
-        Stream<DimensionConfig> f = config.getFilters().stream();
-        Stream<DimensionConfig> filters = Stream.concat(Stream.concat(c, r), f);
+        Stream<ConfigComponent> f = config.getFilters().stream();
+        Stream<ConfigComponent> filters = Stream.concat(Stream.concat(c, r), f);
         JSONArray result = new JSONArray();
-        filters.map(e -> getFilterPart(e)).filter(e -> e != null).forEach(result::add);
+        filters.map(e -> configComponentToFilter(e)).filter(e -> e != null).forEach(result::add);
         return result;
+    }
+
+    private JSONObject configComponentToFilter(ConfigComponent cc) {
+        if (cc instanceof DimensionConfig) {
+            return getFilterPart((DimensionConfig) cc);
+        } else if (cc instanceof CompositeConfig) {
+            CompositeConfig compositeConfig = (CompositeConfig) cc;
+            JSONObject result = new JSONObject();
+            result.put("bool", new JSONObject());
+            String bool = "must";
+            if ("AND".equalsIgnoreCase(compositeConfig.getType())) {
+                bool = "must";
+            } else if ("OR".equalsIgnoreCase(compositeConfig.getType())) {
+                bool = "should";
+            }
+            result.getJSONObject("bool").put(bool, new JSONArray());
+            JSONArray boolArr = result.getJSONObject("bool").getJSONArray(bool);
+            compositeConfig.getConfigComponents().stream().map(e -> configComponentToFilter(e)).forEach(boolArr::add);
+            return result;
+        }
+        return null;
     }
 
     private JSONObject getFilterPart(DimensionConfig config) {

@@ -292,7 +292,7 @@ public class DashboardController {
             JSONObject queryO = JSONObject.parseObject(query);
             strParams = Maps.transformValues(queryO, Functions.toStringFunction());
         }
-        AggConfig config = JSONObject.parseObject(cfg, AggConfig.class);
+        AggConfig config = ViewAggConfig.getAggConfig(JSONObject.parseObject(cfg, ViewAggConfig.class));
         return dataProviderService.getDimensionValues(datasourceId, strParams, datasetId, colmunName, config, reload);
     }
 
@@ -315,7 +315,7 @@ public class DashboardController {
             JSONObject queryO = JSONObject.parseObject(query);
             strParams = Maps.transformValues(queryO, Functions.toStringFunction());
         }
-        AggConfig config = JSONObject.parseObject(cfg, AggConfig.class);
+        AggConfig config = ViewAggConfig.getAggConfig(JSONObject.parseObject(cfg, ViewAggConfig.class));
         return dataProviderService.queryAggData(datasourceId, strParams, datasetId, config, reload);
     }
 
@@ -326,7 +326,7 @@ public class DashboardController {
             JSONObject queryO = JSONObject.parseObject(query);
             strParams = Maps.transformValues(queryO, Functions.toStringFunction());
         }
-        AggConfig config = JSONObject.parseObject(cfg, AggConfig.class);
+        AggConfig config = ViewAggConfig.getAggConfig(JSONObject.parseObject(cfg, ViewAggConfig.class));
         return new String[]{dataProviderService.viewAggDataQuery(datasourceId, strParams, datasetId, config)};
     }
 

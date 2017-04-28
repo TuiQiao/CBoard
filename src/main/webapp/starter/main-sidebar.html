@@ -21,7 +21,7 @@
                 <span class="pull-right-container"><i class="fa fa-angle-left pull-right"></i></span>
             </a>
             <ul class="treeview-menu">
-                <li ui-sref-active="active" ng-repeat="c in categoryList">
+                <li ui-sref-active="active" ng-repeat="c in categoryList | hasBoards : boardList">
                     <a>
                         <i class="fa fa-folder"></i>
                             {{c.name}}
@@ -30,7 +30,7 @@
                         </span>
                     </a>
                     <ul class="treeview-menu">
-                        <li ui-sref-active="active" ng-repeat="b in boardList | filter:{categoryId:c.id}">
+                        <li ui-sref-active="active" ng-repeat="b in boardList | filter:{categoryId:c.id}:true">
                             <a ui-sref="dashboard.category.view({id:b.id,category:c.name})"><i class="fa fa-dashboard"></i>{{b.name}}</a>
                         </li>
                     </ul>

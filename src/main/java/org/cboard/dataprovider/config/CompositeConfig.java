@@ -7,15 +7,24 @@ import java.util.Iterator;
  * Created by zyong on 2017/4/24.
  */
 public class CompositeConfig extends ConfigComponent {
-    ArrayList<ConfigComponent> configComponents = new ArrayList<ConfigComponent>();
 
-    @Override
-    public void print() {
-        Iterator<ConfigComponent> iterator = configComponents.iterator();
-        while (iterator.hasNext()) {
-            ConfigComponent menuComponent = (ConfigComponent) iterator.next();
-            System.out.println(" AND ");
-            menuComponent.print();
-        }
+    private String type;
+
+    private ArrayList<ConfigComponent> configComponents = new ArrayList<ConfigComponent>();
+
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
+    }
+
+    public ArrayList<ConfigComponent> getConfigComponents() {
+        return configComponents;
+    }
+
+    public void setConfigComponents(ArrayList<ConfigComponent> configComponents) {
+        this.configComponents = configComponents;
     }
 }

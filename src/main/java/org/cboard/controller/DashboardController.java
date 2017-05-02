@@ -94,11 +94,8 @@ public class DashboardController {
 
     @RequestMapping(value = "/getDatasourceList")
     public List<ViewDashboardDatasource> getDatasourceList() {
-
         String userid = authenticationService.getCurrentUser().getUserId();
-
-        List<DashboardDatasource> list = datasourceDao.getDatasourceList(userid);
-        return Lists.transform(list, ViewDashboardDatasource.TO);
+        return datasourceService.getViewDatasourceList(() -> datasourceDao.getDatasourceList(userid));
     }
 
     @RequestMapping(value = "/getProviderList")

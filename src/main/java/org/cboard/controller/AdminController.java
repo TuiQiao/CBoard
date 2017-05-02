@@ -8,6 +8,7 @@ import org.cboard.dto.*;
 import org.cboard.pojo.*;
 import org.cboard.services.AdminSerivce;
 import org.cboard.services.AuthenticationService;
+import org.cboard.services.DatasourceService;
 import org.cboard.services.MenuService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -55,6 +56,8 @@ public class AdminController {
     private WidgetDao widgetDao;
     @Autowired
     private MenuService menuService;
+    @Autowired
+    private DatasourceService datasourceService;
 
 
     @RequestMapping(value = "/saveNewUser")
@@ -214,8 +217,7 @@ public class AdminController {
     @RequestMapping(value = "/getDatasourceList")
     public List<ViewDashboardDatasource> getDatasourceList() {
         String userid = authenticationService.getCurrentUser().getUserId();
-        List<DashboardDatasource> list = datasourceDao.getDatasourceListAdmin(userid);
-        return Lists.transform(list, ViewDashboardDatasource.TO);
+        return datasourceService.getViewDatasourceList(() -> datasourceDao.getDatasourceListAdmin(userid));
     }
 
     @RequestMapping(value = "/getMenuList")

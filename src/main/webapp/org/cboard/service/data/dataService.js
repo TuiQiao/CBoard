@@ -18,7 +18,7 @@ cBoard.service('dataService', function ($http, $q, updateService) {
     };
 
     var linkDataset = function (datasetId, chartConfig) {
-        if (_.isUndefined(datasetId)) {
+        if (_.isUndefined(datasetId) || _.isUndefined(chartConfig)) {
             var deferred = $q.defer();
             deferred.resolve();
             return deferred.promise;
@@ -78,10 +78,13 @@ cBoard.service('dataService', function ($http, $q, updateService) {
     this.getDimensionValues = function (datasource, query, datasetId, colmunName, chartConfig, callback) {
         chartConfig = angular.copy(chartConfig);
         linkDataset(datasetId, chartConfig).then(function () {
-            var cfg = {rows: [], columns: [], filters: []};
-            cfg.rows = getDimensionConfig(chartConfig.keys);
-            cfg.columns = getDimensionConfig(chartConfig.groups);
-            cfg.filters = getDimensionConfig(chartConfig.filters);
+            var cfg = undefined;
+            if(chartConfig){
+                cfg = {rows: [], columns: [], filters: []};
+                cfg.rows = getDimensionConfig(chartConfig.keys);
+                cfg.columns = getDimensionConfig(chartConfig.groups);
+                cfg.filters = getDimensionConfig(chartConfig.filters);
+            }
 
             $http.post("dashboard/getDimensionValues.do", {
                 datasourceId: datasource,
@@ -90,7 +93,7 @@ cBoard.service('dataService', function ($http, $q, updateService) {
                 colmunName: colmunName,
                 cfg: angular.toJson(cfg),
             }).success(function (response) {
-                callback(response[0], response[1]);
+                callback(response);
             });
         });
     };

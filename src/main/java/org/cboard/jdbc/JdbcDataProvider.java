@@ -186,46 +186,33 @@ public class JdbcDataProvider extends DataProvider implements Aggregatable, Init
     }
 
     @Override
-    public String[][] queryDimVals(String columnName, AggConfig config) throws Exception {
+    public String[] queryDimVals(String columnName, AggConfig config) throws Exception {
         String fsql = null;
         String exec = null;
         String sql = getAsSubQuery(query.get(SQL));
         List<String> filtered = new ArrayList<>();
-        List<String> nofilter = new ArrayList<>();
+        String whereStr = "";
         if (config != null) {
             Stream<DimensionConfig> c = config.getColumns().stream();
             Stream<DimensionConfig> r = config.getRows().stream();
             Stream<ConfigComponent> f = config.getFilters().stream();
             Stream<ConfigComponent> filters = Stream.concat(Stream.concat(c, r), f);
-            String whereStr = assembleSqlFilter(filters, "WHERE");
-            fsql = "SELECT __view__.%s FROM (%s) __view__ %s GROUP BY __view__.%s";
-            exec = String.format(fsql, columnName, sql, whereStr, columnName);
-            LOG.info(exec);
-            try (Connection connection = getConnection();
-                 Statement stat = connection.createStatement();
-                 ResultSet rs = stat.executeQuery(exec)) {
-                while (rs.next()) {
-                    filtered.add(rs.getString(1));
-                }
-            } catch (Exception e) {
-                LOG.error("ERROR:" + e.getMessage());
-                throw new Exception("ERROR:" + e.getMessage(), e);
-            }
+            whereStr = assembleSqlFilter(filters, "WHERE");
         }
-        fsql = "SELECT __view__.%s FROM (%s) __view__ GROUP BY __view__.%s";
-        exec = String.format(fsql, columnName, sql, columnName);
+        fsql = "SELECT __view__.%s FROM (%s) __view__ %s GROUP BY __view__.%s";
+        exec = String.format(fsql, columnName, sql, whereStr, columnName);
         LOG.info(exec);
         try (Connection connection = getConnection();
              Statement stat = connection.createStatement();
              ResultSet rs = stat.executeQuery(exec)) {
             while (rs.next()) {
-                nofilter.add(rs.getString(1));
+                filtered.add(rs.getString(1));
             }
         } catch (Exception e) {
             LOG.error("ERROR:" + e.getMessage());
             throw new Exception("ERROR:" + e.getMessage(), e);
         }
-        return new String[][]{config == null ? nofilter.toArray(new String[]{}) : filtered.toArray(new String[]{}), nofilter.toArray(new String[]{})};
+        return filtered.toArray(new String[]{});
     }
 
     private String configComponentToSql(ConfigComponent cc) {

@@ -66,24 +66,21 @@ public class ElasticsearchDataProvider extends DataProvider implements Aggregata
     }
 
     @Override
-    public String[][] queryDimVals(String columnName, AggConfig config) throws Exception {
+    public String[] queryDimVals(String columnName, AggConfig config) throws Exception {
         JSONObject request = new JSONObject();
         request.put("size", 0);
         request.put("aggregations", getTermsAggregation(columnName));
-        JSONObject response = post(getSearchUrl(request), request);
-        String[] nofilter = response.getJSONObject("aggregations").getJSONObject(columnName).getJSONArray("buckets").stream()
-                .map(e -> ((JSONObject) e).getString("key")).toArray(String[]::new);
+
         if (config != null) {
             JSONArray filter = getFilter(config);
             if (filter.size() > 0) {
                 request.put("query", buildFilterDSL(config));
-                response = post(getSearchUrl(request), request);
-                String[] filtered = response.getJSONObject("aggregations").getJSONObject(columnName).getJSONArray("buckets").stream()
-                        .map(e -> ((JSONObject) e).getString("key")).toArray(String[]::new);
-                return new String[][]{filtered, nofilter};
             }
         }
-        return new String[][]{nofilter, nofilter};
+        JSONObject response = post(getSearchUrl(request), request);
+        String[] filtered = response.getJSONObject("aggregations").getJSONObject(columnName).getJSONArray("buckets").stream()
+                .map(e -> ((JSONObject) e).getString("key")).toArray(String[]::new);
+        return filtered;
     }
 
     private JSONArray getFilter(AggConfig config) {

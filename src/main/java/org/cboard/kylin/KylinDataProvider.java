@@ -113,14 +113,13 @@ public class KylinDataProvider extends DataProvider implements Aggregatable, Ini
     }
 
     @Override
-    public String[][] queryDimVals(String columnName, AggConfig config) throws Exception {
+    public String[] queryDimVals(String columnName, AggConfig config) throws Exception {
         String fsql = null;
         String exec = null;
         List<String> filtered = new ArrayList<>();
-        List<String> nofilter = new ArrayList<>();
         String tableName = kylinModel.getTable(columnName);
         String columnAliasName = kylinModel.getColumnAndAlias(columnName);
-
+        String whereStr = "";
         if (config != null) {
             Stream<DimensionConfig> c = config.getColumns().stream();
             Stream<DimensionConfig> r = config.getRows().stream();
@@ -136,36 +135,22 @@ public class KylinDataProvider extends DataProvider implements Aggregatable, Ini
                             return true;
                         }
                     });
-            String whereStr = assembleSqlFilter(filterHelpers, "WHERE", kylinModel);
-
-            fsql = "SELECT %s FROM %s %s %s GROUP BY %s ORDER BY %s";
-            exec = String.format(fsql, columnAliasName, tableName, kylinModel.getTableAlias(tableName), whereStr, columnAliasName, columnAliasName);
-            LOG.info(exec);
-            try (Connection connection = getConnection();
-                 Statement stat = connection.createStatement();
-                 ResultSet rs = stat.executeQuery(exec)) {
-                while (rs.next()) {
-                    filtered.add(rs.getString(1));
-                }
-            } catch (Exception e) {
-                LOG.error("ERROR:" + e.getMessage());
-                throw new Exception("ERROR:" + e.getMessage(), e);
-            }
+            whereStr = assembleSqlFilter(filterHelpers, "WHERE", kylinModel);
         }
-        fsql = "SELECT %s FROM %s %s GROUP BY %s ORDER BY %s";
-        exec = String.format(fsql, columnAliasName, tableName, kylinModel.getTableAlias(tableName), columnAliasName, columnAliasName);
+        fsql = "SELECT %s FROM %s %s %s GROUP BY %s ORDER BY %s";
+        exec = String.format(fsql, columnAliasName, tableName, kylinModel.getTableAlias(tableName), whereStr, columnAliasName, columnAliasName);
         LOG.info(exec);
         try (Connection connection = getConnection();
              Statement stat = connection.createStatement();
              ResultSet rs = stat.executeQuery(exec)) {
             while (rs.next()) {
-                nofilter.add(rs.getString(1));
+                filtered.add(rs.getString(1));
             }
         } catch (Exception e) {
             LOG.error("ERROR:" + e.getMessage());
             throw new Exception("ERROR:" + e.getMessage(), e);
         }
-        return new String[][]{config == null ? nofilter.toArray(new String[]{}) : filtered.toArray(new String[]{}), nofilter.toArray(new String[]{})};
+        return filtered.toArray(new String[]{});
     }
 
     /**

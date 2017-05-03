@@ -573,7 +573,7 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
                 config: $scope.curWidget.config,
                 datasource: $scope.datasource ? $scope.datasource.id : null,
                 query: $scope.curWidget.query,
-                datasetId: $scope.customDs ? null : $scope.curWidget.datasetId
+                datasetId: $scope.customDs ? undefined : $scope.curWidget.datasetId
             }, function (query) {
                 var querybr = query.trim().replace(/\n/g, '<br/>').replace(/\t/g, "&nbsp;&nbsp;&nbsp;&nbsp;");
                 $('#viewQuery_widget').html("<div class='alert alert-info' role='alert' style='text-align: left;'>" + querybr + "</div>");
@@ -589,7 +589,7 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
                 config: $scope.curWidget.config,
                 datasource: $scope.datasource ? $scope.datasource.id : null,
                 query: $scope.curWidget.query,
-                datasetId: $scope.customDs ? null : $scope.curWidget.datasetId
+                datasetId: $scope.customDs ? undefined : $scope.curWidget.datasetId
             }, function (option) {
                 switch ($scope.curWidget.config.chart_type) {
                     case 'line':
@@ -835,7 +835,7 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
                 dataService.getColumns({
                     datasource: $scope.datasource ? $scope.datasource.id : null,
                     query: $scope.curWidget.query,
-                    datasetId: $scope.customDs ? null : $scope.curWidget.datasetId,
+                    datasetId: $scope.customDs ? undefined : $scope.curWidget.datasetId,
                     reload: !$scope.loadFromCache,
                     callback: function (dps) {
                         $scope.loading = false;
@@ -935,51 +935,50 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
         $scope.selectsByFilter = [];
         $scope.selects = [];
         $scope.editFilter = function (setbackArr, setbackIdx) {
-            var status = {i: 1};
-
-            var item = setbackArr[setbackIdx];
-            var col;
-            if (item.col) {
-                col = angular.copy(item);
-            } else {
-                col = {col: item, type: 'eq', values: []}
-            }
-
-            var config = angular.copy($scope.curWidget.config);
-            var arr = _.findKey($scope.curWidget.config, function (o) {
-                return o == setbackArr;
-            });
-            config[arr].splice(setbackIdx, 1);
-            dataService.getDimensionValues($scope.datasource ? $scope.datasource.id : null, $scope.curWidget.query, $scope.customDs ? null : $scope.curWidget.datasetId, col.col, config, function (filtered, nofilter) {
-                $scope.selectsByFilter = filtered;
-                $scope.selects = nofilter;
-                status.i--;
-            });
             $uibModal.open({
-                templateUrl: 'org/cboard/view/config/modal/filter.html',
+                templateUrl: 'org/cboard/view/dashboard/modal/param.html',
                 windowTemplateUrl: 'org/cboard/view/util/modal/window.html',
                 backdrop: false,
                 size: 'lg',
-                scope: $scope,
-                controller: function ($scope, $uibModalInstance) {
-                    $scope.status = status;
-                    $scope.type = ['=', '≠', '>', '<', '≥', '≤', '(a,b]', '[a,b)', '(a,b)', '[a,b]'];
-                    $scope.byFilter = true;
-                    $scope.col = col;
-                    $scope.close = function () {
-                        $uibModalInstance.close();
-                    };
-                    $scope.selected = function (v) {
-                        return _.indexOf($scope.col.values, v) == -1
-                    };
-                    $scope.ok = function () {
-                        if ($scope.col.values.length > 100) {
-                            $scope.alerts = [{msg: '条件数量过多>100', type: 'danger'}];
+                resolve: {
+                    param: function () {
+                        var item = setbackArr[setbackIdx];
+                        if (item.col) {
+                            if (item.type = 'eq') {
+                                item.type = '=';
+                            } else if (item.type = 'ne') {
+                                item.type = '≠';
+                            }
+                            return angular.copy(item);
+                        } else {
+                            return {col: item, type: '=', values: []}
                         }
-                        setbackArr[setbackIdx] = $scope.col;
-                        $uibModalInstance.close();
-                    };
-                }
+                    },
+                    filter: function () {
+                        return true;
+                    },
+                    getSelects: function () {
+                        return function (byFilter, column, callback) {
+                            var config = undefined;
+                            if(byFilter){
+                                config = angular.copy($scope.curWidget.config);
+                                var arr = _.findKey($scope.curWidget.config, function (o) {
+                                    return o == setbackArr;
+                                });
+                                config[arr].splice(setbackIdx, 1);
+                            }
+                            dataService.getDimensionValues($scope.datasource ? $scope.datasource.id : null, $scope.curWidget.query, $scope.customDs ? undefined : $scope.curWidget.datasetId, column, config, function (filtered) {
+                                callback(filtered);
+                            });
+                        };
+                    },
+                    ok: function () {
+                        return function (param) {
+                            setbackArr[setbackIdx] = param;
+                        }
+                    }
+                },
+                controller: 'paramSelector'
             });
         };
 
@@ -1057,25 +1056,32 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
                     };
                     $scope.editFilter = function (filter) {
                         $uibModal.open({
-                            templateUrl: 'org/cboard/view/config/modal/dsFilter.html',
+                            templateUrl: 'org/cboard/view/dashboard/modal/param.html',
                             windowTemplateUrl: 'org/cboard/view/util/modal/window.html',
                             backdrop: false,
                             size: 'lg',
-                            controller: function ($scope, $uibModalInstance) {
-                                $scope.filter = angular.copy(filter);
-                                $scope.type = ['=', '≠', '>', '<', '≥', '≤', '(a,b]', '[a,b)', '(a,b)', '[a,b]'];
-                                $scope.close = function () {
-                                    $uibModalInstance.close();
-                                };
-                                $scope.selected = function (v) {
-                                    return _.indexOf($scope.col.values, v) == -1
-                                };
-                                $scope.ok = function () {
-                                    filter.type = $scope.filter.type;
-                                    filter.values = $scope.filter.values;
-                                    $uibModalInstance.close();
-                                };
-                            }
+                            resolve: {
+                                param: function () {
+                                    return angular.copy(filter);
+                                },
+                                filter: function () {
+                                    return false;
+                                },
+                                getSelects: function () {
+                                    return function (byFilter, column, callback) {
+                                        dataService.getDimensionValues($scope.datasource ? $scope.datasource.id : null, $scope.curWidget.query, $scope.curWidget.datasetId, column, undefined, function (filtered) {
+                                            callback(filtered);
+                                        });
+                                    };
+                                },
+                                ok: function () {
+                                    return function (param) {
+                                        filter.type = param.type;
+                                        filter.values = param.values;
+                                    }
+                                }
+                            },
+                            controller: 'paramSelector'
                         });
                     };
                 }

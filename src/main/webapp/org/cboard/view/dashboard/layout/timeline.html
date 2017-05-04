@@ -20,6 +20,14 @@
 </section>
 <div id="inner-container" class="content">
     <div class="n_fixed_area box box-solid" style="border-left: 1px solid #d2d6de; border-right: 1px solid #d2d6de" ng-if="timelineFilter.params.length > 0">
+        <div class="box-header">
+            <div class="box-tools pull-right" ng-init="paramInfoShow = true">
+                <div ng-show="paramInfoShow" class="paramTemplate btn btn-box-tool">{{paramToString(timelineFilter)}}</div>
+                <button type="button" class="btn btn-box-tool" ng-click="paramInfoShow = !paramInfoShow">
+                    <i class="fa fa-info-circle"></i>
+                </button>
+            </div>
+        </div>
         <div class="box-body">
             <div class="col-sm-12">
                 <div style="min-height: 35px;height: auto;padding: 0px">

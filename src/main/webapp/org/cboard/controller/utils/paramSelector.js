@@ -8,9 +8,12 @@ cBoard.controller('paramSelector', function ($scope, $uibModalInstance, dataServ
     $scope.paramType = 'select';
     $scope.filter = filter;
     $scope.byFilter = {a: false};
+    $scope.loading = true;
     $scope.getSelects = function () {
+        $scope.loading = true;
         getSelects($scope.byFilter.a, $scope.param.col, function (d) {
             $scope.selects = d;
+            $scope.loading = false;
         });
     };
     $scope.getSelects();

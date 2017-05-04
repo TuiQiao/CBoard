@@ -224,25 +224,32 @@ cBoard.controller('datasetCtrl', function ($scope, $http, dataService, $uibModal
                 };
                 $scope.editFilter = function (filter) {
                     $uibModal.open({
-                        templateUrl: 'org/cboard/view/config/modal/dsFilter.html',
+                        templateUrl: 'org/cboard/view/dashboard/modal/param.html',
                         windowTemplateUrl: 'org/cboard/view/util/modal/window.html',
                         backdrop: false,
                         size: 'lg',
-                        controller: function ($scope, $uibModalInstance) {
-                            $scope.filter = angular.copy(filter);
-                            $scope.type = ['=', '≠', '>', '<', '≥', '≤', '(a,b]', '[a,b)', '(a,b)', '[a,b]'];
-                            $scope.close = function () {
-                                $uibModalInstance.close();
-                            };
-                            $scope.selected = function (v) {
-                                return _.indexOf($scope.col.values, v) == -1
-                            };
-                            $scope.ok = function () {
-                                filter.type = $scope.filter.type;
-                                filter.values = $scope.filter.values;
-                                $uibModalInstance.close();
-                            };
-                        }
+                        resolve: {
+                            param: function () {
+                                return angular.copy(filter);
+                            },
+                            filter: function () {
+                                return false;
+                            },
+                            getSelects: function () {
+                                return function (byFilter, column, callback) {
+                                    dataService.getDimensionValues($scope.datasource.id, $scope.curWidget.query, undefined, column, undefined, function (filtered) {
+                                        callback(filtered);
+                                    });
+                                };
+                            },
+                            ok: function () {
+                                return function (param) {
+                                    filter.type = param.type;
+                                    filter.values = param.values;
+                                }
+                            }
+                        },
+                        controller: 'paramSelector'
                     });
                 };
             }

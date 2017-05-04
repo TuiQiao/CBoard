@@ -661,6 +661,13 @@ treecontrol.tree-dark {
     color: #ddd;
 }
 
+.top-buffer-lg {
+    margin-top: 40px;
+}
+
+.top-buffer {
+    margin-top: 5px;
+}
 .nav-tabs-custom > .nav-tabs > li > a:hover {
     /*background: transparent;
     margin: 0;*/

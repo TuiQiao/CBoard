@@ -53,7 +53,7 @@ public class JvmAggregator extends InnerAggregator {
         rawDataCache.put(getCacheKey(), data, interval * 1000);
     }
 
-    public String[][] queryDimVals(String columnName, AggConfig config) throws Exception {
+    public String[] queryDimVals(String columnName, AggConfig config) throws Exception {
         String[][] data = rawDataCache.get(getCacheKey());
         Map<String, Integer> columnIndex = getColumnIndex(data);
         final int fi = columnIndex.get(columnName);
@@ -65,12 +65,7 @@ public class JvmAggregator extends InnerAggregator {
                 .distinct()
                 .sorted(comparator)
                 .toArray(String[]::new);
-        String[] nofilter = Arrays.stream(data).parallel().skip(1)
-                .map(e -> e[fi])
-                .distinct()
-                .sorted()
-                .toArray(String[]::new);
-        return new String[][]{filtered, nofilter};
+        return filtered;
     }
 
     private Map<String, Integer> getColumnIndex(String[][] data) {

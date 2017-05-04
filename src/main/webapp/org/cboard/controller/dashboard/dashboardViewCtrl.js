@@ -293,6 +293,14 @@ cBoard.controller('dashboardViewCtrl', function ($timeout, $rootScope, $scope, $
         });
     };
 
+    $scope.paramToString = function (row) {
+        return _.filter(_.map(row.params, function (e) {
+            return e.title;
+        }), function (e) {
+            return e && e.length > 0;
+        }).join('; ');
+    };
+
     $scope.modalChart = function (widget) {
         $uibModal.open({
             templateUrl: 'org/cboard/view/util/modal/chart.html',

@@ -1,0 +1,152 @@
+<div class="modal-header">
+    <button type="button" class="close" data-dismiss="modal" aria-label="Close" ng-click="close()">
+        <span aria-hidden="true">×</span></button>
+    <h4 class="modal-title">{{'DASHBOARD.PARAM.NAME'|translate}}</h4>
+</div>
+<div class="modal-body">
+    <div class="row">
+        <div class="col-md-12" ng-repeat="alert in alerts">
+            <div uib-alert ng-class="'alert-' + (alert.type || 'warning')"
+                 close="alerts.splice($index, 1)">{{alert.msg}}
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-12" style="margin-bottom: 15px;">
+            <select class="form-control" ng-model="paramType">
+                <option value="select">选择</option>
+                <option value="input">字符串和表达式</option>
+            </select>
+        </div>
+    </div>
+    <div class="row" ng-if="paramType=='select'">
+        <div class="col-md-5">
+            <div class="row">
+                <div class="col-md-12 form-horizontal">
+                    <div class="input-group">
+                        <span class="input-group-addon">{{'DASHBOARD.PARAM.FIND'|translate}}</span>
+                        <input type="text" class="form-control" ng-model="keyword">
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-12 SelectsOption">
+                    <select multiple class="form-control selectsOption" ng-model="selectItems" style="height: 300px">
+                        <option ng-repeat="v in selects | filter:selected | filter:keyword" style="overflow: hidden;white-space: nowrap;text-overflow: ellipsis;" title="{{v}}" ng-dblclick="param.values.push(v)">{{v}}</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-2 text-center">
+            <div class="row">
+                <select class="form-control filterOptions" ng-model="param.type" ng-options="t as t for t in type" ng-change="filterType()">
+                </select>
+            </div>
+            <div class="row top-buffer-lg">
+                <button type="button" class="btn btn-default" ng-click="pushValues(selectItems)"><i
+                        class="fa fa-angle-right" style="width: 15px"></i></button>
+            </div>
+            <div class="row top-buffer">
+                <button type="button" class="btn btn-default" ng-click="deleteValues(selectValues)"><i
+                        class="fa fa-angle-left" style="width: 15px"></i></button>
+            </div>
+            <div class="row top-buffer">
+                <button type="button" class="btn btn-default" ng-click="param.values=[]"><i
+                        class="fa fa-angle-double-left" style="width: 15px"></i></button>
+            </div>
+        </div>
+        <div class="col-md-5">
+            <div class="multiValues" ng-show="operate.equal">
+                <span>{{'DASHBOARD.PARAM.VALUE_LIST'|translate}}</span>
+                <select multiple class="form-control selectsOption" ng-model="selectValues" style="height: 300px">
+                    <option ng-repeat="v in param.values" style="overflow: hidden;white-space: nowrap;text-overflow: ellipsis;" title="{{v}}" ng-dblclick="param.values.splice($index,1)">{{v}}</option>
+                </select>
+            </div>
+            <div class="doubleValues" ng-if="operate.closeInterval">
+                <div>
+                    <span>{{'DASHBOARD.PARAM.VALUE_A'|translate}}</span>
+                    <div ng-click="param.values.splice(0,1)">{{param.values[0]}}</div>
+                </div>
+                <div>
+                    <span>{{'DASHBOARD.PARAM.VALUE_B'|translate}}</span>
+                    <div ng-click="param.values.splice(1,1)">{{param.values[1]}}</div>
+                </div>
+            </div>
+            <div class="signalValue" ng-if="operate.openInterval">
+                <span>{{'DASHBOARD.PARAM.VALUE'|translate}}</span>
+                <div ng-click="param.values.splice(0,1)">{{param.values[0]}}</div>
+            </div>
+        </div>
+    </div>
+    <div class="row" ng-if="filter && paramType=='select'">
+        <div class="col-md-5">
+            <label></label>
+            <input type="checkbox" ng-model="byFilter.a" ng-change="getSelects()"> {{'CONFIG.WIDGET.SHOW_BY_FILTER'|translate}}
+        </div>
+    </div>
+    <div class="row" ng-if="paramType=='input'">
+        <div class="col-md-2">
+            <select class="form-control filterOptions" ng-model="param.type" ng-options="t as t for t in type" ng-change="filterType()"
+                    style="margin-top: 24px;">
+            </select>
+        </div>
+        <div class="col-md-5">
+            <div ng-if="operate.equal || operate.openInterval">
+                <div class="row">
+                    <label class="control-label">{{'DASHBOARD.PARAM.VALUE'|translate}}</label>
+                    <div class="input-group">
+                        <input type="text" class="form-control" ng-model="param.values[0]">
+                        <div class="input-group-btn">
+                            <button type="button" class="btn dropdown-toggle" data-toggle="dropdown">
+                                <span class="fa fa-caret-down"></span></button>
+                            <ul class="dropdown-menu">
+                                <li ng-click="param.values[0]='{now(\'M\',-1,\'yyyy-MM-dd\')}'"><a>{{'COMMON.LAST1M'|translate}}</a></li>
+                                <li ng-click="param.values[0]='{now(\'W\',-1,\'yyyy-MM-dd\')}'"><a>{{'COMMON.LAST1W'|translate}}</a></li>
+                                <li ng-click="param.values[0]='{now(\'D\',-10,\'yyyy-MM-dd\')}'"><a>{{'COMMON.LAST10D'|translate}}</a></li>
+                                <li ng-click="param.values[0]='{now(\'D\',-10,\'timestamp\')}'"><a>{{'COMMON.LAST10D_TIMESTAMP'|translate}}</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div ng-if="operate.closeInterval">
+                <div class="row">
+                    <label class="control-label">{{'DASHBOARD.PARAM.VALUE_A'|translate}}</label>
+                    <div class="input-group">
+                        <input type="text" class="form-control" ng-model="param.values[0]">
+                        <div class="input-group-btn">
+                            <button type="button" class="btn dropdown-toggle" data-toggle="dropdown">
+                                <span class="fa fa-caret-down"></span></button>
+                            <ul class="dropdown-menu">
+                                <li ng-click="param.values[0]='{now(\'M\',-1,\'yyyy-MM-dd\')}'"><a>{{'COMMON.LAST1M'|translate}}</a></li>
+                                <li ng-click="param.values[0]='{now(\'W\',-1,\'yyyy-MM-dd\')}'"><a>{{'COMMON.LAST1W'|translate}}</a></li>
+                                <li ng-click="param.values[0]='{now(\'D\',-10,\'yyyy-MM-dd\')}'"><a>{{'COMMON.LAST10D'|translate}}</a></li>
+                                <li ng-click="param.values[0]='{now(\'D\',-10,\'timestamp\')}'"><a>{{'COMMON.LAST10D_TIMESTAMP'|translate}}</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <label class="control-label">{{'DASHBOARD.PARAM.VALUE_B'|translate}}</label>
+                    <div class="input-group">
+                        <input type="text" class="form-control" ng-model="param.values[1]">
+                        <div class="input-group-btn">
+                            <button type="button" class="btn dropdown-toggle" data-toggle="dropdown">
+                                <span class="fa fa-caret-down"></span></button>
+                            <ul class="dropdown-menu">
+                                <li ng-click="param.values[1]='{now(\'M\',-1,\'yyyy-MM-dd\')}'"><a>{{'COMMON.LAST1M'|translate}}</a></li>
+                                <li ng-click="param.values[1]='{now(\'W\',-1,\'yyyy-MM-dd\')}'"><a>{{'COMMON.LAST1W'|translate}}</a></li>
+                                <li ng-click="param.values[1]='{now(\'D\',-10,\'yyyy-MM-dd\')}'"><a>{{'COMMON.LAST10D'|translate}}</a></li>
+                                <li ng-click="param.values[1]='{now(\'D\',-10,\'timestamp\')}'"><a>{{'COMMON.LAST10D_TIMESTAMP'|translate}}</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal-footer">
+    <button type="button" class="btn btn-default pull-left" data-dismiss="modal" ng-click="close()">{{'COMMON.CANCEL'|translate}}</button>
+    <button type="button" class="btn btn-primary" ng-click="ok()">{{'COMMON.OK'|translate}}</button>
+</div>

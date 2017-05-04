@@ -71,10 +71,10 @@ public class DataProviderService {
         return dps;
     }
 
-    public String[][] getDimensionValues(Long datasourceId, Map<String, String> query, Long datasetId, String columnName, AggConfig config, boolean reload) {
+    public String[] getDimensionValues(Long datasourceId, Map<String, String> query, Long datasetId, String columnName, AggConfig config, boolean reload) {
         try {
             DataProvider dataProvider = getDataProvider(datasourceId, query, datasetId);
-            String[][] result = dataProvider.getDimVals(columnName, config, reload);
+            String[] result = dataProvider.getDimVals(columnName, config, reload);
             return result;
         } catch (Exception e) {
             e.printStackTrace();

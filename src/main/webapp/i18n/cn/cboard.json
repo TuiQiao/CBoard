@@ -184,7 +184,7 @@
       "CATEGORY": "分类"
     },
     "DATASET": {
-      "DATASET": "Cube",
+      "DATASET": "数据集",
       "NAME": "名称",
       "CATEGORY": "分类",
       "LOAD_DATA": "读取数据",

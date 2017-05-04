@@ -1,3 +1,9 @@
+.toolbar-icon {
+    cursor: pointer;
+    font-size: large;
+    padding-top: 6px;
+}
+
 .control-label-compact {
     padding: 7px 2px;
     font-size: small;
@@ -661,4 +667,9 @@ treecontrol.tree-dark {
 
 .top-buffer {
     margin-top: 5px;
+}
+.nav-tabs-custom > .nav-tabs > li > a:hover {
+    /*background: transparent;
+    margin: 0;*/
+    cursor: pointer;
 }

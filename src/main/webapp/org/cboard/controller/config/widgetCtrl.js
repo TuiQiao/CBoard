@@ -23,7 +23,7 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
             {
                 name: translate('CONFIG.WIDGET.SCATTER'), value: 'scatter', class: 'cScatter',
                 row: translate('CONFIG.WIDGET.TIPS_DIM_NUM_1_MORE'),
-                column: translate('CONFIG.WIDGET.TIPS_DIM_NUM_0_MORE'),
+                column: translate('CONFIG.WIDGET.TIPS_DIM_NUM_1_MORE'),
                 measure: translate('CONFIG.WIDGET.TIPS_DIM_NUM_1_MORE')
             },
             {

@@ -156,40 +156,28 @@ cBoard.controller('paramCtrl', function ($scope, $uibModal, $http) {
                         $scope.param.values = param.values;
                         $scope.param.type = param.type;
                         $scope.applyParamFilter();
-                        var paramObj = {};
-                        var opt = $scope.operate.equal ? 'equal' : ($scope.operate.openInterval ? 'openInterval' : 'closeInterval');
-                        var types = {
-                            equal: function () {
-                                paramObj.filter = $scope.param.type + ' (' + $scope.param.values + ')';
-                            },
-                            openInterval: function () {
-                                paramObj.filter = $scope.param.type + ' ' + $scope.param.values;
-                            },
-                            closeInterval: function () {
+                        var paramObj;
+                        switch (param.type) {
+                            case '=':
+                            case '≠':
+                                paramObj = param.name + ' ' + $scope.param.type + ' (' + $scope.param.values + ')';
+                                break;
+                            case '>':
+                            case '<':
+                            case '≥':
+                            case '≤':
+                                paramObj = param.name + ' ' + $scope.param.type + ' ' + $scope.param.values;
+                                break;
+                            case '(a,b]':
+                            case '[a,b)':
+                            case '(a,b)':
+                            case '[a,b]':
                                 var leftBrackets = $scope.param.type.split('a')[0];
                                 var rightBrackets = $scope.param.type.split('b')[1];
-                                paramObj.filter = 'between ' + leftBrackets + $scope.param.values[0] + ',' + $scope.param.values[1] + rightBrackets;
-                            }
-                        };
-                        paramObj.name = $scope.param.name;
-                        types[opt] ? types[opt]() : null;
-                        var oldParam = _.find(paramArr, function (param) {
-                            return param.name == paramObj.name;
-                        });
-                        if (oldParam) {
-                            paramArr.map(function (d) {
-                                if (d.name == oldParam.name) {
-                                    d.filter = paramObj.filter;
-                                }
-                            });
-                        } else {
-                            paramArr.push(paramObj);
+                                paramObj = param.name + ' between ' + leftBrackets + $scope.param.values[0] + ',' + $scope.param.values[1] + rightBrackets;
+                                break;
                         }
-                        var template = '';
-                        paramArr.map(function (d) {
-                            template += "<span class='filterParam'><span>" + d.name + "</span><span> :  " + d.filter + "</span></span>"
-                        });
-                        $('div.paramTemplate').html(template);
+                        $scope.param.title = param.values.length > 0 ? paramObj : undefined;
                     }
                 }
             },

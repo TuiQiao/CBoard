@@ -12,7 +12,7 @@
         </div>
     </div>
     <div class="row">
-        <div class="col-md-12" >
+        <div class="col-md-12" style="margin-bottom: 15px;">
             <select class="form-control" ng-model="paramType">
                 <option value="select">选择</option>
                 <option value="input">字符串和表达式</option>
@@ -37,22 +37,22 @@
                 </div>
             </div>
         </div>
-        <div class="col-md-2">
+        <div class="col-md-2 text-center">
             <div class="row">
                 <select class="form-control filterOptions" ng-model="param.type" ng-options="t as t for t in type" ng-change="filterType()">
                 </select>
             </div>
-            <div class="row">
+            <div class="row top-buffer-lg">
                 <button type="button" class="btn btn-default" ng-click="pushValues(selectItems)"><i
-                        class="fa fa-angle-right"></i></button>
+                        class="fa fa-angle-right" style="width: 15px"></i></button>
             </div>
-            <div class="row">
+            <div class="row top-buffer">
                 <button type="button" class="btn btn-default" ng-click="deleteValues(selectValues)"><i
-                        class="fa fa-angle-left"></i></button>
+                        class="fa fa-angle-left" style="width: 15px"></i></button>
             </div>
-            <div class="row">
+            <div class="row top-buffer">
                 <button type="button" class="btn btn-default" ng-click="param.values=[]"><i
-                        class="fa fa-angle-double-left"></i></button>
+                        class="fa fa-angle-double-left" style="width: 15px"></i></button>
             </div>
         </div>
         <div class="col-md-5">
@@ -86,7 +86,8 @@
     </div>
     <div class="row" ng-if="paramType=='input'">
         <div class="col-md-2">
-            <select class="form-control filterOptions" ng-model="param.type" ng-options="t as t for t in type" ng-change="filterType()">
+            <select class="form-control filterOptions" ng-model="param.type" ng-options="t as t for t in type" ng-change="filterType()"
+                    style="margin-top: 24px;">
             </select>
         </div>
         <div class="col-md-5">
@@ -108,7 +109,7 @@
                     </div>
                 </div>
             </div>
-            <div class="doubleValues" ng-if="operate.closeInterval">
+            <div ng-if="operate.closeInterval">
                 <div class="row">
                     <label class="control-label">{{'DASHBOARD.PARAM.VALUE_A'|translate}}</label>
                     <div class="input-group">

@@ -654,3 +654,11 @@ treecontrol.tree-dark {
 [treecontrol].tree-dark {
     color: #ddd;
 }
+
+.top-buffer-lg {
+    margin-top: 40px;
+}
+
+.top-buffer {
+    margin-top: 5px;
+}

@@ -252,7 +252,9 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
             $scope.toChartDisabled = false;
             $scope.newConfig();
             $scope.filterSelect = {};
+            $scope.curWidget.expressions = [];
             loadDsExpressions();
+            $scope.curWidget.filterGroups = [];
             loadDsFilterGroups();
             buildSchema();
         };
@@ -274,7 +276,6 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
         };
 
         var loadDsFilterGroups = function () {
-            $scope.filterGroups = [];
             if (!$scope.customDs) {
                 var fg = _.find($scope.datasetList, function (ds) {
                     return ds.id == $scope.curWidget.datasetId;

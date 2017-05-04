@@ -1191,21 +1191,22 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
                     return obj.id == w.data.datasetId
                 });
                 var dsrName = '';
+                var dsr;
                 if (ds) {
-                    dsrName = _.find($scope.datasourceList, function (obj) {
+                    dsr = _.find($scope.datasourceList, function (obj) {
                         return obj.id == ds.data.datasource
-                    }).name;
+                    });
                 } else if (w.data.datasource) {
-                    _.find($scope.datasourceList, function (obj) {
+                    dsr = _.find($scope.datasourceList, function (obj) {
                         return obj.id == w.data.datasource
-                    }).name
+                    });
                 }
                 return {
                     "id": w.id,
                     "name": w.name,
                     "categoryName": w.categoryName,
                     "datasetName": ds ? ds.name : '',
-                    "datasourceName": dsrName
+                    "datasourceName": dsr ? dsr.name : dsrName
                 };
             });
 

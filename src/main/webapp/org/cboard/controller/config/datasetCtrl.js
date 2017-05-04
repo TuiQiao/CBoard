@@ -91,6 +91,26 @@ cBoard.controller('datasetCtrl', function ($scope, $http, dataService, $uibModal
         $scope.loadData();
     };
 
+    $scope.checkExist = function (column) {
+        var find = _.find($scope.curDataset.data.schema.measure, function (e) {
+            return e.column == column;
+        });
+        if (!_.isUndefined(find)) {
+            return true;
+        }
+        find = _.find($scope.curDataset.data.schema.dimension, function (e) {
+            if (e.type == 'level') {
+                var _find = _.find(e.columns, function (_e) {
+                    return _e.column == column;
+                });
+                return !_.isUndefined(_find);
+            } else {
+                return e.column == column;
+            }
+        });
+        return !_.isUndefined(find);
+    };
+
     $scope.deleteDs = function (ds) {
         $http.get("dashboard/getAllWidgetList.do").then(function (response) {
             if (!response) {

@@ -94,7 +94,7 @@
                                 <div class="col-md-6">
                                     <div class="form-control" style="min-height: 200px;height: auto;padding: 0px; border: 2px dashed #d2d6de">
                                         <span ng-repeat="o in selects"
-                                              class="btn btn-default btn-sm" style="margin: 3px 3px;"
+                                              class="btn btn-sm" style="margin: 3px 3px;" ng-class="{true:'btn-primary',false:'btn-default'}[checkExist(o)]"
                                               dnd-draggable="{type: 'column', column: o}" dnd-type="'column'" ng-click="curDataset.data.schema.dimension.push({type: 'column', column: o})">{{o}}</span>
                                     </div>
                                 </div>

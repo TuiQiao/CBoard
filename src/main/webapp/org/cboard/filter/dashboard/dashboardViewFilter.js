@@ -3,6 +3,7 @@
  */
 cBoard.filter('hasBoards', function () {
     return function(category, boardlist) {
+        if (boardlist == undefined) return boardlist;
         var cids = boardlist.map(function (b) {
             return b.categoryId;
         });

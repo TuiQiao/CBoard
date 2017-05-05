@@ -172,7 +172,7 @@ cBoard.controller('userAdminCtrl', function ($scope, $http, ModalUtils, $filter)
                         listOut.push({
                             "id": type + '_' + listIn[i].id.toString(),
                             "parent": parent,
-                            "text": a + getCUDRlabel(false, false),
+                            "text": a + getCUDRlabel(true, true),
                             resId: listIn[i].id,
                             type: type,
                             icon: icon,
@@ -182,7 +182,7 @@ cBoard.controller('userAdminCtrl', function ($scope, $http, ModalUtils, $filter)
                         listOut.push({
                             "id": 'parent' + '_' + type + '_' + newParentId,
                             "parent": parent,
-                            "text": a,
+                            "text": a
                             /*icon: 'fa fa-fw fa-folder-o'*/
                         });
                     }
@@ -445,7 +445,7 @@ cBoard.controller('userAdminCtrl', function ($scope, $http, ModalUtils, $filter)
             tree.treeInstance.jstree(true).uncheck_all();
             _.each(tree.resList, function (e) {
                 if (e.name) {
-                    tree.treeInstance.jstree(true).rename_node(e, e.name + getCUDRlabel(false, false));
+                    tree.treeInstance.jstree(true).rename_node(e, e.name + getCUDRlabel(true, true));
                 }
                 var f = _.find(roleRes, function (rr) {
                     return rr.resId == e.resId && rr.resType == e.type;
@@ -479,7 +479,7 @@ cBoard.controller('userAdminCtrl', function ($scope, $http, ModalUtils, $filter)
         }
         $http.post("admin/updateRoleRes.do", {
             roleIdArr: angular.toJson(roleIds),
-            resIdArr: angular.toJson(resIds),
+            resIdArr: angular.toJson(resIds)
         }).success(function (serviceStatus) {
             if (serviceStatus == '1') {
                 $scope.selectRole = null;

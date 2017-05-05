@@ -125,13 +125,19 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
         $scope.filterSelect = {};
         $scope.verify = {widgetName: true};
 
-        $http.get("dashboard/getDatasetList.do").success(function (response) {
-            $scope.datasetList = response;
-        });
 
-        $http.get("dashboard/getDatasetCategoryList.do").success(function (response) {
-            $scope.datasetCategoryList = response;
-        });
+        var loadDataset = function (callback) {
+            $http.get("dashboard/getDatasetList.do").success(function (response) {
+                $scope.datasetList = response;
+                if (callback) {
+                    callback();
+                }
+            });
+        };
+        loadDataset();
+        // $http.get("dashboard/getDatasetCategoryList.do").success(function (response) {
+        //     $scope.datasetCategoryList = response;
+        // });
 
         $http.get("dashboard/getDatasourceList.do").success(function (response) {
             $scope.datasourceList = response;
@@ -249,14 +255,17 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
         };
 
         $scope.loadData = function () {
+
             $scope.toChartDisabled = false;
             $scope.newConfig();
             $scope.filterSelect = {};
-            $scope.curWidget.expressions = [];
-            loadDsExpressions();
-            $scope.curWidget.filterGroups = [];
-            loadDsFilterGroups();
-            buildSchema();
+            loadDataset(function(){
+                $scope.curWidget.expressions = [];
+                loadDsExpressions();
+                $scope.curWidget.filterGroups = [];
+                loadDsFilterGroups();
+                buildSchema();
+            });
         };
 
         $scope.newWgt = function () {
@@ -777,10 +786,12 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
             $scope.widgetId = widget.id;
             $scope.optFlag = 'edit';
             $scope.customDs = _.isUndefined($scope.curWidget.datasetId);
-            loadDsExpressions();
-            loadDsFilterGroups();
+            loadDataset(function(){
+                loadDsExpressions();
+                loadDsFilterGroups();
+                buildSchema();
+            });
             addWatch();
-            buildSchema();
         };
 
         $scope.filterDimension = function (e) {

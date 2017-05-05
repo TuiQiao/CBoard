@@ -172,7 +172,7 @@ cBoard.controller('userAdminCtrl', function ($scope, $http, ModalUtils, $filter)
                         listOut.push({
                             "id": type + '_' + listIn[i].id.toString(),
                             "parent": parent,
-                            "text": a + getCUDRlabel(true, true),
+                            "text": a,//+ getCUDRlabel(true, true),
                             resId: listIn[i].id,
                             type: type,
                             icon: icon,
@@ -444,17 +444,24 @@ cBoard.controller('userAdminCtrl', function ($scope, $http, ModalUtils, $filter)
             });
             tree.treeInstance.jstree(true).uncheck_all();
             _.each(tree.resList, function (e) {
-                if (e.name) {
-                    tree.treeInstance.jstree(true).rename_node(e, e.name + getCUDRlabel(true, true));
-                }
                 var f = _.find(roleRes, function (rr) {
                     return rr.resId == e.resId && rr.resType == e.type;
                 });
+                var _n = tree.treeInstance.jstree(true).get_node(e);
                 if (!_.isUndefined(f)) {
                     tree.treeInstance.jstree(true).check_node(e);
                     if (e.name) { //菜单节点不需要更新权限标记
-                        tree.treeInstance.jstree(true).rename_node(e, e.name + getCUDRlabel(f.edit, f.delete));
+                        _n.original.edit = f.edit;
+                        _n.original.delete = f.delete;
                     }
+                } else {
+                    if (e.name) { //菜单节点不需要更新权限标记
+                        _n.original.edit = true;
+                        _n.original.delete = true;
+                    }
+                }
+                if (e.name) {
+                    tree.treeInstance.jstree(true).rename_node(e, e.name + getCUDRlabel(_n.original.edit, _n.original.delete));
                 }
             });
         }
@@ -465,7 +472,7 @@ cBoard.controller('userAdminCtrl', function ($scope, $http, ModalUtils, $filter)
             return e.roleId;
         });
         var resIds = [];
-        for(var key in $scope.tree){
+        for (var key in $scope.tree) {
             _.each(_.filter($scope.tree[key].treeInstance.jstree(true).get_checked(true), function (e) {
                 return !_.isUndefined(e.original.resId);
             }), function (e) {

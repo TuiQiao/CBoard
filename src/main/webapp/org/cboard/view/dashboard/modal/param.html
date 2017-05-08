@@ -31,6 +31,7 @@
             </div>
             <div class="row">
                 <div class="col-md-12 SelectsOption">
+                    <button type="button" class="btn btn-default" style="position: absolute;margin: 35% 35%;" ng-click="getSelects();$parent.loadSelect=false;" ng-if="loadSelect">Load</button>
                     <select multiple class="form-control selectsOption" ng-model="selectItems" style="height: 300px">
                         <option ng-repeat="v in selects | filter:selected | filter:keyword" style="overflow: hidden;white-space: nowrap;text-overflow: ellipsis;" title="{{v}}" ng-dblclick="param.values.push(v)">{{v}}</option>
                     </select>

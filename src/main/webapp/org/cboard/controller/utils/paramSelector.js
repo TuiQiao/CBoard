@@ -8,7 +8,7 @@ cBoard.controller('paramSelector', function ($scope, $uibModalInstance, dataServ
     $scope.paramType = 'select';
     $scope.filter = filter;
     $scope.byFilter = {a: false};
-    $scope.loading = true;
+    $scope.loadSelect = true;
     $scope.getSelects = function () {
         $scope.loading = true;
         getSelects($scope.byFilter.a, $scope.param.col, function (d) {
@@ -16,7 +16,6 @@ cBoard.controller('paramSelector', function ($scope, $uibModalInstance, dataServ
             $scope.loading = false;
         });
     };
-    $scope.getSelects();
     var showValues = function () {
         var equal = ['=', '≠'];
         var openInterval = ['>', '<', '≥', '≤'];

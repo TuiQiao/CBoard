@@ -26,7 +26,9 @@
     "LAST10D_TIMESTAMP": "Last 10 Days(Timestamp)",
     "LAST3H_TIMESTAMP": "Last 3 Hours(Timestamp)",
     "LAST60MIN_TIMESTAMP": "Last 60 Hours(Timestamp)",
-    "FILTER_GROUP": "Filter Group"
+    "FILTER_GROUP": "Filter Group",
+    "SAVE_AS": "Save As",
+    "PARAM": "Parameter"
   },
   "TIPS": {
     "CAL_EXPR": "Calculate after aggregation. Use assist click input to avoid typo. e.g: Math.log(sum(columnA)/count(columB))"

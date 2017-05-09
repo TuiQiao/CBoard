@@ -85,4 +85,19 @@
                  )
     </select>
 
+    <select id="getBoardParam" resultType="org.cboard.pojo.DashboardBoardParam">
+        SELECT board_param_id id,user_id userId,board_id boardId,config
+        FROM dashboard_board_param where board_id = #{0} and user_id = #{1}
+    </select>
+
+    <insert id="saveBoardParam" parameterType="org.cboard.pojo.DashboardBoardParam">
+        <![CDATA[
+        INSERT INTO dashboard_board_param(user_id,board_id,config) VALUES (#{userId},#{boardId},#{config})
+        ]]>
+    </insert>
+
+    <delete id="deleteBoardParam">
+        DELETE FROM dashboard_board_param WHERE board_id = #{0} and user_id = #{1}
+    </delete>
+
 </mapper>

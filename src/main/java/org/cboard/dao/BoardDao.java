@@ -1,6 +1,7 @@
 package org.cboard.dao;
 
 import org.cboard.pojo.DashboardBoard;
+import org.cboard.pojo.DashboardBoardParam;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -27,4 +28,10 @@ public interface BoardDao {
     DashboardBoard getBoard(Long id);
 
     long checkBoardRole(String userId, Long boardId, String permissionPattern);
+
+    DashboardBoardParam getBoardParam(Long boardId, String userId);
+
+    int saveBoardParam(DashboardBoardParam boardParam);
+
+    int deleteBoardParam(Long boardId, String userId);
 }

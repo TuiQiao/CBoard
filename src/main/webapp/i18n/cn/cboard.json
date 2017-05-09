@@ -26,7 +26,9 @@
     "LAST10D_TIMESTAMP": "最近10天(时间戳)",
     "LAST3H_TIMESTAMP": "最近3小时(时间戳)",
     "LAST60MIN_TIMESTAMP": "最近60分钟(时间戳)",
-    "FILTER_GROUP": "可选过滤"
+    "FILTER_GROUP": "可选过滤",
+    "SAVE_AS": "另存为",
+    "PARAM": "条件"
   },
   "TIPS": {
     "CAL_EXPR": "用于聚合后再计算. 使用上面的点击辅助输入避免输入错误. 如: Math.log(sum(columnA)/count(columB))"

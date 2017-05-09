@@ -1,6 +1,7 @@
 {
   "COMMON": {
     "OK": "确认",
+    "LOAD": "加载",
     "CANCEL": "取消",
     "SAVE": "保存",
     "LOADING": "玩命加载中...",
@@ -22,7 +23,9 @@
     "LAST1M": "最近一月",
     "LAST1W": "最近一周",
     "LAST10D": "最近10天",
-    "LAST10D_TIMESTAMP": "最近10天, 时间戳",
+    "LAST10D_TIMESTAMP": "最近10天(时间戳)",
+    "LAST3H_TIMESTAMP": "最近3小时(时间戳)",
+    "LAST60MIN_TIMESTAMP": "最近60分钟(时间戳)",
     "FILTER_GROUP": "可选过滤"
   },
   "TIPS": {
@@ -54,7 +57,10 @@
       "VALUE_LIST": "选定值列",
       "VALUE": "选定值",
       "VALUE_A": "下限",
-      "VALUE_B": "上限"
+      "VALUE_B": "上限",
+      "SELECT_VALUE": "列表选值",
+      "INPUT_VALUE": "输入值或表达式",
+      "LIST_WARN": "值列表过大或者连续值，请不要加载数据列表!"
     }
   },
   "CONFIG": {

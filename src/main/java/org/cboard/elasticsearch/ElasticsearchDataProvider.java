@@ -213,14 +213,10 @@ public class ElasticsearchDataProvider extends DataProvider implements Aggregata
         String maxKey = "max_ts";
         String minKey = "min_ts";
         JSONBuilder request = json("size", 0).
-                put("aggregations",
-                        json().put(minKey,
-                                json("min",
-                                        json("field", columnName)
-                                ))
-                                .put(maxKey, json("max",
-                                        json("field", columnName)
-                                )));
+                put("aggregations", json().
+                        put(minKey, json("min", json("field", columnName))).
+                        put(maxKey, json("max", json("field", columnName)))
+                );
 
         if (config != null) {
             JSONArray filter = getFilter(config);

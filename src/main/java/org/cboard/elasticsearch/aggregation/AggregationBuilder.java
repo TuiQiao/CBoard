@@ -2,6 +2,8 @@ package org.cboard.elasticsearch.aggregation;
 
 import org.cboard.util.json.JSONBuilder;
 
+import java.util.TimeZone;
+
 import static org.cboard.util.json.JSONBuilder.*;
 
 /**
@@ -18,7 +20,7 @@ public class AggregationBuilder {
         return json("date_histogram",
                 json().put("field", fieldName)
                         .put("format", "yyyy-MM-dd HH:mm:ss")
-                        .put("time_zone", "+08:00")
+                        .put("time_zone", TimeZone.getDefault().getID())
                         .put("interval", interval)
                         .put("min_doc_count", min_doc_count)
         );

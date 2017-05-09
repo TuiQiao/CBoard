@@ -1,6 +1,7 @@
 {
   "COMMON": {
     "OK": "OK",
+    "LOAD": "Load",
     "CANCEL": "Cancel",
     "SAVE": "Save",
     "LOADING": "Loading...",
@@ -58,7 +59,8 @@
       "VALUE_A": "Lower Bound",
       "VALUE_B": "Upper Bound",
       "SELECT_VALUE": "Select Value From List",
-      "INPUT_VALUE": "Input Value Or Expression"
+      "INPUT_VALUE": "Input Value Or Expression",
+      "LIST_WARN": "Make sure you are not loading a large size list or continuous value!"
     }
   },
   "CONFIG": {

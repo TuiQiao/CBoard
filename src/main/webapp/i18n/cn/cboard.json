@@ -1,6 +1,7 @@
 {
   "COMMON": {
     "OK": "确认",
+    "LOAD": "加载",
     "CANCEL": "取消",
     "SAVE": "保存",
     "LOADING": "玩命加载中...",
@@ -58,7 +59,8 @@
       "VALUE_A": "下限",
       "VALUE_B": "上限",
       "SELECT_VALUE": "列表选值",
-      "INPUT_VALUE": "输入值或表达式"
+      "INPUT_VALUE": "输入值或表达式",
+      "LIST_WARN": "值列表过大或者连续值，请不要加载数据列表!"
     }
   },
   "CONFIG": {

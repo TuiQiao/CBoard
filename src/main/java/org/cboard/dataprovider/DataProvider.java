@@ -7,6 +7,7 @@ import com.googlecode.aviator.AviatorEvaluator;
 import org.cboard.dataprovider.aggregator.Aggregatable;
 import org.cboard.dataprovider.aggregator.InnerAggregator;
 import org.cboard.dataprovider.config.AggConfig;
+import org.cboard.dataprovider.config.CompositeConfig;
 import org.cboard.dataprovider.config.ConfigComponent;
 import org.cboard.dataprovider.config.DimensionConfig;
 import org.cboard.dataprovider.expression.NowFunction;
@@ -107,15 +108,20 @@ public abstract class DataProvider {
         if (ac == null) {
             return;
         }
-        Consumer<ConfigComponent> evaluator = (e) -> {
-            if (e instanceof DimensionConfig) {
-                DimensionConfig dc = (DimensionConfig) e;
-                dc.setValues(dc.getValues().stream().map(v -> getFilterValue(v)).collect(Collectors.toList()));
-            }
-        };
-        ac.getFilters().forEach(evaluator);
-        ac.getColumns().forEach(evaluator);
-        ac.getRows().forEach(evaluator);
+        ac.getFilters().forEach(e -> evaluator(e));
+        ac.getColumns().forEach(e -> evaluator(e));
+        ac.getRows().forEach(e -> evaluator(e));
+    }
+
+    private void evaluator(ConfigComponent e) {
+        if (e instanceof DimensionConfig) {
+            DimensionConfig dc = (DimensionConfig) e;
+            dc.setValues(dc.getValues().stream().map(v -> getFilterValue(v)).collect(Collectors.toList()));
+        }
+        if (e instanceof CompositeConfig) {
+            CompositeConfig cc = (CompositeConfig) e;
+            cc.getConfigComponents().forEach(_e -> evaluator(_e));
+        }
     }
 
     private String getFilterValue(String value) {

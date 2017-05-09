@@ -12,10 +12,10 @@
         </div>
     </div>
     <div class="row">
-        <div class="col-md-12" style="margin-bottom: 15px;">
+        <div class="col-md-5" style="margin-bottom: 15px;">
             <select class="form-control" ng-model="paramType">
-                <option value="select">选择</option>
-                <option value="input">字符串和表达式</option>
+                <option value="select">{{'DASHBOARD.PARAM.SELECT_VALUE'|translate}}</option>
+                <option value="input">{{'DASHBOARD.PARAM.INPUT_VALUE'|translate}}</option>
             </select>
         </div>
     </div>
@@ -97,16 +97,7 @@
                     <label class="control-label">{{'DASHBOARD.PARAM.VALUE'|translate}}</label>
                     <div class="input-group">
                         <input type="text" class="form-control" ng-model="param.values[0]">
-                        <div class="input-group-btn">
-                            <button type="button" class="btn dropdown-toggle" data-toggle="dropdown">
-                                <span class="fa fa-caret-down"></span></button>
-                            <ul class="dropdown-menu">
-                                <li ng-click="param.values[0]='{now(\'M\',-1,\'yyyy-MM-dd\')}'"><a>{{'COMMON.LAST1M'|translate}}</a></li>
-                                <li ng-click="param.values[0]='{now(\'W\',-1,\'yyyy-MM-dd\')}'"><a>{{'COMMON.LAST1W'|translate}}</a></li>
-                                <li ng-click="param.values[0]='{now(\'D\',-10,\'yyyy-MM-dd\')}'"><a>{{'COMMON.LAST10D'|translate}}</a></li>
-                                <li ng-click="param.values[0]='{now(\'D\',-10,\'timestamp\')}'"><a>{{'COMMON.LAST10D_TIMESTAMP'|translate}}</a></li>
-                            </ul>
-                        </div>
+                        <div class="input-group-btn" ng-include="'org/cboard/view/dashboard/modal/variable-dropbox.html'"></div>
                     </div>
                 </div>
             </div>
@@ -116,14 +107,7 @@
                     <div class="input-group">
                         <input type="text" class="form-control" ng-model="param.values[0]">
                         <div class="input-group-btn">
-                            <button type="button" class="btn dropdown-toggle" data-toggle="dropdown">
-                                <span class="fa fa-caret-down"></span></button>
-                            <ul class="dropdown-menu">
-                                <li ng-click="param.values[0]='{now(\'M\',-1,\'yyyy-MM-dd\')}'"><a>{{'COMMON.LAST1M'|translate}}</a></li>
-                                <li ng-click="param.values[0]='{now(\'W\',-1,\'yyyy-MM-dd\')}'"><a>{{'COMMON.LAST1W'|translate}}</a></li>
-                                <li ng-click="param.values[0]='{now(\'D\',-10,\'yyyy-MM-dd\')}'"><a>{{'COMMON.LAST10D'|translate}}</a></li>
-                                <li ng-click="param.values[0]='{now(\'D\',-10,\'timestamp\')}'"><a>{{'COMMON.LAST10D_TIMESTAMP'|translate}}</a></li>
-                            </ul>
+                            <div class="input-group-btn" ng-include="'org/cboard/view/dashboard/modal/variable-dropbox.html'"></div>
                         </div>
                     </div>
                 </div>
@@ -132,14 +116,7 @@
                     <div class="input-group">
                         <input type="text" class="form-control" ng-model="param.values[1]">
                         <div class="input-group-btn">
-                            <button type="button" class="btn dropdown-toggle" data-toggle="dropdown">
-                                <span class="fa fa-caret-down"></span></button>
-                            <ul class="dropdown-menu">
-                                <li ng-click="param.values[1]='{now(\'M\',-1,\'yyyy-MM-dd\')}'"><a>{{'COMMON.LAST1M'|translate}}</a></li>
-                                <li ng-click="param.values[1]='{now(\'W\',-1,\'yyyy-MM-dd\')}'"><a>{{'COMMON.LAST1W'|translate}}</a></li>
-                                <li ng-click="param.values[1]='{now(\'D\',-10,\'yyyy-MM-dd\')}'"><a>{{'COMMON.LAST10D'|translate}}</a></li>
-                                <li ng-click="param.values[1]='{now(\'D\',-10,\'timestamp\')}'"><a>{{'COMMON.LAST10D_TIMESTAMP'|translate}}</a></li>
-                            </ul>
+                            <div class="input-group-btn" ng-include="'org/cboard/view/dashboard/modal/variable-dropbox.html'"></div>
                         </div>
                     </div>
                 </div>

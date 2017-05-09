@@ -22,7 +22,9 @@
     "LAST1M": "Last 1 Month",
     "LAST1W": "Last 1 Week",
     "LAST10D": "Last 10 Days",
-    "LAST10D_TIMESTAMP": "Last 10 Days, Timestamp",
+    "LAST10D_TIMESTAMP": "Last 10 Days(Timestamp)",
+    "LAST3H_TIMESTAMP": "Last 3 Hours(Timestamp)",
+    "LAST60MIN_TIMESTAMP": "Last 60 Hours(Timestamp)",
     "FILTER_GROUP": "Filter Group"
   },
   "TIPS": {
@@ -54,7 +56,9 @@
       "VALUE_LIST": "Value List",
       "VALUE": "Value",
       "VALUE_A": "Lower Bound",
-      "VALUE_B": "Upper Bound"
+      "VALUE_B": "Upper Bound",
+      "SELECT_VALUE": "Select Value From List",
+      "INPUT_VALUE": "Input Value Or Expression"
     }
   },
   "CONFIG": {

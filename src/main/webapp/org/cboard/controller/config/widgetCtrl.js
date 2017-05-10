@@ -956,9 +956,9 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
                     param: function () {
                         var item = setbackArr[setbackIdx];
                         if (item.col) {
-                            if (item.type = 'eq') {
+                            if (item.type == 'eq') {
                                 item.type = '=';
-                            } else if (item.type = 'ne') {
+                            } else if (item.type == 'ne') {
                                 item.type = '≠';
                             }
                             return angular.copy(item);

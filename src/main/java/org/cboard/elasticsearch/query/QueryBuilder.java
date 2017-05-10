@@ -5,6 +5,7 @@ import com.alibaba.fastjson.JSONObject;
 import org.cboard.util.json.JSONBuilder;
 
 import java.util.List;
+import java.util.Map;
 
 
 /**
@@ -14,6 +15,14 @@ public class QueryBuilder extends JSONBuilder {
 
     public static QueryBuilder queryContent() {
         return new QueryBuilder();
+    }
+    public static QueryBuilder queryContent(Map<String, Object> map) {
+        return new QueryBuilder(map);
+    }
+
+    public QueryBuilder() {}
+    public QueryBuilder(Map<String, Object> map) {
+        super(map);
     }
 
     @Override
@@ -29,7 +38,7 @@ public class QueryBuilder extends JSONBuilder {
 
     @Override
     public QueryBuilder getJSONObject(String key) {
-        return queryContent().putJSONObject(super.getJSONObject(key));
+        return queryContent(super.getJSONObject(key));
     }
 
     public static QueryBuilder termQuery(String fieldName, Object value) {

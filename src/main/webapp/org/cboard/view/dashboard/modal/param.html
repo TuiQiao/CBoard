@@ -103,7 +103,8 @@
                     <label class="control-label">{{'DASHBOARD.PARAM.VALUE'|translate}}</label>
                     <div class="input-group">
                         <input type="text" class="form-control" ng-model="param.values[0]">
-                        <div class="input-group-btn" ng-include="'org/cboard/view/dashboard/modal/variable-dropbox.html'"></div>
+                        <!--  Only ng-repeat can send different variables to one template -->
+                        <div class="input-group-btn" ng-repeat="_i in [0]" ng-include="'org/cboard/view/dashboard/modal/variable-dropbox.html'"></div>
                     </div>
                 </div>
             </div>
@@ -112,8 +113,8 @@
                     <label class="control-label">{{'DASHBOARD.PARAM.VALUE_A'|translate}}</label>
                     <div class="input-group">
                         <input type="text" class="form-control" ng-model="param.values[0]">
-                        <div class="input-group-btn">
-                            <div class="input-group-btn" ng-include="'org/cboard/view/dashboard/modal/variable-dropbox.html'"></div>
+                        <div class="input-group-btn" >
+                            <div class="input-group-btn" ng-repeat="_i in [0]" ng-include="'org/cboard/view/dashboard/modal/variable-dropbox.html'"></div>
                         </div>
                     </div>
                 </div>
@@ -121,8 +122,8 @@
                     <label class="control-label">{{'DASHBOARD.PARAM.VALUE_B'|translate}}</label>
                     <div class="input-group">
                         <input type="text" class="form-control" ng-model="param.values[1]">
-                        <div class="input-group-btn">
-                            <div class="input-group-btn" ng-include="'org/cboard/view/dashboard/modal/variable-dropbox.html'"></div>
+                        <div class="input-group-btn" >
+                            <div class="input-group-btn" ng-repeat="_i in [1]" ng-include="'org/cboard/view/dashboard/modal/variable-dropbox.html'"></div>
                         </div>
                     </div>
                 </div>

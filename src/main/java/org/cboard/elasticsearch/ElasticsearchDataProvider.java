@@ -223,12 +223,12 @@ public class ElasticsearchDataProvider extends DataProvider implements Aggregata
             Long lt1 = jo.getLong("gt");
             Long lt2 = jo.getLong("gte");
             return coalesce(lt1, lt2, Long.MAX_VALUE);
-        }).min();
+        }).max();
         OptionalLong upperOpt = array.stream().mapToLong(jo -> {
             Long lt1 = jo.getLong("lt");
             Long lt2 = jo.getLong("lte");
             return coalesce(lt1, lt2, new Date().getTime());
-        }).max();
+        }).min();
         if (!lowerOpt.isPresent() || lowerOpt.getAsLong() == Long.MAX_VALUE || lowerOpt.getAsLong() >= upperOpt.getAsLong() ) {
             return queryBound(columnName, config);
         }

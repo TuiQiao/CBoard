@@ -6,7 +6,7 @@
     </h1>
     <div class="breadcrumb" style="cursor: pointer" >
         <div style="display: inline-block">
-            <button type="button" class="btn btn-primary btn-sm dropdown-toggle" data-toggle="dropdown">条件
+            <button type="button" class="btn btn-primary btn-sm dropdown-toggle" data-toggle="dropdown"><i class="fa fa-filter"></i> {{"COMMON.PARAM" | translate}}
                 <span class="fa fa-caret-down"></span>
             </button>
             <ul class="dropdown-menu" style="position: relative">
@@ -14,7 +14,7 @@
                     <a ng-click="applyBoardParam(p.params)">{{p.name}}<span class="pull-right" ng-click="deleteBoardParam($index);"><i class="fa fa-trash-o"></i></span></a>
                 </li>
                 <li>
-                    <a>Save As <input style="min-width: 120px" ng-model="newBoardParamName" ng-blur="newBoardParam(newBoardParamName);newBoardParamName='';"></a>
+                    <a>{{"COMMON.SAVE_AS" | translate}}&nbsp;<input style="min-width: 120px" ng-model="newBoardParamName" ng-blur="newBoardParam(newBoardParamName);newBoardParamName='';"></a>
                 </li>
             </ul>
         </div>

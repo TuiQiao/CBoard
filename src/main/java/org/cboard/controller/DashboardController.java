@@ -20,6 +20,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -395,6 +396,28 @@ public class DashboardController {
     @RequestMapping(value = "/getJobStatus")
     public ViewDashboardJob getJobStatus(@RequestParam(name = "id") Long id) {
         return new ViewDashboardJob(jobDao.getJob(id));
+    }
+
+    @RequestMapping(value = "/getBoardParam")
+    public DashboardBoardParam getBoardParam(@RequestParam(name = "boardId") Long boardId) {
+        String userid = authenticationService.getCurrentUser().getUserId();
+        return boardDao.getBoardParam(boardId, userid);
+    }
+
+    @RequestMapping(value = "/saveBoardParam")
+    @Transactional
+    public String saveBoardParam(@RequestParam(name = "boardId") Long boardId, @RequestParam(name = "config") String config) {
+        String userid = authenticationService.getCurrentUser().getUserId();
+        if (boardId == null) {
+            return "";
+        }
+        DashboardBoardParam boardParam = new DashboardBoardParam();
+        boardParam.setBoardId(boardId);
+        boardParam.setUserId(userid);
+        boardParam.setConfig(config);
+        boardDao.deleteBoardParam(boardId, userid);
+        boardDao.saveBoardParam(boardParam);
+        return "1";
     }
 
     @ExceptionHandler

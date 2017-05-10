@@ -5,6 +5,19 @@
         {{board.name}}
     </h1>
     <div class="breadcrumb" style="cursor: pointer" >
+        <div style="display: inline-block">
+            <button type="button" class="btn btn-primary btn-sm dropdown-toggle" data-toggle="dropdown">条件
+                <span class="fa fa-caret-down"></span>
+            </button>
+            <ul class="dropdown-menu" style="position: relative">
+                <li ng-repeat="p in boardParams">
+                    <a ng-click="applyBoardParam(p.params)">{{p.name}}<span class="pull-right" ng-click="deleteBoardParam($index);"><i class="fa fa-trash-o"></i></span></a>
+                </li>
+                <li>
+                    <a>Save As <input style="min-width: 120px" ng-model="newBoardParamName" ng-blur="newBoardParam(newBoardParamName);newBoardParamName='';"></a>
+                </li>
+            </ul>
+        </div>
         <div style="display: inline-block" ng-click="load(true)">
             <button class="btn btn-primary btn-sm">
                 <span><i class="fa fa-refresh"></i>&nbsp;{{"COMMON.REFRESH" | translate}}</span>

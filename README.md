@@ -2,7 +2,7 @@
 #### An **open** BI Dashboard platform that supports **interactive** multi-dimensional report design and data analysis  
 Server side framework is Spring+MyBatis and front-end is based on AngularJS1 and Bootstrap. The whole architecture graphic is as below:   
 
-![image](https://cloud.githubusercontent.com/assets/6037522/19718976/654610b2-9b9a-11e6-8a19-97de7df42b5b.png)
+![image](https://yzhang921.gitbooks.io/cboard-git-book/assets/arch.png)
 
 # Screenshot
 ![image](https://cloud.githubusercontent.com/assets/6037522/21757656/0828c2d6-d66d-11e6-95c5-4d0cb2f6b5b1.png)

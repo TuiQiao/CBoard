@@ -24,21 +24,20 @@ import org.cboard.dataprovider.config.*;
 import org.cboard.dataprovider.result.AggregateResult;
 import org.cboard.dataprovider.result.ColumnIndex;
 import org.cboard.elasticsearch.query.QueryBuilder;
+import org.cboard.util.SqlMethod;
 import org.cboard.util.json.JSONBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.time.Duration;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
 import static org.cboard.elasticsearch.query.QueryBuilder.*;
 import static org.cboard.elasticsearch.aggregation.AggregationBuilder.*;
+import static org.cboard.util.SqlMethod.*;
 /**
  * Created by yfyuan on 2017/3/17.
  */
@@ -74,7 +73,7 @@ public class ElasticsearchDataProvider extends DataProvider implements Aggregata
     public String[] queryDimVals(String columnName, AggConfig config) throws Exception {
         JSONObject request = new JSONObject();
         request.put("size", 1000);
-        request.put("aggregations", getTermsAggregation(columnName, config));
+        request.put("aggregations", getAggregation(columnName, config));
 
         if (config != null) {
             JSONArray filter = getFilter(config);
@@ -185,14 +184,18 @@ public class ElasticsearchDataProvider extends DataProvider implements Aggregata
         return null;
     }
 
-    protected JSONObject getTermsAggregation(String columnName, AggConfig config) {
-        JSONObject result = getOverrideTermsAggregation(columnName);
-        if (result != null) {
-            return result;
-        } else {
-            JSONObject aggregation = null;
-            try {
-                Map<String, String> types = getTypes();
+    protected JSONObject getAggregation(String columnName, AggConfig config) {
+        JSONObject aggregation = null;
+        try {
+            Map<String, String> types = getTypes();
+            JSONObject overrideAgg = getOverrideTermsAggregation(columnName);
+            // For Dimension members query
+//            if (config == null && "date".equals(types.get(columnName))) {
+//                return buildDateHistAggregation(columnName, config);
+//            }
+            if (overrideAgg != null) {
+                return overrideAgg;
+            } else {
                 switch (types.get(columnName)) {
                     case "date":
                         aggregation = buildDateHistAggregation(columnName, config);
@@ -200,16 +203,40 @@ public class ElasticsearchDataProvider extends DataProvider implements Aggregata
                     default:
                         aggregation = json(columnName, termsAggregation(columnName, 1000));
                 }
-
-            } catch (Exception e) {
-                e.printStackTrace();
-                aggregation = json(columnName, termsAggregation(columnName, 1000));
             }
-            return aggregation;
+        } catch (Exception e) {
+            e.printStackTrace();
+            aggregation = json(columnName, termsAggregation(columnName, 1000));
         }
+        return aggregation;
     }
 
     protected JSONObject buildDateHistAggregation(String columnName, AggConfig config) throws Exception {
+        if (config == null) {
+            return queryBound(columnName, config);
+        }
+        String intervalStr = "10m";
+        JSONObject queryDsl = buildFilterDSL(config);
+        Object object = JSONPath.compile("$.." + columnName.replace(".", "\\.")).eval(queryDsl);
+        List<JSONObject> array = (List) object;
+        OptionalLong lowerOpt = array.stream().mapToLong(jo -> {
+            Long lt1 = jo.getLong("gt");
+            Long lt2 = jo.getLong("gte");
+            return coalesce(lt1, lt2, Long.MAX_VALUE);
+        }).min();
+        OptionalLong upperOpt = array.stream().mapToLong(jo -> {
+            Long lt1 = jo.getLong("lt");
+            Long lt2 = jo.getLong("lte");
+            return coalesce(lt1, lt2, new Date().getTime());
+        }).max();
+        if (!lowerOpt.isPresent() || lowerOpt.getAsLong() == Long.MAX_VALUE || lowerOpt.getAsLong() >= upperOpt.getAsLong() ) {
+            return queryBound(columnName, config);
+        }
+        intervalStr = dateInterval(lowerOpt.getAsLong(), upperOpt.getAsLong());
+        return json(columnName, dateHistAggregation(columnName, intervalStr, 0, lowerOpt.getAsLong(), upperOpt.getAsLong()));
+    }
+
+    protected JSONObject queryBound(String columnName, AggConfig config) {
         String maxKey = "max_ts";
         String minKey = "min_ts";
         JSONBuilder request = json("size", 0).
@@ -225,14 +252,26 @@ public class ElasticsearchDataProvider extends DataProvider implements Aggregata
             }
         }
 
-        JSONObject response = post(getSearchUrl(request), request);
-        long maxTs = response.getJSONObject("aggregations").getJSONObject(maxKey).getLong("value");
-        long minTs = response.getJSONObject("aggregations").getJSONObject(minKey).getLong("value");
+        String intervalStr = "10m";
+        try {
+            JSONObject response = post(getSearchUrl(request), request);
+            long maxTs = coalesce(response.getJSONObject("aggregations").getJSONObject(maxKey).getLong("value"), 0l);
+            long minTs = coalesce(response.getJSONObject("aggregations").getJSONObject(minKey).getLong("value"), 0l);
+            intervalStr = dateInterval(minTs, maxTs);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return json(columnName, dateHistAggregation(columnName, intervalStr, 0));
+    }
 
+    protected String dateInterval(long minTs, long maxTs) {
+        String intervalStr;
+        long minutesOfDuration;
         int buckets = 100;
         long stepTs = (maxTs - minTs)/buckets;
-        long minutesOfDuration = Duration.ofMillis(stepTs).toMinutes();
-        return json(columnName, dateHistAggregation(columnName, minutesOfDuration + "m", 0));
+        minutesOfDuration = Duration.ofMillis(stepTs).toMinutes();
+        intervalStr = minutesOfDuration == 0 ? "10m" : minutesOfDuration  + "m";
+        return intervalStr;
     }
 
     protected String getMappingUrl() {
@@ -292,7 +331,7 @@ public class ElasticsearchDataProvider extends DataProvider implements Aggregata
         Stream<DimensionConfig> r = config.getRows().stream();
         Stream<DimensionConfig> aggregationStream = Stream.concat(c, r);
         List<JSONObject> termAggregations =
-                aggregationStream.map(e -> getTermsAggregation(e.getColumnName(), config))
+                aggregationStream.map(e -> getAggregation(e.getColumnName(), config))
                         .collect(Collectors.toList());
         JSONObject metricAggregations = getMetricAggregation(config.getValues(), getTypes());
         termAggregations.add(metricAggregations);

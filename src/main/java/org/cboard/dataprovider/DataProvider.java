@@ -15,8 +15,7 @@ import org.cboard.dataprovider.result.AggregateResult;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.Arrays;
-import java.util.Map;
+import java.util.*;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
@@ -133,6 +132,28 @@ public abstract class DataProvider {
 
     private String getLockKey(Map<String, String> dataSource, Map<String, String> query) {
         return Hashing.md5().newHasher().putString(JSONObject.toJSON(dataSource).toString() + JSONObject.toJSON(query).toString(), Charsets.UTF_8).hash().toString();
+    }
+
+    public List<DimensionConfig> filterCCList2DCList(List<ConfigComponent> filters) {
+        List<DimensionConfig> result = new LinkedList<>();
+        filters.stream().forEach(cc -> {
+            result.addAll(configComp2DimConfigList(cc));
+        });
+        return result;
+    }
+
+    public List<DimensionConfig> configComp2DimConfigList(ConfigComponent cc) {
+        List<DimensionConfig> result = new LinkedList<>();
+        if (cc instanceof DimensionConfig) {
+            result.add((DimensionConfig)cc);
+        } else {
+            Iterator<ConfigComponent> iterator = cc.getIterator();
+            while (iterator.hasNext()) {
+                ConfigComponent next = iterator.next();
+                result.addAll(configComp2DimConfigList(next));
+            }
+        }
+        return result;
     }
 
     abstract public String[][] getData() throws Exception;

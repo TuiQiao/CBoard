@@ -27,4 +27,9 @@ public class CompositeConfig extends ConfigComponent {
     public void setConfigComponents(ArrayList<ConfigComponent> configComponents) {
         this.configComponents = configComponents;
     }
+
+    @Override
+    public Iterator<ConfigComponent> getIterator() {
+        return configComponents.iterator();
+    }
 }

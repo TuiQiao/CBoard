@@ -10,7 +10,7 @@
                     </span>
                     <ul ng-switch-when="level">
                         <li ng-repeat="c in o.columns|filter:filterDimension" >
-                            <span dnd-draggable="c" dnd-type="'dimension'"><img src="imgs/schema/bullet_blue.png">{{c.alias?c.alias:c.column}}</span>
+                            <span dnd-draggable="dndTransfer.attachLevel(c,o)" dnd-type="'dimension'"><img src="imgs/schema/bullet_blue.png">{{c.alias?c.alias:c.column}}</span>
                         </li>
                     </ul>
                 </li>

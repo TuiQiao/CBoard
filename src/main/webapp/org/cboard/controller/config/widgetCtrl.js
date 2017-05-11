@@ -259,7 +259,7 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
             $scope.toChartDisabled = false;
             $scope.newConfig();
             $scope.filterSelect = {};
-            loadDataset(function(){
+            loadDataset(function () {
                 $scope.curWidget.expressions = [];
                 loadDsExpressions();
                 $scope.curWidget.filterGroups = [];
@@ -786,7 +786,7 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
             $scope.widgetId = widget.id;
             $scope.optFlag = 'edit';
             $scope.customDs = _.isUndefined($scope.curWidget.datasetId);
-            loadDataset(function(){
+            loadDataset(function () {
                 loadDsExpressions();
                 loadDsFilterGroups();
                 buildSchema();
@@ -936,11 +936,16 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
                     list[index] = {
                         alias: item.alias,
                         col: item.column,
+                        level: item.level,
                         type: 'eq',
                         values: [],
                         sort: 'asc'
                     };
                 }
+            },
+            attachLevel: function (column, level) {
+                column.level = level.alias;
+                return column;
             }
         };
 
@@ -972,7 +977,7 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
                     getSelects: function () {
                         return function (byFilter, column, callback) {
                             var config = undefined;
-                            if(byFilter){
+                            if (byFilter) {
                                 config = angular.copy($scope.curWidget.config);
                                 var arr = _.findKey($scope.curWidget.config, function (o) {
                                     return o == setbackArr;

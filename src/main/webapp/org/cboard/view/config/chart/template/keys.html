@@ -12,7 +12,7 @@
              class="btn-group" style="cursor: move;margin: 3px 3px;">
             <button type="button" class="btn btn-default btn-sm" style="cursor: move;"
                     ng-click="curWidget.config.keys.splice($index, 1);">
-                {{o.alias?o.alias:o.col}}
+                {{o.level?'['+o.level+'].':''}}{{o.alias?o.alias:o.col}}
             </button>
             <button type="button" class="btn btn-default btn-sm dropdown-toggle"
                     ng-click="editSort(o);cleanVSort();">

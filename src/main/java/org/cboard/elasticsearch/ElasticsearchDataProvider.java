@@ -135,11 +135,11 @@ public class ElasticsearchDataProvider extends DataProvider implements Aggregata
             case ">":
                 return rangeQuery(fieldName, v0, null);
             case "<":
-                return rangeQuery(fieldName, null, v1);
+                return rangeQuery(fieldName, null, v0);
             case "≥":
                 return rangeQuery(fieldName, v0, null, true, true);
             case "≤":
-                return rangeQuery(fieldName, null, v1, true, true);
+                return rangeQuery(fieldName, null, v0, true, true);
             case "(a,b]":
                 return rangeQuery(fieldName, v0, v1, false, true);
             case "[a,b)":
@@ -184,7 +184,7 @@ public class ElasticsearchDataProvider extends DataProvider implements Aggregata
         return null;
     }
 
-    protected JSONObject getAggregation(String columnName, AggConfig config) {
+    private JSONObject getAggregation(String columnName, AggConfig config) {
         JSONObject aggregation = null;
         try {
             Map<String, String> types = getTypes();
@@ -211,7 +211,7 @@ public class ElasticsearchDataProvider extends DataProvider implements Aggregata
         return aggregation;
     }
 
-    protected JSONObject buildDateHistAggregation(String columnName, AggConfig config) throws Exception {
+    private JSONObject buildDateHistAggregation(String columnName, AggConfig config) throws Exception {
         if (config == null) {
             return queryBound(columnName, config);
         }
@@ -219,24 +219,24 @@ public class ElasticsearchDataProvider extends DataProvider implements Aggregata
         JSONObject queryDsl = buildFilterDSL(config);
         Object object = JSONPath.compile("$.." + columnName.replace(".", "\\.")).eval(queryDsl);
         List<JSONObject> array = (List) object;
-        OptionalLong lowerOpt = array.stream().mapToLong(jo -> {
-            Long lt1 = jo.getLong("gt");
-            Long lt2 = jo.getLong("gte");
-            return coalesce(lt1, lt2, Long.MAX_VALUE);
-        }).max();
-        OptionalLong upperOpt = array.stream().mapToLong(jo -> {
-            Long lt1 = jo.getLong("lt");
-            Long lt2 = jo.getLong("lte");
-            return coalesce(lt1, lt2, new Date().getTime());
-        }).min();
-        if (!lowerOpt.isPresent() || lowerOpt.getAsLong() == Long.MAX_VALUE || lowerOpt.getAsLong() >= upperOpt.getAsLong() ) {
+        Long lower = array.stream()
+                .map(jo -> coalesce(jo.getLong("gt"), jo.getLong("gte")))
+                .filter(Objects::nonNull)
+                .max(Comparator.naturalOrder())
+                .orElse(null);
+        Long upper = array.stream()
+                .map(jo -> coalesce(jo.getLong("lt"), jo.getLong("lte")))
+                .filter(Objects::nonNull)
+                .min(Comparator.naturalOrder())
+                .orElse(new Date().getTime());
+        if (lower == null || lower >= upper) {
             return queryBound(columnName, config);
         }
-        intervalStr = dateInterval(lowerOpt.getAsLong(), upperOpt.getAsLong());
-        return json(columnName, dateHistAggregation(columnName, intervalStr, 0, lowerOpt.getAsLong(), upperOpt.getAsLong()));
+        intervalStr = dateInterval(lower, upper);
+        return json(columnName, dateHistAggregation(columnName, intervalStr, 0, lower, upper));
     }
 
-    protected JSONObject queryBound(String columnName, AggConfig config) {
+    private JSONObject queryBound(String columnName, AggConfig config) {
         String maxKey = "max_ts";
         String minKey = "min_ts";
         JSONBuilder request = json("size", 0).

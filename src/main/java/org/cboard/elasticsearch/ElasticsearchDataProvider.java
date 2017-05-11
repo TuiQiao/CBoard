@@ -265,12 +265,16 @@ public class ElasticsearchDataProvider extends DataProvider implements Aggregata
     }
 
     protected String dateInterval(long minTs, long maxTs) {
-        String intervalStr;
-        long minutesOfDuration;
+        String intervalStr = "1m";
         int buckets = 100;
         long stepTs = (maxTs - minTs)/buckets;
-        minutesOfDuration = Duration.ofMillis(stepTs).toMinutes();
-        intervalStr = minutesOfDuration == 0 ? "10m" : minutesOfDuration  + "m";
+        long minutesOfDuration = Duration.ofMillis(stepTs).toMinutes();
+        long secondsOfDuration = Duration.ofMillis(stepTs).toMillis()/1000;
+        if (minutesOfDuration > 0) {
+            intervalStr = minutesOfDuration  + "m";
+        } else if (secondsOfDuration > 0){
+            intervalStr = secondsOfDuration + "s";
+        }
         return intervalStr;
     }
 

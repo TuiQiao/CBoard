@@ -24,7 +24,6 @@ import org.cboard.dataprovider.config.*;
 import org.cboard.dataprovider.result.AggregateResult;
 import org.cboard.dataprovider.result.ColumnIndex;
 import org.cboard.elasticsearch.query.QueryBuilder;
-import org.cboard.util.SqlMethod;
 import org.cboard.util.json.JSONBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -35,9 +34,10 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
+import static org.cboard.elasticsearch.aggregation.AggregationBuilder.dateHistAggregation;
+import static org.cboard.elasticsearch.aggregation.AggregationBuilder.termsAggregation;
 import static org.cboard.elasticsearch.query.QueryBuilder.*;
-import static org.cboard.elasticsearch.aggregation.AggregationBuilder.*;
-import static org.cboard.util.SqlMethod.*;
+import static org.cboard.util.SqlMethod.coalesce;
 /**
  * Created by yfyuan on 2017/3/17.
  */

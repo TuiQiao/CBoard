@@ -229,7 +229,7 @@ desired effect
 
 <script type="text/ng-template" id="echartContent">
     <div class="col-md-{{widget.width}}">
-        <div class="box box-solid">
+        <div class="box box-solid" style="z-index: 99;">
             <div class="box-header">
                 <i class="fa fa-bar-chart-o"></i>
                 <h3 class="box-title">{{widget.name}}</h3>
@@ -257,7 +257,7 @@ desired effect
     </div>
 </script>
 <script type="text/ng-template" id="chartContent">
-    <div class="col-md-{{widget.width}}">
+    <div class="col-md-{{widget.width}}" style="z-index: 99;">
         <div class="box box-solid">
             <div class="box-header">
                 <i class="fa fa-bar-chart-o"></i>

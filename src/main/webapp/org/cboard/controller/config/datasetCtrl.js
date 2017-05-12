@@ -380,6 +380,26 @@ cBoard.controller('datasetCtrl', function ($scope, $http, dataService, $uibModal
         });
     };
 
+    $scope.checkDimension = function (columns, item) {
+        var _f = _.find(columns, function (e) {
+            return e.type == 'column' && e.column == item.column;
+        });
+        return _f ? false : item;
+    };
+
+    $scope.measureToDimension = function (index, o) {
+        if ($scope.checkDimension($scope.curDataset.data.schema.dimension, o) != false) {
+            $scope.curDataset.data.schema.measure.splice(index, 1);
+            $scope.curDataset.data.schema.dimension.push(o);
+        }
+    };
+
+    $scope.toDimension = function (o) {
+        if ($scope.checkDimension($scope.curDataset.data.schema.dimension, o) != false) {
+            $scope.curDataset.data.schema.dimension.push(o);
+        }
+    };
+
     $scope.custom = function (o) {
         $uibModal.open({
             templateUrl: 'org/cboard/view/config/modal/custom.html',

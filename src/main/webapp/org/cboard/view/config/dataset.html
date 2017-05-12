@@ -95,7 +95,7 @@
                                     <div class="form-control" style="min-height: 200px;height: auto;padding: 0px; border: 2px dashed #d2d6de">
                                         <span ng-repeat="o in selects"
                                               class="btn btn-sm" style="margin: 3px 3px;" ng-class="{true:'btn-primary',false:'btn-default'}[checkExist(o)]"
-                                              dnd-draggable="{type: 'column', column: o}" dnd-type="'column'" ng-click="curDataset.data.schema.dimension.push({type: 'column', column: o})">{{o}}</span>
+                                              dnd-draggable="{type: 'column', column: o}" dnd-type="'column'" ng-click="toDimension({type: 'column', column: o})">{{o}}</span>
                                     </div>
                                 </div>
                                 <div class="col-md-6">
@@ -111,7 +111,7 @@
                                                      title="{{'CONFIG.DATASET.TIP_ADD_HIERARCHY'|translate}}"
                                                      style="cursor: pointer"
                                                      />
-                                                <ul dnd-list="curDataset.data.schema.dimension"
+                                                <ul dnd-list="curDataset.data.schema.dimension" dnd-drop="checkDimension(curDataset.data.schema.dimension,item)"
                                                     dnd-allowed-types="['column','level']">
                                                     <li class="dndPlaceholder"><span class="sort-highlight btn btn-default btn-xs">+</span></li>
                                                     <li ng-repeat="o in curDataset.data.schema.dimension" ng-switch="o.type"
@@ -129,14 +129,13 @@
                                                             <img src="imgs/schema/bullet_blue.png">
                                                             {{o.alias?o.alias+' ('+o.column+')':o.column}}
                                                         </span>
-                                                        <i class="fa fa-edit" ng-init="show=false" ng-click="show=true" title="{{'CONFIG.DATASET.TIP_EDIT_ALIAS'|translate}}">
-                                                            <input ng-show="show" type="text" ng-model="o.alias" ng-blur="show=false"/></i>
+                                                        <i class="fa fa-edit" ng-click="custom(c)" title="{{'CONFIG.DATASET.TIP_EDIT_ALIAS'|translate}}"></i>
                                                         <i class="fa fa-trash-o" ng-click="curDataset.data.schema.dimension.splice($index, 1)"></i>
                                                         <i ng-switch-when="column" class="fa fa-exchange" title="{{'CONFIG.DATASET.TIP_SWITCH_TO_MEASURE'|translate}}"
                                                            ng-click="curDataset.data.schema.dimension.splice($index, 1);curDataset.data.schema.measure.push(o)"></i>
                                                         <ul ng-switch-when="level"
                                                             dnd-list="o.columns"
-                                                            dnd-allowed-types="['column']">
+                                                            dnd-allowed-types="['column']" dnd-drop="checkDimension(o.columns,item)">
                                                             <li class="dndPlaceholder">
                                                                 <span class="sort-highlight btn btn-default btn-xs">+</span></li>
                                                             <li ng-repeat="c in o.columns">
@@ -175,7 +174,7 @@
                                                         <i class="fa fa-trash-o"
                                                            ng-click="curDataset.data.schema.measure.splice($index, 1)"></i>
                                                         <i class="fa fa-exchange" title="{{'CONFIG.DATASET.TIP_SWITCH_TO_DIMENSION'|translate}}"
-                                                           ng-click="curDataset.data.schema.measure.splice($index, 1);curDataset.data.schema.dimension.push(o)"></i>
+                                                           ng-click="measureToDimension($index, o);"></i>
                                                     </li>
                                                 </ul>
                                             </li>

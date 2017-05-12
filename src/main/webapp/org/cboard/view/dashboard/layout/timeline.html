@@ -69,7 +69,7 @@
                         <span ng-switch-when="parent"
                               class="n_btn_n3 {{timelineColor[$parent.$parent.$index % timelineColor.length]}}" ng-click="openCloseParentNode(group)">{{row.nodeName}}</span>
                         <i ng-switch-default
-                           class="fa fa-envelope {{timelineColor[$index % timelineColor.length]}}"
+                           class="fa fa-area-chart {{timelineColor[$index % timelineColor.length]}}"
                            title="{{row.title}}" ng-click="openCloseNode(row)"></i>
                         <div class="timeline-item" ng-style="{display:row.show?'block':'none'}">
                             <div class="arrow-left"></div>
@@ -85,9 +85,9 @@
                                                 <dashboard-widget ng-show="widget.loading == false"></dashboard-widget>
                                             </div>
                                             <div ng-if="widget.hasRole != false && (widget.loading || !widget.show)"
-                                                 class="col-md-{{widget.width}}" style="height: 50px;">
+                                                 class="col-md-{{widget.width}}" style="height: 50px;z-index: 99;">
                                                 <div class="box box-solid">
-                                                    <div class="box-header" >
+                                                    <div class="box-header">
                                                         <i class="fa fa-bar-chart-o"></i>
                                                         <h3 class="box-title">{{widget.name}}</h3>
                                                         <div class="box-tools pull-right">

@@ -38,6 +38,7 @@ import java.util.stream.Stream;
 import static org.cboard.elasticsearch.query.QueryBuilder.*;
 import static org.cboard.elasticsearch.aggregation.AggregationBuilder.*;
 import static org.cboard.util.SqlMethod.*;
+
 /**
  * Created by yfyuan on 2017/3/17.
  */
@@ -185,28 +186,36 @@ public class ElasticsearchDataProvider extends DataProvider implements Aggregata
     }
 
     protected JSONObject getAggregation(String columnName, AggConfig config) {
+        DimensionConfig d = new DimensionConfig();
+        d.setColumnName(columnName);
+        return getAggregation(d, config);
+    }
+
+    protected JSONObject getAggregation(DimensionConfig d, AggConfig config) {
         JSONObject aggregation = null;
         try {
             Map<String, String> types = getTypes();
-            JSONObject overrideAgg = getOverrideTermsAggregation(columnName);
+            JSONObject overrideAgg = getOverrideTermsAggregation(d.getColumnName());
             // For Dimension members query
 //            if (config == null && "date".equals(types.get(columnName))) {
 //                return buildDateHistAggregation(columnName, config);
 //            }
-            if (overrideAgg != null) {
+            if (StringUtils.isNotEmpty(d.getCustom())) {
+                return JSONObject.parseObject(d.getCustom());
+            } else if (overrideAgg != null) {
                 return overrideAgg;
             } else {
-                switch (types.get(columnName)) {
+                switch (types.get(d.getColumnName())) {
                     case "date":
-                        aggregation = buildDateHistAggregation(columnName, config);
+                        aggregation = buildDateHistAggregation(d.getColumnName(), config);
                         break;
                     default:
-                        aggregation = json(columnName, termsAggregation(columnName, 1000));
+                        aggregation = json(d.getColumnName(), termsAggregation(d.getColumnName(), 1000));
                 }
             }
         } catch (Exception e) {
             e.printStackTrace();
-            aggregation = json(columnName, termsAggregation(columnName, 1000));
+            aggregation = json(d.getColumnName(), termsAggregation(d.getColumnName(), 1000));
         }
         return aggregation;
     }
@@ -229,7 +238,7 @@ public class ElasticsearchDataProvider extends DataProvider implements Aggregata
             Long lt2 = jo.getLong("lte");
             return coalesce(lt1, lt2, new Date().getTime());
         }).min();
-        if (!lowerOpt.isPresent() || lowerOpt.getAsLong() == Long.MAX_VALUE || lowerOpt.getAsLong() >= upperOpt.getAsLong() ) {
+        if (!lowerOpt.isPresent() || lowerOpt.getAsLong() == Long.MAX_VALUE || lowerOpt.getAsLong() >= upperOpt.getAsLong()) {
             return queryBound(columnName, config);
         }
         intervalStr = dateInterval(lowerOpt.getAsLong(), upperOpt.getAsLong());
@@ -268,9 +277,9 @@ public class ElasticsearchDataProvider extends DataProvider implements Aggregata
         String intervalStr;
         long minutesOfDuration;
         int buckets = 100;
-        long stepTs = (maxTs - minTs)/buckets;
+        long stepTs = (maxTs - minTs) / buckets;
         minutesOfDuration = Duration.ofMillis(stepTs).toMinutes();
-        intervalStr = minutesOfDuration == 0 ? "10m" : minutesOfDuration  + "m";
+        intervalStr = minutesOfDuration == 0 ? "10m" : minutesOfDuration + "m";
         return intervalStr;
     }
 
@@ -331,7 +340,7 @@ public class ElasticsearchDataProvider extends DataProvider implements Aggregata
         Stream<DimensionConfig> r = config.getRows().stream();
         Stream<DimensionConfig> aggregationStream = Stream.concat(c, r);
         List<JSONObject> termAggregations =
-                aggregationStream.map(e -> getAggregation(e.getColumnName(), config))
+                aggregationStream.map(e -> getAggregation(e, config))
                         .collect(Collectors.toList());
         JSONObject metricAggregations = getMetricAggregation(config.getValues(), getTypes());
         termAggregations.add(metricAggregations);

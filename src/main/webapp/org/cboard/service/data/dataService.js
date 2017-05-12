@@ -64,7 +64,7 @@ cBoard.service('dataService', function ($http, $q, updateService) {
         if (array) {
             _.each(array, function (e) {
                 if (_.isUndefined(e.group)) {
-                    result.push({columnName: e.col, filterType: e.type, values: e.values});
+                    result.push({columnName: e.col, filterType: e.type, values: e.values, level: e.level});
                 } else {
                     _.each(e.filters, function (f) {
                         result.push({columnName: f.col, filterType: f.type, values: f.values});

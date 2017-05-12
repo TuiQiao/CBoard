@@ -380,6 +380,21 @@ cBoard.controller('datasetCtrl', function ($scope, $http, dataService, $uibModal
         });
     };
 
+    $scope.custom = function (o) {
+        $uibModal.open({
+            templateUrl: 'org/cboard/view/config/modal/custom.html',
+            windowTemplateUrl: 'org/cboard/view/util/modal/window.html',
+            backdrop: false,
+            size: 'lg',
+            controller: function ($scope, $uibModalInstance) {
+                $scope.c = o;
+                $scope.ok = function () {
+                    $uibModalInstance.close();
+                };
+            }
+        });
+    };
+
     $scope.loadData = function () {
         cleanPreview();
         $scope.loading = true;

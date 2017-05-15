@@ -114,7 +114,7 @@ public class DataProviderService {
     }
 
     private void attachCustom(Dataset dataset, AggConfig aggConfig) {
-        if (dataset == null) {
+        if (dataset == null || aggConfig == null) {
             return;
         }
         Consumer<DimensionConfig> predicate = (config) -> {

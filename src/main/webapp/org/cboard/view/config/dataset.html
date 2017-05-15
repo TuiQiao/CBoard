@@ -129,7 +129,7 @@
                                                             <img src="imgs/schema/bullet_blue.png">
                                                             {{o.alias?o.alias+' ('+o.column+')':o.column}}
                                                         </span>
-                                                        <i class="fa fa-edit" ng-click="custom(c)" title="{{'CONFIG.DATASET.TIP_EDIT_ALIAS'|translate}}"></i>
+                                                        <i class="fa fa-edit" ng-click="custom(o)" title="{{'CONFIG.DATASET.TIP_EDIT_ALIAS'|translate}}"></i>
                                                         <i class="fa fa-trash-o" ng-click="curDataset.data.schema.dimension.splice($index, 1)"></i>
                                                         <i ng-switch-when="column" class="fa fa-exchange" title="{{'CONFIG.DATASET.TIP_SWITCH_TO_MEASURE'|translate}}"
                                                            ng-click="curDataset.data.schema.dimension.splice($index, 1);curDataset.data.schema.measure.push(o)"></i>

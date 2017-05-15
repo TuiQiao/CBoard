@@ -5,7 +5,6 @@ cBoard.controller('paramSelector', function ($scope, $uibModalInstance, dataServ
     $scope.type = ['=', '≠', '>', '<', '≥', '≤', '(a,b]', '[a,b)', '(a,b)', '[a,b]'];
     $scope.param = param;
     $scope.operate = {};
-    $scope.paramType = 'select';
     $scope.filter = filter;
     $scope.byFilter = {a: false};
     $scope.loadSelect = true;
@@ -25,6 +24,21 @@ cBoard.controller('paramSelector', function ($scope, $uibModalInstance, dataServ
         $scope.operate.closeInterval = $.inArray($scope.param.type, closeInterval) > -1 ? true : false;
     };
     showValues();
+    $scope.dbclickPush = function (o) {
+        if ($scope.operate.equal) {
+            $scope.param.values.push(o);
+        }
+        if ($scope.operate.openInterval) {
+            $scope.param.values[0] = o;
+        }
+        if ($scope.operate.closeInterval) {
+            if ($scope.param.values[0] == undefined || $scope.param.values[0] == '') {
+                $scope.param.values[0] = o;
+            } else {
+                $scope.param.values[1] = o;
+            }
+        }
+    };
     $scope.deleteValues = function (array) {
         if ($scope.operate.equal) {
             $scope.param.values = _.difference($scope.param.values, array);

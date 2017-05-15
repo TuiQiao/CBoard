@@ -77,7 +77,7 @@ public abstract class DataProvider {
             checkAndLoad(reload);
             dimVals = innerAggregator.queryDimVals(columnName, config);
         }
-        return dimVals;
+        return Arrays.stream(dimVals).limit(1000).toArray(String[]::new);
     }
 
     public final String[] getColumn(boolean reload) throws Exception {

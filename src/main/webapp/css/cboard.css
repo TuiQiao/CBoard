@@ -14,7 +14,7 @@
     border-bottom: 1px solid #d5d5d5;
     border-right: 1px solid #d5d5d5;
     margin-bottom: 0;
-    table-layout: fixed;
+    /*table-layout: fixed;*/
     width: auto;
     border-collapse: separate;
     border-spacing: 0;

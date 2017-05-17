@@ -17,6 +17,10 @@ cBoard.service('dataService', function ($http, $q, updateService) {
         return deferred.promise;
     };
 
+    this.linkDataset = function (datasetId, chartConfig) {
+        return linkDataset(datasetId, chartConfig);
+    };
+
     var linkDataset = function (datasetId, chartConfig) {
         if (_.isUndefined(datasetId) || _.isUndefined(chartConfig)) {
             var deferred = $q.defer();
@@ -33,10 +37,11 @@ cBoard.service('dataService', function ($http, $q, updateService) {
                 _.each(chartConfig.filters, function (f) {
                     if (f.group) {
                         var group = _.find(dataset.data.filters, function (e) {
-                            return e.group == f.group;
+                            return e.id == f.id;
                         });
-                        if(group){
+                        if (group) {
                             f.filters = group.filters;
+                            f.group = group.group;
                         }
                     }
                 });
@@ -45,14 +50,42 @@ cBoard.service('dataService', function ($http, $q, updateService) {
                     _.each(v.cols, function (c) {
                         if (c.type == 'exp') {
                             var exp = _.find(dataset.data.expressions, function (e) {
-                                return c.alias == e.alias;
+                                return c.id == e.id;
                             });
-                            if(exp){
+                            if (exp) {
                                 c.exp = exp.exp;
+                                c.alias = exp.alias;
                             }
                         }
                     });
                 });
+                //link dimension
+                var linkFunction = function (k) {
+                    if (k.id) {
+                        var _level;
+                        var _dimension;
+                        _.each(dataset.data.schema.dimension, function (e) {
+                            if (e.type == 'level') {
+                                _.each(e.columns, function (c) {
+                                    if (c.id == k.id) {
+                                        _dimension = c;
+                                        _level = e;
+                                    }
+                                });
+                            } else if (k.id == e.id) {
+                                _dimension = e;
+                            }
+                        });
+                        if (_dimension && _dimension.alias) {
+                            k.alias = _dimension.alias;
+                            if (_level) {
+                                k.level = _level.alias;
+                            }
+                        }
+                    }
+                };
+                _.each(chartConfig.keys, linkFunction);
+                _.each(chartConfig.groups, linkFunction);
                 deferred.resolve();
                 return deferred.promise;
             });
@@ -64,7 +97,7 @@ cBoard.service('dataService', function ($http, $q, updateService) {
         if (array) {
             _.each(array, function (e) {
                 if (_.isUndefined(e.group)) {
-                    result.push({columnName: e.col, filterType: e.type, values: e.values, level: e.level});
+                    result.push({columnName: e.col, filterType: e.type, values: e.values, id: e.id});
                 } else {
                     _.each(e.filters, function (f) {
                         result.push({columnName: f.col, filterType: f.type, values: f.values});
@@ -79,7 +112,7 @@ cBoard.service('dataService', function ($http, $q, updateService) {
         chartConfig = angular.copy(chartConfig);
         linkDataset(datasetId, chartConfig).then(function () {
             var cfg = undefined;
-            if(chartConfig){
+            if (chartConfig) {
                 cfg = {rows: [], columns: [], filters: []};
                 cfg.rows = getDimensionConfig(chartConfig.keys);
                 cfg.columns = getDimensionConfig(chartConfig.groups);

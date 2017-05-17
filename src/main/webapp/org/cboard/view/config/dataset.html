@@ -107,11 +107,11 @@
                                                     <b>{{'CONFIG.DATASET.DIMENSION'|translate}}</b>
                                                 </span>
                                                 <img src="imgs/schema/hierarchy_add.png"
-                                                     ng-click="curDataset.data.schema.dimension.push({type: 'level', alias: hierarchy, columns: []})"
+                                                     ng-click="curDataset.data.schema.dimension.push({id:uuid4.generate(),type: 'level', alias: hierarchy, columns: []})"
                                                      title="{{'CONFIG.DATASET.TIP_ADD_HIERARCHY'|translate}}"
                                                      style="cursor: pointer"
                                                      />
-                                                <ul dnd-list="curDataset.data.schema.dimension" dnd-drop="checkDimension(curDataset.data.schema.dimension,item)"
+                                                <ul dnd-list="curDataset.data.schema.dimension" dnd-drop="createNode(item)"
                                                     dnd-allowed-types="['column','level']">
                                                     <li class="dndPlaceholder"><span class="sort-highlight btn btn-default btn-xs">+</span></li>
                                                     <li ng-repeat="o in curDataset.data.schema.dimension" ng-switch="o.type"
@@ -135,7 +135,7 @@
                                                            ng-click="curDataset.data.schema.dimension.splice($index, 1);curDataset.data.schema.measure.push(o)"></i>
                                                         <ul ng-switch-when="level"
                                                             dnd-list="o.columns"
-                                                            dnd-allowed-types="['column']" dnd-drop="checkDimension(o.columns,item)">
+                                                            dnd-allowed-types="['column']" dnd-drop="createNode(item)">
                                                             <li class="dndPlaceholder">
                                                                 <span class="sort-highlight btn btn-default btn-xs">+</span></li>
                                                             <li ng-repeat="c in o.columns">
@@ -160,7 +160,7 @@
                                                     <img src="imgs/schema/measure.gif">
                                                     <b>{{'CONFIG.DATASET.MEASURE'|translate}}</b>
                                                 </span>
-                                                <ul dnd-list="curDataset.data.schema.measure" dnd-allowed-types="['column']">
+                                                <ul dnd-list="curDataset.data.schema.measure" dnd-allowed-types="['column']" dnd-drop="createNode(item)">
                                                     <li class="dndPlaceholder"><span class="sort-highlight btn btn-default btn-sm">+</span>
                                                     </li>
                                                     <li ng-repeat="o in curDataset.data.schema.measure">

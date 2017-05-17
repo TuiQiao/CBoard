@@ -1,7 +1,7 @@
 /**
  * Created by yfyuan on 2016/10/11.
  */
-cBoard.controller('datasetCtrl', function ($scope, $http, dataService, $uibModal, ModalUtils, $filter, chartService, $timeout) {
+cBoard.controller('datasetCtrl', function ($scope, $http, dataService, $uibModal, ModalUtils, $filter, chartService, $timeout, uuid4) {
 
     var translate = $filter('translate');
     $scope.optFlag = 'none';
@@ -12,6 +12,7 @@ cBoard.controller('datasetCtrl', function ($scope, $http, dataService, $uibModal
     $scope.loadFromCache = true;
     $scope.queryAceOpt = cbAcebaseOption;
     $scope.hierarchy = translate("CONFIG.DATASET.HIERARCHY");
+    $scope.uuid4 = uuid4;
 
     var treeID = 'dataSetTreeID'; // Set to a same value with treeDom
     var originalData = [];
@@ -221,7 +222,7 @@ cBoard.controller('datasetCtrl', function ($scope, $http, dataService, $uibModal
                 if (col) {
                     $scope.data = angular.copy(col);
                 } else {
-                    $scope.data = {group: '', filters: []};
+                    $scope.data = {group: '', filters: [], id: uuid4.generate()};
                 }
                 $scope.selects = selects;
                 $scope.close = function () {
@@ -311,7 +312,8 @@ cBoard.controller('datasetCtrl', function ($scope, $http, dataService, $uibModal
                 $scope.curDataset.data.expressions.push({
                     type: 'exp',
                     exp: data.expression,
-                    alias: data.alias
+                    alias: data.alias,
+                    id: uuid4.generate()
                 });
             }
         } else {
@@ -380,24 +382,18 @@ cBoard.controller('datasetCtrl', function ($scope, $http, dataService, $uibModal
         });
     };
 
-    $scope.checkDimension = function (columns, item) {
-        var _f = _.find(columns, function (e) {
-            return e.type == 'column' && e.column == item.column;
-        });
-        return _f ? false : item;
+    $scope.createNode = function (item) {
+        item.id = uuid4.generate();
+        return item;
     };
 
     $scope.measureToDimension = function (index, o) {
-        if ($scope.checkDimension($scope.curDataset.data.schema.dimension, o) != false) {
-            $scope.curDataset.data.schema.measure.splice(index, 1);
-            $scope.curDataset.data.schema.dimension.push(o);
-        }
+        $scope.curDataset.data.schema.measure.splice(index, 1);
+        $scope.curDataset.data.schema.dimension.push(o);
     };
 
     $scope.toDimension = function (o) {
-        if ($scope.checkDimension($scope.curDataset.data.schema.dimension, o) != false) {
-            $scope.curDataset.data.schema.dimension.push(o);
-        }
+        $scope.curDataset.data.schema.dimension.push($scope.createNode(o));
     };
 
     $scope.custom = function (o) {

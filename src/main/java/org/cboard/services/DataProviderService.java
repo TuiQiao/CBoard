@@ -118,11 +118,12 @@ public class DataProviderService {
             return;
         }
         Consumer<DimensionConfig> predicate = (config) -> {
-            if (StringUtils.isNotEmpty(config.getLevel())) {
-                JSONObject o = (JSONObject) JSONPath.eval(dataset.getSchema(), "$.dimension[type='level'][alias='" + config.getLevel() + "'].columns[column='" + config.getColumnName() + "'][0]");
-                if (o != null) {
-                    config.setCustom(o.getString("custom"));
+            if (StringUtils.isNotEmpty(config.getId())) {
+                String custom = (String) JSONPath.eval(dataset.getSchema(), "$.dimension[id='" + config.getId() + "'][0].custom");
+                if (custom == null) {
+                    custom = (String) JSONPath.eval(dataset.getSchema(), "$.dimension[type='level'].columns[id='" + config.getId() + "'][0].custom");
                 }
+                config.setCustom(custom);
             }
         };
         aggConfig.getRows().forEach(predicate);

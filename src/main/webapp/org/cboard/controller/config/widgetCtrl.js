@@ -301,11 +301,11 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
             if ($scope.customDs) {
                 return false;
             } else {
-                var dsExp = angular.copy(_.find($scope.datasetList, function (ds) {
+                var dsExp = _.find($scope.datasetList, function (ds) {
                     return ds.id == $scope.curWidget.datasetId;
-                }).data.expressions);
+                }).data.expressions;
                 var exp = _.find(dsExp, function (e) {
-                    return o.alias == e.alias;
+                    return e.id && o.id == e.id;
                 });
                 return !_.isUndefined(exp);
             }
@@ -315,11 +315,11 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
             if ($scope.customDs) {
                 return false;
             } else {
-                var fg = angular.copy(_.find($scope.datasetList, function (ds) {
+                var fg = _.find($scope.datasetList, function (ds) {
                     return ds.id == $scope.curWidget.datasetId;
-                }).data.filters);
+                }).data.filters;
                 var f = _.find(fg, function (e) {
-                    return o.group == e.group;
+                    return e.id && o.id == e.id;
                 });
                 return !_.isUndefined(f);
             }
@@ -790,6 +790,7 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
                 loadDsExpressions();
                 loadDsFilterGroups();
                 buildSchema();
+                dataService.linkDataset($scope.curWidget.datasetId, $scope.curWidget.config);
             });
             addWatch();
         };
@@ -811,8 +812,10 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
             var result = false;
             _.each($scope.curWidget.config.values, function (v) {
                 _.each(v.cols, function (c) {
-                    if (c.type == 'exp' && e.alias == c.alias) {
-                        result = true;
+                    if (c.type == 'exp') {
+                        if (e.id == c.id && e.alias == c.alias) {
+                            result = true;
+                        }
                     }
                 });
             });
@@ -822,8 +825,10 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
         $scope.filterFilterGroup = function (e) {
             var result = false;
             _.each($scope.curWidget.config.filters, function (f) {
-                if (f.group && e.group == f.group) {
-                    result = true;
+                if (f.group) {
+                    if (e.id == f.id && e.group == f.group) {
+                        result = true;
+                    }
                 }
             });
             return !result;
@@ -941,6 +946,9 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
                         values: [],
                         sort: 'asc'
                     };
+                    if (type == 'dimension') {
+                        list[index].id = item.id;
+                    }
                 }
             },
             attachLevel: function (column, level) {

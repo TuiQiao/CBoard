@@ -18,6 +18,19 @@ cBoard.controller('datasetCtrl', function ($scope, $http, dataService, $uibModal
     var originalData = [];
     var updateUrl = "dashboard/updateDataset.do";
 
+    var trash = {};
+
+    $scope.toTrash = function (array, index) {
+        var o = array[index];
+        if (o.type == 'column') {
+            if (!trash[o.column]) {
+                trash[o.column] = [];
+            }
+            trash[o.column].push(o);
+        }
+        array.splice(index, 1);
+    };
+
     $scope.dndTransfer = {
         dimension: function (list, index, item, type) {
             if (type == 'column') {
@@ -383,6 +396,12 @@ cBoard.controller('datasetCtrl', function ($scope, $http, dataService, $uibModal
     };
 
     $scope.createNode = function (item) {
+        if (trash[item.column]) {
+            var _i = trash[item.column].pop();
+            if (_i) {
+                return _i;
+            }
+        }
         item.id = uuid4.generate();
         return item;
     };

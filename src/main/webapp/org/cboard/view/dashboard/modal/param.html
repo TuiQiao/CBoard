@@ -26,6 +26,7 @@
                     <select multiple class="form-control selectsOption" ng-model="selectItems" style="height: 300px">
                         <option ng-repeat="v in selects | filter:selected | filter:keyword"
                                 style="overflow: hidden;white-space: nowrap;text-overflow: ellipsis;" title="{{v}}"
+                                value="{{v}}"
                                 ng-dblclick="dbclickPush(v)">{{v}}
                         </option>
                     </select>
@@ -65,11 +66,11 @@
                 <div class="row">
                     <div class="col-md-12">
                         <span>{{'DASHBOARD.PARAM.VALUE_LIST'|translate}}</span>
-                        <select multiple class="form-control selectsOption" ng-model="selectValues"
+                        <select multiple class="form-control selectsOption" ng-model="$parent.selectValues"
                                 style="height: 300px">
                             <option ng-repeat="v in param.values"
                                     style="overflow: hidden;white-space: nowrap;text-overflow: ellipsis;" title="{{v}}"
-                                    ng-dblclick="param.values.splice($index,1)">{{v}}
+                                    ng-dblclick="param.values.splice($index,1)" value="{{v}}">{{v}}
                             </option>
                         </select>
                     </div>

@@ -195,26 +195,25 @@ public class ElasticsearchDataProvider extends DataProvider implements Aggregata
         try {
             Map<String, String> types = getTypes();
             JSONObject overrideAgg = getOverrideTermsAggregation(d.getColumnName());
-            // For Dimension members query
-//            if (config == null && "date".equals(types.get(columnName))) {
-//                return buildDateHistAggregation(columnName, config);
-//            }
+
+            // Build default aggregation
+            switch (types.get(d.getColumnName())) {
+                case "date":
+                    aggregation = buildDateHistAggregation(d.getColumnName(), config);
+                    break;
+                default:
+                    aggregation = json(d.getColumnName(), termsAggregation(d.getColumnName(), 1000));
+            }
+            // Query Override
+            if (overrideAgg != null) {
+                aggregation = overrideAgg;
+            }
+            // Schema Override
             if (StringUtils.isNotEmpty(d.getCustom())) {
-                return JSONObject.parseObject(d.getCustom());
-            } else if (overrideAgg != null) {
-                return overrideAgg;
-            } else {
-                switch (types.get(d.getColumnName())) {
-                    case "date":
-                        aggregation = buildDateHistAggregation(d.getColumnName(), config);
-                        break;
-                    default:
-                        aggregation = json(d.getColumnName(), termsAggregation(d.getColumnName(), 1000));
-                }
+                aggregation = json(d.getColumnName(), JSONObject.parseObject(d.getCustom()));
             }
         } catch (Exception e) {
             e.printStackTrace();
-            aggregation = json(d.getColumnName(), termsAggregation(d.getColumnName(), 1000));
         }
         return aggregation;
     }

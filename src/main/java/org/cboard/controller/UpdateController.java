@@ -85,8 +85,8 @@ public class UpdateController {
         List<DashboardWidget> widgetList = widgetDao.getWidgetList(userId);
         widgetList.forEach(widget -> {
             Long datasetId = JSONObject.parseObject(widget.getData()).getLong("datasetId");
-            if (datasetId != null) {
-                DashboardDataset dataset = datasetDao.getDataset(datasetId);
+            DashboardDataset dataset = datasetDao.getDataset(datasetId);
+            if (dataset != null) {
                 JSONObject _dataset = JSONObject.parseObject(dataset.getData());
                 JSONObject data = JSONObject.parseObject(widget.getData());
                 JSONObject config = data.getJSONObject("config");

@@ -416,6 +416,8 @@ cBoard.controller('datasetCtrl', function ($scope, $http, dataService, $uibModal
     };
 
     $scope.custom = function (o) {
+        var selects = $scope.selects;
+        var datasource = $scope.datasource;
         $uibModal.open({
             templateUrl: 'org/cboard/view/config/modal/custom.html',
             windowTemplateUrl: 'org/cboard/view/util/modal/window.html',
@@ -426,6 +428,7 @@ cBoard.controller('datasetCtrl', function ($scope, $http, dataService, $uibModal
                 $scope.ok = function () {
                     $uibModalInstance.close();
                 };
+                $scope.customAceOpt = schemaCustomOpt(selects, datasource.type);
             }
         });
     };

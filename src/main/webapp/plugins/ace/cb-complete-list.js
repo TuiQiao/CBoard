@@ -74,6 +74,18 @@ var cbEsQueryCompleter = {
     }
 };
 
+var cbEsSchemaORCompleter = {
+    getCompletions: function(editor, session, pos, prefix, callback) {
+        callback(null, esBuckets.map(function(aggObj) {
+            return {
+                meta: "es-bucket",
+                caption: aggObj.name,
+                value: "\"esBucket\": " + cbAceStringify(aggObj.body, null, false)
+            };
+        }));
+    }
+};
+
 var esFilter = {
     termFilter: {
         term: {'<filter_column>': '<value>'}
@@ -150,6 +162,30 @@ var datasetEditorOptions = function () {
     result.onLoad = function(_editor) {
         _editor.completers = [];
         _editor.completers.push(cbEsQueryCompleter);
+    };
+    return result;
+};
+
+var schemaCustomOpt = function(selects, sourceType) {
+    var result = angular.copy(cbAcebaseOption);
+    var selectsCompleter = {
+        getCompletions: function(editor, session, pos, prefix, callback) {
+            callback(null, selects.map(function (word) {
+                var value = word.column ? word.column : word;
+                return {
+                    caption: word.alias ? word.alias : value,
+                    value: value,
+                    meta: "selects"
+                };
+            }));
+        }
+    };
+    result.onLoad = function(_editor) {
+        _editor.completers = [];
+        _editor.completers.push(selectsCompleter);
+        if (sourceType !== null && sourceType.toLowerCase().indexOf("elasticsearch") > -1) {
+            _editor.completers.push(cbEsSchemaORCompleter);
+        }
     };
     return result;
 };

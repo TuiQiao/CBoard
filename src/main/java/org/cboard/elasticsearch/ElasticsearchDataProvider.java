@@ -210,7 +210,7 @@ public class ElasticsearchDataProvider extends DataProvider implements Aggregata
             }
             // Schema Override
             if (StringUtils.isNotEmpty(d.getCustom())) {
-                aggregation = json(d.getColumnName(), JSONObject.parseObject(d.getCustom()));
+                aggregation = json(d.getColumnName(), JSONObject.parseObject(d.getCustom()).get("esBucket"));
             }
         } catch (Exception e) {
             e.printStackTrace();

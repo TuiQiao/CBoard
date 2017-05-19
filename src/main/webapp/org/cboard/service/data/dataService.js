@@ -153,9 +153,79 @@ cBoard.service('dataService', function ($http, $q, updateService) {
             }).success(function (data) {
                 var result = castRawData2Series(data, chartConfig);
                 result.chartConfig = chartConfig;
-                callback(result);
+                if (!_.isUndefined(datasetId)) {
+                    getDrillConfig(datasetId, chartConfig).then(function (c) {
+                        result.drill = {config: c};
+                        callback(result);
+                    });
+                } else {
+                    callback(result);
+                }
             });
         });
+    };
+
+    this.getDrillPath = function (datasetId, id) {
+        var deferred = $q.defer();
+        getDatasetList().then(function (dsList) {
+            var dataset = _.find(dsList, function (e) {
+                return e.id == datasetId;
+            });
+            var path = [];
+            var level;
+            _.each(dataset.data.schema.dimension, function (_e) {
+                if (_e.type == 'level') {
+                    _.each(_e.columns, function (_c) {
+                        if (_c.id == id) {
+                            path = _e.columns;
+                            level = _e;
+                        }
+                    });
+                }
+            });
+            path = _.map(path, function (e) {
+                return {
+                    id: e.id,
+                    alias: e.alias,
+                    col: e.column,
+                    level: level.alias,
+                    type: '=',
+                    values: [],
+                    sort: 'asc'
+                }
+            });
+            deferred.resolve(path);
+        });
+        return deferred.promise;
+    };
+
+    var getDrillConfig = function (datasetId, chartConfig) {
+        var deferred = $q.defer();
+        getDatasetList().then(function (dsList) {
+            var drillConfig = {};
+            var dataset = _.find(dsList, function (e) {
+                return e.id == datasetId;
+            });
+            var _f = function (c) {
+                _.each(dataset.data.schema.dimension, function (_e) {
+                    if (_e.type == 'level') {
+                        _.each(_e.columns, function (_c, _i) {
+                            if (_c.id == c.id && (_i > 0 || _i < _e.columns.length - 1)) {
+                                drillConfig[c.id] = {up: _i > 0, down: _i < _e.columns.length - 1};
+                            }
+                        });
+                    }
+                });
+            };
+            _.each(_.filter(chartConfig.keys, function (e) {
+                return e.level;
+            }), _f);
+            _.each(_.filter(chartConfig.groups, function (e) {
+                return e.level;
+            }), _f);
+            deferred.resolve(drillConfig);
+        });
+        return deferred.promise;
     };
 
     this.viewQuery = function (params, callback) {

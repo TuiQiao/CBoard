@@ -161,7 +161,7 @@ var crossTable = {
                 var rowParentCell = data[n][m - 1];
                 var cur_data = currentCell.data ? currentCell.data : "";
                 var keyId = chartConfig.keys[m].id;
-                if (drill.config[keyId].down || drill.config[keyId].up) {
+                if (drill.config[keyId] && (drill.config[keyId].down || drill.config[keyId].up)) {
                     cur_data = "<div>" + cur_data + "</div>";
                     if (drill.config[keyId].down) {
                         cur_data = cur_data + "<div class='table_d_down' drill-id='" + keyId + "'>down</div>";

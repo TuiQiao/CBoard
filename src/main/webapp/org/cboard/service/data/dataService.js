@@ -206,30 +206,41 @@ cBoard.service('dataService', function ($http, $q, updateService) {
                 var dataset = _.find(dsList, function (e) {
                     return e.id == datasetId;
                 });
+                if (!dataset.data.schema || dataset.data.schema.dimension.length == 0) {
+                    deferred.resolve(drillConfig);
+                    return deferred.promise;
+                }
                 var _f = function (array) {
                     _.each(array, function (c, i_array) {
                         var level;
                         var i_level;
-                        _.each(dataset.data.schema.dimension, function (_e) {
+                        _.find(dataset.data.schema.dimension, function (_e) {
                             if (_e.type == 'level') {
-                                _.each(_e.columns, function (_c, _i) {
+                                return _.find(_e.columns, function (_c, _i) {
                                     if (_c.id == c.id) {
                                         level = _e;
                                         i_level = _i;
+                                        return true;
                                     }
                                 });
                             }
                         });
+                        if (!level) {
+                            return;
+                        }
                         var prevIsInLevel = false;
                         if (i_array > 0 && i_level > 0) {
-                            prevIsInLevel = array[i_array - 1].id == level.columns[i_level - 1].id
+                            prevIsInLevel = array[i_array - 1].id == level.columns[i_level - 1].id;
                         }
                         var nextIsInLevel = false;
                         if (i_array < array.length - 1 && i_level < level.columns.length - 1) {
                             nextIsInLevel = array[i_array + 1].id == level.columns[i_level + 1].id;
                         }
-                        var up = i_level > 0 && i_array > 0 && prevIsInLevel && (i_array == array.length - 1 || !nextIsInLevel)
-                        var down = (i_array == array.length - 1 || !nextIsInLevel) && i_level < level.columns.length - 1;
+                        var drillDownExist = _.find(array, function (e) {
+                            return i_level < level.columns.length - 1 && level.columns[i_level + 1].id == e.id;
+                        });
+                        var up = i_level > 0 && i_array > 0 && prevIsInLevel && (i_array == array.length - 1 || !nextIsInLevel);
+                        var down = (i_array == array.length - 1 || !nextIsInLevel) && i_level < level.columns.length - 1 && !drillDownExist;
                         drillConfig[c.id] = {
                             up: up,
                             down: down

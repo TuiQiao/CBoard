@@ -23,18 +23,20 @@ cBoard.service('chartService', function ($q, dataService, chartPieService, chart
                                 }
                             });
                             var node = path[++i];
-                            _.each(widget.config.keys, function (e, _i) {
+                            _.find(widget.config.keys, function (e, _i) {
                                 if (e.id == id) {
                                     e.type = '=';
                                     e.values = [value];
                                     widget.config.keys.splice(_i + 1, 0, node);
+                                    return true;
                                 }
                             });
-                            _.each(widget.config.groups, function (e, _i) {
+                            _.find(widget.config.groups, function (e, _i) {
                                 if (e.id == id) {
                                     e.type = '=';
                                     e.values = [value];
                                     widget.config.groups.splice(_i + 1, 0, node);
+                                    return true;
                                 }
                             });
                             dataService.getDataSeries(widget.datasource, widget.query, widget.datasetId, widget.config, function (data) {
@@ -47,16 +49,18 @@ cBoard.service('chartService', function ($q, dataService, chartPieService, chart
                         });
                     };
                     data.drill.drillUp = function (id, render) {
-                        _.each(widget.config.keys, function (e, _i) {
+                        _.find(widget.config.keys, function (e, _i) {
                             if (e.id == id) {
                                 widget.config.keys[_i - 1].values = [];
                                 widget.config.keys.splice(_i, 1);
+                                return true;
                             }
                         });
-                        _.each(widget.config.groups, function (e, _i) {
+                        _.find(widget.config.groups, function (e, _i) {
                             if (e.id == id) {
                                 widget.config.groups[_i - 1].values = [];
                                 widget.config.groups.splice(_i, 1);
+                                return true;
                             }
                         });
                         dataService.getDataSeries(widget.datasource, widget.query, widget.datasetId, widget.config, function (data) {

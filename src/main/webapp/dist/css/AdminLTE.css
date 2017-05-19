@@ -5017,10 +5017,6 @@ button >canvas {
   left: 0;
   z-index: 5;
 }
-.toolbar-icon {
-  cursor: pointer;
-  font-size: large
-}
 /*
  * Misc: print
  * -----------

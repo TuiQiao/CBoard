@@ -16,6 +16,8 @@ public interface DatasourceDao {
 
     List<DashboardDatasource> getDatasourceList(String userId);
 
+    List<DashboardDatasource> getDatasourceListAdmin(String userId);
+
     DashboardDatasource getDatasource(Long datasourceId);
 
     int save(DashboardDatasource dashboardDatasource);

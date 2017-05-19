@@ -10,4 +10,6 @@ import java.util.List;
 @Repository
 public interface MenuDao {
     List<Long> getMenuIdByUserRole(String userId);
+
+    List<Long> getMenuIdByRoleAdmin(String userId);
 }

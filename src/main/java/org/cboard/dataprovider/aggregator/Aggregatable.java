@@ -16,7 +16,7 @@ public interface Aggregatable {
      * @param columnName
      * @return
      */
-    String[][] queryDimVals(String columnName, AggConfig config) throws Exception;
+    String[] queryDimVals(String columnName, AggConfig config) throws Exception;
 
     /**
      * The data provider that support DataSource side Aggregation must implement this method.

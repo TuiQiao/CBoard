@@ -225,11 +225,11 @@ cBoard.controller('dashboardViewCtrl', function ($timeout, $rootScope, $scope, $
                     $scope.paramInit++;
                 });
             });
-            if ($scope.paramInit == 0) {
-                loadWidget();
-            }
             if ($scope.board.layout.type == 'timeline') {
                 groupTimeline();
+            }
+            if ($scope.paramInit == 0) {
+                loadWidget(reload);
             }
             paramInitListener = $scope.$on('paramInitFinish', function (e, d) {
                 $scope.paramInit--;
@@ -291,6 +291,15 @@ cBoard.controller('dashboardViewCtrl', function ($timeout, $rootScope, $scope, $
                 }
             });
         });
+        updateParamTitle();
+    };
+
+    $scope.paramToString = function (row) {
+        return _.filter(_.map(row.params, function (e) {
+            return e.title;
+        }), function (e) {
+            return e && e.length > 0;
+        }).join('; ');
     };
 
     $scope.modalChart = function (widget) {
@@ -368,5 +377,88 @@ cBoard.controller('dashboardViewCtrl', function ($timeout, $rootScope, $scope, $
             widget.show = true;
         });
     };
+
+    $http.get("dashboard/getBoardParam.do?boardId=" + $stateParams.id).success(function (response) {
+        if (response) {
+            $scope.boardParams = JSON.parse(response.config);
+        } else {
+            $scope.boardParams = [];
+        }
+    });
+
+    $scope.newBoardParam = function (name) {
+        if (name == '') {
+            return;
+        }
+        var params = {};
+        _.each($scope.board.layout.rows, function (row) {
+            _.each(row.params, function (param) {
+                if ('slider' != param.paramType) {
+                    params[param.name] = {type: param.type, values: param.values};
+                }
+            });
+        });
+        $scope.boardParams.unshift({name: name, params: params});
+        $http.post("dashboard/saveBoardParam.do", {
+            boardId: $stateParams.id,
+            config: angular.toJson($scope.boardParams)
+        }).success(function (response) {
+        });
+    };
+
+    $scope.deleteBoardParam = function (index) {
+        $scope.boardParams.splice(index,1);
+        $http.post("dashboard/saveBoardParam.do", {
+            boardId: $stateParams.id,
+            config: angular.toJson($scope.boardParams)
+        }).success(function (response) {
+        });
+    };
+
+    $scope.applyBoardParam = function (param) {
+        for (var name in param) {
+            _.each($scope.board.layout.rows, function (row) {
+                _.each(row.params, function (p) {
+                    if (p.name == name) {
+                        p.type = param[name].type;
+                        p.values = param[name].values;
+                    }
+                });
+            });
+        }
+        $scope.applyParamFilter();
+    };
+
+    var updateParamTitle = function () {
+        _.each($scope.board.layout.rows, function (row) {
+            _.each(row.params, function (param) {
+                if ('slider' == param.paramType) {
+                    return;
+                }
+                var paramObj;
+                switch (param.type) {
+                    case '=':
+                    case '≠':
+                        paramObj = param.name + ' ' + param.type + ' (' + param.values + ')';
+                        break;
+                    case '>':
+                    case '<':
+                    case '≥':
+                    case '≤':
+                        paramObj = param.name + ' ' + param.type + ' ' + param.values;
+                        break;
+                    case '(a,b]':
+                    case '[a,b)':
+                    case '(a,b)':
+                    case '[a,b]':
+                        var leftBrackets = param.type.split('a')[0];
+                        var rightBrackets = param.type.split('b')[1];
+                        paramObj = param.name + ' between ' + leftBrackets + param.values[0] + ',' + param.values[1] + rightBrackets;
+                        break;
+                }
+                param.title = param.values.length > 0 ? paramObj : undefined;
+            });
+        });
+    }
 
 });

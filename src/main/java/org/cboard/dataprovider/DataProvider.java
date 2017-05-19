@@ -7,13 +7,15 @@ import com.googlecode.aviator.AviatorEvaluator;
 import org.cboard.dataprovider.aggregator.Aggregatable;
 import org.cboard.dataprovider.aggregator.InnerAggregator;
 import org.cboard.dataprovider.config.AggConfig;
+import org.cboard.dataprovider.config.CompositeConfig;
+import org.cboard.dataprovider.config.ConfigComponent;
 import org.cboard.dataprovider.config.DimensionConfig;
 import org.cboard.dataprovider.expression.NowFunction;
 import org.cboard.dataprovider.result.AggregateResult;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.Map;
+import java.util.*;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
@@ -66,8 +68,8 @@ public abstract class DataProvider {
      * @param columnName
      * @return
      */
-    public final String[][] getDimVals(String columnName, AggConfig config, boolean reload) throws Exception {
-        String[][] dimVals = null;
+    public final String[] getDimVals(String columnName, AggConfig config, boolean reload) throws Exception {
+        String[] dimVals = null;
         evalValueExpression(config);
         if (this instanceof Aggregatable && doAggregationInDataSource()) {
             dimVals = ((Aggregatable) this).queryDimVals(columnName, config);
@@ -75,7 +77,7 @@ public abstract class DataProvider {
             checkAndLoad(reload);
             dimVals = innerAggregator.queryDimVals(columnName, config);
         }
-        return dimVals;
+        return Arrays.stream(dimVals).limit(1000).toArray(String[]::new);
     }
 
     public final String[] getColumn(boolean reload) throws Exception {
@@ -86,6 +88,7 @@ public abstract class DataProvider {
             checkAndLoad(reload);
             columns = innerAggregator.getColumn();
         }
+        Arrays.sort(columns);
         return columns;
     }
 
@@ -104,11 +107,20 @@ public abstract class DataProvider {
         if (ac == null) {
             return;
         }
-        Consumer<DimensionConfig> evaluator = (e) ->
-                e.setValues(e.getValues().stream().map(v -> getFilterValue(v)).collect(Collectors.toList()));
-        ac.getFilters().forEach(evaluator);
-        ac.getColumns().forEach(evaluator);
-        ac.getRows().forEach(evaluator);
+        ac.getFilters().forEach(e -> evaluator(e));
+        ac.getColumns().forEach(e -> evaluator(e));
+        ac.getRows().forEach(e -> evaluator(e));
+    }
+
+    private void evaluator(ConfigComponent e) {
+        if (e instanceof DimensionConfig) {
+            DimensionConfig dc = (DimensionConfig) e;
+            dc.setValues(dc.getValues().stream().map(v -> getFilterValue(v)).collect(Collectors.toList()));
+        }
+        if (e instanceof CompositeConfig) {
+            CompositeConfig cc = (CompositeConfig) e;
+            cc.getConfigComponents().forEach(_e -> evaluator(_e));
+        }
     }
 
     private String getFilterValue(String value) {
@@ -120,6 +132,28 @@ public abstract class DataProvider {
 
     private String getLockKey(Map<String, String> dataSource, Map<String, String> query) {
         return Hashing.md5().newHasher().putString(JSONObject.toJSON(dataSource).toString() + JSONObject.toJSON(query).toString(), Charsets.UTF_8).hash().toString();
+    }
+
+    public List<DimensionConfig> filterCCList2DCList(List<ConfigComponent> filters) {
+        List<DimensionConfig> result = new LinkedList<>();
+        filters.stream().forEach(cc -> {
+            result.addAll(configComp2DimConfigList(cc));
+        });
+        return result;
+    }
+
+    public List<DimensionConfig> configComp2DimConfigList(ConfigComponent cc) {
+        List<DimensionConfig> result = new LinkedList<>();
+        if (cc instanceof DimensionConfig) {
+            result.add((DimensionConfig)cc);
+        } else {
+            Iterator<ConfigComponent> iterator = cc.getIterator();
+            while (iterator.hasNext()) {
+                ConfigComponent next = iterator.next();
+                result.addAll(configComp2DimConfigList(next));
+            }
+        }
+        return result;
     }
 
     abstract public String[][] getData() throws Exception;

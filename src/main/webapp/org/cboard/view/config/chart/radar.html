@@ -4,7 +4,7 @@
     <div class="col-sm-10">
         <div dnd-list="curWidget.config.values[0].cols"
              dnd-inserted="dndTransfer.toCol(curWidget.config.values[0].cols,index,item,type)"
-             dnd-allowed-types="['select','col','group','key','exp']"
+             dnd-allowed-types="['measure','select','col','exp']"
              class="form-control" style="min-height: 35px;height: auto;padding: 0px">
             <div class="dndPlaceholder sort-highlight"
                  style="height: 24px; width: 93px;margin: 3px 3px;display: inline-block;vertical-align: middle;">
@@ -15,19 +15,18 @@
                  style="margin: 3px 3px;">
                 <ng-switch on="o.type">
                     <div ng-switch-when="exp" class="btn-group">
-                        <button type="button" class="btn btn-primary btn-sm" style="cursor: move;" ng-click="expressions.push(o);curWidget.config.values[0].cols.splice($index, 1);">
-                            {{o.alias?o.alias:o.exp}}
+                        <button type="button" class="btn btn-primary btn-sm" style="cursor: move;" ng-click="curWidget.config.values[0].cols.splice($index, 1);">
+                            {{o.alias}}
                         </button>
                         <button type="button" class="btn btn-primary btn-sm dropdown-toggle"
                                 ng-click="editSort(o);cleanRowSort(o);">
                             <span class="fa" ng-class="{undefined:'fa-sort','asc':'fa-sort-asc','desc':'fa-sort-desc'}[o.sort]"></span>
                         </button>
-                        <button type="button" class="btn btn-primary btn-sm dropdown-toggle"
-                                ng-click="editExp(o)">
+                        <button type="button" class="btn btn-primary btn-sm dropdown-toggle" data-toggle="dropdown">
                             <span class="fa fa-edit"></span>
                         </button>
                         <ul class="dropdown-menu multi-level" role="menu" aria-labelledby="dropdownMenu">
-                            <li>
+                            <li ng-if="!isDsExpression(o)">
                                 <a href="#" ng-click="editExp(o)">{{'COMMON.EDIT'|translate}}</a>
                             </li>
                             <li>
@@ -37,7 +36,7 @@
                     </div>
                     <div ng-switch-default class="btn-group">
                         <button type="button"
-                                ng-click="curWidget.config.selects.push(o.col);curWidget.config.values[0].cols.splice($index, 1);"
+                                ng-click="curWidget.config.values[0].cols.splice($index, 1);"
                                 class="btn btn-default btn-sm" style="cursor: move;">
                             {{o.aggregate_type+'('+o.col+')'+ (o.alias?(' -> '+o.alias):'')}}
                         </button>

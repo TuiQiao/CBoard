@@ -7,22 +7,20 @@ cBoard.service('chartService', function ($q, dataService, chartPieService, chart
 
         this.render = function (containerDom, widget, optionFilter, scope, reload, persist) {
             var deferred = $q.defer();
-            var promise = deferred.promise;
             var chart = getChartServices(widget.config);
 
-                dataService.getData(widget.datasource, widget.query, widget.datasetId, widget.config, function (data) {
+                dataService.getDataSeries(widget.datasource, widget.query, widget.datasetId, widget.config, function (data) {
                     try {
-                        var option = chart.parseOption(data, widget.config);
+                        var option = chart.parseOption(data);
                         if (optionFilter) {
                             optionFilter(option);
                         }
+                    }finally {
                         deferred.resolve(chart.render(containerDom, option, scope, persist));
-                    } catch (e) {
-                        deferred.reject(chart.render(containerDom, option, scope, persist));
                     }
                 }, reload);
 
-            return promise;
+            return deferred.promise;
         };
 
 
@@ -31,8 +29,8 @@ cBoard.service('chartService', function ($q, dataService, chartPieService, chart
                 return;
             }
             var chart = getChartServices(widget.config);
-            dataService.getData(widget.datasource, widget.query, widget.datasetId, widget.config, function (data) {
-                var option = chart.parseOption(data, widget.config);
+            dataService.getDataSeries(widget.datasource, widget.query, widget.datasetId, widget.config, function (data) {
+                var option = chart.parseOption(data);
                 if (optionFilter) {
                     optionFilter(option);
                 }

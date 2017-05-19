@@ -20,6 +20,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -94,11 +95,8 @@ public class DashboardController {
 
     @RequestMapping(value = "/getDatasourceList")
     public List<ViewDashboardDatasource> getDatasourceList() {
-
         String userid = authenticationService.getCurrentUser().getUserId();
-
-        List<DashboardDatasource> list = datasourceDao.getDatasourceList(userid);
-        return Lists.transform(list, ViewDashboardDatasource.TO);
+        return datasourceService.getViewDatasourceList(() -> datasourceDao.getDatasourceList(userid));
     }
 
     @RequestMapping(value = "/getProviderList")
@@ -195,8 +193,7 @@ public class DashboardController {
     }
 
     @RequestMapping(value = "/deleteBoard")
-    public String deleteBoard(@RequestParam(name = "id") Long id) {
-
+    public ServiceStatus deleteBoard(@RequestParam(name = "id") Long id) {
         String userid = authenticationService.getCurrentUser().getUserId();
         return boardService.delete(userid, id);
     }
@@ -287,13 +284,16 @@ public class DashboardController {
     }
 
     @RequestMapping(value = "/getDimensionValues")
-    public String[][] getDimensionValues(@RequestParam(name = "datasourceId", required = false) Long datasourceId, @RequestParam(name = "query", required = false) String query, @RequestParam(name = "datasetId", required = false) Long datasetId, @RequestParam(name = "colmunName", required = true) String colmunName, @RequestParam(name = "cfg", required = false) String cfg, @RequestParam(name = "reload", required = false, defaultValue = "false") Boolean reload) {
+    public String[] getDimensionValues(@RequestParam(name = "datasourceId", required = false) Long datasourceId, @RequestParam(name = "query", required = false) String query, @RequestParam(name = "datasetId", required = false) Long datasetId, @RequestParam(name = "colmunName", required = true) String colmunName, @RequestParam(name = "cfg", required = false) String cfg, @RequestParam(name = "reload", required = false, defaultValue = "false") Boolean reload) {
         Map<String, String> strParams = null;
         if (query != null) {
             JSONObject queryO = JSONObject.parseObject(query);
             strParams = Maps.transformValues(queryO, Functions.toStringFunction());
         }
-        AggConfig config = JSONObject.parseObject(cfg, AggConfig.class);
+        AggConfig config = null;
+        if (cfg != null) {
+            config = ViewAggConfig.getAggConfig(JSONObject.parseObject(cfg, ViewAggConfig.class));
+        }
         return dataProviderService.getDimensionValues(datasourceId, strParams, datasetId, colmunName, config, reload);
     }
 
@@ -316,7 +316,7 @@ public class DashboardController {
             JSONObject queryO = JSONObject.parseObject(query);
             strParams = Maps.transformValues(queryO, Functions.toStringFunction());
         }
-        AggConfig config = JSONObject.parseObject(cfg, AggConfig.class);
+        AggConfig config = ViewAggConfig.getAggConfig(JSONObject.parseObject(cfg, ViewAggConfig.class));
         return dataProviderService.queryAggData(datasourceId, strParams, datasetId, config, reload);
     }
 
@@ -327,7 +327,7 @@ public class DashboardController {
             JSONObject queryO = JSONObject.parseObject(query);
             strParams = Maps.transformValues(queryO, Functions.toStringFunction());
         }
-        AggConfig config = JSONObject.parseObject(cfg, AggConfig.class);
+        AggConfig config = ViewAggConfig.getAggConfig(JSONObject.parseObject(cfg, ViewAggConfig.class));
         return new String[]{dataProviderService.viewAggDataQuery(datasourceId, strParams, datasetId, config)};
     }
 
@@ -396,6 +396,28 @@ public class DashboardController {
     @RequestMapping(value = "/getJobStatus")
     public ViewDashboardJob getJobStatus(@RequestParam(name = "id") Long id) {
         return new ViewDashboardJob(jobDao.getJob(id));
+    }
+
+    @RequestMapping(value = "/getBoardParam")
+    public DashboardBoardParam getBoardParam(@RequestParam(name = "boardId") Long boardId) {
+        String userid = authenticationService.getCurrentUser().getUserId();
+        return boardDao.getBoardParam(boardId, userid);
+    }
+
+    @RequestMapping(value = "/saveBoardParam")
+    @Transactional
+    public String saveBoardParam(@RequestParam(name = "boardId") Long boardId, @RequestParam(name = "config") String config) {
+        String userid = authenticationService.getCurrentUser().getUserId();
+        if (boardId == null) {
+            return "";
+        }
+        DashboardBoardParam boardParam = new DashboardBoardParam();
+        boardParam.setBoardId(boardId);
+        boardParam.setUserId(userid);
+        boardParam.setConfig(config);
+        boardDao.deleteBoardParam(boardId, userid);
+        boardDao.saveBoardParam(boardParam);
+        return "1";
     }
 
     @ExceptionHandler

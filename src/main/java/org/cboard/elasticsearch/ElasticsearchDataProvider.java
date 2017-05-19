@@ -20,22 +20,24 @@ import org.cboard.dataprovider.aggregator.Aggregatable;
 import org.cboard.dataprovider.annotation.DatasourceParameter;
 import org.cboard.dataprovider.annotation.ProviderName;
 import org.cboard.dataprovider.annotation.QueryParameter;
-import org.cboard.dataprovider.config.AggConfig;
-import org.cboard.dataprovider.config.DimensionConfig;
-import org.cboard.dataprovider.config.ValueConfig;
+import org.cboard.dataprovider.config.*;
 import org.cboard.dataprovider.result.AggregateResult;
 import org.cboard.dataprovider.result.ColumnIndex;
+import org.cboard.elasticsearch.query.QueryBuilder;
+import org.cboard.util.json.JSONBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.time.Duration;
+import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
+import static org.cboard.elasticsearch.aggregation.AggregationBuilder.dateHistAggregation;
+import static org.cboard.elasticsearch.aggregation.AggregationBuilder.termsAggregation;
+import static org.cboard.elasticsearch.query.QueryBuilder.*;
+import static org.cboard.util.SqlMethod.coalesce;
 /**
  * Created by yfyuan on 2017/3/17.
  */
@@ -68,111 +70,94 @@ public class ElasticsearchDataProvider extends DataProvider implements Aggregata
     }
 
     @Override
-    public String[][] queryDimVals(String columnName, AggConfig config) throws Exception {
+    public String[] queryDimVals(String columnName, AggConfig config) throws Exception {
         JSONObject request = new JSONObject();
-        request.put("size", 0);
-        request.put("query", buildFilterDSL(config));
-        request.put("aggregations", getTermsAggregation(columnName));
-        JSONObject response = post(getSearchUrl(request), request);
-        String[] nofilter = response.getJSONObject("aggregations").getJSONObject(columnName).getJSONArray("buckets").stream()
-                .map(e -> ((JSONObject) e).getString("key")).toArray(String[]::new);
+        request.put("size", 1000);
+        request.put("aggregations", getAggregation(columnName, config));
+
         if (config != null) {
             JSONArray filter = getFilter(config);
             if (filter.size() > 0) {
-                request.put("query", new JSONObject());
-                request.getJSONObject("query").put("bool", new JSONObject());
-                request.getJSONObject("query").getJSONObject("bool").put("filter", getFilter(config));
-                response = post(getSearchUrl(request), request);
-                String[] filtered = response.getJSONObject("aggregations").getJSONObject(columnName).getJSONArray("buckets").stream()
-                        .map(e -> ((JSONObject) e).getString("key")).toArray(String[]::new);
-                return new String[][]{filtered, nofilter};
+                request.put("query", buildFilterDSL(config));
             }
         }
-        return new String[][]{nofilter, nofilter};
+        JSONObject response = post(getSearchUrl(request), request);
+        String[] filtered = response.getJSONObject("aggregations").getJSONObject(columnName).getJSONArray("buckets").stream()
+                .map(e -> ((JSONObject) e).getString("key")).toArray(String[]::new);
+        return filtered;
     }
 
     private JSONArray getFilter(AggConfig config) {
         Stream<DimensionConfig> c = config.getColumns().stream();
         Stream<DimensionConfig> r = config.getRows().stream();
-        Stream<DimensionConfig> f = config.getFilters().stream();
-        Stream<DimensionConfig> filters = Stream.concat(Stream.concat(c, r), f);
+        Stream<ConfigComponent> f = config.getFilters().stream();
+        Stream<ConfigComponent> filters = Stream.concat(Stream.concat(c, r), f);
         JSONArray result = new JSONArray();
-        filters.map(e -> getFilterPart(e)).filter(e -> e != null).forEach(result::add);
+        filters.map(e -> configComponentToFilter(e)).filter(e -> e != null).forEach(result::add);
         return result;
+    }
+
+    private JSONObject configComponentToFilter(ConfigComponent cc) {
+        if (cc instanceof DimensionConfig) {
+            return getFilterPart((DimensionConfig) cc);
+        } else if (cc instanceof CompositeConfig) {
+            CompositeConfig compositeConfig = (CompositeConfig) cc;
+            BoolType boolType = BoolType.MUST;
+            if ("AND".equalsIgnoreCase(compositeConfig.getType())) {
+                boolType = BoolType.MUST;
+            } else if ("OR".equalsIgnoreCase(compositeConfig.getType())) {
+                boolType = BoolType.SHOULD;
+            }
+            JSONArray boolArr = new JSONArray();
+            compositeConfig.getConfigComponents().stream().map(e -> configComponentToFilter(e)).forEach(boolArr::add);
+            return boolFilter(boolType, boolArr);
+        }
+        return null;
     }
 
     private JSONObject getFilterPart(DimensionConfig config) {
         if (config.getValues().size() == 0) {
             return null;
         }
+        String fieldName = config.getColumnName();
+        String v0 = config.getValues().get(0);
+        String v1 = null;
+        if (config.getValues().size() == 2) {
+            v1 = config.getValues().get(1);
+        }
         switch (config.getFilterType()) {
             case "=":
             case "eq":
-                return getFilterPartEq("should", config.getColumnName(), config.getValues());
+                return termsQuery(fieldName, config.getValues());
             case "≠":
             case "ne":
-                return getFilterPartEq("must_not", config.getColumnName(), config.getValues());
+                return getFilterPartEq(BoolType.MUST_NOT, fieldName, config.getValues());
             case ">":
-                return getFilterPartRange("gt", config.getColumnName(), config.getValues().get(0));
+                return rangeQuery(fieldName, v0, null);
             case "<":
-                return getFilterPartRange("lt", config.getColumnName(), config.getValues().get(0));
+                return rangeQuery(fieldName, null, v0);
             case "≥":
-                return getFilterPartRange("gte", config.getColumnName(), config.getValues().get(0));
+                return rangeQuery(fieldName, v0, null, true, true);
             case "≤":
-                return getFilterPartRange("lte", config.getColumnName(), config.getValues().get(0));
+                return rangeQuery(fieldName, null, v0, true, true);
             case "(a,b]":
-                if (config.getValues().size() < 2) {
-                    return null;
-                }
-                return getFilterPartRangeRounding("gt", "lte", config.getColumnName(), config.getValues().get(0), config.getValues().get(1));
+                return rangeQuery(fieldName, v0, v1, false, true);
             case "[a,b)":
-                if (config.getValues().size() < 2) {
-                    return null;
-                }
-                return getFilterPartRangeRounding("gte", "lt", config.getColumnName(), config.getValues().get(0), config.getValues().get(1));
+                return rangeQuery(fieldName, v0, v1, true, false);
             case "(a,b)":
-                if (config.getValues().size() < 2) {
-                    return null;
-                }
-                return getFilterPartRangeRounding("gt", "lt", config.getColumnName(), config.getValues().get(0), config.getValues().get(1));
+                return rangeQuery(fieldName, v0, v1, false, false);
             case "[a,b]":
-                if (config.getValues().size() < 2) {
-                    return null;
-                }
-                return getFilterPartRangeRounding("gte", "lte", config.getColumnName(), config.getValues().get(0), config.getValues().get(1));
+                return rangeQuery(fieldName, v0, v1, true, true);
         }
         return null;
     }
 
-    private JSONObject getFilterPartRangeRounding(String range, String range2, String terms, String value, String value2) {
-        JSONObject result = new JSONObject();
-        result.put("range", new JSONObject());
-        result.getJSONObject("range").put(terms, new JSONObject());
-        result.getJSONObject("range").getJSONObject(terms).put(range, value);
-        result.getJSONObject("range").getJSONObject(terms).put(range2, value2);
-        return result;
-    }
-
-    private JSONObject getFilterPartRange(String range, String terms, String value) {
-        JSONObject result = new JSONObject();
-        result.put("range", new JSONObject());
-        result.getJSONObject("range").put(terms, new JSONObject());
-        result.getJSONObject("range").getJSONObject(terms).put(range, value);
-        return result;
-    }
-
-    private JSONObject getFilterPartEq(String bool, String terms, List<String> values) {
-        JSONObject result = new JSONObject();
-        result.put("bool", new JSONObject());
-        result.getJSONObject("bool").put(bool, new JSONArray());
-        JSONArray boolArr = result.getJSONObject("bool").getJSONArray(bool);
-        values.stream().map(e -> {
-            JSONObject term = new JSONObject();
-            term.put("term", new JSONObject());
-            term.getJSONObject("term").put(terms, e);
-            return term;
-        }).forEach(boolArr::add);
-        return result;
+    private JSONObject getFilterPartEq(BoolType boolType, String fieldName, List<String> values) {
+        JSONArray boolArr = new JSONArray();
+        values.stream()
+                .map(e -> termQuery(fieldName, e))
+                .forEach(boolArr::add);
+        return QueryBuilder.boolFilter(boolType, boolArr);
     }
 
     protected JSONObject post(String url, JSONObject request) throws Exception {
@@ -199,18 +184,106 @@ public class ElasticsearchDataProvider extends DataProvider implements Aggregata
         return null;
     }
 
-    protected JSONObject getTermsAggregation(String columnName) {
-        JSONObject result = getOverrideTermsAggregation(columnName);
-        if (result != null) {
-            return result;
-        } else {
-            JSONObject aggregation = new JSONObject();
-            aggregation.put(columnName, new JSONObject());
-            aggregation.getJSONObject(columnName).put("terms", new JSONObject());
-            aggregation.getJSONObject(columnName).getJSONObject("terms").put("field", columnName);
-            aggregation.getJSONObject(columnName).getJSONObject("terms").put("size", 1000);
-            return aggregation;
+    private JSONObject getAggregation(String columnName, AggConfig config) {
+        DimensionConfig d = new DimensionConfig();
+        d.setColumnName(columnName);
+        return getAggregation(d, config);
+    }
+
+    private JSONObject getAggregation(DimensionConfig d, AggConfig config) {
+        JSONObject aggregation = null;
+        try {
+            Map<String, String> types = getTypes();
+            JSONObject overrideAgg = getOverrideTermsAggregation(d.getColumnName());
+
+            // Build default aggregation
+            switch (types.get(d.getColumnName())) {
+                case "date":
+                    aggregation = buildDateHistAggregation(d.getColumnName(), config);
+                    break;
+                default:
+                    aggregation = json(d.getColumnName(), termsAggregation(d.getColumnName(), 1000));
+            }
+            // Query Override
+            if (overrideAgg != null) {
+                aggregation = overrideAgg;
+            }
+            // Schema Override
+            if (StringUtils.isNotEmpty(d.getCustom())) {
+                aggregation = json(d.getColumnName(), JSONObject.parseObject(d.getCustom()).get("esBucket"));
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
         }
+        return aggregation;
+    }
+
+    private JSONObject buildDateHistAggregation(String columnName, AggConfig config) throws Exception {
+        if (config == null) {
+            return queryBound(columnName, config);
+        }
+        String intervalStr = "10m";
+        JSONObject queryDsl = buildFilterDSL(config);
+        Object object = JSONPath.compile("$.." + columnName.replace(".", "\\.")).eval(queryDsl);
+        List<JSONObject> array = (List) object;
+        Long lower = array.stream()
+            .map(jo -> coalesce( jo.getLong("gt"), jo.getLong("gte")))
+            .filter(Objects::nonNull)
+        .max(Comparator.naturalOrder())
+        .orElse(null);
+        Long upper = array.stream()
+            .map(jo -> coalesce( jo.getLong("lt"), jo.getLong("lte")))
+            .filter(Objects::nonNull)
+                .min(Comparator.naturalOrder())
+                .orElse( new Date().getTime());
+
+        if (lower == null || lower >= upper ) {
+            return queryBound(columnName, config);
+        }
+        intervalStr = dateInterval(lower, upper);
+        return json(columnName, dateHistAggregation(columnName, intervalStr, 0, lower, upper));
+    }
+
+    private JSONObject queryBound(String columnName, AggConfig config) {
+        String maxKey = "max_ts";
+        String minKey = "min_ts";
+        JSONBuilder request = json("size", 0).
+                put("aggregations", json().
+                        put(minKey, json("min", json("field", columnName))).
+                        put(maxKey, json("max", json("field", columnName)))
+                );
+
+        if (config != null) {
+            JSONArray filter = getFilter(config);
+            if (filter.size() > 0) {
+                request.put("query", buildFilterDSL(config));
+            }
+        }
+
+        String intervalStr = "10m";
+        try {
+            JSONObject response = post(getSearchUrl(request), request);
+            long maxTs = coalesce(response.getJSONObject("aggregations").getJSONObject(maxKey).getLong("value"), 0l);
+            long minTs = coalesce(response.getJSONObject("aggregations").getJSONObject(minKey).getLong("value"), 0l);
+            intervalStr = dateInterval(minTs, maxTs);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return json(columnName, dateHistAggregation(columnName, intervalStr, 0));
+    }
+
+    protected String dateInterval(long minTs, long maxTs) {
+        String intervalStr = "1m";
+        int buckets = 100;
+        long stepTs = (maxTs - minTs) / buckets;
+        long minutesOfDuration = Duration.ofMillis(stepTs).toMinutes();
+        long secondsOfDuration = Duration.ofMillis(stepTs).toMillis()/1000;
+        if (minutesOfDuration > 0) {
+            intervalStr = minutesOfDuration + "m";
+        } else if (secondsOfDuration > 0){
+            intervalStr = secondsOfDuration + "s";
+        }
+        return intervalStr;
     }
 
     protected String getMappingUrl() {
@@ -266,18 +339,22 @@ public class ElasticsearchDataProvider extends DataProvider implements Aggregata
     }
 
     private JSONObject getQueryAggDataRequest(AggConfig config) throws Exception {
-        JSONObject request = new JSONObject();
         Stream<DimensionConfig> c = config.getColumns().stream();
         Stream<DimensionConfig> r = config.getRows().stream();
         Stream<DimensionConfig> aggregationStream = Stream.concat(c, r);
-        List<JSONObject> termAggregations = aggregationStream.map(e -> getTermsAggregation(e.getColumnName())).collect(Collectors.toList());
+        List<JSONObject> termAggregations =
+                aggregationStream.map(e -> getAggregation(e, config))
+                        .collect(Collectors.toList());
         JSONObject metricAggregations = getMetricAggregation(config.getValues(), getTypes());
         termAggregations.add(metricAggregations);
+
+        JSONObject request = new JSONObject();
         for (int i = termAggregations.size() - 1; i > 0; i--) {
             JSONObject pre = termAggregations.get(i - 1);
             String key = pre.keySet().iterator().next();
             pre.getJSONObject(key).put("aggregations", termAggregations.get(i));
         }
+
         request.put("size", 0);
         request.put("query", buildFilterDSL(config));
         request.put("aggregations", termAggregations.get(0));
@@ -285,10 +362,7 @@ public class ElasticsearchDataProvider extends DataProvider implements Aggregata
     }
 
     public JSONObject buildFilterDSL(AggConfig config) {
-        JSONObject filter = new JSONObject();
-        filter.put("bool", new JSONObject());
-        filter.getJSONObject("bool").put("filter", getFilter(config));
-        return filter;
+        return boolFilter(BoolType.FILTER, getFilter(config));
     }
 
     private void getAggregationResponse(JSONObject object, List<String[]> result, List<String> parentKeys, int dimensionLevel, List<ColumnIndex> dimensionList, List<ColumnIndex> valueList) {
@@ -386,7 +460,11 @@ public class ElasticsearchDataProvider extends DataProvider implements Aggregata
         JSONObject property = (JSONObject) field.getValue();
         if (property.keySet().contains("properties")) {
             for (Map.Entry e : property.getJSONObject("properties").entrySet()) {
-                getField(types, e, field.getKey());
+                String key = field.getKey();
+                if (parent != null) {
+                    key = parent + "." + field.getKey();
+                }
+                getField(types, e, key);
             }
         } else {
             String key = null;

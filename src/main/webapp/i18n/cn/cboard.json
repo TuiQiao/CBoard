@@ -1,6 +1,7 @@
 {
   "COMMON": {
     "OK": "确认",
+    "LOAD": "加载",
     "CANCEL": "取消",
     "SAVE": "保存",
     "LOADING": "玩命加载中...",
@@ -22,8 +23,12 @@
     "LAST1M": "最近一月",
     "LAST1W": "最近一周",
     "LAST10D": "最近10天",
-    "LAST10D_TIMESTAMP": "最近10天, 时间戳",
-    "FILTER_GROUP": "可选过滤"
+    "LAST10D_TIMESTAMP": "最近10天(时间戳)",
+    "LAST3H_TIMESTAMP": "最近3小时(时间戳)",
+    "LAST60MIN_TIMESTAMP": "最近60分钟(时间戳)",
+    "FILTER_GROUP": "可选过滤",
+    "SAVE_AS": "另存为",
+    "PARAM": "条件"
   },
   "TIPS": {
     "CAL_EXPR": "用于聚合后再计算. 使用上面的点击辅助输入避免输入错误. 如: Math.log(sum(columnA)/count(columB))"
@@ -40,7 +45,8 @@
     "ADMIN": "管理",
     "USER_ADMIN": "用户管理",
     "RES_ADMIN": "资源管理",
-    "JOB": "定时任务"
+    "JOB": "定时任务",
+    "SHARE_RESOURCE": "资源分享"
   },
   "HEADER": {
     "SIGN_OUT": "注销"
@@ -53,7 +59,10 @@
       "VALUE_LIST": "选定值列",
       "VALUE": "选定值",
       "VALUE_A": "下限",
-      "VALUE_B": "上限"
+      "VALUE_B": "上限",
+      "SELECT_VALUE": "列表选值",
+      "INPUT_VALUE": "输入值或表达式",
+      "LIST_WARN": "值列表过大或者连续值，请不要加载数据列表!"
     }
   },
   "CONFIG": {
@@ -83,7 +92,7 @@
       "SWITCH": "切换",
       "ROW": "行维",
       "GROUP": "列维",
-      "VALUE": "度量",
+      "VALUE": "指标",
       "VALUE_AXIS": "轴",
       "FILTER": "过滤",
       "LABEL": "文字",
@@ -183,14 +192,23 @@
       "CATEGORY": "分类"
     },
     "DATASET": {
-      "DATASET": "Cube",
+      "DATASET": "数据集",
       "NAME": "名称",
       "CATEGORY": "分类",
       "LOAD_DATA": "读取数据",
       "DATASOURCE": "数据源",
       "ADD": "添加",
       "REAL_TIME_INTERVAL": "实时间隔(秒)",
-      "REAL_TIME_TIP": "留空则不做后台刷新"
+      "REAL_TIME_TIP": "留空则不做后台刷新",
+      "DIMENSION": "维度列",
+      "HIERARCHY": "维度层级",
+      "MEASURE": "指标列",
+      "FILTER": "过滤器",
+      "UNCLASSIFY": "未分类列",
+      "TIP_EDIT_ALIAS": "编辑别名",
+      "TIP_ADD_HIERARCHY": "添加层级",
+      "TIP_SWITCH_TO_MEASURE": "转换为指标",
+      "TIP_SWITCH_TO_DIMENSION": "转换为维度"
     },
     "JOB": {
       "CONFIG": "配置",
@@ -223,6 +241,10 @@
       "FINISH": "完成",
       "PROCESSING": "处理中",
       "STATUS": "状态"
+    },
+    "SHARE_RES": {
+      "YOUR_RES": "你的资源",
+      "SHARE": "分享"
     }
   },
   "ADMIN": {

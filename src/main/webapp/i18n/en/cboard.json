@@ -1,6 +1,7 @@
 {
   "COMMON": {
     "OK": "OK",
+    "LOAD": "Load",
     "CANCEL": "Cancel",
     "SAVE": "Save",
     "LOADING": "Loading...",
@@ -22,8 +23,12 @@
     "LAST1M": "Last 1 Month",
     "LAST1W": "Last 1 Week",
     "LAST10D": "Last 10 Days",
-    "LAST10D_TIMESTAMP": "Last 10 Days, Timestamp",
-    "FILTER_GROUP": "Filter Group"
+    "LAST10D_TIMESTAMP": "Last 10 Days(Timestamp)",
+    "LAST3H_TIMESTAMP": "Last 3 Hours(Timestamp)",
+    "LAST60MIN_TIMESTAMP": "Last 60 Hours(Timestamp)",
+    "FILTER_GROUP": "Filter Group",
+    "SAVE_AS": "Save As",
+    "PARAM": "Parameter"
   },
   "TIPS": {
     "CAL_EXPR": "Calculate after aggregation. Use assist click input to avoid typo. e.g: Math.log(sum(columnA)/count(columB))"
@@ -40,7 +45,8 @@
     "ADMIN": "Admin",
     "USER_ADMIN": "User Admin",
     "RES_ADMIN": "Resource Admin",
-    "JOB": "Job"
+    "JOB": "Job",
+    "SHARE_RESOURCE": "Share Resource"
   },
   "HEADER": {
     "SIGN_OUT": "SignOut"
@@ -53,7 +59,10 @@
       "VALUE_LIST": "Value List",
       "VALUE": "Value",
       "VALUE_A": "Lower Bound",
-      "VALUE_B": "Upper Bound"
+      "VALUE_B": "Upper Bound",
+      "SELECT_VALUE": "Select Value From List",
+      "INPUT_VALUE": "Input Value Or Expression",
+      "LIST_WARN": "Make sure you are not loading a large size list or continuous value!"
     }
   },
   "CONFIG": {
@@ -160,7 +169,7 @@
       "VIEW_FORMMAT": "View Format",
       "MIN": "Min",
       "MAX": "Max",
-      "Now": "Now",
+      "NOW": "Now",
       "ONE_HOUR_AGO": "One hour ago",
       "ONE_DAY_AGO": "One day ago",
       "ONE_MONTH_AGO": "One month ago",
@@ -190,7 +199,16 @@
       "DATASOURCE": "Datasource",
       "ADD": "Add",
       "REAL_TIME_INTERVAL": "Real Time Interval(s)",
-      "REAL_TIME_TIP": "If You don't need refresh, just leave it as BLANK"
+      "REAL_TIME_TIP": "If You don't need refresh, just leave it as BLANK",
+      "DIMENSION": "Dimension",
+      "HIERARCHY": "Hierarchy",
+      "MEASURE": "Measure",
+      "FILTER": "Filter",
+      "UNCLASSIFY": "Selects",
+      "TIP_EDIT_ALIAS": "Alias",
+      "TIP_ADD_HIERARCHY": "Add Hierarchy",
+      "TIP_SWITCH_TO_MEASURE": "Switch to Measure",
+      "TIP_SWITCH_TO_DIMENSION": "Switch to Dimension"
     },
     "JOB": {
       "CONFIG": "Config",
@@ -223,6 +241,10 @@
       "FINISH": "Finish",
       "PROCESSING": "Processing",
       "STATUS": "Status"
+    },
+    "SHARE_RES": {
+      "YOUR_RES": "Your Resources",
+      "SHARE": "Share"
     }
   },
   "ADMIN": {

@@ -28,6 +28,26 @@
         ORDER BY widget_name
     </select>
 
+    <select id="getWidgetListAdmin" resultType="org.cboard.pojo.DashboardWidget">
+        SELECT
+               widget_id     AS id,
+               user_id       AS userId,
+               widget_name   AS name,
+               data_json     AS data,
+               category_name AS categoryName
+          FROM dashboard_widget
+         WHERE (
+            #{0} = '${admin_user_id}'
+            OR user_id = #{0}
+            OR widget_id IN (
+              SELECT res_id FROM dashboard_role r
+                LEFT JOIN dashboard_role_res rr ON r.role_id = rr.role_id
+               WHERE r.user_id = #{0} AND rr.res_type = 'widget'
+            )
+         )
+        ORDER BY widget_name
+    </select>
+
     <select id="getWidget" resultType="org.cboard.pojo.DashboardWidget">
        SELECT widget_id id,user_id userId,widget_name name,data_json data,category_name categoryName FROM dashboard_widget WHERE widget_id = #{0}
     </select>

@@ -13,7 +13,7 @@
                          style="min-height: 35px;height: auto;padding: 0px">
                 <span ng-repeat="o in selects"
                       class="btn btn-default btn-sm" style="margin: 3px 3px;"
-                      ng-click="addToken(o)">{{o}}</span>
+                      ng-click="addToken(o.column)">{{o.alias?o.alias:o.column}}</span>
                     </div>
                 </div>
             </div>
@@ -31,18 +31,7 @@
             <div class="form-group">
                 <label class="col-sm-2 control-label">{{'CONFIG.WIDGET.EXPRESSION_TEXT'|translate}}</label>
                 <div class="col-sm-10">
-                    <div id="expression_area" ui-ace="{
-                            useWrapMode : false,
-                            mode: 'sql',
-                            advanced: {
-                                autoScrollEditorIntoView: true
-                            },
-                            rendererOptions:{
-                              fontSize: '14px',
-                                minLines: 5,
-                                maxLines: 20
-                            }
-                        }" ng-model="data.expression" class="form-control" title="{{'TIPS.CAL_EXPR'|translate}}"></div>
+                    <div id="expression_area" ui-ace="expAceOpt" ng-model="data.expression" class="form-control" title="{{'TIPS.CAL_EXPR'|translate}}"></div>
                     <!--<textarea ng-model="data.expression" id="expression_area" class="form-control" placeholder="{{'TIPS.CAL_EXPR'|translate}}"></textarea>-->
                 </div>
             </div>

@@ -64,15 +64,16 @@ var crossTable = {
             colContent += "<th class=" + data[chartConfig.groups.length][k].property + "><div>" + data[chartConfig.groups.length][k].data + "</div></th>";
         }
         html += colContent + "</tr></thead><tbody class='scrollContent'>";
-        var dataPage = this.paginationProcessData(data, chartConfig.groups.length + 1, pageDataNum);
-        var colNum = dataPage[0][0].length;
-        var rowNum = colNum ? data.length : 0;
+        var headerLines = chartConfig.groups.length + 1;
+        var dataPage = this.paginationProcessData(data, headerLines, pageDataNum);
+        var colNum = data[0].length;
+        var rowNum = colNum ? data.length - headerLines : 0;
         var trDom = this.render(dataPage[0], chartConfig);
         html = html + trDom + "</tbody></table>";
         var optionDom = "<select><option value='20'>20</option><option value='50'>50</option><option value='100'>100</option><option value='150'>150</option></select>";
         var p_class = "p_" + random;
         var PaginationDom = "<div class='" + p_class + "'><div class='optionNum'><span>Show</span>" + optionDom + "<span>entries</span></div><div class='page'><ul></ul></div></div>";
-        var operate = "<div class='toolbar toolbar" + random + "'><span class='info'><b>info: </b>" + colNum + " x " + rowNum + "</span>" +
+        var operate = "<div class='toolbar toolbar" + random + "'><span class='info'><b>info: </b>" + rowNum + " x " + colNum + "</span>" +
             "<span class='exportBnt' title='export'></span></div>";
         $(container).html(operate);
         $(container).append("<div class='tableView table_" + random + "' style='width:99%;max-height:" + tall + "px;overflow:auto'>" + html + "</div>");
@@ -103,6 +104,9 @@ var crossTable = {
     },
     render: function (data, chartConfig) {
         var html = '';
+        if (data === undefined) {
+            return html;
+        }
         for (var r = 0; r < chartConfig.keys.length; r++) {
             for (var n = 1; n < data.length; n++) {
                 var node = data[n][r].data;

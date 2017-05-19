@@ -1,3 +1,9 @@
+.toolbar-icon {
+    cursor: pointer;
+    font-size: large;
+    padding-top: 6px;
+}
+
 .control-label-compact {
     padding: 7px 2px;
     font-size: small;
@@ -8,7 +14,7 @@
     border-bottom: 1px solid #d5d5d5;
     border-right: 1px solid #d5d5d5;
     margin-bottom: 0;
-    table-layout: fixed;
+    /*table-layout: fixed;*/
     width: auto;
     border-collapse: separate;
     border-spacing: 0;
@@ -653,4 +659,28 @@ treecontrol.tree-dark {
 
 [treecontrol].tree-dark {
     color: #ddd;
+}
+
+.top-buffer-lg {
+    margin-top: 40px;
+}
+
+.top-buffer {
+    margin-top: 5px;
+}
+.nav-tabs-custom > .nav-tabs > li > a:hover {
+    /*background: transparent;
+    margin: 0;*/
+    cursor: pointer;
+}
+
+.bs-example {
+    margin-right: 0;
+    margin-left: 0;
+    background-color: #fff;
+    border-color: #ddd;
+    border-width: 1px;
+    border-radius: 4px 4px 0 0;
+    -webkit-box-shadow: none;
+    box-shadow: none;
 }

@@ -23,7 +23,7 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
             {
                 name: translate('CONFIG.WIDGET.SCATTER'), value: 'scatter', class: 'cScatter',
                 row: translate('CONFIG.WIDGET.TIPS_DIM_NUM_1_MORE'),
-                column: translate('CONFIG.WIDGET.TIPS_DIM_NUM_0_MORE'),
+                column: translate('CONFIG.WIDGET.TIPS_DIM_NUM_1_MORE'),
                 measure: translate('CONFIG.WIDGET.TIPS_DIM_NUM_1_MORE')
             },
             {
@@ -125,13 +125,19 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
         $scope.filterSelect = {};
         $scope.verify = {widgetName: true};
 
-        $http.get("dashboard/getDatasetList.do").success(function (response) {
-            $scope.datasetList = response;
-        });
 
-        $http.get("dashboard/getDatasetCategoryList.do").success(function (response) {
-            $scope.datasetCategoryList = response;
-        });
+        var loadDataset = function (callback) {
+            $http.get("dashboard/getDatasetList.do").success(function (response) {
+                $scope.datasetList = response;
+                if (callback) {
+                    callback();
+                }
+            });
+        };
+        loadDataset();
+        // $http.get("dashboard/getDatasetCategoryList.do").success(function (response) {
+        //     $scope.datasetCategoryList = response;
+        // });
 
         $http.get("dashboard/getDatasourceList.do").success(function (response) {
             $scope.datasourceList = response;
@@ -169,14 +175,14 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
         };
 
         $scope.editExp = function (col) {
-            var selects = angular.copy($scope.columns);
+            var selects = schemaToSelect($scope.schema);
             var aggregate = $scope.value_aggregate_types;
             var curWidget = $scope.curWidget;
             var ok;
             var data = {expression: ''};
             if (!col) {
                 ok = function (data) {
-                    $scope.expressions.push({
+                    $scope.curWidget.expressions.push({
                         type: 'exp',
                         exp: data.expression,
                         alias: data.alias
@@ -195,6 +201,7 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
                 templateUrl: 'org/cboard/view/config/modal/exp.html',
                 windowTemplateUrl: 'org/cboard/view/util/modal/window.html',
                 backdrop: false,
+                size: 'lg',
                 controller: function ($scope, $uibModalInstance) {
                     $scope.data = data;
                     $scope.curWidget = curWidget;
@@ -204,6 +211,7 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
                     $scope.close = function () {
                         $uibModalInstance.close();
                     };
+                    $scope.expAceOpt = expEditorOptions(selects, aggregate);
                     $scope.addToken = function (str, agg) {
                         var tc = document.getElementById("expression_area");
                         var tclen = $scope.data.expression.length;
@@ -247,30 +255,24 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
         };
 
         $scope.loadData = function () {
-            $scope.loading = true;
-            dataService.getColumns({
-                datasource: $scope.datasource ? $scope.datasource.id : null,
-                query: $scope.curWidget.query,
-                datasetId: $scope.customDs ? null : $scope.curWidget.datasetId,
-                reload: !$scope.loadFromCache,
-                callback: function (dps) {
-                    $scope.loading = false;
-                    $scope.alerts = [];
-                    if (dps.msg == "1") {
-                        $scope.columns = dps.columns;
-                        $scope.toChartDisabled = false;
-                        $scope.newConfig();
-                        $scope.filterSelect = {};
-                    } else {
-                        $scope.alerts = [{msg: dps.msg, type: 'danger'}];
-                    }
-                }
+
+            $scope.toChartDisabled = false;
+            $scope.newConfig();
+            $scope.filterSelect = {};
+            loadDataset(function () {
+                $scope.curWidget.expressions = [];
+                loadDsExpressions();
+                $scope.curWidget.filterGroups = [];
+                loadDsFilterGroups();
+                buildSchema();
             });
         };
 
         $scope.newWgt = function () {
             $scope.curWidget = {};
             $scope.curWidget.config = {};
+            $scope.curWidget.expressions = [];
+            $scope.curWidget.filterGroups = [];
             $scope.curWidget.query = {};
             $scope.datasource = null;
             $scope.widgetName = null;
@@ -278,52 +280,59 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
             $scope.widgetId = null;
             $scope.optFlag = 'new';
             $scope.customDs = false;
+            $scope.schema = null;
             addValidateWatch();
         };
 
         var loadDsFilterGroups = function () {
-            $scope.filterGroups = [];
             if (!$scope.customDs) {
-                var fg = angular.copy(_.find($scope.datasetList, function (ds) {
+                var fg = _.find($scope.datasetList, function (ds) {
                     return ds.id == $scope.curWidget.datasetId;
-                }).data.filters);
+                }).data.filters;
                 if (fg) {
-                    $scope.filterGroups = fg.filter(function (g) {
-                        var dupDefine = _.find($scope.curWidget.config.filters, function (f) {
-                            return g.group == f.group;
-                        });
-                        return _.isUndefined(dupDefine);
+                    _.each(fg, function (e) {
+                        $scope.curWidget.filterGroups.push(e);
                     });
                 }
             }
         };
 
-        var loadDsExpressions = function () {
+        $scope.isDsExpression = function (o) {
             if ($scope.customDs) {
-                $scope.expressions = [];
+                return false;
             } else {
-                var dsExp = angular.copy(_.find($scope.datasetList, function (ds) {
+                var dsExp = _.find($scope.datasetList, function (ds) {
                     return ds.id == $scope.curWidget.datasetId;
-                }).data.expressions);
+                }).data.expressions;
+                var exp = _.find(dsExp, function (e) {
+                    return e.id && o.id == e.id;
+                });
+                return !_.isUndefined(exp);
+            }
+        };
 
-                var axes = $scope.curWidget.config.values;
-                if ($scope.optFlag == 'new' || _.isUndefined(axes)) {
-                    $scope.expressions = dsExp;
-                } else {
-                    // de-duplicate expression
-                    var colInAxes = [];
-                    for (var i = 0; i < axes.length; i++) {
-                        colInAxes = colInAxes.concat(axes[i].cols)
-                    }
-                    colInAxes = colInAxes.filter(function (col) {
-                        return col.type == "exp"
-                    });
+        $scope.isDsFilter = function (o) {
+            if ($scope.customDs) {
+                return false;
+            } else {
+                var fg = _.find($scope.datasetList, function (ds) {
+                    return ds.id == $scope.curWidget.datasetId;
+                }).data.filters;
+                var f = _.find(fg, function (e) {
+                    return e.id && o.id == e.id;
+                });
+                return !_.isUndefined(f);
+            }
+        };
 
-                    $scope.expressions = dsExp.filter(function (exp) {
-                        var dupDefine = _.find(colInAxes, function (col) {
-                            return col.alias == exp.alias;
-                        })
-                        return _.isUndefined(dupDefine) ? true : false;
+        var loadDsExpressions = function () {
+            if (!$scope.customDs) {
+                var dsExp = _.find($scope.datasetList, function (ds) {
+                    return ds.id == $scope.curWidget.datasetId;
+                }).data.expressions;
+                if (dsExp) {
+                    _.each(dsExp, function (e) {
+                        $scope.curWidget.expressions.push(e);
                     });
                 }
             }
@@ -478,8 +487,6 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
         $scope.newConfig = function () {
             $scope.curWidget.config = {};
             $scope.curWidget.config.chart_type = 'table';
-            loadDsExpressions();
-            loadDsFilterGroups();
             cleanPreview();
             switch ($scope.curWidget.config.chart_type) {
                 case 'line':
@@ -576,9 +583,9 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
                 config: $scope.curWidget.config,
                 datasource: $scope.datasource ? $scope.datasource.id : null,
                 query: $scope.curWidget.query,
-                datasetId: $scope.customDs ? null : $scope.curWidget.datasetId
-            },function (query) {
-                var querybr = query.trim().replace(/\n/g,'<br/>').replace(/\t/g, "&nbsp;&nbsp;&nbsp;&nbsp;");
+                datasetId: $scope.customDs ? undefined : $scope.curWidget.datasetId
+            }, function (query) {
+                var querybr = query.trim().replace(/\n/g, '<br/>').replace(/\t/g, "&nbsp;&nbsp;&nbsp;&nbsp;");
                 $('#viewQuery_widget').html("<div class='alert alert-info' role='alert' style='text-align: left;'>" + querybr + "</div>");
                 $scope.loadingPre = false;
                 $scope.viewQueryMoal = true;
@@ -592,7 +599,7 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
                 config: $scope.curWidget.config,
                 datasource: $scope.datasource ? $scope.datasource.id : null,
                 query: $scope.curWidget.query,
-                datasetId: $scope.customDs ? null : $scope.curWidget.datasetId
+                datasetId: $scope.customDs ? undefined : $scope.curWidget.datasetId
             }, function (option) {
                 switch ($scope.curWidget.config.chart_type) {
                     case 'line':
@@ -695,6 +702,12 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
             } else {
                 o.data.datasetId = $scope.curWidget.datasetId;
             }
+            o.data.expressions = _.filter($scope.curWidget.expressions, function (e) {
+                return !$scope.isDsExpression(e);
+            });
+            o.data.filterGroups = _.filter($scope.curWidget.filterGroups, function (e) {
+                return !$scope.isDsFilter(e);
+            });
             $scope.alerts = [];
             $scope.verify = {widgetName: true};
 
@@ -757,6 +770,12 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
             switchNode(widget.id);
             $('#preview_widget').html('');
             $scope.curWidget = angular.copy(widget.data);
+            if (!$scope.curWidget.expressions) {
+                $scope.curWidget.expressions = [];
+            }
+            if (!$scope.curWidget.filterGroups) {
+                $scope.curWidget.filterGroups = [];
+            }
             updateService.updateConfig($scope.curWidget.config);
             $scope.datasource = _.find($scope.datasourceList, function (ds) {
                 return ds.id == widget.data.datasource;
@@ -766,27 +785,89 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
 
             $scope.widgetId = widget.id;
             $scope.optFlag = 'edit';
-            $scope.loading = true;
             $scope.customDs = _.isUndefined($scope.curWidget.datasetId);
-            loadDsExpressions();
-            loadDsFilterGroups();
+            loadDataset(function () {
+                loadDsExpressions();
+                loadDsFilterGroups();
+                buildSchema();
+                dataService.linkDataset($scope.curWidget.datasetId, $scope.curWidget.config);
+            });
             addWatch();
-            dataService.getColumns({
-                datasource: $scope.datasource ? $scope.datasource.id : null,
-                query: $scope.curWidget.query,
-                datasetId: $scope.customDs ? null : $scope.curWidget.datasetId,
-                reload: !$scope.loadFromCache,
-                callback: function (dps) {
-                    $scope.loading = false;
-                    $scope.alerts = [];
-                    if (dps.msg == "1") {
-                        $scope.columns = dps.columns;
-                    } else {
-                        $scope.alerts = [{msg: dps.msg, type: 'danger'}];
+        };
+
+        $scope.filterDimension = function (e) {
+            if (e.type == 'level') {
+                return true;
+            }
+            var keys = _.find($scope.curWidget.config.keys, function (k) {
+                return k.col == e.column;
+            });
+            var groups = _.find($scope.curWidget.config.groups, function (k) {
+                return k.col == e.column;
+            });
+            return !(keys || groups);
+        };
+
+        $scope.filterExpressions = function (e) {
+            var result = false;
+            _.each($scope.curWidget.config.values, function (v) {
+                _.each(v.cols, function (c) {
+                    if (c.type == 'exp') {
+                        if (e.id == c.id && e.alias == c.alias) {
+                            result = true;
+                        }
+                    }
+                });
+            });
+            return !result;
+        };
+
+        $scope.filterFilterGroup = function (e) {
+            var result = false;
+            _.each($scope.curWidget.config.filters, function (f) {
+                if (f.group) {
+                    if (e.id == f.id && e.group == f.group) {
+                        result = true;
                     }
                 }
-
             });
+            return !result;
+        };
+
+        var buildSchema = function () {
+            var loadFromDataset = false;
+            if (!$scope.customDs) {
+                $scope.dataset = _.find($scope.datasetList, function (ds) {
+                    return ds.id == $scope.curWidget.datasetId;
+                });
+                if ($scope.dataset.data.schema && ($scope.dataset.data.schema.measure.length > 0 || $scope.dataset.data.schema.dimension.length > 0)) {
+                    loadFromDataset = true;
+                }
+            }
+            if (loadFromDataset) {
+                $scope.schema = $scope.dataset.data.schema;
+                $scope.alerts = [];
+            } else {
+                $scope.loading = true;
+                dataService.getColumns({
+                    datasource: $scope.datasource ? $scope.datasource.id : null,
+                    query: $scope.curWidget.query,
+                    datasetId: $scope.customDs ? undefined : $scope.curWidget.datasetId,
+                    reload: !$scope.loadFromCache,
+                    callback: function (dps) {
+                        $scope.loading = false;
+                        $scope.alerts = [];
+                        if (dps.msg == "1") {
+                            $scope.schema = {selects: []};
+                            _.each(dps.columns, function (e) {
+                                $scope.schema.selects.push({column: e});
+                            });
+                        } else {
+                            $scope.alerts = [{msg: dps.msg, type: 'danger'}];
+                        }
+                    }
+                });
+            }
         };
 
         $scope.deleteWgt = function (widget) {
@@ -842,8 +923,8 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
             toCol: function (list, index, item, type) {
                 if (type == 'key' || type == 'group' || type == 'filter') {
                     list[index] = {col: item.col, aggregate_type: 'sum'};
-                } else if (type == 'select') {
-                    list[index] = {col: item, aggregate_type: 'sum'};
+                } else if (type == 'select' || type == 'measure') {
+                    list[index] = {col: item.column, aggregate_type: 'sum'};
                 }
             },
             toSelect: function (list, index, item, type) {
@@ -856,60 +937,73 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
             toKeysGroups: function (list, index, item, type) {
                 if (type == 'col') {
                     list[index] = {col: item.col, type: 'eq', values: [], sort: 'asc'};
-                } else if (type == 'select') {
-                    list[index] = {col: item, type: 'eq', values: [], sort: 'asc'};
+                } else if (type == 'dimension' || type == 'select') {
+                    list[index] = {
+                        alias: item.alias,
+                        col: item.column,
+                        level: item.level,
+                        type: 'eq',
+                        values: [],
+                        sort: 'asc'
+                    };
+                    if (type == 'dimension') {
+                        list[index].id = item.id;
+                    }
                 }
+            },
+            attachLevel: function (column, level) {
+                column.level = level.alias;
+                return column;
             }
         };
 
         $scope.selectsByFilter = [];
         $scope.selects = [];
         $scope.editFilter = function (setbackArr, setbackIdx) {
-            var status = {i: 1};
-
-            var item = setbackArr[setbackIdx];
-            var col;
-            if (item.col) {
-                col = angular.copy(item);
-            } else {
-                col = {col: item, type: 'eq', values: []}
-            }
-
-            var config = angular.copy($scope.curWidget.config);
-            var arr = _.findKey($scope.curWidget.config, function (o) {
-                return o == setbackArr;
-            });
-            config[arr].splice(setbackIdx, 1);
-            dataService.getDimensionValues($scope.datasource ? $scope.datasource.id : null, $scope.curWidget.query, $scope.customDs ? null : $scope.curWidget.datasetId, col.col, config, function (filtered, nofilter) {
-                $scope.selectsByFilter = filtered;
-                $scope.selects = nofilter;
-                status.i--;
-            });
             $uibModal.open({
-                templateUrl: 'org/cboard/view/config/modal/filter.html',
+                templateUrl: 'org/cboard/view/dashboard/modal/param.html',
                 windowTemplateUrl: 'org/cboard/view/util/modal/window.html',
                 backdrop: false,
                 size: 'lg',
-                scope: $scope,
-                controller: function ($scope, $uibModalInstance) {
-                    $scope.status = status;
-                    $scope.type = ['=', '≠', '>', '<', '≥', '≤', '(a,b]', '[a,b)', '(a,b)', '[a,b]'];
-                    $scope.byFilter = true;
-                    $scope.col = col;
-                    $scope.close = function () {
-                        $uibModalInstance.close();
-                    };
-                    $scope.selected = function (v) {
-                        return _.indexOf($scope.col.values, v) == -1
-                    };
-                    $scope.ok = function () {
-                        if ($scope.col.values.length > 100) {
-                            $scope.alerts = [{msg: '条件数量过多>100', type: 'danger'}];
+                resolve: {
+                    param: function () {
+                        var item = setbackArr[setbackIdx];
+                        if (item.col) {
+                            if (item.type == 'eq') {
+                                item.type = '=';
+                            } else if (item.type == 'ne') {
+                                item.type = '≠';
+                            }
+                            return angular.copy(item);
+                        } else {
+                            return {col: item, type: '=', values: []}
                         }
-                        setbackArr[setbackIdx] = $scope.col;
-                        $uibModalInstance.close();
-                    };
-                }
+                    },
+                    filter: function () {
+                        return true;
+                    },
+                    getSelects: function () {
+                        return function (byFilter, column, callback) {
+                            var config = undefined;
+                            if (byFilter) {
+                                config = angular.copy($scope.curWidget.config);
+                                var arr = _.findKey($scope.curWidget.config, function (o) {
+                                    return o == setbackArr;
+                                });
+                                config[arr].splice(setbackIdx, 1);
+                            }
+                            dataService.getDimensionValues($scope.datasource ? $scope.datasource.id : null, $scope.curWidget.query, $scope.customDs ? undefined : $scope.curWidget.datasetId, column, config, function (filtered) {
+                                callback(filtered);
+                            });
+                        };
+                    },
+                    ok: function () {
+                        return function (param) {
+                            setbackArr[setbackIdx] = param;
+                        }
+                    }
+                },
+                controller: 'paramSelector'
             });
         };
 
@@ -937,15 +1031,38 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
             });
         };
 
+        var schemaToSelect = function (schema) {
+            if (schema.selects) {
+                return angular.copy(schema.selects);
+            } else {
+                var selects = [];
+                selects = selects.concat(schema.measure);
+                _.each(schema.dimension, function (e) {
+                    if (e.type == 'level') {
+                        _.each(e.columns, function (c) {
+                            selects.push(c);
+                        });
+                    } else {
+                        selects.push(e);
+                    }
+                });
+                return angular.copy(selects);
+            }
+        };
+
         $scope.editFilterGroup = function (col) {
-            var selects = angular.copy($scope.columns);
+            var selects = schemaToSelect($scope.schema);
             $uibModal.open({
                 templateUrl: 'org/cboard/view/config/modal/filterGroup.html',
                 windowTemplateUrl: 'org/cboard/view/util/modal/window.html',
                 backdrop: false,
                 scope: $scope,
                 controller: function ($scope, $uibModalInstance) {
-                    $scope.data = angular.copy(col);
+                    if (col) {
+                        $scope.data = angular.copy(col);
+                    } else {
+                        $scope.data = {group: '', filters: []};
+                    }
                     $scope.selects = selects;
                     $scope.close = function () {
                         $uibModalInstance.close();
@@ -954,31 +1071,42 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
                         $scope.data.filters.push({col: str, type: '=', values: []})
                     };
                     $scope.ok = function () {
-                        col.group = $scope.data.group;
-                        col.filters = $scope.data.filters;
+                        if (col) {
+                            col.group = $scope.data.group;
+                            col.filters = $scope.data.filters;
+                        } else {
+                            $scope.curWidget.filterGroups.push($scope.data);
+                        }
                         $uibModalInstance.close();
                     };
                     $scope.editFilter = function (filter) {
                         $uibModal.open({
-                            templateUrl: 'org/cboard/view/config/modal/dsFilter.html',
+                            templateUrl: 'org/cboard/view/dashboard/modal/param.html',
                             windowTemplateUrl: 'org/cboard/view/util/modal/window.html',
                             backdrop: false,
                             size: 'lg',
-                            controller: function ($scope, $uibModalInstance) {
-                                $scope.filter = angular.copy(filter);
-                                $scope.type = ['=', '≠', '>', '<', '≥', '≤', '(a,b]', '[a,b)', '(a,b)', '[a,b]'];
-                                $scope.close = function () {
-                                    $uibModalInstance.close();
-                                };
-                                $scope.selected = function (v) {
-                                    return _.indexOf($scope.col.values, v) == -1
-                                };
-                                $scope.ok = function () {
-                                    filter.type = $scope.filter.type;
-                                    filter.values = $scope.filter.values;
-                                    $uibModalInstance.close();
-                                };
-                            }
+                            resolve: {
+                                param: function () {
+                                    return angular.copy(filter);
+                                },
+                                filter: function () {
+                                    return false;
+                                },
+                                getSelects: function () {
+                                    return function (byFilter, column, callback) {
+                                        dataService.getDimensionValues($scope.datasource ? $scope.datasource.id : null, $scope.curWidget.query, $scope.curWidget.datasetId, column, undefined, function (filtered) {
+                                            callback(filtered);
+                                        });
+                                    };
+                                },
+                                ok: function () {
+                                    return function (param) {
+                                        filter.type = param.type;
+                                        filter.values = param.values;
+                                    }
+                                }
+                            },
+                            controller: 'paramSelector'
                         });
                     };
                 }
@@ -1087,21 +1215,22 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
                     return obj.id == w.data.datasetId
                 });
                 var dsrName = '';
+                var dsr;
                 if (ds) {
-                    dsrName = _.find($scope.datasourceList, function (obj) {
+                    dsr = _.find($scope.datasourceList, function (obj) {
                         return obj.id == ds.data.datasource
-                    }).name;
+                    });
                 } else if (w.data.datasource) {
-                    _.find($scope.datasourceList, function (obj) {
+                    dsr = _.find($scope.datasourceList, function (obj) {
                         return obj.id == w.data.datasource
-                    }).name
+                    });
                 }
                 return {
                     "id": w.id,
                     "name": w.name,
                     "categoryName": w.categoryName,
                     "datasetName": ds ? ds.name : '',
-                    "datasourceName": dsrName
+                    "datasourceName": dsr ? dsr.name : dsrName
                 };
             });
 
@@ -1140,6 +1269,10 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
             return baseEventObj;
         }();
         /** js tree related End... **/
+
+
+        /** Ace Editor Starer... **/
+        $scope.queryAceOpt = datasetEditorOptions();
     }
 )
 ;

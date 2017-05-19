@@ -53,7 +53,7 @@ public class JvmAggregator extends InnerAggregator {
         rawDataCache.put(getCacheKey(), data, interval * 1000);
     }
 
-    public String[][] queryDimVals(String columnName, AggConfig config) throws Exception {
+    public String[] queryDimVals(String columnName, AggConfig config) throws Exception {
         String[][] data = rawDataCache.get(getCacheKey());
         Map<String, Integer> columnIndex = getColumnIndex(data);
         final int fi = columnIndex.get(columnName);
@@ -65,12 +65,7 @@ public class JvmAggregator extends InnerAggregator {
                 .distinct()
                 .sorted(comparator)
                 .toArray(String[]::new);
-        String[] nofilter = Arrays.stream(data).parallel().skip(1)
-                .map(e -> e[fi])
-                .distinct()
-                .sorted()
-                .toArray(String[]::new);
-        return new String[][]{filtered, nofilter};
+        return filtered;
     }
 
     private Map<String, Integer> getColumnIndex(String[][] data) {
@@ -100,7 +95,7 @@ public class JvmAggregator extends InnerAggregator {
         dimensionList.forEach(e -> e.setIndex(columnIndex.get(e.getName())));
         valuesList.forEach(e -> e.setIndex(columnIndex.get(e.getName())));
 
-        Map<Dimensions, Double[]> grouped = Arrays.stream(data).parallel().skip(1).filter(rowFilter::filter)
+        Map<Dimensions, Double[]> grouped = Arrays.stream(data).skip(1).filter(rowFilter::filter)
                 .collect(Collectors.groupingBy(row -> {
                     String[] ds = dimensionList.stream().map(d -> row[d.getIndex()]).toArray(String[]::new);
                     return new Dimensions(ds);

@@ -14,6 +14,7 @@ var crossTable = {
         var html = "<table class = 'table_wrapper' id='tableWrapper" + random + "'><thead class='fixedHeader'>",
             colContent = "<tr>";
         for (var i = 0; i < chartConfig.groups.length; i++) {
+            var groupId = chartConfig.groups[i].id;
             var colspan = 1;
             var colList = [];
             for (var t = 0; t < chartConfig.keys.length; t++) {
@@ -55,9 +56,20 @@ var crossTable = {
                 }
             }
             for (var c = 0; c < colList.length; c++) {
+                var d = ""
+                if (drill.config[groupId] && (drill.config[groupId].down || drill.config[groupId].up)) {
+                    d += "class='table_drill_cell'";
+                    if (drill.config[groupId].down) {
+                        d += " drill-down='" + groupId + "' ";
+                    }
+                    if (drill.config[groupId].up) {
+                        d += " drill-up='" + groupId + "' ";
+                    }
+                }
+                var value = "<div " + d + ">" + colList[c].data + "</div>";
                 colContent += colList[c].colSpan > 1 ? "<th colspan=" + colList[c].colSpan +
-                    " class=" + colList[c].property + "><div>" + colList[c].data + "</div></th>" :
-                    "<th class=" + colList[c].property + "><div>" + colList[c].data + "</div></th>";
+                    " class=" + colList[c].property + ">" + value + "</th>" :
+                    "<th class=" + colList[c].property + ">" + value + "</th>";
             }
             colContent += "</tr><tr>";
         }

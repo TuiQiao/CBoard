@@ -85,6 +85,9 @@
     border-left: 0px;
     border-top: 1px solid #d5d5d5;
 }
+.tableView .table_drill_cell {
+    color: royalblue;
+}
 .ui-select-choices-group{
     z-index: 1000;
 }

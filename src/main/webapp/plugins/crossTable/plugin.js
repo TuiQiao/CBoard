@@ -92,16 +92,31 @@ var crossTable = {
         this.clickDrill("table_" + random, drill, args.render);
     },
     clickDrill: function (t_class, drill, render) {
-        $('.' + t_class).on('click', '.table_d_down', function (e) {
-            var id = $(e.target).attr('drill-id');
-            var value = $(e.target).prev('div').html();
-            drill.drillDown(id, value, render);
+        $.contextMenu({
+            selector: '.' + t_class + ' .table_drill_cell',
+            build: function ($trigger, e) {
+                var down = $trigger.attr('drill-down');
+                var up = $trigger.attr('drill-up');
+                var value = $trigger.html();
+                var items = {};
+                if (up) {
+                    items.up = {name: "Up"}
+                }
+                if (down) {
+                    items.down = {name: "Down"}
+                }
+                return {
+                    callback: function (key, options) {
+                        if ('up' == key) {
+                            drill.drillUp(up, render);
+                        } else if ('down' == key) {
+                            drill.drillDown(down, value, render);
+                        }
+                    },
+                    items: items
+                };
+            }
         });
-        $('.' + t_class).on('click', '.table_d_up', function (e) {
-            var id = $(e.target).attr('drill-id');
-            drill.drillUp(id, render);
-        });
-
     },
     paginationProcessData: function (rawData, headerLines, pageSize) {
         var dataLength = rawData.length - headerLines;
@@ -162,13 +177,14 @@ var crossTable = {
                 var cur_data = currentCell.data ? currentCell.data : "";
                 var keyId = chartConfig.keys[m].id;
                 if (drill.config[keyId] && (drill.config[keyId].down || drill.config[keyId].up)) {
-                    cur_data = "<div>" + cur_data + "</div>";
+                    var d = "";
                     if (drill.config[keyId].down) {
-                        cur_data = cur_data + "<div class='table_d_down' drill-id='" + keyId + "'>down</div>";
+                        d += " drill-down='" + keyId + "' ";
                     }
                     if (drill.config[keyId].up) {
-                        cur_data = "<div class='table_d_up' drill-id='" + keyId + "'>up</div>" + cur_data
+                        d += " drill-up='" + keyId + "' ";
                     }
+                    cur_data = "<div class='table_drill_cell' " + d + ">" + cur_data + "</div>";
                 }
                 if (m > 0) {
                     if (currentCell.rowSpan == 'row_null' && rowParentCell.rowSpan == 'row_null' && !isFirstLine) {

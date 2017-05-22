@@ -57,7 +57,7 @@ var crossTable = {
             }
             for (var c = 0; c < colList.length; c++) {
                 var d = ""
-                if (drill.config[groupId] && (drill.config[groupId].down || drill.config[groupId].up)) {
+                if (drill && drill.config[groupId] && (drill.config[groupId].down || drill.config[groupId].up)) {
                     d += "class='table_drill_cell'";
                     if (drill.config[groupId].down) {
                         d += " drill-down='" + groupId + "' ";
@@ -188,7 +188,7 @@ var crossTable = {
                 var rowParentCell = data[n][m - 1];
                 var cur_data = currentCell.data ? currentCell.data : "";
                 var keyId = chartConfig.keys[m].id;
-                if (drill.config[keyId] && (drill.config[keyId].down || drill.config[keyId].up)) {
+                if (drill && drill.config[keyId] && (drill.config[keyId].down || drill.config[keyId].up)) {
                     var d = "";
                     if (drill.config[keyId].down) {
                         d += " drill-down='" + keyId + "' ";

@@ -71,6 +71,19 @@ public class XlsProcessService {
                 .map(e -> e.getJSONArray("widgets"))
                 .collect(Collectors.toList());
 
+        int widgets = 0;
+        int tables = 0;
+        for (JSONArray rw : arr) {
+            for (int i = 0; i < rw.size(); i++) {
+                JSONObject widget = rw.getJSONObject(i);
+                JSONObject v = persistContext.getData().getJSONObject(widget.getLong("widgetId").toString());
+                if (v != null && "table".equals(v.getString("type"))) {
+                    tables++;
+                }
+                widgets++;
+            }
+        }
+
         int columns = 170;
         int columnWidth = 1700 / columns;
         int column_width12 = 148;
@@ -91,55 +104,47 @@ public class XlsProcessService {
             context.settStyle(tStyle);
             context.setPercentStyle(percentStyle);
         }
-
-        Sheet sheet = context.getWb().createSheet(board.getName());
-        sheet.setDisplayGridlines(false);
-        IntStream.range(0, 180).forEach(i -> sheet.setColumnWidth(i, 365));
-        context.setBoardSheet(sheet);
         int eachRow = -2;
         int dCol;
         int dRow;
         int widthInRow;
-        for (JSONArray rw : arr) {
-            dCol = Math.round(30.0f / 1700 * columns);
-            dRow = eachRow + 3;
-            widthInRow = 0;
-            for (int i = 0; i < rw.size(); i++) {
 
-                JSONObject widget = rw.getJSONObject(i);
-                JSONObject v = persistContext.getData().getJSONObject(widget.getLong("widgetId").toString());
-                if (v == null || v.keySet().size() == 0) {
-                    continue;
-                }
-                int width = widget.getInteger("width").intValue();
-                int widget_cols = Math.round(1.0f * width / 12 * (148 - (rw.size() - 1) * 2));
-                widthInRow += width;
-                if (widthInRow > 12) {
-                    dCol = Math.round(30.0f / 1700 * columns);
-                    dRow = eachRow + 3;
-                    widthInRow = width;
-                }
-                context.setC1(dCol + 2);
-                context.setC2(dCol + 2 + widget_cols);
-                context.setR1(dRow);
-                context.setR2(dRow);
-                context.setWidget(widget);
-                context.setData(v);
-                XlsProcesser processer = getProcesser(v.getString("type"));
-                ClientAnchor anchor = processer.draw(context);
-                if (anchor.getRow2() > eachRow) {
-                    eachRow = anchor.getRow2();
-                }
-                dCol = context.getC2();
-            }
-        }
-        int tables = 0;
-        for (JSONArray rw : arr) {
-            for (int i = 0; i < rw.size(); i++) {
-                JSONObject widget = rw.getJSONObject(i);
-                JSONObject v = persistContext.getData().getJSONObject(widget.getLong("widgetId").toString());
-                if (v != null && "table".equals(v.getString("type"))) {
-                    tables++;
+        if (tables != widgets) {
+            Sheet sheet = context.getWb().createSheet(board.getName());
+            sheet.setDisplayGridlines(false);
+            IntStream.range(0, 180).forEach(i -> sheet.setColumnWidth(i, 365));
+            context.setBoardSheet(sheet);
+            for (JSONArray rw : arr) {
+                dCol = Math.round(30.0f / 1700 * columns);
+                dRow = eachRow + 3;
+                widthInRow = 0;
+                for (int i = 0; i < rw.size(); i++) {
+
+                    JSONObject widget = rw.getJSONObject(i);
+                    JSONObject v = persistContext.getData().getJSONObject(widget.getLong("widgetId").toString());
+                    if (v == null || v.keySet().size() == 0) {
+                        continue;
+                    }
+                    int width = widget.getInteger("width").intValue();
+                    int widget_cols = Math.round(1.0f * width / 12 * (148 - (rw.size() - 1) * 2));
+                    widthInRow += width;
+                    if (widthInRow > 12) {
+                        dCol = Math.round(30.0f / 1700 * columns);
+                        dRow = eachRow + 3;
+                        widthInRow = width;
+                    }
+                    context.setC1(dCol + 2);
+                    context.setC2(dCol + 2 + widget_cols);
+                    context.setR1(dRow);
+                    context.setR2(dRow);
+                    context.setWidget(widget);
+                    context.setData(v);
+                    XlsProcesser processer = getProcesser(v.getString("type"));
+                    ClientAnchor anchor = processer.draw(context);
+                    if (anchor.getRow2() > eachRow) {
+                        eachRow = anchor.getRow2();
+                    }
+                    dCol = context.getC2();
                 }
             }
         }

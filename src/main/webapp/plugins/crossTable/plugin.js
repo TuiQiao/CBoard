@@ -112,10 +112,10 @@ var crossTable = {
                 var value = $trigger.html();
                 var items = {};
                 if (up) {
-                    items.up = {name: "Up"}
+                    items.up = {name: "Drill Up", icon: "fa-arrow-up"}
                 }
                 if (down) {
-                    items.down = {name: "Down"}
+                    items.down = {name: "Drill Down", icon: "fa-arrow-down"}
                 }
                 return {
                     callback: function (key, options) {
@@ -129,6 +129,13 @@ var crossTable = {
                 };
             }
         });
+        /*$(".table_drill_cell").hover(function(){
+            $(this).css({'color':'red','background-color':'blue' });
+        });
+        $(".table_drill_cell").mouseout(function(){
+            $(this).css({'color':'blue','background-color':'white' });
+        });*/
+
     },
     paginationProcessData: function (rawData, headerLines, pageSize) {
         var dataLength = rawData.length - headerLines;

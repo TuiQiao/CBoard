@@ -61,7 +61,7 @@ public class TableXlsProcesser extends XlsProcesser {
                     Cell cell = row.createCell(j);
                     if ("header_key".equals(property) || "header_empty".equals(property)) {
                         cell.setCellStyle(context.getTableStyle());
-                    } else if ("data".equals(property)) {
+                    } else if ("data".equals(property)|| "column_key".equals(property)) {
                         cell.setCellStyle(context.gettStyle());
                     }
                     if (j == colStart) {

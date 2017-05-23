@@ -228,6 +228,7 @@ public class XlsProcessService {
         thStyle.setTopBorderColor(IndexedColors.BLUE_GREY.getIndex());
         thStyle.setAlignment(HorizontalAlignment.CENTER);
         thStyle.setVerticalAlignment(VerticalAlignment.CENTER);
+        thStyle.setShrinkToFit(true);
         Font font = wb.createFont();
         font.setColor(IndexedColors.WHITE.getIndex());
         thStyle.setFont(font);
@@ -246,6 +247,7 @@ public class XlsProcessService {
         tStyle.setTopBorderColor(IndexedColors.GREY_25_PERCENT.getIndex());
         tStyle.setAlignment(HorizontalAlignment.CENTER);
         tStyle.setVerticalAlignment(VerticalAlignment.CENTER);
+        tStyle.setShrinkToFit(true);
         return tStyle;
     }
 

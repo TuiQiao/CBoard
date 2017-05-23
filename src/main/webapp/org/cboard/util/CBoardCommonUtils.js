@@ -74,3 +74,23 @@ function verifyAggExpRegx(exp) {
     result.msg = "ok!";
     return result;
 }
+
+function cboardTranslate(path) {
+    var i18n;
+    $.ajax({
+        url: "i18n/" + settings.preferredLanguage + "/cboard.json",
+        type: "GET",//请求方式为get
+        dataType: "json", //返回数据格式为json
+        success: function(data) {//请求成功完成后要执行的方法
+            return i18n = data;
+        },
+        async: false
+    });
+    var keys = path.split(".");
+    var exp = "i18n";
+    for(var i = 0; i < keys.length; i++) {
+        exp += "['" + keys[i] + "']";
+    }
+    var result = eval(exp);
+    return result ? result : path;
+}

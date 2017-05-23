@@ -112,10 +112,10 @@ var crossTable = {
                 var value = $trigger.html();
                 var items = {};
                 if (up) {
-                    items.up = {name: "Up"}
+                    items.up = {name: cboardTranslate("COMMON.ROLL_UP"), icon: "fa-arrow-up"}
                 }
                 if (down) {
-                    items.down = {name: "Down"}
+                    items.down = {name: cboardTranslate("COMMON.DRILL_DOWN"), icon: "fa-arrow-down"}
                 }
                 return {
                     callback: function (key, options) {
@@ -129,6 +129,7 @@ var crossTable = {
                 };
             }
         });
+
     },
     paginationProcessData: function (rawData, headerLines, pageSize) {
         var dataLength = rawData.length - headerLines;

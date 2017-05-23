@@ -87,6 +87,11 @@
 }
 .tableView .table_drill_cell {
     color: royalblue;
+    cursor: url(../imgs/right_click.png), auto;
+}
+.table_drill_cell:hover {
+    background-color: #999;
+    color: white !important;
 }
 .ui-select-choices-group{
     z-index: 1000;

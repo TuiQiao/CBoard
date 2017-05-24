@@ -12,6 +12,7 @@ import org.cboard.dataprovider.config.ConfigComponent;
 import org.cboard.dataprovider.config.DimensionConfig;
 import org.cboard.dataprovider.expression.NowFunction;
 import org.cboard.dataprovider.result.AggregateResult;
+import org.cboard.util.NaturalOrderComparator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -77,7 +78,7 @@ public abstract class DataProvider {
             checkAndLoad(reload);
             dimVals = innerAggregator.queryDimVals(columnName, config);
         }
-        return Arrays.stream(dimVals).limit(1000).toArray(String[]::new);
+        return Arrays.stream(dimVals).sorted(new NaturalOrderComparator()).limit(1000).toArray(String[]::new);
     }
 
     public final String[] getColumn(boolean reload) throws Exception {

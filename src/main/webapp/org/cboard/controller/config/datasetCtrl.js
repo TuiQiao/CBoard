@@ -199,7 +199,6 @@ cBoard.controller('datasetCtrl', function ($scope, $http, dataService, $uibModal
         if ($scope.optFlag == 'new') {
             $http.post("dashboard/saveNewDataset.do", {json: angular.toJson(ds)}).success(function (serviceStatus) {
                 if (serviceStatus.status == '1') {
-                    $scope.optFlag = 'edit';
                     getCategoryList();
                     getDatasetList();
                     $scope.verify = {dsName: true};

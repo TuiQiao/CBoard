@@ -11,8 +11,8 @@
              dnd-moved="curWidget.config.groups.splice($index, 1)" dnd-type="'group'"
              class="btn-group" style="cursor: move;margin: 3px 3px;">
             <button type="button" class="btn btn-default btn-sm" style="cursor: move;"
-                    ng-click="curWidget.config.groups.splice($index, 1);" title="{{o.level?'['+o.level+'].':''}}{{o.alias?o.alias:o.col}}">
-                {{o.alias?o.alias:o.col}}
+                    ng-click="curWidget.config.groups.splice($index, 1);">
+                {{o.level?'['+o.level+'].':''}}{{o.alias?o.alias:o.col}}
             </button>
             <button type="button" class="btn btn-default btn-sm dropdown-toggle"
                     ng-click="editSort(o)">

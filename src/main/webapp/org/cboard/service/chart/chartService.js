@@ -28,7 +28,11 @@ cBoard.service('chartService', function ($q, dataService, chartPieService, chart
                                     if (e.id == id) {
                                         e.type = '=';
                                         e.values = [value];
-                                        widget.config.keys.splice(_i + 1, 0, node);
+                                        if (!_.find(widget.config.keys, function (e) {
+                                                return e.id == node.id;
+                                            })) {
+                                            widget.config.keys.splice(_i + 1, 0, node);
+                                        }
                                         return true;
                                     }
                                 });
@@ -36,7 +40,11 @@ cBoard.service('chartService', function ($q, dataService, chartPieService, chart
                                     if (e.id == id) {
                                         e.type = '=';
                                         e.values = [value];
-                                        widget.config.groups.splice(_i + 1, 0, node);
+                                        if (!_.find(widget.config.groups, function (e) {
+                                                return e.id == node.id;
+                                            })) {
+                                            widget.config.groups.splice(_i + 1, 0, node);
+                                        }
                                         return true;
                                     }
                                 });

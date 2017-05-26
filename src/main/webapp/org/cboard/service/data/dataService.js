@@ -232,15 +232,23 @@ cBoard.service('dataService', function ($http, $q, updateService) {
                         if (i_array > 0 && i_level > 0) {
                             prevIsInLevel = array[i_array - 1].id == level.columns[i_level - 1].id;
                         }
+                        var prevDrilled = i_array > 0 && array[i_array - 1].values.length == 1 && array[i_array - 1].type == '=';
                         var nextIsInLevel = false;
                         if (i_array < array.length - 1 && i_level < level.columns.length - 1) {
                             nextIsInLevel = array[i_array + 1].id == level.columns[i_level + 1].id;
                         }
-                        var drillDownExist = _.find(array, function (e) {
-                            return i_level < level.columns.length - 1 && level.columns[i_level + 1].id == e.id;
+                        var isLastLevel = i_level == level.columns.length - 1;
+                        var drillDownExistIdx = 0;
+                        var drillDownExist = _.find(array, function (e, i) {
+                            if (i_level < level.columns.length - 1 && level.columns[i_level + 1].id == e.id) {
+                                drillDownExistIdx = i;
+                                return true;
+                            }
                         });
-                        var up = i_level > 0 && i_array > 0 && prevIsInLevel && (i_array == array.length - 1 || !nextIsInLevel);
-                        var down = (i_array == array.length - 1 || !nextIsInLevel) && i_level < level.columns.length - 1 && !drillDownExist;
+                        //if next level exist in array,the level must be the next of current
+                        var drillDown = drillDownExist ? drillDownExistIdx == i_array + 1 : true;
+                        var up = i_level > 0 && i_array > 0 && prevIsInLevel && (i_array == array.length - 1 || !nextIsInLevel) && prevDrilled;
+                        var down = (nextIsInLevel || !isLastLevel) && drillDown && (!prevIsInLevel || (array[i_array - 1].type == '=' && array[i_array - 1].values.length == 1));
                         drillConfig[c.id] = {
                             up: up,
                             down: down

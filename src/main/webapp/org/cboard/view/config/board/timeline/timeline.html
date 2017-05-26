@@ -23,3 +23,13 @@
         </ng-switch>
     </div>
 </div>
+<div class="row" ng-if="curBoard.layout.rows.length >= 3">
+    <div class="form-group" style="margin: 5px 15px;">
+        <button type="submit" class="btn btn-success" ng-click="addNode('parent')">
+            {{'CONFIG.DASHBOARD.ADD_MAIN_NODE'|translate}}
+        </button>
+        <button type="submit" class="btn btn-success" ng-click="addNode('leaf')">
+            {{'CONFIG.DASHBOARD.ADD_SUB_NODE'|translate}}
+        </button>
+    </div>
+</div>

@@ -104,6 +104,11 @@ var crossTable = {
         this.clickDrill("table_" + random, drill, args.render);
     },
     clickDrill: function (t_class, drill, render) {
+        $('.' + t_class + ' .table_drill_cell[drill-down]').click(function(){
+            var down = $(this).attr('drill-down');
+            var value = $(this).html();
+            drill.drillDown(down, value, render);
+        });
         $.contextMenu({
             selector: '.' + t_class + ' .table_drill_cell',
             build: function ($trigger, e) {

@@ -29,11 +29,12 @@ import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.function.BiFunction;
-import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
+
+import static org.cboard.elasticsearch.query.QueryBuilder.nullQuery;
 
 /**
  * Created by yfyuan on 2016/8/17.
@@ -220,7 +221,7 @@ public class JdbcDataProvider extends DataProvider implements Aggregatable, Init
             return filter2SqlCondtion.apply((DimensionConfig) cc);
         } else if (cc instanceof CompositeConfig) {
             CompositeConfig compositeConfig = (CompositeConfig) cc;
-            String sql = compositeConfig.getConfigComponents().stream().map(e -> configComponentToSql(e)).collect(Collectors.joining(" " + compositeConfig.getType() + " "));
+            String sql = compositeConfig.getConfigComponents().stream().map(e -> separateNull(e)).map(e -> configComponentToSql(e)).collect(Collectors.joining(" " + compositeConfig.getType() + " "));
             return "(" + sql + ")";
         }
         return null;
@@ -233,6 +234,14 @@ public class JdbcDataProvider extends DataProvider implements Aggregatable, Init
         if (config.getValues().size() == 0) {
             return null;
         }
+        if (NULL_STRING.equals(config.getValues().get(0))) {
+            switch (config.getFilterType()) {
+                case "=":
+                case "≠":
+                    return config.getColumnName() + ("=".equals(config.getFilterType()) ? " IS NULL" : " IS NOT NULL");
+            }
+        }
+
         switch (config.getFilterType()) {
             case "=":
             case "eq":
@@ -286,7 +295,7 @@ public class JdbcDataProvider extends DataProvider implements Aggregatable, Init
     private String assembleSqlFilter(Stream<ConfigComponent> filterStream, String prefix) {
         StringJoiner where = new StringJoiner("\nAND ", prefix + " ", "");
         where.setEmptyValue("");
-        filterStream.map(e -> configComponentToSql(e)).filter(e -> e != null).forEach(where::add);
+        filterStream.map(e -> separateNull(e)).map(e -> configComponentToSql(e)).filter(e -> e != null).forEach(where::add);
         return where.toString();
     }
 

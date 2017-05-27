@@ -38,6 +38,7 @@ import static org.cboard.elasticsearch.aggregation.AggregationBuilder.dateHistAg
 import static org.cboard.elasticsearch.aggregation.AggregationBuilder.termsAggregation;
 import static org.cboard.elasticsearch.query.QueryBuilder.*;
 import static org.cboard.util.SqlMethod.coalesce;
+
 /**
  * Created by yfyuan on 2017/3/17.
  */
@@ -93,7 +94,7 @@ public class ElasticsearchDataProvider extends DataProvider implements Aggregata
         Stream<ConfigComponent> f = config.getFilters().stream();
         Stream<ConfigComponent> filters = Stream.concat(Stream.concat(c, r), f);
         JSONArray result = new JSONArray();
-        filters.map(e -> configComponentToFilter(e)).filter(e -> e != null).forEach(result::add);
+        filters.map(e -> separateNull(e)).map(e -> configComponentToFilter(e)).filter(e -> e != null).forEach(result::add);
         return result;
     }
 
@@ -109,7 +110,7 @@ public class ElasticsearchDataProvider extends DataProvider implements Aggregata
                 boolType = BoolType.SHOULD;
             }
             JSONArray boolArr = new JSONArray();
-            compositeConfig.getConfigComponents().stream().map(e -> configComponentToFilter(e)).forEach(boolArr::add);
+            compositeConfig.getConfigComponents().stream().map(e -> separateNull(e)).map(e -> configComponentToFilter(e)).forEach(boolArr::add);
             return boolFilter(boolType, boolArr);
         }
         return null;
@@ -124,6 +125,13 @@ public class ElasticsearchDataProvider extends DataProvider implements Aggregata
         String v1 = null;
         if (config.getValues().size() == 2) {
             v1 = config.getValues().get(1);
+        }
+        if (NULL_STRING.equals(v0)) {
+            switch (config.getFilterType()) {
+                case "=":
+                case "≠":
+                    return nullQuery(fieldName, "=".equals(config.getFilterType()));
+            }
         }
         switch (config.getFilterType()) {
             case "=":
@@ -227,17 +235,17 @@ public class ElasticsearchDataProvider extends DataProvider implements Aggregata
         Object object = JSONPath.compile("$.." + columnName.replace(".", "\\.")).eval(queryDsl);
         List<JSONObject> array = (List) object;
         Long lower = array.stream()
-            .map(jo -> coalesce( jo.getLong("gt"), jo.getLong("gte")))
-            .filter(Objects::nonNull)
-        .max(Comparator.naturalOrder())
-        .orElse(null);
+                .map(jo -> coalesce(jo.getLong("gt"), jo.getLong("gte")))
+                .filter(Objects::nonNull)
+                .max(Comparator.naturalOrder())
+                .orElse(null);
         Long upper = array.stream()
-            .map(jo -> coalesce( jo.getLong("lt"), jo.getLong("lte")))
-            .filter(Objects::nonNull)
+                .map(jo -> coalesce(jo.getLong("lt"), jo.getLong("lte")))
+                .filter(Objects::nonNull)
                 .min(Comparator.naturalOrder())
-                .orElse( new Date().getTime());
+                .orElse(new Date().getTime());
 
-        if (lower == null || lower >= upper ) {
+        if (lower == null || lower >= upper) {
             return queryBound(columnName, config);
         }
         intervalStr = dateInterval(lower, upper);
@@ -277,10 +285,10 @@ public class ElasticsearchDataProvider extends DataProvider implements Aggregata
         int buckets = 100;
         long stepTs = (maxTs - minTs) / buckets;
         long minutesOfDuration = Duration.ofMillis(stepTs).toMinutes();
-        long secondsOfDuration = Duration.ofMillis(stepTs).toMillis()/1000;
+        long secondsOfDuration = Duration.ofMillis(stepTs).toMillis() / 1000;
         if (minutesOfDuration > 0) {
             intervalStr = minutesOfDuration + "m";
-        } else if (secondsOfDuration > 0){
+        } else if (secondsOfDuration > 0) {
             intervalStr = secondsOfDuration + "s";
         }
         return intervalStr;

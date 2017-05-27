@@ -81,7 +81,7 @@ public abstract class DataProvider {
         }
         return Arrays.stream(dimVals)
                 .map(member -> {
-                     return Objects.isNull(member) ? NULL_STRING : member;
+                    return Objects.isNull(member) ? NULL_STRING : member;
                 })
                 .sorted(new NaturalOrderComparator()).limit(1000).toArray(String[]::new);
     }
@@ -151,7 +151,7 @@ public abstract class DataProvider {
     public List<DimensionConfig> configComp2DimConfigList(ConfigComponent cc) {
         List<DimensionConfig> result = new LinkedList<>();
         if (cc instanceof DimensionConfig) {
-            result.add((DimensionConfig)cc);
+            result.add((DimensionConfig) cc);
         } else {
             Iterator<ConfigComponent> iterator = cc.getIterator();
             while (iterator.hasNext()) {

@@ -277,13 +277,22 @@ cBoard.controller('userAdminCtrl', function ($scope, $http, ModalUtils, $filter)
         });
     };
 
-    $scope.userByRole = function (user) {
+    $scope.searchUserByRole = function (user) {
         if (!$scope.filterByRole) {
             return true;
         }
         return !_.isUndefined(_.find($scope.roleFilter, function (e) {
             return e == user.userId;
         }))
+    };
+    
+    $scope.searchUserByName = function (user) {
+        if ($scope.userKeyword === "" || $scope.userKeyword === undefined) return true;
+        if (!$scope.filterByRole) {
+            return (user.loginName + user.userName).toLowerCase().indexOf($scope.userKeyword) != -1;
+        } else {
+            return false;
+        }
     };
 
     $scope.changeRoleSelect = function () {

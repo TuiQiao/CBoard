@@ -28,7 +28,7 @@
             <div class="row">
                 <div class="col-md-12" >
                     <select multiple class="form-control" ng-model="selectUser" ng-change="changeRoleSelect()"
-                            ng-options="u.loginName+'('+u.userName+')' for u in userList | filter:{loginName:userKeyword} | filter:userByRole"
+                            ng-options="u.loginName+'('+u.userName+')' for u in userList | filter: searchUserByName | filter: searchUserByRole"
                             style="height: 500px; overflow: auto;">
                     </select>
                 </div>

@@ -1,5 +1,6 @@
 package org.cboard.elasticsearch.aggregation;
 
+import org.cboard.dataprovider.DataProvider;
 import org.cboard.util.json.JSONBuilder;
 
 import java.text.SimpleDateFormat;
@@ -15,8 +16,11 @@ import static org.cboard.util.json.JSONBuilder.*;
 public class AggregationBuilder {
 
     public static JSONBuilder termsAggregation(String fieldName, int size) {
-        return json("terms",
-                json("field", fieldName).put("size", size));
+        return json("terms", json()
+                .put("field", fieldName)
+                .put("size", size)
+                .put("missing", DataProvider.NULL_STRING)
+        );
     }
 
     public static JSONBuilder dateHistAggregation(String fieldName, String interval, int min_doc_count) {

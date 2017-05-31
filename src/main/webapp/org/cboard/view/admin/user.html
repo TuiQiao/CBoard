@@ -12,7 +12,7 @@
             <div class="row" style="margin-bottom: 10px">
                 <div class="col-md-12">
                     <div class="input-group">
-                        <span class="input-group-addon" style="cursor:pointer" ng-click="filterByRole=!filterByRole">{{filterByRole?'ADMIN.BY_ROLE':'ADMIN.BY_NAME'|translate}}</span>
+                        <span class="input-group-addon" style="cursor:pointer" ng-click="filterByRole=!filterByRole;userKeyword=''">{{filterByRole?'ADMIN.BY_ROLE':'ADMIN.BY_NAME'|translate}}</span>
                         <input ng-show="!filterByRole" type="text" class="form-control" ng-model="userKeyword">
                         <ui-select ng-show="filterByRole" ng-model="selectedRoleFilter" on-select="onRoleFilter($item)">
                             <ui-select-match>

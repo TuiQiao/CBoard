@@ -1,6 +1,5 @@
 package org.cboard.elasticsearch.aggregation;
 
-import org.cboard.dataprovider.DataProvider;
 import org.cboard.util.json.JSONBuilder;
 
 import java.text.SimpleDateFormat;
@@ -8,18 +7,18 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.TimeZone;
 
-import static org.cboard.util.json.JSONBuilder.*;
+import static org.cboard.util.json.JSONBuilder.json;
 
 /**
  * Created by Peter on 2017/5/7.
  */
 public class AggregationBuilder {
 
-    public static JSONBuilder termsAggregation(String fieldName, int size) {
+    public static JSONBuilder termsAggregation(String fieldName, int size, Object missing) {
         return json("terms", json()
                 .put("field", fieldName)
                 .put("size", size)
-                .put("missing", DataProvider.NULL_STRING)
+                .put("missing", missing)
         );
     }
 

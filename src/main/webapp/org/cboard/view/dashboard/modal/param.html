@@ -68,7 +68,7 @@
                         <span>{{'DASHBOARD.PARAM.VALUE_LIST'|translate}}</span>
                         <select multiple class="form-control selectsOption" ng-model="$parent.selectValues"
                                 style="height: 300px">
-                            <option ng-repeat="v in param.values"
+                            <option ng-repeat="v in param.values | orderBy"
                                     style="overflow: hidden;white-space: nowrap;text-overflow: ellipsis;" title="{{v}}"
                                     ng-dblclick="param.values.splice($index,1)" value="{{v}}">{{v}}
                             </option>

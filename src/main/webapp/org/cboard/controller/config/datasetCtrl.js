@@ -199,7 +199,6 @@ cBoard.controller('datasetCtrl', function ($scope, $http, dataService, $uibModal
         if ($scope.optFlag == 'new') {
             $http.post("dashboard/saveNewDataset.do", {json: angular.toJson(ds)}).success(function (serviceStatus) {
                 if (serviceStatus.status == '1') {
-                    $scope.optFlag = 'edit';
                     getCategoryList();
                     getDatasetList();
                     $scope.verify = {dsName: true};
@@ -288,6 +287,15 @@ cBoard.controller('datasetCtrl', function ($scope, $http, dataService, $uibModal
                 };
             }
         });
+    };
+
+    $scope.deleteFilterGroup = function (index) {
+        ModalUtils.confirm(translate("COMMON.FILTER_GROUP") + ": [" + $scope.curDataset.data.filters[index].group + "], " +
+            translate("COMMON.CONFIRM_DELETE"), "modal-warning", "lg",
+            function () {
+                $scope.curDataset.data.filters.splice(index, 1)
+            }
+        );
     };
 
     var schemaToSelect = function (schema) {
@@ -395,6 +403,15 @@ cBoard.controller('datasetCtrl', function ($scope, $http, dataService, $uibModal
         });
     };
 
+    $scope.deleteExp = function (index) {
+        ModalUtils.confirm(translate("CONFIG.COMMON.CUSTOM_EXPRESSION") + ": [" + $scope.curDataset.data.expressions[index].alias + "], " +
+            translate("COMMON.CONFIRM_DELETE"), "modal-warning", "lg",
+            function () {
+                $scope.curDataset.data.expressions.splice(index, 1)
+            }
+        );
+    };
+
     $scope.createNode = function (item) {
         if (trash[item.column]) {
             var _i = trash[item.column].pop();
@@ -477,7 +494,6 @@ cBoard.controller('datasetCtrl', function ($scope, $http, dataService, $uibModal
     var cleanPreview = function () {
         $('#dataset_preview').html("");
     };
-
 
     /**  js tree related start **/
     $scope.treeConfig = jsTreeConfig1;

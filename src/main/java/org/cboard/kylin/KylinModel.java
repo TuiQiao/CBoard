@@ -8,9 +8,7 @@ import org.springframework.http.client.support.BasicAuthorizationInterceptor;
 import org.springframework.web.client.RestTemplate;
 
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -19,7 +17,7 @@ import java.util.stream.Collectors;
 class KylinModel implements Serializable {
     private JSONObject model;
     private Map<String, String> columnTable = new HashedMap();
-    private Map<String, String> tableAlias = new HashedMap();
+    private Map<String, String> tableAlias = new TableMap();
     private Map<String, String> columnType = new HashedMap();
 
     public String getColumnAndAlias(String column) {
@@ -82,7 +80,7 @@ class KylinModel implements Serializable {
     }
 
     public String geModelSql() {
-        String factTable = model.getString("fact_table");
+        String factTable = formatTableName(model.getString("fact_table"));
         return String.format("%s %s %s", factTable, tableAlias.get(factTable), getJoinSql(tableAlias.get(factTable)));
     }
 
@@ -96,7 +94,7 @@ class KylinModel implements Serializable {
                 on.add(String.format("%s.%s = %s.%s", tableAlias.get(j.getString("table")), pk[i], factAlias, fk[i]));
             }
             String type = j.getJSONObject("join").getString("type").toUpperCase();
-            String pTable = j.getString("table");
+            String pTable = formatTableName(j.getString("table"));
             String onStr = on.stream().collect(Collectors.joining(" "));
             return String.format("\n %s JOIN %s %s ON %s", type, pTable, tableAlias.get(pTable), onStr);
         }).collect(Collectors.joining(" "));
@@ -110,5 +108,12 @@ class KylinModel implements Serializable {
         );
         model.getJSONArray("metrics").stream().map(e -> e.toString()).forEach(result::add);
         return result.toArray(new String[0]);
+    }
+
+    public String formatTableName(String rawName) {
+        String tmp = rawName.replaceAll("\"", "");
+        StringJoiner joiner = new StringJoiner(".");
+        Arrays.stream(tmp.split("\\.")).map(i -> "\"" + i + "\"").forEach(joiner::add);
+        return joiner.toString();
     }
 }

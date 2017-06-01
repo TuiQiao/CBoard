@@ -8,11 +8,13 @@ var crossTable = {
             chartConfig = args.chartConfig,
             tall = args.tall,
             pageDataNum = 20,
+            drill = args.drill,
             random = Math.random().toString(36).substring(2),
             container = args.container;
         var html = "<table class = 'table_wrapper' id='tableWrapper" + random + "'><thead class='fixedHeader'>",
             colContent = "<tr>";
         for (var i = 0; i < chartConfig.groups.length; i++) {
+            var groupId = chartConfig.groups[i].id;
             var colspan = 1;
             var colList = [];
             for (var t = 0; t < chartConfig.keys.length; t++) {
@@ -54,9 +56,20 @@ var crossTable = {
                 }
             }
             for (var c = 0; c < colList.length; c++) {
+                var d = ""
+                if (drill && drill.config[groupId] && (drill.config[groupId].down || drill.config[groupId].up)) {
+                    d += "class='table_drill_cell'";
+                    if (drill.config[groupId].down) {
+                        d += " drill-down='" + groupId + "' ";
+                    }
+                    if (drill.config[groupId].up) {
+                        d += " drill-up='" + groupId + "' ";
+                    }
+                }
+                var value = "<div " + d + ">" + colList[c].data + "</div>";
                 colContent += colList[c].colSpan > 1 ? "<th colspan=" + colList[c].colSpan +
-                " class=" + colList[c].property + "><div>" + colList[c].data + "</div></th>" :
-                "<th class=" + colList[c].property + "><div>" + colList[c].data + "</div></th>";
+                    " class=" + colList[c].property + ">" + value + "</th>" :
+                    "<th class=" + colList[c].property + ">" + value + "</th>";
             }
             colContent += "</tr><tr>";
         }
@@ -68,7 +81,7 @@ var crossTable = {
         var dataPage = this.paginationProcessData(data, headerLines, pageDataNum);
         var colNum = data[0].length;
         var rowNum = colNum ? data.length - headerLines : 0;
-        var trDom = this.render(dataPage[0], chartConfig);
+        var trDom = this.render(dataPage[0], chartConfig, drill);
         html = html + trDom + "</tbody></table>";
         var optionDom = "<select><option value='20'>20</option><option value='50'>50</option><option value='100'>100</option><option value='150'>150</option></select>";
         var p_class = "p_" + random;
@@ -80,13 +93,48 @@ var crossTable = {
         $(container).append(PaginationDom);
         var pageObj = {
             data: dataPage,
-            chartConfig: chartConfig
+            chartConfig: chartConfig,
+            drill: drill
         };
         data.length ? this.renderPagination(dataPage.length, 1, pageObj, $('.' + p_class + ' .page>ul')[0]) : null;
-        this.clickPageNum(dataPage, chartConfig, p_class);
+        this.clickPageNum(dataPage, chartConfig, drill, p_class);
         this.clickNextPrev(dataPage.length, pageObj, p_class);
-        this.selectDataNum(data, chartConfig.groups.length + 1, chartConfig, p_class);
+        this.selectDataNum(data, chartConfig.groups.length + 1, chartConfig, drill, p_class);
         this.export(random, data);
+        this.clickDrill("table_" + random, drill, args.render);
+    },
+    clickDrill: function (t_class, drill, render) {
+        $('.' + t_class + ' .table_drill_cell[drill-down]').click(function(){
+            var down = $(this).attr('drill-down');
+            var value = $(this).html();
+            drill.drillDown(down, value, render);
+        });
+        $.contextMenu({
+            selector: '.' + t_class + ' .table_drill_cell',
+            build: function ($trigger, e) {
+                var down = $trigger.attr('drill-down');
+                var up = $trigger.attr('drill-up');
+                var value = $trigger.html();
+                var items = {};
+                if (up) {
+                    items.up = {name: cboardTranslate("COMMON.ROLL_UP"), icon: "fa-arrow-up"}
+                }
+                if (down) {
+                    items.down = {name: cboardTranslate("COMMON.DRILL_DOWN"), icon: "fa-arrow-down"}
+                }
+                return {
+                    callback: function (key, options) {
+                        if ('up' == key) {
+                            drill.drillUp(up, render);
+                        } else if ('down' == key) {
+                            drill.drillDown(down, value, render);
+                        }
+                    },
+                    items: items
+                };
+            }
+        });
+
     },
     paginationProcessData: function (rawData, headerLines, pageSize) {
         var dataLength = rawData.length - headerLines;
@@ -102,7 +150,7 @@ var crossTable = {
         }
         return pageData;
     },
-    render: function (data, chartConfig) {
+    render: function (data, chartConfig, drill) {
         var html = '';
         if (data === undefined) {
             return html;
@@ -145,6 +193,17 @@ var crossTable = {
                 var currentCell = data[n][m];
                 var rowParentCell = data[n][m - 1];
                 var cur_data = currentCell.data ? currentCell.data : "";
+                var keyId = chartConfig.keys[m].id;
+                if (drill && drill.config[keyId] && (drill.config[keyId].down || drill.config[keyId].up)) {
+                    var d = "";
+                    if (drill.config[keyId].down) {
+                        d += " drill-down='" + keyId + "' ";
+                    }
+                    if (drill.config[keyId].up) {
+                        d += " drill-up='" + keyId + "' ";
+                    }
+                    cur_data = "<div class='table_drill_cell' " + d + ">" + cur_data + "</div>";
+                }
                 if (m > 0) {
                     if (currentCell.rowSpan == 'row_null' && rowParentCell.rowSpan == 'row_null' && !isFirstLine) {
                         rowContent += "<th class=row_null><div></div></th>";
@@ -166,7 +225,7 @@ var crossTable = {
         }
         return html;
     },
-    selectDataNum: function (data, num, chartConfig, random) {
+    selectDataNum: function (data, num, chartConfig, drill, random) {
         var _this = this;
         $('.' + random).on('change', '.optionNum select', function (e) {
             var pageDataNum = e.target.value;
@@ -174,29 +233,31 @@ var crossTable = {
 
             var dom = $(e.target.offsetParent).find('.page>ul')[0];
             var tbody = $(e.target.offsetParent).find('tbody')[0];
-            tbody.innerHTML = (_this.render(dataPage[0], chartConfig));
+            tbody.innerHTML = (_this.render(dataPage[0], chartConfig, drill));
             _this.renderPagination(dataPage.length, 1, null, dom);
             $('.' + random).off('click');
             _this.clickPageNum(dataPage, chartConfig, random);
             var pageObj = {
                 data: dataPage,
-                chartConfig: chartConfig
+                chartConfig: chartConfig,
+                drill: drill
             };
             _this.clickNextPrev(dataPage.length, pageObj, random);
         });
     },
-    clickPageNum: function (data, chartConfig, random) {
+    clickPageNum: function (data, chartConfig, drill, random) {
         var _this = this;
         $('.' + random).on('click', 'a.pageLink', function (e) {
             var pageNum = e.target.innerText - 1;
             var pageObj = {
                 data: data,
-                chartConfig: chartConfig
+                chartConfig: chartConfig,
+                drill: drill
             };
 
             var dom = $(e.target.offsetParent).find('.page>ul')[0];
             var tbody = $(e.target.offsetParent).find('tbody')[0];
-            tbody.innerHTML = _this.render(data[pageNum], chartConfig);
+            tbody.innerHTML = _this.render(data[pageNum], chartConfig, drill);
             _this.renderPagination(data.length, parseInt(e.target.innerText), pageObj, dom);
         });
     },
@@ -279,7 +340,7 @@ var crossTable = {
                     var pageNum = parseInt(kids[i].childNodes[0].text) - 1;
                 }
             }
-            tbody.innerHTML = _this.render(pageObj.data[pageNum - 1], pageObj.chartConfig);
+            tbody.innerHTML = _this.render(pageObj.data[pageNum - 1], pageObj.chartConfig, pageObj.drill);
             _this.renderPagination(pageCount, pageNum, pageObj, dom);
             //_this.clickPageNum(pageObj.data, pageObj.chartConfig);
         });
@@ -293,7 +354,7 @@ var crossTable = {
                     var pageNum = parseInt(kids[i].childNodes[0].text) + 1;
                 }
             }
-            tbody.innerHTML = _this.render(pageObj.data[pageNum - 1], pageObj.chartConfig);
+            tbody.innerHTML = _this.render(pageObj.data[pageNum - 1], pageObj.chartConfig, pageObj.drill);
             _this.renderPagination(pageCount, pageNum, pageObj, dom);
             //_this.clickPageNum(pageObj.data, pageObj.chartConfig);
         });

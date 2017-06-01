@@ -8,21 +8,85 @@ cBoard.service('chartService', function ($q, dataService, chartPieService, chart
         this.render = function (containerDom, widget, optionFilter, scope, reload, persist) {
             var deferred = $q.defer();
             var chart = getChartServices(widget.config);
-
-                dataService.getDataSeries(widget.datasource, widget.query, widget.datasetId, widget.config, function (data) {
-                    try {
-                        var option = chart.parseOption(data);
-                        if (optionFilter) {
-                            optionFilter(option);
-                        }
-                    }finally {
-                        deferred.resolve(chart.render(containerDom, option, scope, persist));
+            dataService.getDataSeries(widget.datasource, widget.query, widget.datasetId, widget.config, function (data) {
+                try {
+                    var option = chart.parseOption(data);
+                    if (optionFilter) {
+                        optionFilter(option);
                     }
-                }, reload);
-
+                    if (data.drill) {
+                        data.drill.drillDown = function (id, value, render) {
+                            dataService.getDrillPath(widget.datasetId, id).then(function (path) {
+                                var i = 0;
+                                _.each(path, function (e, _i) {
+                                    if (e.id == id) {
+                                        i = _i;
+                                    }
+                                });
+                                var node = path[++i];
+                                _.find(widget.config.keys, function (e, _i) {
+                                    if (e.id == id) {
+                                        e.type = '=';
+                                        e.values = [value];
+                                        if (!_.find(widget.config.keys, function (e) {
+                                                return e.id == node.id;
+                                            })) {
+                                            widget.config.keys.splice(_i + 1, 0, node);
+                                        }
+                                        return true;
+                                    }
+                                });
+                                _.find(widget.config.groups, function (e, _i) {
+                                    if (e.id == id) {
+                                        e.type = '=';
+                                        e.values = [value];
+                                        if (!_.find(widget.config.groups, function (e) {
+                                                return e.id == node.id;
+                                            })) {
+                                            widget.config.groups.splice(_i + 1, 0, node);
+                                        }
+                                        return true;
+                                    }
+                                });
+                                dataService.getDataSeries(widget.datasource, widget.query, widget.datasetId, widget.config, function (data) {
+                                    var option = chart.parseOption(data);
+                                    if (optionFilter) {
+                                        optionFilter(option);
+                                    }
+                                    render(option, data.drill.config);
+                                });
+                            });
+                        };
+                        data.drill.drillUp = function (id, render) {
+                            _.find(widget.config.keys, function (e, _i) {
+                                if (e.id == id) {
+                                    widget.config.keys[_i - 1].values = [];
+                                    widget.config.keys.splice(_i, 1);
+                                    return true;
+                                }
+                            });
+                            _.find(widget.config.groups, function (e, _i) {
+                                if (e.id == id) {
+                                    widget.config.groups[_i - 1].values = [];
+                                    widget.config.groups.splice(_i, 1);
+                                    return true;
+                                }
+                            });
+                            dataService.getDataSeries(widget.datasource, widget.query, widget.datasetId, widget.config, function (data) {
+                                var option = chart.parseOption(data);
+                                if (optionFilter) {
+                                    optionFilter(option);
+                                }
+                                render(option, data.drill.config);
+                            });
+                        };
+                    }
+                } finally {
+                    deferred.resolve(chart.render(containerDom, option, scope, persist, data.drill));
+                }
+            }, reload);
             return deferred.promise;
         };
-
 
         this.realTimeRender = function (realTimeTicket, widget, optionFilter, scope) {
             if (!realTimeTicket) {
@@ -34,7 +98,7 @@ cBoard.service('chartService', function ($q, dataService, chartPieService, chart
                 if (optionFilter) {
                     optionFilter(option);
                 }
-                realTimeTicket(option);
+                realTimeTicket(option, data.drill.config);
             });
         };
 

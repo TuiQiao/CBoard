@@ -29,11 +29,12 @@ import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.function.BiFunction;
-import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
+
+import static org.cboard.elasticsearch.query.QueryBuilder.nullQuery;
 
 /**
  * Created by yfyuan on 2016/8/17.
@@ -199,7 +200,7 @@ public class JdbcDataProvider extends DataProvider implements Aggregatable, Init
             Stream<ConfigComponent> filters = Stream.concat(Stream.concat(c, r), f);
             whereStr = assembleSqlFilter(filters, "WHERE");
         }
-        fsql = "SELECT __view__.%s FROM (%s) __view__ %s GROUP BY __view__.%s";
+        fsql = "SELECT __view__.%s FROM (\n%s\n) __view__ %s GROUP BY __view__.%s";
         exec = String.format(fsql, columnName, sql, whereStr, columnName);
         LOG.info(exec);
         try (Connection connection = getConnection();
@@ -220,7 +221,7 @@ public class JdbcDataProvider extends DataProvider implements Aggregatable, Init
             return filter2SqlCondtion.apply((DimensionConfig) cc);
         } else if (cc instanceof CompositeConfig) {
             CompositeConfig compositeConfig = (CompositeConfig) cc;
-            String sql = compositeConfig.getConfigComponents().stream().map(e -> configComponentToSql(e)).collect(Collectors.joining(" " + compositeConfig.getType() + " "));
+            String sql = compositeConfig.getConfigComponents().stream().map(e -> separateNull(e)).map(e -> configComponentToSql(e)).collect(Collectors.joining(" " + compositeConfig.getType() + " "));
             return "(" + sql + ")";
         }
         return null;
@@ -233,6 +234,14 @@ public class JdbcDataProvider extends DataProvider implements Aggregatable, Init
         if (config.getValues().size() == 0) {
             return null;
         }
+        if (NULL_STRING.equals(config.getValues().get(0))) {
+            switch (config.getFilterType()) {
+                case "=":
+                case "≠":
+                    return config.getColumnName() + ("=".equals(config.getFilterType()) ? " IS NULL" : " IS NOT NULL");
+            }
+        }
+
         switch (config.getFilterType()) {
             case "=":
             case "eq":
@@ -286,7 +295,7 @@ public class JdbcDataProvider extends DataProvider implements Aggregatable, Init
     private String assembleSqlFilter(Stream<ConfigComponent> filterStream, String prefix) {
         StringJoiner where = new StringJoiner("\nAND ", prefix + " ", "");
         where.setEmptyValue("");
-        filterStream.map(e -> configComponentToSql(e)).filter(e -> e != null).forEach(where::add);
+        filterStream.map(e -> separateNull(e)).map(e -> configComponentToSql(e)).filter(e -> e != null).forEach(where::add);
         return where.toString();
     }
 
@@ -388,8 +397,14 @@ public class JdbcDataProvider extends DataProvider implements Aggregatable, Init
         // recreate a dimension stream
         Stream<DimensionConfig> dimStream = Stream.concat(config.getColumns().stream(), config.getRows().stream());
         List<ColumnIndex> dimensionList = dimStream.map(ColumnIndex::fromDimensionConfig).collect(Collectors.toList());
+        int dimSize = dimensionList.size();
         dimensionList.addAll(config.getValues().stream().map(ColumnIndex::fromValueConfig).collect(Collectors.toList()));
         IntStream.range(0, dimensionList.size()).forEach(j -> dimensionList.get(j).setIndex(j));
+        list.forEach(row -> {
+            IntStream.range(0, dimSize).forEach(i -> {
+                if (row[i] == null) row[i] = NULL_STRING;
+            });
+        });
         String[][] result = list.toArray(new String[][]{});
         return new AggregateResult(dimensionList, result);
     }

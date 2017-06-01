@@ -153,9 +153,114 @@ cBoard.service('dataService', function ($http, $q, updateService) {
             }).success(function (data) {
                 var result = castRawData2Series(data, chartConfig);
                 result.chartConfig = chartConfig;
-                callback(result);
+                if (!_.isUndefined(datasetId)) {
+                    getDrillConfig(datasetId, chartConfig).then(function (c) {
+                        result.drill = {config: c};
+                        callback(result);
+                    });
+                } else {
+                    callback(result);
+                }
             });
         });
+    };
+
+    this.getDrillPath = function (datasetId, id) {
+        var deferred = $q.defer();
+        getDatasetList().then(function (dsList) {
+            var dataset = _.find(dsList, function (e) {
+                return e.id == datasetId;
+            });
+            var path = [];
+            var level;
+            _.each(dataset.data.schema.dimension, function (_e) {
+                if (_e.type == 'level') {
+                    _.each(_e.columns, function (_c) {
+                        if (_c.id == id) {
+                            path = _e.columns;
+                            level = _e;
+                        }
+                    });
+                }
+            });
+            path = _.map(path, function (e) {
+                return {
+                    id: e.id,
+                    alias: e.alias,
+                    col: e.column,
+                    level: level.alias,
+                    type: '=',
+                    values: [],
+                    sort: 'asc'
+                }
+            });
+            deferred.resolve(path);
+        });
+        return deferred.promise;
+    };
+
+    var getDrillConfig = function (datasetId, chartConfig) {
+        var deferred = $q.defer();
+        getDatasetList().then(function (dsList) {
+                var drillConfig = {};
+                var dataset = _.find(dsList, function (e) {
+                    return e.id == datasetId;
+                });
+                if (!dataset.data.schema || dataset.data.schema.dimension.length == 0) {
+                    deferred.resolve(drillConfig);
+                    return deferred.promise;
+                }
+                var _f = function (array) {
+                    _.each(array, function (c, i_array) {
+                        var level;
+                        var i_level;
+                        _.find(dataset.data.schema.dimension, function (_e) {
+                            if (_e.type == 'level') {
+                                return _.find(_e.columns, function (_c, _i) {
+                                    if (_c.id == c.id) {
+                                        level = _e;
+                                        i_level = _i;
+                                        return true;
+                                    }
+                                });
+                            }
+                        });
+                        if (!level) {
+                            return;
+                        }
+                        var prevIsInLevel = false;
+                        if (i_array > 0 && i_level > 0) {
+                            prevIsInLevel = array[i_array - 1].id == level.columns[i_level - 1].id;
+                        }
+                        var prevDrilled = i_array > 0 && array[i_array - 1].values.length == 1 && array[i_array - 1].type == '=';
+                        var nextIsInLevel = false;
+                        if (i_array < array.length - 1 && i_level < level.columns.length - 1) {
+                            nextIsInLevel = array[i_array + 1].id == level.columns[i_level + 1].id;
+                        }
+                        var isLastLevel = i_level == level.columns.length - 1;
+                        var drillDownExistIdx = 0;
+                        var drillDownExist = _.find(array, function (e, i) {
+                            if (i_level < level.columns.length - 1 && level.columns[i_level + 1].id == e.id) {
+                                drillDownExistIdx = i;
+                                return true;
+                            }
+                        });
+                        //if next level exist in array,the level must be the next of current
+                        var drillDown = drillDownExist ? drillDownExistIdx == i_array + 1 : true;
+                        var up = i_level > 0 && i_array > 0 && prevIsInLevel && (i_array == array.length - 1 || !nextIsInLevel) && prevDrilled;
+                        var down = (nextIsInLevel || !isLastLevel) && drillDown && (!prevIsInLevel || (array[i_array - 1].type == '=' && array[i_array - 1].values.length == 1));
+                        drillConfig[c.id] = {
+                            up: up,
+                            down: down
+                        };
+                    });
+                };
+                _f(chartConfig.keys);
+                _f(chartConfig.groups);
+                deferred.resolve(drillConfig);
+            }
+        );
+        return deferred.promise;
     };
 
     this.viewQuery = function (params, callback) {
@@ -633,7 +738,7 @@ cBoard.service('dataService', function ($http, $q, updateService) {
         });
 
         var names = []; // expression text in aggreagtion function, could be a columnName or script
-        _.each(evalExp.match(/(sum|avg|count|max|min)\("?.*?"?\)/g), function (aggUnit) {
+        _.each(evalExp.match(/(sum|avg|count|max|min|distinct)\("?.*?"?\)/g), function (aggUnit) {
             var aggregate = aggUnit.substring(0, aggUnit.indexOf('('));
             var name = aggUnit.substring(aggUnit.indexOf('(') + 1, aggUnit.indexOf(')'));
             if (name.match("_#")) {

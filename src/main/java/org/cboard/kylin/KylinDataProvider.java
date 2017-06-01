@@ -29,6 +29,7 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
+
 /**
  * Created by yfyuan on 2017/3/6.
  */
@@ -160,6 +161,14 @@ public class KylinDataProvider extends DataProvider implements Aggregatable, Ini
         if (config.getValues().size() == 0) {
             return null;
         }
+        if (NULL_STRING.equals(config.getValues().get(0))) {
+            switch (config.getFilterType()) {
+                case "=":
+                case "≠":
+                    return kylinModel.getColumnAndAlias(config.getColumnName()) + ("=".equals(config.getFilterType()) ? " IS NULL" : " IS NOT NULL");
+            }
+        }
+
         switch (config.getFilterType()) {
             case "=":
             case "eq":
@@ -208,7 +217,7 @@ public class KylinDataProvider extends DataProvider implements Aggregatable, Ini
             return filter2SqlCondtion.apply((DimensionConfig) cc);
         } else if (cc instanceof CompositeConfig) {
             CompositeConfig compositeConfig = (CompositeConfig) cc;
-            String sql = compositeConfig.getConfigComponents().stream().map(e -> configComponentToSql(e)).collect(Collectors.joining(" " + compositeConfig.getType() + " "));
+            String sql = compositeConfig.getConfigComponents().stream().map(e -> separateNull(e)).map(e -> configComponentToSql(e)).collect(Collectors.joining(" " + compositeConfig.getType() + " "));
             return "(" + sql + ")";
         }
         return null;
@@ -224,7 +233,7 @@ public class KylinDataProvider extends DataProvider implements Aggregatable, Ini
     private String assembleSqlFilter(Stream<ConfigComponent> filterStream, String prefix, KylinModel model) {
         StringJoiner where = new StringJoiner("\nAND ", prefix + " ", "");
         where.setEmptyValue("");
-        filterStream.map(s -> configComponentToSql(s)).filter(e -> e != null).forEach(where::add);
+        filterStream.map(e -> separateNull(e)).map(s -> configComponentToSql(s)).filter(e -> e != null).forEach(where::add);
         return where.toString();
     }
 
@@ -299,8 +308,14 @@ public class KylinDataProvider extends DataProvider implements Aggregatable, Ini
         // recreate a dimension stream
         Stream<DimensionConfig> dimStream = Stream.concat(config.getColumns().stream(), config.getRows().stream());
         List<ColumnIndex> dimensionList = dimStream.map(ColumnIndex::fromDimensionConfig).collect(Collectors.toList());
+        int dimSize = dimensionList.size();
         dimensionList.addAll(config.getValues().stream().map(ColumnIndex::fromValueConfig).collect(Collectors.toList()));
         IntStream.range(0, dimensionList.size()).forEach(j -> dimensionList.get(j).setIndex(j));
+        list.forEach(row -> {
+            IntStream.range(0, dimSize).forEach(i -> {
+                if (row[i] == null) row[i] = NULL_STRING;
+            });
+        });
         String[][] result = list.toArray(new String[][]{});
         return new AggregateResult(dimensionList, result);
     }

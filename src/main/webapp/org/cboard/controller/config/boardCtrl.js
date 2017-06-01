@@ -296,6 +296,9 @@ cBoard.controller('boardCtrl', function ($rootScope, $scope, $http, ModalUtils, 
                 ];
                 $scope.status = status;
                 $scope.param = param;
+                if (!$scope.param.paramType) {
+                    $scope.param.paramType = 'selector';
+                }
                 $scope.boardDataset = parent.boardDataset;
                 $scope.add = function (selectedDataset, column) {
                     var v = angular.copy(selectedDataset);

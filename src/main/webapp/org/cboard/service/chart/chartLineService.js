@@ -9,6 +9,7 @@ cBoard.service('chartLineService', function () {
     };
 
     this.parseOption = function (data) {
+
         var chartConfig = data.chartConfig;
         var casted_keys = data.keys;
         var casted_values = data.series;
@@ -72,6 +73,7 @@ cBoard.service('chartLineService', function () {
             type: 'category',
             data: string_keys
         };
+
         var echartOption = {
             legend: {
                 data: _.map(casted_values, function (v) {
@@ -97,6 +99,35 @@ cBoard.service('chartLineService', function () {
             yAxis: chartConfig.valueAxis == 'horizontal' ? categoryAxis : valueAxis,
             series: series_data
         };
-        return echartOption;
+
+        var basicOption = {
+            title: {},
+            grid: {
+                left: '50',
+                right: '20',
+                bottom: '15%',
+                top: '20%',
+                containLabel: false
+            },
+            tooltip: {
+                trigger: 'axis'
+            },
+            legend: {
+                x: 'left',
+                itemWidth: 15,
+                itemHeight: 10
+            }
+        };
+
+        if (chartConfig.valueAxis === 'horizontal') {
+            basicOption.grid.left = 'left';
+            basicOption.grid.containLabel = true;
+            basicOption.grid.bottom = '5%';
+        }
+        if (chartConfig.valueAxis === 'vertical' && chartConfig.values.length > 1) {
+            basicOption.grid.right = 40;
+        }
+
+        return $.extend(true, {}, echartOption, basicOption);
     };
 });

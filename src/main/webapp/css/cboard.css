@@ -1,3 +1,13 @@
+.modal-dialog h1,
+.modal-dialog h2,
+.modal-dialog h3,
+.modal-dialog h4,
+.modal-dialogh5,
+.modal-dialog h6,
+.modal-dialog p {
+    color: black;
+}
+
 .toolbar-icon {
     cursor: pointer;
     font-size: large;
@@ -84,6 +94,14 @@
 .tableView th.col_null{
     border-left: 0px;
     border-top: 1px solid #d5d5d5;
+}
+.tableView .table_drill_cell {
+    color: royalblue;
+    cursor: url(../imgs/right_click.png), auto;
+}
+.table_drill_cell:hover {
+    background-color: #999;
+    color: white !important;
 }
 .ui-select-choices-group{
     z-index: 1000;

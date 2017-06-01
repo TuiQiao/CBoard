@@ -23,7 +23,7 @@ var chartDataProcess = function(chartConfig,casted_keys, casted_values, aggregat
     for (var h = 0; h < rowHeaderLength; h++) {
         for (var k = 0; k < keysList.length; k++) {
             table_data[k][h] = {
-                property: 'header_key',
+                property: 'column_key',
                 data: keysList[k][h]
             };
         }
@@ -59,6 +59,7 @@ var chartDataProcess = function(chartConfig,casted_keys, casted_values, aggregat
     for (var y = 0; y < keyLength; y++) {
         keyArr.push({
             property: 'header_key',
+            column_header_header: true,
             data: chartConfig.keys[y].alias ? chartConfig.keys[y].alias : chartConfig.keys[y].col
         });
         emptyList.push({

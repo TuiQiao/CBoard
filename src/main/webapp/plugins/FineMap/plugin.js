@@ -83,7 +83,7 @@ var threeLevelMap = {
             }
             else {
                 data[0].map(function (d) {
-                    d.property == 'row_key' ? rowHeaderLength++ : null;
+                    d['column_header_header'] ? rowHeaderLength++ : null;
                 });
                 this.tipHeader = data[0][rowHeaderLength].data;
                 break;
@@ -140,7 +140,7 @@ var threeLevelMap = {
                 }
                 else {
                     data[0].map(function (d) {
-                        d.property == 'column_key' ? columnHeaderLink.push(d.data) : rowHeaderLength++;
+                        d['column_header_header'] ? columnHeaderLink.push(d.data) : rowHeaderLength++;
                     });
                     break;
                 }

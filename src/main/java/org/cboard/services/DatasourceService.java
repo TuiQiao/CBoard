@@ -60,7 +60,7 @@ public class DatasourceService {
             datasourceDao.save(datasource);
             return new ServiceStatus(ServiceStatus.Status.Success, "success");
         } else {
-            return new ServiceStatus(ServiceStatus.Status.Fail, "名称已存在");
+            return new ServiceStatus(ServiceStatus.Status.Fail, "Duplicated Name!");
         }
     }
 
@@ -81,7 +81,7 @@ public class DatasourceService {
             datasourceDao.update(datasource);
             return new ServiceStatus(ServiceStatus.Status.Success, "success");
         } else {
-            return new ServiceStatus(ServiceStatus.Status.Fail, "名称已存在");
+            return new ServiceStatus(ServiceStatus.Status.Fail, "Duplicated Name!");
         }
     }
 

@@ -7,7 +7,7 @@
     "LOADING": "Loading...",
     "REFRESH": "Refresh",
     "EDIT": "Edit",
-    "CONFIRM_DELETE": "Confirm to Delete",
+    "CONFIRM_DELETE": "Confirm to Delete?",
     "CONFIRM_SAVE_BEFORE_PREVIEW": "Need save board before preview, confirm to save?",
     "NOT_ALLOWED_TO_DELETE_BECAUSE_BE_DEPENDENT": "Not allowed to delete, because be dependent",
     "TIP": "Tip",
@@ -28,7 +28,9 @@
     "LAST60MIN_TIMESTAMP": "Last 60 Hours(Timestamp)",
     "FILTER_GROUP": "Filter Group",
     "SAVE_AS": "Save As",
-    "PARAM": "Parameter"
+    "PARAM": "Parameter",
+    "DRILL_DOWN": "Drill Down",
+    "ROLL_UP": "Roll Up"
   },
   "TIPS": {
     "CAL_EXPR": "Calculate after aggregation. Use assist click input to avoid typo. e.g: Math.log(sum(columnA)/count(columB))"

@@ -16,11 +16,14 @@ public class QueryBuilder extends JSONBuilder {
     public static QueryBuilder queryContent() {
         return new QueryBuilder();
     }
+
     public static QueryBuilder queryContent(Map<String, Object> map) {
         return new QueryBuilder(map);
     }
 
-    public QueryBuilder() {}
+    public QueryBuilder() {
+    }
+
     public QueryBuilder(Map<String, Object> map) {
         super(map);
     }
@@ -49,6 +52,10 @@ public class QueryBuilder extends JSONBuilder {
         return queryContent().put("terms", json(fieldName, values));
     }
 
+    public static QueryBuilder nullQuery(String fieldName, boolean isNull) {
+        return boolFilter(isNull ? BoolType.MUST_NOT : BoolType.MUST, json("exists", json("field", fieldName)));
+    }
+
     public static QueryBuilder rangeQuery(String fieldName, Object from, Object to, boolean includeLower, boolean includeUpper) {
         JSONBuilder content = json();
         if (from != null) {
@@ -68,6 +75,13 @@ public class QueryBuilder extends JSONBuilder {
         return queryContent()
                 .put("bool",
                         json(boolType.toString(), filterArray)
+                );
+    }
+
+    public static QueryBuilder boolFilter(BoolType boolType, JSONObject jsonObject) {
+        return queryContent()
+                .put("bool",
+                        json(boolType.toString(), jsonObject)
                 );
     }
 

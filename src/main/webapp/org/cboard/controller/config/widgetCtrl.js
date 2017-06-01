@@ -586,7 +586,7 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
                 datasetId: $scope.customDs ? undefined : $scope.curWidget.datasetId
             }, function (query) {
                 var querybr = query.trim().replace(/\n/g, '<br/>').replace(/\t/g, "&nbsp;&nbsp;&nbsp;&nbsp;");
-                $('#viewQuery_widget').html("<div class='alert alert-info' role='alert' style='text-align: left;'>" + querybr + "</div>");
+                $('#viewQuery_widget').html("<div class='alert alert-info' role='alert' style='text-align: left;'><p style='color: black'>" + querybr + "</p></div>");
                 $scope.loadingPre = false;
                 $scope.viewQueryMoal = true;
             });

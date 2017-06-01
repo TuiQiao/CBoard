@@ -12,6 +12,7 @@ import org.cboard.dataprovider.config.ConfigComponent;
 import org.cboard.dataprovider.config.DimensionConfig;
 import org.cboard.dataprovider.expression.NowFunction;
 import org.cboard.dataprovider.result.AggregateResult;
+import org.cboard.util.NaturalOrderComparator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -30,6 +31,7 @@ public abstract class DataProvider {
     private int resultLimit;
     private long interval = 12 * 60 * 60; // second
 
+    public static final String NULL_STRING = "#NULL";
     private static final Logger logger = LoggerFactory.getLogger(DataProvider.class);
 
     static {
@@ -77,7 +79,11 @@ public abstract class DataProvider {
             checkAndLoad(reload);
             dimVals = innerAggregator.queryDimVals(columnName, config);
         }
-        return Arrays.stream(dimVals).limit(1000).toArray(String[]::new);
+        return Arrays.stream(dimVals)
+                .map(member -> {
+                    return Objects.isNull(member) ? NULL_STRING : member;
+                })
+                .sorted(new NaturalOrderComparator()).limit(1000).toArray(String[]::new);
     }
 
     public final String[] getColumn(boolean reload) throws Exception {
@@ -145,7 +151,7 @@ public abstract class DataProvider {
     public List<DimensionConfig> configComp2DimConfigList(ConfigComponent cc) {
         List<DimensionConfig> result = new LinkedList<>();
         if (cc instanceof DimensionConfig) {
-            result.add((DimensionConfig)cc);
+            result.add((DimensionConfig) cc);
         } else {
             Iterator<ConfigComponent> iterator = cc.getIterator();
             while (iterator.hasNext()) {

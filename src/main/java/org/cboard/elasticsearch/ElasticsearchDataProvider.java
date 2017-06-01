@@ -38,6 +38,7 @@ import static org.cboard.elasticsearch.aggregation.AggregationBuilder.dateHistAg
 import static org.cboard.elasticsearch.aggregation.AggregationBuilder.termsAggregation;
 import static org.cboard.elasticsearch.query.QueryBuilder.*;
 import static org.cboard.util.SqlMethod.coalesce;
+
 /**
  * Created by yfyuan on 2017/3/17.
  */
@@ -64,6 +65,19 @@ public class ElasticsearchDataProvider extends DataProvider implements Aggregata
 
     private static final JSONPath jsonPath_value = JSONPath.compile("$..value");
 
+    private static final List<String> numericTypes = new ArrayList<>();
+
+    private static final Integer NULL_NUMBER = -999;
+
+    static {
+        numericTypes.add("long");
+        numericTypes.add("integer");
+        numericTypes.add("short");
+        numericTypes.add("byte");
+        numericTypes.add("double");
+        numericTypes.add("float");
+    }
+
     @Override
     public boolean doAggregationInDataSource() {
         return true;
@@ -83,7 +97,9 @@ public class ElasticsearchDataProvider extends DataProvider implements Aggregata
         }
         JSONObject response = post(getSearchUrl(request), request);
         String[] filtered = response.getJSONObject("aggregations").getJSONObject(columnName).getJSONArray("buckets").stream()
-                .map(e -> ((JSONObject) e).getString("key")).toArray(String[]::new);
+                .map(e -> ((JSONObject) e).getString("key"))
+                .map(e -> e.replaceAll(NULL_NUMBER.toString(), NULL_STRING))
+                .toArray(String[]::new);
         return filtered;
     }
 
@@ -93,7 +109,7 @@ public class ElasticsearchDataProvider extends DataProvider implements Aggregata
         Stream<ConfigComponent> f = config.getFilters().stream();
         Stream<ConfigComponent> filters = Stream.concat(Stream.concat(c, r), f);
         JSONArray result = new JSONArray();
-        filters.map(e -> configComponentToFilter(e)).filter(e -> e != null).forEach(result::add);
+        filters.map(e -> separateNull(e)).map(e -> configComponentToFilter(e)).filter(e -> e != null).forEach(result::add);
         return result;
     }
 
@@ -109,7 +125,7 @@ public class ElasticsearchDataProvider extends DataProvider implements Aggregata
                 boolType = BoolType.SHOULD;
             }
             JSONArray boolArr = new JSONArray();
-            compositeConfig.getConfigComponents().stream().map(e -> configComponentToFilter(e)).forEach(boolArr::add);
+            compositeConfig.getConfigComponents().stream().map(e -> separateNull(e)).map(e -> configComponentToFilter(e)).forEach(boolArr::add);
             return boolFilter(boolType, boolArr);
         }
         return null;
@@ -124,6 +140,13 @@ public class ElasticsearchDataProvider extends DataProvider implements Aggregata
         String v1 = null;
         if (config.getValues().size() == 2) {
             v1 = config.getValues().get(1);
+        }
+        if (NULL_STRING.equals(v0)) {
+            switch (config.getFilterType()) {
+                case "=":
+                case "≠":
+                    return nullQuery(fieldName, "=".equals(config.getFilterType()));
+            }
         }
         switch (config.getFilterType()) {
             case "=":
@@ -202,7 +225,8 @@ public class ElasticsearchDataProvider extends DataProvider implements Aggregata
                     aggregation = buildDateHistAggregation(d.getColumnName(), config);
                     break;
                 default:
-                    aggregation = json(d.getColumnName(), termsAggregation(d.getColumnName(), 1000));
+                    Object missing = numericTypes.contains(getTypes().get(d.getColumnName())) ? NULL_NUMBER : NULL_STRING;
+                    aggregation = json(d.getColumnName(), termsAggregation(d.getColumnName(), 1000, missing));
             }
             // Query Override
             if (overrideAgg != null) {
@@ -227,17 +251,17 @@ public class ElasticsearchDataProvider extends DataProvider implements Aggregata
         Object object = JSONPath.compile("$.." + columnName.replace(".", "\\.")).eval(queryDsl);
         List<JSONObject> array = (List) object;
         Long lower = array.stream()
-            .map(jo -> coalesce( jo.getLong("gt"), jo.getLong("gte")))
-            .filter(Objects::nonNull)
-        .max(Comparator.naturalOrder())
-        .orElse(null);
+                .map(jo -> coalesce(jo.getLong("gt"), jo.getLong("gte")))
+                .filter(Objects::nonNull)
+                .max(Comparator.naturalOrder())
+                .orElse(null);
         Long upper = array.stream()
-            .map(jo -> coalesce( jo.getLong("lt"), jo.getLong("lte")))
-            .filter(Objects::nonNull)
+                .map(jo -> coalesce(jo.getLong("lt"), jo.getLong("lte")))
+                .filter(Objects::nonNull)
                 .min(Comparator.naturalOrder())
-                .orElse( new Date().getTime());
+                .orElse(new Date().getTime());
 
-        if (lower == null || lower >= upper ) {
+        if (lower == null || lower >= upper) {
             return queryBound(columnName, config);
         }
         intervalStr = dateInterval(lower, upper);
@@ -277,10 +301,10 @@ public class ElasticsearchDataProvider extends DataProvider implements Aggregata
         int buckets = 100;
         long stepTs = (maxTs - minTs) / buckets;
         long minutesOfDuration = Duration.ofMillis(stepTs).toMinutes();
-        long secondsOfDuration = Duration.ofMillis(stepTs).toMillis()/1000;
+        long secondsOfDuration = Duration.ofMillis(stepTs).toMillis() / 1000;
         if (minutesOfDuration > 0) {
             intervalStr = minutesOfDuration + "m";
-        } else if (secondsOfDuration > 0){
+        } else if (secondsOfDuration > 0) {
             intervalStr = secondsOfDuration + "s";
         }
         return intervalStr;
@@ -335,6 +359,14 @@ public class ElasticsearchDataProvider extends DataProvider implements Aggregata
         JSONObject aggregations = response.getJSONObject("aggregations");
         getAggregationResponse(aggregations, result, null, 0, dimensionList, valueList);
         String[][] _result = result.toArray(new String[][]{});
+        Map<String, String> types = getTypes();
+        int[] numericIdx = dimensionList.stream().filter(e -> numericTypes.contains(types.get(e.getName())))
+                .map(e -> e.getIndex()).mapToInt(e -> e).toArray();
+        for (String[] strings : _result) {
+            for (int i : numericIdx) {
+                strings[i] = strings[i].replaceAll(NULL_NUMBER.toString(), NULL_STRING);
+            }
+        }
         return new AggregateResult(columnList, _result);
     }
 

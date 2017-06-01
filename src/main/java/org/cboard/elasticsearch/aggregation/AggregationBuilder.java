@@ -7,16 +7,19 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.TimeZone;
 
-import static org.cboard.util.json.JSONBuilder.*;
+import static org.cboard.util.json.JSONBuilder.json;
 
 /**
  * Created by Peter on 2017/5/7.
  */
 public class AggregationBuilder {
 
-    public static JSONBuilder termsAggregation(String fieldName, int size) {
-        return json("terms",
-                json("field", fieldName).put("size", size));
+    public static JSONBuilder termsAggregation(String fieldName, int size, Object missing) {
+        return json("terms", json()
+                .put("field", fieldName)
+                .put("size", size)
+                .put("missing", missing)
+        );
     }
 
     public static JSONBuilder dateHistAggregation(String fieldName, String interval, int min_doc_count) {

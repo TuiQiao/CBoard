@@ -200,7 +200,7 @@ public class JdbcDataProvider extends DataProvider implements Aggregatable, Init
             Stream<ConfigComponent> filters = Stream.concat(Stream.concat(c, r), f);
             whereStr = assembleSqlFilter(filters, "WHERE");
         }
-        fsql = "SELECT __view__.%s FROM (%s) __view__ %s GROUP BY __view__.%s";
+        fsql = "SELECT __view__.%s FROM (\n%s\n) __view__ %s GROUP BY __view__.%s";
         exec = String.format(fsql, columnName, sql, whereStr, columnName);
         LOG.info(exec);
         try (Connection connection = getConnection();

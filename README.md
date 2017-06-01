@@ -162,7 +162,8 @@ Waiting for your Contribution and pull request!
 
 
 # Let us kown you are using CBoard
-If your company is using CBoard or prepare to use it, please let us known
+If your company is using CBoard or prepare to use it, please let us known.
+You can check in at this issue page [https://github.com/yzhang921/CBoard/issues/122](https://github.com/yzhang921/CBoard/issues/122)
 
 # Donate (请我们喝咖啡)
 ![image](https://cloud.githubusercontent.com/assets/6037522/26662085/3eb1f00e-46b4-11e7-900f-77d9b1499f6b.png)

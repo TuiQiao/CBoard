@@ -27,6 +27,8 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
+import static org.cboard.dataprovider.DataProvider.NULL_STRING;
+
 /**
  * Created by yfyuan on 2017/1/18.
  */
@@ -107,6 +109,12 @@ public class JvmAggregator extends InnerAggregator {
         for (Dimensions d : grouped.keySet()) {
             result[i++] = Stream.concat(Arrays.stream(d.dimensions), Arrays.stream(grouped.get(d)).map(e -> e.toString())).toArray(String[]::new);
         }
+        int dimSize = dimensionList.size();
+        for (String[] row : result) {
+            IntStream.range(0, dimSize).forEach(d -> {
+                if (row[d] == null) row[d] = NULL_STRING;
+            });
+        }
         dimensionList.addAll(valuesList);
         IntStream.range(0, dimensionList.size()).forEach(j -> dimensionList.get(j).setIndex(j));
         return new AggregateResult(dimensionList, result);
@@ -176,7 +184,7 @@ public class JvmAggregator extends InnerAggregator {
             String v = row[columnIndex.get(rule.getColumnName())];
             String a = rule.getValues().get(0);
             String b = rule.getValues().size() >= 2 ? rule.getValues().get(1) : null;
-            if (DataProvider.NULL_STRING.equals(a)) {
+            if (NULL_STRING.equals(a)) {
                 switch ((rule.getFilterType())) {
                     case "=":
                         return v == null;

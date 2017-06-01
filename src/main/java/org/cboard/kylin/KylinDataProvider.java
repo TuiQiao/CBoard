@@ -309,8 +309,14 @@ public class KylinDataProvider extends DataProvider implements Aggregatable, Ini
         // recreate a dimension stream
         Stream<DimensionConfig> dimStream = Stream.concat(config.getColumns().stream(), config.getRows().stream());
         List<ColumnIndex> dimensionList = dimStream.map(ColumnIndex::fromDimensionConfig).collect(Collectors.toList());
+        int dimSize = dimensionList.size();
         dimensionList.addAll(config.getValues().stream().map(ColumnIndex::fromValueConfig).collect(Collectors.toList()));
         IntStream.range(0, dimensionList.size()).forEach(j -> dimensionList.get(j).setIndex(j));
+        list.forEach(row -> {
+            IntStream.range(0, dimSize).forEach(i -> {
+                if (row[i] == null) row[i] = NULL_STRING;
+            });
+        });
         String[][] result = list.toArray(new String[][]{});
         return new AggregateResult(dimensionList, result);
     }

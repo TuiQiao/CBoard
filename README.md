@@ -65,7 +65,7 @@ Server side framework is Spring+MyBatis and front-end is based on AngularJS1 and
 ![image](https://yzhang921.gitbooks.io/cboard-git-book/content/assets/UserAdmin_Snap.png)
 
 
-## How to build project
+## Prerequisite
 Before the start, make sure you have setup environment:
 - JDK version above 1.8
 - MySQL
@@ -74,12 +74,13 @@ Before the start, make sure you have setup environment:
 - Phantomjs (for export dashbaord)
 - Mail Servier
 
-1 Download or git clone project
+## How to build project
+- 1 Download or git clone project
 ```
 git clone https://github.com/yzhang921/CBoard.git
 ```
-2 Install metadata of CBoard (take MySQL database as example)
-    2.1 Install demo metadata and sample foodmart db
+- 2 Install metadata of CBoard (take MySQL database as example)  
+    - 2.1 Install demo metadata and sample foodmart db
         - Download [cboard_demo & foodmart](https://www.dropbox.com/sh/zhgysm4ewandmwl/AADC4oPwn34vHv39AJMGzhyia?dl=0)
         - Enter into the path of these two files
         - Use MySQL Command Line tool login and execute
@@ -88,59 +89,61 @@ git clone https://github.com/yzhang921/CBoard.git
             source foodmart.sql
         ```
         - After success completed, check if cboard_demo2 and foodmart2 databases have been created
-    2.2 You can alternative choose start from a blank setting
+    - 2.2 You can alternative choose start from a blank setting
         ```mysql
             -- CREATE DATEBASE cboard;
             Execute ddl to create metadata table: _sql/mysql/mysql.sql_
         ```
-3 Modify metadata connection properties file according to your db environment  
-```
-CBoard/src/main/resources/config.properties
-```
-```pro
-validationQuery=SELECT 1
-jdbc_url=jdbc:mysql://localhost:3306/cboard # set to your metadata db connection url, if you are using demo db, change db name to cboard_demo2
-jdbc_username=root # change to the username/password of your db
-jdbc_password=111111
+- 3 Modify metadata connection properties file according to your db environment  
+  ```
+  CBoard/src/main/resources/config.properties
+  ```
 
-# Service configuration
-dataprovider.resultLimit=300000
-admin_user_id=1
-phantomjs_path=D:/phantomjs-2.1.1-windows/bin/phantomjs.exe  # change to the install path of your phantomjs
-web_port=8026 #
-web_context=  # web context name of your app, can be blank for ROOT deploy
+  ```pro
+  validationQuery=SELECT 1
+  jdbc_url=jdbc:mysql://localhost:3306/cboard # set to your metadata db connection url, if you are using demo db, change db name to cboard_demo2
+  jdbc_username=root # change to the username/password of your db
+  jdbc_password=111111
 
-# configuration of Mail service
-mail.smtp.host=127.0.0.1
-mail.smtp.port=8825
-mail.smtp.from=test@test.com
-#mail.smtp.username=test@test.com
-#mail.smtp.password=111111
-#mail.smtp.ssl.checkserveridentity=false
+  # Service configuration
+  dataprovider.resultLimit=300000
+  admin_user_id=1
+  phantomjs_path=D:/phantomjs-2.1.1-windows/bin/phantomjs.exe  # change to the install path of your phantomjs
+  web_port=8026 #
+  web_context=  # web context name of your app, can be blank for ROOT deploy
 
-# Cache Properties if you wanna use redis as cache layer
-cache.redis.hostName=127.0.0.1
-cache.redis.port=6379
-```
-4 Comile and package project with Maven
-```
-cd root path of CBoard
-# Install SQLServer JDBC Driver into your local respository
-mvn install:install-file -Dfile=lib/sqljdbc4-4.0.jar -DgroupId=com.microsoft.sqlserver -DartifactId=sqljdbc4 -Dversion=4.0 -Dpackaging=jar
-mvn clean package
-```
+  # configuration of Mail service
+  mail.smtp.host=127.0.0.1
+  mail.smtp.port=8825
+  mail.smtp.from=test@test.com
+  #mail.smtp.username=test@test.com
+  #mail.smtp.password=111111
+  #mail.smtp.ssl.checkserveridentity=false
 
-5 Deploy war to Tomcat application
+  # Cache Properties if you wanna use redis as cache layer
+  cache.redis.hostName=127.0.0.1
+  cache.redis.port=6379
+  ```
+
+- 4 Comile and package project with Maven
+  ```
+  cd root path of CBoard
+  # Install SQLServer JDBC Driver into your local respository
+  mvn install:install-file -Dfile=lib/sqljdbc4-4.0.jar -DgroupId=com.microsoft.sqlserver -DartifactId=sqljdbc4 -Dversion=4.0 -Dpackaging=jar
+  mvn clean package
+  ```
+
+- 5 Deploy war to Tomcat application
  * Copy **CBoard/target/cboard.war** to **webapp** folder of Tomcat and rename cboard.war would be better to change name to ROOT.war
  * Start up Tomcat
 
-## Access CBoard
+- 6 Access CBoard
 ```
 http://_yourserverip_:8080
 Default login username and passwor: admin/root123
 ```
 
-6 For Demo DB user, check and test the source of foodmart
+- 7 For Demo DB user, check and test the source of foodmart
 ![](https://yzhang921.gitbooks.io/cboard-git-book/content/assets/demo_datasource.png)
 
 # Road Map

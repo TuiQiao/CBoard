@@ -194,7 +194,7 @@
                                                     <li ng-repeat="o in curDataset.data.expressions">
                                                         <span dnd-draggable="o" dnd-type="'exp'"><img src="imgs/schema/bullet_red.png">{{o.alias}}</span>
                                                         <i class="fa fa-edit" ng-click="editExp(o)"></i>
-                                                        <i class="fa fa-trash-o"  ng-click="curDataset.data.expressions.splice($index, 1)"></i>
+                                                        <i class="fa fa-trash-o" ng-click="deleteExp($index)"></i>
                                                     </li>
                                                 </ul>
                                             </li>
@@ -210,7 +210,7 @@
                                                     <li ng-repeat="o in curDataset.data.filters">
                                                         <span dnd-draggable="o" dnd-type="'filterGroup'"><img src="imgs/schema/bullet_green.png">{{o.group}}</span>
                                                         <i class="fa fa-edit" ng-click="editFilterGroup(o)"></i>
-                                                        <i class="fa fa-trash-o"  ng-click="curDataset.data.filters.splice($index, 1)"></i>
+                                                        <i class="fa fa-trash-o"  ng-click="deleteFilterGroup($index)"></i>
                                                     </li>
                                                 </ul>
                                             </li>

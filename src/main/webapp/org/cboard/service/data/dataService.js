@@ -738,7 +738,7 @@ cBoard.service('dataService', function ($http, $q, updateService) {
         });
 
         var names = []; // expression text in aggreagtion function, could be a columnName or script
-        _.each(evalExp.match(/(sum|avg|count|max|min)\("?.*?"?\)/g), function (aggUnit) {
+        _.each(evalExp.match(/(sum|avg|count|max|min|distinct)\("?.*?"?\)/g), function (aggUnit) {
             var aggregate = aggUnit.substring(0, aggUnit.indexOf('('));
             var name = aggUnit.substring(aggUnit.indexOf('(') + 1, aggUnit.indexOf(')'));
             if (name.match("_#")) {

@@ -5,7 +5,7 @@ Server side framework is Spring+MyBatis and front-end is based on AngularJS1 and
 ![image](https://yzhang921.gitbooks.io/cboard-git-book/assets/arch.png)
 
 # Screenshot
-![image](https://cloud.githubusercontent.com/assets/6037522/21757656/0828c2d6-d66d-11e6-95c5-4d0cb2f6b5b1.png)
+![image](https://yzhang921.gitbooks.io/cboard-git-book/content/assets/cboard_snapshot.png)
 
 # Near Realtime data refresh  
 **Be attention, refresh level is cube level rather than whole dashboard **
@@ -92,7 +92,7 @@ git clone https://github.com/yzhang921/CBoard.git
     - 2.2 You can alternative choose start from a blank setting
         ```mysql
             -- CREATE DATEBASE cboard;
-            Execute ddl to create metadata table: _sql/mysql/mysql.sql_
+            Execute ddl to create metadata table: sql/mysql/mysql.sql
         ```
 - 3 Modify metadata connection properties file according to your db environment  
   ```

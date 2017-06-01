@@ -30,7 +30,7 @@ public class CategoryService {
             categoryDao.save(category);
             return new ServiceStatus(ServiceStatus.Status.Success, "success");
         } else {
-            return new ServiceStatus(ServiceStatus.Status.Fail, "名称已存在");
+            return new ServiceStatus(ServiceStatus.Status.Fail, "Duplicated Name!");
         }
     }
 
@@ -48,7 +48,7 @@ public class CategoryService {
             categoryDao.update(category);
             return new ServiceStatus(ServiceStatus.Status.Success, "success");
         } else {
-            return new ServiceStatus(ServiceStatus.Status.Fail, "名称已存在");
+            return new ServiceStatus(ServiceStatus.Status.Fail, "Duplicated Name!");
         }
     }
 

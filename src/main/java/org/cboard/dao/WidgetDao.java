@@ -18,6 +18,8 @@ public interface WidgetDao {
 
     List<DashboardWidget> getWidgetList(String userId);
 
+    List<DashboardWidget> getWidgetListAdmin(String userId);
+
     int save(DashboardWidget dashboardWidget);
 
     long countExistWidgetName(Map<String, Object> map);
@@ -28,5 +30,5 @@ public interface WidgetDao {
 
     DashboardWidget getWidget(Long id);
 
-    long checkWidgetRole(String userId, Long widgetId);
+    long checkWidgetRole(String userId, Long widgetId, String permissionPattern);
 }

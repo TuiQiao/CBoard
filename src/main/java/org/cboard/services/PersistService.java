@@ -5,13 +5,16 @@ import org.apache.commons.collections.map.HashedMap;
 import org.apache.commons.lang.text.StrSubstitutor;
 import org.apache.commons.lang3.StringUtils;
 import org.cboard.jdbc.JdbcDataProvider;
+import org.cboard.security.service.LocalSecurityFilter;
 import org.cboard.services.persist.PersistContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.InputStreamReader;
 import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
@@ -46,11 +49,20 @@ public class PersistService {
             }
             PersistContext context = new PersistContext(dashboardId);
             TASK_MAP.put(persistId, context);
-            String cmd = String.format("%s %s %s %s %s %s", phantomjsPath, scriptPath, dashboardId, persistId, userId, web);
+            String uuid = UUID.randomUUID().toString().replaceAll("-", "");
+            LocalSecurityFilter.put(uuid, userId);
+            String phantomUrl = new StringBuffer("http://127.0.0.1:")
+                    .append(web)
+                    .append("render.html")
+                    .append("?sid=").append(uuid)
+                    .append("#?id=").append(dashboardId)
+                    .append("&pid=").append(persistId)
+                    .toString();
+            String cmd = String.format("%s %s %s", phantomjsPath, scriptPath, phantomUrl);
             LOG.info("Run phantomjs command: {}", cmd);
             process = Runtime.getRuntime().exec(cmd);
             synchronized (context) {
-                context.wait();
+                context.wait(10 * 60 * 1000);
             }
             process.destroy();
             TASK_MAP.remove(persistId);

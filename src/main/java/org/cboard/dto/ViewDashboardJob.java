@@ -3,6 +3,7 @@ package org.cboard.dto;
 import com.alibaba.fastjson.JSONObject;
 import org.apache.commons.collections.map.HashedMap;
 import org.cboard.pojo.DashboardJob;
+import org.cboard.services.role.RolePermission;
 
 import java.util.Date;
 import java.util.Map;
@@ -23,6 +24,8 @@ public class ViewDashboardJob {
     private String userName;
     private Long jobStatus;
     private String execLog;
+    private boolean edit;
+    private boolean delete;
 
     public static final Long STATUS_PROCESSING = 2L;
     public static final Long STATUS_FINISH = 1L;
@@ -42,6 +45,24 @@ public class ViewDashboardJob {
         this.userName = job.getUserName();
         this.jobStatus = job.getJobStatus();
         this.execLog = job.getExecLog();
+        this.edit = RolePermission.isEdit(job.getPermission());
+        this.delete = RolePermission.isDelete(job.getPermission());
+    }
+
+    public boolean isEdit() {
+        return edit;
+    }
+
+    public void setEdit(boolean edit) {
+        this.edit = edit;
+    }
+
+    public boolean isDelete() {
+        return delete;
+    }
+
+    public void setDelete(boolean delete) {
+        this.delete = delete;
     }
 
     public String getExecLog() {

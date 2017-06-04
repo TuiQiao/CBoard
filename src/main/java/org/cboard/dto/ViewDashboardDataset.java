@@ -3,6 +3,7 @@ package org.cboard.dto;
 import com.alibaba.fastjson.JSONObject;
 import com.google.common.base.Function;
 import org.cboard.pojo.DashboardDataset;
+import org.cboard.services.role.RolePermission;
 
 import javax.annotation.Nullable;
 import java.util.Map;
@@ -16,6 +17,8 @@ public class ViewDashboardDataset {
     private String name;
     private String categoryName;
     private Map<String, Object> data;
+    private boolean edit;
+    private boolean delete;
 
 
     public static final Function TO = new Function<DashboardDataset, ViewDashboardDataset>() {
@@ -32,6 +35,24 @@ public class ViewDashboardDataset {
         this.name = dataset.getName();
         this.categoryName = dataset.getCategoryName();
         this.data = JSONObject.parseObject(dataset.getData());
+        this.edit = RolePermission.isEdit(dataset.getPermission());
+        this.delete = RolePermission.isDelete(dataset.getPermission());
+    }
+
+    public boolean isEdit() {
+        return edit;
+    }
+
+    public void setEdit(boolean edit) {
+        this.edit = edit;
+    }
+
+    public boolean isDelete() {
+        return delete;
+    }
+
+    public void setDelete(boolean delete) {
+        this.delete = delete;
     }
 
     public Long getId() {

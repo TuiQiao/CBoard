@@ -17,6 +17,8 @@ public interface JobDao {
 
     List<DashboardJob> getJobList(String userId);
 
+    List<DashboardJob> getJobListAdmin(String userId);
+
     int delete(Long jobId);
 
     int updateLastExecTime(Long jobId, Date date);
@@ -24,5 +26,7 @@ public interface JobDao {
     int updateStatus(Long jobId, Long status, String log);
 
     DashboardJob getJob(Long jobId);
+
+    long checkJobRole(String userId, Long jobId, String permissionPattern);
 
 }

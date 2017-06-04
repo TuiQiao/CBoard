@@ -47,6 +47,8 @@ public class AggregateCollector<T> implements Collector<T[], Object[], Double[]>
                 return Collectors.maxBy(Comparator.comparingDouble(this::toDouble));
             case "min":
                 return Collectors.minBy(Comparator.comparingDouble(this::toDouble));
+            case "distinct":
+                return new CardinalityCollector();
             default:
                 return Collectors.counting();
         }
@@ -89,13 +91,17 @@ public class AggregateCollector<T> implements Collector<T[], Object[], Double[]>
                     result[i] = (Double) r;
                 } else if (r instanceof Long) {
                     result[i] = ((Long) r).doubleValue();
+                } else if (r instanceof Integer) {
+                    result[i] = ((Integer) r).doubleValue();
                 } else if (r instanceof Optional) {
                     result[i] = toDouble(((Optional) r).get());
                 }
 
             });
             return result;
-        };
+        }
+
+                ;
     }
 
     @Override

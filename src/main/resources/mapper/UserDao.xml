@@ -29,6 +29,27 @@
         </if>
     </delete>
 
+    <delete id="deleteUserRoles" parameterType="Map">
+        DELETE FROM dashboard_user_role
+        WHERE user_id IN
+        <foreach item="item" index="index" collection="userIds" open="("
+                 separator="," close=")">
+            #{item}
+        </foreach>
+        <if test="curUid != adminUid">
+            AND role_id IN (select role_id from dashboard_role where user_id = #{curUid} and role_id in
+            <foreach item="item" index="index" collection="roleIds" open="(" separator="," close=")">
+            #{item}
+            </foreach>)
+        </if>
+        <if test="curUid == adminUid">
+            AND role_id IN
+            <foreach item="item" index="index" collection="roleIds" open="(" separator="," close=")">
+                #{item}
+            </foreach>
+        </if>
+    </delete>
+
     <insert id="saveUserRole" parameterType="java.util.List">
         insert into dashboard_user_role
         (user_id, role_id)

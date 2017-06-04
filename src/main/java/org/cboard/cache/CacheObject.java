@@ -1,5 +1,11 @@
 package org.cboard.cache;
 
+import com.caucho.hessian.io.Hessian2Input;
+import com.caucho.hessian.io.Hessian2Output;
+
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.io.Serializable;
 
 /**
@@ -8,12 +14,24 @@ import java.io.Serializable;
 public class CacheObject implements Serializable {
     private long t1;
     private long expire;
-    private Object d;
+    private byte[] d;
 
     public CacheObject(long t1, long expire, Object d) {
         this.t1 = t1;
         this.expire = expire;
-        this.d = d;
+        if (d != null) {
+            ByteArrayOutputStream os = new ByteArrayOutputStream();
+            Hessian2Output ho = new Hessian2Output(os);
+            try {
+                ho.startMessage();
+                ho.writeObject(d);
+                ho.completeMessage();
+                ho.close();
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+            this.d = os.toByteArray();
+        }
     }
 
     public long getT1() {
@@ -33,10 +51,20 @@ public class CacheObject implements Serializable {
     }
 
     public Object getD() {
+        if (d != null) {
+            ByteArrayInputStream is = new ByteArrayInputStream(d);
+            Hessian2Input hi = new Hessian2Input(is);
+            try {
+                hi.startMessage();
+                Object o = hi.readObject();
+                hi.completeMessage();
+                hi.close();
+                return o;
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        }
         return d;
     }
 
-    public void setD(Object d) {
-        this.d = d;
-    }
 }

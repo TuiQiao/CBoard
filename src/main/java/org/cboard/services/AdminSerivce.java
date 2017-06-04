@@ -6,12 +6,9 @@ import com.google.common.base.Charsets;
 import com.google.common.hash.Hashing;
 import org.apache.commons.collections.map.HashedMap;
 import org.apache.commons.lang.StringUtils;
-import org.cboard.dao.RoleDao;
-import org.cboard.dao.UserDao;
-import org.cboard.pojo.DashboardRole;
-import org.cboard.pojo.DashboardRoleRes;
-import org.cboard.pojo.DashboardUser;
-import org.cboard.pojo.DashboardUserRole;
+import org.cboard.dao.*;
+import org.cboard.pojo.*;
+import org.cboard.services.role.RolePermission;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Repository;
@@ -20,6 +17,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * Created by yfyuan on 2016/12/2.
@@ -35,6 +33,15 @@ public class AdminSerivce {
 
     @Autowired
     private RoleDao roleDao;
+
+    @Autowired
+    private DatasetDao datasetDao;
+
+    @Autowired
+    private WidgetDao widgetDao;
+
+    @Autowired
+    private BoardDao boardDao;
 
     public String addUser(String userId, String loginName, String userName, String userPassword) {
         String md5 = Hashing.md5().newHasher().putString(userPassword, Charsets.UTF_8).hash().toString();
@@ -108,6 +115,36 @@ public class AdminSerivce {
         return "1";
     }
 
+    public String deleteUserRoles(String[] userId, String[] roleId, final String curUid) {
+
+        Map<String, Object> params = new HashedMap();
+        params.put("userIds", userId);
+        params.put("roleIds", roleId);
+        params.put("curUid", curUid);
+        params.put("adminUid", adminUid);
+        userDao.deleteUserRoles(params);
+        return "1";
+    }
+
+    public String updateRoleResUser(String[] roleId, String resIdArr) {
+        JSONArray arr = JSONArray.parseArray(resIdArr);
+        for (Object res : arr) {
+            JSONObject jo = (JSONObject) res;
+            roleDao.deleteRoleResByResId(jo.getLong("resId"), jo.getString("resType"));
+            List<DashboardRoleRes> list = new ArrayList<>();
+            for (String rid : roleId) {
+                DashboardRoleRes roleRes = new DashboardRoleRes();
+                roleRes.setRoleId(rid);
+                roleRes.setResId(jo.getLong("resId"));
+                roleRes.setResType(jo.getString("resType"));
+                roleRes.setPermission("" + (false ? 1 : 0) + (false ? 1 : 0));
+                list.add(roleRes);
+            }
+            roleDao.saveRoleRes(list);
+        }
+        return "1";
+    }
+
     public String updateRoleRes(String[] roleId, String resIdArr) {
 
         JSONArray arr = JSONArray.parseArray(resIdArr);
@@ -121,6 +158,9 @@ public class AdminSerivce {
                     roleRes.setRoleId(rid);
                     roleRes.setResId(jo.getLong("resId"));
                     roleRes.setResType(jo.getString("resType"));
+                    boolean edit = jo.getBooleanValue("edit");
+                    boolean delete = jo.getBooleanValue("delete");
+                    roleRes.setPermission("" + (edit ? 1 : 0) + (delete ? 1 : 0));
                     list.add(roleRes);
                 }
                 roleDao.saveRoleRes(list);
@@ -140,4 +180,37 @@ public class AdminSerivce {
         }
         return null;
     }
+
+    public List<DashboardBoard> getBoardList(String userId) {
+        if (adminUid.equals(userId)) {
+            return boardDao.getBoardList(userId);
+        } else {
+            List<DashboardRoleRes> resList = roleDao.getUserRoleResList(userId, "board");
+
+            List<Long> resIdList = resList.stream().filter(e -> RolePermission.isEdit(e.getPermission())).map(e -> e.getResId()).distinct().collect(Collectors.toList());
+            return boardDao.getBoardList(userId).stream().filter(e -> resIdList.contains(e.getId()) || e.getUserId().equals(userId)).collect(Collectors.toList());
+        }
+    }
+
+    public List<DashboardDataset> getDatasetList(String userId) {
+        if (adminUid.equals(userId)) {
+            return datasetDao.getDatasetList(userId);
+        } else {
+            List<DashboardRoleRes> resList = roleDao.getUserRoleResList(userId, "dataset");
+            List<Long> resIdList = resList.stream().filter(e -> RolePermission.isEdit(e.getPermission())).map(e -> e.getResId()).distinct().collect(Collectors.toList());
+            return datasetDao.getDatasetList(userId).stream().filter(e -> resIdList.contains(e.getId()) || e.getUserId().equals(userId)).collect(Collectors.toList());
+        }
+    }
+
+    public List<DashboardWidget> getWidgetList(String userId) {
+        if (adminUid.equals(userId)) {
+            return widgetDao.getWidgetList(userId);
+        } else {
+            List<DashboardRoleRes> resList = roleDao.getUserRoleResList(userId, "widget");
+            List<Long> resIdList = resList.stream().filter(e -> RolePermission.isEdit(e.getPermission())).map(e -> e.getResId()).distinct().collect(Collectors.toList());
+            return widgetDao.getWidgetList(userId).stream().filter(e -> resIdList.contains(e.getId()) || e.getUserId().equals(userId)).collect(Collectors.toList());
+        }
+    }
+
+
 }

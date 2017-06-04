@@ -148,7 +148,6 @@ body.hold-transition .main-header .logo {
 /* Content */
 .content {
   min-height: 250px;
-  margin-top:50px;
   padding: 15px;
   margin-right: auto;
   margin-left: auto;
@@ -232,8 +231,7 @@ a:focus {
  * ----------------------
  */
 .main-header {
-  position: fixed;
-  width:100%;
+  position: relative;
   max-height: 100px;
   z-index: 1030;
 }
@@ -457,7 +455,7 @@ a:focus {
  */
 .main-sidebar,
 .left-side {
-  position: fixed;
+  position: absolute;
   top: 0;
   left: 0;
   padding-top: 50px;
@@ -4538,7 +4536,7 @@ table.text-center th {
 .modal-danger .modal-body,
 .modal-danger .modal-header,
 .modal-danger .modal-footer {
-  color: #000 !important;
+  color: white !important;
 }
 .modal-body>p {
   margin-left: 40px;
@@ -5018,10 +5016,6 @@ button >canvas {
   top: 0;
   left: 0;
   z-index: 5;
-}
-.toolbar-icon {
-  cursor: pointer;
-  font-size: large
 }
 /*
  * Misc: print

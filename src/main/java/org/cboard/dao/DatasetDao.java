@@ -18,6 +18,8 @@ public interface DatasetDao {
 
     List<DashboardDataset> getDatasetList(String userId);
 
+    List<DashboardDataset> getDatasetListAdmin(String userId);
+
     int save(DashboardDataset dataset);
 
     long countExistDatasetName(Map<String, Object> map);
@@ -28,6 +30,6 @@ public interface DatasetDao {
 
     DashboardDataset getDataset(Long id);
 
-    long checkDatasetRole(String userId, Long widgetId);
+    long checkDatasetRole(String userId, Long widgetId, String permissionPattern);
 
 }

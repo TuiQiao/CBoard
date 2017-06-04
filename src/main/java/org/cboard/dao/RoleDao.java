@@ -15,6 +15,8 @@ public interface RoleDao {
 
     List<DashboardRole> getRoleList(String userId);
 
+    List<DashboardRole> getRoleListAll();
+
     int update(DashboardRole role);
 
     List<DashboardRoleRes> getRoleResList();
@@ -23,9 +25,13 @@ public interface RoleDao {
 
     int deleteRoleRes(String roleId);
 
+    int deleteRoleResByResId(Long resId,String resType);
+
     List<Long> getRoleResByResIds(String userId, String resType);
 
     DashboardRole getRole(String roleId);
 
     int deleteRole(String roleId);
+
+    List<DashboardRoleRes> getUserRoleResList(String userId, String resType);
 }

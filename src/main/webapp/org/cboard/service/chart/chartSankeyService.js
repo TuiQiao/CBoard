@@ -2,70 +2,72 @@
  * Created by yfyuan on 2016/10/28.
  */
 'use strict';
-cBoard.service('chartSankeyService', function (dataService) {
+cBoard.service('chartSankeyService', function () {
 
     this.render = function (containerDom, option, scope, persist) {
         return new CBoardEChartRender(containerDom, option).chart(null, persist);
     };
 
-    this.parseOption = function (chartData, chartConfig) {
-        var echartOption = null;
-        dataService.castRawData2Series(chartData, chartConfig, function (casted_keys, casted_values, aggregate_data, newValuesConfig) {
-            var nodes = [];
-            var string_keys = _.map(casted_keys, function (key) {
-                var s = key.join('-');
-                if (!_.find(nodes, function (e) {return e.name == s;})) {
-                    nodes.push({name: s});
-                }
-                return s;
-            });
-            _.each(casted_values, function (values) {
-                if (values.length > 1) {
-                    values.splice(-1, 1);
-                }
-                var s = values.join('-');
-                if (!_.find(nodes, function (e) {return e.name == s;})) {
-                    nodes.push({name: s});
-                }
-            });
-            var links = [];
-            for (var i = 0; i < aggregate_data.length; i++) {
-                for (var j = 0; j < aggregate_data[i].length; j++) {
-                    if (!_.isUndefined(aggregate_data[i][j])) {
-                        links.push({
-                            source: string_keys[j],
-                            target: casted_values[i].join('-'),
-                            value: aggregate_data[i][j]
-                        });
-                    }
+    this.parseOption = function (data) {
+        var casted_keys = data.keys;
+        var casted_values = data.series;
+        var aggregate_data = data.data;
+        var newValuesConfig = data.seriesConfig;
+
+        var nodes = [];
+        var string_keys = _.map(casted_keys, function (key) {
+            var s = key.join('-');
+            if (!_.find(nodes, function (e) {return e.name == s;})) {
+                nodes.push({name: s});
+            }
+            return s;
+        });
+        _.each(casted_values, function (values) {
+            if (values.length > 1) {
+                values.splice(-1, 1);
+            }
+            var s = values.join('-');
+            if (!_.find(nodes, function (e) {return e.name == s;})) {
+                nodes.push({name: s});
+            }
+        });
+        var links = [];
+        for (var i = 0; i < aggregate_data.length; i++) {
+            for (var j = 0; j < aggregate_data[i].length; j++) {
+                if (!_.isUndefined(aggregate_data[i][j])) {
+                    links.push({
+                        source: string_keys[j],
+                        target: casted_values[i].join('-'),
+                        value: aggregate_data[i][j]
+                    });
                 }
             }
-            echartOption = {
-                tooltip: {
-                    trigger: 'item',
-                    triggerOn: 'mousemove'
-                },
-                toolbox: false,
-                series: [{
-                    type: 'sankey',
-                    layout: 'none',
-                    data: nodes,
-                    links: links,
-                    itemStyle: {
-                        normal: {
-                            borderWidth: 1,
-                            borderColor: '#aaa'
-                        }
-                    },
-                    lineStyle: {
-                        normal: {
-                            color: 'source',
-                            curveness: 0.5
-                        }
+        }
+        var echartOption = {
+            tooltip: {
+                trigger: 'item',
+                triggerOn: 'mousemove'
+            },
+            toolbox: false,
+            series: [{
+                type: 'sankey',
+                layout: 'none',
+                data: nodes,
+                links: links,
+                itemStyle: {
+                    normal: {
+                        borderWidth: 1,
+                        borderColor: '#aaa'
                     }
-                }]
-            };
-        });
+                },
+                lineStyle: {
+                    normal: {
+                        color: 'source',
+                        curveness: 0.5
+                    }
+                }
+            }]
+        };
         return echartOption;
     };
 });

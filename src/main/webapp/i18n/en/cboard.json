@@ -1,27 +1,39 @@
 {
   "COMMON": {
     "OK": "OK",
+    "LOAD": "Load",
     "CANCEL": "Cancel",
     "SAVE": "Save",
     "LOADING": "Loading...",
     "REFRESH": "Refresh",
     "EDIT": "Edit",
-    "CONFIRM_DELETE": "Confirm to Delete!!!",
+    "CONFIRM_DELETE": "Confirm to Delete?",
     "CONFIRM_SAVE_BEFORE_PREVIEW": "Need save board before preview, confirm to save?",
-    "NOT_ALLOWED_TO_DELETE_BECAUSE_BE_DEPENDENT":"Not allowed to delete, because be dependent！",
+    "NOT_ALLOWED_TO_DELETE_BECAUSE_BE_DEPENDENT": "Not allowed to delete, because be dependent",
     "TIP": "Tip",
-    "SUCCESS": "Success!",
-    "FAIL": "Fail!",
+    "SUCCESS": "Success",
+    "FAIL": "Fail",
     "DEFAULT_CATEGORY": "Default Category",
-    "NOT_EMPTY": " can not be empty!",
+    "NOT_EMPTY": " can not be empty.",
     "NEW": "New",
     "COPY": "Copy",
     "DELETE": "Delete",
     "EXPORT": "Export",
-    "LOG": "Log"
+    "LOG": "Log",
+    "LAST1M": "Last 1 Month",
+    "LAST1W": "Last 1 Week",
+    "LAST10D": "Last 10 Days",
+    "LAST10D_TIMESTAMP": "Last 10 Days(Timestamp)",
+    "LAST3H_TIMESTAMP": "Last 3 Hours(Timestamp)",
+    "LAST60MIN_TIMESTAMP": "Last 60 Hours(Timestamp)",
+    "FILTER_GROUP": "Filter Group",
+    "SAVE_AS": "Save As",
+    "PARAM": "Parameter",
+    "DRILL_DOWN": "Drill Down",
+    "ROLL_UP": "Roll Up"
   },
   "TIPS": {
-    "CAL_EXPR": "Calculate after aggregation. Use assist click input to avoid typo! e.g: Math.log(sum(columnA)/count(columB))"
+    "CAL_EXPR": "Calculate after aggregation. Use assist click input to avoid typo. e.g: Math.log(sum(columnA)/count(columB))"
   },
   "SIDEBAR": {
     "C_DASHBOARD": "Dashboard",
@@ -35,7 +47,8 @@
     "ADMIN": "Admin",
     "USER_ADMIN": "User Admin",
     "RES_ADMIN": "Resource Admin",
-    "JOB": "Job"
+    "JOB": "Job",
+    "SHARE_RESOURCE": "Share Resource"
   },
   "HEADER": {
     "SIGN_OUT": "SignOut"
@@ -48,7 +61,10 @@
       "VALUE_LIST": "Value List",
       "VALUE": "Value",
       "VALUE_A": "Lower Bound",
-      "VALUE_B": "Upper Bound"
+      "VALUE_B": "Upper Bound",
+      "SELECT_VALUE": "Select Value From List",
+      "INPUT_VALUE": "Input Value Or Expression",
+      "LIST_WARN": "Make sure you are not loading a large size list or continuous value!"
     }
   },
   "CONFIG": {
@@ -127,7 +143,9 @@
       "TIPS_DIM_NUM_1_MORE": "1 or more",
       "FROM_CACHE": "From Cache",
       "SIZE": "Size",
-      "COLOR": "Opacity"
+      "COLOR": "Opacity",
+      "PREVIEW_QUERY": "View Query",
+      "PERCENT_BAR": "Stacked Percent"
     },
     "DASHBOARD": {
       "CATEGORY": "Category",
@@ -147,7 +165,29 @@
       "PARAM": "Param",
       "PARAM_NAME": "Param Name",
       "CUBE_TREE": "Cube/Query in dashboard",
-      "LINKED_COLUMN": "Columns linked with this param"
+      "LINKED_COLUMN": "Columns linked with this param",
+      "PARAM_TYPE": "Param Type",
+      "VALUE_FORMMAT": "Value Format",
+      "VIEW_FORMMAT": "View Format",
+      "MIN": "Min",
+      "MAX": "Max",
+      "NOW": "Now",
+      "ONE_HOUR_AGO": "One hour ago",
+      "ONE_DAY_AGO": "One day ago",
+      "ONE_MONTH_AGO": "One month ago",
+      "STEP": "Step",
+      "MAX_RANGE": "Max Range",
+      "DEFAUT_RANGE": "Default Range",
+      "ONE_SECOND": "1 Second",
+      "ONE_MINUT": "1 Minute",
+      "ONE_HOUR": "1 Hour",
+      "ONE_DAY": "1 Day",
+      "MAIN_NODE": "Main Node",
+      "SUB_NODE": "Sub Node",
+      "ADD_MAIN_NODE": "Add Main Node",
+      "ADD_SUB_NODE": "Add Sub Node",
+      "NODE_NAME": "Node Name",
+      "TITLE": "Title"
     },
     "CATEGORY": {
       "NAME": "Category Name",
@@ -161,7 +201,16 @@
       "DATASOURCE": "Datasource",
       "ADD": "Add",
       "REAL_TIME_INTERVAL": "Real Time Interval(s)",
-      "REAL_TIME_TIP": "If You don't need refresh, just leave it as BLANK"
+      "REAL_TIME_TIP": "If You don't need refresh, just leave it as BLANK",
+      "DIMENSION": "Dimension",
+      "HIERARCHY": "Hierarchy",
+      "MEASURE": "Measure",
+      "FILTER": "Filter",
+      "UNCLASSIFY": "Selects",
+      "TIP_EDIT_ALIAS": "Alias",
+      "TIP_ADD_HIERARCHY": "Add Hierarchy",
+      "TIP_SWITCH_TO_MEASURE": "Switch to Measure",
+      "TIP_SWITCH_TO_DIMENSION": "Switch to Dimension"
     },
     "JOB": {
       "CONFIG": "Config",
@@ -194,6 +243,10 @@
       "FINISH": "Finish",
       "PROCESSING": "Processing",
       "STATUS": "Status"
+    },
+    "SHARE_RES": {
+      "YOUR_RES": "Your Resources",
+      "SHARE": "Share"
     }
   },
   "ADMIN": {
@@ -213,9 +266,13 @@
     "DATASOURCE": "Datasource",
     "DATASET": "Cube",
     "WIDGET": "Widget",
-    "CONTACT_ADMIN": "Please contact the administrator to apply the following resources' access"
+    "JOB": "Job",
+    "CONTACT_ADMIN": "Please contact the administrator to apply the following resources' access",
+    "BY_NAME": "By Name",
+    "BY_ROLE": "By Role"
   },
   "DATAPROVIDER": {
+    "AGGREGATABLE_PROVIDER": "Aggregatable DataProvider",
     "JDBC": {
       "DRIVER": "Driver (eg: com.mysql.jdbc.Driver)",
       "JDBCURL": "JDBC Url (eg: jdbc:mysql://hostname:port/db)",

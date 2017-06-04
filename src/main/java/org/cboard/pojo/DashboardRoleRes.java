@@ -8,6 +8,15 @@ public class DashboardRoleRes {
     private String roleId;
     private Long resId;
     private String resType;
+    private String permission;
+
+    public String getPermission() {
+        return permission;
+    }
+
+    public void setPermission(String permission) {
+        this.permission = permission;
+    }
 
     public String getResType() {
         return resType;

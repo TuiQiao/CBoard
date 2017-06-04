@@ -10,7 +10,7 @@ var CBoardEChartRender = function (jqContainer, options, isDeepSpec) {
         title: {},
         grid: {
             left: '50',
-            right: '40',
+            right: '20',
             bottom: '15%',
             top: '20%',
             containLabel: false
@@ -21,11 +21,11 @@ var CBoardEChartRender = function (jqContainer, options, isDeepSpec) {
         legend: {
             x: 'left',
             itemWidth: 15,
-            itemHeight: 10,
+            itemHeight: 10
         }
     };
     this.options = options;
-}
+};
 
 CBoardEChartRender.prototype.theme = "theme-fin1"; // 主题
 

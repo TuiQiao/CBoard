@@ -1,0 +1,19 @@
+<label class="col-sm-2 control-label">{{'COMMON.FILTER_GROUP'|translate}}</label>
+<div class="col-sm-10">
+    <div class="input-group">
+        <div class="form-control" style="min-height: 35px;height: auto;padding: 0px">
+            <div ng-repeat="o in curWidget.filterGroups" dnd-draggable="o" dnd-effect-allowed="move" dnd-type="'filterGroup'"
+                 class="btn-group" style="cursor: move;margin: 3px 3px;">
+                <button type="button" class="btn btn-warning btn-sm">
+                    {{o.group}}
+                </button>
+                <button type="button" class="btn btn-warning btn-sm dropdown-toggle" ng-click="editFilterGroup(o)" ng-if="!isDsFilter(o)">
+                    <span class="fa fa-edit"></span>
+                </button>
+            </div>
+        </div>
+        <div class="input-group-btn">
+            <button type="button" class="btn btn-info" ng-click="editFilterGroup()" style="min-height: 38px;">{{'CONFIG.WIDGET.ADD'|translate}}</button>
+        </div>
+    </div>
+</div>

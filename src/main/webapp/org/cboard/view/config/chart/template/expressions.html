@@ -3,21 +3,15 @@
 </label>
 <div class="col-sm-10">
     <div class="input-group">
-        <div dnd-list="expressions"
-             dnd-allowed-types="['exp']"
-             class="form-control" style="min-height: 38px;height: auto;padding: 0px">
-            <div class="dndPlaceholder sort-highlight"
-                 style="height: 24px; width: 93px;margin: 3px 3px;display: inline-block;vertical-align: middle;">
-            </div>
-            <div ng-repeat="o in expressions" dnd-draggable="o" dnd-type="'exp'"
+        <div class="form-control" style="min-height: 38px;height: auto;padding: 0px">
+            <div ng-repeat="o in curWidget.expressions" dnd-draggable="o" dnd-type="'exp'"
                  dnd-effect-allowed="move"
                  dnd-moved="expressions.splice($index, 1)" class="btn-group"
                  style="margin: 3px 3px;">
                 <button type="button" class="btn btn-primary btn-sm" style="cursor: move;">
-                    {{o.alias?o.alias:o.exp}}
+                    {{o.alias}}
                 </button>
-                <button type="button" class="btn btn-primary btn-sm dropdown-toggle"
-                        ng-click="editExp(o)">
+                <button type="button" class="btn btn-primary btn-sm dropdown-toggle" ng-click="editExp(o)" ng-if="!isDsExpression(o)">
                     <span class="fa fa-edit"></span>
                 </button>
             </div>

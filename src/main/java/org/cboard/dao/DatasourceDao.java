@@ -16,6 +16,8 @@ public interface DatasourceDao {
 
     List<DashboardDatasource> getDatasourceList(String userId);
 
+    List<DashboardDatasource> getDatasourceListAdmin(String userId);
+
     DashboardDatasource getDatasource(Long datasourceId);
 
     int save(DashboardDatasource dashboardDatasource);
@@ -26,5 +28,5 @@ public interface DatasourceDao {
 
     int delete(Long id, String userId);
 
-    long checkDatasourceRole(String userId, Long datasourceId);
+    long checkDatasourceRole(String userId, Long datasourceId, String permissionPattern);
 }

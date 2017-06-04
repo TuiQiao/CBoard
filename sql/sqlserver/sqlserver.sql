@@ -75,6 +75,7 @@ CREATE TABLE dashboard_role_res (
   role_id varchar(100) DEFAULT NULL,
   res_type varchar(100) DEFAULT NULL,
   res_id bigint DEFAULT NULL,
+  permission varchar(20) DEFAULT NULL,
   PRIMARY KEY CLUSTERED(role_res_id)
 );
 
@@ -91,4 +92,12 @@ CREATE TABLE dashboard_job (
   job_status bigint,
   exec_log text,
   PRIMARY KEY CLUSTERED (job_id)
+);
+
+CREATE TABLE dashboard_board_param (
+  board_param_id bigint identity(1,1),
+  user_id varchar(50) NOT NULL,
+  board_id bigint NOT NULL,
+  config text,
+  PRIMARY KEY CLUSTERED (board_param_id)
 );

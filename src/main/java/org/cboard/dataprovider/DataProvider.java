@@ -3,49 +3,64 @@ package org.cboard.dataprovider;
 import com.alibaba.fastjson.JSONObject;
 import com.google.common.base.Charsets;
 import com.google.common.hash.Hashing;
-import org.cboard.dataprovider.aggregator.Aggregator;
-import org.cboard.dataprovider.annotation.DatasourceParameter;
+import com.googlecode.aviator.AviatorEvaluator;
+import org.cboard.dataprovider.aggregator.Aggregatable;
+import org.cboard.dataprovider.aggregator.InnerAggregator;
 import org.cboard.dataprovider.config.AggConfig;
+import org.cboard.dataprovider.config.CompositeConfig;
+import org.cboard.dataprovider.config.ConfigComponent;
+import org.cboard.dataprovider.config.DimensionConfig;
+import org.cboard.dataprovider.expression.NowFunction;
 import org.cboard.dataprovider.result.AggregateResult;
+import org.cboard.util.NaturalOrderComparator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 
-import java.util.Map;
+import java.util.*;
+import java.util.function.Consumer;
+import java.util.stream.Collectors;
 
 /**
  * Created by zyong on 2017/1/9.
  */
 public abstract class DataProvider {
 
-    @Autowired
-    private Aggregator aggregator;
-    private Map<String, String> dataSource;
-    private Map<String, String> query;
+    private InnerAggregator innerAggregator;
+    protected Map<String, String> dataSource;
+    protected Map<String, String> query;
     private int resultLimit;
     private long interval = 12 * 60 * 60; // second
 
+    public static final String NULL_STRING = "#NULL";
     private static final Logger logger = LoggerFactory.getLogger(DataProvider.class);
 
-    @DatasourceParameter(label = "Aggregate Provider", type = DatasourceParameter.Type.Checkbox, order = 100)
-    private String aggregateProvider = "aggregateProvider";
-
-    private boolean isAggregateProviderActive() {
-        String v = dataSource.get(aggregateProvider);
-        return v != null && "true".equals(v);
+    static {
+        AviatorEvaluator.addFunction(new NowFunction());
     }
+
+    public abstract boolean doAggregationInDataSource();
 
     /**
      * get the aggregated data by user's widget designer
      *
      * @return
      */
-    public AggregateResult getAggData(AggConfig ac, boolean reload) throws Exception {
-        if (this instanceof AggregateProvider && isAggregateProviderActive()) {
-            return ((AggregateProvider) this).queryAggData(dataSource, query, ac);
+    public final AggregateResult getAggData(AggConfig ac, boolean reload) throws Exception {
+        evalValueExpression(ac);
+        if (this instanceof Aggregatable && doAggregationInDataSource()) {
+            return ((Aggregatable) this).queryAggData(ac);
         } else {
             checkAndLoad(reload);
-            return aggregator.queryAggData(dataSource, query, ac);
+            return innerAggregator.queryAggData(ac);
+        }
+    }
+
+    public final String getViewAggDataQuery(AggConfig config) throws Exception {
+        evalValueExpression(config);
+        if (this instanceof Aggregatable && doAggregationInDataSource()) {
+            return ((Aggregatable) this).viewAggDataQuery(config);
+        } else {
+            return "Not Support";
         }
     }
 
@@ -55,44 +70,99 @@ public abstract class DataProvider {
      * @param columnName
      * @return
      */
-    public String[][] getDimVals(String columnName, AggConfig config, boolean reload) throws Exception {
-        String[][] dimVals = null;
-        if (this instanceof AggregateProvider && isAggregateProviderActive()) {
-            dimVals = ((AggregateProvider) this).queryDimVals(dataSource, query, columnName, config);
+    public final String[] getDimVals(String columnName, AggConfig config, boolean reload) throws Exception {
+        String[] dimVals = null;
+        evalValueExpression(config);
+        if (this instanceof Aggregatable && doAggregationInDataSource()) {
+            dimVals = ((Aggregatable) this).queryDimVals(columnName, config);
         } else {
             checkAndLoad(reload);
-            dimVals = aggregator.queryDimVals(dataSource, query, columnName, config);
+            dimVals = innerAggregator.queryDimVals(columnName, config);
         }
-        return dimVals;
+        return Arrays.stream(dimVals)
+                .map(member -> {
+                    return Objects.isNull(member) ? NULL_STRING : member;
+                })
+                .sorted(new NaturalOrderComparator()).limit(1000).toArray(String[]::new);
     }
 
-    public String[] getColumn(boolean reload) throws Exception {
+    public final String[] getColumn(boolean reload) throws Exception {
         String[] columns = null;
-        if (this instanceof AggregateProvider && isAggregateProviderActive()) {
-            columns = ((AggregateProvider) this).getColumn(dataSource, query);
+        if (this instanceof Aggregatable && doAggregationInDataSource()) {
+            columns = ((Aggregatable) this).getColumn();
         } else {
             checkAndLoad(reload);
-            columns = aggregator.getColumn(dataSource, query);
+            columns = innerAggregator.getColumn();
         }
+        Arrays.sort(columns);
         return columns;
     }
 
     private void checkAndLoad(boolean reload) throws Exception {
         String key = getLockKey(dataSource, query);
         synchronized (key.intern()) {
-            if (reload || !aggregator.checkExist(dataSource, query)) {
-                String[][] data = getData(dataSource, query);
-                aggregator.loadData(dataSource, query, data, interval);
+            if (reload || !innerAggregator.checkExist()) {
+                String[][] data = getData();
+                innerAggregator.loadData(data, interval);
                 logger.info("loadData {}", key);
             }
         }
+    }
+
+    private void evalValueExpression(AggConfig ac) {
+        if (ac == null) {
+            return;
+        }
+        ac.getFilters().forEach(e -> evaluator(e));
+        ac.getColumns().forEach(e -> evaluator(e));
+        ac.getRows().forEach(e -> evaluator(e));
+    }
+
+    private void evaluator(ConfigComponent e) {
+        if (e instanceof DimensionConfig) {
+            DimensionConfig dc = (DimensionConfig) e;
+            dc.setValues(dc.getValues().stream().map(v -> getFilterValue(v)).collect(Collectors.toList()));
+        }
+        if (e instanceof CompositeConfig) {
+            CompositeConfig cc = (CompositeConfig) e;
+            cc.getConfigComponents().forEach(_e -> evaluator(_e));
+        }
+    }
+
+    private String getFilterValue(String value) {
+        if (value == null || !(value.startsWith("{") && value.endsWith("}"))) {
+            return value;
+        }
+        return AviatorEvaluator.compile(value.substring(1, value.length() - 1), true).execute().toString();
     }
 
     private String getLockKey(Map<String, String> dataSource, Map<String, String> query) {
         return Hashing.md5().newHasher().putString(JSONObject.toJSON(dataSource).toString() + JSONObject.toJSON(query).toString(), Charsets.UTF_8).hash().toString();
     }
 
-    abstract public String[][] getData(Map<String, String> dataSource, Map<String, String> query) throws Exception;
+    public List<DimensionConfig> filterCCList2DCList(List<ConfigComponent> filters) {
+        List<DimensionConfig> result = new LinkedList<>();
+        filters.stream().forEach(cc -> {
+            result.addAll(configComp2DimConfigList(cc));
+        });
+        return result;
+    }
+
+    public List<DimensionConfig> configComp2DimConfigList(ConfigComponent cc) {
+        List<DimensionConfig> result = new LinkedList<>();
+        if (cc instanceof DimensionConfig) {
+            result.add((DimensionConfig) cc);
+        } else {
+            Iterator<ConfigComponent> iterator = cc.getIterator();
+            while (iterator.hasNext()) {
+                ConfigComponent next = iterator.next();
+                result.addAll(configComp2DimConfigList(next));
+            }
+        }
+        return result;
+    }
+
+    abstract public String[][] getData() throws Exception;
 
     public void setDataSource(Map<String, String> dataSource) {
         this.dataSource = dataSource;
@@ -112,6 +182,10 @@ public abstract class DataProvider {
 
     public void setInterval(long interval) {
         this.interval = interval;
+    }
+
+    public void setInnerAggregator(InnerAggregator innerAggregator) {
+        this.innerAggregator = innerAggregator;
     }
 
 }

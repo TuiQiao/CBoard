@@ -10,6 +10,15 @@ public class DashboardWidget {
     private String name;
     private String categoryName;
     private String data;
+    private String permission;
+
+    public String getPermission() {
+        return permission;
+    }
+
+    public void setPermission(String permission) {
+        this.permission = permission;
+    }
 
     public Long getId() {
         return id;

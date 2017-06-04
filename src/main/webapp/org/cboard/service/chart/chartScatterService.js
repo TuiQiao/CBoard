@@ -8,94 +8,143 @@ cBoard.service('chartScatterService', function (dataService) {
         return new CBoardEChartRender(containerDom, option).chart(null, persist);
     };
 
-    this.parseOption = function (chartData, chartConfig) {
-        var echartOption = null;
-        dataService.castRawData2Series(chartData, chartConfig, function (casted_keys, casted_values, aggregate_data, newValuesConfig) {
-            var string_keys = _.map(casted_keys, function (key) {
-                return key.join('-');
+    this.parseOption = function (data) {
+        var casted_keys = data.keys;
+        var casted_values = data.series;
+        var aggregate_data = data.data;
+        var newValuesConfig = data.seriesConfig;
+
+        var string_keys = _.map(casted_keys, function (key) {
+            return key.join('-');
+        });
+        var series = [];
+        var valueName = [];
+
+        for (var i = 0; i < casted_values.length; i++) {
+            var joined_values = casted_values[i].join('-');
+            var valueAxisIndex = newValuesConfig[joined_values].valueAxisIndex;
+            var name = casted_values[i].slice(0, -1).join('-');
+
+            var s = _.find(series, function (_s) {
+                return _s.name == name;
             });
-            var series = [];
-
-            for (var i = 0; i < casted_values.length; i++) {
-                var joined_values = casted_values[i].join('-');
-                var valueAxisIndex = newValuesConfig[joined_values].valueAxisIndex;
-                var name = casted_values[i].slice(0, -1).join('-');
-
-                var s = _.find(series, function (_s) {
-                    return _s.name == name;
-                });
-                if (!s) {
-                    s = {name: name};
-                    series.push(s);
-                }
-                if (valueAxisIndex == 0) {
-                    s.yIdx = i;
-                }
-                if (valueAxisIndex == 1) {
-                    s.sizeIdx = i;
-                }
-                if (valueAxisIndex == 2) {
-                    s.colorIdx = i;
-                }
+            if (!s) {
+                s = {name: name};
+                series.push(s);
             }
-            var data = _.unzip(aggregate_data);
+            if (valueAxisIndex == 0) {
+                s.yIdx = i;
+            }
+            if (valueAxisIndex == 1) {
+                s.sizeIdx = i;
+            }
+            if (valueAxisIndex == 2) {
+                s.colorIdx = i;
+            }
+            valueName[valueAxisIndex] = casted_values[i][casted_values[i].length - 1];
+        }
+        var data = _.unzip(aggregate_data);
 
-            _.each(series, function (s) {
-                s.data = _.map(data, function (d, i) {
-                    return [string_keys[i], d[s.yIdx], d[s.sizeIdx], d[s.colorIdx]];
-                });
-                s.sizeMax = _.max(data, function (d) {
-                    return d[s.sizeIdx];
-                })[s.sizeIdx];
-                s.colorMax = _.max(data, function (d) {
-                    return d[s.colorIdx];
-                })[s.colorIdx];
+        _.each(series, function (s) {
+            s.data = _.map(data, function (d, i) {
+                return [string_keys[i], d[s.yIdx], d[s.sizeIdx] ? d[s.sizeIdx] : 1, d[s.colorIdx] ? d[s.colorIdx] : 1];
             });
-
-            echartOption = {
-                legend: {
-                    data: _.map(series, function (v) {
-                        return v.name;
-                    })
-                },
-                xAxis: {
-                    data: string_keys,
-                    splitLine: {
-                        lineStyle: {
-                            type: 'dashed'
-                        }
+            s.sizeMax = _.max(s.data, function (d) {
+                return Number(d[2]);
+            })[2];
+            s.sizeMin = _.min(s.data, function (d) {
+                return Number(d[2]);
+            })[2];
+            s.colorMax = _.max(s.data, function (d) {
+                return Number(d[3]);
+            })[3];
+            s.colorMin = _.min(s.data, function (d) {
+                return Number(d[3]);
+            })[3];
+        });
+        var sizeMax = _.max(series, function (s) {
+            return Number(s.sizeMax);
+        }).sizeMax;
+        var sizeMin = _.min(series, function (s) {
+            return Number(s.sizeMin);
+        }).sizeMin;
+        var colorMax = _.max(series, function (s) {
+            return Number(s.colorMax);
+        }).colorMax;
+        var colorMin = _.max(series, function (s) {
+            return Number(s.colorMin);
+        }).colorMin;
+        var echartOption = {
+            legend: {
+                data: _.map(series, function (v) {
+                    return v.name;
+                })
+            },
+            tooltip: {
+                trigger: 'item',
+                formatter: function (params) {
+                    var s = params.seriesName + " " + params.value[0] + "</br>";
+                    for (var i = 1; i < params.value.length; i++) {
+                        if (valueName[i - 1] == undefined) continue;
+                        s += valueName[i - 1] + " : " + params.value[i] + "<br>"
+                    }
+                    return s;
+                }
+            },
+            xAxis: {
+                data: string_keys,
+                splitLine: {
+                    lineStyle: {
+                        type: 'dashed'
+                    }
+                }
+            },
+            yAxis: {
+                axisLabel: {
+                    formatter: function (value) {
+                        return numbro(value).format("0a.[0000]");
                     }
                 },
-                yAxis: {
-                    axisLabel: {
-                        formatter: function (value) {
-                            return numbro(value).format("0a.[0000]");
-                        }
-                    },
-                    splitLine: {
-                        lineStyle: {
-                            type: 'dashed'
-                        }
-                    },
-                    scale: true
+                splitLine: {
+                    lineStyle: {
+                        type: 'dashed'
+                    }
                 },
-                series: _.map(series, function (v) {
-                    return {
-                        name: v.name,
-                        data: v.data,
-                        type: 'scatter',
-                        symbolSize: function (data) {
-                            return data[2] / v.sizeMax * 10
-                        },
-                        itemStyle: {
-                            normal: {
-                                opacity: data[3] / v.colorMax * 1.0
-                            }
-                        }
-                    };
-                })
-            };
-        });
+                scale: true
+            },
+            visualMap: [
+                {
+                    dimension: 2,
+                    show: false,
+                    min: sizeMin * 0.8,
+                    max: sizeMax * 1.5,
+                    calculable: true,
+                    precision: 0.1,
+                    textStyle: {
+                        color: 'white'
+                    },
+                    inRange: {
+                        symbolSize: [5, 70]
+                    }
+                },
+                {
+                    dimension: 3,
+                    show: false,
+                    min: colorMin,
+                    max: colorMax,
+                    inRange: {
+                        opacity: [0.2, 1]
+                    }
+
+                }],
+            series: _.map(series, function (v) {
+                return {
+                    name: v.name,
+                    data: v.data,
+                    type: 'scatter'
+                };
+            })
+        };
         return echartOption;
     };
 });

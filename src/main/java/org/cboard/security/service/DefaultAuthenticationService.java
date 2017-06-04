@@ -23,11 +23,6 @@ public class DefaultAuthenticationService implements AuthenticationService {
         if (authentication == null) {
             return null;
         }
-        if ("anonymousUser".equals(authentication.getPrincipal())) {
-            User user = new User("anonymousUser", "", new ArrayList<>());
-            user.setUserId(LocalSecurityFilter.getLocalUserId());
-            return user;
-        }
         User user = (User) authentication.getPrincipal();
         if (user == null) {
             return null;

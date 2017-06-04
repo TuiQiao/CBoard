@@ -58,19 +58,28 @@ angular.module('cBoard').config(['$stateProvider', function ($stateProvider) {
             url: '/category',
             templateUrl: 'org/cboard/view/config/category.html',
             controller: 'categoryCtrl'
-        }).state('config.dataset', {
+        })
+        .state('config.dataset', {
             url: '/dataset',
             templateUrl: 'org/cboard/view/config/dataset.html',
             controller: 'datasetCtrl'
-        }).state('config.job', {
+        })
+        .state('config.job', {
             url: '/job',
             templateUrl: 'org/cboard/view/config/job.html',
             controller: 'jobCtrl'
-        }).state('admin', {
+        })
+        .state('config.role', {
+            url: '/role',
+            templateUrl: 'org/cboard/view/config/shareResource.html',
+            controller: 'shareResCtrl'
+        })
+        .state('admin', {
             url: '/admin',
             abstract: true,
             template: '<div ui-view></div>'
-        }).state('admin.user', {
+        })
+        .state('admin.user', {
             url: '/user',
             templateUrl: 'org/cboard/view/admin/user.html',
             controller: 'userAdminCtrl'
@@ -78,14 +87,15 @@ angular.module('cBoard').config(['$stateProvider', function ($stateProvider) {
 
 }]);
 
-angular.module('cBoard').factory('sessionHelper', ["$rootScope", function ($rootScope) {
+angular.module('cBoard').factory('sessionHelper', ["$rootScope","$q", function ($rootScope,$q) {
     var sessionHelper = {
         responseError: function (response) {
-            if (response.status == -1) {
-                window.location.href = "/";
-            } else {
-                return response;
+            if (response.data.status == 2) {
+                if ($rootScope.alert) {
+                    $rootScope.alert(response.data.msg);
+                }
             }
+            return $q.reject(response);
         }
     };
     return sessionHelper;

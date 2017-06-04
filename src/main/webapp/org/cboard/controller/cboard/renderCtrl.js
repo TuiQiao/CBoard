@@ -12,11 +12,14 @@ cBoard.controller('renderCtrl', function ($timeout, $rootScope, $scope, $state, 
                 w.realTimeTicket = d;
                 w.loading = false;
                 $scope.l--;
+            }, function (error) {
+                $scope.l--;
             });
         };
     };
 
     $scope.$watch('l', function (newValue) {
+        console.log(newValue);
         if (newValue == 0) {
             $timeout(function () {
                 runTask();

@@ -72,6 +72,7 @@ CREATE TABLE dashboard_role_res (
   role_id varchar(100) DEFAULT NULL,
   res_type varchar(100) DEFAULT NULL,
   res_id bigint(20) DEFAULT NULL,
+  permission varchar(20) DEFAULT NULL,
   PRIMARY KEY (role_res_id)
 );
 
@@ -88,4 +89,12 @@ CREATE TABLE dashboard_job (
   job_status bigint(20),
   exec_log text,
   PRIMARY KEY (job_id)
+);
+
+CREATE TABLE dashboard_board_param (
+  board_param_id bigint(20) NOT NULL AUTO_INCREMENT,
+  user_id varchar(50) NOT NULL,
+  board_id bigint(20) NOT NULL,
+  config text,
+  PRIMARY KEY (board_param_id)
 );

@@ -5,7 +5,7 @@
 cBoard.controller('dashboardViewCtrl', function ($timeout, $rootScope, $scope, $state, $stateParams, $http, ModalUtils, chartService, $interval, $uibModal, dataService) {
 
     $scope.loading = true;
-
+    $scope.paramInit = 0;
     $http.get("dashboard/getDatasetList.do").success(function (response) {
         $scope.datasetList = response;
         $scope.realtimeDataset = {};
@@ -16,20 +16,82 @@ cBoard.controller('dashboardViewCtrl', function ($timeout, $rootScope, $scope, $
         $scope.load(false);
     });
 
+    $scope.timelineColor = ['bg-light-blue', 'bg-red', 'bg-aqua', 'bg-green', 'bg-yellow', 'bg-gray', 'bg-navy', 'bg-teal', 'bg-purple', 'bg-orange', 'bg-maroon', 'bg-black'];
+
+    var groupTimeline = function () {
+        $scope.timeline = [];
+        var group = undefined;
+        _.each($scope.board.layout.rows, function (row, idx) {
+            if (idx == 0) {
+                $scope.timelineFilter = row;
+                return;
+            }
+            row.show = false;
+            if (row.node == 'parent') {
+                if (group) {
+                    $scope.timeline.push(group);
+                }
+                group = [];
+                row.show = true;
+            }
+            group.push(row);
+        });
+        $scope.timeline.push(group);
+    };
+
+    $scope.openCloseParentNode = function (group) {
+        var find = _.find(group, function (row) {
+            return row.node != 'parent' && row.show;
+        });
+        if (find) {
+            _.each(group, function (row) {
+                if (row.node != 'parent') {
+                    row.show = false;
+                    _.each(row.widgets, function (widget) {
+                        widget.show = false;
+                    });
+                }
+            });
+        } else {
+            _.each(group, function (row) {
+                if (row.node != 'parent') {
+                    row.show = true;
+                    _.each(row.widgets, function (widget) {
+                        widget.show = true;
+                    });
+                }
+            });
+        }
+    };
+
+    $scope.openCloseNode = function (row) {
+        if (row.show) {
+            row.show = false;
+            _.each(row.widgets, function (widget) {
+                widget.show = false;
+            });
+        } else {
+            row.show = true;
+            _.each(row.widgets, function (widget) {
+                widget.show = true;
+            });
+        }
+    };
+
     $http.post("admin/isConfig.do", {type: 'widget'}).success(function (response) {
         $scope.widgetCfg = response;
     });
 
     var buildRender = function (w, reload) {
         w.render = function (content, optionFilter, scope) {
-            chartService.render(content, w.widget.data, optionFilter, scope, reload).then(function (d) {
+            chartService.render(content, injectFilter(w.widget).data, optionFilter, scope, reload).then(function (d) {
                 w.realTimeTicket = d;
                 w.loading = false;
             });
             w.realTimeOption = {optionFilter: optionFilter, scope: scope};
         };
         w.modalRender = function (content, optionFilter, scope) {
-            w.modalRealTimeTicket = chartService.render(content, w.widget.data, optionFilter, scope);
+            w.modalRealTimeTicket = chartService.render(content, injectFilter(w.widget).data, optionFilter, scope);
             w.modalRealTimeOption = {optionFilter: optionFilter, scope: scope};
         };
     };
@@ -58,8 +120,8 @@ cBoard.controller('dashboardViewCtrl', function ($timeout, $rootScope, $scope, $
         }).success(function (data) {
             var blob = new Blob([data], {type: "application/vnd.ms-excel"});
             var objectUrl = URL.createObjectURL(blob);
-            var aForExcel = $("<a><span class='forExcel'>下载excel</span></a>").attr("href",objectUrl);
-            aForExcel.attr("download",$scope.board.name);
+            var aForExcel = $("<a><span class='forExcel'>下载excel</span></a>").attr("href", objectUrl);
+            aForExcel.attr("download", $scope.board.name);
             $("body").append(aForExcel);
             $(".forExcel").click();
             aForExcel.remove();
@@ -69,7 +131,68 @@ cBoard.controller('dashboardViewCtrl', function ($timeout, $rootScope, $scope, $
         });
     };
 
+    var refreshParam = function () {
+        _.each($scope.board.layout.rows, function (row) {
+            _.each(row.params, function (param) {
+                if (param.refresh) {
+                    param.refresh();
+                }
+            });
+        });
+        paramToFilter();
+    };
+
+    var loadWidget = function (reload) {
+        paramToFilter();
+        _.each($scope.board.layout.rows, function (row) {
+            _.each(row.widgets, function (widget) {
+                if (!_.isUndefined(widget.hasRole) && !widget.hasRole) {
+                    return;
+                }
+                buildRender(widget, reload);
+                widget.loading = true;
+                if ($scope.board.layout.type == 'timeline') {
+                    if (row.show) {
+                        widget.show = true;
+                    }
+                } else {
+                    widget.show = true;
+                }
+                //real time load task
+                var w = widget.widget.data;
+                var ds = _.find($scope.datasetList, function (e) {
+                    return e.id == w.datasetId;
+                });
+                if (ds && ds.data.interval && ds.data.interval > 0) {
+                    if (!$scope.intervalGroup[w.datasetId]) {
+                        $scope.intervalGroup[w.datasetId] = [];
+                        $scope.intervals.push($interval(function () {
+                            refreshParam();
+                            _.each($scope.intervalGroup[w.datasetId], function (e) {
+                                e();
+                            });
+                        }, ds.data.interval * 1000));
+                    }
+                    $scope.intervalGroup[w.datasetId].push(function () {
+                        try {
+                            if (widget.show) {
+                                chartService.realTimeRender(widget.realTimeTicket, injectFilter(widget.widget).data);
+                                if (widget.modalRealTimeTicket) {
+                                    chartService.realTimeRender(widget.modalRealTimeTicket, injectFilter(widget.widget).data, widget.modalRealTimeOption.optionFilter, null);
+                                }
+                            }
+                        } catch (e) {
+                            console.error(e);
+                        }
+                    });
+                }
+            });
+        });
+    };
+
+    var paramInitListener;
     $scope.load = function (reload) {
+        $scope.paramInit = 0;
         $scope.loading = true;
         _.each($scope.intervals, function (e) {
             $interval.cancel(e);
@@ -84,78 +207,35 @@ cBoard.controller('dashboardViewCtrl', function ($timeout, $rootScope, $scope, $
             });
         }
         $http.get("dashboard/getBoardData.do?id=" + $stateParams.id).success(function (response) {
+            $scope.intervalGroup = {};
             $scope.loading = false;
             $scope.board = response;
             _.each($scope.board.layout.rows, function (row) {
-                _.each(row.widgets, function (widget) {
-                    if (!_.isUndefined(widget.hasRole) && !widget.hasRole) {
-                        return;
-                    }
-                    buildRender(widget, reload);
-                    widget.loading = true;
-                    widget.show = true;
-                    var w = widget.widget.data;
-                    //real time load task
-                    var ds = _.find($scope.datasetList, function (e) {
-                        return e.id == w.datasetId;
-                    });
-                    if (ds && ds.data.interval && ds.data.interval > 0) {
-                        $scope.intervals.push($interval(function () {
-                            try {
-                                chartService.realTimeRender(widget.realTimeTicket, widget.widget.data);
-                                if (widget.modalRealTimeTicket) {
-                                    chartService.realTimeRender(widget.modalRealTimeTicket, widget.widget.data, widget.modalRealTimeOption.optionFilter, null);
-                                }
-                            } catch (e) {
-                                console.error(e);
-                            }
-                        }, ds.data.interval * 1000));
+                _.each(row.params, function (param) {
+                    if (!param.paramType) {
+                        param.paramType = 'selector';
                     }
                 });
             });
-
+            if (paramInitListener) {
+                paramInitListener(reload);
+            }
             _.each($scope.board.layout.rows, function (row) {
                 _.each(row.params, function (param) {
-                    param.selects = [];
-                    param.type = '=';
-                    param.values = [];
+                    $scope.paramInit++;
                 });
             });
-
-            _.each($scope.board.layout.rows, function (row) {
-                _.each(row.params, function (param) {
-                    _.each(param.col, function (c) {
-                        var p;
-                        if (_.isUndefined(c.datasetId)) {
-                            _.each($scope.board.layout.rows, function (row) {
-                                _.each(row.widgets, function (widget) {
-                                    if (widget.widget.id == c.widgetId) {
-                                        p = {
-                                            datasourceId: widget.widget.data.datasource,
-                                            query: angular.toJson(widget.widget.data.query),
-                                            datasetId: null
-                                        };
-                                    }
-                                });
-                            });
-                        } else {
-                            p = {datasourceId: null, query: null, datasetId: c.datasetId};
-                        }
-                        $http.post("dashboard/getDimensionValues.do", {
-                            datasourceId: p.datasourceId,
-                            query: p.query,
-                            datasetId: p.datasetId,
-                            colmunName: c.column
-                        }).success(function (response) {
-                            _.each(response[0], function (s) {
-                                if (_.indexOf(param.selects, s) < 0) {
-                                    param.selects.push(s);
-                                }
-                            });
-
-                        });
-                    });
-                });
+            if ($scope.board.layout.type == 'timeline') {
+                groupTimeline();
+            }
+            if ($scope.paramInit == 0) {
+                loadWidget(reload);
+            }
+            paramInitListener = $scope.$on('paramInitFinish', function (e, d) {
+                $scope.paramInit--;
+                if ($scope.paramInit == 0) {
+                    loadWidget(reload)
+                }
             });
         });
     };
@@ -170,7 +250,7 @@ cBoard.controller('dashboardViewCtrl', function ($timeout, $rootScope, $scope, $
         return widget;
     };
 
-    $scope.applyParamFilter = function () {
+    var paramToFilter = function () {
         $scope.widgetFilters = [];
         $scope.datasetFilters = [];
         _.each($scope.board.layout.rows, function (row) {
@@ -198,7 +278,10 @@ cBoard.controller('dashboardViewCtrl', function ($timeout, $rootScope, $scope, $
                 });
             });
         });
+    };
 
+    $scope.applyParamFilter = function () {
+        paramToFilter();
         _.each($scope.board.layout.rows, function (row) {
             _.each(row.widgets, function (w) {
                 try {
@@ -208,6 +291,15 @@ cBoard.controller('dashboardViewCtrl', function ($timeout, $rootScope, $scope, $
                 }
             });
         });
+        updateParamTitle();
+    };
+
+    $scope.paramToString = function (row) {
+        return _.filter(_.map(row.params, function (e) {
+            return e.title;
+        }), function (e) {
+            return e && e.length > 0;
+        }).join('; ');
     };
 
     $scope.modalChart = function (widget) {
@@ -285,131 +377,88 @@ cBoard.controller('dashboardViewCtrl', function ($timeout, $rootScope, $scope, $
             widget.show = true;
         });
     };
-    var paramArr = [];
-    $scope.editParam = function (param) {
-        var ok = $scope.applyParamFilter;
-        $uibModal.open({
-            templateUrl: 'org/cboard/view/dashboard/modal/boardParam.html',
-            windowTemplateUrl: 'org/cboard/view/util/modal/window.html',
-            backdrop: false,
-            size: 'lg',
-            controller: function ($scope, $uibModalInstance, dataService) {
-                var paramSelects = angular.copy(param.selects);
-                paramSelects.map(function (d, l) {
-                    param.values.map(function (i) {
-                        d == i ? paramSelects.splice(l, 1) : null;
-                    });
-                });
-                $scope.selects = paramSelects;
-                $scope.type = ['=', '≠', '>', '<', '≥', '≤', '(a,b]', '[a,b)', '(a,b)', '[a,b]'];
-                $scope.param = param;
-                $scope.operate = {};
-                var showValues = function (operate, type) {
-                    var equal = ['=', '≠'];
-                    var openInterval = ['>', '<', '≥', '≤'];
-                    var closeInterval = ['(a,b]', '[a,b)', '(a,b)', '[a,b]'];
-                    operate.equal = $.inArray(type, equal) > -1 ? true : false;
-                    operate.openInterval = $.inArray(type, openInterval) > -1 ? true : false;
-                    operate.closeInterval = $.inArray(type, closeInterval) > -1 ? true : false;
-                };
-                showValues($scope.operate, $scope.param.type);
-                $scope.selected = function (v) {
-                    return _.indexOf($scope.param.values, v) == -1
-                };
-                $scope.selectedValues = function (ev) {
-                    var opt = $scope.operate.equal ? 'equal' : ($scope.operate.openInterval ? 'openInterval' : 'closeInterval');
-                    var select = ev.target.textContent;
-                    var types = {
-                        equal: function () {
-                            param.values.push(select);
-                            $scope.selects.map(function (d, i) {
-                                d == select ? $scope.selects.splice(i, 1) : null;
-                            });
-                        },
-                        openInterval: function () {
-                            if (param.values.length == 0) {
-                                param.values.push(select);
-                                $scope.selects.map(function (d, i) {
-                                    d == select ? $scope.selects.splice(i, 1) : null;
-                                });
-                            }
-                        },
-                        closeInterval: function () {
-                            if (param.values[0] == null) {
-                                param.values[0] = select;
-                                $scope.selects.map(function (d, i) {
-                                    d == select ? $scope.selects.splice(i, 1) : null;
-                                });
-                            } else if (param.values[1] == null) {
-                                param.values[1] = select;
-                                $scope.selects.map(function (d, i) {
-                                    d == select ? $scope.selects.splice(i, 1) : null;
-                                });
-                            }
-                        }
-                    };
-                    types[opt] ? types[opt]() : null;
-                };
-                $scope.filterType = function () {
-                    $scope.param.values = [];
-                    $scope.selects = _.sortBy(dataService.toNumber(param.selects));
-                    showValues($scope.operate, $scope.param.type);
-                };
-                $scope.deleteSelected = function (ev) {
-                    var select = ev.target.textContent;
-                    $scope.selects.push(select);
-                    $scope.selects = _.sortBy(dataService.toNumber($scope.selects));
-                    $scope.param.values.map(function (d, i) {
-                        d == select ? $scope.param.values.splice(i, 1) : null;
-                    });
-                };
-                $scope.deleteDoubleValues = function (index) {
-                    $scope.selects.push($scope.param.values[index]);
-                    $scope.selects = _.sortBy(dataService.toNumber($scope.selects));
-                    $scope.param.values[index] = null;
-                };
-                $scope.close = function () {
-                    $uibModalInstance.close();
-                };
-                $scope.ok = function () {
-                    $uibModalInstance.close();
-                    ok();
-                    var paramObj = {};
-                    var opt = $scope.operate.equal ? 'equal' : ($scope.operate.openInterval ? 'openInterval' : 'closeInterval');
-                    var types = {
-                        equal: function () {
-                            paramObj.filter = $scope.param.type + ' (' + $scope.param.values + ')';
-                        },
-                        openInterval: function () {
-                            paramObj.filter = $scope.param.type + ' ' + $scope.param.values;
-                        },
-                        closeInterval: function () {
-                            var leftBrackets = $scope.param.type.split('a')[0];
-                            var rightBrackets = $scope.param.type.split('b')[1];
-                            paramObj.filter = 'between ' + leftBrackets + $scope.param.values[0] + ',' + $scope.param.values[1] + rightBrackets;
-                        }
-                    };
-                    paramObj.name = $scope.param.name;
-                    types[opt] ? types[opt]() : null;
-                    var oldParam = _.find(paramArr, function (param) {
-                        return param.name == paramObj.name;
-                    });
-                    if (oldParam) {
-                        paramArr.map(function (d) {
-                            if (d.name == oldParam.name) {
-                                d.filter = paramObj.filter;
-                            }
-                        });
-                    } else {
-                        paramArr.push(paramObj);
-                    }
-                    var template = '';
-                    paramArr.map(function (d) {
-                        template += "<span class='filterParam'><span>" + d.name + "</span><span> :  " + d.filter + "</span></span>"
-                    });
-                    $('div.paramTemplate').html(template);
-                };
-            },
+
+    $http.get("dashboard/getBoardParam.do?boardId=" + $stateParams.id).success(function (response) {
+        if (response) {
+            $scope.boardParams = JSON.parse(response.config);
+        } else {
+            $scope.boardParams = [];
+        }
+    });
+
+    $scope.newBoardParam = function (name) {
+        if (name == '') {
+            return;
+        }
+        var params = {};
+        _.each($scope.board.layout.rows, function (row) {
+            _.each(row.params, function (param) {
+                if ('slider' != param.paramType) {
+                    params[param.name] = {type: param.type, values: param.values};
+                }
+            });
+        });
+        $scope.boardParams.unshift({name: name, params: params});
+        $http.post("dashboard/saveBoardParam.do", {
+            boardId: $stateParams.id,
+            config: angular.toJson($scope.boardParams)
+        }).success(function (response) {
         });
     };
+
+    $scope.deleteBoardParam = function (index) {
+        $scope.boardParams.splice(index,1);
+        $http.post("dashboard/saveBoardParam.do", {
+            boardId: $stateParams.id,
+            config: angular.toJson($scope.boardParams)
+        }).success(function (response) {
+        });
+    };
+
+    $scope.applyBoardParam = function (param) {
+        for (var name in param) {
+            _.each($scope.board.layout.rows, function (row) {
+                _.each(row.params, function (p) {
+                    if (p.name == name) {
+                        p.type = param[name].type;
+                        p.values = param[name].values;
+                    }
+                });
+            });
+        }
+        $scope.applyParamFilter();
+    };
+
+    var updateParamTitle = function () {
+        _.each($scope.board.layout.rows, function (row) {
+            _.each(row.params, function (param) {
+                if ('slider' == param.paramType) {
+                    return;
+                }
+                var paramObj;
+                switch (param.type) {
+                    case '=':
+                    case '≠':
+                        paramObj = param.name + ' ' + param.type + ' (' + param.values + ')';
+                        break;
+                    case '>':
+                    case '<':
+                    case '≥':
+                    case '≤':
+                        paramObj = param.name + ' ' + param.type + ' ' + param.values;
+                        break;
+                    case '(a,b]':
+                    case '[a,b)':
+                    case '(a,b)':
+                    case '[a,b]':
+                        var leftBrackets = param.type.split('a')[0];
+                        var rightBrackets = param.type.split('b')[1];
+                        paramObj = param.name + ' between ' + leftBrackets + param.values[0] + ',' + param.values[1] + rightBrackets;
+                        break;
+                }
+                param.title = param.values.length > 0 ? paramObj : undefined;
+            });
+        });
+    }
+
 });

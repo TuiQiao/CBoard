@@ -12,3 +12,13 @@ CREATE TABLE dashboard_job (
   exec_log text,
   PRIMARY KEY (job_id)
 );
+
+ALTER TABLE dashboard_role_res ADD permission varchar(20);
+
+CREATE TABLE dashboard_board_param (
+  board_param_id bigint(20) NOT NULL AUTO_INCREMENT,
+  user_id varchar(50) NOT NULL,
+  board_id bigint(20) NOT NULL,
+  config text,
+  PRIMARY KEY (board_param_id)
+);

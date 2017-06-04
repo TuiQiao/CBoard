@@ -20,26 +20,19 @@ function waitFor(testFx, onReady, timeOutMillis) {
                 }
             }
         }, 250); //< repeat check every 250ms
-};
+}
 
 var page = require('webpage').create();
 var system = require('system');
 page.viewportSize = {width: 1500, height: 1080};
-var _url = 'http://127.0.0.1:' + system.args[4] + 'render.html#?id=' + system.args[1] + '&pid=' + system.args[2];
-phantom.addCookie({
-    'name': 'CBLOCALUID', /* required property */
-    'value': system.args[3], /* required property */
-    'domain': '127.0.0.1',
-    'path': '/', /* required property */
-    'httponly': true,
-    'secure': false,
-    'expires': (new Date()).getTime() + (1000 * 60 * 60)   /* <-- expires in 1 hour */
-});
+var _url = system.args[1];
+console.log("[PhantomJS] Opening Url:", _url);
 page.open(_url, function (status) {
     if (status !== 'success') {
         console.log('open page fail!');
         phantom.exit();
     } else {
+        console.log("success");
         waitFor(function () {
             return page.evaluate(function () {
                 return $(".persistFinish").length > 0;

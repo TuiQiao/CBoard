@@ -12,3 +12,13 @@ CREATE TABLE dashboard_job (
   exec_log text,
   PRIMARY KEY CLUSTERED (job_id)
 );
+
+ALTER TABLE dashboard_role_res ADD permission varchar(20);
+
+CREATE TABLE dashboard_board_param (
+  board_param_id bigint identity(1,1),
+  user_id varchar(50) NOT NULL,
+  board_id bigint NOT NULL,
+  config text,
+  PRIMARY KEY CLUSTERED (board_param_id)
+);

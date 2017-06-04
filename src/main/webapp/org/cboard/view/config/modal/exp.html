@@ -13,7 +13,7 @@
                          style="min-height: 35px;height: auto;padding: 0px">
                 <span ng-repeat="o in selects"
                       class="btn btn-default btn-sm" style="margin: 3px 3px;"
-                      ng-click="addToken(o)">{{o}}</span>
+                      ng-click="addToken(o.column)">{{o.alias?o.alias:o.column}}</span>
                     </div>
                 </div>
             </div>
@@ -31,7 +31,8 @@
             <div class="form-group">
                 <label class="col-sm-2 control-label">{{'CONFIG.WIDGET.EXPRESSION_TEXT'|translate}}</label>
                 <div class="col-sm-10">
-                    <textarea ng-model="data.expression" id="expression_area" class="form-control" placeholder="{{'TIPS.CAL_EXPR'|translate}}"></textarea>
+                    <div id="expression_area" ui-ace="expAceOpt" ng-model="data.expression" class="form-control" title="{{'TIPS.CAL_EXPR'|translate}}"></div>
+                    <!--<textarea ng-model="data.expression" id="expression_area" class="form-control" placeholder="{{'TIPS.CAL_EXPR'|translate}}"></textarea>-->
                 </div>
             </div>
             <div class="form-group" ng-repeat="alert in alerts">
@@ -52,6 +53,6 @@
 </div>
 <div class="modal-footer">
     <button type="button" class="btn btn-default pull-left" data-dismiss="modal" ng-click="close()">{{'COMMON.CANCEL'|translate}}</button>
-    <button type="button" class="btn btn-primary" ng-click="verify()">{{'CONFIG.WIDGET.CHECK'|translate}}</button>
+    <!--<button type="button" class="btn btn-primary" ng-click="verify()">{{'CONFIG.WIDGET.CHECK'|translate}}</button>-->
     <button type="button" class="btn btn-primary" ng-click="ok()">{{'COMMON.OK'|translate}}</button>
 </div>

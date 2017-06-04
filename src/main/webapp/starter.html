@@ -70,9 +70,14 @@ scratch. This page gets rid of all links and provides the needed markup only.
     <!--<script src="plugins/echart/china.json"></script>-->
     <!--<script src="plugins/echart/china.js"></script>-->
     <script src="plugins/ace/ace.js"></script>
-    <script src="plugins/ui-ace/ui-ace.min.js"></script>
+    <script src="plugins/ace/cb-complete-list.js"></script>
+    <script type="text/javascript" src="plugins/ace/ext-language_tools.js"></script>
+    <script src="plugins/ui-ace/ui-ace.js"></script>
     <script src="plugins/FineMap/d3.v3.js"></script>
     <script src="plugins/FineMap/d3.tip.js"></script>
+
+    <link rel="stylesheet" href="plugins/rzslider/rzslider.min.css">
+    <script src="plugins/rzslider/rzslider.min.js"></script>
 
     <link rel="stylesheet" href="plugins/daterangepicker/daterangepicker.css">
     <script src="plugins/daterangepicker/moment.js"></script>
@@ -86,6 +91,18 @@ scratch. This page gets rid of all links and provides the needed markup only.
     <!--<link rel="stylesheet" href="plugins/datatables/dataTables.bootstrap.css">-->
     <!--<link rel="stylesheet" href="css/ui-select.min.css">-->
     <link rel="stylesheet" href="css/select.css">
+
+    <link rel="stylesheet" href="plugins/timeline/map_tree.css">
+    <script src="plugins/timeline/timeline.js"></script>
+
+    <link rel="stylesheet" href="plugins/tree/tree.css">
+    <script src="plugins/tree/tree.js"></script>
+    <script src="lib/angular-uuid4.min.js"></script>
+
+    <link rel="stylesheet" href="plugins/jquery-contextmenu/jquery.contextMenu.min.css">
+    <script src="plugins/jquery-contextmenu/jquery.contextMenu.min.js"></script>
+    <script src="plugins/jquery-contextmenu/jquery.ui.position.min.js"></script>
+
     <style>
         .modal-fit .modal-dialog {
             left: 0;
@@ -138,6 +155,9 @@ desired effect
 
     <!-- Content Wrapper. Contains page content -->
     <div class="content-wrapper">
+        <ui-view>
+
+        </ui-view>
         <!-- Content Header (Page header) -->
         <!--<section class="content-header">-->
         <!--<h1>-->
@@ -151,7 +171,6 @@ desired effect
         <!--</section>-->
 
         <!-- Main content -->
-        <section ui-view class="content"></section>
         <!-- /.content -->
     </div>
     <!-- /.content-wrapper -->
@@ -186,7 +205,9 @@ desired effect
 <script src="org/cboard/controller/admin/userAdminCtrl.js"></script>
 <script src="org/cboard/controller/config/jobCtrl.js"></script>
 <script src="org/cboard/controller/config/job/mailJobCtrl.js"></script>
-
+<script src="org/cboard/controller/dashboard/paramCtrl.js"></script>
+<script src="org/cboard/controller/config/shareResCtrl.js"></script>
+<script src="org/cboard/controller/utils/paramSelector.js"></script>
 
 <script src="org/cboard/service/dashboard/dashboardService.js"></script>
 <script src="org/cboard/service/dashboard/freeLayoutService.js"></script>
@@ -206,12 +227,14 @@ desired effect
 <script src="org/cboard/service/chart/chartScatterService.js"></script>
 <script src="org/cboard/directive/dashboard/dashboardWidget.js"></script>
 
+<script src="org/cboard/filter/dashboard/dashboardViewFilter.js"></script>
+
 <script src="plugins/crossTable/plugin.js"></script>
 <script src="plugins/FineMap/plugin.js"></script>
 
 <script type="text/ng-template" id="echartContent">
     <div class="col-md-{{widget.width}}">
-        <div class="box box-solid">
+        <div class="box box-solid" style="z-index: 99;">
             <div class="box-header">
                 <i class="fa fa-bar-chart-o"></i>
                 <h3 class="box-title">{{widget.name}}</h3>
@@ -239,7 +262,7 @@ desired effect
     </div>
 </script>
 <script type="text/ng-template" id="chartContent">
-    <div class="col-md-{{widget.width}}">
+    <div class="col-md-{{widget.width}}" style="z-index: 99;">
         <div class="box box-solid">
             <div class="box-header">
                 <i class="fa fa-bar-chart-o"></i>

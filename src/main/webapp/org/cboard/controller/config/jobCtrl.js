@@ -123,7 +123,7 @@ cBoard.controller('jobCtrl', function ($scope, $rootScope, $http, dataService, $
                                 $scope.$parent.loadJobList();
                                 $uibModalInstance.close();
                             } else {
-                                //$scope.alerts = [{msg: serviceStatus.msg, type: 'danger'}];
+                                ModalUtils.alert(serviceStatus.msg, "modal-warning", "lg");
                             }
                         });
                     } else {
@@ -154,8 +154,12 @@ cBoard.controller('jobCtrl', function ($scope, $rootScope, $http, dataService, $
 
     $scope.deleteJob = function (job) {
         ModalUtils.confirm(translate("COMMON.CONFIRM_DELETE"), "modal-info", "lg", function () {
-            $http.post("dashboard/deleteJob.do", {id: job.id}).success(function () {
-                $scope.loadJobList();
+            $http.post("dashboard/deleteJob.do", {id: job.id}).success(function (serviceStatus) {
+                if (serviceStatus.status == '1') {
+                    $scope.loadJobList();
+                } else {
+                    ModalUtils.alert(serviceStatus.msg, "modal-warning", "lg");
+                }
             });
         });
     };

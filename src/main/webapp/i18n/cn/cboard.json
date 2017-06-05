@@ -80,7 +80,7 @@
     "WIDGET": {
       "WIDGET": "图表",
       "DATA_SOURCE": "数据源类型",
-      "DATASET": "新建数据源名称",
+      "DATASET": "选择数据集",
       "LOAD_DATA": "读取数据",
       "WIDGET_NAME": "图表名",
       "AXIS_NAME": "轴名",

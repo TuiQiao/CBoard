@@ -269,7 +269,9 @@
     "JOB": "定时任务",
     "CONTACT_ADMIN": "请联系管理员申请以下权限",
     "BY_NAME": "按名称",
-    "BY_ROLE": "按角色"
+    "BY_ROLE": "按角色",
+    "TOGGLE_UPDATE": "切换UDATE权限",
+    "TOGGLE_DELETE": "切换DELETE权限"
   },
   "DATAPROVIDER": {
     "AGGREGATABLE_PROVIDER": "数据源聚合",

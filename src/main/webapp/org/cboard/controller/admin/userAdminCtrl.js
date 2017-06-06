@@ -197,40 +197,34 @@ cBoard.controller('userAdminCtrl', function ($scope, $http, ModalUtils, $filter)
     };
 
     var getContextMenu = function ($node) {
+        function toggleACL(attr) {
+            return function(obj) {
+                $node.original[attr] = $node.original[attr] == undefined ? false : !$node.original[attr];
+                _.each($node.children_d, function (e) {
+                    var tree = $(obj.reference).jstree(true);
+                    var node = tree.get_node(e);
+                    if (node.children.length == 0) {
+                        node.original[attr] = $node.original[attr];
+                        tree.rename_node(node, node.original.name + getCUDRlabel(node.original[attr], node.original.delete));
+                    }
+                });
+            }
+        }
+
         if (_.isUndefined($node.original.resId)) {
             if ($node.parent != '#') {
                 return {
                     edit: {
                         label: function () {
-                            return 'Update';
+                            return translate('ADMIN.TOGGLE_UPDATE');
                         },
-                        action: function (obj) {
-                            $node.original.edit = $node.original.edit == undefined ? true : !$node.original.edit;
-                            _.each($node.children,function(e){
-                                var t = $(obj.reference).jstree(true);
-                                var n = t.get_node(e);
-                                if (n.original.resId) {
-                                    n.original.edit = $node.original.edit;
-                                    t.rename_node(n, n.original.name + getCUDRlabel(n.original.edit, n.original.delete));
-                                }
-                            });
-                        }
+                        action: toggleACL('update')
                     },
                     delete: {
                         label: function () {
-                            return 'Delete';
+                            return translate('ADMIN.TOGGLE_DELETE');
                         },
-                        action: function (obj) {
-                            $node.original.delete = $node.original.delete == undefined ? true : !$node.original.delete;
-                            _.each($node.children,function(e){
-                                var t = $(obj.reference).jstree(true);
-                                var n = t.get_node(e);
-                                if (n.original.resId) {
-                                    n.original.delete = $node.original.delete;
-                                    t.rename_node(n, n.original.name + getCUDRlabel(n.original.edit, n.original.delete));
-                                }
-                            });
-                        }
+                        action: toggleACL('delete')
                     }
                 };
             } else {

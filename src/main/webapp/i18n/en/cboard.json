@@ -269,7 +269,9 @@
     "JOB": "Job",
     "CONTACT_ADMIN": "Please contact the administrator to apply the following resources' access",
     "BY_NAME": "By Name",
-    "BY_ROLE": "By Role"
+    "BY_ROLE": "By Role",
+    "TOGGLE_UPDATE": "Toggle UDATE",
+    "TOGGLE_DELETE": "Toggle DELETE"
   },
   "DATAPROVIDER": {
     "AGGREGATABLE_PROVIDER": "Aggregatable DataProvider",

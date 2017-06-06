@@ -197,29 +197,63 @@ cBoard.controller('userAdminCtrl', function ($scope, $http, ModalUtils, $filter)
     };
 
     var getContextMenu = function ($node) {
-        if (_.isUndefined($node.original.resId) || $node.original.type == 'menu') {
-            return;
-        }
-        return {
-            edit: {
-                label: function () {
-                    return $node.original.edit ? '√ Update' : '× Update';
-                },
-                action: function (obj) {
-                    $node.original.edit = !$node.original.edit;
-                    $(obj.reference).jstree(true).rename_node($node, $node.original.name + getCUDRlabel($node.original.edit, $node.original.delete));
-                }
-            },
-            delete: {
-                label: function () {
-                    return $node.original.delete ? '√ Delete' : '× Delete';
-                },
-                action: function (obj) {
-                    $node.original.delete = !$node.original.delete;
-                    $(obj.reference).jstree(true).rename_node($node, $node.original.name + getCUDRlabel($node.original.edit, $node.original.delete));
-                }
+        if (_.isUndefined($node.original.resId)) {
+            if ($node.parent != '#') {
+                return {
+                    edit: {
+                        label: function () {
+                            return 'Update';
+                        },
+                        action: function (obj) {
+                            $node.original.edit = $node.original.edit == undefined ? true : !$node.original.edit;
+                            _.each($node.children,function(e){
+                                var t = $(obj.reference).jstree(true);
+                                var n = t.get_node(e);
+                                n.original.edit = $node.original.edit;
+                                t.rename_node(n, n.original.name + getCUDRlabel(n.original.edit, n.original.delete));
+                            });
+                        }
+                    },
+                    delete: {
+                        label: function () {
+                            return 'Delete';
+                        },
+                        action: function (obj) {
+                            $node.original.delete = $node.original.delete == undefined ? true : !$node.original.delete;
+                            _.each($node.children,function(e){
+                                var t = $(obj.reference).jstree(true);
+                                var n = t.get_node(e);
+                                n.original.delete = $node.original.delete;
+                                t.rename_node(n, n.original.name + getCUDRlabel(n.original.edit, n.original.delete));
+                            });
+                        }
+                    }
+                };
+            } else {
+                return;
             }
-        };
+        } else {
+            return {
+                edit: {
+                    label: function () {
+                        return $node.original.edit ? '√ Update' : '× Update';
+                    },
+                    action: function (obj) {
+                        $node.original.edit = !$node.original.edit;
+                        $(obj.reference).jstree(true).rename_node($node, $node.original.name + getCUDRlabel($node.original.edit, $node.original.delete));
+                    }
+                },
+                delete: {
+                    label: function () {
+                        return $node.original.delete ? '√ Delete' : '× Delete';
+                    },
+                    action: function (obj) {
+                        $node.original.delete = !$node.original.delete;
+                        $(obj.reference).jstree(true).rename_node($node, $node.original.name + getCUDRlabel($node.original.edit, $node.original.delete));
+                    }
+                }
+            };
+        }
     };
 
     var loadResData = function () {
@@ -285,7 +319,7 @@ cBoard.controller('userAdminCtrl', function ($scope, $http, ModalUtils, $filter)
             return e == user.userId;
         }))
     };
-    
+
     $scope.searchUserByName = function (user) {
         if ($scope.userKeyword === "" || $scope.userKeyword === undefined) return true;
         if (!$scope.filterByRole) {

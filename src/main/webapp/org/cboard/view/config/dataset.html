@@ -190,9 +190,11 @@
                                                     <b>{{'CONFIG.COMMON.CUSTOM_EXPRESSION'|translate}}</b>
                                                 </span>
                                                 <i class="glyphicon glyphicon-plus" ng-click="editExp()"></i>
-                                                <ul>
+                                                <ul dnd-list="curDataset.data.expressions" dnd-allowed-types="['exp']">
+                                                    <li class="dndPlaceholder"><span class="sort-highlight btn btn-default btn-sm">+</span>
+                                                    </li>
                                                     <li ng-repeat="o in curDataset.data.expressions">
-                                                        <span dnd-draggable="o" dnd-type="'exp'"><img src="imgs/schema/bullet_red.png">{{o.alias}}</span>
+                                                        <span dnd-draggable="o" dnd-type="'exp'" dnd-moved="curDataset.data.expressions.splice($index, 1)"><img src="imgs/schema/bullet_red.png">{{o.alias}}</span>
                                                         <i class="fa fa-edit" ng-click="editExp(o)"></i>
                                                         <i class="fa fa-trash-o" ng-click="deleteExp($index)"></i>
                                                     </li>
@@ -206,9 +208,11 @@
                                                     <b>{{'COMMON.FILTER_GROUP'|translate}}</b>
                                                 </span>
                                                 <i class="glyphicon glyphicon-plus" ng-click="editFilterGroup()"></i>
-                                                <ul>
+                                                <ul dnd-list="curDataset.data.filters" dnd-allowed-types="['filterGroup']">
+                                                    <li class="dndPlaceholder"><span class="sort-highlight btn btn-default btn-sm">+</span>
+                                                    </li>
                                                     <li ng-repeat="o in curDataset.data.filters">
-                                                        <span dnd-draggable="o" dnd-type="'filterGroup'"><img src="imgs/schema/bullet_green.png">{{o.group}}</span>
+                                                        <span dnd-draggable="o" dnd-type="'filterGroup'" dnd-moved="curDataset.data.filters.splice($index, 1)"><img src="imgs/schema/bullet_green.png">{{o.group}}</span>
                                                         <i class="fa fa-edit" ng-click="editFilterGroup(o)"></i>
                                                         <i class="fa fa-trash-o"  ng-click="deleteFilterGroup($index)"></i>
                                                     </li>

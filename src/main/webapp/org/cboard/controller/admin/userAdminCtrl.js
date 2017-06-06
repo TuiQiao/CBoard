@@ -209,8 +209,10 @@ cBoard.controller('userAdminCtrl', function ($scope, $http, ModalUtils, $filter)
                             _.each($node.children,function(e){
                                 var t = $(obj.reference).jstree(true);
                                 var n = t.get_node(e);
-                                n.original.edit = $node.original.edit;
-                                t.rename_node(n, n.original.name + getCUDRlabel(n.original.edit, n.original.delete));
+                                if (n.original.resId) {
+                                    n.original.edit = $node.original.edit;
+                                    t.rename_node(n, n.original.name + getCUDRlabel(n.original.edit, n.original.delete));
+                                }
                             });
                         }
                     },
@@ -223,8 +225,10 @@ cBoard.controller('userAdminCtrl', function ($scope, $http, ModalUtils, $filter)
                             _.each($node.children,function(e){
                                 var t = $(obj.reference).jstree(true);
                                 var n = t.get_node(e);
-                                n.original.delete = $node.original.delete;
-                                t.rename_node(n, n.original.name + getCUDRlabel(n.original.edit, n.original.delete));
+                                if (n.original.resId) {
+                                    n.original.delete = $node.original.delete;
+                                    t.rename_node(n, n.original.name + getCUDRlabel(n.original.edit, n.original.delete));
+                                }
                             });
                         }
                     }
@@ -281,7 +285,8 @@ cBoard.controller('userAdminCtrl', function ($scope, $http, ModalUtils, $filter)
                     three_state: true
                 },
                 contextmenu: {
-                    items: getContextMenu
+                    items: getContextMenu,
+                    select_node: false
                 },
                 version: 1,
                 plugins: ['types', 'checkbox', 'unique', 'contextmenu']

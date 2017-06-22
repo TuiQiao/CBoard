@@ -9,8 +9,17 @@ import com.google.common.hash.Hashing;
 import org.apache.commons.collections.keyvalue.DefaultMapEntry;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.HttpResponse;
+import org.apache.http.auth.AuthScope;
+import org.apache.http.auth.UsernamePasswordCredentials;
+import org.apache.http.client.AuthCache;
+import org.apache.http.client.CredentialsProvider;
 import org.apache.http.client.fluent.Request;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.protocol.HttpClientContext;
 import org.apache.http.entity.ContentType;
+import org.apache.http.impl.client.BasicAuthCache;
+import org.apache.http.impl.client.BasicCredentialsProvider;
+import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.util.EntityUtils;
 import org.cboard.cache.CacheManager;
 import org.cboard.cache.HeapCacheManager;
@@ -50,14 +59,23 @@ public class ElasticsearchDataProvider extends DataProvider implements Aggregata
     @DatasourceParameter(label = "Elasticsearch Server (domain:port)", type = DatasourceParameter.Type.Input, order = 1)
     protected String SERVERIP = "serverIp";
 
-    @QueryParameter(label = "Index", type = QueryParameter.Type.Input, order = 2)
+    @DatasourceParameter(label = "UserName", type = DatasourceParameter.Type.Input, order = 2)
+    private String USERNAME = "username";
+
+    @DatasourceParameter(label = "Password", type = DatasourceParameter.Type.Password, order = 3)
+    private String PASSWORD = "password";
+
+    @QueryParameter(label = "Index", type = QueryParameter.Type.Input, order = 4)
     protected String INDEX = "index";
 
-    @QueryParameter(label = "Type", type = QueryParameter.Type.Input, order = 3)
+    @QueryParameter(label = "Type", type = QueryParameter.Type.Input, order = 5)
     protected String TYPE = "type";
 
     @QueryParameter(label = "Override Aggregations", type = QueryParameter.Type.TextArea, order = 6)
     private String OVERRIDE = "override";
+
+    @DatasourceParameter(label = "Charset", type = DatasourceParameter.Type.Input, order = 7)
+    private String CHARSET = "charset";
 
     private JSONObject overrideAggregations = new JSONObject();
 
@@ -194,8 +212,21 @@ public class ElasticsearchDataProvider extends DataProvider implements Aggregata
     }
 
     protected JSONObject get(String url) throws Exception {
-        String response = Request.Get(url).execute().returnContent().asString();
-        return JSONObject.parseObject(response);
+        HttpClientBuilder httpClientBuilder = HttpClientBuilder.create();
+        CredentialsProvider provider = new BasicCredentialsProvider();
+        provider.setCredentials(
+                new AuthScope(AuthScope.ANY),
+                new UsernamePasswordCredentials(dataSource.get(USERNAME), dataSource.get(PASSWORD))
+        );
+
+        HttpClientContext context = HttpClientContext.create();
+        context.setCredentialsProvider(provider);
+        AuthCache authCache = new BasicAuthCache();
+        context.setAuthCache(authCache);
+        HttpGet httpget = new HttpGet(url);
+        HttpResponse response = httpClientBuilder.build().execute(httpget, context);
+
+        return JSONObject.parseObject(EntityUtils.toString(response.getEntity(), dataSource.get(CHARSET)));
     }
 
     private JSONObject getOverrideTermsAggregation(String columnName) {

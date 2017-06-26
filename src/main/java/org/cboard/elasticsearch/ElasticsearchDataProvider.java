@@ -9,8 +9,17 @@ import com.google.common.hash.Hashing;
 import org.apache.commons.collections.keyvalue.DefaultMapEntry;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.HttpResponse;
-import org.apache.http.client.fluent.Request;
-import org.apache.http.entity.ContentType;
+import org.apache.http.auth.AuthScope;
+import org.apache.http.auth.UsernamePasswordCredentials;
+import org.apache.http.client.AuthCache;
+import org.apache.http.client.CredentialsProvider;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.client.protocol.HttpClientContext;
+import org.apache.http.entity.StringEntity;
+import org.apache.http.impl.client.BasicAuthCache;
+import org.apache.http.impl.client.BasicCredentialsProvider;
+import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.util.EntityUtils;
 import org.cboard.cache.CacheManager;
 import org.cboard.cache.HeapCacheManager;
@@ -56,8 +65,17 @@ public class ElasticsearchDataProvider extends DataProvider implements Aggregata
     @QueryParameter(label = "Type", type = QueryParameter.Type.Input, order = 3)
     protected String TYPE = "type";
 
+    @DatasourceParameter(label = "UserName", type = DatasourceParameter.Type.Input, order = 4)
+    private String USERNAME = "username";
+
+    @DatasourceParameter(label = "Password", type = DatasourceParameter.Type.Password, order = 5)
+    private String PASSWORD = "password";
+
     @QueryParameter(label = "Override Aggregations", type = QueryParameter.Type.TextArea, order = 6)
     private String OVERRIDE = "override";
+
+    @DatasourceParameter(label = "Charset", type = DatasourceParameter.Type.Input, order = 7)
+    private String CHARSET = "charset";
 
     private JSONObject overrideAggregations = new JSONObject();
 
@@ -184,8 +202,13 @@ public class ElasticsearchDataProvider extends DataProvider implements Aggregata
     }
 
     protected JSONObject post(String url, JSONObject request) throws Exception {
-        HttpResponse httpResponse = Request.Post(url).bodyString(request.toString(), ContentType.APPLICATION_JSON).execute().returnResponse();
-        String response = EntityUtils.toString(httpResponse.getEntity());
+        HttpClientBuilder httpClientBuilder = HttpClientBuilder.create();
+        HttpPost httpPost = new HttpPost(url);
+        StringEntity reqEntity = new StringEntity(request.toString());
+        httpPost.setEntity(reqEntity);
+        HttpResponse httpResponse = httpClientBuilder.build().execute(httpPost, getHttpContext());
+
+        String response = EntityUtils.toString(httpResponse.getEntity(), dataSource.get(CHARSET));
         if (httpResponse.getStatusLine().getStatusCode() == 200) {
             return JSONObject.parseObject(response);
         } else {
@@ -194,8 +217,31 @@ public class ElasticsearchDataProvider extends DataProvider implements Aggregata
     }
 
     protected JSONObject get(String url) throws Exception {
-        String response = Request.Get(url).execute().returnContent().asString();
-        return JSONObject.parseObject(response);
+        HttpClientBuilder httpClientBuilder = HttpClientBuilder.create();
+        HttpGet httpget = new HttpGet(url);
+        HttpResponse response = httpClientBuilder.build().execute(httpget, getHttpContext());
+        return JSONObject.parseObject(EntityUtils.toString(response.getEntity(), dataSource.get(CHARSET)));
+    }
+
+    private HttpClientContext getHttpContext() {
+
+        HttpClientContext context = HttpClientContext.create();
+        String userName = dataSource.get(USERNAME);
+        String password = dataSource.get(PASSWORD);
+
+        if (StringUtils.isEmpty(userName) || StringUtils.isEmpty(password)) {
+            return context;
+        }
+
+        CredentialsProvider provider = new BasicCredentialsProvider();
+        provider.setCredentials(
+                new AuthScope(AuthScope.ANY),
+                new UsernamePasswordCredentials(userName, password)
+        );
+        context.setCredentialsProvider(provider);
+        AuthCache authCache = new BasicAuthCache();
+        context.setAuthCache(authCache);
+        return context;
     }
 
     private JSONObject getOverrideTermsAggregation(String columnName) {
@@ -481,7 +527,15 @@ public class ElasticsearchDataProvider extends DataProvider implements Aggregata
 
     @Override
     public String[][] getData() throws Exception {
-        return new String[0][];
+        HttpClientBuilder httpClientBuilder = HttpClientBuilder.create();
+        HttpGet httpget = new HttpGet(getMappingUrl());
+        HttpResponse httpResponse = httpClientBuilder.build().execute(httpget, getHttpContext());
+        String response = EntityUtils.toString(httpResponse.getEntity(), dataSource.get(CHARSET));
+        if (httpResponse.getStatusLine().getStatusCode() == 200) {
+            return new String[0][];
+        } else {
+            throw new Exception(response);
+        }
     }
 
     private String getKey() {

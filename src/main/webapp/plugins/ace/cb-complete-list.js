@@ -68,7 +68,7 @@ var cbEsQueryCompleter = {
             return {
                 meta: "es-bucket",
                 caption: aggObj.name,
-                value: "\"<columnname>\": " + cbAceStringify(aggObj.body, null, false)
+                 value: "{\n\"<columnname>\": " + cbAceStringify(aggObj.body, null, false)+"\n}"
             };
         }));
     }
@@ -80,7 +80,7 @@ var cbEsSchemaORCompleter = {
             return {
                 meta: "es-bucket",
                 caption: aggObj.name,
-                value: "\"esBucket\": " + cbAceStringify(aggObj.body, null, false)
+                value: "{\n\"esBucket\": " + cbAceStringify(aggObj.body, null, false)+"\n}"
             };
         }));
     }

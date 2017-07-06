@@ -14,7 +14,7 @@ var CBoardMapRender = function (jqContainer, options) {
 
 CBoardMapRender.prototype.do = function (tall, persist) {
     this.tall = tall;
-    this.container = $('.map_wrapper');
+    this.container = this.jqContainer;
     tall = _.isUndefined(tall) ? 500 : tall;
     var args = {
         height: tall,

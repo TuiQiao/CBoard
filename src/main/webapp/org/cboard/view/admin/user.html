@@ -36,10 +36,10 @@
             <div class="row" style="padding-top: 5px">
                 <div class="col-md-12">
                     <button type="submit" ng-click="revokeRole()" class="btn btn-danger">
-                        Revoke
+                        {{'ADMIN.REVOKE'|translate}}
                     </button>
                     <button type="submit" ng-click="grantRole()" class="btn btn-success pull-right">
-                        Grant
+                        {{'ADMIN.GRANT'|translate}}
                     </button>
                 </div>
             </div>
@@ -74,7 +74,7 @@
                     <div class="form-group">
                         <div class="col-sm-offset-2 col-sm-10" style="padding-right: 0px; padding-top: 5px">
                             <button type="submit" ng-disabled="selectRole.length!=1" ng-click="grantRes()" class="btn btn-success pull-right">
-                                Grant
+                                {{'ADMIN.GRANT'|translate}}
                             </button>
                         </div>
                     </div>

@@ -40,14 +40,14 @@
   },
   "SIDEBAR": {
     "MENU": "菜单",
-    "C_DASHBOARD": "仪表盘",
-    "MY_DASHBOARD": "我的仪表盘",
+    "C_DASHBOARD": "看板",
+    "MY_DASHBOARD": "我的看板",
     "CONFIG": "配置",
     "DATA_SOURCE": "数据源管理",
     "DATASET": "数据集管理",
     "WIDGET": "图表设计",
-    "DASHBOARD": "仪表盘设计",
-    "DASHBOARD_CATEGORY": "仪表盘分类",
+    "DASHBOARD": "看板设计",
+    "DASHBOARD_CATEGORY": "看板分类",
     "ADMIN": "管理",
     "USER_ADMIN": "用户管理",
     "RES_ADMIN": "资源管理",
@@ -63,7 +63,7 @@
     "CONFIRM_PASSWORD": "确认密码"
   },
   "FOOTER": {
-    "COPYRIGHT": "CBorad开源软件组",
+    "COPYRIGHT": "携程支付中心",
     "VERSION": "版本"
   },
   "DASHBOARD": {
@@ -162,8 +162,8 @@
       "AGGREGATE_TYPE":"汇总类型"
     },
     "DASHBOARD": {
-      "DASHBOARD": "仪表盘",
-      "MY_DASHBOARD": "我的仪表盘",
+      "DASHBOARD": "看板",
+      "MY_DASHBOARD": "我的看板",
       "CATEGORY": "分类",
       "NAME": "名称",
       "ADD_ROW": "添加行",
@@ -210,7 +210,7 @@
       "DATA_REFRESH_TIME":"数据刷新时间"
     },
     "CATEGORY": {
-      "NAME": "仪表盘分类名称",
+      "NAME": "看板分类名称",
       "CATEGORY": "分类"
     },
     "DATASET": {
@@ -246,8 +246,8 @@
       "CC": "抄送",
       "BCC": "密送",
       "SUBJECT": "主题",
-      "ADD_DASHBOARD": "添加仪表盘",
-      "DASHBOARD": "仪表盘",
+      "ADD_DASHBOARD": "添加看板",
+      "DASHBOARD": "看板",
       "EVERY": "每",
       "Minute": "分钟",
       "Hour": "小时",
@@ -282,7 +282,7 @@
       "ROLE_NAME": "角色名",
       "ADMIN": "管理员"
     },
-    "BOARD": "仪表盘",
+    "BOARD": "看板",
     "MENU": "菜单",
     "DATASOURCE": "数据源",
     "DATASET": "数据集",

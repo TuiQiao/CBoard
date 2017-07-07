@@ -134,7 +134,7 @@
                                                             {{o.alias?o.alias+' ('+o.column+')':o.column}}
                                                         </span>
                                                         <i class="fa fa-edit" ng-click="custom(o)" title="{{'CONFIG.DATASET.TIP_EDIT_ALIAS'|translate}}"></i>
-                                                        <i class="fa fa-trash-o" ng-click="toTrash(curDataset.data.schema.dimension,$index)"></i>
+                                                        <i class="fa fa-trash-o" ng-click="toTrash(curDataset.data.schema.dimension,$index)" title="{{'COMMON.DELETE'|translate}}"></i>
                                                         <i ng-switch-when="column" class="fa fa-exchange" title="{{'CONFIG.DATASET.TIP_SWITCH_TO_MEASURE'|translate}}"
                                                            ng-click="curDataset.data.schema.dimension.splice($index, 1);curDataset.data.schema.measure.push(o)"></i>
                                                         <ul ng-switch-when="level"
@@ -149,7 +149,7 @@
                                                                     {{c.alias?c.alias+' ('+c.column+')':c.column}}
                                                                 </span>
                                                                 <i class="fa fa-edit" ng-click="custom(c)" title="{{'CONFIG.DATASET.TIP_EDIT_ALIAS'|translate}}"></i>
-                                                                <i class="fa fa-trash-o" ng-click="toTrash(o.columns,$index)"></i>
+                                                                <i class="fa fa-trash-o" ng-click="toTrash(o.columns,$index)" title="{{'COMMON.DELETE'|translate}}"></i>
                                                                 <i class="fa fa-exchange" title="{{'CONFIG.DATASET.TIP_SWITCH_TO_MEASURE'|translate}}"
                                                                    ng-click="o.columns.splice($index, 1);curDataset.data.schema.measure.push(c)"></i>
                                                             </li>
@@ -176,7 +176,7 @@
                                                         <i class="fa fa-edit" ng-init="show=false" ng-click="show=true" title="{{'CONFIG.DATASET.TIP_EDIT_ALIAS'|translate}}">
                                                             <input ng-show="show" type="text" ng-model="o.alias" ng-blur="show=false"/></i>
                                                         <i class="fa fa-trash-o"
-                                                           ng-click="toTrash(curDataset.data.schema.measure,$index)"></i>
+                                                           ng-click="toTrash(curDataset.data.schema.measure,$index)" title="{{'COMMON.DELETE'|translate}}"></i>
                                                         <i class="fa fa-exchange" title="{{'CONFIG.DATASET.TIP_SWITCH_TO_DIMENSION'|translate}}"
                                                            ng-click="measureToDimension($index, o);"></i>
                                                     </li>
@@ -189,12 +189,12 @@
                                                     <img src="imgs/schema/measure.gif"/>
                                                     <b>{{'CONFIG.COMMON.CUSTOM_EXPRESSION'|translate}}</b>
                                                 </span>
-                                                <i class="glyphicon glyphicon-plus" ng-click="editExp()"></i>
+                                                <i class="glyphicon glyphicon-plus" ng-click="editExp()" title="{{'COMMON.NEW'|translate}}"></i>
                                                 <ul>
                                                     <li ng-repeat="o in curDataset.data.expressions">
                                                         <span dnd-draggable="o" dnd-type="'exp'"><img src="imgs/schema/bullet_red.png">{{o.alias}}</span>
-                                                        <i class="fa fa-edit" ng-click="editExp(o)"></i>
-                                                        <i class="fa fa-trash-o" ng-click="deleteExp($index)"></i>
+                                                        <i class="fa fa-edit" ng-click="editExp(o)" title="{{'COMMON.EDIT'|translate}}"></i>
+                                                        <i class="fa fa-trash-o" ng-click="deleteExp($index)" title="{{'COMMON.DELETE'|translate}}"></i>
                                                     </li>
                                                 </ul>
                                             </li>
@@ -205,12 +205,12 @@
                                                     <img src="imgs/schema/filter.png"/>
                                                     <b>{{'COMMON.FILTER_GROUP'|translate}}</b>
                                                 </span>
-                                                <i class="glyphicon glyphicon-plus" ng-click="editFilterGroup()"></i>
+                                                <i class="glyphicon glyphicon-plus" ng-click="editFilterGroup()" title="{{'COMMON.DELETE'|translate}}"></i>
                                                 <ul>
                                                     <li ng-repeat="o in curDataset.data.filters">
                                                         <span dnd-draggable="o" dnd-type="'filterGroup'"><img src="imgs/schema/bullet_green.png">{{o.group}}</span>
-                                                        <i class="fa fa-edit" ng-click="editFilterGroup(o)"></i>
-                                                        <i class="fa fa-trash-o"  ng-click="deleteFilterGroup($index)"></i>
+                                                        <i class="fa fa-edit" ng-click="editFilterGroup(o)" title="{{'COMMON.EDIT'|translate}}"></i>
+                                                        <i class="fa fa-trash-o"  ng-click="deleteFilterGroup($index)" title="{{'COMMON.DELETE'|translate}}"></i>
                                                     </li>
                                                 </ul>
                                             </li>

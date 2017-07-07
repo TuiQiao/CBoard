@@ -12,7 +12,7 @@
     </div>
     <!-- Sidebar Menu -->
     <ul class="sidebar-menu">
-        <li class="header">MENU</li>
+        <li class="header">{{'SIDEBAR.MENU'|translate}}</li>
         <!-- DashBoard -->
         <li class="treeview" ui-sref-active="active">
             <a>
@@ -63,7 +63,7 @@
                     <a ui-sref="config.datasource"><i class="fa fa-database"></i>{{'SIDEBAR.DATA_SOURCE'|translate}}</a>
                 </li>
                 <li ui-sref-active="active" ng-if="isShowMenu('config.dataset')">
-                    <a ui-sref="config.dataset"><i class="fa fa-table"></i>{{'SIDEBAR.CUBE'|translate}}</a>
+                    <a ui-sref="config.dataset"><i class="fa fa-table"></i>{{'SIDEBAR.DATASET'|translate}}</a>
                 </li>
                 <li ui-sref-active="active" ng-if="isShowMenu('config.widget')">
                     <a ui-sref="config.widget"><i class="fa fa-line-chart"></i>{{'SIDEBAR.WIDGET'|translate}}</a>

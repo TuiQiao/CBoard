@@ -30,20 +30,24 @@
     "SAVE_AS": "另存为",
     "PARAM": "条件",
     "DRILL_DOWN": "下钻",
-    "ROLL_UP": "上卷"
+    "ROLL_UP": "上卷",
+    "WANRING": "警告！",
+    "COLLAPSE": "最小化",
+    "REMOVE": "关闭"
   },
   "TIPS": {
     "CAL_EXPR": "用于聚合后再计算. 使用上面的点击辅助输入避免输入错误. 如: Math.log(sum(columnA)/count(columB))"
   },
   "SIDEBAR": {
-    "C_DASHBOARD": "看板",
-    "MY_DASHBOARD": "我的看板",
+    "MENU": "菜单",
+    "C_DASHBOARD": "仪表盘",
+    "MY_DASHBOARD": "我的仪表盘",
     "CONFIG": "配置",
     "DATA_SOURCE": "数据源管理",
-    "CUBE": "数据集管理",
+    "DATASET": "数据集管理",
     "WIDGET": "图表设计",
-    "DASHBOARD": "看板设计",
-    "DASHBOARD_CATEGORY": "看板分类",
+    "DASHBOARD": "仪表盘设计",
+    "DASHBOARD_CATEGORY": "仪表盘分类",
     "ADMIN": "管理",
     "USER_ADMIN": "用户管理",
     "RES_ADMIN": "资源管理",
@@ -51,7 +55,16 @@
     "SHARE_RESOURCE": "资源分享"
   },
   "HEADER": {
-    "SIGN_OUT": "注销"
+    "SIGN_OUT": "注销",
+    "TOGGLE_NAVIGATION": "切换导航",
+    "CHANGE_PASSWORD": "修改密码",
+    "CURRENT_PASSWORD": "当前密码",
+    "NEW_PASSWORD": "新的密码",
+    "CONFIRM_PASSWORD": "确认密码"
+  },
+  "FOOTER": {
+    "COPYRIGHT": "CBorad开源软件组",
+    "VERSION": "版本"
   },
   "DASHBOARD": {
     "PARAM": {
@@ -145,11 +158,12 @@
       "SIZE": "大小",
       "COLOR": "透明度",
       "PREVIEW_QUERY": "预览查询",
-      "PERCENT_BAR": "百分比堆叠"
+      "PERCENT_BAR": "百分比堆叠",
+      "AGGREGATE_TYPE":"汇总类型"
     },
     "DASHBOARD": {
-      "DASHBOARD": "看板",
-      "MY_DASHBOARD": "我的看板",
+      "DASHBOARD": "仪表盘",
+      "MY_DASHBOARD": "我的仪表盘",
       "CATEGORY": "分类",
       "NAME": "名称",
       "ADD_ROW": "添加行",
@@ -187,10 +201,16 @@
       "ADD_MAIN_NODE": "添加主节点",
       "ADD_SUB_NODE": "添加子节点",
       "NODE_NAME": "节点名称",
-      "TITLE": "标题"
+      "TITLE": "标题",
+      "NEW_GRID_LAYOUT": "新建网格布局",
+      "NEW_TIMELINE_LAYOUT": "新建时间轴布局",
+      "VALUE_FORMMAT_ALERT": "只有日期类型需要格式化",
+      "AUTOMATIC_REFRESH_SWITCH": "自动刷新切换",
+      "REMOVE_EMPTY_LINES": "清除空行",
+      "DATA_REFRESH_TIME":"数据刷新时间"
     },
     "CATEGORY": {
-      "NAME": "看板分类名称",
+      "NAME": "仪表盘分类名称",
       "CATEGORY": "分类"
     },
     "DATASET": {
@@ -210,7 +230,8 @@
       "TIP_EDIT_ALIAS": "编辑别名",
       "TIP_ADD_HIERARCHY": "添加层级",
       "TIP_SWITCH_TO_MEASURE": "转换为指标",
-      "TIP_SWITCH_TO_DIMENSION": "转换为维度"
+      "TIP_SWITCH_TO_DIMENSION": "转换为维度",
+      "CUSTOM": "定制语句"
     },
     "JOB": {
       "CONFIG": "配置",
@@ -225,8 +246,8 @@
       "CC": "抄送",
       "BCC": "密送",
       "SUBJECT": "主题",
-      "ADD_DASHBOARD": "添加看板",
-      "DASHBOARD": "看板",
+      "ADD_DASHBOARD": "添加仪表盘",
+      "DASHBOARD": "仪表盘",
       "EVERY": "每",
       "Minute": "分钟",
       "Hour": "小时",
@@ -261,7 +282,7 @@
       "ROLE_NAME": "角色名",
       "ADMIN": "管理员"
     },
-    "BOARD": "看板",
+    "BOARD": "仪表盘",
     "MENU": "菜单",
     "DATASOURCE": "数据源",
     "DATASET": "数据集",
@@ -269,12 +290,14 @@
     "JOB": "定时任务",
     "CONTACT_ADMIN": "请联系管理员申请以下权限",
     "BY_NAME": "按名称",
-    "BY_ROLE": "按角色"
+    "BY_ROLE": "按角色",
+    "REVOKE": "撤销",
+    "GRANT": "授予"
   },
   "DATAPROVIDER": {
     "AGGREGATABLE_PROVIDER": "数据源聚合",
     "JDBC": {
-      "DRIVER": "驱动 (如: com.mysql.jdbc.Driver)",
+      "DRIVER": "驱动类 (如: com.mysql.jdbc.Driver)",
       "JDBCURL": "连接串 (如: jdbc:mysql://hostname:port/db)",
       "USERNAME": "数据库用户名",
       "PASSWORD": "数据库密码",

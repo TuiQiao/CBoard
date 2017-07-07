@@ -14,10 +14,10 @@
                             ng-click="editParam(row)">
                         {{'CONFIG.DASHBOARD.ADD_PARAM'|translate}}
                     </button>
-                    <button type="button" class="btn btn-box-tool" data-widget="collapse"><i
+                    <button type="button" class="btn btn-box-tool" data-widget="collapse" title="{{'COMMON.COLLAPSE'|translate}}"><i
                             class="fa fa-minus"></i>
                     </button>
-                    <button type="button" class="btn btn-box-tool" data-widget="remove"
+                    <button type="button" class="btn btn-box-tool" data-widget="remove" title="{{'COMMON.REMOVE'|translate}}"
                             ng-click="curBoard.layout.rows.splice($index, 1)"><i
                             class="fa fa-times"></i>
                     </button>
@@ -43,12 +43,12 @@
                         {{param.name}}
                     </button>
                     <button type="button" class="btn btn-default btn-sm dropdown-toggle"
-                            ng-click="editParam(row,$index)">
+                            ng-click="editParam(row,$index)" title="{{'COMMON.EDIT'|translate}}">
                         <span class="fa fa-edit"></span>
                     </button>
                     <button type="button"
                             class="btn btn-default btn-sm dropdown-toggle"
-                            ng-click="row.params.splice($index, 1)">
+                            ng-click="row.params.splice($index, 1)" title="{{'COMMON.DELETE'|translate}}">
                         <span class="fa fa-trash-o"></span>
                     </button>
                 </div>

@@ -75,7 +75,7 @@
                             </div>
                             <div class="row" ng-show="customDs">
                                 <div class="col-md-12" ng-show="datasource.name"
-                                     ng-include="datasource.type?('dashboard/getConfigView.do?type=' + datasource.type):''"></div>
+                                     ng-include="datasource.type?('dashboard/getConfigView.do?type=' + datasource.type + '&page=widget.html'):''"></div>
                             </div>
                             <div class="row">
                                 <div class="col-md-12">

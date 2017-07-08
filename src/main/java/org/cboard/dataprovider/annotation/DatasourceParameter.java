@@ -19,6 +19,11 @@ public @interface DatasourceParameter {
 
     int order() default 0;
 
+    // Init value
+    String value() default "";
+
+    String placeholder() default "";
+
     String[] options() default "N/A";
 
     enum Type {

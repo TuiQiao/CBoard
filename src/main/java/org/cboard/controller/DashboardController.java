@@ -105,8 +105,8 @@ public class DashboardController {
     }
 
     @RequestMapping(value = "/getConfigView")
-    public String getConfigView(@RequestParam(name = "type") String type) {
-        return DataProviderViewManager.getQueryView(type);
+    public String getConfigView(@RequestParam(name = "type") String type, @RequestParam(name = "page") String page) {
+        return DataProviderViewManager.getQueryView(type, page);
     }
 
     @RequestMapping(value = "/getDatasourceView")

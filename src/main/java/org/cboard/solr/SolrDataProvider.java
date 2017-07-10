@@ -213,24 +213,4 @@ public class SolrDataProvider extends DataProvider {
 
         return strings;
     }
-
-    private static Ordering<Field> fieldOrdering = Ordering.from(new Comparator<Field>() {
-        @Override
-        public int compare(Field o1, Field o2) {
-            return Integer.compare(getOrder(o1), getOrder(o2));
-        }
-
-        private int getOrder(Field field) {
-            field.setAccessible(true);
-            DatasourceParameter datasourceParameter = field.getAnnotation(DatasourceParameter.class);
-            if (datasourceParameter != null) {
-                return datasourceParameter.order();
-            }
-            QueryParameter queryParameter = field.getAnnotation(QueryParameter.class);
-            if (queryParameter != null) {
-                return queryParameter.order();
-            }
-            return 0;
-        }
-    });
 }

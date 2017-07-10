@@ -309,9 +309,11 @@
     "TEXTFILE": {
       "BASE_PATH": "BasePath",
       "FILE_NAME": "FileName",
-      "ENCODING": "Encoding<UTF-8>",
-      "SEPRATOR": "Seprator<TAB>",
-      "ENCLOSURE": "Enclosure<Empty>"
+      "ENCODING": "Encoding",
+      "SEPRATOR": "Seprator",
+      "ENCLOSURE": "Enclosure",
+      "DATA_TYPE": "DataType",
+      "FIELD_NAMES": "FieldNames"
     },
     "SOLR":{
       "SOLR_SERVERS": "Solr Servers",

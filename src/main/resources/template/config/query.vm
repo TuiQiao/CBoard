@@ -4,20 +4,25 @@
     <div class="col-sm-10">
     #if ($param.type == "input")
         <input ng-model="curWidget.query.$param.name" class="form-control"
-               placeholder="$param.placeholder" required="$param.required" value="$param.value"/>
+               placeholder="$param.placeholder" ng-init="curWidget.query.$param.name='$param.value'"/>
     #elseif ($param.type == "textarea")
         <div ui-ace="queryAceOpt" ng-model="curWidget.query.$param.name" class="form-control" ></div>
     #elseif ($param.type == "textarea2")
         <textarea ng-model="curWidget.query.$param.name" class="form-control input-sm"
-                  placeholder="$param.placeholder" required="$param.required">$param.value
+                  placeholder="$param.placeholder" ng-init="curWidget.query.$param.name='$param.value'">
         </textarea>
     #elseif ($param.type == "number")
         <input ng-model="curWidget.query.$param.name" class="form-control number"
-               placeholder="$param.placeholder" required="$param.required" value="$param.value"/>
+               placeholder="$param.placeholder" ng-init="curWidget.query.$param.name='$param.value'"/>
+    #elseif ($param.type == "checkbox")
+        <input ng-model="curDatasource.config.$param.name" type="checkbox" ng-checked="$param.checked"/>
+    #elseif ($param.type == "select")
+        <select class="form-control" ng-model="curDatasource.config.$param.name">
+            #foreach($option in $param.options)
+                <option>$option</option>
+            #end
+        </select>
     #end
-        <span style="color:red" ng-show="curWidget.query.$param.name.$dirty && curWidget.query.$param.name.$invalid">
-            <span ng-show="curWidget.query.$param.name.$error.required">$param.name can not empty.</span>
-        </span>
     </div>
 </div>
 #end

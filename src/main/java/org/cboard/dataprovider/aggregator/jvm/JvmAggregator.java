@@ -14,6 +14,7 @@ import org.cboard.dataprovider.config.ConfigComponent;
 import org.cboard.dataprovider.config.DimensionConfig;
 import org.cboard.dataprovider.result.AggregateResult;
 import org.cboard.dataprovider.result.ColumnIndex;
+import org.cboard.exception.CBoardException;
 import org.cboard.util.NaturalOrderComparator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -82,7 +83,11 @@ public class JvmAggregator extends InnerAggregator {
     @Override
     public String[] getColumn() throws Exception {
         String[][] data = rawDataCache.get(getCacheKey());
-        return data[0];
+        try {
+            return data[0];
+        } catch (Exception e) {
+            throw new CBoardException("data set is null");
+        }
     }
 
     @Override

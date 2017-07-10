@@ -1,13 +1,14 @@
 package org.cboard.dataprovider;
 
+import com.google.common.collect.Ordering;
+import org.apache.commons.io.output.StringBuilderWriter;
+import org.apache.commons.lang.StringUtils;
+import org.apache.velocity.VelocityContext;
 import org.apache.velocity.app.Velocity;
+import org.apache.velocity.app.VelocityEngine;
 import org.apache.velocity.runtime.RuntimeConstants;
 import org.cboard.dataprovider.annotation.DatasourceParameter;
 import org.cboard.dataprovider.annotation.QueryParameter;
-import com.google.common.collect.Ordering;
-import org.apache.commons.io.output.StringBuilderWriter;
-import org.apache.velocity.VelocityContext;
-import org.apache.velocity.app.VelocityEngine;
 import org.reflections.ReflectionUtils;
 
 import java.lang.reflect.Field;
@@ -34,22 +35,42 @@ public class DataProviderViewManager {
 
     private static Map<String, String> rendered = new HashMap<>();
 
-    public static String getQueryView(String type) {
+    public static String getQueryView(String type, String page) {
         Class clz = DataProviderManager.getDataProviderClass(type);
 
         Set<Field> fieldSet = ReflectionUtils.getAllFields(clz, ReflectionUtils.withAnnotation(QueryParameter.class));
         List<Field> fieldList = fieldOrdering.sortedCopy(fieldSet);
         try {
             Object o = clz.newInstance();
-            List<Map<String, String>> lists = new ArrayList<>();
+            List<Map<String, Object>> lists = new ArrayList<>();
             for (Field field : fieldList) {
                 field.setAccessible(true);
                 QueryParameter queryParameter = field.getAnnotation(QueryParameter.class);
-                Map<String, String> param = new HashMap<>();
+                Map<String, Object> param = new HashMap<>();
                 param.put("label", queryParameter.label());
                 param.put("type", queryParameter.type().toString());
                 param.put("name", (String) field.get(o));
-                lists.add(param);
+                param.put("placeholder", queryParameter.placeholder());
+                param.put("value", queryParameter.value());
+                param.put("options", queryParameter.options());
+                param.put("checked", queryParameter.checked());
+
+                /*
+                不同页面显示不同输入框
+                 */
+                String pageType = queryParameter.pageType();
+                if (pageType.contains("all") || StringUtils.isBlank(page)) {
+                    lists.add(param);
+                } else if ("test.html".equals(page) && pageType.contains("test")) {
+                    lists.add(param);
+                } else if ("dataset.html".equals(page) && pageType.contains("dataset")) {
+                    lists.add(param);
+                } else if ("widget.html".equals(page) && pageType.contains("widget")) {
+                    lists.add(param);
+                } else {
+                    continue;
+                }
+
             }
             VelocityContext context = new VelocityContext();
             context.put("params", lists);
@@ -77,7 +98,10 @@ public class DataProviderViewManager {
                 param.put("label", datasourceParameter.label());
                 param.put("type", datasourceParameter.type().toString());
                 param.put("name", (String) field.get(o));
+                param.put("placeholder", datasourceParameter.placeholder());
+                param.put("value", datasourceParameter.value());
                 param.put("options", datasourceParameter.options());
+                param.put("checked", datasourceParameter.checked());
                 lists.add(param);
             }
             VelocityContext context = new VelocityContext();

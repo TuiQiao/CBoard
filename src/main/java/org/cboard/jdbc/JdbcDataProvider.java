@@ -9,9 +9,9 @@ import org.apache.commons.collections.map.HashedMap;
 import org.apache.commons.lang.StringUtils;
 import org.cboard.cache.CacheManager;
 import org.cboard.cache.HeapCacheManager;
+import org.cboard.dataprovider.DataProvider;
 import org.cboard.dataprovider.Initializing;
 import org.cboard.dataprovider.aggregator.Aggregatable;
-import org.cboard.dataprovider.DataProvider;
 import org.cboard.dataprovider.annotation.DatasourceParameter;
 import org.cboard.dataprovider.annotation.ProviderName;
 import org.cboard.dataprovider.annotation.QueryParameter;
@@ -33,8 +33,6 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
-
-import static org.cboard.elasticsearch.query.QueryBuilder.nullQuery;
 
 /**
  * Created by yfyuan on 2016/8/17.
@@ -59,7 +57,7 @@ public class JdbcDataProvider extends DataProvider implements Aggregatable, Init
     @DatasourceParameter(label = "{{'DATAPROVIDER.JDBC.PASSWORD'|translate}}", type = DatasourceParameter.Type.Password, order = 4)
     private String PASSWORD = "password";
 
-    @DatasourceParameter(label = "{{'DATAPROVIDER.JDBC.POOLEDCONNECTION'|translate}}", type = DatasourceParameter.Type.Checkbox, order = 5)
+    @DatasourceParameter(label = "{{'DATAPROVIDER.POOLEDCONNECTION'|translate}}", type = DatasourceParameter.Type.Checkbox, order = 5)
     private String POOLED = "pooled";
 
     @DatasourceParameter(label = "{{'DATAPROVIDER.AGGREGATABLE_PROVIDER'|translate}}", type = DatasourceParameter.Type.Checkbox, order = 100)

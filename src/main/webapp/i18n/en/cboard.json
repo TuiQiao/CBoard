@@ -63,7 +63,7 @@
     "CONFIRM_PASSWORD": "Confirm Password"
   },
   "FOOTER": {
-    "COPYRIGHT": "Ctrip Payment Department",
+    "COPYRIGHT": "Shanghai Hex Information Technology Co,. Ltd.",
     "VERSION": "Version"
   },
   "DASHBOARD": {
@@ -296,12 +296,12 @@
   },
   "DATAPROVIDER": {
     "AGGREGATABLE_PROVIDER": "Aggregatable DataProvider",
+    "POOLEDCONNECTION": "Pooled Connection",
     "JDBC": {
       "DRIVER": "Driver (eg: com.mysql.jdbc.Driver)",
       "JDBCURL": "JDBC Url (eg: jdbc:mysql://hostname:port/db)",
       "USERNAME": "UserName",
       "PASSWORD": "Password",
-      "POOLEDCONNECTION": "Pooled Connection",
       "SQLTEXT": "Sql Text"
     },
     "SAIKU": {
@@ -312,6 +312,16 @@
       "ENCODING": "Encoding<UTF-8>",
       "SEPRATOR": "Seprator<TAB>",
       "ENCLOSURE": "Enclosure<Empty>"
+    },
+    "SOLR":{
+      "SOLR_SERVERS": "Solr Servers",
+      "COLLECTION": "Collection",
+      "Q": "q",
+      "FQ": "fq",
+      "SORT": "sort",
+      "START": "start",
+      "ROWS": "rows",
+      "FL": "fl"
     }
   }
 }

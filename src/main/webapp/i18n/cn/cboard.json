@@ -296,12 +296,12 @@
   },
   "DATAPROVIDER": {
     "AGGREGATABLE_PROVIDER": "数据源聚合",
+    "POOLEDCONNECTION": "是否使用连接池",
     "JDBC": {
       "DRIVER": "驱动类 (如: com.mysql.jdbc.Driver)",
       "JDBCURL": "连接串 (如: jdbc:mysql://hostname:port/db)",
       "USERNAME": "数据库用户名",
       "PASSWORD": "数据库密码",
-      "POOLEDCONNECTION": "是否使用连接池",
       "SQLTEXT": "查询语句"
     },
     "SAIKU": {
@@ -312,6 +312,16 @@
       "ENCODING": "编码<UTF-8>",
       "SEPRATOR": "分隔符<TAB>",
       "ENCLOSURE": "列包围字符"
+    },
+    "SOLR":{
+      "SOLR_SERVERS": "Solr服务",
+      "COLLECTION": "集合名称",
+      "Q": "查询字段",
+      "FQ": "过滤字段",
+      "SORT": "排序字段",
+      "START": "开始位置",
+      "ROWS": "结果数",
+      "FL": "结果字段"
     }
   }
 }

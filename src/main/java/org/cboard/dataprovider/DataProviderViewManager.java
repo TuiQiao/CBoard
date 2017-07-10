@@ -42,17 +42,18 @@ public class DataProviderViewManager {
         List<Field> fieldList = fieldOrdering.sortedCopy(fieldSet);
         try {
             Object o = clz.newInstance();
-            List<Map<String, String>> lists = new ArrayList<>();
+            List<Map<String, Object>> lists = new ArrayList<>();
             for (Field field : fieldList) {
                 field.setAccessible(true);
                 QueryParameter queryParameter = field.getAnnotation(QueryParameter.class);
-                Map<String, String> param = new HashMap<>();
+                Map<String, Object> param = new HashMap<>();
                 param.put("label", queryParameter.label());
                 param.put("type", queryParameter.type().toString());
                 param.put("name", (String) field.get(o));
-                param.put("value", queryParameter.value());
                 param.put("placeholder", queryParameter.placeholder());
-                param.put("required", String.valueOf(queryParameter.required()));
+                param.put("value", queryParameter.value());
+                param.put("options", queryParameter.options());
+                param.put("checked", queryParameter.checked());
 
                 /*
                 不同页面显示不同输入框
@@ -98,7 +99,9 @@ public class DataProviderViewManager {
                 param.put("type", datasourceParameter.type().toString());
                 param.put("name", (String) field.get(o));
                 param.put("placeholder", datasourceParameter.placeholder());
+                param.put("value", datasourceParameter.value());
                 param.put("options", datasourceParameter.options());
+                param.put("checked", datasourceParameter.checked());
                 lists.add(param);
             }
             VelocityContext context = new VelocityContext();

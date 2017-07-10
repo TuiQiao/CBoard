@@ -26,6 +26,8 @@ public @interface DatasourceParameter {
 
     String[] options() default "N/A";
 
+    boolean checked() default false;
+
     enum Type {
         Input("input"), TextArea("textarea"), Password("password"), Checkbox("checkbox"), Select("select");
         private String name;

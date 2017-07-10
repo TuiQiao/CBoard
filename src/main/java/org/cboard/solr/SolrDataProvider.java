@@ -2,6 +2,7 @@ package org.cboard.solr;
 
 import com.alibaba.fastjson.JSONObject;
 import com.google.common.base.Charsets;
+import com.google.common.collect.Ordering;
 import com.google.common.hash.Hashing;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.pool2.impl.GenericObjectPoolConfig;
@@ -12,18 +13,19 @@ import org.apache.solr.client.solrj.impl.LBHttpSolrServer;
 import org.apache.solr.client.solrj.response.QueryResponse;
 import org.apache.solr.common.SolrDocumentList;
 import org.cboard.dataprovider.DataProvider;
+import org.cboard.dataprovider.DataProviderManager;
 import org.cboard.dataprovider.annotation.DatasourceParameter;
 import org.cboard.dataprovider.annotation.ProviderName;
 import org.cboard.dataprovider.annotation.QueryParameter;
 import org.cboard.exception.CBoardException;
+import org.reflections.ReflectionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 
+import java.lang.reflect.Field;
 import java.net.MalformedURLException;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 /**
  * Created by JunjieM on 2017-7-7.
@@ -36,31 +38,31 @@ public class SolrDataProvider extends DataProvider {
     @Value("${dataprovider.resultLimit:300000}")
     private int resultLimit;
 
-    @DatasourceParameter(label = "Solr Servers", placeholder = "<ip>:<port>,[<ip>:<port>]...", type = DatasourceParameter.Type.Input, order = 1)
+    @DatasourceParameter(label = "{{'DATAPROVIDER.SOLR.SOLR_SERVERS'|translate}}", placeholder = "<ip>:<port>,[<ip>:<port>]...", type = DatasourceParameter.Type.Input, order = 1)
     private String solrServers = "solrServers";
 
-    @QueryParameter(label = "Collection", pageType = "test,dataset,widget", required = true, type = QueryParameter.Type.Input, order = 1)
+    @QueryParameter(label = "{{'DATAPROVIDER.SOLR.COLLECTION'|translate}}", pageType = "test,dataset,widget", type = QueryParameter.Type.Input, order = 1)
     private String collection = "collection";
 
-    @QueryParameter(label = "q", pageType = "dataset,widget", value = "*:*", placeholder = "*:*|<fieldName>:<fieldValue>[ <AND|OR> <fieldName>:<fieldValue>]...", required = true, type = QueryParameter.Type.TextArea2, order = 2)
+    @QueryParameter(label = "{{'DATAPROVIDER.SOLR.Q'|translate}}", pageType = "dataset,widget", value = "*:*", placeholder = "*:*|<fieldName>:<fieldValue>[ <AND|OR> <fieldName>:<fieldValue>]...", type = QueryParameter.Type.TextArea2, order = 2)
     private String q = "q";
 
-    @QueryParameter(label = "fq", pageType = "dataset,widget", placeholder = "<fieldName>:<fieldValue>[,<fieldName>:<fieldValue>]...", type = QueryParameter.Type.Input, order = 3)
+    @QueryParameter(label = "{{'DATAPROVIDER.SOLR.FQ'|translate}}", pageType = "dataset,widget", placeholder = "<fieldName>:<fieldValue>[,<fieldName>:<fieldValue>]...", type = QueryParameter.Type.Input, order = 3)
     private String fq = "fq";
 
-    @QueryParameter(label = "sort", pageType = "dataset,widget", placeholder = "<fieldName> <ASC|DESC>[,<fieldName> <ASC|DESC>]...", type = QueryParameter.Type.Input, order = 4)
+    @QueryParameter(label = "{{'DATAPROVIDER.SOLR.SORT'|translate}}", pageType = "dataset,widget", placeholder = "<fieldName> <ASC|DESC>[,<fieldName> <ASC|DESC>]...", type = QueryParameter.Type.Input, order = 4)
     private String sort = "sort";
 
-    @QueryParameter(label = "start", pageType = "dataset,widget", value = "0", required = true, type = QueryParameter.Type.Number, order = 5)
+    @QueryParameter(label = "{{'DATAPROVIDER.SOLR.START'|translate}}", pageType = "dataset,widget", value = "0", placeholder = "default value is 0", type = QueryParameter.Type.Number, order = 5)
     private String start = "start";
 
-    @QueryParameter(label = "rows", pageType = "dataset,widget", value = "10", required = true, type = QueryParameter.Type.Number, order = 6)
+    @QueryParameter(label = "{{'DATAPROVIDER.SOLR.ROWS'|translate}}", pageType = "dataset,widget", value = "10", placeholder = "default value is 10", type = QueryParameter.Type.Number, order = 6)
     private String rows = "rows";
 
-    @QueryParameter(label = "fl", pageType = "dataset,widget", placeholder = "*|<fieldName>[,<fieldName>]...", type = QueryParameter.Type.Input, order = 7)
+    @QueryParameter(label = "{{'DATAPROVIDER.SOLR.FL'|translate}}", pageType = "dataset,widget", placeholder = "*|<fieldName>[,<fieldName>]...", type = QueryParameter.Type.Input, order = 7)
     private String fl = "fl";
 
-    @DatasourceParameter(label = "{{'DATAPROVIDER.JDBC.POOLEDCONNECTION'|translate}}", type = DatasourceParameter.Type.Checkbox, order = 5)
+    @DatasourceParameter(label = "{{'DATAPROVIDER.POOLEDCONNECTION'|translate}}", type = DatasourceParameter.Type.Checkbox, order = 5)
     private String pooled = "pooled";
 
     private static Map<String, SolrServerPoolFactory> poolMap;

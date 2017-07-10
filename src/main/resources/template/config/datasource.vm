@@ -3,15 +3,15 @@
     <label>$param.label</label>
     #if ($param.type == "input")
         <input ng-model="curDatasource.config.$param.name" class="form-control input-sm"
-               placeholder="$param.placeholder" value="$param.value"/>
+               placeholder="$param.placeholder" ng-init="curWidget.query.$param.name='$param.value'"/>
     #elseif ($param.type == "textarea")
         <textarea ng-model="curDatasource.config.$param.name" class="form-control input-sm"
-                  placeholder="$param.placeholder" value="$param.value"/>
+                  placeholder="$param.placeholder" ng-init="curWidget.query.$param.name='$param.value'"/>
     #elseif ($param.type == "password")
         <input ng-model="curDatasource.config.$param.name" class="form-control input-sm" type="password"
-               placeholder="$param.placeholder" value="$param.value"/>
+               placeholder="$param.placeholder" ng-init="curWidget.query.$param.name='$param.value'"/>
     #elseif ($param.type == "checkbox")
-        <input ng-model="curDatasource.config.$param.name" type="checkbox"/>
+        <input ng-model="curDatasource.config.$param.name" type="checkbox" ng-checked="$param.checked"/>
     #elseif ($param.type == "select")
         <select class="form-control" ng-model="curDatasource.config.$param.name">
             #foreach($option in $param.options)

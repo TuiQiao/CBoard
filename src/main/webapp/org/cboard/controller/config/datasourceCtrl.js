@@ -9,6 +9,7 @@ cBoard.controller('datasourceCtrl', function ($scope, $http, ModalUtils, $uibMod
     $scope.curDatasource = {};
     $scope.alerts = [];
     $scope.verify = {dsName:true,provider:true};
+    $scope.params = [];
     
     var getDatasourceList = function () {
         $http.get("dashboard/getDatasourceList.do").success(function (response) {
@@ -103,6 +104,27 @@ cBoard.controller('datasourceCtrl', function ($scope, $http, ModalUtils, $uibMod
     $scope.changeDsView = function () {
         $scope.dsView = 'dashboard/getDatasourceView.do?type=' + $scope.curDatasource.type;
     };
+
+    $scope.changeDs = function () {
+        $scope.changeDsView();
+        $scope.curDatasource.config = {};
+        $http.get('dashboard/getDatasourceParams.do?type=' + $scope.curDatasource.type).then(function (response) {
+            $scope.params = response.data;
+            for(i in $scope.params){
+                var name = $scope.params[i].name;
+                var value = $scope.params[i].value;
+                var checked = $scope.params[i].checked;
+                var type = $scope.params[i].type;
+                if(type == "checkbox" && checked == true){
+                    $scope.curDatasource.config[name] = true;
+                }if(type == "number" && value != "" && !isNaN(value)){
+                    $scope.curDatasource.config[name] = Number(value);
+                }else if(value != "") {
+                    $scope.curDatasource.config[name] = value;
+                }
+            }
+        });
+    };
     
     var validate = function () {
         $scope.alerts = [];
@@ -116,6 +138,21 @@ cBoard.controller('datasourceCtrl', function ($scope, $http, ModalUtils, $uibMod
             $scope.verify = {dsName : false};
             $("#DatasetName").focus();
             return false;
+        }
+        for(i in $scope.params){
+            var name = $scope.params[i].name;
+            var label = $scope.params[i].label;
+            var required = $scope.params[i].required;
+            if(required == true && !$scope.curDatasource.config[name]){
+                var pattern = /([A-Z_\.]+)/;
+                var msg = pattern.exec(label);
+                if(msg && msg.length > 0)
+                    msg = translate(msg[0]);
+                else
+                    msg = label;
+                $scope.alerts = [{msg: msg + translate('COMMON.NOT_EMPTY'), type: 'danger'}];
+                return false;
+            }
         }
         return true;
     };
@@ -161,12 +198,49 @@ cBoard.controller('datasourceCtrl', function ($scope, $http, ModalUtils, $uibMod
             backdrop: false,
             controller: function ($scope, $uibModalInstance) {
                 $scope.datasource = datasource;
-                $scope.curWidget = {query: {}};
                 $scope.alerts = [];
                 $scope.close = function () {
                     $uibModalInstance.close();
                 };
+                $scope.curWidget = {query: {}};
+                $http.get('dashboard/getConfigParams.do?type=' + $scope.datasource.type + '&page=test.html').then(function (response) {
+                    $scope.params = response.data;
+                    for(i in $scope.params){
+                        var name = $scope.params[i].name;
+                        var value = $scope.params[i].value;
+                        var checked = $scope.params[i].checked;
+                        var type = $scope.params[i].type;
+                        if(type == "checkbox" && checked == true){
+                            $scope.curWidget.query[name] = true;
+                        }if(type == "number" && value != "" && !isNaN(value)){
+                            $scope.curWidget.query[name] = Number(value);
+                        }else if(value != "") {
+                            $scope.curWidget.query[name] = value;
+                        }
+                    }
+                });
+                var validate = function () {
+                    for(i in $scope.params){
+                        var name = $scope.params[i].name;
+                        var label = $scope.params[i].label;
+                        var required = $scope.params[i].required;
+                        if(required == true && !$scope.curWidget.query[name]){
+                            var pattern = /([A-Z_\.]+)/;
+                            var msg = pattern.exec(label);
+                            if(msg && msg.length > 0)
+                                msg = translate(msg[0]);
+                            else
+                                msg = label;
+                            $scope.alerts = [{msg: msg + translate('COMMON.NOT_EMPTY'), type: 'danger'}];
+                            return false;
+                        }
+                    }
+                    return true;
+                };
                 $scope.do = function () {
+                    if (!validate()) {
+                        return;
+                    }
                     $http.post("dashboard/test.do", {
                         datasource: angular.toJson($scope.datasource),
                         query: angular.toJson($scope.curWidget.query)
@@ -187,6 +261,5 @@ cBoard.controller('datasourceCtrl', function ($scope, $http, ModalUtils, $uibMod
             }
         });
     };
-
 
 });

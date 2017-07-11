@@ -104,9 +104,19 @@ public class DashboardController {
         return DataProviderManager.getProviderList();
     }
 
+    @RequestMapping(value = "/getConfigParams")
+    public List<Map<String, Object>> getConfigParams(@RequestParam(name = "type") String type, @RequestParam(name = "page") String page) {
+        return DataProviderViewManager.getQueryParams(type, page);
+    }
+
     @RequestMapping(value = "/getConfigView")
     public String getConfigView(@RequestParam(name = "type") String type, @RequestParam(name = "page") String page) {
         return DataProviderViewManager.getQueryView(type, page);
+    }
+
+    @RequestMapping(value = "/getDatasourceParams")
+    public List<Map<String, Object>> getDatasourceParams(@RequestParam(name = "type") String type) {
+        return DataProviderViewManager.getDatasourceParams(type);
     }
 
     @RequestMapping(value = "/getDatasourceView")

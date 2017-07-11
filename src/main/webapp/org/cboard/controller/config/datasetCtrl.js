@@ -178,6 +178,21 @@ cBoard.controller('datasetCtrl', function ($scope, $http, dataService, $uibModal
             $("#DatasetName").focus();
             return false;
         }
+        for(i in $scope.params){
+            var name = $scope.params[i].name;
+            var label = $scope.params[i].label;
+            var required = $scope.params[i].required;
+            if(required == true && !$scope.curWidget.query[name]){
+                var pattern = /([A-Z_\.]+)/;
+                var msg = pattern.exec(label);
+                if(msg && msg.length > 0)
+                    msg = translate(msg[0]);
+                else
+                    msg = label;
+                $scope.alerts = [{msg: msg + translate('COMMON.NOT_EMPTY'), type: 'danger'}];
+                return false;
+            }
+        }
         return true;
     };
 
@@ -587,9 +602,30 @@ cBoard.controller('datasetCtrl', function ($scope, $http, dataService, $uibModal
         return baseEventObj;
     }();
 
+    $scope.changeDs = function (page) {
+        $scope.curWidget.query = {};
+        $http.get('dashboard/getConfigParams.do?type=' + $scope.datasource.type + '&page=' + page).then(function (response) {
+            $scope.params = response.data;
+            for(i in $scope.params){
+                var name = $scope.params[i].name;
+                var value = $scope.params[i].value;
+                var checked = $scope.params[i].checked;
+                var type = $scope.params[i].type;
+                if(type == "checkbox" && checked == true){
+                    $scope.curWidget.query[name] = true;
+                }if(type == "number" && value != "" && !isNaN(value)){
+                    $scope.curWidget.query[name] = Number(value);
+                }else if(value != "") {
+                    $scope.curWidget.query[name] = value;
+                }
+            }
+        });
+    };
+
     /**  js tree related end **/
 
 
     /** Ace Editor Starer... **/
     $scope.queryAceOpt = datasetEditorOptions();
+
 });

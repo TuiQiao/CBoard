@@ -35,14 +35,14 @@ public class DataProviderViewManager {
 
     private static Map<String, String> rendered = new HashMap<>();
 
-    public static String getQueryView(String type, String page) {
+    public static List<Map<String, Object>> getQueryParams(String type, String page) {
         Class clz = DataProviderManager.getDataProviderClass(type);
-
         Set<Field> fieldSet = ReflectionUtils.getAllFields(clz, ReflectionUtils.withAnnotation(QueryParameter.class));
         List<Field> fieldList = fieldOrdering.sortedCopy(fieldSet);
+        List<Map<String, Object>> params = null;
         try {
             Object o = clz.newInstance();
-            List<Map<String, Object>> lists = new ArrayList<>();
+            params = new ArrayList<>();
             for (Field field : fieldList) {
                 field.setAccessible(true);
                 QueryParameter queryParameter = field.getAnnotation(QueryParameter.class);
@@ -54,43 +54,49 @@ public class DataProviderViewManager {
                 param.put("value", queryParameter.value());
                 param.put("options", queryParameter.options());
                 param.put("checked", queryParameter.checked());
-
+                param.put("required", queryParameter.required());
                 /*
                 不同页面显示不同输入框
                  */
                 String pageType = queryParameter.pageType();
                 if (pageType.contains("all") || StringUtils.isBlank(page)) {
-                    lists.add(param);
+                    params.add(param);
                 } else if ("test.html".equals(page) && pageType.contains("test")) {
-                    lists.add(param);
+                    params.add(param);
                 } else if ("dataset.html".equals(page) && pageType.contains("dataset")) {
-                    lists.add(param);
+                    params.add(param);
                 } else if ("widget.html".equals(page) && pageType.contains("widget")) {
-                    lists.add(param);
+                    params.add(param);
                 } else {
                     continue;
                 }
-
             }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return params;
+    }
+
+    public static String getQueryView(String type, String page) {
+        List<Map<String, Object>> params = getQueryParams(type, page);
+        if (params != null && params.size() > 0) {
             VelocityContext context = new VelocityContext();
-            context.put("params", lists);
+            context.put("params", params);
             StringBuilderWriter stringBuilderWriter = new StringBuilderWriter();
             velocityEngine.mergeTemplate("query.vm", "utf-8", context, stringBuilderWriter);
             return stringBuilderWriter.toString();
-        } catch (Exception e) {
-            e.printStackTrace();
         }
         return null;
     }
 
-    public static String getDatasourceView(String type) {
+    public static List<Map<String, Object>> getDatasourceParams(String type) {
         Class clz = DataProviderManager.getDataProviderClass(type);
-
         Set<Field> fieldSet = ReflectionUtils.getAllFields(clz, ReflectionUtils.withAnnotation(DatasourceParameter.class));
         List<Field> fieldList = fieldOrdering.sortedCopy(fieldSet);
+        List<Map<String, Object>> params = null;
         try {
             Object o = clz.newInstance();
-            List<Map<String, Object>> lists = new ArrayList<>();
+            params = new ArrayList<>();
             for (Field field : fieldList) {
                 field.setAccessible(true);
                 DatasourceParameter datasourceParameter = field.getAnnotation(DatasourceParameter.class);
@@ -102,15 +108,23 @@ public class DataProviderViewManager {
                 param.put("value", datasourceParameter.value());
                 param.put("options", datasourceParameter.options());
                 param.put("checked", datasourceParameter.checked());
-                lists.add(param);
+                param.put("required", datasourceParameter.required());
+                params.add(param);
             }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return params;
+    }
+
+    public static String getDatasourceView(String type) {
+        List<Map<String, Object>> params = getDatasourceParams(type);
+        if (params != null && params.size() > 0) {
             VelocityContext context = new VelocityContext();
-            context.put("params", lists);
+            context.put("params", params);
             StringBuilderWriter stringBuilderWriter = new StringBuilderWriter();
             velocityEngine.mergeTemplate("datasource.vm", "utf-8", context, stringBuilderWriter);
             return stringBuilderWriter.toString();
-        } catch (Exception e) {
-            e.printStackTrace();
         }
         return null;
     }

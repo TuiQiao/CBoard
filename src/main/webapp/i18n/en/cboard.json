@@ -311,7 +311,7 @@
       "FILE_NAME": "FileName",
       "ENCODING": "Encoding",
       "SEPRATOR": "Seprator",
-      "ENCLOSURE": "Enclosure",
+      "QUOTECHAR": "quoteChar",
       "DATA_TYPE": "DataType",
       "FIELD_NAMES": "FieldNames"
     },

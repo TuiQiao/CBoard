@@ -26,6 +26,8 @@ public @interface QueryParameter {
 
     boolean checked() default false;
 
+    boolean required() default false;
+
     // 页面类型，all、test、dataset、widget，多个可用逗号隔开，默认：all
     String pageType() default "all";
 

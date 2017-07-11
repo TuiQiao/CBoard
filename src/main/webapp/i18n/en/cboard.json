@@ -311,9 +311,10 @@
       "FILE_NAME": "FileName",
       "ENCODING": "Encoding",
       "SEPRATOR": "Seprator",
-      "QUOTECHAR": "quoteChar",
       "DATA_TYPE": "DataType",
-      "FIELD_NAMES": "FieldNames"
+      "FIELD_NAMES": "FieldNames",
+      "QUOTE_CHAR": "quoteChar",
+      "ESCAPE_CHAR": "escapeChar"
     },
     "SOLR":{
       "SOLR_SERVERS": "Solr Servers",

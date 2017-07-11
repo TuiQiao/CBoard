@@ -2,7 +2,6 @@ package org.cboard.solr;
 
 import com.alibaba.fastjson.JSONObject;
 import com.google.common.base.Charsets;
-import com.google.common.collect.Ordering;
 import com.google.common.hash.Hashing;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.pool2.impl.GenericObjectPoolConfig;
@@ -13,38 +12,48 @@ import org.apache.solr.client.solrj.impl.LBHttpSolrServer;
 import org.apache.solr.client.solrj.response.QueryResponse;
 import org.apache.solr.common.SolrDocumentList;
 import org.cboard.dataprovider.DataProvider;
-import org.cboard.dataprovider.DataProviderManager;
+import org.cboard.dataprovider.Initializing;
+import org.cboard.dataprovider.aggregator.Aggregatable;
 import org.cboard.dataprovider.annotation.DatasourceParameter;
 import org.cboard.dataprovider.annotation.ProviderName;
 import org.cboard.dataprovider.annotation.QueryParameter;
+import org.cboard.dataprovider.config.AggConfig;
+import org.cboard.dataprovider.config.ConfigComponent;
+import org.cboard.dataprovider.result.AggregateResult;
 import org.cboard.exception.CBoardException;
-import org.reflections.ReflectionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 
-import java.lang.reflect.Field;
 import java.net.MalformedURLException;
-import java.util.*;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * Created by JunjieM on 2017-7-7.
  */
 @ProviderName(name = "Solr")
-public class SolrDataProvider extends DataProvider {
+public class SolrDataProvider extends DataProvider implements Aggregatable, Initializing {
 
     private static final Logger LOG = LoggerFactory.getLogger(SolrDataProvider.class);
 
     @Value("${dataprovider.resultLimit:300000}")
     private int resultLimit;
 
-    @DatasourceParameter(label = "{{'DATAPROVIDER.SOLR.SOLR_SERVERS'|translate}}", placeholder = "<ip>:<port>,[<ip>:<port>]...", type = DatasourceParameter.Type.Input, order = 1)
+    @DatasourceParameter(label = "{{'DATAPROVIDER.SOLR.SOLR_SERVERS'|translate}}", required = true, placeholder = "<ip>:<port>,[<ip>:<port>]...", type = DatasourceParameter.Type.Input, order = 1)
     private String solrServers = "solrServers";
 
-    @QueryParameter(label = "{{'DATAPROVIDER.SOLR.COLLECTION'|translate}}", pageType = "test,dataset,widget", type = QueryParameter.Type.Input, order = 1)
+    @DatasourceParameter(label = "{{'DATAPROVIDER.POOLEDCONNECTION'|translate}}", type = DatasourceParameter.Type.Checkbox, order = 2)
+    private String pooled = "pooled";
+
+    @DatasourceParameter(label = "{{'DATAPROVIDER.AGGREGATABLE_PROVIDER'|translate}}", type = DatasourceParameter.Type.Checkbox, order = 3)
+    private String aggregateProvider = "aggregateProvider";
+
+    @QueryParameter(label = "{{'DATAPROVIDER.SOLR.COLLECTION'|translate}}", required = true, pageType = "test,dataset,widget", type = QueryParameter.Type.Input, order = 1)
     private String collection = "collection";
 
-    @QueryParameter(label = "{{'DATAPROVIDER.SOLR.Q'|translate}}", pageType = "dataset,widget", value = "*:*", placeholder = "*:*|<fieldName>:<fieldValue>[ <AND|OR> <fieldName>:<fieldValue>]...", type = QueryParameter.Type.TextArea2, order = 2)
+    @QueryParameter(label = "{{'DATAPROVIDER.SOLR.Q'|translate}}", required = true, pageType = "dataset,widget", value = "*:*", placeholder = "*:*|<fieldName>:<fieldValue>[ <AND|OR> <fieldName>:<fieldValue>]...", type = QueryParameter.Type.TextArea2, order = 2)
     private String q = "q";
 
     @QueryParameter(label = "{{'DATAPROVIDER.SOLR.FQ'|translate}}", pageType = "dataset,widget", placeholder = "<fieldName>:<fieldValue>[,<fieldName>:<fieldValue>]...", type = QueryParameter.Type.Input, order = 3)
@@ -53,24 +62,16 @@ public class SolrDataProvider extends DataProvider {
     @QueryParameter(label = "{{'DATAPROVIDER.SOLR.SORT'|translate}}", pageType = "dataset,widget", placeholder = "<fieldName> <ASC|DESC>[,<fieldName> <ASC|DESC>]...", type = QueryParameter.Type.Input, order = 4)
     private String sort = "sort";
 
-    @QueryParameter(label = "{{'DATAPROVIDER.SOLR.START'|translate}}", pageType = "dataset,widget", value = "0", placeholder = "default value is 0", type = QueryParameter.Type.Number, order = 5)
+    @QueryParameter(label = "{{'DATAPROVIDER.SOLR.START'|translate}}", required = true, pageType = "dataset,widget", value = "0", placeholder = "default value is 0", type = QueryParameter.Type.Number, order = 5)
     private String start = "start";
 
-    @QueryParameter(label = "{{'DATAPROVIDER.SOLR.ROWS'|translate}}", pageType = "dataset,widget", value = "10", placeholder = "default value is 10", type = QueryParameter.Type.Number, order = 6)
+    @QueryParameter(label = "{{'DATAPROVIDER.SOLR.ROWS'|translate}}", required = true, pageType = "dataset,widget", value = "10", placeholder = "default value is 10", type = QueryParameter.Type.Number, order = 6)
     private String rows = "rows";
 
     @QueryParameter(label = "{{'DATAPROVIDER.SOLR.FL'|translate}}", pageType = "dataset,widget", placeholder = "*|<fieldName>[,<fieldName>]...", type = QueryParameter.Type.Input, order = 7)
     private String fl = "fl";
 
-    @DatasourceParameter(label = "{{'DATAPROVIDER.POOLEDCONNECTION'|translate}}", type = DatasourceParameter.Type.Checkbox, order = 5)
-    private String pooled = "pooled";
-
     private static Map<String, SolrServerPoolFactory> poolMap;
-
-    @Override
-    public boolean doAggregationInDataSource() {
-        return false;
-    }
 
     private synchronized SolrServerPoolFactory getSolrServerPoolFactory(String solrServers, String collectionName) {
         String poolKey = getPoolKey(solrServers, collectionName);
@@ -133,14 +134,15 @@ public class SolrDataProvider extends DataProvider {
         return solrQuery;
     }
 
-    private QueryResponse getQueryResponse(String solrServers, String collectionName) {
+    private QueryResponse getQueryResponse(String solrServers, String collectionName) throws Exception {
         SolrServer solrServer = null;
         QueryResponse res = null;
         try {
             solrServer = getConnection(solrServers, collectionName);
             res = solrServer.query(getSolrQuery());
         } catch (SolrServerException e) {
-            e.printStackTrace();
+            LOG.error("ERROR:" + e.getMessage());
+            throw new Exception("ERROR:" + e.getMessage(), e);
         } finally {
             if (solrServer != null) {
                 releaseConnection(solrServers, collectionName, solrServer);
@@ -212,5 +214,46 @@ public class SolrDataProvider extends DataProvider {
         }
 
         return strings;
+    }
+
+    /**
+     * Solr5.x才开始支持group by a,b
+     *
+     * @return
+     */
+    @Override
+    public boolean doAggregationInDataSource() {
+        String v = dataSource.get(aggregateProvider);
+        return v != null && "true".equals(v);
+    }
+
+    @Override
+    public void afterPropertiesSet() throws Exception {
+
+    }
+
+    @Override
+    public String[] queryDimVals(String columnName, AggConfig config) throws Exception {
+        return new String[0];
+    }
+
+    @Override
+    public String[] getColumn() throws Exception {
+        return new String[0];
+    }
+
+    @Override
+    public AggregateResult queryAggData(AggConfig ac) throws Exception {
+        return null;
+    }
+
+    @Override
+    public String viewAggDataQuery(AggConfig ac) throws Exception {
+        return null;
+    }
+
+    @Override
+    public ConfigComponent separateNull(ConfigComponent configComponent) {
+        return null;
     }
 }

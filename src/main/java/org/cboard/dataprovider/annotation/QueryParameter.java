@@ -17,8 +17,21 @@ public @interface QueryParameter {
 
     int order() default 0;
 
+    // Init value
+    String value() default "";
+
+    String placeholder() default "";
+
+    String[] options() default "N/A";
+
+    boolean checked() default false;
+
+    // 页面类型，all、test、dataset、widget，多个可用逗号隔开，默认：all
+    String pageType() default "all";
+
     enum Type {
-        Input("input"), TextArea("textarea");
+        Input("input"), TextArea("textarea"), TextArea2("textarea2"), Number("number"), Checkbox("checkbox"), Select("select");
+
         private String name;
 
         Type(String name) {

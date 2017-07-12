@@ -61,8 +61,8 @@ public class FileDataProvider extends DataProvider {
     public String[][] getData() throws Exception {
         String basePath = dataSource.get(DS_PARAM_BASE_PATH);
         String fileName = query.get(QUERY_PARAM_FILE_NAME);
-        String encoding = query.getOrDefault(QUERY_PARAM_ENCODING, "UTF-8");
-        String dataType = query.getOrDefault(QUERY_PARAM_DATA_TYPE, "DSV");
+        String encoding = StringUtils.isBlank(query.get(QUERY_PARAM_ENCODING)) ? "UTF-8" : query.get(QUERY_PARAM_ENCODING);
+        String dataType = StringUtils.isBlank(query.get(QUERY_PARAM_DATA_TYPE)) ? "DSV" : query.get(QUERY_PARAM_DATA_TYPE);
         String fieldNames = query.get(QUERY_PARAM_FIELD_NAMES);
         String seprator = query.getOrDefault(QUERY_PARAM_SEPRATOR, "\\t");
         String quoteChar = query.getOrDefault(QUERY_PARAM_QUOTECHAR, "\"");

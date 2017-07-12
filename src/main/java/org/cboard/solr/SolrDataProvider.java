@@ -42,34 +42,34 @@ public class SolrDataProvider extends DataProvider implements Aggregatable, Init
     private int resultLimit;
 
     @DatasourceParameter(label = "{{'DATAPROVIDER.SOLR.SOLR_SERVERS'|translate}}", required = true, placeholder = "<ip>:<port>,[<ip>:<port>]...", type = DatasourceParameter.Type.Input, order = 1)
-    private String solrServers = "solrServers";
+    private String SOLR_SERVERS = "solrServers";
 
     @DatasourceParameter(label = "{{'DATAPROVIDER.POOLEDCONNECTION'|translate}}", type = DatasourceParameter.Type.Checkbox, order = 2)
-    private String pooled = "pooled";
+    private String POOLED = "pooled";
 
     @DatasourceParameter(label = "{{'DATAPROVIDER.AGGREGATABLE_PROVIDER'|translate}}", type = DatasourceParameter.Type.Checkbox, order = 3)
-    private String aggregateProvider = "aggregateProvider";
+    private String AGGREGATE_PROVIDER = "aggregateProvider";
 
     @QueryParameter(label = "{{'DATAPROVIDER.SOLR.COLLECTION'|translate}}", required = true, pageType = "test,dataset,widget", type = QueryParameter.Type.Input, order = 1)
-    private String collection = "collection";
+    private String COLLECTION = "collection";
 
     @QueryParameter(label = "{{'DATAPROVIDER.SOLR.Q'|translate}}", required = true, pageType = "dataset,widget", value = "*:*", placeholder = "*:*|<fieldName>:<fieldValue>[ <AND|OR> <fieldName>:<fieldValue>]...", type = QueryParameter.Type.TextArea2, order = 2)
-    private String q = "q";
+    private String Q = "q";
 
     @QueryParameter(label = "{{'DATAPROVIDER.SOLR.FQ'|translate}}", pageType = "dataset,widget", placeholder = "<fieldName>:<fieldValue>[,<fieldName>:<fieldValue>]...", type = QueryParameter.Type.Input, order = 3)
-    private String fq = "fq";
+    private String FQ = "fq";
 
     @QueryParameter(label = "{{'DATAPROVIDER.SOLR.SORT'|translate}}", pageType = "dataset,widget", placeholder = "<fieldName> <ASC|DESC>[,<fieldName> <ASC|DESC>]...", type = QueryParameter.Type.Input, order = 4)
-    private String sort = "sort";
+    private String SORT = "sort";
 
     @QueryParameter(label = "{{'DATAPROVIDER.SOLR.START'|translate}}", required = true, pageType = "dataset,widget", value = "0", placeholder = "default value is 0", type = QueryParameter.Type.Number, order = 5)
-    private String start = "start";
+    private String START = "start";
 
     @QueryParameter(label = "{{'DATAPROVIDER.SOLR.ROWS'|translate}}", required = true, pageType = "dataset,widget", value = "10", placeholder = "default value is 10", type = QueryParameter.Type.Number, order = 6)
-    private String rows = "rows";
+    private String ROWS = "rows";
 
     @QueryParameter(label = "{{'DATAPROVIDER.SOLR.FL'|translate}}", pageType = "dataset,widget", placeholder = "*|<fieldName>[,<fieldName>]...", type = QueryParameter.Type.Input, order = 7)
-    private String fl = "fl";
+    private String FL = "fl";
 
     private static Map<String, SolrServerPoolFactory> poolMap;
 
@@ -97,9 +97,9 @@ public class SolrDataProvider extends DataProvider implements Aggregatable, Init
     }
 
     private SolrServer getConnection(String solrServers, String collectionName) {
-        String usePool = dataSource.get(pooled);
+        String v = dataSource.get(POOLED);
         SolrServer solrServer = null;
-        if (usePool != null && "true".equals(usePool)) {
+        if (v != null && "true".equals(v)) {
             solrServer = getSolrServerPoolFactory(solrServers, collectionName).getConnection();
         } else {
             solrServer = getSolrServer(solrServers, collectionName);
@@ -114,12 +114,12 @@ public class SolrDataProvider extends DataProvider implements Aggregatable, Init
     private SolrQuery getSolrQuery() {
         SolrQuery solrQuery = new SolrQuery();
 
-        String q = StringUtils.isBlank(query.get("q")) ? "*:*" : query.get("q");
-        String fqs = StringUtils.isBlank(query.get("fq")) ? "" : query.get("fq");
-        String fl = StringUtils.isBlank(query.get("fl")) ? "" : query.get("fl");
-        String sort = StringUtils.isBlank(query.get("sort")) ? "" : query.get("sort");
-        int start = StringUtils.isBlank(query.get("start")) ? 0 : Integer.parseInt(query.get("start"));
-        int rows = StringUtils.isBlank(query.get("rows")) ? 10 : Integer.parseInt(query.get("rows"));
+        String q = StringUtils.isBlank(query.get(Q)) ? "*:*" : query.get(Q);
+        String fqs = query.getOrDefault(FQ, "");
+        String fl = query.getOrDefault(FL, "");
+        String sort = query.getOrDefault(SORT, "");
+        int start = StringUtils.isBlank(query.get(START)) ? 0 : Integer.parseInt(query.get(START));
+        int rows = StringUtils.isBlank(query.get(ROWS)) ? 10 : Integer.parseInt(query.get(ROWS));
 
         solrQuery.set("q", q);
         String[] fqArr = fqs.split(",");
@@ -176,17 +176,17 @@ public class SolrDataProvider extends DataProvider implements Aggregatable, Init
 
     @Override
     public String[][] getData() throws Exception {
-        String solrServers = dataSource.get("solrServers");
+        String solrServers = dataSource.get(SOLR_SERVERS);
         if (StringUtils.isBlank(solrServers))
             throw new CBoardException("Datasource config Solr Servers can not be empty.");
-        String collectionName = query.get("collection");
+        String collectionName = query.get(COLLECTION);
         if (StringUtils.isBlank(collectionName))
             throw new CBoardException("Collection can not be empty.");
 
         QueryResponse qs = getQueryResponse(solrServers, collectionName);
 
         if (qs == null || qs.getResults().size() == 0) {
-            return new String[0][0];
+            throw new CBoardException("dataset is null");
         }
 
         SolrDocumentList results = qs.getResults();
@@ -223,7 +223,7 @@ public class SolrDataProvider extends DataProvider implements Aggregatable, Init
      */
     @Override
     public boolean doAggregationInDataSource() {
-        String v = dataSource.get(aggregateProvider);
+        String v = dataSource.get(AGGREGATE_PROVIDER);
         return v != null && "true".equals(v);
     }
 

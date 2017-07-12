@@ -45,16 +45,27 @@ public class JdbcDataProvider extends DataProvider implements Aggregatable, Init
     @Value("${dataprovider.resultLimit:200000}")
     private int resultLimit;
 
-    @DatasourceParameter(label = "{{'DATAPROVIDER.JDBC.DRIVER'|translate}}", type = DatasourceParameter.Type.Input, order = 1)
+    @DatasourceParameter(label = "{{'DATAPROVIDER.JDBC.DRIVER'|translate}} *",
+            type = DatasourceParameter.Type.Input,
+            required = true,
+            order = 1)
     private String DRIVER = "driver";
 
-    @DatasourceParameter(label = "{{'DATAPROVIDER.JDBC.JDBCURL'|translate}}", type = DatasourceParameter.Type.Input, order = 2)
+    @DatasourceParameter(label = "{{'DATAPROVIDER.JDBC.JDBCURL'|translate}} *",
+            type = DatasourceParameter.Type.Input,
+            required = true,
+            order = 2)
     private String JDBC_URL = "jdbcurl";
 
-    @DatasourceParameter(label = "{{'DATAPROVIDER.JDBC.USERNAME'|translate}}", type = DatasourceParameter.Type.Input, order = 3)
+    @DatasourceParameter(label = "{{'DATAPROVIDER.JDBC.USERNAME'|translate}} *",
+            type = DatasourceParameter.Type.Input,
+            required = true,
+            order = 3)
     private String USERNAME = "username";
 
-    @DatasourceParameter(label = "{{'DATAPROVIDER.JDBC.PASSWORD'|translate}}", type = DatasourceParameter.Type.Password, order = 4)
+    @DatasourceParameter(label = "{{'DATAPROVIDER.JDBC.PASSWORD'|translate}}",
+            type = DatasourceParameter.Type.Password,
+            order = 4)
     private String PASSWORD = "password";
 
     @DatasourceParameter(label = "{{'DATAPROVIDER.POOLEDCONNECTION'|translate}}", checked = true, type = DatasourceParameter.Type.Checkbox, order = 5)
@@ -63,7 +74,10 @@ public class JdbcDataProvider extends DataProvider implements Aggregatable, Init
     @DatasourceParameter(label = "{{'DATAPROVIDER.AGGREGATABLE_PROVIDER'|translate}}", type = DatasourceParameter.Type.Checkbox, order = 100)
     private String aggregateProvider = "aggregateProvider";
 
-    @QueryParameter(label = "{{'DATAPROVIDER.JDBC.SQLTEXT'|translate}}", type = QueryParameter.Type.TextArea, order = 1)
+    @QueryParameter(label = "{{'DATAPROVIDER.JDBC.SQLTEXT'|translate}}",
+            type = QueryParameter.Type.TextArea,
+            required = true,
+            order = 1)
     private String SQL = "sql";
 
     private static final CacheManager<Map<String, Integer>> typeCahce = new HeapCacheManager<>();

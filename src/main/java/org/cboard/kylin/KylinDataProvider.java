@@ -38,19 +38,29 @@ public class KylinDataProvider extends DataProvider implements Aggregatable, Ini
 
     private static final Logger LOG = LoggerFactory.getLogger(KylinDataProvider.class);
 
-    @DatasourceParameter(label = "Kylin Server (domain:port)", type = DatasourceParameter.Type.Input, order = 1)
+    @DatasourceParameter(label = "Kylin Server *",
+            type = DatasourceParameter.Type.Input,
+            required = true,
+            value = "domain:port",
+            placeholder = "domain:port",
+            order = 1)
     private String SERVERIP = "serverIp";
 
-    @DatasourceParameter(label = "User Name (for Kylin Server)", type = DatasourceParameter.Type.Input, order = 2)
+    @DatasourceParameter(label = "User Name (for Kylin Server) *",
+            type = DatasourceParameter.Type.Input,
+            required = true,
+            order = 2)
     private String USERNAME = "username";
 
     @DatasourceParameter(label = "Password", type = DatasourceParameter.Type.Password, order = 3)
     private String PASSWORD = "password";
 
-    @QueryParameter(label = "Kylin Project", type = QueryParameter.Type.Input)
+    @QueryParameter(label = "Kylin Project *",
+            type = QueryParameter.Type.Input,
+            required = true)
     private String PROJECT = "project";
 
-    @QueryParameter(label = "Data Model", type = QueryParameter.Type.Input)
+    @QueryParameter(label = "Data Model *", type = QueryParameter.Type.Input, required = true)
     private String DATA_MODEL = "datamodel";
 
     private static final CacheManager<KylinModel> modelCache = new HeapCacheManager<>();

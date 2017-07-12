@@ -183,13 +183,13 @@ cBoard.controller('datasetCtrl', function ($scope, $http, dataService, $uibModal
             var label = $scope.params[i].label;
             var required = $scope.params[i].required;
             if(required == true && !$scope.curWidget.query[name]){
-                var pattern = /([A-Z_\.]+)/;
+                var pattern = /([\w_\s\.]+)/;
                 var msg = pattern.exec(label);
                 if(msg && msg.length > 0)
                     msg = translate(msg[0]);
                 else
                     msg = label;
-                $scope.alerts = [{msg: msg + translate('COMMON.NOT_EMPTY'), type: 'danger'}];
+                $scope.alerts = [{msg: "[" + msg + "]" + translate('COMMON.NOT_EMPTY'), type: 'danger'}];
                 return false;
             }
         }

@@ -309,9 +309,12 @@
     "TEXTFILE": {
       "BASE_PATH": "文件所在目录",
       "FILE_NAME": "文件名",
-      "ENCODING": "编码<UTF-8>",
-      "SEPRATOR": "分隔符<TAB>",
-      "ENCLOSURE": "列包围字符"
+      "ENCODING": "编码",
+      "SEPRATOR": "分隔符",
+      "DATA_TYPE": "数据类型",
+      "FIELD_NAMES": "字段名称",
+      "QUOTE_CHAR": "引用字符",
+      "ESCAPE_CHAR": "逃避字符"
     },
     "SOLR":{
       "SOLR_SERVERS": "Solr服务",

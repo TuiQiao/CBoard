@@ -86,7 +86,7 @@ public class JvmAggregator extends InnerAggregator {
         try {
             return data[0];
         } catch (Exception e) {
-            throw new CBoardException("data set is null");
+            throw new CBoardException("dataset is null");
         }
     }
 

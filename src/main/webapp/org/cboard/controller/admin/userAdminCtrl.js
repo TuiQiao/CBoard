@@ -197,29 +197,61 @@ cBoard.controller('userAdminCtrl', function ($scope, $http, ModalUtils, $filter)
     };
 
     var getContextMenu = function ($node) {
-        if (_.isUndefined($node.original.resId) || $node.original.type == 'menu') {
-            return;
-        }
-        return {
-            edit: {
-                label: function () {
-                    return $node.original.edit ? '√ Update' : '× Update';
-                },
-                action: function (obj) {
-                    $node.original.edit = !$node.original.edit;
-                    $(obj.reference).jstree(true).rename_node($node, $node.original.name + getCUDRlabel($node.original.edit, $node.original.delete));
-                }
-            },
-            delete: {
-                label: function () {
-                    return $node.original.delete ? '√ Delete' : '× Delete';
-                },
-                action: function (obj) {
-                    $node.original.delete = !$node.original.delete;
-                    $(obj.reference).jstree(true).rename_node($node, $node.original.name + getCUDRlabel($node.original.edit, $node.original.delete));
-                }
+        function toggleACL(attr) {
+            return function(obj) {
+                $node.original[attr] = $node.original[attr] == undefined ? false : !$node.original[attr];
+                _.each($node.children_d, function (e) {
+                    var tree = $(obj.reference).jstree(true);
+                    var node = tree.get_node(e);
+                    if (node.children.length == 0) {
+                        node.original[attr] = $node.original[attr];
+                        tree.rename_node(node, node.original.name + getCUDRlabel(node.original[attr], node.original.delete));
+                    }
+                });
             }
-        };
+        }
+
+        if (_.isUndefined($node.original.resId)) {
+            if ($node.parent != '#') {
+                return {
+                    edit: {
+                        label: function () {
+                            return translate('ADMIN.TOGGLE_UPDATE');
+                        },
+                        action: toggleACL('update')
+                    },
+                    delete: {
+                        label: function () {
+                            return translate('ADMIN.TOGGLE_DELETE');
+                        },
+                        action: toggleACL('delete')
+                    }
+                };
+            } else {
+                return;
+            }
+        } else {
+            return {
+                edit: {
+                    label: function () {
+                        return $node.original.edit ? '√ Update' : '× Update';
+                    },
+                    action: function (obj) {
+                        $node.original.edit = !$node.original.edit;
+                        $(obj.reference).jstree(true).rename_node($node, $node.original.name + getCUDRlabel($node.original.edit, $node.original.delete));
+                    }
+                },
+                delete: {
+                    label: function () {
+                        return $node.original.delete ? '√ Delete' : '× Delete';
+                    },
+                    action: function (obj) {
+                        $node.original.delete = !$node.original.delete;
+                        $(obj.reference).jstree(true).rename_node($node, $node.original.name + getCUDRlabel($node.original.edit, $node.original.delete));
+                    }
+                }
+            };
+        }
     };
 
     var loadResData = function () {
@@ -247,7 +279,8 @@ cBoard.controller('userAdminCtrl', function ($scope, $http, ModalUtils, $filter)
                     three_state: true
                 },
                 contextmenu: {
-                    items: getContextMenu
+                    items: getContextMenu,
+                    select_node: false
                 },
                 version: 1,
                 plugins: ['types', 'checkbox', 'unique', 'contextmenu']
@@ -285,7 +318,7 @@ cBoard.controller('userAdminCtrl', function ($scope, $http, ModalUtils, $filter)
             return e == user.userId;
         }))
     };
-    
+
     $scope.searchUserByName = function (user) {
         if ($scope.userKeyword === "" || $scope.userKeyword === undefined) return true;
         if (!$scope.filterByRole) {

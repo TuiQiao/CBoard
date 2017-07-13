@@ -292,16 +292,19 @@
     "BY_NAME": "By Name",
     "BY_ROLE": "By Role",
     "REVOKE": "Revoke",
-    "GRANT": "Grant"
+    "GRANT": "Grant",
+    "BY_ROLE": "By Role",
+    "TOGGLE_UPDATE": "Toggle UDATE",
+    "TOGGLE_DELETE": "Toggle DELETE"
   },
   "DATAPROVIDER": {
     "AGGREGATABLE_PROVIDER": "Aggregatable DataProvider",
+    "POOLEDCONNECTION": "Pooled Connection",
     "JDBC": {
       "DRIVER": "Driver (eg: com.mysql.jdbc.Driver)",
       "JDBCURL": "JDBC Url (eg: jdbc:mysql://hostname:port/db)",
       "USERNAME": "UserName",
       "PASSWORD": "Password",
-      "POOLEDCONNECTION": "Pooled Connection",
       "SQLTEXT": "Sql Text"
     },
     "SAIKU": {
@@ -309,9 +312,22 @@
     "TEXTFILE": {
       "BASE_PATH": "BasePath",
       "FILE_NAME": "FileName",
-      "ENCODING": "Encoding<UTF-8>",
-      "SEPRATOR": "Seprator<TAB>",
-      "ENCLOSURE": "Enclosure<Empty>"
+      "ENCODING": "Encoding",
+      "SEPRATOR": "Seprator",
+      "DATA_TYPE": "DataType",
+      "FIELD_NAMES": "FieldNames",
+      "QUOTE_CHAR": "quoteChar",
+      "ESCAPE_CHAR": "escapeChar"
+    },
+    "SOLR":{
+      "SOLR_SERVERS": "Solr Servers",
+      "COLLECTION": "Collection",
+      "Q": "q",
+      "FQ": "fq",
+      "SORT": "sort",
+      "START": "start",
+      "ROWS": "rows",
+      "FL": "fl"
     }
   }
 }

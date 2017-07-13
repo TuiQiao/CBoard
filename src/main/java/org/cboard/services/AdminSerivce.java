@@ -213,4 +213,21 @@ public class AdminSerivce {
     }
 
 
+    //create by lijiang on 20170309
+    public String updateUserCity(String userId, String cityIdArr) {
+        userDao.deleteUserCityByUserId(userId);
+        String[] cityId = cityIdArr.split(",");
+        if (cityId != null && cityId.length > 0) {
+            List<DashboardUserAuthority> list = new ArrayList<>();
+            for (String cid : cityId) {
+                DashboardUserAuthority userAuthority = new DashboardUserAuthority();
+                userAuthority.setUserId(userId);
+                userAuthority.setCityId(Integer.valueOf(cid));
+                list.add(userAuthority);
+            }
+            userDao.saveUserCity(list);
+        }
+        return "1";
+    }
+
 }

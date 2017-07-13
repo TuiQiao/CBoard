@@ -53,5 +53,6 @@ public class User extends org.springframework.security.core.userdetails.User {
     public void setUserId(String userId) {
         this.userId = userId;
     }
+
 }
 

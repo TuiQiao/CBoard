@@ -146,6 +146,13 @@ cBoard.controller('userAdminCtrl', function ($scope, $http, ModalUtils, $filter)
         return ' (' + a.join(',') + ')';
     };
 
+    var getCityList = function () {
+        $http.get("admin/getCityList.do").success(function (response) {
+            $scope.cityList = response;
+        });
+    };
+    getCityList();
+
     var buildNodeByCategory = function (listIn, rParent, type, icon) {
         var newParentId = 1;
         var listOut = [];
@@ -309,7 +316,62 @@ cBoard.controller('userAdminCtrl', function ($scope, $http, ModalUtils, $filter)
         }
     };
 
+
     $scope.newUser = function () {
+        $scope.optFlag = 'newUser';
+        $scope.curUser = {};
+        // $scope.loginNameStatus = false;
+    };
+
+    $scope.editUser = function (user) {
+        $scope.optFlag = 'editUser';
+        $scope.curUser = angular.copy(user);
+        // $scope.loginNameStatus = true;
+    };
+
+    $scope.curUserCitySelect = function () {
+        var curUserCity = $scope.curUser.cityNameArr;
+        $scope.selectCity = new Array();
+        for (var i = 0; i < $scope.cityList.length; i++) {
+            if(RegExp($scope.cityList[i].cityName).test(curUserCity)){
+                $scope.selectCity[i]=true;
+            }
+        }
+    };
+
+    $scope.allSelect = function ($event) {
+        var checkbox = $event.target;
+
+        for (var i = 0; i < $scope.cityList.length; i++) {
+            if(!angular.isArray($scope.selectCity)){
+                $scope.selectCity = new Array();
+            }
+            if(checkbox.checked){
+                $scope.selectCity[i] = true;
+            }else{
+                $scope.selectCity[i] = false;
+            }
+
+        }
+    };
+
+    $scope.saveSelectCity = function () {
+        var selectCityNameList = new Array();
+        var selectCityIdList = new Array();
+        for (var i = 0; i < $scope.cityList.length; i++) {
+            if ($scope.selectCity[i] == true) {
+                selectCityNameList.push($scope.cityList[i].cityName);
+                selectCityIdList.push($scope.cityList[i].cityId);
+            }
+        }
+        $scope.curUser.cityNameArr = selectCityNameList.join(",");
+        $scope.curUser.cityIdArr = selectCityIdList.join(",");
+        //$("#select_mulit_city_close").trigger("click");
+        //$("#select_mulit_city_dialog").modal("hidden");
+    };
+
+
+/*    $scope.newUser = function () {
         $scope.optFlag = 'newUser';
         $scope.curUser = {};
     };
@@ -317,7 +379,7 @@ cBoard.controller('userAdminCtrl', function ($scope, $http, ModalUtils, $filter)
     $scope.editUser = function (user) {
         $scope.optFlag = 'editUser';
         $scope.curUser = angular.copy(user);
-    };
+    };*/
 
     $scope.newRole = function () {
         $scope.optFlag = 'newRole';

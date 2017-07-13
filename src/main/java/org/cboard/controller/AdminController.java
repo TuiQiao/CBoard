@@ -59,24 +59,48 @@ public class AdminController {
     @Autowired
     private DatasourceService datasourceService;
 
+    /**
+     * update by lijaing
+     */
 
     @RequestMapping(value = "/saveNewUser")
     public String saveNewUser(@RequestParam(name = "user") String user) {
         JSONObject jsonObject = JSONObject.parseObject(user);
-        return adminSerivce.addUser(UUID.randomUUID().toString(), jsonObject.getString("loginName"), jsonObject.getString("userName"), jsonObject.getString("userPassword"));
+        String user_id = UUID.randomUUID().toString();
+        adminSerivce.addUser(user_id, jsonObject.getString("loginName"), jsonObject.getString("userName"), jsonObject.getString("userPassword"));
+        adminSerivce.updateUserCity(user_id, jsonObject.getString("cityIdArr"));
+        return "1";
     }
 
     @RequestMapping(value = "/updateUser")
     public String updateUser(@RequestParam(name = "user") String user) {
         JSONObject jsonObject = JSONObject.parseObject(user);
-        return adminSerivce.updateUser(jsonObject.getString("userId"), jsonObject.getString("loginName"), jsonObject.getString("userName"), jsonObject.getString("userPassword"));
+        adminSerivce.updateUser(jsonObject.getString("userId"), jsonObject.getString("loginName"), jsonObject.getString("userName"), jsonObject.getString("userPassword"));
+        adminSerivce.updateUserCity(jsonObject.getString("userId"), jsonObject.getString("cityIdArr"));
+        return "1";
     }
+
+    /**end*/
+
+    /**
+     * create by lijiang
+     */
+    @RequestMapping(value = "/getCityList")
+    public List<DashboardCity> getCityList() {
+        List<DashboardCity> list = userDao.getCityList();
+        return list;
+    }
+
+    /**
+     * end
+     */
 
     @RequestMapping(value = "/getUserList")
     public List<DashboardUser> getUserList() {
         List<DashboardUser> list = userDao.getUserList();
         return list;
     }
+
 
     @RequestMapping(value = "/saveRole")
     public String saveRole(@RequestParam(name = "role") String role) {

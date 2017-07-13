@@ -7,11 +7,13 @@ import com.google.common.collect.Maps;
 import org.apache.commons.lang3.StringUtils;
 import org.cboard.dao.DatasetDao;
 import org.cboard.dao.DatasourceDao;
+import org.cboard.dao.UserDao;
 import org.cboard.dataprovider.DataProvider;
 import org.cboard.dataprovider.DataProviderManager;
 import org.cboard.dataprovider.config.AggConfig;
 import org.cboard.dataprovider.config.DimensionConfig;
 import org.cboard.dataprovider.result.AggregateResult;
+import org.cboard.dataprovider.result.ColumnIndex;
 import org.cboard.dto.DataProviderResult;
 import org.cboard.exception.CBoardException;
 import org.cboard.pojo.DashboardDataset;
@@ -19,9 +21,10 @@ import org.cboard.pojo.DashboardDatasource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
-import java.util.function.Predicate;
 
 /**
  * Created by yfyuan on 2016/8/15.
@@ -34,6 +37,12 @@ public class DataProviderService {
 
     @Autowired
     private DatasetDao datasetDao;
+
+    @Autowired
+    private AuthenticationService authenticationService;
+
+    @Autowired
+    private UserDao userDao;
 
     private DataProvider getDataProvider(Long datasourceId, Map<String, String> query, Dataset dataset) throws Exception {
         if (dataset != null) {
@@ -55,11 +64,48 @@ public class DataProviderService {
             Dataset dataset = getDataset(datasetId);
             attachCustom(dataset, config);
             DataProvider dataProvider = getDataProvider(datasourceId, query, dataset);
-            return dataProvider.getAggData(config, reload);
+            AggregateResult d = dataProvider.getAggData(config, reload);
+            return filterData(d);
         } catch (Exception e) {
             e.printStackTrace();
             throw new CBoardException(e.getMessage());
         }
+    }
+
+    public AggregateResult filterData(AggregateResult d) {
+        String userId = authenticationService.getCurrentUser().getUserId();
+        List<String> cityList = userDao.getUserCityListByUserId(userId);
+
+        List<ColumnIndex> columnIndexList = d.getColumnList();
+        String[][] data = d.getData();
+        int k = -1;
+
+        for (ColumnIndex list : columnIndexList) {
+            if (list.getName().equals("城市")) {
+                k = list.getIndex();
+            }
+        }
+
+        if (k >= 0) {
+            for (int i = 0; i < data.length; i++) {
+                if (cityList.indexOf(data[i][k]) < 0) {
+                    data = deleterow(data, i);
+                    i--;
+                }
+            }
+            d.setData(data);
+        }
+        return d;
+    }
+
+    private String[][] deleterow(String[][] d, int i) {
+
+        List<String[]> ld = new ArrayList<>();
+        for (int j = 0; j < d.length; j++) {
+            ld.add(d[j]);
+        }
+        ld.remove(i);
+        return ld.toArray(new String[ld.size()][]);
     }
 
     public DataProviderResult getColumns(Long datasourceId, Map<String, String> query, Long datasetId, boolean reload) {

@@ -292,7 +292,10 @@
     "BY_NAME": "按名称",
     "BY_ROLE": "按角色",
     "REVOKE": "撤销",
-    "GRANT": "授予"
+    "GRANT": "授予",
+    "BY_ROLE": "按角色",
+    "TOGGLE_UPDATE": "切换UDATE权限",
+    "TOGGLE_DELETE": "切换DELETE权限"
   },
   "DATAPROVIDER": {
     "AGGREGATABLE_PROVIDER": "数据源聚合",

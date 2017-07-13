@@ -30,17 +30,21 @@
     "SAVE_AS": "Save As",
     "PARAM": "Parameter",
     "DRILL_DOWN": "Drill Down",
-    "ROLL_UP": "Roll Up"
+    "ROLL_UP": "Roll Up",
+    "WANRING": "WANRING!",
+    "COLLAPSE": "Collapse",
+    "REMOVE": "Remove"
   },
   "TIPS": {
     "CAL_EXPR": "Calculate after aggregation. Use assist click input to avoid typo. e.g: Math.log(sum(columnA)/count(columB))"
   },
   "SIDEBAR": {
+    "MENU": "MENU",
     "C_DASHBOARD": "Dashboard",
     "MY_DASHBOARD": "My DashBoard",
     "CONFIG": "Configuration",
     "DATA_SOURCE": "DataSource",
-    "CUBE": "Cube",
+    "DATASET": "Dataset",
     "WIDGET": "Widget",
     "DASHBOARD": "Dashboard",
     "DASHBOARD_CATEGORY": "Dashboard Category",
@@ -51,7 +55,16 @@
     "SHARE_RESOURCE": "Share Resource"
   },
   "HEADER": {
-    "SIGN_OUT": "SignOut"
+    "SIGN_OUT": "SignOut",
+    "TOGGLE_NAVIGATION": "Toggle navigation",
+    "CHANGE_PASSWORD": "Change Password",
+    "CURRENT_PASSWORD": "Current Password",
+    "NEW_PASSWORD": "New Password",
+    "CONFIRM_PASSWORD": "Confirm Password"
+  },
+  "FOOTER": {
+    "COPYRIGHT": "Ctrip Payment Department",
+    "VERSION": "Version"
   },
   "DASHBOARD": {
     "PARAM": {
@@ -145,7 +158,8 @@
       "SIZE": "Size",
       "COLOR": "Opacity",
       "PREVIEW_QUERY": "View Query",
-      "PERCENT_BAR": "Stacked Percent"
+      "PERCENT_BAR": "Stacked Percent",
+      "AGGREGATE_TYPE": "Aggregate Type"
     },
     "DASHBOARD": {
       "CATEGORY": "Category",
@@ -187,7 +201,13 @@
       "ADD_MAIN_NODE": "Add Main Node",
       "ADD_SUB_NODE": "Add Sub Node",
       "NODE_NAME": "Node Name",
-      "TITLE": "Title"
+      "TITLE": "Title",
+      "NEW_GRID_LAYOUT": "New grid layout",
+      "NEW_TIMELINE_LAYOUT": "New timeline layout",
+      "VALUE_FORMMAT_ALERT": "Only date type need format",
+      "AUTOMATIC_REFRESH_SWITCH": "Automatic refresh switch",
+      "REMOVE_EMPTY_LINES": "Remove empty lines",
+      "DATA_REFRESH_TIME":"Data refresh time"
     },
     "CATEGORY": {
       "NAME": "Category Name",
@@ -210,7 +230,8 @@
       "TIP_EDIT_ALIAS": "Alias",
       "TIP_ADD_HIERARCHY": "Add Hierarchy",
       "TIP_SWITCH_TO_MEASURE": "Switch to Measure",
-      "TIP_SWITCH_TO_DIMENSION": "Switch to Dimension"
+      "TIP_SWITCH_TO_DIMENSION": "Switch to Dimension",
+      "CUSTOM": "Custom"
     },
     "JOB": {
       "CONFIG": "Config",
@@ -270,17 +291,20 @@
     "CONTACT_ADMIN": "Please contact the administrator to apply the following resources' access",
     "BY_NAME": "By Name",
     "BY_ROLE": "By Role",
+    "REVOKE": "Revoke",
+    "GRANT": "Grant",
+    "BY_ROLE": "By Role",
     "TOGGLE_UPDATE": "Toggle UDATE",
     "TOGGLE_DELETE": "Toggle DELETE"
   },
   "DATAPROVIDER": {
     "AGGREGATABLE_PROVIDER": "Aggregatable DataProvider",
+    "POOLEDCONNECTION": "Pooled Connection",
     "JDBC": {
       "DRIVER": "Driver (eg: com.mysql.jdbc.Driver)",
       "JDBCURL": "JDBC Url (eg: jdbc:mysql://hostname:port/db)",
       "USERNAME": "UserName",
       "PASSWORD": "Password",
-      "POOLEDCONNECTION": "Pooled Connection",
       "SQLTEXT": "Sql Text"
     },
     "SAIKU": {
@@ -288,9 +312,22 @@
     "TEXTFILE": {
       "BASE_PATH": "BasePath",
       "FILE_NAME": "FileName",
-      "ENCODING": "Encoding<UTF-8>",
-      "SEPRATOR": "Seprator<TAB>",
-      "ENCLOSURE": "Enclosure<Empty>"
+      "ENCODING": "Encoding",
+      "SEPRATOR": "Seprator",
+      "DATA_TYPE": "DataType",
+      "FIELD_NAMES": "FieldNames",
+      "QUOTE_CHAR": "quoteChar",
+      "ESCAPE_CHAR": "escapeChar"
+    },
+    "SOLR":{
+      "SOLR_SERVERS": "Solr Servers",
+      "COLLECTION": "Collection",
+      "Q": "q",
+      "FQ": "fq",
+      "SORT": "sort",
+      "START": "start",
+      "ROWS": "rows",
+      "FL": "fl"
     }
   }
 }

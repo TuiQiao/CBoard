@@ -328,6 +328,16 @@
       "START": "开始位置",
       "ROWS": "结果数",
       "FL": "结果字段"
+    },
+    "UDSP":{
+      "UDSP_SERVERS": "UDSP服务",
+      "USERNAME": "用户名",
+      "PASSWORD": "密码",
+      "SERVICE_NAME": "服务名",
+      "SQL_TEXT": "SQL查询语句",
+      "JSON_TEXT": "JSON查询语句",
+      "PAGE_INDEX": "分页页号",
+      "PAGE_SIZE": "每页行数"
     }
   }
 }

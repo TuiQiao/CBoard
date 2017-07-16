@@ -6,6 +6,7 @@
 var threeLevelMap = {
     tipHeader: null,
     drillData: [],
+    provinceData: {},
     getZoomScale: function(features, width, height){
         var longitudeMin = 100000;
         var latitudeMin = 100000;
@@ -221,10 +222,10 @@ var threeLevelMap = {
         //	return maxvalue[0];
         //});
     },
-    backToTop: function(options) {
+    backToTop: function(svg, width) {
         var _this = this;
-        options.svg.append('image')
-            .attr('x', options.width * 0.7)
+        svg.append('image')
+            .attr('x', width * 0.7)
             .attr('y', 0)
             .attr('width', 30)
             .attr('height', 30)
@@ -232,12 +233,13 @@ var threeLevelMap = {
             .attr('xlink:href', '../../imgs/back-top.svg')
             .style('cursor', 'pointer')
             .on('click', function(){
-                _this.map(options);
+                _this.map(_this.provinceData);
             });
     },
     map: function(options) {
         var mapPath = 'plugins/FineMap/mapdata/china.json';
         var that = this ? this : threeLevelMap;
+        that.provinceData = options;
         var width = $('.map_wrapper')[0].clientWidth * 0.95;
         d3.select($('.map_wrapper')[0]).selectAll('svg').remove();
         d3.selectAll('.d3-tip').remove();
@@ -331,7 +333,7 @@ var threeLevelMap = {
         d3.selectAll(".d3-tip").remove();
         d3.selectAll(".scatter").remove();
         this.drawPrivenceMap(argsProvince);
-        // this.backToTop(argsProvince);
+        this.backToTop(argsProvince.svg, argsProvince.width);
     },
     drawPrivenceMap: function(argsProvince) {
         var background,
@@ -405,7 +407,7 @@ var threeLevelMap = {
         d3.selectAll(".pathChina").remove();
         d3.selectAll(".d3-tip").remove();
         this.drawCountyMap(argsCountry);
-        // this.backToTop(argsCountry);
+        this.backToTop(argsCountry.svg, argsCountry.width);
     },
     drawCountyMap : function(argsCountry) {
         var backColor;
@@ -452,27 +454,27 @@ var threeLevelMap = {
                         .attr("fill", backColor);
                     tip.hide();
                 })
-            .on("click",function(d){
-                const keyId = threeLevelMap.drillData[0].chartConfig.keys[1].id;
-                const chinaJsonPath = "plugins/map/mapdata/china.json";
-                if (argsCountry.drill && threeLevelMap.drillData[1][keyId]){
-                    argsCountry.drill.drillUp(keyId, _this.getRenderOption);
-                }
-                setTimeout(function () {
-                    var countryObj = {
-                        svg: argsCountry.svg,
-                        data: threeLevelMap.drillData[0].data,
-                        height: argsCountry.height,
-                        width: argsCountry.width,
-                        drill: argsCountry.drill,
-                        chartConfig: threeLevelMap.drillData[0].chartConfig,
-                        mapPath: chinaJsonPath
-                    };
-                    d3.selectAll(".pathProvince").remove();
-                    d3.selectAll(".pathCounty").remove();
-                    d3.selectAll(".d3-tip").remove();
-                    _this.map(countryObj);
-                }, 1500);
+            .on("click",function(){
+                // const keyId = threeLevelMap.drillData[0].chartConfig.keys[1].id;
+                // const chinaJsonPath = "plugins/map/mapdata/china.json";
+                // if (argsCountry.drill && threeLevelMap.drillData[1][keyId]){
+                //     argsCountry.drill.drillUp(keyId, _this.getRenderOption);
+                // }
+                // setTimeout(function () {
+                //     var countryObj = {
+                //         svg: argsCountry.svg,
+                //         data: threeLevelMap.drillData[0].data,
+                //         height: argsCountry.height,
+                //         width: argsCountry.width,
+                //         drill: argsCountry.drill,
+                //         chartConfig: threeLevelMap.drillData[0].chartConfig,
+                //         mapPath: chinaJsonPath
+                //     };
+                //     d3.selectAll(".pathProvince").remove();
+                //     d3.selectAll(".pathCounty").remove();
+                //     d3.selectAll(".d3-tip").remove();
+                //     _this.map(countryObj);
+                // }, 1500);
             });
             // argsCountry.data != [] ? _this.drawBubble(argsCountry.data, argsCountry.svg, root, projection) : null;
         });
@@ -481,7 +483,7 @@ var threeLevelMap = {
         threeLevelMap.drillData = [];
         threeLevelMap.drillData.push(option);
         threeLevelMap.drillData.push(drillConfig);
-        console.log(threeLevelMap.drillData);
+        // console.log(threeLevelMap.drillData);
     },
     drawBubble: function(data, svg, root, projection){
         var rowHeaderLength = 0,

@@ -126,10 +126,10 @@ var threeLevelMap = {
         data ? data[0].map(function(d){
             d.property == 'header_empty' ? rowHeaderLength++ : null;
         }) : null;
-        data.map(function (d) {
+        data.map(function(d){
             d[0] ? (d[0].property == 'header_empty' ? columnHeaderLength++ : null) : null;
         });
-        if (data[rowHeaderLength]) {
+        if (data[rowHeaderLength] && rowHeaderLength) {
             for (var n = rowHeaderLength; n < data[rowHeaderLength].length; n++) {
                 var title = [];
                 if (rowHeaderLength) {
@@ -140,13 +140,13 @@ var threeLevelMap = {
                 }
                 else {
                     data[0].map(function (d) {
-                        d['column_header_header'] ? columnHeaderLink.push(d.data) : rowHeaderLength++;
+                        d[0].property == 'column_header_header' ? columnHeaderLink.push(d.data) : rowHeaderLength++;
                     });
                     break;
                 }
             }
             for (var k = 0; k < data.length; k++) {
-                if (data[k][rowHeaderLength - 1] && data[k][rowHeaderLength - 1].data == name) {
+                if (data[k][rowHeaderLength - 1] && data[k][rowHeaderLength - 1].data == name|| data[k][rowHeaderLength].data === name) {
                     for(var t = 0;t < columnHeaderLink.length;t++){
                         var saveHeader = [],
                             headerStr = [];
@@ -158,6 +158,12 @@ var threeLevelMap = {
                     }
                     return name+" :</br>"+tipsArray.join("</br>");
                 }
+            }
+        }
+        else if (rowHeaderLength == 0 && columnHeaderLength == 0) {
+
+            for (let t = 0; t < data.length; t++) {
+
             }
         }
     },
@@ -325,7 +331,7 @@ var threeLevelMap = {
         d3.selectAll(".d3-tip").remove();
         d3.selectAll(".scatter").remove();
         this.drawPrivenceMap(argsProvince);
-        this.backToTop(argsProvince);
+        // this.backToTop(argsProvince);
     },
     drawPrivenceMap: function(argsProvince) {
         var background,
@@ -371,11 +377,10 @@ var threeLevelMap = {
                     tip.hide();
                 })
                 .on("click",function(d){
-                    // const id = d.properties.id;
                     const value = d.properties.name;
                     const keyId = threeLevelMap.drillData[0].chartConfig.keys[1].id;
-                    if (argsProvince.drill && argsProvince.drill.config[keyId]){
-                        if (argsProvince.drill.config[keyId].down){
+                    if (argsProvince.drill && threeLevelMap.drillData[1][keyId]){
+                        if (threeLevelMap.drillData[1][keyId].down){
                             argsProvince.drill.drillDown(keyId, value, _this.getRenderOption);
                         }
                     }
@@ -400,7 +405,7 @@ var threeLevelMap = {
         d3.selectAll(".pathChina").remove();
         d3.selectAll(".d3-tip").remove();
         this.drawCountyMap(argsCountry);
-        this.backToTop(argsCountry);
+        // this.backToTop(argsCountry);
     },
     drawCountyMap : function(argsCountry) {
         var backColor;
@@ -450,7 +455,9 @@ var threeLevelMap = {
             .on("click",function(d){
                 const keyId = threeLevelMap.drillData[0].chartConfig.keys[1].id;
                 const chinaJsonPath = "plugins/map/mapdata/china.json";
-                argsCountry.drill.drillUp(keyId, _this.getRenderOption);
+                if (argsCountry.drill && threeLevelMap.drillData[1][keyId]){
+                    argsCountry.drill.drillUp(keyId, _this.getRenderOption);
+                }
                 setTimeout(function () {
                     var countryObj = {
                         svg: argsCountry.svg,

@@ -3,7 +3,8 @@
  */
 'use strict';
 cBoard.service('chartService', function ($q, dataService, chartPieService, chartLineService, chartFunnelService,
-                                         chartSankeyService, chartTableService, chartKpiService, chartRadarService, chartMapService, chartScatterService) {
+                                         chartSankeyService, chartTableService, chartKpiService, chartRadarService,
+                                         chartMapService, chartScatterService) {
 
         this.render = function (containerDom, widget, optionFilter, scope, reload, persist) {
             var deferred = $q.defer();
@@ -132,6 +133,9 @@ cBoard.service('chartService', function ($q, dataService, chartPieService, chart
                 case 'scatter':
                     chart = chartScatterService;
                     break;
+                // case 'gis':
+                //     chart = CBoardGisRender;
+                //     break;
             }
             return chart;
         };

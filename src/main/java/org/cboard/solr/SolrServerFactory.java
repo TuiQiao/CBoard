@@ -3,6 +3,7 @@ package org.cboard.solr;
 import org.apache.commons.pool2.PooledObject;
 import org.apache.commons.pool2.PooledObjectFactory;
 import org.apache.commons.pool2.impl.DefaultPooledObject;
+import org.apache.solr.client.solrj.SolrClient;
 import org.apache.solr.client.solrj.SolrServer;
 import org.apache.solr.client.solrj.impl.LBHttpSolrServer;
 
@@ -22,7 +23,7 @@ public class SolrServerFactory implements PooledObjectFactory<SolrServer> {
     }
 
     public PooledObject<SolrServer> makeObject() throws Exception {
-        SolrServer solrServer = new LBHttpSolrServer(servers);
+        SolrClient solrServer = new LBHttpSolrServer(servers);
         return new DefaultPooledObject(solrServer);
     }
 

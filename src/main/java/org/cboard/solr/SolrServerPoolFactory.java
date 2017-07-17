@@ -2,21 +2,23 @@ package org.cboard.solr;
 
 import org.apache.commons.pool2.impl.GenericObjectPool;
 import org.apache.commons.pool2.impl.GenericObjectPoolConfig;
-import org.apache.solr.client.solrj.SolrServer;
+import org.apache.solr.client.solrj.SolrClient;
+
+import java.io.IOException;
 
 /**
  * Created by JunjieM on 2017-7-7.
  */
 public class SolrServerPoolFactory {
 
-    private GenericObjectPool<SolrServer> pool;
+    private GenericObjectPool<SolrClient> pool;
 
     public SolrServerPoolFactory(GenericObjectPoolConfig config, String solrServices, String collectionName) {
         SolrServerFactory factory = new SolrServerFactory(solrServices, collectionName);
         pool = new GenericObjectPool(factory, config);
     }
 
-    public SolrServer getConnection() {
+    public SolrClient getConnection() {
         try {
             return pool.borrowObject();
         } catch (Exception e) {
@@ -25,13 +27,17 @@ public class SolrServerPoolFactory {
         }
     }
 
-    public void releaseConnection(SolrServer solrServer) {
+    public void releaseConnection(SolrClient solrClient) {
         try {
-            pool.returnObject(solrServer);
+            pool.returnObject(solrClient);
         } catch (Exception e) {
-            if (solrServer != null) {
-                solrServer.shutdown();
-                solrServer = null;
+            if (solrClient != null) {
+                try {
+                    solrClient.close();
+                } catch (IOException e1) {
+                    e1.printStackTrace();
+                }
+                solrClient = null;
             }
         }
     }

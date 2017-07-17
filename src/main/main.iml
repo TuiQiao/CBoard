@@ -11,29 +11,6 @@
         </webroots>
       </configuration>
     </facet>
-    <facet type="web" name="Web2">
-      <configuration>
-        <descriptors>
-          <deploymentDescriptor name="web.xml" url="file://$MODULE_DIR$/webapp/WEB-INF/web.xml" />
-        </descriptors>
-        <webroots>
-          <root url="file://$MODULE_DIR$/webapp" relative="/" />
-        </webroots>
-      </configuration>
-    </facet>
-    <facet type="Spring" name="Spring">
-      <configuration>
-        <fileset id="fileset" name="Spring Application Context" removed="false">
-          <file>file://$MODULE_DIR$/resources/spring.xml</file>
-          <file>file://$MODULE_DIR$/resources/spring-mvc.xml</file>
-          <file>file://$MODULE_DIR$/resources/spring-mybatis.xml</file>
-          <file>file://$MODULE_DIR$/resources/spring-security.xml</file>
-          <file>file://$MODULE_DIR$/resources/spring-cacher-redis.xml</file>
-          <file>file://$MODULE_DIR$/resources/spring-security-jdbc.xml</file>
-          <file>file://$MODULE_DIR$/resources/spring-cacher-ehcache.xml</file>
-        </fileset>
-      </configuration>
-    </facet>
   </component>
   <component name="NewModuleRootManager" inherit-compiler-output="true">
     <exclude-output />

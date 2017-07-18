@@ -184,6 +184,7 @@
       "PARAM_TYPE_SELECTOR": "选择器",
       "PARAM_TYPE_SLIDER": "滑动器",
       "CHART_NAME":"图表名称",
+      "ENTER_PARAMETER_NAME": "请输入参数名称",
       "VALUE_FORMMAT": "值格式化",
       "VIEW_FORMMAT": "显示格式化",
       "MIN": "最小值",

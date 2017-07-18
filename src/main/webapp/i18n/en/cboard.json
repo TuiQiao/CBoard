@@ -184,6 +184,7 @@
       "PARAM_TYPE_SELECTOR": "Selector",
       "PARAM_TYPE_SLIDER": "Slider",
       "CHART_NAME":"Chart Name",
+      "ENTER_PARAMETER_NAME": "Please enter the parameter name",
       "VALUE_FORMMAT": "Value Format",
       "VIEW_FORMMAT": "View Format",
       "MIN": "Min",

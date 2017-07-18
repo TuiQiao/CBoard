@@ -53,7 +53,7 @@ public class SolrDataProvider extends DataProvider implements Aggregatable, Init
     @DatasourceParameter(label = "{{'DATAPROVIDER.POOLEDCONNECTION'|translate}}", type = DatasourceParameter.Type.Checkbox, order = 2)
     private String POOLED = "pooled";
 
-    @DatasourceParameter(label = "{{'DATAPROVIDER.AGGREGATABLE_PROVIDER'|translate}}", type = DatasourceParameter.Type.Checkbox, order = 3)
+    @DatasourceParameter(label = "{{'DATAPROVIDER.AGGREGATABLE_PROVIDER_SOLR'|translate}}", type = DatasourceParameter.Type.Checkbox, order = 3)
     private String AGGREGATE_PROVIDER = "aggregateProvider";
 
     @QueryParameter(label = "{{'DATAPROVIDER.SOLR.COLLECTION'|translate}}", required = true, pageType = "test,dataset,widget", type = QueryParameter.Type.Input, order = 1)

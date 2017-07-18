@@ -299,6 +299,7 @@
   },
   "DATAPROVIDER": {
     "AGGREGATABLE_PROVIDER": "数据源聚合",
+    "AGGREGATABLE_PROVIDER_SOLR": "数据源聚合(必须Solr5.0+)",
     "POOLEDCONNECTION": "是否使用连接池",
     "JDBC": {
       "DRIVER": "驱动类 (如: com.mysql.jdbc.Driver)",

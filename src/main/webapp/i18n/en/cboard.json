@@ -299,6 +299,7 @@
   },
   "DATAPROVIDER": {
     "AGGREGATABLE_PROVIDER": "Aggregatable DataProvider",
+    "AGGREGATABLE_PROVIDER_SOLR": "Aggregatable DataProvider(Must Solr5.0+)",
     "POOLEDCONNECTION": "Pooled Connection",
     "JDBC": {
       "DRIVER": "Driver (eg: com.mysql.jdbc.Driver)",

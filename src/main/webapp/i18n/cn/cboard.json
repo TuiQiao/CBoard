@@ -181,6 +181,10 @@
       "CUBE_TREE": "看板中的数据集/查询",
       "LINKED_COLUMN": "参数关联上的列",
       "PARAM_TYPE": "交互类型",
+      "PARAM_TYPE_SELECTOR": "选择器",
+      "PARAM_TYPE_SLIDER": "滑动器",
+      "CHART_NAME":"图表名称",
+      "ENTER_PARAMETER_NAME": "请输入参数名称",
       "VALUE_FORMMAT": "值格式化",
       "VIEW_FORMMAT": "显示格式化",
       "MIN": "最小值",
@@ -299,6 +303,7 @@
   },
   "DATAPROVIDER": {
     "AGGREGATABLE_PROVIDER": "数据源聚合",
+    "AGGREGATABLE_PROVIDER_SOLR": "数据源聚合(必须Solr5.0+)",
     "POOLEDCONNECTION": "是否使用连接池",
     "JDBC": {
       "DRIVER": "驱动类 (如: com.mysql.jdbc.Driver)",

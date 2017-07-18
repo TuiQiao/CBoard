@@ -181,6 +181,10 @@
       "CUBE_TREE": "Cube/Query in dashboard",
       "LINKED_COLUMN": "Columns linked with this param",
       "PARAM_TYPE": "Param Type",
+      "PARAM_TYPE_SELECTOR": "Selector",
+      "PARAM_TYPE_SLIDER": "Slider",
+      "CHART_NAME":"Chart Name",
+      "ENTER_PARAMETER_NAME": "Please enter the parameter name",
       "VALUE_FORMMAT": "Value Format",
       "VIEW_FORMMAT": "View Format",
       "MIN": "Min",
@@ -299,6 +303,7 @@
   },
   "DATAPROVIDER": {
     "AGGREGATABLE_PROVIDER": "Aggregatable DataProvider",
+    "AGGREGATABLE_PROVIDER_SOLR": "Aggregatable DataProvider(Must Solr5.0+)",
     "POOLEDCONNECTION": "Pooled Connection",
     "JDBC": {
       "DRIVER": "Driver (eg: com.mysql.jdbc.Driver)",

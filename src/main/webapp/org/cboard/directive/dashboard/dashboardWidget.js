@@ -75,6 +75,9 @@ cBoard.directive('dashboardWidget', function ($compile, $templateCache, dataServ
                         case 'scatter':
                             renderEchart(scope, element, attrs);
                             break;
+                        case 'gauge':
+                            renderEchart(scope, element, attrs);
+                            break;
                     }
                 }
             }

@@ -14,7 +14,6 @@ import org.apache.solr.common.util.SimpleOrderedMap;
 import org.cboard.dataprovider.DataProvider;
 import org.cboard.dataprovider.Initializing;
 import org.cboard.dataprovider.aggregator.Aggregatable;
-import org.cboard.dataprovider.aggregator.jvm.JvmAggregator;
 import org.cboard.dataprovider.annotation.DatasourceParameter;
 import org.cboard.dataprovider.annotation.ProviderName;
 import org.cboard.dataprovider.annotation.QueryParameter;
@@ -77,8 +76,6 @@ public class SolrDataProvider extends DataProvider implements Aggregatable, Init
     private String FL = "fl";
 
     private static Map<String, SolrServerPoolFactory> poolMap;
-
-
 
 
     private synchronized SolrServerPoolFactory getSolrServerPoolFactory(String solrServers, String collectionName) {
@@ -198,7 +195,7 @@ public class SolrDataProvider extends DataProvider implements Aggregatable, Init
 
         SolrDocumentList results = qs.getResults();
         Set<Map.Entry<String, Object>> entrySet = results.get(0).entrySet();
-        String[][] strings = new String[results.size()+1][entrySet.size()];
+        String[][] strings = new String[results.size() + 1][entrySet.size()];
 
         // 字段行
         int col = 0;
@@ -220,6 +217,21 @@ public class SolrDataProvider extends DataProvider implements Aggregatable, Init
             }
         }
 
+        return strings;
+    }
+
+    public String[][] getData(String dimColsStr, SolrDocumentList results) throws Exception {
+        if (StringUtils.isEmpty(dimColsStr) || results == null || results.size() <= 0) {
+            throw new CBoardException("Cube result is null");
+        }
+        String[] fields = dimColsStr.split(",");
+        String[][] strings = new String[results.size()][fields.length];
+        // 数据集
+        for (int i = 0; i < results.size(); i++) {
+            for (int j = 0; j < fields.length; j++) {
+                strings[i][j] = String.valueOf(results.get(i).get(fields[j]));
+            }
+        }
         return strings;
     }
 
@@ -275,23 +287,22 @@ public class SolrDataProvider extends DataProvider implements Aggregatable, Init
 
     @Override
     public AggregateResult queryAggData(AggConfig config) throws Exception {
-        //没有聚合参数直接返回
-        if(config.getValues().size()<=0){
-            String[][] strings = getData();
-            JvmAggregator jgg = new JvmAggregator();
-            return jgg.queryAggData(config, strings);
-        }
-
         //获取统计集合
         QueryResponse response = getQueryResponse(dataSource.get("solrServers"), query.get("collection"), getAggQuery(config));
-        SimpleOrderedMap obj = (SimpleOrderedMap)((SimpleOrderedMap)response.getResponse().get("facet_counts")).get("facet_pivot");
+        //获取行列字段
         Supplier<Stream<DimensionConfig>> dimStream = () -> Stream.concat(config.getColumns().stream(), config.getRows().stream());
-        String dimColsStr = assembleDimColumns(dimStream.get()).replaceAll(" ","");
-        List statList = (List)obj.get(dimColsStr);
-
-        //解析统计集合
-        List<String[]> list = dealStatList(statList, config);
+        String dimColsStr = assembleDimColumns(dimStream.get()).replaceAll(" ", "");
         List<ColumnIndex> dimensionList = dimStream.get().map(ColumnIndex::fromDimensionConfig).collect(Collectors.toList());
+        //没有聚合参数直接返回
+        if (config.getValues().size() <= 0) {
+            String[][] strings = getData(dimColsStr, response.getResults());
+            IntStream.range(0, dimensionList.size()).forEach(j -> dimensionList.get(j).setIndex(j));
+            return new AggregateResult(dimensionList, strings);
+        }
+        //解析统计集合
+        SimpleOrderedMap obj = (SimpleOrderedMap) ((SimpleOrderedMap) response.getResponse().get("facet_counts")).get("facet_pivot");
+        List statList = (List) obj.get(dimColsStr);
+        List<String[]> list = dealStatList(statList, config);
         int dimSize = dimensionList.size();
         dimensionList.addAll(config.getValues().stream().map(ColumnIndex::fromValueConfig).collect(Collectors.toList()));
         IntStream.range(0, dimensionList.size()).forEach(j -> dimensionList.get(j).setIndex(j));
@@ -306,53 +317,53 @@ public class SolrDataProvider extends DataProvider implements Aggregatable, Init
 
     private List<String[]> dealStatList(List statList, AggConfig config) {
         Stream<DimensionConfig> dimStream = Stream.concat(config.getColumns().stream(), config.getRows().stream());
-        String dimColsStr = assembleDimColumns(dimStream).replaceAll(" ","");
+        String dimColsStr = assembleDimColumns(dimStream).replaceAll(" ", "");
         List<String[]> list = new LinkedList<>();
-        for(ValueConfig e:config.getValues()){
-            dimColsStr += ","+e.getAggType()+"@"+e.getColumn();
+        for (ValueConfig e : config.getValues()) {
+            dimColsStr += "," + e.getAggType() + "@" + e.getColumn();
         }
         String[] fileds = dimColsStr.split(",");
-        for(Object e : statList){
-            SimpleOrderedMap orderedMap = (SimpleOrderedMap)e;
+        for (Object e : statList) {
+            SimpleOrderedMap orderedMap = (SimpleOrderedMap) e;
             String[] row = new String[fileds.length];
-            for(int x=0;x<fileds.length;x++){
-                if(x <= fileds.length-config.getValues().size()-1){
-                    if(orderedMap.get("value")!=null && fileds[x].equals(orderedMap.get("field"))){
+            for (int x = 0; x < fileds.length; x++) {
+                if (x <= fileds.length - config.getValues().size() - 1) {
+                    if (orderedMap.get("value") != null && fileds[x].equals(orderedMap.get("field"))) {
                         row[x] = orderedMap.get("value").toString();
                     }
-                    if(x == fileds.length-config.getValues().size()-1){
-                        orderedMap = (SimpleOrderedMap)((SimpleOrderedMap)orderedMap.get("stats")).get("stats_fields");
-                    }else{
+                    if (x == fileds.length - config.getValues().size() - 1) {
+                        orderedMap = (SimpleOrderedMap) ((SimpleOrderedMap) orderedMap.get("stats")).get("stats_fields");
+                    } else {
                         List orderedList = (List) orderedMap.get("pivot");
-                        if(orderedList != null){
-                            orderedMap = (SimpleOrderedMap)orderedList.get(0);
-                        }else{
+                        if (orderedList != null) {
+                            orderedMap = (SimpleOrderedMap) orderedList.get(0);
+                        } else {
                             continue;
                         }
                     }
-                }else{
+                } else {
                     String aggType = fileds[x].split("@")[0];
                     String field = fileds[x].split("@")[1];
-                    SimpleOrderedMap statMap = (SimpleOrderedMap)orderedMap.get(field);
-                    if(orderedMap != null){
+                    SimpleOrderedMap statMap = (SimpleOrderedMap) orderedMap.get(field);
+                    if (orderedMap != null) {
                         switch (aggType) {
                             case "sum":
-                                row[x] = statMap.get("sum") != null ? statMap.get("sum").toString():"";
+                                row[x] = statMap.get("sum") != null ? statMap.get("sum").toString() : "";
                                 break;
                             case "avg":
-                                row[x] = statMap.get("mean") != null ? statMap.get("mean").toString():"";
+                                row[x] = statMap.get("mean") != null ? statMap.get("mean").toString() : "";
                                 break;
                             case "max":
-                                row[x] = statMap.get("max") != null ? statMap.get("max").toString():"";
+                                row[x] = statMap.get("max") != null ? statMap.get("max").toString() : "";
                                 break;
                             case "min":
-                                row[x] = statMap.get("min") != null ? statMap.get("min").toString():"";
+                                row[x] = statMap.get("min") != null ? statMap.get("min").toString() : "";
                                 break;
                             case "distinct":
-                                row[x] = statMap.get("count") != null ? statMap.get("count").toString():""; // TODO: 2017-07-13
+                                row[x] = statMap.get("count") != null ? statMap.get("count").toString() : ""; // TODO: 2017-07-13
                                 break;
                             default:
-                                row[x] = statMap.get("count") != null ? statMap.get("count").toString():"";
+                                row[x] = statMap.get("count") != null ? statMap.get("count").toString() : "";
                         }
                     }
                 }
@@ -374,11 +385,11 @@ public class SolrDataProvider extends DataProvider implements Aggregatable, Init
     }
 
     private String getValueStrEq(DimensionConfig cc, int i) {
-        return cc.getColumnName() +":"+ cc.getValues().get(i);
+        return cc.getColumnName() + ":" + cc.getValues().get(i);
     }
 
     private String getValueStrNe(DimensionConfig cc, int i) {
-        return "-"+cc.getColumnName() +":"+ cc.getValues().get(i);
+        return "-" + cc.getColumnName() + ":" + cc.getValues().get(i);
     }
 
     /**
@@ -392,7 +403,7 @@ public class SolrDataProvider extends DataProvider implements Aggregatable, Init
             switch (config.getFilterType()) {
                 case "=":
                 case "≠":
-                    return ("=".equals(config.getFilterType()) ? "-"+config.getColumnName()+":*" : config.getColumnName()+":*");
+                    return ("=".equals(config.getFilterType()) ? "-" + config.getColumnName() + ":*" : config.getColumnName() + ":*");
             }
         }
 
@@ -404,34 +415,34 @@ public class SolrDataProvider extends DataProvider implements Aggregatable, Init
             case "ne":
                 return "(" + IntStream.range(0, config.getValues().size()).boxed().map(i -> getValueStrNe(config, i)).collect(Collectors.joining("AND")) + ")";
             case ">":
-                return config.getColumnName() + ":" + "{"+config.getValues().get(0)+" TO *]";
+                return config.getColumnName() + ":" + "{" + config.getValues().get(0) + " TO *]";
             case "<":
-                return config.getColumnName() + ":" + "{* TO "+config.getValues().get(0)+"}";
+                return config.getColumnName() + ":" + "{* TO " + config.getValues().get(0) + "}";
             case "≥":
-                return config.getColumnName() + ":" + "["+config.getValues().get(0)+" TO *]";
+                return config.getColumnName() + ":" + "[" + config.getValues().get(0) + " TO *]";
             case "≤":
-                return config.getColumnName() + ":" + "{* TO "+config.getValues().get(0)+"]";
+                return config.getColumnName() + ":" + "{* TO " + config.getValues().get(0) + "]";
             case "(a,b]":
                 if (config.getValues().size() >= 2) {
-                    return config.getColumnName() + ":" + "{"+config.getValues().get(0)+" TO" +config.getValues().get(1)+"]";
+                    return config.getColumnName() + ":" + "{" + config.getValues().get(0) + " TO " + config.getValues().get(1) + "]";
                 } else {
                     return null;
                 }
             case "[a,b)":
                 if (config.getValues().size() >= 2) {
-                    return config.getColumnName() + ":" + "["+config.getValues().get(0)+" TO "+config.getValues().get(1)+"}";
+                    return config.getColumnName() + ":" + "[" + config.getValues().get(0) + " TO " + config.getValues().get(1) + "}";
                 } else {
                     return null;
                 }
             case "(a,b)":
                 if (config.getValues().size() >= 2) {
-                    return config.getColumnName() + ":" + "{"+config.getValues().get(0)+"TO"+config.getValues().get(1)+"}";
+                    return config.getColumnName() + ":" + "{" + config.getValues().get(0) + " TO " + config.getValues().get(1) + "}";
                 } else {
                     return null;
                 }
             case "[a,b]":
                 if (config.getValues().size() >= 2) {
-                    return config.getColumnName() + ":" + "["+config.getValues().get(0)+" TO "+config.getValues().get(1)+"]";
+                    return config.getColumnName() + ":" + "[" + config.getValues().get(0) + " TO " + config.getValues().get(1) + "]";
                 } else {
                     return null;
                 }
@@ -448,7 +459,7 @@ public class SolrDataProvider extends DataProvider implements Aggregatable, Init
 
     private SolrQuery getAggQuery(AggConfig config) throws Exception {
         Stream<DimensionConfig> dimStream = Stream.concat(config.getColumns().stream(), config.getRows().stream());
-        String dimColsStr = assembleDimColumns(dimStream).replaceAll(" ","");
+        String dimColsStr = assembleDimColumns(dimStream).replaceAll(" ", "");
         SolrQuery sQuery = getSolrQuery();
         //行纬 列维 过滤 过滤条件
         Stream<DimensionConfig> c = config.getColumns().stream();
@@ -458,11 +469,11 @@ public class SolrDataProvider extends DataProvider implements Aggregatable, Init
         StringJoiner where = new StringJoiner(",", "", "");
         where.setEmptyValue("");
         filters.map(e -> separateNull(e)).map(e -> configComponentToSql(e)).filter(e -> e != null).forEach(where::add);
-        if(org.apache.commons.lang.StringUtils.isNotEmpty(where.toString())) {
+        if (org.apache.commons.lang.StringUtils.isNotEmpty(where.toString())) {
             sQuery.set("fq", where.toString().split(","));
         }
         //存在聚合参数
-        if(config.getValues().size()>0) {
+        if (config.getValues() != null && config.getValues().size() > 0) {
             sQuery.set("stats", true);
             String[] stats = new String[config.getValues().size()];
             int i = 0;
@@ -474,19 +485,14 @@ public class SolrDataProvider extends DataProvider implements Aggregatable, Init
             sQuery.setFacet(true);
             sQuery.add("facet.pivot", "{!stats=piv}" + dimColsStr);
         }
-        sQuery.set("wt","json");
+        sQuery.set("wt", "json");
         return sQuery;
     }
 
     @Override
     public String viewAggDataQuery(AggConfig ac) throws Exception {
         //返回查询sql
-        return "http://"+dataSource.get("solrServers")+"/solr/"+query.get("collection")+"/select?"+
+        return "http://" + dataSource.get("solrServers") + "/solr/" + query.get("collection") + "/select?" +
                 URLDecoder.decode(getAggQuery(ac).toString());
-    }
-
-    @Override
-    public ConfigComponent separateNull(ConfigComponent configComponent) {
-        return null;
     }
 }

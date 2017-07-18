@@ -185,6 +185,7 @@
       "PARAM_TYPE_SLIDER": "Slider",
       "CHART_NAME":"Chart Name",
       "ENTER_PARAMETER_NAME": "Please enter the parameter name",
+      "DASHBOARD_SOMETHING_WRONG": "Some widget access errors, please check the config of the dashboard!",
       "VALUE_FORMMAT": "Value Format",
       "VIEW_FORMMAT": "View Format",
       "MIN": "Min",

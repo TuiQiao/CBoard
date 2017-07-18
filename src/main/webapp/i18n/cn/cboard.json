@@ -185,6 +185,7 @@
       "PARAM_TYPE_SLIDER": "滑动器",
       "CHART_NAME":"图表名称",
       "ENTER_PARAMETER_NAME": "请输入参数名称",
+      "DASHBOARD_SOMETHING_WRONG": "有部分图表访问出错,请检查看板的配置!",
       "VALUE_FORMMAT": "值格式化",
       "VIEW_FORMMAT": "显示格式化",
       "MIN": "最小值",

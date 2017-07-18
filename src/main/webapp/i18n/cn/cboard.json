@@ -292,16 +292,19 @@
     "BY_NAME": "按名称",
     "BY_ROLE": "按角色",
     "REVOKE": "撤销",
-    "GRANT": "授予"
+    "GRANT": "授予",
+    "BY_ROLE": "按角色",
+    "TOGGLE_UPDATE": "切换UDATE权限",
+    "TOGGLE_DELETE": "切换DELETE权限"
   },
   "DATAPROVIDER": {
     "AGGREGATABLE_PROVIDER": "数据源聚合",
+    "POOLEDCONNECTION": "是否使用连接池",
     "JDBC": {
       "DRIVER": "驱动类 (如: com.mysql.jdbc.Driver)",
       "JDBCURL": "连接串 (如: jdbc:mysql://hostname:port/db)",
       "USERNAME": "数据库用户名",
       "PASSWORD": "数据库密码",
-      "POOLEDCONNECTION": "是否使用连接池",
       "SQLTEXT": "查询语句"
     },
     "SAIKU": {
@@ -309,9 +312,22 @@
     "TEXTFILE": {
       "BASE_PATH": "文件所在目录",
       "FILE_NAME": "文件名",
-      "ENCODING": "编码<UTF-8>",
-      "SEPRATOR": "分隔符<TAB>",
-      "ENCLOSURE": "列包围字符"
+      "ENCODING": "编码",
+      "SEPRATOR": "分隔符",
+      "DATA_TYPE": "数据类型",
+      "FIELD_NAMES": "字段名称",
+      "QUOTE_CHAR": "引用字符",
+      "ESCAPE_CHAR": "逃避字符"
+    },
+    "SOLR":{
+      "SOLR_SERVERS": "Solr服务",
+      "COLLECTION": "集合名称",
+      "Q": "查询字段",
+      "FQ": "过滤字段",
+      "SORT": "排序字段",
+      "START": "开始位置",
+      "ROWS": "结果数",
+      "FL": "结果字段"
     }
   }
 }

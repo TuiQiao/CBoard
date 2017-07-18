@@ -56,22 +56,25 @@ public class ElasticsearchDataProvider extends DataProvider implements Aggregata
 
     private static final Logger LOG = LoggerFactory.getLogger(ElasticsearchDataProvider.class);
 
-    @DatasourceParameter(label = "Elasticsearch Server (domain:port) *", type = DatasourceParameter.Type.Input, order = 1)
+    @DatasourceParameter(label = "Elasticsearch Server *",
+            type = DatasourceParameter.Type.Input,
+            value = "localhost:9200", placeholder = "domain:port",
+            required = true, order = 1)
     protected String SERVERIP = "serverIp";
 
-    @QueryParameter(label = "Index *", type = QueryParameter.Type.Input, order = 2)
+    @QueryParameter(label = "Index *", type = QueryParameter.Type.Input, required = true, order = 2)
     protected String INDEX = "index";
 
-    @QueryParameter(label = "Type *", type = QueryParameter.Type.Input, order = 3)
+    @QueryParameter(label = "Type *", type = QueryParameter.Type.Input, required = true, order = 3)
     protected String TYPE = "type";
 
-    @DatasourceParameter(label = "UserName (Leave blank if don't need auth)", type = DatasourceParameter.Type.Input, order = 4)
+    @DatasourceParameter(label = "UserName (Optional)", type = DatasourceParameter.Type.Input, order = 4)
     private String USERNAME = "username";
 
-    @DatasourceParameter(label = "Password (Leave blank if don't need auth)", type = DatasourceParameter.Type.Password, order = 5)
+    @DatasourceParameter(label = "Password (Optional)", type = DatasourceParameter.Type.Password, order = 5)
     private String PASSWORD = "password";
 
-    @QueryParameter(label = "Override Aggregations", type = QueryParameter.Type.TextArea, order = 6)
+    @QueryParameter(label = "Override Aggregations", pageType = "dataset,widget", type = QueryParameter.Type.TextArea, order = 6)
     private String OVERRIDE = "override";
 
     @DatasourceParameter(label = "Charset (Default: utf-8)", type = DatasourceParameter.Type.Input, order = 7)

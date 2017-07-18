@@ -2,7 +2,6 @@ package org.cboard.solr;
 
 import com.alibaba.fastjson.JSONObject;
 import com.google.common.base.Charsets;
-import com.google.common.collect.Lists;
 import com.google.common.hash.Hashing;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.pool2.impl.GenericObjectPoolConfig;
@@ -15,7 +14,6 @@ import org.apache.solr.common.util.SimpleOrderedMap;
 import org.cboard.dataprovider.DataProvider;
 import org.cboard.dataprovider.Initializing;
 import org.cboard.dataprovider.aggregator.Aggregatable;
-import org.cboard.dataprovider.aggregator.jvm.JvmAggregator;
 import org.cboard.dataprovider.annotation.DatasourceParameter;
 import org.cboard.dataprovider.annotation.ProviderName;
 import org.cboard.dataprovider.annotation.QueryParameter;
@@ -384,10 +382,6 @@ public class SolrDataProvider extends DataProvider implements Aggregatable, Init
             return "(" + sql + ")";
         }
         return null;
-    }
-
-    private String getValueStr(DimensionConfig cc, int i) {
-        return cc.getValues().get(i);
     }
 
     /**

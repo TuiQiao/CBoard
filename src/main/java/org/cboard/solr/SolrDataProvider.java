@@ -224,6 +224,21 @@ public class SolrDataProvider extends DataProvider implements Aggregatable, Init
         return strings;
     }
 
+    public String[][] getData(String dimColsStr, SolrDocumentList results) throws Exception {
+        if(StringUtils.isEmpty(dimColsStr) || results==null || results.size()<=0){
+            throw new CBoardException("Cube result is null");
+        }
+        String[] fields = dimColsStr.split(",");
+        String[][] strings = new String[results.size()][fields.length];
+        // 数据集
+        for (int i = 0; i < results.size(); i++) {
+            for(int j = 0; j < fields.length; j++ ){
+                strings[i][j] = String.valueOf(results.get(i).get(fields[j]));
+            }
+        }
+        return strings;
+    }
+
     /**
      * Solr5.x才开始支持group by a,b
      *
@@ -276,23 +291,22 @@ public class SolrDataProvider extends DataProvider implements Aggregatable, Init
 
     @Override
     public AggregateResult queryAggData(AggConfig config) throws Exception {
-        //没有聚合参数直接返回
-        if(config.getValues().size()<=0){
-            String[][] strings = getData();
-            JvmAggregator jgg = new JvmAggregator();
-            return jgg.queryAggData(config, strings);
-        }
-
         //获取统计集合
         QueryResponse response = getQueryResponse(dataSource.get("solrServers"), query.get("collection"), getAggQuery(config));
-        SimpleOrderedMap obj = (SimpleOrderedMap)((SimpleOrderedMap)response.getResponse().get("facet_counts")).get("facet_pivot");
+        //获取行列字段
         Supplier<Stream<DimensionConfig>> dimStream = () -> Stream.concat(config.getColumns().stream(), config.getRows().stream());
         String dimColsStr = assembleDimColumns(dimStream.get()).replaceAll(" ","");
-        List statList = (List)obj.get(dimColsStr);
-
-        //解析统计集合
-        List<String[]> list = dealStatList(statList, config);
         List<ColumnIndex> dimensionList = dimStream.get().map(ColumnIndex::fromDimensionConfig).collect(Collectors.toList());
+        //没有聚合参数直接返回
+        if(config.getValues().size()<=0){
+            String[][] strings = getData(dimColsStr, response.getResults());
+            IntStream.range(0, dimensionList.size()).forEach(j -> dimensionList.get(j).setIndex(j));
+            return new AggregateResult(dimensionList, strings);
+        }
+        //解析统计集合
+        SimpleOrderedMap obj = (SimpleOrderedMap)((SimpleOrderedMap)response.getResponse().get("facet_counts")).get("facet_pivot");
+        List statList = (List)obj.get(dimColsStr);
+        List<String[]> list = dealStatList(statList, config);
         int dimSize = dimensionList.size();
         dimensionList.addAll(config.getValues().stream().map(ColumnIndex::fromValueConfig).collect(Collectors.toList()));
         IntStream.range(0, dimensionList.size()).forEach(j -> dimensionList.get(j).setIndex(j));
@@ -414,7 +428,7 @@ public class SolrDataProvider extends DataProvider implements Aggregatable, Init
                 return config.getColumnName() + ":" + "{* TO "+config.getValues().get(0)+"]";
             case "(a,b]":
                 if (config.getValues().size() >= 2) {
-                    return config.getColumnName() + ":" + "{"+config.getValues().get(0)+" TO" +config.getValues().get(1)+"]";
+                    return config.getColumnName() + ":" + "{"+config.getValues().get(0)+" TO " +config.getValues().get(1)+"]";
                 } else {
                     return null;
                 }
@@ -426,7 +440,7 @@ public class SolrDataProvider extends DataProvider implements Aggregatable, Init
                 }
             case "(a,b)":
                 if (config.getValues().size() >= 2) {
-                    return config.getColumnName() + ":" + "{"+config.getValues().get(0)+"TO"+config.getValues().get(1)+"}";
+                    return config.getColumnName() + ":" + "{"+config.getValues().get(0)+" TO "+config.getValues().get(1)+"}";
                 } else {
                     return null;
                 }
@@ -463,7 +477,7 @@ public class SolrDataProvider extends DataProvider implements Aggregatable, Init
             sQuery.set("fq", where.toString().split(","));
         }
         //存在聚合参数
-        if(config.getValues().size()>0) {
+        if(config.getValues()!=null && config.getValues().size()>0) {
             sQuery.set("stats", true);
             String[] stats = new String[config.getValues().size()];
             int i = 0;
@@ -484,10 +498,5 @@ public class SolrDataProvider extends DataProvider implements Aggregatable, Init
         //返回查询sql
         return "http://"+dataSource.get("solrServers")+"/solr/"+query.get("collection")+"/select?"+
                 URLDecoder.decode(getAggQuery(ac).toString());
-    }
-
-    @Override
-    public ConfigComponent separateNull(ConfigComponent configComponent) {
-        return null;
     }
 }

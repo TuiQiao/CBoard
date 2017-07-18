@@ -125,39 +125,6 @@ public class JvmAggregator extends InnerAggregator {
         return new AggregateResult(dimensionList, result);
     }
 
-    public AggregateResult queryAggData(AggConfig config, String[][] data) throws Exception {
-        Map<String, Integer> columnIndex = getColumnIndex(data);
-        Filter rowFilter = new Filter(config, columnIndex);
-
-        Stream<ColumnIndex> columns = config.getColumns().stream().map(ColumnIndex::fromDimensionConfig);
-        Stream<ColumnIndex> rows = config.getRows().stream().map(ColumnIndex::fromDimensionConfig);
-        List<ColumnIndex> valuesList = config.getValues().stream().map(ColumnIndex::fromValueConfig).collect(Collectors.toList());
-        List<ColumnIndex> dimensionList = Stream.concat(columns, rows).collect(Collectors.toList());
-        dimensionList.forEach(e -> e.setIndex(columnIndex.get(e.getName())));
-        valuesList.forEach(e -> e.setIndex(columnIndex.get(e.getName())));
-
-        Map<Dimensions, Double[]> grouped = Arrays.stream(data).skip(1).filter(rowFilter::filter)
-                .collect(Collectors.groupingBy(row -> {
-                    String[] ds = dimensionList.stream().map(d -> row[d.getIndex()]).toArray(String[]::new);
-                    return new Dimensions(ds);
-                }, AggregateCollector.getCollector(valuesList)));
-
-        String[][] result = new String[grouped.keySet().size()][dimensionList.size() + valuesList.size()];
-        int i = 0;
-        for (Dimensions d : grouped.keySet()) {
-            result[i++] = Stream.concat(Arrays.stream(d.dimensions), Arrays.stream(grouped.get(d)).map(e -> e.toString())).toArray(String[]::new);
-        }
-        int dimSize = dimensionList.size();
-        for (String[] row : result) {
-            IntStream.range(0, dimSize).forEach(d -> {
-                if (row[d] == null) row[d] = NULL_STRING;
-            });
-        }
-        dimensionList.addAll(valuesList);
-        IntStream.range(0, dimensionList.size()).forEach(j -> dimensionList.get(j).setIndex(j));
-        return new AggregateResult(dimensionList, result);
-    }
-
     private class Dimensions {
         private String[] dimensions;
 

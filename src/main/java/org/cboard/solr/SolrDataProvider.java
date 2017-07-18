@@ -2,7 +2,6 @@ package org.cboard.solr;
 
 import com.alibaba.fastjson.JSONObject;
 import com.google.common.base.Charsets;
-import com.google.common.collect.Lists;
 import com.google.common.hash.Hashing;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.pool2.impl.GenericObjectPoolConfig;
@@ -15,7 +14,6 @@ import org.apache.solr.common.util.SimpleOrderedMap;
 import org.cboard.dataprovider.DataProvider;
 import org.cboard.dataprovider.Initializing;
 import org.cboard.dataprovider.aggregator.Aggregatable;
-import org.cboard.dataprovider.aggregator.jvm.JvmAggregator;
 import org.cboard.dataprovider.annotation.DatasourceParameter;
 import org.cboard.dataprovider.annotation.ProviderName;
 import org.cboard.dataprovider.annotation.QueryParameter;
@@ -255,7 +253,23 @@ public class SolrDataProvider extends DataProvider implements Aggregatable, Init
 
     @Override
     public String[] queryDimVals(String columnName, AggConfig config) throws Exception {
-        return new String[0];
+        String[][] data = getData();
+        Map<String, Integer> columnIndex = getColumnIndex(data);
+        final int fi = columnIndex.get(columnName);
+        String[] result = Arrays.stream(data).parallel().skip(1)
+                .filter(e -> e!=null)
+                .map(e -> e[fi])
+                .distinct()
+                .toArray(String[]::new);
+        return result;
+    }
+
+    private Map<String, Integer> getColumnIndex(String[][] data) {
+        Map<String, Integer> map = new HashMap<>();
+        for (int i = 0; i < data[0].length; i++) {
+            map.put(data[0][i], i);
+        }
+        return map;
     }
 
     @Override

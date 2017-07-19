@@ -5,7 +5,13 @@
 cBoard.service('chartGaugeService', function () {
 
     this.render = function (containerDom, option, scope, persist) {
-        return new CBoardEChartRender(containerDom, option).chart(null, persist);
+        if (option == null) {
+            containerDom.html("<div class=\"alert alert-danger\" role=\"alert\">No Data!</div>");
+            return;
+        }
+        var height;
+        scope ? height = scope.myheight - 20 : null;
+        return new CBoardEChartRender(containerDom, option).chart(height, persist);
     };
 
     this.parseOption = function (data) {

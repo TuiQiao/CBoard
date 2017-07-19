@@ -400,10 +400,6 @@ public class SolrDataProvider extends DataProvider implements Aggregatable, Init
         return null;
     }
 
-    private String getValueStr(DimensionConfig cc, int i) {
-        return cc.getValues().get(i);
-    }
-
     /**
      * Parser a single filter configuration to sql syntax
      */

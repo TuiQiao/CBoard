@@ -108,6 +108,8 @@
       "ROW": "Row",
       "GROUP": "Column",
       "VALUE": "Value",
+      "MIN_VALUE": "Min Value",
+      "MAX_VALUE": "Max Value",
       "VALUE_AXIS": "Value Axis",
       "FILTER": "Filter",
       "LABEL": "Label",
@@ -159,7 +161,12 @@
       "COLOR": "Opacity",
       "PREVIEW_QUERY": "View Query",
       "PERCENT_BAR": "Stacked Percent",
-      "AGGREGATE_TYPE": "Aggregate Type"
+      "AGGREGATE_TYPE": "Aggregate Type",
+      "GAUGE": "Gauge",
+      "ADD_NEW_STYLE": "Add New Style",
+      "LINE_STYLE": "Line Style",
+      "STYLE_PROPORTION": "Proportion",
+      "STYLE_COLOR": "Color"
     },
     "DASHBOARD": {
       "CATEGORY": "Category",
@@ -181,6 +188,11 @@
       "CUBE_TREE": "Cube/Query in dashboard",
       "LINKED_COLUMN": "Columns linked with this param",
       "PARAM_TYPE": "Param Type",
+      "PARAM_TYPE_SELECTOR": "Selector",
+      "PARAM_TYPE_SLIDER": "Slider",
+      "CHART_NAME":"Chart Name",
+      "ENTER_PARAMETER_NAME": "Please enter the parameter name",
+      "DASHBOARD_SOMETHING_WRONG": "Some widget access errors, please check the config of the dashboard!",
       "VALUE_FORMMAT": "Value Format",
       "VIEW_FORMMAT": "View Format",
       "MIN": "Min",
@@ -299,6 +311,7 @@
   },
   "DATAPROVIDER": {
     "AGGREGATABLE_PROVIDER": "Aggregatable DataProvider",
+    "AGGREGATABLE_PROVIDER_SOLR": "Aggregatable DataProvider(Must Solr5.0+)",
     "POOLEDCONNECTION": "Pooled Connection",
     "JDBC": {
       "DRIVER": "Driver (eg: com.mysql.jdbc.Driver)",

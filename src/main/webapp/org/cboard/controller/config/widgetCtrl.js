@@ -61,12 +61,19 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
                 row: translate('CONFIG.WIDGET.TIPS_DIM_NUM_1_MORE'),
                 column: translate('CONFIG.WIDGET.TIPS_DIM_NUM_0_MORE'),
                 measure: translate('CONFIG.WIDGET.TIPS_DIM_NUM_1_MORE')
+            },
+            {
+                name: translate('CONFIG.WIDGET.GAUGE'), value: 'gauge', class: 'cGauge',
+                row: translate('CONFIG.WIDGET.TIPS_DIM_NUM_0'),
+                column: translate('CONFIG.WIDGET.TIPS_DIM_NUM_0'),
+                measure: translate('CONFIG.WIDGET.TIPS_DIM_NUM_1')
             }
         ];
 
         $scope.chart_types_status = {
             "line": true, "pie": true, "kpi": true, "table": true,
-            "funnel": true, "sankey": true, "radar": true, "map": true, "scatter": true
+            "funnel": true, "sankey": true, "radar": true, "map": true,
+            "scatter": true, "gauge": true
         };
 
         $scope.value_series_types = [
@@ -102,6 +109,7 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
             radar: {keys: 0, groups: 0, filters: 0, values: 0},
             map: {keys: 0, groups: 0, filters: 0, values: 0},
             scatter: {keys: 0, groups: 0, filters: 0, values: 0},
+            gauge: {keys: -1, groups: -1, filters: 0, values: 1}
         };
 
         //界面控制
@@ -487,6 +495,20 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
                         }
                     }
                     break;
+                case 'gauge':
+                    $scope.curWidget.config.values.push({name: '', cols: []});
+                    _.each(oldConfig.values, function (v) {
+                        _.each(v.cols, function (c) {
+                            $scope.curWidget.config.values[0].cols.push(c);
+                        });
+                    });
+                    $scope.curWidget.config.selects = angular.copy($scope.columns);
+                    $scope.curWidget.config.styles = [
+                        {proportion: '0.2', color: '#228b22'},
+                        {proportion: '0.8', color: '#48b'},
+                        {proportion: '1', color: '#ff4500'}
+                    ];
+                    break;
                 default:
                     $scope.curWidget.config.values.push({name: '', cols: []});
                     _.each(oldConfig.values, function (v) {
@@ -585,6 +607,19 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
                         cols: []
                     }];
                     $scope.curWidget.config.filters = new Array();
+                    break;
+                case 'gauge':
+                    $scope.curWidget.config.selects = angular.copy($scope.columns);
+                    $scope.curWidget.config.values = [{
+                        name: '',
+                        cols: []
+                    }];
+                    $scope.curWidget.config.filters = new Array();
+                    $scope.curWidget.config.styles = [
+                        {proportion: '0.2', color: '#228b22'},
+                        {proportion: '0.8', color: '#48b'},
+                        {proportion: '1', color: '#ff4500'}
+                    ];
                     break;
             }
             addWatch();
@@ -693,6 +728,13 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
             });
         };
 
+        $scope.add_style = function () {
+            $scope.curWidget.config.styles.push({
+                proportion: '',
+                color: ''
+            });
+        };
+
         var saveWgtCallBack = function (serviceStatus) {
             if (serviceStatus.status == '1') {
                 getWidgetList();
@@ -775,7 +817,7 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
             $http.post("dashboard/checkWidget.do", {id: widget.id}).success(function (response) {
                 if (response.status == '1') {
                     doEditWgt(widget);
-                    if($scope.customDs = true) $scope.doConfigParams();
+                    if($scope.customDs == true) $scope.doConfigParams();
                 } else {
                     var d = widget.data.datasetId ? 'CONFIG.WIDGET.DATASET' : 'CONFIG.WIDGET.DATA_SOURCE';
                     ModalUtils.alert(translate("ADMIN.CONTACT_ADMIN") + "：" + translate(d) + '/' + response.msg, "modal-danger", "lg");

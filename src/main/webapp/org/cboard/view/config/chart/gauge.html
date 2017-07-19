@@ -1,0 +1,127 @@
+<div ng-include="'org/cboard/view/config/chart/template/config.html'"></div>
+<div class="form-group">
+    <label class="col-sm-2 control-label">{{'CONFIG.WIDGET.VALUE'|translate}}</label>
+    <div class="col-sm-10">
+        <div class="form-control" dnd-list="curWidget.config.values[0].cols"
+             dnd-drop="curWidget.config.values[0].cols.length == 0 ? item:false"
+             dnd-inserted="dndTransfer.toCol(curWidget.config.values[0].cols,index,item,type)"
+             dnd-allowed-types="['measure','select','col','exp']"
+             style="min-height: 35px;height: auto;padding: 0px">
+            <div class="dndPlaceholder sort-highlight"
+                 style="height: 24px; width: 93px;margin: 3px 3px;display: inline-block;vertical-align: middle;">
+            </div>
+            <div ng-repeat="o in curWidget.config.values[0].cols" dnd-draggable="o" dnd-type="o.type=='exp'?'exp':'col'"
+                 dnd-effect-allowed="move"
+                 dnd-moved="curWidget.config.values[0].cols.splice($index, 1)" class="btn-group"
+                 style="margin: 3px 3px;">
+                <ng-switch on="o.type">
+                    <div ng-switch-when="exp" class="btn-group">
+                        <button type="button" class="btn btn-primary btn-sm" style="cursor: move;" ng-click="curWidget.config.values[0].cols.splice($index, 1);">
+                            {{o.alias}}
+                        </button>
+                        <button type="button" class="btn btn-primary btn-sm dropdown-toggle"
+                                ng-click="editSort(o);cleanRowSort(o);">
+                            <span class="fa" ng-class="{undefined:'fa-sort','asc':'fa-sort-asc','desc':'fa-sort-desc'}[o.sort]"></span>
+                        </button>
+                        <button type="button" class="btn btn-primary btn-sm dropdown-toggle" data-toggle="dropdown">
+                            <span class="fa fa-edit"></span>
+                        </button>
+                        <ul class="dropdown-menu multi-level" role="menu" aria-labelledby="dropdownMenu">
+                            <li ng-if="!isDsExpression(o)">
+                                <a href="#" ng-click="editExp(o)">{{'COMMON.EDIT'|translate}}</a>
+                            </li>
+                            <li>
+                                <a href="#" ng-click="editVFilter(o)">{{'CONFIG.WIDGET.FILTER'|translate}}</a>
+                            </li>
+                        </ul>
+                    </div>
+                    <div ng-switch-default class="btn-group">
+                        <button type="button"
+                                ng-click="curWidget.config.values[0].cols.splice($index, 1);"
+                                class="btn btn-default btn-sm" style="cursor: move;">
+                            {{o.aggregate_type+'('+o.col+')'+ (o.alias?(' -> '+o.alias):'')}}
+                        </button>
+                        <button type="button" class="btn btn-default btn-sm dropdown-toggle"
+                                ng-click="editSort(o);cleanRowSort(o);">
+                            <span class="fa" ng-class="{undefined:'fa-sort','asc':'fa-sort-asc','desc':'fa-sort-desc'}[o.sort]"></span>
+                        </button>
+                        <button type="button" class="btn btn-default btn-sm dropdown-toggle"
+                                data-toggle="dropdown">
+                            <span class="fa fa-edit"></span>
+                        </button>
+                        <ul class="dropdown-menu" role="menu">
+                            <li><input class="form-control" ng-model="o.alias" placeholder="{{'CONFIG.WIDGET.ALIAS'|translate}}"></li>
+                            <li ng-repeat="a in value_aggregate_types">
+                                <a ng-click="o.aggregate_type=a.value">{{a.name+'('+o.col+')'}}</a>
+                            </li>
+                            <li>
+                                <a href="#" ng-click="editVFilter(o)">{{'CONFIG.WIDGET.FILTER'|translate}}</a>
+                            </li>
+                        </ul>
+                    </div>
+                </ng-switch>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="form-group">
+    <label class="col-sm-2 control-label">{{'CONFIG.WIDGET.LABEL'|translate}}</label>
+    <div class="col-sm-10">
+        <input type="text" ng-model="curWidget.config.values[0].name" class="form-control" />
+    </div>
+</div>
+<div class="form-group">
+    <label class="col-sm-2 control-label">{{'CONFIG.WIDGET.FORMATTER'|translate}}</label>
+    <div class="col-sm-10">
+        <input type="text" ng-model="curWidget.config.values[0].format" class="form-control" />
+        <span class="help-block">{{'CONFIG.WIDGET.EXAMPLE'|translate}}：'0,0.00' '0.00' '0%' '0.00%' ，<a href="http://numbrojs.com/format.html"
+                                                                    target="_blank">{{'CONFIG.WIDGET.MORE'|translate}}</a> </span>
+    </div>
+</div>
+<div class="form-group">
+    <label class="col-sm-2 control-label">{{'CONFIG.WIDGET.MIN_VALUE'|translate}}</label>
+    <div class="col-sm-10">
+        <input type="number" ng-model="curWidget.config.values[0].minValue" ng-value="0.0" placeholder="default value is 0" class="form-control" />
+    </div>
+</div>
+<div class="form-group">
+    <label class="col-sm-2 control-label">{{'CONFIG.WIDGET.MAX_VALUE'|translate}}</label>
+    <div class="col-sm-10">
+        <input type="number" ng-model="curWidget.config.values[0].maxValue" ng-value="100.0" placeholder="default value is 100" class="form-control" />
+    </div>
+</div>
+<div class="form-group">
+    <label class="col-sm-2 control-label">{{'CONFIG.WIDGET.LINE_STYLE'|translate}}</label>
+    <div class="col-sm-10">
+        <table class="table table-striped">
+            <tr>
+                <th style="width: 25px"></th>
+                <th style="width: 120px">{{'CONFIG.WIDGET.STYLE_PROPORTION'|translate}}</th>
+                <th style="width: 100px">{{'CONFIG.WIDGET.STYLE_COLOR'|translate}}</th>
+            </tr>
+            <tr ng-repeat="s in curWidget.config.styles">
+                <td>
+                    <span class="text-red" style="display: block;margin-top: 7px;">
+                        <i class="fa fa-trash-o" style="cursor: pointer;vertical-align: middle;"
+                           ng-click="deleteValue(v.cols);curWidget.config.styles.splice($index, 1)"></i>
+                    </span>
+                </td>
+                <td>
+                    <input type="text" ng-model="s.proportion" class="form-control input" style="width: 90%; padding: 6px 6px;"/>
+                </td>
+                <td>
+                    <input type="text" ng-model="s.color" class="form-control input" style="width: 90%; padding: 6px 6px;"/>
+                </td>
+            </tr>
+            <tr>
+                <th colspan="4" style="text-align: center;">
+                    <button type="button" class="btn btn-info btn-sm" ng-click="add_style()">
+                        {{'CONFIG.WIDGET.ADD_NEW_STYLE'|translate}}
+                    </button>
+                </th>
+            </tr>
+        </table>
+    </div>
+</div>
+</div>

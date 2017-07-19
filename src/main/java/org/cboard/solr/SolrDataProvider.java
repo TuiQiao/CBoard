@@ -51,7 +51,7 @@ public class SolrDataProvider extends DataProvider implements Aggregatable, Init
     @DatasourceParameter(label = "{{'DATAPROVIDER.POOLEDCONNECTION'|translate}}", type = DatasourceParameter.Type.Checkbox, order = 2)
     private String POOLED = "pooled";
 
-    @DatasourceParameter(label = "{{'DATAPROVIDER.AGGREGATABLE_PROVIDER'|translate}}", type = DatasourceParameter.Type.Checkbox, order = 3)
+    @DatasourceParameter(label = "{{'DATAPROVIDER.AGGREGATABLE_PROVIDER_SOLR'|translate}}", type = DatasourceParameter.Type.Checkbox, order = 3)
     private String AGGREGATE_PROVIDER = "aggregateProvider";
 
     @QueryParameter(label = "{{'DATAPROVIDER.SOLR.COLLECTION'|translate}}", required = true, pageType = "test,dataset,widget", type = QueryParameter.Type.Input, order = 1)
@@ -384,14 +384,6 @@ public class SolrDataProvider extends DataProvider implements Aggregatable, Init
         return null;
     }
 
-    private String getValueStrEq(DimensionConfig cc, int i) {
-        return cc.getColumnName() + ":" + cc.getValues().get(i);
-    }
-
-    private String getValueStrNe(DimensionConfig cc, int i) {
-        return "-" + cc.getColumnName() + ":" + cc.getValues().get(i);
-    }
-
     /**
      * Parser a single filter configuration to sql syntax
      */
@@ -402,47 +394,48 @@ public class SolrDataProvider extends DataProvider implements Aggregatable, Init
         if (NULL_STRING.equals(config.getValues().get(0))) {
             switch (config.getFilterType()) {
                 case "=":
+                    return "-" + config.getColumnName() + ":*";
                 case "≠":
-                    return ("=".equals(config.getFilterType()) ? "-" + config.getColumnName() + ":*" : config.getColumnName() + ":*");
+                    return config.getColumnName() + ":*";
             }
         }
 
         switch (config.getFilterType()) {
             case "=":
             case "eq":
-                return "(" + IntStream.range(0, config.getValues().size()).boxed().map(i -> getValueStrEq(config, i)).collect(Collectors.joining("OR")) + ")";
+                return config.getColumnName() + ":(" + IntStream.range(0, config.getValues().size()).boxed().map(i -> config.getValues().get(i)).collect(Collectors.joining("OR", " ", " ")) + ")";
             case "≠":
             case "ne":
-                return "(" + IntStream.range(0, config.getValues().size()).boxed().map(i -> getValueStrNe(config, i)).collect(Collectors.joining("AND")) + ")";
+                return "-" + config.getColumnName() + ":(" + IntStream.range(0, config.getValues().size()).boxed().map(i -> config.getValues().get(i)).collect(Collectors.joining("OR", " ", " ")) + ")";
             case ">":
-                return config.getColumnName() + ":" + "{" + config.getValues().get(0) + " TO *]";
+                return config.getColumnName() + ":{" + config.getValues().get(0) + " TO *]";
             case "<":
-                return config.getColumnName() + ":" + "{* TO " + config.getValues().get(0) + "}";
+                return config.getColumnName() + ":{* TO " + config.getValues().get(0) + "}";
             case "≥":
-                return config.getColumnName() + ":" + "[" + config.getValues().get(0) + " TO *]";
+                return config.getColumnName() + ":[" + config.getValues().get(0) + " TO *]";
             case "≤":
-                return config.getColumnName() + ":" + "{* TO " + config.getValues().get(0) + "]";
+                return config.getColumnName() + ":{* TO " + config.getValues().get(0) + "]";
             case "(a,b]":
                 if (config.getValues().size() >= 2) {
-                    return config.getColumnName() + ":" + "{" + config.getValues().get(0) + " TO " + config.getValues().get(1) + "]";
+                    return config.getColumnName() + ":{" + config.getValues().get(0) + " TO " + config.getValues().get(1) + "]";
                 } else {
                     return null;
                 }
             case "[a,b)":
                 if (config.getValues().size() >= 2) {
-                    return config.getColumnName() + ":" + "[" + config.getValues().get(0) + " TO " + config.getValues().get(1) + "}";
+                    return config.getColumnName() + ":[" + config.getValues().get(0) + " TO " + config.getValues().get(1) + "}";
                 } else {
                     return null;
                 }
             case "(a,b)":
                 if (config.getValues().size() >= 2) {
-                    return config.getColumnName() + ":" + "{" + config.getValues().get(0) + " TO " + config.getValues().get(1) + "}";
+                    return config.getColumnName() + ":{" + config.getValues().get(0) + " TO " + config.getValues().get(1) + "}";
                 } else {
                     return null;
                 }
             case "[a,b]":
                 if (config.getValues().size() >= 2) {
-                    return config.getColumnName() + ":" + "[" + config.getValues().get(0) + " TO " + config.getValues().get(1) + "]";
+                    return config.getColumnName() + ":[" + config.getValues().get(0) + " TO " + config.getValues().get(1) + "]";
                 } else {
                     return null;
                 }

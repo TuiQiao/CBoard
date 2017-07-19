@@ -63,7 +63,7 @@
     "CONFIRM_PASSWORD": "Confirm Password"
   },
   "FOOTER": {
-    "COPYRIGHT": "Ctrip Payment Department",
+    "COPYRIGHT": "Shanghai Hex Information Technology Co,. Ltd.",
     "VERSION": "Version"
   },
   "DASHBOARD": {
@@ -341,6 +341,16 @@
       "START": "start",
       "ROWS": "rows",
       "FL": "fl"
+    },
+    "UDSP":{
+      "UDSP_SERVERS": "UDSP Servers",
+      "USERNAME": "UserName",
+      "PASSWORD": "Password",
+      "SERVICE_NAME": "Service Name",
+      "SQL_TEXT": "Sql Text",
+      "JSON_TEXT": "Json Text",
+      "PAGE_INDEX": "Page Index",
+      "PAGE_SIZE": "Page Size"
     }
   }
 }

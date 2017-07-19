@@ -181,20 +181,24 @@ public class JdbcDataProvider extends DataProvider implements Aggregatable, Init
             } catch (SQLException e) {
                 e.printStackTrace();
                 datasourceMap.remove(key);
-                throw e;
+                throw new CBoardException(e.getMessage());
             }
             return conn;
         } else {
             String driver = dataSource.get(DRIVER);
             String jdbcurl = dataSource.get(JDBC_URL);
-
             Class.forName(driver);
             Properties props = new Properties();
             props.setProperty("user", username);
             if (StringUtils.isNotBlank(password)) {
                 props.setProperty("password", password);
             }
-            return DriverManager.getConnection(jdbcurl, props);
+            try {
+                return DriverManager.getConnection(jdbcurl, props);
+            }catch (Exception e){
+                e.printStackTrace();
+                throw new CBoardException(e.getMessage());
+            }
         }
     }
 
@@ -212,7 +216,7 @@ public class JdbcDataProvider extends DataProvider implements Aggregatable, Init
             Stream<ConfigComponent> filters = Stream.concat(Stream.concat(c, r), f);
             whereStr = assembleSqlFilter(filters, "WHERE");
         }
-        fsql = "SELECT __view__.%s FROM (\n%s\n) __view__ %s GROUP BY __view__.%s";
+        fsql = "SELECT view20170715.%s FROM (\n%s\n) view20170715 %s GROUP BY view20170715.%s";
         exec = String.format(fsql, columnName, sql, whereStr, columnName);
         LOG.info(exec);
         try (Connection connection = getConnection();
@@ -329,7 +333,7 @@ public class JdbcDataProvider extends DataProvider implements Aggregatable, Init
         ResultSetMetaData metaData;
         try {
             stat.setMaxRows(100);
-            String fsql = "\nSELECT * FROM (\n%s\n) __view__ WHERE 1=0";
+            String fsql = "\nSELECT * FROM (\n%s\n) view20170715 WHERE 1=0";
             String sql = String.format(fsql, subQuerySql);
             LOG.info(sql);
             ResultSet rs = stat.executeQuery(sql);
@@ -443,7 +447,7 @@ public class JdbcDataProvider extends DataProvider implements Aggregatable, Init
         }
 
         String subQuerySql = getAsSubQuery(query.get(SQL));
-        String fsql = "\nSELECT %s \n FROM (\n%s\n) __view__ \n %s \n %s";
+        String fsql = "\nSELECT %s \n FROM (\n%s\n) view20170715 \n %s \n %s";
         String exec = String.format(fsql, selectColsStr, subQuerySql, whereStr, groupByStr);
         return exec;
     }
@@ -458,10 +462,10 @@ public class JdbcDataProvider extends DataProvider implements Aggregatable, Init
         if (config.getColumn().contains(" ")) {
             aggExp = config.getColumn();
             for (String column : types.keySet()) {
-                aggExp = aggExp.replaceAll(" " + column + " ", " __view__." + column + " ");
+                aggExp = aggExp.replaceAll(" " + column + " ", " view20170715." + column + " ");
             }
         } else {
-            aggExp = "__view__." + config.getColumn();
+            aggExp = "view20170715." + config.getColumn();
         }
         switch (config.getAggType()) {
             case "sum":

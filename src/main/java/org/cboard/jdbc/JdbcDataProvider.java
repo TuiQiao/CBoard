@@ -216,7 +216,7 @@ public class JdbcDataProvider extends DataProvider implements Aggregatable, Init
             Stream<ConfigComponent> filters = Stream.concat(Stream.concat(c, r), f);
             whereStr = assembleSqlFilter(filters, "WHERE");
         }
-        fsql = "SELECT view20170715.%s FROM (\n%s\n) view20170715 %s GROUP BY view20170715.%s";
+        fsql = "SELECT hb_view.%s FROM (\n%s\n) hb_view %s GROUP BY hb_view.%s";
         exec = String.format(fsql, columnName, sql, whereStr, columnName);
         LOG.info(exec);
         try (Connection connection = getConnection();
@@ -333,7 +333,7 @@ public class JdbcDataProvider extends DataProvider implements Aggregatable, Init
         ResultSetMetaData metaData;
         try {
             stat.setMaxRows(100);
-            String fsql = "\nSELECT * FROM (\n%s\n) view20170715 WHERE 1=0";
+            String fsql = "\nSELECT * FROM (\n%s\n) hb_view WHERE 1=0";
             String sql = String.format(fsql, subQuerySql);
             LOG.info(sql);
             ResultSet rs = stat.executeQuery(sql);
@@ -447,7 +447,7 @@ public class JdbcDataProvider extends DataProvider implements Aggregatable, Init
         }
 
         String subQuerySql = getAsSubQuery(query.get(SQL));
-        String fsql = "\nSELECT %s \n FROM (\n%s\n) view20170715 \n %s \n %s";
+        String fsql = "\nSELECT %s \n FROM (\n%s\n) hb_view \n %s \n %s";
         String exec = String.format(fsql, selectColsStr, subQuerySql, whereStr, groupByStr);
         return exec;
     }
@@ -462,10 +462,10 @@ public class JdbcDataProvider extends DataProvider implements Aggregatable, Init
         if (config.getColumn().contains(" ")) {
             aggExp = config.getColumn();
             for (String column : types.keySet()) {
-                aggExp = aggExp.replaceAll(" " + column + " ", " view20170715." + column + " ");
+                aggExp = aggExp.replaceAll(" " + column + " ", " hb_view." + column + " ");
             }
         } else {
-            aggExp = "view20170715." + config.getColumn();
+            aggExp = "hb_view." + config.getColumn();
         }
         switch (config.getAggType()) {
             case "sum":

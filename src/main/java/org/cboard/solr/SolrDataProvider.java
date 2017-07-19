@@ -253,7 +253,23 @@ public class SolrDataProvider extends DataProvider implements Aggregatable, Init
 
     @Override
     public String[] queryDimVals(String columnName, AggConfig config) throws Exception {
-        return new String[0];
+        String[][] data = getData();
+        Map<String, Integer> columnIndex = getColumnIndex(data);
+        final int fi = columnIndex.get(columnName);
+        String[] result = Arrays.stream(data).parallel().skip(1)
+                .filter(e -> e!=null)
+                .map(e -> e[fi])
+                .distinct()
+                .toArray(String[]::new);
+        return result;
+    }
+
+    private Map<String, Integer> getColumnIndex(String[][] data) {
+        Map<String, Integer> map = new HashMap<>();
+        for (int i = 0; i < data[0].length; i++) {
+            map.put(data[0][i], i);
+        }
+        return map;
     }
 
     @Override

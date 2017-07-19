@@ -108,6 +108,8 @@
       "ROW": "行维",
       "GROUP": "列维",
       "VALUE": "指标",
+      "MIN_VALUE": "最小值",
+      "MAX_VALUE": "最大值",
       "VALUE_AXIS": "轴",
       "FILTER": "过滤",
       "LABEL": "文字",
@@ -159,7 +161,12 @@
       "COLOR": "透明度",
       "PREVIEW_QUERY": "预览查询",
       "PERCENT_BAR": "百分比堆叠",
-      "AGGREGATE_TYPE":"汇总类型"
+      "AGGREGATE_TYPE":"汇总类型",
+      "GAUGE": "仪表",
+      "ADD_NEW_STYLE": "添加样式",
+      "LINE_STYLE": "线条样式",
+      "STYLE_PROPORTION": "比例",
+      "STYLE_COLOR": "颜色"
     },
     "DASHBOARD": {
       "DASHBOARD": "看板",

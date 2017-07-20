@@ -166,7 +166,8 @@
       "ADD_NEW_STYLE": "Add New Style",
       "LINE_STYLE": "Line Style",
       "STYLE_PROPORTION": "Proportion",
-      "STYLE_COLOR": "Color"
+      "STYLE_COLOR": "Color",
+      "WORD_CLOUD": "Word Cloud"
     },
     "DASHBOARD": {
       "CATEGORY": "Category",

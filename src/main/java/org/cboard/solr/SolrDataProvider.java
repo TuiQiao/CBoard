@@ -257,7 +257,7 @@ public class SolrDataProvider extends DataProvider implements Aggregatable, Init
         Map<String, Integer> columnIndex = getColumnIndex(data);
         final int fi = columnIndex.get(columnName);
         String[] result = Arrays.stream(data).parallel().skip(1)
-                .filter(e -> e!=null)
+                .filter(e -> e != null)
                 .map(e -> e[fi])
                 .distinct()
                 .toArray(String[]::new);
@@ -376,7 +376,7 @@ public class SolrDataProvider extends DataProvider implements Aggregatable, Init
                                 row[x] = statMap.get("min") != null ? statMap.get("min").toString() : "";
                                 break;
                             case "distinct":
-                                row[x] = statMap.get("count") != null ? statMap.get("count").toString() : ""; // TODO: 2017-07-13
+                                row[x] = statMap.get("count") != null ? statMap.get("count").toString() : "";
                                 break;
                             default:
                                 row[x] = statMap.get("count") != null ? statMap.get("count").toString() : "";

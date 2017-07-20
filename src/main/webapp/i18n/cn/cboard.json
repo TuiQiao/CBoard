@@ -166,7 +166,8 @@
       "ADD_NEW_STYLE": "添加样式",
       "LINE_STYLE": "线条样式",
       "STYLE_PROPORTION": "比例",
-      "STYLE_COLOR": "颜色"
+      "STYLE_COLOR": "颜色",
+      "WORD_CLOUD": "标签云"
     },
     "DASHBOARD": {
       "DASHBOARD": "看板",

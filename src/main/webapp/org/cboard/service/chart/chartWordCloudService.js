@@ -28,7 +28,7 @@ cBoard.service('chartWordCloudService', function () {
 
         var option = {
             tooltip: {
-                formatter: "{a} <br/>{b} : {c}"
+                formatter: "{b} : {c}"
             },
             toolbox: {
                 show : true,

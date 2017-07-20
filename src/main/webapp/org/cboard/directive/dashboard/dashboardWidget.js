@@ -78,6 +78,9 @@ cBoard.directive('dashboardWidget', function ($compile, $templateCache, dataServ
                         case 'gauge':
                             renderEchart(scope, element, attrs);
                             break;
+                        case 'wordCloud':
+                            renderEchart(scope, element, attrs);
+                            break;
                     }
                 }
             }

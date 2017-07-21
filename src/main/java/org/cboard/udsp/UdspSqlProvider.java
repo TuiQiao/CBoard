@@ -191,7 +191,11 @@ public class UdspSqlProvider extends DataProvider implements Aggregatable, Initi
 
     @Override
     public void afterPropertiesSet() throws Exception {
-
+        try {
+            dimensionConfigHelper = new UdspSqlProvider.DimensionConfigHelper();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     @Override

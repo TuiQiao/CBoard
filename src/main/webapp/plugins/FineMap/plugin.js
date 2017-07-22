@@ -7,6 +7,7 @@ var threeLevelMap = {
     tipHeader: null,
     drillData: [],
     provinceData: {},
+    mapData:{},
     getZoomScale: function(features, width, height){
         var longitudeMin = 100000;
         var latitudeMin = 100000;
@@ -175,13 +176,16 @@ var threeLevelMap = {
                     }
                 }
             }
-            console.log(tipslist);
+            if (!tipslist[0]){
+                return name;
+            }
             for (let i = index; i < data[0].length; i++) {
                 let tipsLink = [];
                 tipsLink.push(data[0][i].data);
                 tipslist[i] ? tipsLink.push(tipslist[i].data) : null;
                 tipsArray.push(tipsLink.join(' : '))
             }
+
             return name+" :</br>"+tipsArray.join("</br>");
         }
     },
@@ -240,7 +244,7 @@ var threeLevelMap = {
         //});
     },
     backToTop: function(svg, width) {
-        var _this = this;
+        var that = this;
         svg.append('image')
             .attr('x', width * 0.7)
             .attr('y', 0)
@@ -250,7 +254,7 @@ var threeLevelMap = {
             .attr('xlink:href', '../../imgs/back-top.svg')
             .style('cursor', 'pointer')
             .on('click', function(){
-                _this.map(_this.provinceData);
+                that.map(that.provinceData);
             });
     },
     map: function(options) {
@@ -319,10 +323,11 @@ var threeLevelMap = {
                     setTimeout(function(){
                         d3.selectAll(".pathProvince").remove();
                         d3.selectAll(".pathCounty").remove();
+                        that.mapData.city = that.mapData.city || threeLevelMap.drillData[0].data;
                         var pathProvince = "plugins/FineMap/mapdata/geometryProvince/" + id + ".json";
                         var argsProvince = {
                             d: d,
-                            data: threeLevelMap.drillData[0].data,
+                            data: that.mapData.city,
                             mapPath: pathProvince,
                             svg: svg,
                             width: width,
@@ -342,7 +347,7 @@ var threeLevelMap = {
                 contentHeader: that.tipHeader
             };
             options.data[0].length ? that.colorRange(colorParam) : null;
-            // options.data[0].length ? _this.drawBubble(options.data, svg, root, projection) : null;
+            // options.data[0].length ? that.drawBubble(options.data, svg, root, projection) : null;
         });
     },
     clickMap: function(argsProvince){
@@ -354,10 +359,10 @@ var threeLevelMap = {
     },
     drawPrivenceMap: function(argsProvince) {
         var background,
-            _this = this;
+            that = this;
         d3.json(argsProvince.mapPath, function(error, root) {
-            var zoomScale = _this.getZoomScale(root.features, argsProvince.width, argsProvince.height);
-            var centers = _this.getCenters(root.features);
+            var zoomScale = that.getZoomScale(root.features, argsProvince.width, argsProvince.height);
+            var centers = that.getCenters(root.features);
             if (error)
                 return console.error(error);
             var projection = d3.geo.mercator()
@@ -377,7 +382,7 @@ var threeLevelMap = {
                 .attr("stroke-width", 0.3)
                 .attr("fill", function(d){
                     var nameNode = d.properties.name;
-                    return _this.fillColor(argsProvince.data, nameNode);
+                    return that.fillColor(argsProvince.data, nameNode);
                 })
                 .attr("d", path)
                 .on("mouseover",function(d){
@@ -386,7 +391,7 @@ var threeLevelMap = {
                     background = d3.select(this).attr("fill");
                     d3.select(this)
                         .attr("fill", overColor);
-                    var tipString = _this.tipData(argsProvince.data, nameNode) ? _this.tipData(argsProvince.data, nameNode) : nameNode;
+                    var tipString = that.tipData(argsProvince.data, nameNode) ? that.tipData(argsProvince.data, nameNode) : nameNode;
                     tip.html(tipString);
                     tip.show();
                 })
@@ -400,23 +405,24 @@ var threeLevelMap = {
                     const keyId = threeLevelMap.drillData[0].chartConfig.keys[1].id;
                     if (argsProvince.drill && threeLevelMap.drillData[1][keyId]){
                         if (threeLevelMap.drillData[1][keyId].down){
-                            argsProvince.drill.drillDown(keyId, value, _this.getRenderOption);
+                            argsProvince.drill.drillDown(keyId, value, that.getRenderOption);
                         }
                     }
                     setTimeout(function(){
+                        that.mapData.district = that.mapData.district ? that.mapData.district : threeLevelMap.drillData[0].data;
                         var argsCountry = {
                             d: d,
-                            data: threeLevelMap.drillData[0].data,
+                            data: that.mapData.district,
                             svg: argsProvince.svg,
                             width: argsProvince.width,
                             height: argsProvince.height,
                             drill: argsProvince.drill,
                             drillConfig: threeLevelMap.drillData[1]
                         };
-                        _this.clickProvince(argsCountry);
+                        that.clickProvince(argsCountry);
                     },1000);
                 });
-            // argsProvince.data != [] ? _this.drawBubble(argsProvince.data, argsProvince.svg, root, projection) : null;
+            // argsProvince.data != [] ? that.drawBubble(argsProvince.data, argsProvince.svg, root, projection) : null;
         });
     },
     clickProvince : function(argsCountry) {
@@ -428,14 +434,14 @@ var threeLevelMap = {
     },
     drawCountyMap : function(argsCountry) {
         var backColor;
-        var _this = this;
+        var that = this;
         var id = argsCountry.d.properties.id;
         var mapPath = "plugins/FineMap/mapdata/geometryCouties/" + id + "00.json";
         d3.json(mapPath, function(error, root) {
             if (error)
                 return console.error(error);
-            var zoomScale = _this.getZoomScale(root.features, argsCountry.width, argsCountry.height);
-            var centers = _this.getCenters(root.features);
+            var zoomScale = that.getZoomScale(root.features, argsCountry.width, argsCountry.height);
+            var centers = that.getCenters(root.features);
             var projection = d3.geo.mercator()
                 .center(centers)
                 .scale(zoomScale*40)
@@ -453,7 +459,7 @@ var threeLevelMap = {
                 .attr("stroke-width",0.3)
                 .attr("fill", function(d){
                     var nameNode = d.properties.name;
-                    return _this.fillColor(argsCountry.data, nameNode);
+                    return that.fillColor(argsCountry.data, nameNode);
                 })
                 .attr("d", path)
                 .on("mouseover",function(d){
@@ -462,7 +468,7 @@ var threeLevelMap = {
                     backColor = d3.select(this).attr("fill");
                     d3.select(this)
                         .attr("fill", overColor);
-                    var tipString =  _this.tipData(argsCountry.data, nameNode) ? _this.tipData(argsCountry.data, nameNode) : nameNode;
+                    var tipString =  that.tipData(argsCountry.data, nameNode) ? that.tipData(argsCountry.data, nameNode) : nameNode;
                     tip.html(tipString);
                     tip.show();
                 })
@@ -475,7 +481,7 @@ var threeLevelMap = {
                 // const keyId = threeLevelMap.drillData[0].chartConfig.keys[1].id;
                 // const chinaJsonPath = "plugins/map/mapdata/china.json";
                 // if (argsCountry.drill && threeLevelMap.drillData[1][keyId]){
-                //     argsCountry.drill.drillUp(keyId, _this.getRenderOption);
+                //     argsCountry.drill.drillUp(keyId, that.getRenderOption);
                 // }
                 // setTimeout(function () {
                 //     var countryObj = {
@@ -490,10 +496,10 @@ var threeLevelMap = {
                 //     d3.selectAll(".pathProvince").remove();
                 //     d3.selectAll(".pathCounty").remove();
                 //     d3.selectAll(".d3-tip").remove();
-                //     _this.map(countryObj);
+                //     that.map(countryObj);
                 // }, 1500);
             });
-            // argsCountry.data != [] ? _this.drawBubble(argsCountry.data, argsCountry.svg, root, projection) : null;
+            // argsCountry.data != [] ? that.drawBubble(argsCountry.data, argsCountry.svg, root, projection) : null;
         });
     },
     getRenderOption: function(option, drillConfig){

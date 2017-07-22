@@ -73,21 +73,23 @@ var threeLevelMap = {
         data.map(function (d) {
             d[0] ? (d[0].property == 'header_empty' ? columnHeaderLength++ : null) : null;
         });
-        for (var n = rowHeaderLength; n < data[rowHeaderLength].length; n++) {
-            var title = [];
-            if (rowHeaderLength) {
-                for (var m = 0; m < columnHeaderLength + 1; m++) {
-                    title.push(data[m][n].data);
+        if (data[rowHeaderLength]) {
+            for (var n = rowHeaderLength; n < data[rowHeaderLength].length; n++) {
+                var title = [];
+                if (rowHeaderLength) {
+                    for (var m = 0; m < columnHeaderLength + 1; m++) {
+                        title.push(data[m][n].data);
+                    }
+                    columnHeaderLink.push(title.join('-'));
+                    this.tipHeader = columnHeaderLink[0];
                 }
-                columnHeaderLink.push(title.join('-'));
-                this.tipHeader = columnHeaderLink[0];
-            }
-            else {
-                data[0].map(function (d) {
-                    d['column_header_header'] ? rowHeaderLength++ : null;
-                });
-                this.tipHeader = data[0][rowHeaderLength].data;
-                break;
+                else {
+                    data[0].map(function (d) {
+                        d['column_header_header'] ? rowHeaderLength++ : null;
+                    });
+                    this.tipHeader = data[0][rowHeaderLength] ? data[0][rowHeaderLength].data : null;
+                    break;
+                }
             }
         }
         if (data[0].length) {
@@ -162,10 +164,25 @@ var threeLevelMap = {
             }
         }
         else if (rowHeaderLength == 0 && columnHeaderLength == 0) {
-
+            let index = 0;
+            let tipslist = [];
             for (let t = 0; t < data.length; t++) {
-
+                for (let j = 0; j < data[t].length; j++) {
+                    if (data[t][j].data == name) {
+                        index = j + 1;
+                        tipslist = data[t];
+                        break;
+                    }
+                }
             }
+            console.log(tipslist);
+            for (let i = index; i < data[0].length; i++) {
+                let tipsLink = [];
+                tipsLink.push(data[0][i].data);
+                tipslist[i] ? tipsLink.push(tipslist[i].data) : null;
+                tipsArray.push(tipsLink.join(' : '))
+            }
+            return name+" :</br>"+tipsArray.join("</br>");
         }
     },
     colorRange: function(args) {
@@ -483,7 +500,6 @@ var threeLevelMap = {
         threeLevelMap.drillData = [];
         threeLevelMap.drillData.push(option);
         threeLevelMap.drillData.push(drillConfig);
-        // console.log(threeLevelMap.drillData);
     },
     drawBubble: function(data, svg, root, projection){
         var rowHeaderLength = 0,

@@ -9,9 +9,9 @@ import org.apache.commons.collections.map.HashedMap;
 import org.apache.commons.lang.StringUtils;
 import org.cboard.cache.CacheManager;
 import org.cboard.cache.HeapCacheManager;
+import org.cboard.dataprovider.DataProvider;
 import org.cboard.dataprovider.Initializing;
 import org.cboard.dataprovider.aggregator.Aggregatable;
-import org.cboard.dataprovider.DataProvider;
 import org.cboard.dataprovider.annotation.DatasourceParameter;
 import org.cboard.dataprovider.annotation.ProviderName;
 import org.cboard.dataprovider.annotation.QueryParameter;
@@ -34,8 +34,6 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
-import static org.cboard.elasticsearch.query.QueryBuilder.nullQuery;
-
 /**
  * Created by yfyuan on 2016/8/17.
  */
@@ -47,25 +45,39 @@ public class JdbcDataProvider extends DataProvider implements Aggregatable, Init
     @Value("${dataprovider.resultLimit:200000}")
     private int resultLimit;
 
-    @DatasourceParameter(label = "{{'DATAPROVIDER.JDBC.DRIVER'|translate}}", type = DatasourceParameter.Type.Input, order = 1)
+    @DatasourceParameter(label = "{{'DATAPROVIDER.JDBC.DRIVER'|translate}} *",
+            type = DatasourceParameter.Type.Input,
+            required = true,
+            order = 1)
     private String DRIVER = "driver";
 
-    @DatasourceParameter(label = "{{'DATAPROVIDER.JDBC.JDBCURL'|translate}}", type = DatasourceParameter.Type.Input, order = 2)
+    @DatasourceParameter(label = "{{'DATAPROVIDER.JDBC.JDBCURL'|translate}} *",
+            type = DatasourceParameter.Type.Input,
+            required = true,
+            order = 2)
     private String JDBC_URL = "jdbcurl";
 
-    @DatasourceParameter(label = "{{'DATAPROVIDER.JDBC.USERNAME'|translate}}", type = DatasourceParameter.Type.Input, order = 3)
+    @DatasourceParameter(label = "{{'DATAPROVIDER.JDBC.USERNAME'|translate}} *",
+            type = DatasourceParameter.Type.Input,
+            required = true,
+            order = 3)
     private String USERNAME = "username";
 
-    @DatasourceParameter(label = "{{'DATAPROVIDER.JDBC.PASSWORD'|translate}}", type = DatasourceParameter.Type.Password, order = 4)
+    @DatasourceParameter(label = "{{'DATAPROVIDER.JDBC.PASSWORD'|translate}}",
+            type = DatasourceParameter.Type.Password,
+            order = 4)
     private String PASSWORD = "password";
 
-    @DatasourceParameter(label = "{{'DATAPROVIDER.JDBC.POOLEDCONNECTION'|translate}}", type = DatasourceParameter.Type.Checkbox, order = 5)
+    @DatasourceParameter(label = "{{'DATAPROVIDER.POOLEDCONNECTION'|translate}}", checked = true, type = DatasourceParameter.Type.Checkbox, order = 5)
     private String POOLED = "pooled";
 
     @DatasourceParameter(label = "{{'DATAPROVIDER.AGGREGATABLE_PROVIDER'|translate}}", type = DatasourceParameter.Type.Checkbox, order = 100)
     private String aggregateProvider = "aggregateProvider";
 
-    @QueryParameter(label = "{{'DATAPROVIDER.JDBC.SQLTEXT'|translate}}", type = QueryParameter.Type.TextArea, order = 1)
+    @QueryParameter(label = "{{'DATAPROVIDER.JDBC.SQLTEXT'|translate}}",
+            type = QueryParameter.Type.TextArea,
+            required = true,
+            order = 1)
     private String SQL = "sql";
 
     private static final CacheManager<Map<String, Integer>> typeCahce = new HeapCacheManager<>();
@@ -200,7 +212,7 @@ public class JdbcDataProvider extends DataProvider implements Aggregatable, Init
             Stream<ConfigComponent> filters = Stream.concat(Stream.concat(c, r), f);
             whereStr = assembleSqlFilter(filters, "WHERE");
         }
-        fsql = "SELECT __view__.%s FROM (\n%s\n) __view__ %s GROUP BY __view__.%s";
+        fsql = "SELECT cb_view.%s FROM (\n%s\n) cb_view %s GROUP BY cb_view.%s";
         exec = String.format(fsql, columnName, sql, whereStr, columnName);
         LOG.info(exec);
         try (Connection connection = getConnection();
@@ -317,7 +329,7 @@ public class JdbcDataProvider extends DataProvider implements Aggregatable, Init
         ResultSetMetaData metaData;
         try {
             stat.setMaxRows(100);
-            String fsql = "\nSELECT * FROM (\n%s\n) __view__ WHERE 1=0";
+            String fsql = "\nSELECT * FROM (\n%s\n) cb_view WHERE 1=0";
             String sql = String.format(fsql, subQuerySql);
             LOG.info(sql);
             ResultSet rs = stat.executeQuery(sql);
@@ -431,7 +443,7 @@ public class JdbcDataProvider extends DataProvider implements Aggregatable, Init
         }
 
         String subQuerySql = getAsSubQuery(query.get(SQL));
-        String fsql = "\nSELECT %s \n FROM (\n%s\n) __view__ \n %s \n %s";
+        String fsql = "\nSELECT %s \n FROM (\n%s\n) cb_view \n %s \n %s";
         String exec = String.format(fsql, selectColsStr, subQuerySql, whereStr, groupByStr);
         return exec;
     }
@@ -446,10 +458,10 @@ public class JdbcDataProvider extends DataProvider implements Aggregatable, Init
         if (config.getColumn().contains(" ")) {
             aggExp = config.getColumn();
             for (String column : types.keySet()) {
-                aggExp = aggExp.replaceAll(" " + column + " ", " __view__." + column + " ");
+                aggExp = aggExp.replaceAll(" " + column + " ", " cb_view." + column + " ");
             }
         } else {
-            aggExp = "__view__." + config.getColumn();
+            aggExp = "cb_view." + config.getColumn();
         }
         switch (config.getAggType()) {
             case "sum":

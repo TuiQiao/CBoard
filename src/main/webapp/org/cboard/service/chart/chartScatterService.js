@@ -80,6 +80,11 @@ cBoard.service('chartScatterService', function (dataService) {
                     return v.name;
                 })
             },
+            dataZoom: {
+                show: true,
+                start : 0,
+                end: 100
+            },
             tooltip: {
                 trigger: 'item',
                 formatter: function (params) {

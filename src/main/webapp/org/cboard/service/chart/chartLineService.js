@@ -25,6 +25,8 @@ cBoard.service('chartLineService', function () {
             var sum = 0;
             for (var i = 0; i < aggregate_data.length; i++) {
                 sum += aggregate_data[i][j] ? Number(aggregate_data[i][j]) : 0;
+                // change undefined to 0
+                aggregate_data[i][j] = aggregate_data[i][j] ? Number(aggregate_data[i][j]) : 0;
             }
             sum_data[j] = sum;
         }
@@ -116,6 +118,11 @@ cBoard.service('chartLineService', function () {
                 x: 'left',
                 itemWidth: 15,
                 itemHeight: 10
+            },
+            dataZoom: {
+                show: true,
+                start : 0,
+                end: 100
             }
         };
 

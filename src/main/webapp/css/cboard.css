@@ -137,6 +137,10 @@
 .cTable.disabled{  background-image: url(../imgs/table.png);  }
 .cMap{  background-image: url(../imgs/map-active.png);  }
 .cMap.disabled{  background-image: url(../imgs/map.png);  }
+.cGauge{ background-image: url(../imgs/gauge-active.png); }
+.cGauge.disabled{ background-image: url(../imgs/gauge.png); }
+.cWordCloud{ background-image: url(../imgs/wordCloud-active.png); }
+.cWordCloud.disabled{ background-image: url(../imgs/wordCloud.png); }
 
 .chart-type a.active{
     background-color: #FFF;

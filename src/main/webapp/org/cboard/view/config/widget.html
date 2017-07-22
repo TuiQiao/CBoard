@@ -68,6 +68,7 @@
                                         <label class="col-sm-2 control-label">{{'CONFIG.WIDGET.DATA_SOURCE'|translate}}</label>
                                         <div class="col-sm-10">
                                             <select class="form-control" ng-model="datasource"
+                                                    ng-change="changeDs()"
                                                     ng-options="d as d.name+' ('+d.type+')' for d in datasourceList"></select>
                                         </div>
                                     </div>
@@ -75,7 +76,7 @@
                             </div>
                             <div class="row" ng-show="customDs">
                                 <div class="col-md-12" ng-show="datasource.name"
-                                     ng-include="datasource.type?('dashboard/getConfigView.do?type=' + datasource.type):''"></div>
+                                     ng-include="datasource.type?('dashboard/getConfigView.do?type=' + datasource.type + '&page=widget.html'):''"></div>
                             </div>
                             <div class="row">
                                 <div class="col-md-12">

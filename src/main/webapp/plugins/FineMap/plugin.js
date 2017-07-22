@@ -251,7 +251,7 @@ var threeLevelMap = {
             .attr('width', 30)
             .attr('height', 30)
             .attr('class', 'backTop')
-            .attr('xlink:href', '../../imgs/back-top.svg')
+            .attr('xlink:href', 'imgs/back-top.svg')
             .style('cursor', 'pointer')
             .on('click', function(){
                 that.map(that.provinceData);

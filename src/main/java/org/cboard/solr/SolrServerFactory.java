@@ -3,13 +3,13 @@ package org.cboard.solr;
 import org.apache.commons.pool2.PooledObject;
 import org.apache.commons.pool2.PooledObjectFactory;
 import org.apache.commons.pool2.impl.DefaultPooledObject;
-import org.apache.solr.client.solrj.SolrServer;
-import org.apache.solr.client.solrj.impl.LBHttpSolrServer;
+import org.apache.solr.client.solrj.SolrClient;
+import org.apache.solr.client.solrj.impl.LBHttpSolrClient;
 
 /**
  * Created by JunjieM on 2017-7-7.
  */
-public class SolrServerFactory implements PooledObjectFactory<SolrServer> {
+public class SolrServerFactory implements PooledObjectFactory<SolrClient> {
 
     private String[] servers;
 
@@ -21,28 +21,28 @@ public class SolrServerFactory implements PooledObjectFactory<SolrServer> {
         }
     }
 
-    public PooledObject<SolrServer> makeObject() throws Exception {
-        SolrServer solrServer = new LBHttpSolrServer(servers);
-        return new DefaultPooledObject(solrServer);
+    public PooledObject<SolrClient> makeObject() throws Exception {
+        SolrClient solrClient = new LBHttpSolrClient(servers);
+        return new DefaultPooledObject(solrClient);
     }
 
-    public void destroyObject(PooledObject<SolrServer> pool) throws Exception {
-        SolrServer solrServer = pool.getObject();
-        if (solrServer != null) {
-            solrServer.shutdown();
-            solrServer = null;
+    public void destroyObject(PooledObject<SolrClient> pool) throws Exception {
+        SolrClient solrClient = pool.getObject();
+        if (solrClient != null) {
+            solrClient.close();
+            solrClient = null;
         }
     }
 
-    public void activateObject(PooledObject<SolrServer> pool) throws Exception {
+    public void activateObject(PooledObject<SolrClient> pool) throws Exception {
         // TODO Auto-generated method stub
     }
 
-    public void passivateObject(PooledObject<SolrServer> pool) throws Exception {
+    public void passivateObject(PooledObject<SolrClient> pool) throws Exception {
         // TODO Auto-generated method stub
     }
 
-    public boolean validateObject(PooledObject<SolrServer> pool) {
+    public boolean validateObject(PooledObject<SolrClient> pool) {
         // TODO Auto-generated method stub
         return false;
     }

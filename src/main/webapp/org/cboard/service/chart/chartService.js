@@ -4,7 +4,8 @@
 'use strict';
 cBoard.service('chartService', function ($q, dataService, chartPieService, chartLineService, chartFunnelService,
                                          chartSankeyService, chartTableService, chartKpiService, chartRadarService,
-                                         chartMapService, chartScatterService, chartGaugeService, chartWordCloudService) {
+                                         chartMapService, chartScatterService, chartGaugeService, chartWordCloudService,
+                                         chartTreeMapService ) {
 
         this.render = function (containerDom, widget, optionFilter, scope, reload, persist) {
             var deferred = $q.defer();
@@ -139,6 +140,9 @@ cBoard.service('chartService', function ($q, dataService, chartPieService, chart
                 case 'wordCloud':
                     chart = chartWordCloudService;
                     break;
+                case 'treeMap':
+                chart = chartTreeMapService;
+                break;
             }
             return chart;
         };

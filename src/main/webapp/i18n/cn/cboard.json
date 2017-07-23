@@ -112,7 +112,7 @@
       "MAX_VALUE": "最大值",
       "VALUE_AXIS": "轴",
       "FILTER": "过滤",
-      "LABEL": "文字",
+      "LABEL": "名称",
       "FORMATTER": "格式化",
       "STYLE": "样式",
       "CHART": "图形",
@@ -167,7 +167,13 @@
       "LINE_STYLE": "线条样式",
       "STYLE_PROPORTION": "比例",
       "STYLE_COLOR": "颜色",
-      "WORD_CLOUD": "标签云"
+      "WORD_CLOUD": "标签云",
+      "TREE_MAP": "矩形树图",
+      "LEAF_DEPTH": "展示层级",
+      "MULTI": "混合",
+      "RANDOM": "随机",
+      "BLUE": "蓝色",
+      "PURPLE": "紫色"
     },
     "DASHBOARD": {
       "DASHBOARD": "看板",

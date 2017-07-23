@@ -167,7 +167,13 @@
       "LINE_STYLE": "Line Style",
       "STYLE_PROPORTION": "Proportion",
       "STYLE_COLOR": "Color",
-      "WORD_CLOUD": "Word Cloud"
+      "WORD_CLOUD": "Word Cloud",
+      "TREE_MAP": "Tree Map",
+      "LEAF_DEPTH": "Leaf Depth",
+      "MULTI": "Multi",
+      "RANDOM": "Random",
+      "BLUE": "Blue",
+      "PURPLE": "Purple"
     },
     "DASHBOARD": {
       "CATEGORY": "Category",

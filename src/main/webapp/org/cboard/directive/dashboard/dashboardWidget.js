@@ -81,6 +81,9 @@ cBoard.directive('dashboardWidget', function ($compile, $templateCache, dataServ
                         case 'wordCloud':
                             renderEchart(scope, element, attrs);
                             break;
+                        case 'treeMap':
+                            renderEchart(scope, element, attrs);
+                            break;
                     }
                 }
             }

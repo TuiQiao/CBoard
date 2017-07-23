@@ -73,13 +73,19 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
                 row: translate('CONFIG.WIDGET.TIPS_DIM_NUM_1_MORE'),
                 column: translate('CONFIG.WIDGET.TIPS_DIM_NUM_0'),
                 measure: translate('CONFIG.WIDGET.TIPS_DIM_NUM_1')
+            },
+            {
+                name: translate('CONFIG.WIDGET.TREE_MAP'), value: 'treeMap', class: 'cTreeMap',
+                row: translate('CONFIG.WIDGET.TIPS_DIM_NUM_1_MORE'),
+                column: translate('CONFIG.WIDGET.TIPS_DIM_NUM_0'),
+                measure: translate('CONFIG.WIDGET.TIPS_DIM_NUM_1')
             }
         ];
 
         $scope.chart_types_status = {
             "line": true, "pie": true, "kpi": true, "table": true,
             "funnel": true, "sankey": true, "radar": true, "map": true,
-            "scatter": true, "gauge": true, "wordCloud": true
+            "scatter": true, "gauge": true, "wordCloud": true, "treeMap": true
         };
 
         $scope.value_series_types = [
@@ -116,7 +122,7 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
             map: {keys: 0, groups: 0, filters: 0, values: 0},
             scatter: {keys: 0, groups: 0, filters: 0, values: 0},
             gauge: {keys: -1, groups: -1, filters: 0, values: 1},
-            wordCloud: {keys: 0, groups: -1, filters: 0, values: 1}
+            wordCloud: {keys: 1, groups: -1, filters: 0, values: 1}
         };
 
         //界面控制

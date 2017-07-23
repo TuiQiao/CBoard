@@ -141,6 +141,8 @@
 .cGauge.disabled{ background-image: url(../imgs/gauge.png); }
 .cWordCloud{ background-image: url(../imgs/wordCloud-active.png); }
 .cWordCloud.disabled{ background-image: url(../imgs/wordCloud.png); }
+.cTreeMap{ background-image: url(../imgs/treeMap-active.png); }
+.cTreeMap.disabled{ background-image: url(../imgs/treeMap.png); }
 
 .chart-type a.active{
     background-color: #FFF;

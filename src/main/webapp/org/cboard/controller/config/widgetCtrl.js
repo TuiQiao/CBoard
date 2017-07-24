@@ -128,6 +128,11 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
             {name: translate('CONFIG.WIDGET.PURPLE'), value: 'purple'}
         ];
 
+        /***************************************
+         *  0:  1 or more items
+         *  1:  only 1 item
+         * -1:  none item
+         ***************************************/
         $scope.configRule = {
             line: {keys: 0, groups: 0, filters: 0, values: 0},
             pie: {keys: 0, groups: 0, filters: 0, values: 0},

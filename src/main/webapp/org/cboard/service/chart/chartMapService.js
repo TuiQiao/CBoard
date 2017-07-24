@@ -8,8 +8,8 @@ cBoard.service('chartMapService', function () {
             return;
         }
         var height;
-        scope ? height = scope.myheight - 20 : null;
-        return new CBoardMapRender(containerDom, option, drill).do(height, persist);
+        scope ? height = scope.myheight : null;
+        return new CBoardMapRender(containerDom, option).do(height, persist);
     };
 
     this.parseOption = function (data) {

@@ -196,7 +196,7 @@ cBoard.controller('boardCtrl', function ($rootScope, $scope, $http, ModalUtils, 
 
     $scope.addWidget = function (row) {
         var w = {};
-        w.name = '图表名称';
+        w.name = translate('CONFIG.DASHBOARD.CHART_NAME');
         w.width = 12;
         w.widgetId = $scope.widgetList[0].id;
         row.widgets.push(w);
@@ -241,6 +241,9 @@ cBoard.controller('boardCtrl', function ($rootScope, $scope, $http, ModalUtils, 
 
     $scope.checkBeforPreview = function (Id) {
         $scope.isPreview = true;
+        if (!validate()) {
+            return;
+        }
         ModalUtils.confirm(translate("COMMON.CONFIRM_SAVE_BEFORE_PREVIEW"), "modal-warning", "lg", function () {
             var newTab = $window.open('', '_blank');
             $scope.saveBoard()
@@ -291,8 +294,8 @@ cBoard.controller('boardCtrl', function ($rootScope, $scope, $http, ModalUtils, 
             size: 'lg',
             controller: function ($scope, $uibModalInstance) {
                 $scope.param_types = [
-                    {name: 'selector', value: 'selector'},
-                    {name: 'slider', value: 'slider'}
+                    {name: translate('CONFIG.DASHBOARD.PARAM_TYPE_SELECTOR'), value: 'selector'},
+                    {name: translate('CONFIG.DASHBOARD.PARAM_TYPE_SLIDER'), value: 'slider'}
                 ];
                 $scope.status = status;
                 $scope.param = param;
@@ -329,7 +332,7 @@ cBoard.controller('boardCtrl', function ($rootScope, $scope, $http, ModalUtils, 
                         ok($scope.param);
                         $uibModalInstance.close();
                     } else {
-                        ModalUtils.alert('Please fill out the information', "modal-warning", "lg");
+                        ModalUtils.alert(translate('CONFIG.DASHBOARD.ENTER_PARAMETER_NAME'), "modal-warning", "lg");
                     }
                 };
                 $scope.foldCube = function (cube, e) {

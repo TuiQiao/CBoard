@@ -118,6 +118,11 @@ cBoard.service('chartLineService', function () {
                 x: 'left',
                 itemWidth: 15,
                 itemHeight: 10
+            },
+            dataZoom: {
+                show: true,
+                start : 0,
+                end: 100
             }
         };
 

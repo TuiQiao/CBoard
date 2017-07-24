@@ -139,7 +139,7 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
             map: {keys: 0, groups: 0, filters: 0, values: 0},
             scatter: {keys: 0, groups: 0, filters: 0, values: 0},
             gauge: {keys: -1, groups: -1, filters: 0, values: 1},
-            wordCloud: {keys: 1, groups: -1, filters: 0, values: 1},
+            wordCloud: {keys: 0, groups: -1, filters: 0, values: 1},
             treeMap: {keys: 0, groups: -1, filters: 0, values: 1},
             relation: {keys: 0, groups: 0, filters: 0, values: 0}
         };

@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <script src="plugins/jQuery/jquery-2.2.3.min.js"></script>
+    <script src="plugins/base64/jquery.base64.js"></script>
+    <script src="plugins/base64/hboard.base64.js"></script>
+</head>
+<body>
+
+</body>
+<script>
+
+    // 客户端参数加密
+    var accessKey = '39a51F4fD73Fb50e'; // 设定访问的键值，客户端会根据访问的键值加密，服务端会接收并根据访问的键值进行解密
+    var clientUsername = encodeBase64New('admin', accessKey);
+    var clientPassword = encodeBase64New('000000', accessKey);
+    //console.log(clientUsername + "/" + clientPassword);
+
+    // 通过get方式页面或浏览器访问
+    // http://localhost:8080/hboard/loginto.html?accessKey=39a51F4fD73Fb50e&username=YWRtaW4HMzlhNTFGNGZENzNGYjUwZQ==&password=MDAwMDAwBzM5YTUxRjRmRDczRmI1MGU=
+
+    /**
+     * 获取get参数
+     * @param name
+     * @returns {null}
+     */
+    function getQueryString(name) {
+        var reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)");
+        var r = window.location.search.substr(1).match(reg);
+        if (r != null)return unescape(r[2]);
+        return null;
+    }
+
+    // 服务端参数解密
+    var accessKey = getQueryString('accessKey');
+    //console.log("accessKey:" + accessKey);
+    var username = decodeBase64New(getQueryString('username'), accessKey);
+    var password = decodeBase64New(getQueryString('password'), accessKey);
+    //console.log("username:" + username);
+    //console.log("password:" + password);
+
+    $.ajax({
+        url: "login",
+        type: 'POST',
+        data: 'username=' + username + '&password=' + password,
+        cache: false,
+        contentType: 'application/x-www-form-urlencoded',
+        success: function (data) {
+            window.location.href = "starter.html";
+        },
+        error: function (XMLHttpRequest, textStatus, errorThrown) {
+
+        }
+    });
+
+</script>
+</html>

@@ -47,13 +47,13 @@
 
     <insert id="save" useGeneratedKeys="true" keyProperty="id" keyColumn="board_id" parameterType="org.cboard.pojo.DashboardBoard">
         <![CDATA[
-        INSERT INTO dashboard_board(user_id,board_name,layout_json,category_id) VALUES (#{userId},#{name},#{layout},#{categoryId})
+        INSERT INTO dashboard_board(user_id,board_name,layout_json,category_id) VALUES (#{userId},#{name},#{layout},#{categoryId, jdbcType=VARCHAR})
         ]]>
     </insert>
 
     <update id="update" parameterType="org.cboard.pojo.DashboardBoard">
         <![CDATA[
-        UPDATE dashboard_board SET board_name = #{name},layout_json = #{layout},category_id = #{categoryId} WHERE board_id = #{id}
+        UPDATE dashboard_board SET board_name = #{name},layout_json = #{layout},category_id = #{categoryId, jdbcType=VARCHAR} WHERE board_id = #{id}
         ]]>
     </update>
 

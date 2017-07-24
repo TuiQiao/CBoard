@@ -141,8 +141,8 @@ cBoard.service('chartService', function ($q, dataService, chartPieService, chart
                     chart = chartWordCloudService;
                     break;
                 case 'treeMap':
-                chart = chartTreeMapService;
-                break;
+                    chart = chartTreeMapService;
+                    break;
             }
             return chart;
         };

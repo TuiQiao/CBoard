@@ -18,7 +18,7 @@ CBoardMapRender.prototype.do = function (tall, persist) {
     this.container = this.jqContainer;
     tall = _.isUndefined(tall) ? 500 : tall;
     var args = {
-        height: tall,
+        height: tall - 20,
         chartConfig: this.options.chartConfig,
         data: this.options.data,
         container: this.container,

@@ -121,6 +121,11 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
             {name: translate('CONFIG.WIDGET.PURPLE'), value: 'purple'}
         ];
 
+        /***************************************
+         *  0:  1 or more items
+         *  1:  only 1 item
+         * -1:  none item
+         ***************************************/
         $scope.configRule = {
             line: {keys: 0, groups: 0, filters: 0, values: 0},
             pie: {keys: 0, groups: 0, filters: 0, values: 0},
@@ -133,7 +138,7 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
             scatter: {keys: 0, groups: 0, filters: 0, values: 0},
             gauge: {keys: -1, groups: -1, filters: 0, values: 1},
             wordCloud: {keys: 1, groups: -1, filters: 0, values: 1},
-            treeMap: {keys: 1, groups: -1, filters: 0, values: 1}
+            treeMap: {keys: 0, groups: -1, filters: 0, values: 1}
         };
 
         //界面控制

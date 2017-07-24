@@ -159,6 +159,7 @@ cBoard.service('chartRelationService', function () {
                     name: "关系",
                     symbol:'circle',
                     symbolSize:15,
+                    focusNodeAdjacency: true,
                     edgeSymbol : [ 'none', 'arrow' ],
                     edgeSymbolSize : 10,
                     categories: categoriesObj, //[{name:"预警客户"}, {name:"普通客户"}],

@@ -111,6 +111,16 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
             {name: translate('CONFIG.WIDGET.YELLOW'), value: 'bg-yellow'}
         ];
 
+        $scope.treemap_styles = [
+            {name: translate('CONFIG.WIDGET.RANDOM'), value: 'random'},
+            {name: translate('CONFIG.WIDGET.MULTI'), value: 'multi'},
+            {name: translate('CONFIG.WIDGET.BLUE'), value: 'blue'},
+            {name: translate('CONFIG.WIDGET.RED'), value: 'red'},
+            {name: translate('CONFIG.WIDGET.GREEN'), value: 'green'},
+            {name: translate('CONFIG.WIDGET.YELLOW'), value: 'yellow'},
+            {name: translate('CONFIG.WIDGET.PURPLE'), value: 'purple'}
+        ];
+
         $scope.configRule = {
             line: {keys: 0, groups: 0, filters: 0, values: 0},
             pie: {keys: 0, groups: 0, filters: 0, values: 0},

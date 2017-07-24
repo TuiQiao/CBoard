@@ -173,7 +173,11 @@
       "MULTI": "Multi",
       "RANDOM": "Random",
       "BLUE": "Blue",
-      "PURPLE": "Purple"
+      "PURPLE": "Purple",
+      "RELATION": "Relation",
+      "SOURCE": "Source",
+      "TARGET": "Target",
+      "LINK": "Link"
     },
     "DASHBOARD": {
       "CATEGORY": "Category",

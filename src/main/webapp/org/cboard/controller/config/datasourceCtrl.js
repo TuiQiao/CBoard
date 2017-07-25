@@ -32,6 +32,7 @@ cBoard.controller('datasourceCtrl', function ($scope, $http, ModalUtils, $uibMod
         $scope.optFlag = 'edit';
         $scope.curDatasource = angular.copy(ds);
         $scope.changeDsView();
+        $scope.doDatasourceParams();
     };
     $scope.deleteDs = function (ds) {
         // var isDependent = false;
@@ -105,6 +106,12 @@ cBoard.controller('datasourceCtrl', function ($scope, $http, ModalUtils, $uibMod
         $scope.dsView = 'dashboard/getDatasourceView.do?type=' + $scope.curDatasource.type;
     };
 
+    $scope.doDatasourceParams = function () {
+        $http.get('dashboard/getDatasourceParams.do?type=' + $scope.curDatasource.type).then(function (response) {
+            $scope.params = response.data;
+        });
+    };
+
     $scope.changeDs = function () {
         $scope.changeDsView();
         $scope.curDatasource.config = {};
@@ -139,11 +146,12 @@ cBoard.controller('datasourceCtrl', function ($scope, $http, ModalUtils, $uibMod
             $("#DatasetName").focus();
             return false;
         }
-        for(i in $scope.params){
+        for (i in $scope.params) {
             var name = $scope.params[i].name;
             var label = $scope.params[i].label;
             var required = $scope.params[i].required;
-            if(required == true && !$scope.curDatasource.config[name]){
+            var value = $scope.curDatasource.config[name];
+            if (required == true && value != 0 && (value == undefined || value == "")) {
                 var pattern = /([\w_\s\.]+)/;
                 var msg = pattern.exec(label);
                 if(msg && msg.length > 0)
@@ -151,6 +159,7 @@ cBoard.controller('datasourceCtrl', function ($scope, $http, ModalUtils, $uibMod
                 else
                     msg = label;
                 $scope.alerts = [{msg: "[" + msg + "]" + translate('COMMON.NOT_EMPTY'), type: 'danger'}];
+                $scope.verify[name] = false;
                 return false;
             }
         }
@@ -224,7 +233,8 @@ cBoard.controller('datasourceCtrl', function ($scope, $http, ModalUtils, $uibMod
                         var name = $scope.params[i].name;
                         var label = $scope.params[i].label;
                         var required = $scope.params[i].required;
-                        if(required == true && !$scope.curWidget.query[name]){
+                        var value = $scope.curWidget.query[name];
+                        if (required == true && value != 0 && (value == undefined || value == "")) {
                             var pattern = /([\w_\s\.]+)/;
                             var msg = pattern.exec(label);
                             if(msg && msg.length > 0)

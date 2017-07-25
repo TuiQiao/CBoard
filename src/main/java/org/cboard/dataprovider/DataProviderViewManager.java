@@ -11,7 +11,9 @@ import org.cboard.dataprovider.annotation.DatasourceParameter;
 import org.cboard.dataprovider.annotation.QueryParameter;
 import org.reflections.ReflectionUtils;
 
+import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Field;
+import java.net.URLDecoder;
 import java.util.*;
 
 /**
@@ -24,6 +26,11 @@ public class DataProviderViewManager {
     static {
         Properties props = new Properties();
         String fileDir = DataProviderViewManager.class.getResource("/template/config").getPath();
+        try {
+            fileDir = URLDecoder.decode(fileDir, "UTF-8");
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }
         props.setProperty(RuntimeConstants.RUNTIME_LOG_LOGSYSTEM_CLASS, "org.apache.velocity.runtime.log.Log4JLogChute");
         props.setProperty(velocityEngine.FILE_RESOURCE_LOADER_PATH, fileDir);
         props.setProperty(Velocity.OUTPUT_ENCODING, "UTF-8");

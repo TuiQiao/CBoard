@@ -2,10 +2,11 @@
 <div class="form-group">
     <label class="col-sm-2 control-label">{{'CONFIG.WIDGET.VALUE'|translate}}</label>
     <div class="col-sm-10">
-        <div dnd-list="curWidget.config.values[0].cols"
+        <div class="form-control" dnd-list="curWidget.config.values[0].cols"
+             dnd-drop="curWidget.config.values[0].cols.length == 0 ? item:false"
              dnd-inserted="dndTransfer.toCol(curWidget.config.values[0].cols,index,item,type)"
              dnd-allowed-types="['measure','select','col','exp']"
-             class="form-control" style="min-height: 35px;height: auto;padding: 0px">
+             style="min-height: 35px;height: auto;padding: 0px">
             <div class="dndPlaceholder sort-highlight"
                  style="height: 24px; width: 93px;margin: 3px 3px;display: inline-block;vertical-align: middle;">
             </div>
@@ -61,12 +62,5 @@
                 </ng-switch>
             </div>
         </div>
-    </div>
-</div>
-<div class="form-group">
-    <div class="col-sm-2">
-        <button type="button" class="btn btn-info btn-sm" ng-click="curWidget.config.asRow=!curWidget.config.asRow">
-            {{'CONFIG.WIDGET.'+(curWidget.config.asRow?'ROW':'GROUP')|translate}}
-        </button>
     </div>
 </div>

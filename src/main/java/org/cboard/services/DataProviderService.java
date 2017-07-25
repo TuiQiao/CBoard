@@ -109,6 +109,7 @@ public class DataProviderService {
             dataProvider.getData();
             return new ServiceStatus(ServiceStatus.Status.Success, null);
         } catch (Exception e) {
+            e.printStackTrace();
             return new ServiceStatus(ServiceStatus.Status.Fail, e.getMessage());
         }
     }

@@ -1,5 +1,5 @@
 /**
- * Created by Fine on 2016/12/13.
+ * Created by hj on 2017/07/26.
  */
 cBoard.service('chartAreaMapService', function () {
     this.render = function (containerDom, option, scope, persist) {
@@ -19,7 +19,7 @@ cBoard.service('chartAreaMapService', function () {
         }
         var url;
         if(code == 'china') {
-            url = 'plugins/echart/china.json';
+            url = 'plugins/FineMap/mapdata/china.json'
         }else if(code.length > 2){
             url = 'plugins/FineMap/mapdata/geometryCouties/'+code+'.json';
         }else{

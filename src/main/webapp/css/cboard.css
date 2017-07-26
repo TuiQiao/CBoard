@@ -143,6 +143,8 @@
 .cWordCloud.disabled{ background-image: url(../imgs/wordCloud.png); }
 .cTreeMap{ background-image: url(../imgs/treeMap-active.png); }
 .cTreeMap.disabled{ background-image: url(../imgs/treeMap.png); }
+.cAreaMap{ background-image: url(../imgs/area-active.png);}
+.cAreaMap.disabled{ background-image: url(../imgs/area.png);}
 
 .chart-type a.active{
     background-color: #FFF;

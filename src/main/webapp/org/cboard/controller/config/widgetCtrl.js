@@ -118,11 +118,25 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
             {name: translate('CONFIG.WIDGET.YELLOW'), value: 'bg-yellow'}
         ];
 
-        $scope.vm = {};
         $.get('plugins/FineMap/mapdata/citycode.json', function (data) {
             $scope.provinces = data.provinces;
         });
 
+        $scope.treemap_styles = [
+            {name: translate('CONFIG.WIDGET.RANDOM'), value: 'random'},
+            {name: translate('CONFIG.WIDGET.MULTI'), value: 'multi'},
+            {name: translate('CONFIG.WIDGET.BLUE'), value: 'blue'},
+            {name: translate('CONFIG.WIDGET.RED'), value: 'red'},
+            {name: translate('CONFIG.WIDGET.GREEN'), value: 'green'},
+            {name: translate('CONFIG.WIDGET.YELLOW'), value: 'yellow'},
+            {name: translate('CONFIG.WIDGET.PURPLE'), value: 'purple'}
+        ];
+
+        /***************************************
+         *  0:  1 or more items
+         *  1:  only 1 item
+         * -1:  none item
+         ***************************************/
         $scope.configRule = {
             line: {keys: 0, groups: 0, filters: 0, values: 0},
             pie: {keys: 0, groups: 0, filters: 0, values: 0},
@@ -134,8 +148,8 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
             map: {keys: 0, groups: 0, filters: 0, values: 0},
             scatter: {keys: 0, groups: 0, filters: 0, values: 0},
             gauge: {keys: -1, groups: -1, filters: 0, values: 1},
-            wordCloud: {keys: 1, groups: -1, filters: 0, values: 1},
-            treeMap: {keys: 1, groups: -1, filters: 0, values: 1},
+            wordCloud: {keys: 0, groups: -1, filters: 0, values: 1},
+            treeMap: {keys: 0, groups: -1, filters: 0, values: 1},
             areaMap: {keys: 1, groups: 0, filters: 0, values: 1}
         };
 

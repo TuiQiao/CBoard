@@ -173,7 +173,8 @@
       "MULTI": "混合",
       "RANDOM": "随机",
       "BLUE": "蓝色",
-      "PURPLE": "紫色"
+      "PURPLE": "紫色",
+      "AREA_MAP": "区域地图"
     },
     "DASHBOARD": {
       "DASHBOARD": "看板",

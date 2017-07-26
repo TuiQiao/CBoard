@@ -173,7 +173,8 @@
       "MULTI": "Multi",
       "RANDOM": "Random",
       "BLUE": "Blue",
-      "PURPLE": "Purple"
+      "PURPLE": "Purple",
+      "AREA_MAP": "AREA_MAP"
     },
     "DASHBOARD": {
       "CATEGORY": "Category",

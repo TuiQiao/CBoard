@@ -5,7 +5,7 @@
 cBoard.service('chartService', function ($q, dataService, chartPieService, chartLineService, chartFunnelService,
                                          chartSankeyService, chartTableService, chartKpiService, chartRadarService,
                                          chartMapService, chartScatterService, chartGaugeService, chartWordCloudService,
-                                         chartTreeMapService ) {
+                                         chartTreeMapService, chartAreaMapService ) {
 
         this.render = function (containerDom, widget, optionFilter, scope, reload, persist) {
             var deferred = $q.defer();
@@ -141,8 +141,11 @@ cBoard.service('chartService', function ($q, dataService, chartPieService, chart
                     chart = chartWordCloudService;
                     break;
                 case 'treeMap':
-                chart = chartTreeMapService;
-                break;
+                    chart = chartTreeMapService;
+                    break;
+                case 'areaMap':
+                    chart = chartAreaMapService;
+                    break;
             }
             return chart;
         };

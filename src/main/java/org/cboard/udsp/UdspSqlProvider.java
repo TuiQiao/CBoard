@@ -3,11 +3,11 @@ package org.cboard.udsp;
 import com.alibaba.fastjson.JSONObject;
 import com.google.common.base.Charsets;
 import com.google.common.hash.Hashing;
-import com.hex.bigdata.udsp.client.IqClient;
-import com.hex.bigdata.udsp.client.OlqClient;
+import com.hex.bigdata.udsp.client.factory.ConsumerClientFactory;
+import com.hex.bigdata.udsp.client.impl.SqlClient;
 import com.hex.bigdata.udsp.constant.SdkConstant;
-import com.hex.bigdata.udsp.model.OlqRequest;
-import com.hex.bigdata.udsp.model.UdspResponse;
+import com.hex.bigdata.udsp.model.request.SqlRequest;
+import com.hex.bigdata.udsp.model.response.pack.SyncPackResponse;
 import org.apache.commons.collections.map.HashedMap;
 import org.apache.commons.lang3.StringUtils;
 import org.cboard.cache.CacheManager;
@@ -22,12 +22,11 @@ import org.cboard.dataprovider.config.*;
 import org.cboard.dataprovider.result.AggregateResult;
 import org.cboard.dataprovider.result.ColumnIndex;
 import org.cboard.exception.CBoardException;
-import org.cboard.jdbc.JdbcDataProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 
-import java.sql.*;
+import java.sql.Types;
 import java.util.*;
 import java.util.function.BiFunction;
 import java.util.function.Function;
@@ -89,7 +88,7 @@ public class UdspSqlProvider extends DataProvider implements Aggregatable, Initi
         return url;
     }
 
-    private OlqRequest getRequest() {
+    private SqlRequest getRequest() {
         String username = dataSource.get(USERNAME);
         if (StringUtils.isBlank(username))
             throw new CBoardException("Datasource config Username can not be empty.");
@@ -105,7 +104,7 @@ public class UdspSqlProvider extends DataProvider implements Aggregatable, Initi
         sql = getAsSubQuery(sql);
         LOG.info("SQL String: \n" + sql);
 
-        OlqRequest request = new OlqRequest();
+        SqlRequest request = new SqlRequest();
         request.setServiceName(serviceName);
         request.setEntity(SdkConstant.CONSUMER_ENTITY_START);
         request.setType(SdkConstant.CONSUMER_TYPE_SYNC);
@@ -125,9 +124,9 @@ public class UdspSqlProvider extends DataProvider implements Aggregatable, Initi
         return list.toArray(new String[][]{});
     }
 
-    private List<Map<String, String>> getResults(OlqRequest request) {
-        OlqClient client = OlqClient.createOlqClient(getUrl());
-        UdspResponse response = null;
+    private List<Map<String, String>> getResults(SqlRequest request) {
+        SqlClient client = ConsumerClientFactory.createCustomClient(SqlClient.class,getUrl());
+        SyncPackResponse response = null;
         try {
             response = client.syncStart(request);
         } catch (Throwable t) {
@@ -200,7 +199,7 @@ public class UdspSqlProvider extends DataProvider implements Aggregatable, Initi
 
     @Override
     public String[] queryDimVals(String columnName, AggConfig config) throws Exception {
-        OlqRequest request = getRequest();
+        SqlRequest request = getRequest();
         List<String> filtered = new ArrayList<>();
         String whereStr = "";
         if (config != null) {
@@ -228,7 +227,7 @@ public class UdspSqlProvider extends DataProvider implements Aggregatable, Initi
     @Override
     public String[] getColumn() throws Exception {
         //String fsql = "\nSELECT * FROM (\n%s\n) hb_view WHERE 1=0";
-        OlqRequest request = getRequest();
+        SqlRequest request = getRequest();
         //String sql = String.format(fsql, request.getSql());
         //LOG.info(sql);
         //request.setSql(sql);
@@ -239,7 +238,7 @@ public class UdspSqlProvider extends DataProvider implements Aggregatable, Initi
 
     @Override
     public AggregateResult queryAggData(AggConfig config) throws Exception {
-        OlqRequest request = getRequest();
+        SqlRequest request = getRequest();
         String exec = getQueryAggDataSql(request, config);
         LOG.info(exec);
         request.setSql(exec);
@@ -266,7 +265,7 @@ public class UdspSqlProvider extends DataProvider implements Aggregatable, Initi
         return getQueryAggDataSql(getRequest(), config);
     }
 
-    private String getQueryAggDataSql(OlqRequest request, AggConfig config) throws Exception {
+    private String getQueryAggDataSql(SqlRequest request, AggConfig config) throws Exception {
         Stream<DimensionConfig> c = config.getColumns().stream();
         Stream<DimensionConfig> r = config.getRows().stream();
         Stream<ConfigComponent> f = config.getFilters().stream();
@@ -441,7 +440,7 @@ public class UdspSqlProvider extends DataProvider implements Aggregatable, Initi
         }
     }
 
-    private Map<String, Integer> getColumnType(OlqRequest request) throws Exception {
+    private Map<String, Integer> getColumnType(SqlRequest request) throws Exception {
         Map<String, Integer> result = null;
         String key = getKey();
         result = typeCahce.get(key);

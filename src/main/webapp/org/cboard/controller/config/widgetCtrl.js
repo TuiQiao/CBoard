@@ -81,6 +81,12 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
                 measure: translate('CONFIG.WIDGET.TIPS_DIM_NUM_1')
             },
             {
+                name: translate('CONFIG.WIDGET.AREA_MAP'), value: 'areaMap', class: 'cAreaMap',
+                row: translate('CONFIG.WIDGET.TIPS_DIM_NUM_1'),
+                column: translate('CONFIG.WIDGET.TIPS_DIM_NUM_0_MORE'),
+                measure: translate('CONFIG.WIDGET.TIPS_DIM_NUM_1')
+            },
+            {
                 name: translate('CONFIG.WIDGET.RELATION'), value: 'relation', class: 'cRelation',
                 row: translate('CONFIG.WIDGET.TIPS_DIM_NUM_0'),
                 column: translate('CONFIG.WIDGET.TIPS_DIM_NUM_0'),
@@ -92,7 +98,7 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
             "line": true, "pie": true, "kpi": true, "table": true,
             "funnel": true, "sankey": true, "radar": true, "map": true,
             "scatter": true, "gauge": true, "wordCloud": true, "treeMap": true,
-            "relation": true
+            "areaMap": true, "relation": true
         };
 
         $scope.value_series_types = [
@@ -117,6 +123,10 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
             {name: translate('CONFIG.WIDGET.GREEN'), value: 'bg-green'},
             {name: translate('CONFIG.WIDGET.YELLOW'), value: 'bg-yellow'}
         ];
+
+        $.get('plugins/FineMap/mapdata/citycode.json', function (data) {
+            $scope.provinces = data.provinces;
+        });
 
         $scope.treemap_styles = [
             {name: translate('CONFIG.WIDGET.RANDOM'), value: 'random'},
@@ -146,6 +156,7 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
             gauge: {keys: -1, groups: -1, filters: 0, values: 1},
             wordCloud: {keys: 0, groups: -1, filters: 0, values: 1},
             treeMap: {keys: 0, groups: -1, filters: 0, values: 1},
+            areaMap: {keys: 1, groups: 0, filters: 0, values: 1},
             relation: {keys: 0, groups: 0, filters: 0, values: 0}
         };
 
@@ -546,6 +557,17 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
                         {proportion: '1', color: '#ff4500'}
                     ];
                     break;
+                case 'areaMap':
+                    $scope.curWidget.config.values.push({name: '', cols: []});
+                    _.each(oldConfig.values, function (v) {
+                        _.each(v.cols, function (c) {
+                            $scope.curWidget.config.values[0].cols.push(c);
+                        });
+                    });
+                    $scope.curWidget.config.selects = angular.copy($scope.columns);
+                    _.each($scope.curWidget.config.values, function (v) {
+                        v.style = 'bg-aqua';
+                    });
                 case 'relation':
                     $scope.curWidget.config.selects = angular.copy($scope.columns);
                     $scope.curWidget.config.sources = new Array();
@@ -664,6 +686,14 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
                         {proportion: '1', color: '#ff4500'}
                     ];
                     break;
+                case 'areaMap':
+                    $scope.curWidget.config.selects = angular.copy($scope.columns);
+                    $scope.curWidget.config.keys = new Array();
+                    $scope.curWidget.config.groups = new Array();
+                    $scope.curWidget.config.values = [{
+                        name: '',
+                        cols: []
+                    }];
                 case 'relation':
                     $scope.curWidget.config.selects = angular.copy($scope.columns);
                     $scope.curWidget.config.sources = new Array();
@@ -770,6 +800,9 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
                         };
                         break;
                     case 'map':
+                        $scope.previewDivWidth = 12;
+                        break;
+                    case 'areaMap':
                         $scope.previewDivWidth = 12;
                         break;
                     case 'relation':
@@ -1434,6 +1467,16 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
             });
         };
 
+        $scope.setCities = function () {
+            var province = _.find($scope.provinces, function (e) {
+                return e.code == $scope.curWidget.config.province.code;
+            });
+            if(province && province.cities){
+                $scope.cities = province.cities
+            }else if($scope.curWidget.config.city && $scope.curWidget.config.city.code){
+                $scope.curWidget.config.city.code="";
+            }
+        }
         /** js tree related End... **/
 
 

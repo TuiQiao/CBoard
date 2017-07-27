@@ -32,6 +32,16 @@ CBoardEChartRender.prototype.theme = "theme-fin1"; // 主题
 CBoardEChartRender.prototype.chart = function (group, persist) {
     var self = this;
     var options = this.isDeppSpec == true ? self.options : $.extend(true, {}, self.basicOption, self.options);
+    if (options.visualMap != undefined) {
+        $(this.jqContainer).css({
+            height: 500 + "px",
+            width: '100%'
+        });
+    }
+    if (options.legend.data.length > 35) {
+        options.grid.top = '5%';
+        options.legend.show =false;
+    }
     if(persist){
         options.animation = false;
     }

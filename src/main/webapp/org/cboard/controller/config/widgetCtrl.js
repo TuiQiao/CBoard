@@ -82,7 +82,7 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
             },
             {
                 name: translate('CONFIG.WIDGET.AREA_MAP'), value: 'areaMap', class: 'cAreaMap',
-                row: translate('CONFIG.WIDGET.TIPS_DIM_NUM_1'),
+                row: translate('CONFIG.WIDGET.TIPS_DIM_NUM_1_MORE'),
                 column: translate('CONFIG.WIDGET.TIPS_DIM_NUM_0_MORE'),
                 measure: translate('CONFIG.WIDGET.TIPS_DIM_NUM_1')
             }
@@ -150,7 +150,7 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
             gauge: {keys: -1, groups: -1, filters: 0, values: 1},
             wordCloud: {keys: 0, groups: -1, filters: 0, values: 1},
             treeMap: {keys: 0, groups: -1, filters: 0, values: 1},
-            areaMap: {keys: 1, groups: 0, filters: 0, values: 1}
+            areaMap: {keys: 0, groups: 0, filters: 0, values: 0}
         };
 
         //界面控制

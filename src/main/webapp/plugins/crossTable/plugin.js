@@ -194,6 +194,7 @@ var crossTable = {
                 var rowParentCell = data[n][m - 1];
                 var cur_data = currentCell.data ? currentCell.data : "";
                 var keyId = chartConfig.keys[m].id;
+                var align = chartConfig.keys[m].align;
                 if (drill && drill.config[keyId] && (drill.config[keyId].down || drill.config[keyId].up)) {
                     var d = "";
                     if (drill.config[keyId].down) {
@@ -208,18 +209,19 @@ var crossTable = {
                     if (currentCell.rowSpan == 'row_null' && rowParentCell.rowSpan == 'row_null' && !isFirstLine) {
                         rowContent += "<th class=row_null><div></div></th>";
                     } else {
-                        rowContent += "<th class=row><div>" + cur_data + "</div></th>";
+                        rowContent += "<th style='text-align:"+align+"' class=row><div>" + cur_data + "</div></th>";
                     }
                 } else {
                     if (currentCell.rowSpan == 'row_null' && !isFirstLine) {
                         rowContent += "<th class=row_null><div></div></th>";
                     } else {
-                        rowContent += "<th class=row><div>" + cur_data + "</div></th>";
+                        rowContent += "<th style='text-align:"+align+"' class=row><div>" + cur_data + "</div></th>";
                     }
                 }
             }
             for (var y = chartConfig.keys.length; y < data[n].length; y++) {
-                rowContent += "<td class=" + data[n][m].property + "><div>" + data[n][y].data + "</div></td>";
+                var align = chartConfig.values[0].cols[(y-chartConfig.keys.length)%chartConfig.values[0].cols.length].align;
+                rowContent += "<td style='text-align:"+align+"'class=" + data[n][m].property + "><div>" + data[n][y].data + "</div></td>";
             }
             html = html + rowContent + "</tr>";
         }

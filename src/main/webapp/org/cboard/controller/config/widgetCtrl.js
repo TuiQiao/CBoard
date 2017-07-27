@@ -118,7 +118,7 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
             {name: translate('CONFIG.WIDGET.YELLOW'), value: 'bg-yellow'}
         ];
 
-        $.get('plugins/FineMap/mapdata/citycode.json', function (data) {
+        $.getJSON('plugins/FineMap/mapdata/citycode.json', function (data) {
             $scope.provinces = data.provinces;
         });
 
@@ -1262,6 +1262,20 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
                     c.sort = undefined;
                 });
             });
+        };
+
+        $scope.editAlign = function (o) {
+            switch (o.align) {
+                case undefined:
+                    o.align = 'left';
+                    break;
+                case 'left':
+                    o.align = 'right';
+                    break;
+                default:
+                    o.align = undefined;
+                    break;
+            }
         };
 
         $scope.cleanRowSort = function (o) {

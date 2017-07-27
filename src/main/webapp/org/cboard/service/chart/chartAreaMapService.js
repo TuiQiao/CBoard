@@ -44,7 +44,7 @@ cBoard.service('chartAreaMapService', function () {
                 },
                 label: {
                     normal: {
-                        show: true
+                        show: false
                     },
                     emphasis: {
                         show: true

@@ -82,7 +82,7 @@ cBoard.controller('userAdminCtrl', function ($scope, $http, ModalUtils, $filter)
         return $http.get("admin/getBoardList.do").success(function (response) {
             _.each(buildNodeByCategory(_.filter(response, function (e) {
                 return e.categoryId;
-            }), 'Dashboard', 'board', 'fa fa-puzzle-piece'), function (e) {
+            }), 'Dashboard', 'board', 'fa fa-dashboard'), function (e) {
                 $scope.tree.board.resList.push(e);
             })
         });
@@ -113,7 +113,7 @@ cBoard.controller('userAdminCtrl', function ($scope, $http, ModalUtils, $filter)
 
     var getDatasetList = function () {
         return $http.get("admin/getDatasetList.do").success(function (response) {
-            _.each(buildNodeByCategory(response, 'Dataset', 'dataset', 'fa fa-table'), function (e) {
+            _.each(buildNodeByCategory(response, 'Dataset', 'dataset', 'fa fa-cubes'), function (e) {
                 $scope.tree.dataset.resList.push(e);
             });
         });
@@ -121,7 +121,7 @@ cBoard.controller('userAdminCtrl', function ($scope, $http, ModalUtils, $filter)
 
     var getWidgetList = function () {
         return $http.get("admin/getWidgetList.do").success(function (response) {
-            _.each(buildNodeByCategory(response, 'Widget', 'widget', 'fa fa-line-chart'), function (e) {
+            _.each(buildNodeByCategory(response, 'Widget', 'widget', 'fa fa-bar-chart-o'), function (e) {
                 $scope.tree.widget.resList.push(e);
             });
         });

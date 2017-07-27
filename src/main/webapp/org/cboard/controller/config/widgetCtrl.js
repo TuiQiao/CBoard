@@ -85,6 +85,12 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
                 row: translate('CONFIG.WIDGET.TIPS_DIM_NUM_1'),
                 column: translate('CONFIG.WIDGET.TIPS_DIM_NUM_0_MORE'),
                 measure: translate('CONFIG.WIDGET.TIPS_DIM_NUM_1')
+            },
+            {
+                name: translate('CONFIG.WIDGET.RELATION'), value: 'relation', class: 'cRelation',
+                row: translate('CONFIG.WIDGET.TIPS_DIM_NUM_0'),
+                column: translate('CONFIG.WIDGET.TIPS_DIM_NUM_0'),
+                measure: translate('CONFIG.WIDGET.TIPS_DIM_NUM_0')
             }
         ];
 
@@ -92,7 +98,7 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
             "line": true, "pie": true, "kpi": true, "table": true,
             "funnel": true, "sankey": true, "radar": true, "map": true,
             "scatter": true, "gauge": true, "wordCloud": true, "treeMap": true,
-            "areaMap": true
+            "areaMap": true, "relation": true
         };
 
         $scope.value_series_types = [
@@ -150,7 +156,8 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
             gauge: {keys: -1, groups: -1, filters: 0, values: 1},
             wordCloud: {keys: 0, groups: -1, filters: 0, values: 1},
             treeMap: {keys: 0, groups: -1, filters: 0, values: 1},
-            areaMap: {keys: 1, groups: 0, filters: 0, values: 1}
+            areaMap: {keys: 1, groups: 0, filters: 0, values: 1},
+            relation: {keys: 0, groups: 0, filters: 0, values: 0}
         };
 
         //界面控制
@@ -561,6 +568,11 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
                     _.each($scope.curWidget.config.values, function (v) {
                         v.style = 'bg-aqua';
                     });
+                case 'relation':
+                    $scope.curWidget.config.selects = angular.copy($scope.columns);
+                    $scope.curWidget.config.sources = new Array();
+                    $scope.curWidget.config.targets = new Array();
+                    $scope.curWidget.config.links = new Array();
                     break;
                 default:
                     $scope.curWidget.config.values.push({name: '', cols: []});
@@ -682,6 +694,11 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
                         name: '',
                         cols: []
                     }];
+                case 'relation':
+                    $scope.curWidget.config.selects = angular.copy($scope.columns);
+                    $scope.curWidget.config.sources = new Array();
+                    $scope.curWidget.config.targets = new Array();
+                    $scope.curWidget.config.links = new Array();
                     $scope.curWidget.config.filters = new Array();
                     break;
             }
@@ -710,8 +727,20 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
             });
         };
 
+        var combineConfig = function () {
+            switch ($scope.curWidget.config.chart_type) {
+                case 'relation':
+                    var config = $scope.curWidget.config;
+                    $scope.curWidget.config.keys = config.sources.concat(config.targets).concat(config.links);
+                    break;
+                default :
+                    break;
+            }
+        };
+
         $scope.preview = function () {
             cleanPreview();
+            combineConfig();
             $scope.loadingPre = true;
             chartService.render($('#preview_widget'), {
                 config: $scope.curWidget.config,
@@ -774,6 +803,9 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
                         $scope.previewDivWidth = 12;
                         break;
                     case 'areaMap':
+                        $scope.previewDivWidth = 12;
+                        break;
+                    case 'relation':
                         $scope.previewDivWidth = 12;
                         break;
                 }
@@ -883,7 +915,7 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
             $http.post("dashboard/checkWidget.do", {id: widget.id}).success(function (response) {
                 if (response.status == '1') {
                     doEditWgt(widget);
-                    if($scope.customDs == true) $scope.doConfigParams();
+                    if ($scope.customDs == true) $scope.doConfigParams();
                 } else {
                     var d = widget.data.datasetId ? 'CONFIG.WIDGET.DATASET' : 'CONFIG.WIDGET.DATA_SOURCE';
                     ModalUtils.alert(translate("ADMIN.CONTACT_ADMIN") + "：" + translate(d) + '/' + response.msg, "modal-danger", "lg");
@@ -905,7 +937,7 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
             if (!$scope.curWidget.filterGroups) {
                 $scope.curWidget.filterGroups = [];
             }
-            updateService.updateConfig($scope.curWidget.config);
+            updateService.updateConfig($scope.curWidget.config, true);
             $scope.datasource = _.find($scope.datasourceList, function (ds) {
                 return ds.id == widget.data.datasource;
             });
@@ -934,7 +966,16 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
             var groups = _.find($scope.curWidget.config.groups, function (k) {
                 return k.col == e.column;
             });
-            return !(keys || groups);
+            var sources = _.find($scope.curWidget.config.sources, function (k) {
+                    return k.col == e.column;
+                });
+            var targets = _.find($scope.curWidget.config.targets, function (k) {
+                    return k.col == e.column;
+                });
+            var links = _.find($scope.curWidget.config.links, function (k) {
+                    return k.col == e.column;
+                });
+            return !(groups || sources || targets || links);
         };
 
         $scope.filterExpressions = function (e) {

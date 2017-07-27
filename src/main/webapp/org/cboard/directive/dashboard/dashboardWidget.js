@@ -87,6 +87,9 @@ cBoard.directive('dashboardWidget', function ($compile, $templateCache, dataServ
                         case 'areaMap':
                             renderEchart(scope, element, attrs);
                             break;
+                        case 'relation':
+                            renderEchart(scope, element, attrs);
+                            break;
                     }
                 }
             }

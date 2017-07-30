@@ -38,7 +38,7 @@ CBoardEChartRender.prototype.chart = function (group, persist) {
             width: '100%'
         });
     }
-    if (options.legend.data.length > 35) {
+    if (options.legend.data && options.legend.data.length > 35) {
         options.grid.top = '5%';
         options.legend.show =false;
     }

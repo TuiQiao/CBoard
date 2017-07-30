@@ -100,7 +100,7 @@ cBoard.service('chartService', function ($q, dataService, chartPieService, chart
                 if (optionFilter) {
                     optionFilter(option);
                 }
-                realTimeTicket(option, data.drill.config);
+                realTimeTicket(option, data.drill ? data.drill.config : null);
             });
         };
 

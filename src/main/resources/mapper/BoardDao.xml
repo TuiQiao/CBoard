@@ -64,7 +64,7 @@
         SET board_name = #{name},layout_json = #{layout},
         <choose>
             <when test="categoryId == null">
-                category_id is null
+                category_id = null
             </when>
             <otherwise>
                 category_id = #{categoryId}

@@ -16,11 +16,8 @@ cBoard.service('chartHeatMapCalendarService', function () {
 
     this.parseOption = function (data) {
         var preferredLanguage = settings.preferredLanguage;
-
         var config = data.chartConfig;
-
         var dateFormat = config.values[0].dateFormat ? config.values[0].dateFormat : "yyyy-MM-dd";
-
         var style = config.values[0].style ? config.values[0].style : "blue";
 
         var dates = data.keys.map(function (item) {
@@ -108,11 +105,8 @@ cBoard.service('chartHeatMapCalendarService', function () {
                     type: 'shadow'
                 },
                 formatter: function (params) {
-                    if ("cn" == preferredLanguage) {
-                        return '日期 : ' + params.value[0] + "<br>值 : " + params.value[1];
-                    } else {
-                        return 'date : ' + params.value[0] + "<br>value : " + params.value[1];
-                    }
+                    return cboardTranslate("COMMON.DATE") + ': ' + params.value[0] + "<br>"
+                        + cboardTranslate("COMMON.VALUE") + ": " + params.value[1];
                 }
             },
             toolbox: {

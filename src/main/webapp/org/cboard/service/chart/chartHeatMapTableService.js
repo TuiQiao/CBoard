@@ -66,11 +66,9 @@ cBoard.service('chartHeatMapTableService', function () {
                     type: 'shadow'
                 },
                 formatter: function (params) {
-                    if ("cn" == preferredLanguage) {
-                        return 'x轴 : ' + xAxisData[params.value[0]] + "<br>y轴 : " + yAxisData[params.value[1]] + "<br>值 : " + params.value[2];
-                    } else {
-                        return 'xAxis : ' + xAxisData[params.value[0]] + "<br>yAxis : " + yAxisData[params.value[1]] + "<br>value : " + params.value[2];
-                    }
+                    return 'x ' + cboardTranslate("CONFIG.WIDGET.VALUE_AXIS") + ': ' + xAxisData[params.value[0]] +
+                        '<br/>y ' + cboardTranslate("CONFIG.WIDGET.VALUE_AXIS") + ': ' + yAxisData[params.value[1]] +
+                        '<br/>' + cboardTranslate("COMMON.VALUE") + ': ' + params.value[2];
                 }
             },
             animation: false,

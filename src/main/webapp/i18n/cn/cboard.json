@@ -33,7 +33,9 @@
     "ROLL_UP": "上卷",
     "WANRING": "警告！",
     "COLLAPSE": "最小化",
-    "REMOVE": "关闭"
+    "REMOVE": "关闭",
+    "DATE": "日期",
+    "VALUE": "值"
   },
   "TIPS": {
     "CAL_EXPR": "用于聚合后再计算. 使用上面的点击辅助输入避免输入错误. 如: Math.log(sum(columnA)/count(columB))"

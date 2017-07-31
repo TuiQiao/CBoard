@@ -33,7 +33,9 @@
     "ROLL_UP": "Roll Up",
     "WANRING": "WANRING!",
     "COLLAPSE": "Collapse",
-    "REMOVE": "Remove"
+    "REMOVE": "Remove",
+    "DATE": "Date",
+    "VALUE": "Value"
   },
   "TIPS": {
     "CAL_EXPR": "Calculate after aggregation. Use assist click input to avoid typo. e.g: Math.log(sum(columnA)/count(columB))"

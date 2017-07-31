@@ -65,7 +65,7 @@
     "CONFIRM_PASSWORD": "确认密码"
   },
   "FOOTER": {
-    "COPYRIGHT": "携程支付中心",
+    "COPYRIGHT": "上海致宇信息技术有限公司",
     "VERSION": "版本"
   },
   "DASHBOARD": {
@@ -179,7 +179,11 @@
       "AREA_MAP": "区域地图",
       "HEAT_MAP_CALENDER": "热点图（日历）",
       "DATE_FORMAT": "日期格式",
-      "HEAT_MAP_TABLE": "热点图（表格）"
+      "HEAT_MAP_TABLE": "热点图（表格）",
+      "RELATION": "关系图",
+      "SOURCE": "源",
+      "TARGET": "目标",
+      "LINK": "关系"
     },
     "DASHBOARD": {
       "DASHBOARD": "看板",
@@ -288,7 +292,8 @@
       "FAIL": "失败",
       "FINISH": "完成",
       "PROCESSING": "处理中",
-      "STATUS": "状态"
+      "STATUS": "状态",
+      "SEND_MAIL": "发送邮件"
     },
     "SHARE_RES": {
       "YOUR_RES": "你的资源",
@@ -353,6 +358,16 @@
       "START": "开始位置",
       "ROWS": "结果数",
       "FL": "结果字段"
+    },
+    "UDSP":{
+      "UDSP_SERVERS": "UDSP服务",
+      "USERNAME": "用户名",
+      "PASSWORD": "密码",
+      "SERVICE_NAME": "服务名",
+      "SQL_TEXT": "SQL查询语句",
+      "JSON_TEXT": "JSON查询语句",
+      "PAGE_INDEX": "分页页号",
+      "PAGE_SIZE": "每页行数"
     }
   }
 }

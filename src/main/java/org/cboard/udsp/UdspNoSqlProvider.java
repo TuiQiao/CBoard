@@ -1,10 +1,11 @@
 package org.cboard.udsp;
 
-import com.hex.bigdata.udsp.client.IqClient;
+import com.hex.bigdata.udsp.client.factory.ConsumerClientFactory;
+import com.hex.bigdata.udsp.client.impl.NoSqlClient;
 import com.hex.bigdata.udsp.constant.SdkConstant;
-import com.hex.bigdata.udsp.model.IqRequest;
 import com.hex.bigdata.udsp.model.Page;
-import com.hex.bigdata.udsp.model.UdspResponse;
+import com.hex.bigdata.udsp.model.request.NoSqlRequest;
+import com.hex.bigdata.udsp.model.response.pack.SyncPackResponse;
 import org.apache.commons.lang3.StringUtils;
 import org.cboard.dataprovider.DataProvider;
 import org.cboard.dataprovider.annotation.DatasourceParameter;
@@ -15,7 +16,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 
-import java.util.*;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * Created by JunjieM on 2017-7-11.
@@ -57,7 +61,7 @@ public class UdspNoSqlProvider extends DataProvider {
         return url;
     }
 
-    private IqRequest getRequest() {
+    private NoSqlRequest getRequest() {
         String username = dataSource.get(USERNAME);
         if (StringUtils.isBlank(username))
             throw new CBoardException("Datasource config Username can not be empty.");
@@ -82,7 +86,7 @@ public class UdspNoSqlProvider extends DataProvider {
         page.setPageIndex(pageIndex);
         page.setPageSize(pageSize);
 
-        IqRequest request = new IqRequest();
+        NoSqlRequest request = new NoSqlRequest();
         request.setServiceName(serviceName);
         request.setEntity(SdkConstant.CONSUMER_ENTITY_START);
         request.setType(SdkConstant.CONSUMER_TYPE_SYNC);
@@ -103,9 +107,9 @@ public class UdspNoSqlProvider extends DataProvider {
         return list.toArray(new String[][]{});
     }
 
-    private List<Map<String, String>> getResults(IqRequest request) {
-        IqClient client = IqClient.createIqClient(getUrl());
-        UdspResponse response = null;
+    private List<Map<String, String>> getResults(NoSqlRequest request) {
+        NoSqlClient client = ConsumerClientFactory.createCustomClient(NoSqlClient.class,getUrl());
+        SyncPackResponse response = null;
         try {
             response = client.syncStart(request);
         } catch (Throwable t) {

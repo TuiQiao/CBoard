@@ -3,11 +3,11 @@ package org.cboard.udsp;
 import com.alibaba.fastjson.JSONObject;
 import com.google.common.base.Charsets;
 import com.google.common.hash.Hashing;
-import com.hex.bigdata.udsp.client.IqClient;
-import com.hex.bigdata.udsp.client.OlqClient;
+import com.hex.bigdata.udsp.client.factory.ConsumerClientFactory;
+import com.hex.bigdata.udsp.client.impl.SqlClient;
 import com.hex.bigdata.udsp.constant.SdkConstant;
-import com.hex.bigdata.udsp.model.OlqRequest;
-import com.hex.bigdata.udsp.model.UdspResponse;
+import com.hex.bigdata.udsp.model.request.SqlRequest;
+import com.hex.bigdata.udsp.model.response.pack.SyncPackResponse;
 import org.apache.commons.collections.map.HashedMap;
 import org.apache.commons.lang3.StringUtils;
 import org.cboard.cache.CacheManager;
@@ -22,12 +22,11 @@ import org.cboard.dataprovider.config.*;
 import org.cboard.dataprovider.result.AggregateResult;
 import org.cboard.dataprovider.result.ColumnIndex;
 import org.cboard.exception.CBoardException;
-import org.cboard.jdbc.JdbcDataProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 
-import java.sql.*;
+import java.sql.Types;
 import java.util.*;
 import java.util.function.BiFunction;
 import java.util.function.Function;
@@ -43,7 +42,7 @@ public class UdspSqlProvider extends DataProvider implements Aggregatable, Initi
     private static final Logger LOG = LoggerFactory.getLogger(UdspSqlProvider.class);
 
     @Value("${dataprovider.resultLimit:300000}")
-    private int resultLimit;
+    private int resultLimit = 30000;
 
     @DatasourceParameter(label = "{{'DATAPROVIDER.UDSP.UDSP_SERVERS'|translate}}", required = true, placeholder = "<ip>:<port>", type = DatasourceParameter.Type.Input, order = 1)
     private String UDSP_SERVERS = "udspServers";
@@ -63,7 +62,7 @@ public class UdspSqlProvider extends DataProvider implements Aggregatable, Initi
     @QueryParameter(label = "{{'DATAPROVIDER.UDSP.SQL_TEXT'|translate}}", required = true, type = QueryParameter.Type.TextArea, order = 2)
     private String SQL = "sql";
 
-    private static final CacheManager<Map<String, Integer>> typeCahce = new HeapCacheManager<>();
+    private static final CacheManager<Map<String,String>> typeCahce = new HeapCacheManager<>();
 
     private DimensionConfigHelper dimensionConfigHelper;
 
@@ -89,7 +88,7 @@ public class UdspSqlProvider extends DataProvider implements Aggregatable, Initi
         return url;
     }
 
-    private OlqRequest getRequest() {
+    private SqlRequest getRequest() {
         String username = dataSource.get(USERNAME);
         if (StringUtils.isBlank(username))
             throw new CBoardException("Datasource config Username can not be empty.");
@@ -105,7 +104,7 @@ public class UdspSqlProvider extends DataProvider implements Aggregatable, Initi
         sql = getAsSubQuery(sql);
         LOG.info("SQL String: \n" + sql);
 
-        OlqRequest request = new OlqRequest();
+        SqlRequest request = new SqlRequest();
         request.setServiceName(serviceName);
         request.setEntity(SdkConstant.CONSUMER_ENTITY_START);
         request.setType(SdkConstant.CONSUMER_TYPE_SYNC);
@@ -125,9 +124,9 @@ public class UdspSqlProvider extends DataProvider implements Aggregatable, Initi
         return list.toArray(new String[][]{});
     }
 
-    private List<Map<String, String>> getResults(OlqRequest request) {
-        OlqClient client = OlqClient.createOlqClient(getUrl());
-        UdspResponse response = null;
+    private List<Map<String, String>> getResults(SqlRequest request) {
+        SqlClient client = ConsumerClientFactory.createCustomClient(SqlClient.class, getUrl());
+        SyncPackResponse response = null;
         try {
             response = client.syncStart(request);
         } catch (Throwable t) {
@@ -147,6 +146,42 @@ public class UdspSqlProvider extends DataProvider implements Aggregatable, Initi
         return results;
     }
 
+    /**
+     * 获取列名称以及列类型
+     *
+     * @param request
+     * @return
+     */
+    private LinkedHashMap<String, String> getColumnInfos(SqlRequest request) {
+        SqlClient client = ConsumerClientFactory.createCustomClient(SqlClient.class, getUrl());
+        SyncPackResponse response = null;
+        try {
+            response = client.syncStart(request);
+        } catch (Throwable t) {
+            t.printStackTrace();
+            throw new CBoardException(t.getMessage());
+        }
+        if ("DEFEAT".equals(response.getStatus())) {
+            throw new CBoardException(response.getMessage());
+        }
+        return response.getReturnColumns();
+    }
+
+    /**
+     * 获取列名称以及列类型
+     *
+     * @return
+     */
+    public Map<String, String> getColumnInfos() {
+        String fsql = "\nSELECT * FROM (\n%s\n) hb_view WHERE 1=0";
+        SqlRequest request = getRequest();
+        String sql = String.format(fsql, request.getSql());
+        LOG.info(sql);
+        request.setSql(sql);
+        return this.getColumnInfos(request);
+    }
+
+
     private List<String[]> getHeaderAndDatas(List<Map<String, String>> results) {
         List<String[]> list = new LinkedList<>();
         String[] columns = getColumns(results);
@@ -165,7 +200,7 @@ public class UdspSqlProvider extends DataProvider implements Aggregatable, Initi
 
     private String[] getValues(String[] columns, Map<String, String> map) {
         Set<Map.Entry<String, String>> entrySet = map.entrySet();
-        String[] row = new String[entrySet.size()];
+        String[] row = new String[columns.length];
         int i = 0;
         for (String col : columns) {
             row[i++] = map.get(col);
@@ -179,6 +214,15 @@ public class UdspSqlProvider extends DataProvider implements Aggregatable, Initi
         String[] row = new String[entrySet.size()];
         for (Map.Entry<String, String> entry : entrySet) {
             row[i++] = entry.getKey();
+        }
+        return row;
+    }
+
+    private String[] getArrayColumns(Map<String, String> columns) {
+        String[] row = new String[columns.size()];
+        int i = 0;
+        for (String column : columns.keySet()) {
+            row[i++] = column;
         }
         return row;
     }
@@ -200,7 +244,7 @@ public class UdspSqlProvider extends DataProvider implements Aggregatable, Initi
 
     @Override
     public String[] queryDimVals(String columnName, AggConfig config) throws Exception {
-        OlqRequest request = getRequest();
+        SqlRequest request = getRequest();
         List<String> filtered = new ArrayList<>();
         String whereStr = "";
         if (config != null) {
@@ -227,19 +271,20 @@ public class UdspSqlProvider extends DataProvider implements Aggregatable, Initi
 
     @Override
     public String[] getColumn() throws Exception {
-        //String fsql = "\nSELECT * FROM (\n%s\n) hb_view WHERE 1=0";
-        OlqRequest request = getRequest();
-        //String sql = String.format(fsql, request.getSql());
-        //LOG.info(sql);
-        //request.setSql(sql);
-        List<Map<String, String>> results = getResults(request);
-        String[] columns = getColumns(results);
+        String fsql = "\nSELECT * FROM (\n%s\n) hb_view WHERE 1=0";
+        SqlRequest request = getRequest();
+        String sql = String.format(fsql, request.getSql());
+        LOG.info(sql);
+        request.setSql(sql);
+        LinkedHashMap<String, String> results = getColumnInfos(request);
+        String[] columns = getArrayColumns(results);
         return columns;
     }
 
+
     @Override
     public AggregateResult queryAggData(AggConfig config) throws Exception {
-        OlqRequest request = getRequest();
+        SqlRequest request = getRequest();
         String exec = getQueryAggDataSql(request, config);
         LOG.info(exec);
         request.setSql(exec);
@@ -266,12 +311,12 @@ public class UdspSqlProvider extends DataProvider implements Aggregatable, Initi
         return getQueryAggDataSql(getRequest(), config);
     }
 
-    private String getQueryAggDataSql(OlqRequest request, AggConfig config) throws Exception {
+    private String getQueryAggDataSql(SqlRequest request, AggConfig config) throws Exception {
         Stream<DimensionConfig> c = config.getColumns().stream();
         Stream<DimensionConfig> r = config.getRows().stream();
         Stream<ConfigComponent> f = config.getFilters().stream();
         Stream<ConfigComponent> filters = Stream.concat(Stream.concat(c, r), f);
-        Map<String, Integer> types = getColumnType(request);
+        Map<String, String> types = getColumnType(request);
         Stream<DimensionConfig> dimStream = Stream.concat(config.getColumns().stream(), config.getRows().stream());
 
         String dimColsStr = assembleDimColumns(dimStream);
@@ -299,7 +344,7 @@ public class UdspSqlProvider extends DataProvider implements Aggregatable, Initi
         return columns.toString();
     }
 
-    private String assembleAggValColumns(Stream<ValueConfig> selectStream, Map<String, Integer> types) {
+    private String assembleAggValColumns(Stream<ValueConfig> selectStream, Map<String, String> types) {
         StringJoiner columns = new StringJoiner(", ", "", " ");
         columns.setEmptyValue("");
         selectStream.map(m -> toSelect.apply(m, types)).filter(e -> e != null).forEach(columns::add);
@@ -331,7 +376,7 @@ public class UdspSqlProvider extends DataProvider implements Aggregatable, Initi
         return null;
     }
 
-    private BiFunction<ValueConfig, Map<String, Integer>, String> toSelect = (config, types) -> {
+    private BiFunction<ValueConfig, Map<String, String>, String> toSelect = (config, types) -> {
         String aggExp;
         if (config.getColumn().contains(" ")) {
             aggExp = config.getColumn();
@@ -416,24 +461,40 @@ public class UdspSqlProvider extends DataProvider implements Aggregatable, Initi
     };
 
     private class DimensionConfigHelper {
-        private Map<String, Integer> types = getColumnType(getRequest());
+        private Map<String, String> types = getColumnType(getRequest());
 
         private DimensionConfigHelper() throws Exception {
         }
 
         public String getValueStr(DimensionConfig dc, int index) {
             switch (types.get(dc.getColumnName())) {
-                case Types.VARCHAR:
-                case Types.CHAR:
-                case Types.NVARCHAR:
-                case Types.NCHAR:
-                case Types.CLOB:
-                case Types.NCLOB:
-                case Types.LONGVARCHAR:
-                case Types.LONGNVARCHAR:
-                case Types.DATE:
-                case Types.TIMESTAMP:
-                case Types.TIMESTAMP_WITH_TIMEZONE:
+                case DbTypes.CHAR:
+                case DbTypes.CLOB:
+                case DbTypes.DATE:
+                case DbTypes.NCLOB:
+                case DbTypes.NVARCHAR2:
+                case DbTypes.VARCHAR2:
+                case DbTypes.TIMESTAMP:
+                case DbTypes.TIMESTAMP_WITH_TIMEZONE:
+                case DbTypes.NCHAR:
+                case DbTypes.TEXT:
+                case DbTypes.NTEXT:
+                case DbTypes.XML:
+                case DbTypes.DATETIME:
+                case DbTypes.SMALLDATETIME:
+                case DbTypes.NVARCHAR:
+                case DbTypes.CHARACTER:
+                case DbTypes.GRAPHIC:
+                case DbTypes.LONGVARGRAPHIC:
+                case DbTypes.LONGVARCHAR:
+                case DbTypes.TIME:
+                case DbTypes.VARGRAPHIC:
+                case DbTypes.ENUM:
+                case DbTypes.SET:
+                case DbTypes.YEAR:
+                case DbTypes.TINYTEXT:
+                case DbTypes.VARCHAR:
+                case DbTypes.STRING:
                     return "'" + dc.getValues().get(index) + "'";
                 default:
                     return dc.getValues().get(index);
@@ -441,20 +502,21 @@ public class UdspSqlProvider extends DataProvider implements Aggregatable, Initi
         }
     }
 
-    private Map<String, Integer> getColumnType(OlqRequest request) throws Exception {
-        Map<String, Integer> result = null;
+    /**
+     * 获取列名及列类型
+     * @param request
+     * @return
+     * @throws Exception
+     */
+    private Map<String, String> getColumnType(SqlRequest request) throws Exception {
+        Map<String, String> result = null;
         String key = getKey();
         result = typeCahce.get(key);
         if (result != null) {
             return result;
         } else {
-            List<Map<String, String>> results = getResults(request);
-            String[] columns = getColumns(results);
-            result = new HashedMap();
-            for (int i = 0; i < columns.length; i++) {
-                result.put(columns[i], 12);
-            }
-            typeCahce.put(key, result, 12 * 60 * 60 * 1000);
+            Map<String, String> columnInfosMap = getColumnInfos();
+            typeCahce.put(key, columnInfosMap, 12 * 60 * 60 * 1000);
             return result;
         }
     }
@@ -462,4 +524,48 @@ public class UdspSqlProvider extends DataProvider implements Aggregatable, Initi
     private String getKey() {
         return Hashing.md5().newHasher().putString(JSONObject.toJSON(dataSource).toString() + JSONObject.toJSON(query).toString(), Charsets.UTF_8).hash().toString();
     }
+
+    class   DbTypes{
+
+        //ORACLE
+        private static final String CHAR="CHAR";
+        private static final String CLOB="CLOB";
+        private static final String DATE="DATE";
+        private static final String NCLOB="NCLOB";
+        private static final String NVARCHAR2="NVARCHAR2";
+        private static final String VARCHAR2="VARCHAR2";
+        private static final String TIMESTAMP="TIMESTAMP";
+        private static final String TIMESTAMP_WITH_TIMEZONE="TIMESTAMP_WITH_TIMEZONE";
+
+        //SQL SERVER
+        private static final String NCHAR="NCHAR";
+        private static final String TEXT="TEXT";
+        private static final String NTEXT="NTEXT";
+        private static final String XML="XML";
+        private static final String DATETIME="DATETIME";
+        private static final String SMALLDATETIME="SMALLDATETIME";
+        private static final String NVARCHAR="NVARCHAR";
+
+        //DB2
+        private static final String CHARACTER="CHARACTER";
+        private static final String GRAPHIC="GRAPHIC";
+        private static final String LONGVARGRAPHIC="LONGVARGRAPHIC";
+        private static final String LONGVARCHAR="LONGVARCHAR";
+        private static final String TIME="TIME";
+        private static final String VARGRAPHIC="VARGRAPHIC";
+
+        //MYSQL
+        private static final String ENUM ="ENUM";
+        private static final String SET ="SET";
+        private static final String YEAR="YEAR";
+        private static final String TINYTEXT="TINYTEXT";
+
+        //IMPALA
+        private static final String VARCHAR="VARCHAR";
+        private static final String STRING="STRING";
+        //HIVE
+        //KYLIN
+        //PGSQL
+    }
+
 }

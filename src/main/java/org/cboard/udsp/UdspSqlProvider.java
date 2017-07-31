@@ -473,6 +473,7 @@ public class UdspSqlProvider extends DataProvider implements Aggregatable, Initi
                 case DbTypes.DATE:
                 case DbTypes.NCLOB:
                 case DbTypes.NVARCHAR2:
+                case DbTypes.VARCHAR2:
                 case DbTypes.TIMESTAMP:
                 case DbTypes.TIMESTAMP_WITH_TIMEZONE:
                 case DbTypes.NCHAR:
@@ -532,6 +533,7 @@ public class UdspSqlProvider extends DataProvider implements Aggregatable, Initi
         private static final String DATE="DATE";
         private static final String NCLOB="NCLOB";
         private static final String NVARCHAR2="NVARCHAR2";
+        private static final String VARCHAR2="VARCHAR2";
         private static final String TIMESTAMP="TIMESTAMP";
         private static final String TIMESTAMP_WITH_TIMEZONE="TIMESTAMP_WITH_TIMEZONE";
 

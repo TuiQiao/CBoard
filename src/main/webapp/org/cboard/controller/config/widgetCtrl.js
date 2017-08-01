@@ -79,13 +79,32 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
                 row: translate('CONFIG.WIDGET.TIPS_DIM_NUM_1_MORE'),
                 column: translate('CONFIG.WIDGET.TIPS_DIM_NUM_0'),
                 measure: translate('CONFIG.WIDGET.TIPS_DIM_NUM_1')
+            },
+            {
+                name: translate('CONFIG.WIDGET.AREA_MAP'), value: 'areaMap', class: 'cAreaMap',
+                row: translate('CONFIG.WIDGET.TIPS_DIM_NUM_1_MORE'),
+                column: translate('CONFIG.WIDGET.TIPS_DIM_NUM_0_MORE'),
+                measure: translate('CONFIG.WIDGET.TIPS_DIM_NUM_1')
+            },
+            {
+                name: translate('CONFIG.WIDGET.HEAT_MAP_CALENDER'), value: 'heatMapCalendar', class: 'cHeatMapCalendar',
+                row: translate('CONFIG.WIDGET.TIPS_DIM_NUM_1'),
+                column: translate('CONFIG.WIDGET.TIPS_DIM_NUM_0'),
+                measure: translate('CONFIG.WIDGET.TIPS_DIM_NUM_1')
+            },
+            {
+                name: translate('CONFIG.WIDGET.HEAT_MAP_TABLE'), value: 'heatMapTable', class: 'cHeatMapTable',
+                row: translate('CONFIG.WIDGET.TIPS_DIM_NUM_1_MORE'),
+                column: translate('CONFIG.WIDGET.TIPS_DIM_NUM_1_MORE'),
+                measure: translate('CONFIG.WIDGET.TIPS_DIM_NUM_1')
             }
         ];
 
         $scope.chart_types_status = {
             "line": true, "pie": true, "kpi": true, "table": true,
             "funnel": true, "sankey": true, "radar": true, "map": true,
-            "scatter": true, "gauge": true, "wordCloud": true, "treeMap": true
+            "scatter": true, "gauge": true, "wordCloud": true, "treeMap": true,
+            "areaMap": true, "heatMapCalendar": true, "heatMapTable": true
         };
 
         $scope.value_series_types = [
@@ -111,6 +130,10 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
             {name: translate('CONFIG.WIDGET.YELLOW'), value: 'bg-yellow'}
         ];
 
+        $.getJSON('plugins/FineMap/mapdata/citycode.json', function (data) {
+            $scope.provinces = data.provinces;
+        });
+
         $scope.treemap_styles = [
             {name: translate('CONFIG.WIDGET.RANDOM'), value: 'random'},
             {name: translate('CONFIG.WIDGET.MULTI'), value: 'multi'},
@@ -119,6 +142,20 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
             {name: translate('CONFIG.WIDGET.GREEN'), value: 'green'},
             {name: translate('CONFIG.WIDGET.YELLOW'), value: 'yellow'},
             {name: translate('CONFIG.WIDGET.PURPLE'), value: 'purple'}
+        ];
+
+        $scope.heatmap_styles = [
+            {name: translate('CONFIG.WIDGET.BLUE'), value: 'blue'},
+            {name: translate('CONFIG.WIDGET.RED'), value: 'red'},
+            {name: translate('CONFIG.WIDGET.GREEN'), value: 'green'},
+            {name: translate('CONFIG.WIDGET.YELLOW'), value: 'yellow'},
+            {name: translate('CONFIG.WIDGET.PURPLE'), value: 'purple'}
+        ];
+
+        $scope.heatmap_date_format = [
+            {name: 'yyyy-MM-dd', value: 'yyyy-MM-dd'},
+            {name: 'yyyy/MM/dd', value: 'yyyy/MM/dd'},
+            {name: 'yyyyMMdd', value: 'yyyyMMdd'}
         ];
 
         /***************************************
@@ -138,7 +175,10 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
             scatter: {keys: 0, groups: 0, filters: 0, values: 0},
             gauge: {keys: -1, groups: -1, filters: 0, values: 1},
             wordCloud: {keys: 0, groups: -1, filters: 0, values: 1},
-            treeMap: {keys: 0, groups: -1, filters: 0, values: 1}
+            treeMap: {keys: 0, groups: -1, filters: 0, values: 1},
+            areaMap: {keys: 0, groups: 0, filters: 0, values: 0},
+            heatMapCalendar: {keys: 1, groups: -1, filters: 0, values: 1},
+            heatMapTable: {keys: 0, groups: 0, filters: 0, values: 1}
         };
 
         //界面控制
@@ -538,6 +578,43 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
                         {proportion: '1', color: '#ff4500'}
                     ];
                     break;
+                case 'areaMap':
+                    $scope.curWidget.config.values.push({name: '', cols: []});
+                    _.each(oldConfig.values, function (v) {
+                        _.each(v.cols, function (c) {
+                            $scope.curWidget.config.values[0].cols.push(c);
+                        });
+                    });
+                    $scope.curWidget.config.selects = angular.copy($scope.columns);
+                    _.each($scope.curWidget.config.values, function (v) {
+                        v.style = 'bg-aqua';
+                    });
+                    break;
+                case 'heatMapCalendar':
+                    $scope.curWidget.config.values.push({name: '', cols: []});
+                    _.each(oldConfig.values, function (v) {
+                        _.each(v.cols, function (c) {
+                            $scope.curWidget.config.values[0].cols.push(c);
+                        });
+                    });
+                    $scope.curWidget.config.selects = angular.copy($scope.columns);
+                    _.each($scope.curWidget.config.values, function (v) {
+                        v.dataFormat = 'yyyy-MM-dd';
+                        v.style = 'Blue';
+                    });
+                    break;
+                case 'heatMapTable':
+                    $scope.curWidget.config.values.push({name: '', cols: []});
+                    _.each(oldConfig.values, function (v) {
+                        _.each(v.cols, function (c) {
+                            $scope.curWidget.config.values[0].cols.push(c);
+                        });
+                    });
+                    $scope.curWidget.config.selects = angular.copy($scope.columns);
+                    _.each($scope.curWidget.config.values, function (v) {
+                        v.style = 'Blue';
+                    });
+                    break;
                 default:
                     $scope.curWidget.config.values.push({name: '', cols: []});
                     _.each(oldConfig.values, function (v) {
@@ -650,6 +727,34 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
                         {proportion: '1', color: '#ff4500'}
                     ];
                     break;
+                case 'areaMap':
+                    $scope.curWidget.config.selects = angular.copy($scope.columns);
+                    $scope.curWidget.config.keys = new Array();
+                    $scope.curWidget.config.groups = new Array();
+                    $scope.curWidget.config.values = [{
+                        name: '',
+                        cols: []
+                    }];
+                    $scope.curWidget.config.filters = new Array();
+                    break;
+                case 'heatMapCalendar':
+                    $scope.curWidget.config.selects = angular.copy($scope.columns);
+                    $scope.curWidget.config.values = [{
+                        name: '',
+                        cols: [],
+                        dataFormat: 'yyyy-MM-dd',
+                        style: 'Blue'
+                    }];
+                    break;
+                case 'heatMapTable':
+                    $scope.curWidget.config.selects = angular.copy($scope.columns);
+                    $scope.curWidget.config.values = [{
+                        name: '',
+                        cols: [],
+                        style: 'Blue'
+                    }];
+                    $scope.curWidget.config.filters = new Array();
+                    break;
             }
             addWatch();
         };
@@ -679,7 +784,13 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
         $scope.preview = function () {
             cleanPreview();
             $scope.loadingPre = true;
-            chartService.render($('#preview_widget'), {
+            // --- start ---
+            // 添加echarts3.6.2后这里除了第一次可以加载echarts图表，再次加载无法显示图表。
+            // 完全无法找到问题下，出于无奈嵌套了一层后发现可以显示图表。囧！！
+            // 具体原因没有找到，求大神帮忙解决，thanks！
+            $('#preview_widget').html("<div id='preview' style='min-height: 300px; user-select: text;'></div>");
+            // --- end ---
+            chartService.render($('#preview'), {
                 config: $scope.curWidget.config,
                 datasource: $scope.datasource ? $scope.datasource.id : null,
                 query: $scope.curWidget.query,
@@ -737,6 +848,9 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
                         };
                         break;
                     case 'map':
+                        $scope.previewDivWidth = 12;
+                        break;
+                    case 'areaMap':
                         $scope.previewDivWidth = 12;
                         break;
                 }
@@ -1227,6 +1341,20 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
             });
         };
 
+        $scope.editAlign = function (o) {
+            switch (o.align) {
+                case undefined:
+                    o.align = 'left';
+                    break;
+                case 'left':
+                    o.align = 'right';
+                    break;
+                default:
+                    o.align = undefined;
+                    break;
+            }
+        };
+
         $scope.cleanRowSort = function (o) {
             var sort = o.sort;
             _.each($scope.curWidget.config.keys, function (k) {
@@ -1389,6 +1517,16 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
             });
         };
 
+        $scope.setCities = function () {
+            var province = _.find($scope.provinces, function (e) {
+                return e.code == $scope.curWidget.config.province.code;
+            });
+            if(province && province.cities){
+                $scope.cities = province.cities
+            }else if($scope.curWidget.config.city && $scope.curWidget.config.city.code){
+                $scope.curWidget.config.city.code="";
+            }
+        }
         /** js tree related End... **/
 
 

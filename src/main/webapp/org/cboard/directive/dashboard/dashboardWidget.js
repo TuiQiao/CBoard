@@ -84,6 +84,15 @@ cBoard.directive('dashboardWidget', function ($compile, $templateCache, dataServ
                         case 'treeMap':
                             renderEchart(scope, element, attrs);
                             break;
+                        case 'areaMap':
+                            renderEchart(scope, element, attrs);
+                            break;
+                        case 'heatMapCalendar':
+                            renderEchart(scope, element, attrs);
+                            break;
+                        case 'heatMapTable':
+                            renderEchart(scope, element, attrs);
+                            break;
                     }
                 }
             }

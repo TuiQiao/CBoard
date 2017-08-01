@@ -143,6 +143,12 @@
 .cWordCloud.disabled{ background-image: url(../imgs/wordCloud.png); }
 .cTreeMap{ background-image: url(../imgs/treeMap-active.png); }
 .cTreeMap.disabled{ background-image: url(../imgs/treeMap.png); }
+.cAreaMap{ background-image: url(../imgs/area-active.png);}
+.cAreaMap.disabled{ background-image: url(../imgs/area.png);}
+.cHeatMapCalendar{ background-image: url(../imgs/heatMapCalendar-active.png); }
+.cHeatMapCalendar.disabled{ background-image: url(../imgs/heatMapCalendar.png); }
+.cHeatMapTable{ background-image: url(../imgs/heatMapTable-active.png); }
+.cHeatMapTable.disabled{ background-image: url(../imgs/heatMapTable.png); }
 
 .chart-type a.active{
     background-color: #FFF;

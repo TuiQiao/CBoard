@@ -5,7 +5,7 @@
 cBoard.service('chartService', function ($q, dataService, chartPieService, chartLineService, chartFunnelService,
                                          chartSankeyService, chartTableService, chartKpiService, chartRadarService,
                                          chartMapService, chartScatterService, chartGaugeService, chartWordCloudService,
-                                         chartTreeMapService ) {
+                                         chartTreeMapService, chartAreaMapService, chartHeatMapCalendarService, chartHeatMapTableService ) {
 
         this.render = function (containerDom, widget, optionFilter, scope, reload, persist) {
             var deferred = $q.defer();
@@ -100,7 +100,7 @@ cBoard.service('chartService', function ($q, dataService, chartPieService, chart
                 if (optionFilter) {
                     optionFilter(option);
                 }
-                realTimeTicket(option, data.drill.config);
+                realTimeTicket(option, data.drill ? data.drill.config : null);
             });
         };
 
@@ -142,6 +142,15 @@ cBoard.service('chartService', function ($q, dataService, chartPieService, chart
                     break;
                 case 'treeMap':
                     chart = chartTreeMapService;
+                    break;
+                case 'areaMap':
+                    chart = chartAreaMapService;
+                    break;
+                case 'heatMapCalendar':
+                    chart = chartHeatMapCalendarService;
+                    break;
+                case 'heatMapTable':
+                    chart = chartHeatMapTableService;
                     break;
             }
             return chart;

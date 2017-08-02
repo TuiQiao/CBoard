@@ -143,14 +143,14 @@
 .cWordCloud.disabled{ background-image: url(../imgs/wordCloud.png); }
 .cTreeMap{ background-image: url(../imgs/treeMap-active.png); }
 .cTreeMap.disabled{ background-image: url(../imgs/treeMap.png); }
-.cAreaMap{ background-image: url(../imgs/area-active.png);}
-.cAreaMap.disabled{ background-image: url(../imgs/area.png);}
+.cAreaMap{ background-image: url(../imgs/areaMap-active.png);}
+.cAreaMap.disabled{ background-image: url(../imgs/areaMap.png);}
 .cHeatMapCalendar{ background-image: url(../imgs/heatMapCalendar-active.png); }
 .cHeatMapCalendar.disabled{ background-image: url(../imgs/heatMapCalendar.png); }
 .cHeatMapTable{ background-image: url(../imgs/heatMapTable-active.png); }
 .cHeatMapTable.disabled{ background-image: url(../imgs/heatMapTable.png); }
-.cMarkLineMap{ background-image: url(../imgs/area-active.png);}
-.cMarkLineMap.disabled{ background-image: url(../imgs/area.png);}
+.cMarkLineMap{ background-image: url(../imgs/markLineMap-active.png);}
+.cMarkLineMap.disabled{ background-image: url(../imgs/markLineMap.png);}
 .cLiquidFill{ background-image: url(../imgs/liquidFill-active.png); }
 .cLiquidFill.disabled{ background-image: url(../imgs/liquidFill.png); }
 

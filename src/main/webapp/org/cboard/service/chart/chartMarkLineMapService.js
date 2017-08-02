@@ -19,43 +19,43 @@ cBoard.service('chartMarkLineMapService', function () {
 
         var chartConfig = data.chartConfig;
         var code = 'china';
-        if(chartConfig.city && chartConfig.city.code){
+        if (chartConfig.city && chartConfig.city.code) {
             code = chartConfig.city.code;
-        }else if(chartConfig.province && chartConfig.province.code){
+        } else if (chartConfig.province && chartConfig.province.code) {
             code = chartConfig.province.code;
         }
         var url;
-        if(code == 'china') {
+        if (code == 'china') {
             url = 'plugins/FineMap/mapdata/china.json'
-        }else if(code.length > 2){
-            url = 'plugins/FineMap/mapdata/geometryCouties/'+code+'.json';
-        }else{
-            url = 'plugins/FineMap/mapdata/geometryProvince/'+code+'.json';
+        } else if (code.length > 2) {
+            url = 'plugins/FineMap/mapdata/geometryCouties/' + code + '.json';
+        } else {
+            url = 'plugins/FineMap/mapdata/geometryProvince/' + code + '.json';
         }
         //var groups = _.map(data_series, function(val){return val.join("-")});
 
         var max = 0;
-        for(var j = 0; data_keys[0] && j < data_keys.length; j++){
+        for (var j = 0; data_keys[0] && j < data_keys.length; j++) {
             geoKey = data_keys[j][2];
-            geoCoordMap[geoKey] = [data_keys[j][0],data_keys[j][1]];
+            geoCoordMap[geoKey] = [data_keys[j][0], data_keys[j][1]];
         }
-        for(var j = 0; data_series[0] && j < data_series.length; j++){
+        for (var j = 0; data_series[0] && j < data_series.length; j++) {
             geoKey = data_series[j][2];
-            geoCoordMap[geoKey] = [data_series[j][0],data_series[j][1]];
+            geoCoordMap[geoKey] = [data_series[j][0], data_series[j][1]];
             optionData[j] = data_series[j][2];
             var serieData = [];
-            for(var i = 0,n = 0; data_keys[0] && i < data_keys.length; i++){
-                if(data.data[j][i] && data.data[j][i] != 0){
-                    serieData[n] = [{name:geoKey},{name:data_keys[i][2],value:data.data[j][i]}];
+            for (var i = 0, n = 0; data_keys[0] && i < data_keys.length; i++) {
+                if (data.data[j][i] && data.data[j][i] != 0) {
+                    serieData[n] = [{name: geoKey}, {name: data_keys[i][2], value: data.data[j][i]}];
                     n++;
-                    if(max < data.data[j][i]){
+                    if (max < data.data[j][i]) {
                         max = data.data[j][i];
                     }
                 }
             }
-            seriesData[j] = [geoKey,serieData]
+            seriesData[j] = [geoKey, serieData]
         }
-        var convertData = function(data) {
+        var convertData = function (data) {
             var res = [];
             for (var i = 0; i < data.length; i++) {
                 var dataItem = data[i];
@@ -74,7 +74,7 @@ cBoard.service('chartMarkLineMapService', function () {
 
         var color = ['#a6c84c', '#ffa022', '#46bee9'];
         var series = [];
-        seriesData.forEach(function(item, i) {
+        seriesData.forEach(function (item, i) {
             series.push({
                     name: item[0],
                     type: 'lines',
@@ -83,8 +83,9 @@ cBoard.service('chartMarkLineMapService', function () {
                     symbolSize: 10,
                     effect: {
                         show: true,
+                        constantSpeed: 30,
                         period: 6,
-                        trailLength: 0,
+                        trailLength: 0.1,
                         symbol: 'arrow',
                         symbolSize: 4
                     },
@@ -113,7 +114,7 @@ cBoard.service('chartMarkLineMapService', function () {
                         }
                     },
                     symbolSize: function (val) {
-                        if(max == 0){
+                        if (max == 0) {
                             return 0;
                         }
                         return val[2] * 10 / max;
@@ -134,10 +135,10 @@ cBoard.service('chartMarkLineMapService', function () {
         var mapOption;
 
         $.ajax({
-            type : "get",
-            url : url,
-            async : false,
-            success : function(cityJson){
+            type: "get",
+            url: url,
+            async: false,
+            success: function (cityJson) {
                 echarts.registerMap(code, cityJson);
                 mapOption = {
                     legend: {

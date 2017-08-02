@@ -179,7 +179,8 @@
       "AREA_MAP": "区域地图",
       "HEAT_MAP_CALENDER": "热点图（日历）",
       "DATE_FORMAT": "日期格式",
-      "HEAT_MAP_TABLE": "热点图（表格）"
+      "HEAT_MAP_TABLE": "热点图（表格）",
+      "MARK_LINE_MAP":"地图标线(静态)"
     },
     "DASHBOARD": {
       "DASHBOARD": "看板",

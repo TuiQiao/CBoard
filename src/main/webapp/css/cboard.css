@@ -149,6 +149,8 @@
 .cHeatMapCalendar.disabled{ background-image: url(../imgs/heatMapCalendar.png); }
 .cHeatMapTable{ background-image: url(../imgs/heatMapTable-active.png); }
 .cHeatMapTable.disabled{ background-image: url(../imgs/heatMapTable.png); }
+.cMarkLineMap{ background-image: url(../imgs/area-active.png);}
+.cMarkLineMap.disabled{ background-image: url(../imgs/area.png);}
 
 .chart-type a.active{
     background-color: #FFF;

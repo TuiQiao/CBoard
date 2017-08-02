@@ -97,6 +97,11 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
                 row: translate('CONFIG.WIDGET.TIPS_DIM_NUM_1_MORE'),
                 column: translate('CONFIG.WIDGET.TIPS_DIM_NUM_1_MORE'),
                 measure: translate('CONFIG.WIDGET.TIPS_DIM_NUM_1')
+            },{
+                name: translate('CONFIG.WIDGET.MARK_LINE_MAP'), value: 'markLineMap', class: 'cMarkLineMap',
+                row: translate('CONFIG.WIDGET.TIPS_DIM_NUM_1_MORE'),
+                column: translate('CONFIG.WIDGET.TIPS_DIM_NUM_0_MORE'),
+                measure: translate('CONFIG.WIDGET.TIPS_DIM_NUM_1')
             }
         ];
 
@@ -104,7 +109,7 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
             "line": true, "pie": true, "kpi": true, "table": true,
             "funnel": true, "sankey": true, "radar": true, "map": true,
             "scatter": true, "gauge": true, "wordCloud": true, "treeMap": true,
-            "areaMap": true, "heatMapCalendar": true, "heatMapTable": true
+            "areaMap": true, "heatMapCalendar": true, "heatMapTable": true,"markLineMap":true
         };
 
         $scope.value_series_types = [
@@ -178,7 +183,8 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
             treeMap: {keys: 0, groups: -1, filters: 0, values: 1},
             areaMap: {keys: 0, groups: 0, filters: 0, values: 0},
             heatMapCalendar: {keys: 1, groups: -1, filters: 0, values: 1},
-            heatMapTable: {keys: 0, groups: 0, filters: 0, values: 1}
+            heatMapTable: {keys: 0, groups: 0, filters: 0, values: 1},
+            markLineMap: {keys: 0, groups: 0, filters: 0, values: 0}
         };
 
         //界面控制
@@ -615,6 +621,18 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
                         v.style = 'Blue';
                     });
                     break;
+                case 'markLineMap':
+                    $scope.curWidget.config.values.push({name: '', cols: []});
+                    _.each(oldConfig.values, function (v) {
+                        _.each(v.cols, function (c) {
+                            $scope.curWidget.config.values[0].cols.push(c);
+                        });
+                    });
+                    $scope.curWidget.config.selects = angular.copy($scope.columns);
+                    _.each($scope.curWidget.config.values, function (v) {
+                        v.style = 'bg-aqua';
+                    });
+                    break;
                 default:
                     $scope.curWidget.config.values.push({name: '', cols: []});
                     _.each(oldConfig.values, function (v) {
@@ -755,6 +773,16 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
                     }];
                     $scope.curWidget.config.filters = new Array();
                     break;
+                case 'markLineMap':
+                    $scope.curWidget.config.selects = angular.copy($scope.columns);
+                    $scope.curWidget.config.keys = new Array();
+                    $scope.curWidget.config.groups = new Array();
+                    $scope.curWidget.config.values = [{
+                        name: '',
+                        cols: []
+                    }];
+                    $scope.curWidget.config.filters = new Array();
+                    break;
             }
             addWatch();
         };
@@ -851,6 +879,9 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
                         $scope.previewDivWidth = 12;
                         break;
                     case 'areaMap':
+                        $scope.previewDivWidth = 12;
+                        break;
+                    case 'markLineMap':
                         $scope.previewDivWidth = 12;
                         break;
                 }

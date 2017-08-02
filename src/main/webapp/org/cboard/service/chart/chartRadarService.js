@@ -80,6 +80,16 @@ cBoard.service('chartRadarService', function () {
                 data: data
             }]
         };
+
+        var tunningOpt = chartConfig.option;
+        if (tunningOpt) {
+            if (tunningOpt.legendShow == false) {
+                echartOption.grid = echartsBasicOption.grid;
+                echartOption.grid.top = '5%';
+                echartOption.legend.show =false;
+            }
+        }
+
         return echartOption;
     };
 });

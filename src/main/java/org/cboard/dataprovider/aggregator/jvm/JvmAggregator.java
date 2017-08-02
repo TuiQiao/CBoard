@@ -6,7 +6,6 @@ import com.google.common.hash.Hashing;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.cboard.cache.CacheManager;
-import org.cboard.dataprovider.DataProvider;
 import org.cboard.dataprovider.aggregator.InnerAggregator;
 import org.cboard.dataprovider.config.AggConfig;
 import org.cboard.dataprovider.config.CompositeConfig;

@@ -61,12 +61,38 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
                 row: translate('CONFIG.WIDGET.TIPS_DIM_NUM_1_MORE'),
                 column: translate('CONFIG.WIDGET.TIPS_DIM_NUM_0_MORE'),
                 measure: translate('CONFIG.WIDGET.TIPS_DIM_NUM_1_MORE')
+            },
+            {
+                name: translate('CONFIG.WIDGET.GAUGE'), value: 'gauge', class: 'cGauge',
+                row: translate('CONFIG.WIDGET.TIPS_DIM_NUM_0'),
+                column: translate('CONFIG.WIDGET.TIPS_DIM_NUM_0'),
+                measure: translate('CONFIG.WIDGET.TIPS_DIM_NUM_1')
+            },
+            {
+                name: translate('CONFIG.WIDGET.WORD_CLOUD'), value: 'wordCloud', class: 'cWordCloud',
+                row: translate('CONFIG.WIDGET.TIPS_DIM_NUM_1_MORE'),
+                column: translate('CONFIG.WIDGET.TIPS_DIM_NUM_0'),
+                measure: translate('CONFIG.WIDGET.TIPS_DIM_NUM_1')
+            },
+            {
+                name: translate('CONFIG.WIDGET.TREE_MAP'), value: 'treeMap', class: 'cTreeMap',
+                row: translate('CONFIG.WIDGET.TIPS_DIM_NUM_1_MORE'),
+                column: translate('CONFIG.WIDGET.TIPS_DIM_NUM_0'),
+                measure: translate('CONFIG.WIDGET.TIPS_DIM_NUM_1')
+            },
+            {
+                name: translate('CONFIG.WIDGET.AREA_MAP'), value: 'areaMap', class: 'cAreaMap',
+                row: translate('CONFIG.WIDGET.TIPS_DIM_NUM_1'),
+                column: translate('CONFIG.WIDGET.TIPS_DIM_NUM_0_MORE'),
+                measure: translate('CONFIG.WIDGET.TIPS_DIM_NUM_1')
             }
         ];
 
         $scope.chart_types_status = {
             "line": true, "pie": true, "kpi": true, "table": true,
-            "funnel": true, "sankey": true, "radar": true, "map": true, "scatter": true
+            "funnel": true, "sankey": true, "radar": true, "map": true,
+            "scatter": true, "gauge": true, "wordCloud": true, "treeMap": true,
+            "areaMap": true
         };
 
         $scope.value_series_types = [
@@ -92,6 +118,25 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
             {name: translate('CONFIG.WIDGET.YELLOW'), value: 'bg-yellow'}
         ];
 
+        $.get('plugins/FineMap/mapdata/citycode.json', function (data) {
+            $scope.provinces = data.provinces;
+        });
+
+        $scope.treemap_styles = [
+            {name: translate('CONFIG.WIDGET.RANDOM'), value: 'random'},
+            {name: translate('CONFIG.WIDGET.MULTI'), value: 'multi'},
+            {name: translate('CONFIG.WIDGET.BLUE'), value: 'blue'},
+            {name: translate('CONFIG.WIDGET.RED'), value: 'red'},
+            {name: translate('CONFIG.WIDGET.GREEN'), value: 'green'},
+            {name: translate('CONFIG.WIDGET.YELLOW'), value: 'yellow'},
+            {name: translate('CONFIG.WIDGET.PURPLE'), value: 'purple'}
+        ];
+
+        /***************************************
+         *  0:  1 or more items
+         *  1:  only 1 item
+         * -1:  none item
+         ***************************************/
         $scope.configRule = {
             line: {keys: 0, groups: 0, filters: 0, values: 0},
             pie: {keys: 0, groups: 0, filters: 0, values: 0},
@@ -102,6 +147,10 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
             radar: {keys: 0, groups: 0, filters: 0, values: 0},
             map: {keys: 0, groups: 0, filters: 0, values: 0},
             scatter: {keys: 0, groups: 0, filters: 0, values: 0},
+            gauge: {keys: -1, groups: -1, filters: 0, values: 1},
+            wordCloud: {keys: 0, groups: -1, filters: 0, values: 1},
+            treeMap: {keys: 0, groups: -1, filters: 0, values: 1},
+            areaMap: {keys: 1, groups: 0, filters: 0, values: 1}
         };
 
         //界面控制
@@ -487,6 +536,32 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
                         }
                     }
                     break;
+                case 'gauge':
+                    $scope.curWidget.config.values.push({name: '', cols: []});
+                    _.each(oldConfig.values, function (v) {
+                        _.each(v.cols, function (c) {
+                            $scope.curWidget.config.values[0].cols.push(c);
+                        });
+                    });
+                    $scope.curWidget.config.selects = angular.copy($scope.columns);
+                    $scope.curWidget.config.styles = [
+                        {proportion: '0.2', color: '#228b22'},
+                        {proportion: '0.8', color: '#48b'},
+                        {proportion: '1', color: '#ff4500'}
+                    ];
+                    break;
+                case 'areaMap':
+                    $scope.curWidget.config.values.push({name: '', cols: []});
+                    _.each(oldConfig.values, function (v) {
+                        _.each(v.cols, function (c) {
+                            $scope.curWidget.config.values[0].cols.push(c);
+                        });
+                    });
+                    $scope.curWidget.config.selects = angular.copy($scope.columns);
+                    _.each($scope.curWidget.config.values, function (v) {
+                        v.style = 'bg-aqua';
+                    });
+                    break;
                 default:
                     $scope.curWidget.config.values.push({name: '', cols: []});
                     _.each(oldConfig.values, function (v) {
@@ -586,6 +661,29 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
                     }];
                     $scope.curWidget.config.filters = new Array();
                     break;
+                case 'gauge':
+                    $scope.curWidget.config.selects = angular.copy($scope.columns);
+                    $scope.curWidget.config.values = [{
+                        name: '',
+                        cols: []
+                    }];
+                    $scope.curWidget.config.filters = new Array();
+                    $scope.curWidget.config.styles = [
+                        {proportion: '0.2', color: '#228b22'},
+                        {proportion: '0.8', color: '#48b'},
+                        {proportion: '1', color: '#ff4500'}
+                    ];
+                    break;
+                case 'areaMap':
+                    $scope.curWidget.config.selects = angular.copy($scope.columns);
+                    $scope.curWidget.config.keys = new Array();
+                    $scope.curWidget.config.groups = new Array();
+                    $scope.curWidget.config.values = [{
+                        name: '',
+                        cols: []
+                    }];
+                    $scope.curWidget.config.filters = new Array();
+                    break;
             }
             addWatch();
         };
@@ -675,6 +773,9 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
                     case 'map':
                         $scope.previewDivWidth = 12;
                         break;
+                    case 'areaMap':
+                        $scope.previewDivWidth = 12;
+                        break;
                 }
                 $scope.loadingPre = false;
             }, null, !$scope.loadFromCache);
@@ -690,6 +791,13 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
                 series_type: 'line',
                 type: 'value',
                 cols: []
+            });
+        };
+
+        $scope.add_style = function () {
+            $scope.curWidget.config.styles.push({
+                proportion: '',
+                color: ''
             });
         };
 
@@ -775,7 +883,7 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
             $http.post("dashboard/checkWidget.do", {id: widget.id}).success(function (response) {
                 if (response.status == '1') {
                     doEditWgt(widget);
-                    if($scope.customDs = true) $scope.doConfigParams();
+                    if($scope.customDs == true) $scope.doConfigParams();
                 } else {
                     var d = widget.data.datasetId ? 'CONFIG.WIDGET.DATASET' : 'CONFIG.WIDGET.DATA_SOURCE';
                     ModalUtils.alert(translate("ADMIN.CONTACT_ADMIN") + "：" + translate(d) + '/' + response.msg, "modal-danger", "lg");
@@ -1318,6 +1426,16 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
             });
         };
 
+        $scope.setCities = function () {
+            var province = _.find($scope.provinces, function (e) {
+                return e.code == $scope.curWidget.config.province.code;
+            });
+            if(province && province.cities){
+                $scope.cities = province.cities
+            }else if($scope.curWidget.config.city && $scope.curWidget.config.city.code){
+                $scope.curWidget.config.city.code="";
+            }
+        }
         /** js tree related End... **/
 
 

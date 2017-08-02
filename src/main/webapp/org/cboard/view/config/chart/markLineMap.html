@@ -1,11 +1,6 @@
 <div class="form-group">
     <label class="col-sm-2 control-label"></label>
     <div class="col-sm-10 row">
-        <!--<div class="col-md-3">-->
-        <!--<select class="form-control" ng-model="vm.country" ng-options="country.label for country in vm.countries">-->
-        <!--<option value="">&#45;&#45; 请选择国家 &#45;&#45;</option>-->
-        <!--</select>-->
-        <!--</div>-->
         <div class="col-md-3" >
             <select class="form-control" ng-model="curWidget.config.province.code" ng-change="setCities()"
                     ng-options="province.code as province.name for province in provinces">

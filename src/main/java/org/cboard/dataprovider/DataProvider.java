@@ -29,7 +29,8 @@ public abstract class DataProvider {
     protected Map<String, String> dataSource;
     protected Map<String, String> query;
     private int resultLimit;
-    private long interval = 12 * 60 * 60; // second
+    private String userID;
+    private long interval = 12 * 60 * 60; //second
 
     public static final String NULL_STRING = "#NULL";
     private static final Logger logger = LoggerFactory.getLogger(DataProvider.class);
@@ -169,7 +170,7 @@ public abstract class DataProvider {
     }
 
     public void setQuery(Map<String, String> query) {
-        this.query = query;
+        this.query =  query;
     }
 
     public void setResultLimit(int resultLimit) {

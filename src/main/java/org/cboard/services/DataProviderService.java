@@ -22,6 +22,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
@@ -73,8 +74,6 @@ public class DataProviderService {
     }
 
     public AggregateResult filterData(AggregateResult d) {
-        String userId = authenticationService.getCurrentUser().getUserId();
-        List<String> cityList = userDao.getUserCityListByUserId(userId);
 
         List<ColumnIndex> columnIndexList = d.getColumnList();
         String[][] data = d.getData();
@@ -83,29 +82,54 @@ public class DataProviderService {
         for (ColumnIndex list : columnIndexList) {
             if (list.getName().equals("城市")) {
                 k = list.getIndex();
+                break;
             }
         }
 
         if (k >= 0) {
+            String[] dim = new String[data.length];
             for (int i = 0; i < data.length; i++) {
-                if (cityList.indexOf(data[i][k]) < 0) {
-                    data = deleterow(data, i);
-                    i--;
+                dim[i] = data[i][k];
+            }
+
+            Map<Integer, String> map = filterDim(dim, "城市");
+            int j = 0;
+            String[][] fd = new String[map.values().size()][];
+            for (int i = 0; i < data.length; i++) {
+                if (map.containsKey(i)) {
+                    fd[j] = data[i];
+                    j++;
                 }
             }
-            d.setData(data);
+            d.setData(fd);
         }
         return d;
     }
 
-    private String[][] deleterow(String[][] d, int i) {
+//    private String[][] deleterow(String[][] d, int i) {
+//
+//        List<String[]> ld = new ArrayList<>();
+//        for (int j = 0; j < d.length; j++) {
+//            ld.add(d[j]);
+//        }
+//        ld.remove(i);
+//        return ld.toArray(new String[ld.size()][]);
+//    }
 
-        List<String[]> ld = new ArrayList<>();
-        for (int j = 0; j < d.length; j++) {
-            ld.add(d[j]);
+
+    private Map<Integer, String> filterDim(String[] d, String columnName) {
+        Map<Integer, String> map = new HashMap<>();
+        String userId = authenticationService.getCurrentUser().getUserId();
+        List<String> cityList = userDao.getUserCityListByUserId(userId);
+        for (int i = 0; i < d.length; i++) {
+            map.put(i, d[i]);
+            if (columnName.equals("城市")) {
+                if (cityList.indexOf(d[i]) < 0) {
+                    map.remove(i);
+                }
+            }
         }
-        ld.remove(i);
-        return ld.toArray(new String[ld.size()][]);
+        return map;
     }
 
     public DataProviderResult getColumns(Long datasourceId, Map<String, String> query, Long datasetId, boolean reload) {
@@ -128,7 +152,9 @@ public class DataProviderService {
             Dataset dataset = getDataset(datasetId);
             attachCustom(dataset, config);
             DataProvider dataProvider = getDataProvider(datasourceId, query, dataset);
-            String[] result = dataProvider.getDimVals(columnName, config, reload);
+            Map<Integer, String> map = filterDim(dataProvider.getDimVals(columnName, config, reload), columnName);
+            String[] result = new String[map.values().size()];
+            map.values().toArray(result);
             return result;
         } catch (Exception e) {
             e.printStackTrace();

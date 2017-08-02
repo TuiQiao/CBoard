@@ -116,8 +116,8 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
             "line": true, "pie": true, "kpi": true, "table": true,
             "funnel": true, "sankey": true, "radar": true, "map": true,
             "scatter": true, "gauge": true, "wordCloud": true, "treeMap": true,
-            "areaMap": true, "heatMapCalendar": true, "heatMapTable": true,"markLineMap":true,
-            "liquidFill": true
+            "areaMap": true, "heatMapCalendar": true, "heatMapTable": true,
+            "markLineMap":true, "liquidFill": true
         };
 
         $scope.value_series_types = [

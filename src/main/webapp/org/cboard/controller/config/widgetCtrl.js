@@ -97,6 +97,12 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
                 row: translate('CONFIG.WIDGET.TIPS_DIM_NUM_1_MORE'),
                 column: translate('CONFIG.WIDGET.TIPS_DIM_NUM_1_MORE'),
                 measure: translate('CONFIG.WIDGET.TIPS_DIM_NUM_1')
+            },
+            {
+                name: translate('CONFIG.WIDGET.LIQUID_FILL'), value: 'liquidFill', class: 'cLiquidFill',
+                row: translate('CONFIG.WIDGET.TIPS_DIM_NUM_0'),
+                column: translate('CONFIG.WIDGET.TIPS_DIM_NUM_0'),
+                measure: translate('CONFIG.WIDGET.TIPS_DIM_NUM_1')
             }
         ];
 
@@ -104,7 +110,8 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
             "line": true, "pie": true, "kpi": true, "table": true,
             "funnel": true, "sankey": true, "radar": true, "map": true,
             "scatter": true, "gauge": true, "wordCloud": true, "treeMap": true,
-            "areaMap": true, "heatMapCalendar": true, "heatMapTable": true
+            "areaMap": true, "heatMapCalendar": true, "heatMapTable": true,
+            "liquidFill": true
         };
 
         $scope.value_series_types = [
@@ -158,6 +165,17 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
             {name: 'yyyyMMdd', value: 'yyyyMMdd'}
         ];
 
+        $scope.liquid_fill_style = [
+            {name: translate('CONFIG.WIDGET.CIRCLE'), value: 'circle'},
+            {name: translate('CONFIG.WIDGET.PIN'), value: 'pin'},
+            {name: translate('CONFIG.WIDGET.RECT'), value: 'rect'},
+            {name: translate('CONFIG.WIDGET.ARROW'), value: 'arrow'},
+            {name: translate('CONFIG.WIDGET.TRIANGLE'), value: 'triangle'},
+            {name: translate('CONFIG.WIDGET.ROUND_RECT'), value: 'roundRect'},
+            {name: translate('CONFIG.WIDGET.SQUARE'), value: 'square'},
+            {name: translate('CONFIG.WIDGET.DIAMOND'), value: 'diamond'}
+        ];
+
         /***************************************
          *  0:  1 or more items
          *  1:  only 1 item
@@ -178,7 +196,8 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
             treeMap: {keys: 0, groups: -1, filters: 0, values: 1},
             areaMap: {keys: 0, groups: 0, filters: 0, values: 0},
             heatMapCalendar: {keys: 1, groups: -1, filters: 0, values: 1},
-            heatMapTable: {keys: 0, groups: 0, filters: 0, values: 1}
+            heatMapTable: {keys: 0, groups: 0, filters: 0, values: 1},
+            liquidFill: {keys: -1, groups: -1, filters: 0, values: 1}
         };
 
         //界面控制
@@ -602,8 +621,8 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
                     });
                     $scope.curWidget.config.selects = angular.copy($scope.columns);
                     _.each($scope.curWidget.config.values, function (v) {
-                        v.dataFormat = 'yyyy-MM-dd';
-                        v.style = 'Blue';
+                        v.dateFormat = 'yyyy-MM-dd';
+                        v.style = 'blue';
                     });
                     break;
                 case 'heatMapTable':
@@ -615,7 +634,20 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
                     });
                     $scope.curWidget.config.selects = angular.copy($scope.columns);
                     _.each($scope.curWidget.config.values, function (v) {
-                        v.style = 'Blue';
+                        v.style = 'blue';
+                    });
+                    break;
+                case 'liquidFill':
+                    $scope.curWidget.config.values.push({name: '', cols: []});
+                    _.each(oldConfig.values, function (v) {
+                        _.each(v.cols, function (c) {
+                            $scope.curWidget.config.values[0].cols.push(c);
+                        });
+                    });
+                    $scope.curWidget.config.selects = angular.copy($scope.columns);
+                    $scope.curWidget.config.animation = 'static';
+                    _.each($scope.curWidget.config.values, function (v) {
+                        v.style = 'circle';
                     });
                     break;
                 default:
@@ -746,8 +778,8 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
                     $scope.curWidget.config.values = [{
                         name: '',
                         cols: [],
-                        dataFormat: 'yyyy-MM-dd',
-                        style: 'Blue'
+                        dateFormat: 'yyyy-MM-dd',
+                        style: 'blue'
                     }];
                     break;
                 case 'heatMapTable':
@@ -755,9 +787,19 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
                     $scope.curWidget.config.values = [{
                         name: '',
                         cols: [],
-                        style: 'Blue'
+                        style: 'blue'
                     }];
                     $scope.curWidget.config.filters = new Array();
+                    break;
+                case 'liquidFill':
+                    $scope.curWidget.config.selects = angular.copy($scope.columns);
+                    $scope.curWidget.config.values = [{
+                        name: '',
+                        cols: [],
+                        style: 'circle'
+                    }];
+                    $scope.curWidget.config.filters = new Array();
+                    $scope.curWidget.config.animation = 'static';
                     break;
             }
             addWatch();

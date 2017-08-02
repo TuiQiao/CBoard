@@ -350,6 +350,7 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
         $scope.newWgt = function () {
             $scope.curWidget = {};
             $scope.curWidget.config = {};
+            $scope.curWidget.config.option = {};
             $scope.curWidget.expressions = [];
             $scope.curWidget.filterGroups = [];
             $scope.curWidget.query = {};
@@ -511,6 +512,7 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
             }
             var oldConfig = angular.copy($scope.curWidget.config);
             $scope.curWidget.config = {};
+            $scope.curWidget.config.option = {};
             $scope.curWidget.config.chart_type = chart_type;
             //loadDsExpressions();
             cleanPreview();
@@ -635,6 +637,7 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
 
         $scope.newConfig = function () {
             $scope.curWidget.config = {};
+            $scope.curWidget.config.option = {};
             $scope.curWidget.config.chart_type = 'table';
             cleanPreview();
             switch ($scope.curWidget.config.chart_type) {
@@ -1121,6 +1124,13 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
                 return 'org/cboard/view/config/chart/' + $scope.curWidget.config.chart_type + '.html';
             }
         };
+
+        $scope.getOptionsView = function() {
+            var basePath = 'org/cboard/view/config/chart/options/';
+            if ($scope.curWidget.config && $scope.curWidget.config.chart_type) {
+                return basePath + $scope.curWidget.config.chart_type + '.html';
+            }
+        }
 
         $scope.deleteValue = function (cols) {
             _.each(cols, function (e) {

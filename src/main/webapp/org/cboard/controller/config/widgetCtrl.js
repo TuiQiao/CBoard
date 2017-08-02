@@ -344,6 +344,7 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
                 loadDsFilterGroups();
                 buildSchema();
             });
+            cleanPreview();
         };
 
         $scope.newWgt = function () {
@@ -766,7 +767,10 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
         };
 
         $scope.previewQuery = function () {
-            cleanPreview();
+            $('#viewQuery_widget').html("");
+            $timeout(function(){
+                angular.element('#viewQuery_widget_tab').trigger('click');
+            });
             $scope.loadingPre = true;
             dataService.viewQuery({
                 config: $scope.curWidget.config,
@@ -782,7 +786,10 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
         };
 
         $scope.preview = function () {
-            cleanPreview();
+            $('#preview_widget').html("");
+            $timeout(function(){
+                angular.element('#preview_widget_tab').trigger('click');
+            });
             $scope.loadingPre = true;
             // --- start ---
             // 添加echarts3.6.2后这里除了第一次可以加载echarts图表，再次加载无法显示图表。

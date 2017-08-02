@@ -179,7 +179,18 @@
       "AREA_MAP": "区域地图",
       "HEAT_MAP_CALENDER": "热点图（日历）",
       "DATE_FORMAT": "日期格式",
-      "HEAT_MAP_TABLE": "热点图（表格）"
+      "HEAT_MAP_TABLE": "热点图（表格）",
+      "LIQUID_FILL": "水球图",
+      "STATIC": "静态",
+      "DYNAMIC": "动态",
+      "CIRCLE": "圆形",
+      "PIN": "针形",
+      "RECT": "矩形",
+      "ARROW": "箭头形",
+      "TRIANGLE": "三角形",
+      "ROUND_RECT": "圆角矩形",
+      "SQUARE": "正方形",
+      "DIAMOND": "菱形"
     },
     "DASHBOARD": {
       "DASHBOARD": "看板",

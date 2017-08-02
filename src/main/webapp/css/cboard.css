@@ -151,6 +151,9 @@
 .cHeatMapTable.disabled{ background-image: url(../imgs/heatMapTable.png); }
 .cMarkLineMap{ background-image: url(../imgs/area-active.png);}
 .cMarkLineMap.disabled{ background-image: url(../imgs/area.png);}
+.cLiquidFill{ background-image: url(../imgs/liquidFill-active.png); }
+.cLiquidFill.disabled{ background-image: url(../imgs/liquidFill.png); }
+
 
 .chart-type a.active{
     background-color: #FFF;

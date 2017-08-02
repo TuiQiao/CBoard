@@ -1,29 +1,32 @@
 /**
  * Created by zyong on 2016/7/25.
  */
+
+var echartsBasicOption = {
+    title: {},
+    grid: {
+        left: '50',
+        right: '20',
+        bottom: '15%',
+        top: '20%',
+        containLabel: false
+    },
+    tooltip: {
+        trigger: 'axis'
+    },
+    legend: {
+        x: 'left',
+        itemWidth: 15,
+        itemHeight: 10
+    }
+};
+
 var CBoardEChartRender = function (jqContainer, options, isDeepSpec) {
     this.container = jqContainer; // jquery object
     this.ecc = echarts.init(jqContainer.get(0), this.theme);
     this.isDeppSpec = isDeepSpec;
 
-    this.basicOption = {
-        title: {},
-        grid: {
-            left: '50',
-            right: '20',
-            bottom: '15%',
-            top: '20%',
-            containLabel: false
-        },
-        tooltip: {
-            trigger: 'axis'
-        },
-        legend: {
-            x: 'left',
-            itemWidth: 15,
-            itemHeight: 10
-        }
-    };
+    this.basicOption = echartsBasicOption;
     this.options = options;
 };
 

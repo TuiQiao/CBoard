@@ -96,6 +96,9 @@ cBoard.directive('dashboardWidget', function ($compile, $templateCache, dataServ
                         case 'markLineMap':
                             renderEchart(scope, element, attrs);
                             break;
+                        case 'liquidFill':
+                            renderEchart(scope, element, attrs);
+                            break;
                     }
                 }
             }

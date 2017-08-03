@@ -73,12 +73,18 @@ cBoard.service('chartLineService', function () {
             axis.scale = true;
         });
 
+        if (tunningOpt) {
+            var labelInterval, labelRotate;
+            tunningOpt.ctgLabelInterval ? labelInterval = tunningOpt.ctgLabelInterval : 'auto';
+            tunningOpt.ctgLabelRotate ? labelRotate = tunningOpt.ctgLabelRotate : 0;
+        }
+
         var categoryAxis = {
             type: 'category',
             data: string_keys,
             axisLabel: {
-                interval: tunningOpt.ctgLabelInterval ? tunningOpt.ctgLabelInterval : 'auto',
-                rotate: tunningOpt.ctgLabelRotate ? tunningOpt.ctgLabelRotate : 0
+                interval: labelInterval,
+                rotate: labelRotate
             }
         };
 

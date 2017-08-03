@@ -3,7 +3,8 @@
         <div class="form-group col-md-6">
             <div class="checkbox">
                 <label>
-                    <input type="checkbox" ng-model="curWidget.config.option.gridCustom" ng-init="curWidget.config.option.gridCustom=false"> Customize
+                    <input type="checkbox" ng-model="curWidget.config.option.gridCustom"
+                           ng-init="curWidget.config.option.gridCustom ? null : curWidget.config.option.gridCustom=false"> Customize
                 </label>
             </div>
         </div>

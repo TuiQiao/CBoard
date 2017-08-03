@@ -76,6 +76,13 @@ cBoard.service('chartScatterService', function (dataService) {
         var colorMin = _.max(series, function (s) {
             return Number(s.colorMin);
         }).colorMin;
+
+        if (tunningOpt) {
+            var labelInterval, labelRotate;
+            tunningOpt.ctgLabelInterval ? labelInterval = tunningOpt.ctgLabelInterval : 'auto';
+            tunningOpt.ctgLabelRotate ? labelRotate = tunningOpt.ctgLabelRotate : 0;
+        }
+
         var echartOption = {
             legend: {
                 data: _.map(series, function (v) {
@@ -101,8 +108,8 @@ cBoard.service('chartScatterService', function (dataService) {
                     }
                 },
                 axisLabel: {
-                    interval: tunningOpt.ctgLabelInterval ? tunningOpt.ctgLabelInterval : 'auto',
-                    rotate: tunningOpt.ctgLabelRotate ? tunningOpt.ctgLabelRotate : 0
+                    interval: labelInterval,
+                    rotate: labelRotate
                 }
             },
             yAxis: {

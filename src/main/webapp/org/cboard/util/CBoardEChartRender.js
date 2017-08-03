@@ -8,7 +8,7 @@ var echartsBasicOption = {
         left: '50',
         right: '20',
         bottom: '15%',
-        top: '20%',
+        top: '15%',
         containLabel: false
     },
     tooltip: {

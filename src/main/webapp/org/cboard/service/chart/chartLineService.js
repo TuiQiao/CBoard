@@ -77,6 +77,7 @@ cBoard.service('chartLineService', function () {
         };
 
         var echartOption = {
+            grid: angular.copy(echartsBasicOption.grid),
             legend: {
                 data: _.map(casted_values, function (v) {
                     return v.join('-');
@@ -121,31 +122,18 @@ cBoard.service('chartLineService', function () {
             }
         };
 
-        var tunningOpt = chartConfig.option;
-        if (tunningOpt) {
-            if (tunningOpt.dataZoom == true) {
-                basicOption.dataZoom = {
-                    show: true,
-                    start : 0,
-                    end: 100
-                };
-            }
-            if (tunningOpt.legendShow == false) {
-                echartOption.grid = echartsBasicOption.grid;
-                echartOption.grid.top = '5%';
-                echartOption.legend.show =false;
-            }
-        }
-
         if (chartConfig.valueAxis === 'horizontal') {
-            basicOption.grid.left = 'left';
-            basicOption.grid.containLabel = true;
-            basicOption.grid.bottom = '5%';
+            echartOption.grid.left = 'left';
+            echartOption.grid.containLabel = true;
+            echartOption.grid.bottom = '5%';
         }
         if (chartConfig.valueAxis === 'vertical' && chartConfig.values.length > 1) {
-            basicOption.grid.right = 40;
+            echartOption.grid.right = 40;
         }
 
-        return $.extend(true, {}, echartOption, basicOption);
+        // Apply tunning options
+        updateEchartOptions(chartConfig.option, echartOption);
+
+        return $.extend(true, {}, basicOption, echartOption);
     };
 });

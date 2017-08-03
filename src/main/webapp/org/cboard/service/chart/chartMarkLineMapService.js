@@ -32,21 +32,36 @@ cBoard.service('chartMarkLineMapService', function () {
         } else {
             url = 'plugins/FineMap/mapdata/geometryProvince/' + code + '.json';
         }
-        //var groups = _.map(data_series, function(val){return val.join("-")});
 
         var max = 0;
         for (var j = 0; data_keys[0] && j < data_keys.length; j++) {
-            geoKey = data_keys[j][2];
-            geoCoordMap[geoKey] = [data_keys[j][0], data_keys[j][1]];
+            if(data_keys[j].length > 2){
+                geoKey = data_keys[j][2];
+                geoCoordMap[geoKey] = [data_keys[j][0], data_keys[j][1]];
+            }else if(data_keys[j].length = 2){
+                geoKey = data_keys[j][1];
+                geoCoordMap[geoKey] = [data_keys[j][0].split(",")[0],data_keys[j][0].split(",")[1]];
+            }
         }
         for (var j = 0; data_series[0] && j < data_series.length; j++) {
-            geoKey = data_series[j][2];
-            geoCoordMap[geoKey] = [data_series[j][0], data_series[j][1]];
-            optionData[j] = data_series[j][2];
+            if(data_series[j].length > 3){
+                geoKey = data_series[j][2];
+                geoCoordMap[geoKey] = [data_series[j][0], data_series[j][1]];
+                optionData[j] = data_series[j][2];
+            }else if(data_series[j].length = 3){
+                geoKey = data_series[j][1];
+                geoCoordMap[geoKey] = [data_series[j][0].split(",")[0],data_series[j][0].split(",")[1]];
+                optionData[j] = data_series[j][1];
+            }
+
             var serieData = [];
             for (var i = 0, n = 0; data_keys[0] && i < data_keys.length; i++) {
                 if (data.data[j][i] && data.data[j][i] != 0) {
-                    serieData[n] = [{name: geoKey}, {name: data_keys[i][2], value: data.data[j][i]}];
+                    if(data_keys[i].length > 2){
+                        serieData[n] = [{name: geoKey}, {name: data_keys[i][2], value: data.data[j][i]}];
+                    }else if(data_keys[i].length = 2){
+                        serieData[n] = [{name: geoKey}, {name: data_keys[i][1], value: data.data[j][i]}];
+                    }
                     n++;
                     if (max < data.data[j][i]) {
                         max = data.data[j][i];
@@ -72,7 +87,6 @@ cBoard.service('chartMarkLineMapService', function () {
             return res;
         };
 
-        var color = ['#a6c84c', '#ffa022', '#46bee9'];
         var series = [];
         seriesData.forEach(function (item, i) {
             series.push({
@@ -83,9 +97,8 @@ cBoard.service('chartMarkLineMapService', function () {
                     symbolSize: 10,
                     effect: {
                         show: true,
-                        constantSpeed: 30,
                         period: 6,
-                        trailLength: 0.1,
+                        trailLength: 0,
                         symbol: 'arrow',
                         symbolSize: 4
                     },
@@ -117,11 +130,13 @@ cBoard.service('chartMarkLineMapService', function () {
                         if (max == 0) {
                             return 0;
                         }
-                        return val[2] * 10 / max;
+                        return val[2] * 20 / max;
                     },
                     itemStyle: {
                         normal: {
-                            color: color[i]
+                            color: function(val){
+                                return ['#d94e5d','#eac736','#50a3ba'].reverse();
+                            }
                         }
                     },
                     data: item[1].map(function (dataItem) {
@@ -162,17 +177,6 @@ cBoard.service('chartMarkLineMapService', function () {
                     tooltip: {
                         trigger: 'item'
                     },
-                    /*visualMap: {
-                     min: 0,
-                     max: max,
-                     left: 'right',
-                     top: 'bottom',
-                     text: ['High','Low'],
-                     inRange: {
-                     color: ['#e0ffff', '#006edd']
-                     },
-                     calculable : true
-                     },*/
                     series: series
                 };
             }

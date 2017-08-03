@@ -33,7 +33,9 @@
     "ROLL_UP": "上卷",
     "WANRING": "警告！",
     "COLLAPSE": "最小化",
-    "REMOVE": "关闭"
+    "REMOVE": "关闭",
+    "DATE": "日期",
+    "VALUE": "值"
   },
   "TIPS": {
     "CAL_EXPR": "用于聚合后再计算. 使用上面的点击辅助输入避免输入错误. 如: Math.log(sum(columnA)/count(columB))"
@@ -174,7 +176,22 @@
       "RANDOM": "随机",
       "BLUE": "蓝色",
       "PURPLE": "紫色",
-      "AREA_MAP": "区域地图"
+      "AREA_MAP": "区域地图",
+      "HEAT_MAP_CALENDER": "热点图（日历）",
+      "DATE_FORMAT": "日期格式",
+      "HEAT_MAP_TABLE": "热点图（表格）",
+      "MARK_LINE_MAP":"标线地图(本地)",
+      "LIQUID_FILL": "水球图",
+      "STATIC": "静态",
+      "DYNAMIC": "动态",
+      "CIRCLE": "圆形",
+      "PIN": "针形",
+      "RECT": "矩形",
+      "ARROW": "箭头形",
+      "TRIANGLE": "三角形",
+      "ROUND_RECT": "圆角矩形",
+      "SQUARE": "正方形",
+      "DIAMOND": "菱形"
     },
     "DASHBOARD": {
       "DASHBOARD": "看板",
@@ -313,7 +330,6 @@
     "BY_ROLE": "按角色",
     "REVOKE": "撤销",
     "GRANT": "授予",
-    "BY_ROLE": "按角色",
     "TOGGLE_UPDATE": "切换UDATE权限",
     "TOGGLE_DELETE": "切换DELETE权限"
   },

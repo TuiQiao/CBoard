@@ -118,13 +118,24 @@ cBoard.service('chartLineService', function () {
                 x: 'left',
                 itemWidth: 15,
                 itemHeight: 10
-            },
-            dataZoom: {
-                show: true,
-                start : 0,
-                end: 100
             }
         };
+
+        var tunningOpt = chartConfig.option;
+        if (tunningOpt) {
+            if (tunningOpt.dataZoom == true) {
+                basicOption.dataZoom = {
+                    show: true,
+                    start : 0,
+                    end: 100
+                };
+            }
+            if (tunningOpt.legendShow == false) {
+                echartOption.grid = echartsBasicOption.grid;
+                echartOption.grid.top = '5%';
+                echartOption.legend.show =false;
+            }
+        }
 
         if (chartConfig.valueAxis === 'horizontal') {
             basicOption.grid.left = 'left';

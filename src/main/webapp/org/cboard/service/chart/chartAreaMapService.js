@@ -31,7 +31,7 @@ cBoard.service('chartAreaMapService', function () {
         for(var i=0;i<groups.length;i++){
             var data = [];
             for(var j=0;j<aggregate_data[i].length;j++){
-                var e = {"name":casted_keys[j][0], "value": aggregate_data[i][j]?aggregate_data[i][j]:0};
+                var e = {"name":casted_keys[j][chartConfig.keys.length-1], "value": aggregate_data[i][j]?aggregate_data[i][j]:0};
                 data.push(e);
             }
             var e = {
@@ -44,7 +44,7 @@ cBoard.service('chartAreaMapService', function () {
                 },
                 label: {
                     normal: {
-                        show: true
+                        show: false
                     },
                     emphasis: {
                         show: true

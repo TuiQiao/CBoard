@@ -93,6 +93,12 @@ cBoard.directive('dashboardWidget', function ($compile, $templateCache, dataServ
                         case 'heatMapTable':
                             renderEchart(scope, element, attrs);
                             break;
+                        case 'markLineMap':
+                            renderEchart(scope, element, attrs);
+                            break;
+                        case 'liquidFill':
+                            renderEchart(scope, element, attrs);
+                            break;
                         case 'relation':
                             renderEchart(scope, element, attrs);
                             break;

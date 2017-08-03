@@ -3,6 +3,7 @@
     <ul class="nav nav-tabs tabs-left"><!-- 'tabs-right' for right tabs -->
         <li class="active"><a href="#grid" data-toggle="tab">Grid</a></li>
         <li><a href="#legend" data-toggle="tab">Legend</a></li>
+        <li><a href="#ctgAxis" data-toggle="tab">Category Axis</a></li>
         <li><a href="#ext" data-toggle="tab">Ext</a></li>
     </ul>
 </div>
@@ -14,6 +15,9 @@
         </div>
         <div class="tab-pane" id="legend">
             <ng-include src="'org/cboard/view/config/chart/options/common/legend.html'"></ng-include>
+        </div>
+        <div class="tab-pane" id="ctgAxis">
+            <ng-include src="'org/cboard/view/config/chart/options/common/categoryAxis.html'"></ng-include>
         </div>
         <div class="tab-pane" id="ext">
             <form class="form-horizontal">

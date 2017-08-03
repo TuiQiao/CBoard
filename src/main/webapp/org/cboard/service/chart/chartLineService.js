@@ -19,6 +19,7 @@ cBoard.service('chartLineService', function () {
         var string_keys = _.map(casted_keys, function (key) {
             return key.join('-');
         });
+        var tunningOpt = chartConfig.option;
 
         var sum_data = [];
         for (var j = 0; aggregate_data[0] && j < aggregate_data[0].length; j++) {
@@ -71,9 +72,14 @@ cBoard.service('chartLineService', function () {
             }
             axis.scale = true;
         });
+
         var categoryAxis = {
             type: 'category',
-            data: string_keys
+            data: string_keys,
+            axisLabel: {
+                interval: tunningOpt.ctgLabelInterval ? tunningOpt.ctgLabelInterval : 'auto',
+                rotate: tunningOpt.ctgLabelRotate ? tunningOpt.ctgLabelRotate : 0
+            }
         };
 
         var echartOption = {
@@ -132,7 +138,7 @@ cBoard.service('chartLineService', function () {
         }
 
         // Apply tunning options
-        updateEchartOptions(chartConfig.option, echartOption);
+        updateEchartOptions(tunningOpt, echartOption);
 
         return $.extend(true, {}, basicOption, echartOption);
     };

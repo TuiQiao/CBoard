@@ -99,10 +99,22 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
                 measure: translate('CONFIG.WIDGET.TIPS_DIM_NUM_1')
             },
             {
+                name: translate('CONFIG.WIDGET.MARK_LINE_MAP'), value: 'markLineMap', class: 'cMarkLineMap',
+                row: translate('CONFIG.WIDGET.TIPS_DIM_NUM_1_MORE'),
+                column: translate('CONFIG.WIDGET.TIPS_DIM_NUM_1_MORE'),
+                measure: translate('CONFIG.WIDGET.TIPS_DIM_NUM_1')
+            },
+            {
                 name: translate('CONFIG.WIDGET.LIQUID_FILL'), value: 'liquidFill', class: 'cLiquidFill',
                 row: translate('CONFIG.WIDGET.TIPS_DIM_NUM_0'),
                 column: translate('CONFIG.WIDGET.TIPS_DIM_NUM_0'),
                 measure: translate('CONFIG.WIDGET.TIPS_DIM_NUM_1')
+            },
+            {
+                name: translate('CONFIG.WIDGET.RELATION'), value: 'relation', class: 'cRelation',
+                row: translate('CONFIG.WIDGET.TIPS_DIM_NUM_0'),
+                column: translate('CONFIG.WIDGET.TIPS_DIM_NUM_0'),
+                measure: translate('CONFIG.WIDGET.TIPS_DIM_NUM_0')
             }
         ];
 
@@ -111,7 +123,7 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
             "funnel": true, "sankey": true, "radar": true, "map": true,
             "scatter": true, "gauge": true, "wordCloud": true, "treeMap": true,
             "areaMap": true, "heatMapCalendar": true, "heatMapTable": true,
-            "liquidFill": true
+            "markLineMap": true, "liquidFill": true, "relation": true
         };
 
         $scope.value_series_types = [
@@ -197,7 +209,9 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
             areaMap: {keys: 0, groups: 0, filters: 0, values: 0},
             heatMapCalendar: {keys: 1, groups: -1, filters: 0, values: 1},
             heatMapTable: {keys: 0, groups: 0, filters: 0, values: 1},
-            liquidFill: {keys: -1, groups: -1, filters: 0, values: 1}
+            markLineMap: {keys: 0, groups: 0, filters: 0, values: 1},
+            liquidFill: {keys: -1, groups: -1, filters: 0, values: 1},
+            relation: {keys: 0, groups: 0, filters: 0, values: 0}
         };
 
         //界面控制
@@ -611,6 +625,11 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
                     _.each($scope.curWidget.config.values, function (v) {
                         v.style = 'bg-aqua';
                     });
+                case 'relation':
+                    $scope.curWidget.config.selects = angular.copy($scope.columns);
+                    $scope.curWidget.config.sources = new Array();
+                    $scope.curWidget.config.targets = new Array();
+                    $scope.curWidget.config.links = new Array();
                     break;
                 case 'heatMapCalendar':
                     $scope.curWidget.config.values.push({name: '', cols: []});
@@ -648,6 +667,18 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
                     $scope.curWidget.config.animation = 'static';
                     _.each($scope.curWidget.config.values, function (v) {
                         v.style = 'circle';
+                    });
+                    break;
+                case 'markLineMap':
+                    $scope.curWidget.config.values.push({name: '', cols: []});
+                    _.each(oldConfig.values, function (v) {
+                        _.each(v.cols, function (c) {
+                            $scope.curWidget.config.values[0].cols.push(c);
+                        });
+                    });
+                    $scope.curWidget.config.selects = angular.copy($scope.columns);
+                    _.each($scope.curWidget.config.values, function (v) {
+                        v.style = 'bg-aqua';
                     });
                     break;
                 default:
@@ -771,6 +802,11 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
                         name: '',
                         cols: []
                     }];
+                case 'relation':
+                    $scope.curWidget.config.selects = angular.copy($scope.columns);
+                    $scope.curWidget.config.sources = new Array();
+                    $scope.curWidget.config.targets = new Array();
+                    $scope.curWidget.config.links = new Array();
                     $scope.curWidget.config.filters = new Array();
                     break;
                 case 'heatMapCalendar':
@@ -788,6 +824,16 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
                         name: '',
                         cols: [],
                         style: 'blue'
+                    }];
+                    $scope.curWidget.config.filters = new Array();
+                    break;
+                case 'markLineMap':
+                    $scope.curWidget.config.selects = angular.copy($scope.columns);
+                    $scope.curWidget.config.keys = new Array();
+                    $scope.curWidget.config.groups = new Array();
+                    $scope.curWidget.config.values = [{
+                        name: '',
+                        cols: []
                     }];
                     $scope.curWidget.config.filters = new Array();
                     break;
@@ -830,11 +876,24 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
             });
         };
 
+        var combineConfig = function () {
+            switch ($scope.curWidget.config.chart_type) {
+                case 'relation':
+                    var config = $scope.curWidget.config;
+                    $scope.curWidget.config.keys = config.sources.concat(config.targets).concat(config.links);
+                    break;
+                default :
+                    break;
+            }
+        };
+
         $scope.preview = function () {
             $('#preview_widget').html("");
             $timeout(function(){
                 angular.element('#preview_widget_tab').trigger('click');
             });
+            //cleanPreview();
+            combineConfig();
             $scope.loadingPre = true;
             // --- start ---
             // 添加echarts3.6.2后这里除了第一次可以加载echarts图表，再次加载无法显示图表。
@@ -903,6 +962,12 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
                         $scope.previewDivWidth = 12;
                         break;
                     case 'areaMap':
+                        $scope.previewDivWidth = 12;
+                        break;
+                    case 'markLineMap':
+                        $scope.previewDivWidth = 12;
+                        break;
+                    case 'relation':
                         $scope.previewDivWidth = 12;
                         break;
                 }
@@ -1012,7 +1077,7 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
             $http.post("dashboard/checkWidget.do", {id: widget.id}).success(function (response) {
                 if (response.status == '1') {
                     doEditWgt(widget);
-                    if($scope.customDs == true) $scope.doConfigParams();
+                    if ($scope.customDs == true) $scope.doConfigParams();
                 } else {
                     var d = widget.data.datasetId ? 'CONFIG.WIDGET.DATASET' : 'CONFIG.WIDGET.DATA_SOURCE';
                     ModalUtils.alert(translate("ADMIN.CONTACT_ADMIN") + "：" + translate(d) + '/' + response.msg, "modal-danger", "lg");
@@ -1034,7 +1099,7 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
             if (!$scope.curWidget.filterGroups) {
                 $scope.curWidget.filterGroups = [];
             }
-            updateService.updateConfig($scope.curWidget.config);
+            updateService.updateConfig($scope.curWidget.config, true);
             $scope.datasource = _.find($scope.datasourceList, function (ds) {
                 return ds.id == widget.data.datasource;
             });
@@ -1063,7 +1128,16 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
             var groups = _.find($scope.curWidget.config.groups, function (k) {
                 return k.col == e.column;
             });
-            return !(keys || groups);
+            var sources = _.find($scope.curWidget.config.sources, function (k) {
+                    return k.col == e.column;
+                });
+            var targets = _.find($scope.curWidget.config.targets, function (k) {
+                    return k.col == e.column;
+                });
+            var links = _.find($scope.curWidget.config.links, function (k) {
+                    return k.col == e.column;
+                });
+            return !(groups || sources || targets || links);
         };
 
         $scope.filterExpressions = function (e) {

@@ -65,7 +65,7 @@
     "CONFIRM_PASSWORD": "Confirm Password"
   },
   "FOOTER": {
-    "COPYRIGHT": "Ctrip Payment Department",
+    "COPYRIGHT": "Shanghai Hex Information Technology Co,. Ltd.",
     "VERSION": "Version"
   },
   "DASHBOARD": {
@@ -180,6 +180,7 @@
       "HEAT_MAP_CALENDER": "Heat Map (Calender)",
       "DATE_FORMAT": "Date Format",
       "HEAT_MAP_TABLE": "Heat Map (Table)",
+      "MARK_LINE_MAP":"Mark Line Map (Local)",
       "LIQUID_FILL": "Liquid Fill",
       "STATIC": "Static",
       "DYNAMIC": "Dynamic",
@@ -190,7 +191,12 @@
       "TRIANGLE": "Triangle",
       "ROUND_RECT": "RoundRect",
       "SQUARE": "Square",
-      "DIAMOND": "Diamond"
+      "DIAMOND": "Diamond",
+      "AREA_MAP": "AREA_MAP",
+      "RELATION": "Relation",
+      "SOURCE": "Source",
+      "TARGET": "Target",
+      "LINK": "Link"
     },
     "DASHBOARD": {
       "CATEGORY": "Category",
@@ -299,7 +305,8 @@
       "FAIL": "Fail",
       "FINISH": "Finish",
       "PROCESSING": "Processing",
-      "STATUS": "Status"
+      "STATUS": "Status",
+      "SEND_MAIL": "Send Mail"
     },
     "SHARE_RES": {
       "YOUR_RES": "Your Resources",
@@ -364,6 +371,16 @@
       "START": "start",
       "ROWS": "rows",
       "FL": "fl"
+    },
+    "UDSP":{
+      "UDSP_SERVERS": "UDSP Servers",
+      "USERNAME": "UserName",
+      "PASSWORD": "Password",
+      "SERVICE_NAME": "Service Name",
+      "SQL_TEXT": "Sql Text",
+      "JSON_TEXT": "Json Text",
+      "PAGE_INDEX": "Page Index",
+      "PAGE_SIZE": "Page Size"
     }
   }
 }

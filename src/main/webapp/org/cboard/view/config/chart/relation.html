@@ -1,0 +1,138 @@
+<!--<div ng-include="'org/cboard/view/config/chart/template/config.html'"></div>-->
+<!--源-->
+<div class="form-group" class="col-sm-12">
+    <label class="col-sm-2 control-label">{{'CONFIG.WIDGET.SOURCE'|translate}}
+        <i class="fa fa-question-circle" title="源可以输入三个参数，规则为：name[value[type]]，name:节点名称、value:节点值、type:节点类型。"></i>
+    </label>
+    <div class="col-sm-10">
+        <div dnd-list="curWidget.config.sources"
+             dnd-inserted="dndTransfer.toKeysGroups(curWidget.config.sources,index,item,type)"
+             dnd-drop="curWidget.config.sources.length<3 ? item:false"
+             dnd-allowed-types="['dimension','select','key']"
+             class="form-control" style="min-height: 35px;height: auto;padding: 0px">
+            <div class="dndPlaceholder sort-highlight form-control"
+                 style="height: 24px; width: 93px;margin: 3px 3px;display: inline-block;vertical-align: middle;">
+            </div>
+            <div ng-repeat="o in curWidget.config.sources" dnd-draggable="o" dnd-effect-allowed="move"
+                 dnd-moved="curWidget.config.sources.splice($index, 1)" dnd-type="'key'"
+                 class="btn-group" style="cursor: move;margin: 3px 3px;">
+                <button type="button" class="btn btn-default btn-sm" style="cursor: move;"
+                        ng-click="curWidget.config.sources.splice($index, 1);">
+                    {{o.level?'['+o.level+'].':''}}{{o.alias?o.alias:o.col}}
+                </button>
+                <button type="button" class="btn btn-default btn-sm dropdown-toggle"
+                        ng-click="editSort(o)">
+                    <span class="fa" ng-class="{undefined:'fa-sort','asc':'fa-sort-asc','desc':'fa-sort-desc'}[o.sort]"></span>
+                </button>
+                <button type="button" class="btn btn-default btn-sm dropdown-toggle"
+                        ng-click="editFilter(curWidget.config.sources,$index)">
+                    <span class="fa fa-filter"></span>
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+<!--目标-->
+<div class="form-group">
+    <label class="col-sm-2 control-label">{{'CONFIG.WIDGET.TARGET'|translate}}
+        <i class="fa fa-question-circle" title="目标可以输入三个参数，规则为：name[value[type]]，name:节点名称、value:节点值、type:节点类型。"></i>
+    </label>
+    <div class="col-sm-10">
+        <div dnd-list="curWidget.config.targets"
+             dnd-inserted="dndTransfer.toKeysGroups(curWidget.config.targets,index,item,type)"
+             dnd-drop="curWidget.config.targets.length<3 ? item:false"
+             dnd-allowed-types="['dimension','select','key']"
+             class="form-control" style="min-height: 35px;height: auto;padding: 0px">
+            <div class="dndPlaceholder sort-highlight"
+                 style="height: 24px; width: 93px;margin: 3px 3px;display: inline-block;vertical-align: middle;">
+            </div>
+            <div ng-repeat="o in curWidget.config.targets" dnd-draggable="o" dnd-effect-allowed="move"
+                 dnd-moved="curWidget.config.keys.splice($index, 1)" dnd-type="'key'"
+                 class="btn-group" style="cursor: move;margin: 3px 3px;">
+                <button type="button" class="btn btn-default btn-sm" style="cursor: move;"
+                        ng-click="curWidget.config.targets.splice($index, 1);">
+                    {{o.level?'['+o.level+'].':''}}{{o.alias?o.alias:o.col}}
+                </button>
+                <button type="button" class="btn btn-default btn-sm dropdown-toggle"
+                        ng-click="editSort(o);cleanVSort();">
+                    <span class="fa" ng-class="{undefined:'fa-sort','asc':'fa-sort-asc','desc':'fa-sort-desc'}[o.sort]"></span>
+                </button>
+                <button type="button" class="btn btn-default btn-sm dropdown-toggle"
+                        ng-click="editFilter(curWidget.config.targets,$index)">
+                    <span class="fa fa-filter"></span>
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+<!--关系-->
+<div class="form-group">
+    <label class="col-sm-2 control-label">{{'CONFIG.WIDGET.LINK'|translate}}
+        <i class="fa fa-question-circle" title="关系可以输入三个参数，规则为：name[value[type]]，name:关系名称、value:关系值、type:关系类型。"></i>
+    </label>
+    <div class="col-sm-10">
+        <div dnd-list="curWidget.config.links"
+             dnd-inserted="dndTransfer.toKeysGroups(curWidget.config.links,index,item,type)"
+             dnd-allowed-types="['dimension','select','key']"
+             dnd-drop="curWidget.config.links.length<3 ? item:false"
+             class="form-control" style="min-height: 35px;height: auto;padding: 0px">
+            <div class="dndPlaceholder sort-highlight"
+                 style="height: 24px; width: 93px;margin: 3px 3px;display: inline-block;vertical-align: middle;">
+            </div>
+            <div ng-repeat="o in curWidget.config.links" dnd-draggable="o" dnd-effect-allowed="move"
+                 dnd-moved="curWidget.config.links.splice($index, 1)" dnd-type="'key'"
+                 class="btn-group" style="cursor: move;margin: 3px 3px;">
+                <button type="button" class="btn btn-default btn-sm" style="cursor: move;"
+                        ng-click="curWidget.config.links.splice($index, 1);">
+                    {{o.level?'['+o.level+'].':''}}{{o.alias?o.alias:o.col}}
+                </button>
+                <button type="button" class="btn btn-default btn-sm dropdown-toggle"
+                        ng-click="editSort(o);cleanVSort();">
+                    <span class="fa" ng-class="{undefined:'fa-sort','asc':'fa-sort-asc','desc':'fa-sort-desc'}[o.sort]"></span>
+                </button>
+                <button type="button" class="btn btn-default btn-sm dropdown-toggle"
+                        ng-click="editFilter(curWidget.config.links,$index)">
+                    <span class="fa fa-filter"></span>
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+<!--过滤-->
+<div class="form-group">
+    <label class="col-sm-2 control-label">{{'CONFIG.WIDGET.FILTER'|translate}}</label>
+    <div class="col-sm-10">
+        <div dnd-list="curWidget.config.filters"
+             dnd-inserted="dndTransfer.toKeysGroups(curWidget.config.filters,index,item,type)"
+             dnd-allowed-types="['dimension','select','group','key','filter','filterGroup']"
+             class="form-control" style="min-height: 35px;height: auto;padding: 0px">
+            <div class="dndPlaceholder sort-highlight"
+                 style="height: 24px; width: 93px;margin: 3px 3px;display: inline-block;vertical-align: middle;">
+            </div>
+            <div ng-repeat="o in curWidget.config.filters" dnd-draggable="o" dnd-effect-allowed="move"
+                 dnd-moved="curWidget.config.filters.splice($index, 1)" dnd-type="o.group?'filterGroup':'filter'"
+                 class="btn-group" style="cursor: move;margin: 3px 3px;">
+                <div ng-if="o.group" class="btn-group">
+                    <button type="button" class="btn btn-warning btn-sm" style="cursor: move;"
+                            ng-click="curWidget.config.filters.splice($index, 1);">
+                        {{o.group}}
+                    </button>
+                    <button type="button" class="btn btn-warning btn-sm dropdown-toggle" ng-if="!isDsFilter(o)"
+                            ng-click="editFilterGroup(o)">
+                        <span class="fa fa-edit"></span>
+                    </button>
+                </div>
+                <div ng-if="!o.group" class="btn-group">
+                    <button type="button" class="btn btn-default btn-sm" style="cursor: move;"
+                            ng-click="curWidget.config.selects.push(o.col);curWidget.config.filters.splice($index, 1);">
+                        {{o.alias?o.alias:o.col}}
+                    </button>
+                    <button type="button" class="btn btn-default btn-sm dropdown-toggle"
+                            ng-click="editFilter(curWidget.config.filters,$index)">
+                        <span class="fa fa-filter"></span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

@@ -117,7 +117,7 @@
 
 }
 .cLine{  background-image: url(../imgs/line-active.png);  }
-.cLine.disabled{background-image: url(imgs/line.png); }
+.cLine.disabled{background-image: url(../imgs/line.png); }
 /*.cBar{  background-image: url(../imgs/bar-active.png);  }*/
 /*.cBar.disabled{background-image: url(../imgs/bar.png);  }*/
 .cScatter{  background-image: url(../imgs/scatter-active.png);  }

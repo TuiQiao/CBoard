@@ -4,6 +4,7 @@
         <li class="active"><a href="#grid" data-toggle="tab">Grid</a></li>
         <li><a href="#legend" data-toggle="tab">Legend</a></li>
         <li><a href="#ctgAxis" data-toggle="tab">Category Axis</a></li>
+        <li><a href="#valAxis" data-toggle="tab">Value Axis</a></li>
         <li><a href="#ext" data-toggle="tab">Ext</a></li>
     </ul>
 </div>
@@ -18,6 +19,24 @@
         </div>
         <div class="tab-pane" id="ctgAxis">
             <ng-include src="'org/cboard/view/config/chart/options/common/categoryAxis.html'"></ng-include>
+        </div>
+        <div class="tab-pane" id="valAxis">
+            <form class="form-horizontal">
+                <div class="row" ng-repeat="v in curWidget.config.values">
+                    <div class="form-group col-md-6">
+                        <label class="col-md-3 control-label">{{$index}}-Min</label>
+                        <div class="col-md-7">
+                            <input type="text" class="form-control" ng-model="v.min">
+                        </div>
+                    </div>
+                    <div class="form-group col-md-6">
+                        <label class="col-md-3 control-label">{{$index}}-Max</label>
+                        <div class="col-md-7">
+                            <input type="text" class="form-control" ng-model="v.max">
+                        </div>
+                    </div>
+                </div>
+            </form>
         </div>
         <div class="tab-pane" id="ext">
             <form class="form-horizontal">

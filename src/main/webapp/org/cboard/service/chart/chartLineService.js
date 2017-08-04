@@ -37,7 +37,7 @@ cBoard.service('chartLineService', function () {
             var s = angular.copy(newValuesConfig[joined_values]);
             s.name = joined_values;
             s.data = aggregate_data[i];
-            s.barMaxWidth = 20;
+            s.barMaxWidth = 40;
             if (s.type == 'stackbar') {
                 s.type = 'bar';
                 s.stack = s.valueAxisIndex.toString();
@@ -66,6 +66,9 @@ cBoard.service('chartLineService', function () {
             if (axis.series_type == "percentbar") {
                 axis.min = 0;
                 axis.max = 100;
+            } else {
+                axis.min = axis.min ? axis.min : null;
+                axis.max = axis.max ? axis.max : null;
             }
             if (index > 0) {
                 axis.splitLine = false;
@@ -115,25 +118,6 @@ cBoard.service('chartLineService', function () {
             series: series_data
         };
 
-        var basicOption = {
-            title: {},
-            grid: {
-                left: '50',
-                right: '20',
-                bottom: '15%',
-                top: '20%',
-                containLabel: false
-            },
-            tooltip: {
-                trigger: 'axis'
-            },
-            legend: {
-                x: 'left',
-                itemWidth: 15,
-                itemHeight: 10
-            }
-        };
-
         if (chartConfig.valueAxis === 'horizontal') {
             echartOption.grid.left = 'left';
             echartOption.grid.containLabel = true;
@@ -146,6 +130,6 @@ cBoard.service('chartLineService', function () {
         // Apply tunning options
         updateEchartOptions(tunningOpt, echartOption);
 
-        return $.extend(true, {}, basicOption, echartOption);
+        return echartOption;
     };
 });

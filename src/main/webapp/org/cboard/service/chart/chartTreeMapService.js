@@ -4,14 +4,17 @@
 'use strict';
 cBoard.service('chartTreeMapService', function () {
 
-    this.render = function (containerDom, option, scope, persist) {
+    this.render = function (containerDom, option, scope, persist, drill, relation, chartConfig) {
         if (option == null) {
             containerDom.html("<div class=\"alert alert-danger\" role=\"alert\">No Data!</div>");
             return;
         }
         var height;
         scope ? height = scope.myheight - 20 : null;
-        return new CBoardEChartRender(containerDom, option).chart(height, persist);
+        var render = new CBoardEChartRender(containerDom, option);
+        render.addClick(chartConfig, relation);
+        render.chart(height, persist);
+        return render;
     };
 
     this.parseOption = function (data) {

@@ -5,9 +5,9 @@
 cBoard.service('chartService', function ($q, dataService, chartPieService, chartLineService, chartFunnelService,
                                          chartSankeyService, chartTableService, chartKpiService, chartRadarService,
                                          chartMapService, chartScatterService, chartGaugeService, chartWordCloudService,
-                                         chartTreeMapService, chartAreaMapService ) {
+                                         chartTreeMapService, chartAreaMapService) {
 
-        this.render = function (containerDom, widget, optionFilter, scope, reload, persist) {
+        this.render = function (containerDom, widget, optionFilter, scope, reload, persist, relation) {
             var deferred = $q.defer();
             var chart = getChartServices(widget.config);
             dataService.getDataSeries(widget.datasource, widget.query, widget.datasetId, widget.config, function (data) {
@@ -84,7 +84,7 @@ cBoard.service('chartService', function ($q, dataService, chartPieService, chart
                         };
                     }
                 } finally {
-                    deferred.resolve(chart.render(containerDom, option, scope, persist, data.drill));
+                    deferred.resolve(chart.render(containerDom, option, scope, persist, data.drill, relation, widget.config));
                 }
             }, reload);
             return deferred.promise;

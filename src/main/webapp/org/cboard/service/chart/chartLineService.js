@@ -4,8 +4,11 @@
 'use strict';
 cBoard.service('chartLineService', function () {
 
-    this.render = function (containerDom, option, scope, persist) {
-        return new CBoardEChartRender(containerDom, option).chart(null, persist);
+    this.render = function (containerDom, option, scope, persist, drill, relation, chartConfig) {//todo add  relation, chartConfig
+        var render = new CBoardEChartRender(containerDom, option);
+        render.addClick(chartConfig, relation);
+        render.chart(null, persist);
+        return render;
     };
 
     this.parseOption = function (data) {

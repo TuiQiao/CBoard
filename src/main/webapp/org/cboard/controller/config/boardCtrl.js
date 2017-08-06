@@ -214,6 +214,17 @@ cBoard.controller('boardCtrl', function ($rootScope, $scope, $http, ModalUtils, 
         $scope.curBoard.layout.rows.unshift({type: 'param', params: []});
     };
 
+    $scope.addRelation = function(widget) {
+        widget.relation = {};
+        $scope.changeSourceCol(widget, widget.widgetId);
+    }
+
+    $scope.delRelation = function(widget) {
+        if(widget.relation){
+          delete widget.relation;
+        }
+    }
+
     var validate = function () {
         $scope.alerts = [];
         if (!$scope.curBoard.name) {
@@ -422,4 +433,54 @@ cBoard.controller('boardCtrl', function ($rootScope, $scope, $http, ModalUtils, 
         return baseEventObj;
     }();
     /**  js tree related start **/
+
+    $scope.changeTargetCol = function(e, widgetId){
+        if(!e.relation){
+            return;
+        }
+        var w = _.find($scope.widgetList, function (w) {
+            return w.id == widgetId;
+        });
+        if(!w){
+            return;
+        }
+        dataService.getColumns({
+            datasource: null,
+            query: null,
+            datasetId: w.data.datasetId,
+            callback: function (dps) {
+                $scope.alerts = [];
+                if (dps.msg == "1") {
+                    e.relation.targetFields = dps.columns;
+                } else {
+                    $scope.alerts = [{msg: dps.msg, type: 'danger'}];
+                }
+            }
+        });
+    }
+
+    $scope.changeSourceCol = function(e,widgetId){
+        if(!e.relation){
+            return;
+        }
+        var w = _.find($scope.widgetList, function (w) {
+            return w.id == widgetId;
+        });
+        if(!w){
+            return;
+        }
+        dataService.getColumns({
+            datasource: null,
+            query: null,
+            datasetId: w.data.datasetId,
+            callback: function (dps) {
+                $scope.alerts = [];
+                if (dps.msg == "1") {
+                    e.relation.sourceFields = dps.columns;
+                } else {
+                    $scope.alerts = [{msg: dps.msg, type: 'danger'}];
+                }
+            }
+        });
+    }
 });

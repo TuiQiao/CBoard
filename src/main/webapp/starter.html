@@ -188,7 +188,7 @@ desired effect
 <!-- ./wrapper -->
 
 
-
+<script src="org/cboard/util/CBoardEChartUtils.js"></script>
 <script src="org/cboard/util/CBoardEChartRender.js"></script>
 <script src="org/cboard/util/CBoardCommonUtils.js"></script>
 <script src="org/cboard/util/CBoardKpiRender.js"></script>
@@ -252,10 +252,10 @@ desired effect
 <script type="text/ng-template" id="echartContent">
     <div class="col-md-{{widget.width}}">
         <div class="box box-solid" style="z-index: 99;">
-            <div class="box-header">
-                <i class="fa fa-bar-chart-o"></i>
+            <div class="box-header" ng-mouseover="x=true" ng-mouseleave="x=false">
+                <!--<i class="fa fa-bar-chart-o"></i>-->
                 <h3 class="box-title">{{widget.name}}</h3>
-                <div class="box-tools pull-right">
+                <div class="box-tools pull-right" ng-show="x" ng-init="x=false">
                     <button type="button" class="btn btn-box-tool" ng-click="reload(widget)"><i
                             class="fa fa-refresh"></i>
                     </button>
@@ -269,7 +269,7 @@ desired effect
                     </button>
                 </div>
             </div>
-            <div class="box-body" ng-style="{height:myheight+'px'}">
+            <div class="box-body" ng-style="{height:myheight+'px'}" style="padding: 3px 0px 3px 13px;">
             </div>
         </div>
     </div>
@@ -281,10 +281,10 @@ desired effect
 <script type="text/ng-template" id="chartContent">
     <div class="col-md-{{widget.width}}" style="z-index: 99;">
         <div class="box box-solid">
-            <div class="box-header">
-                <i class="fa fa-bar-chart-o"></i>
+            <div class="box-header" ng-mouseover="x=true" ng-mouseleave="x=false" >
+                <!--<i class="fa fa-bar-chart-o"></i>-->
                 <h3 class="box-title">{{widget.name}}</h3>
-                <div class="box-tools pull-right">
+                <div class="box-tools pull-right" ng-show="x" ng-init="x=false">
                     <button type="button" class="btn btn-box-tool" ng-click="reload(widget)"><i
                             class="fa fa-refresh"></i>
                     </button>
@@ -298,7 +298,7 @@ desired effect
                     </button>
                 </div>
             </div>
-            <div class="box-body" ng-style="{height:myheight+'px'}">
+            <div class="box-body" ng-style="{height:myheight+'px'}" style="padding: 3px 0px 3px 13px;">
             </div>
         </div>
     </div>

@@ -32,13 +32,10 @@
         SELECT role_res_id roleResId,role_id roleId,res_id resId,res_type resType,permission permission FROM dashboard_role_res
     </select>
 
-    <insert id="saveRoleRes" parameterType="java.util.List">
-        insert into dashboard_role_res
-        (res_id, role_id,res_type,permission)
-        values
-        <foreach collection="list" item="rr" index="index" separator=",">
-            (#{rr.resId}, #{rr.roleId} ,#{rr.resType},#{rr.permission})
-        </foreach>
+    <insert id="saveRoleRes" parameterType="org.cboard.pojo.DashboardRoleRes">
+        <![CDATA[
+        insert into dashboard_role_res (res_id, role_id,res_type,permission) values (#{resId}, #{roleId} ,#{resType},#{permission})
+        ]]>
     </insert>
 
     <delete id="deleteRoleRes">

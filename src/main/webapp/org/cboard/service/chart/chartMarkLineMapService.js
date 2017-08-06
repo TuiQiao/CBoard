@@ -1,9 +1,6 @@
 /**
  * Created by jintian on 2017/7/26.
  */
-/**
- * Created by Fine on 2016/12/13.
- */
 cBoard.service('chartMarkLineMapService', function () {
     this.render = function (containerDom, option, scope, persist) {
         return new CBoardEChartRender(containerDom, option).chart(null, persist);

@@ -6,7 +6,7 @@ cBoard.controller('dashboardViewCtrl', function ($timeout, $rootScope, $scope, $
 
     $scope.loading = true;
     $scope.paramInit = 0;
-    $scope.relations = JSON.stringify([]); //todo add
+    $scope.relations = JSON.stringify([]);
     $http.get("dashboard/getDatasetList.do").success(function (response) {
         $scope.datasetList = response;
         $scope.realtimeDataset = {};
@@ -195,6 +195,7 @@ cBoard.controller('dashboardViewCtrl', function ($timeout, $rootScope, $scope, $
     $scope.load = function (reload) {
         $scope.paramInit = 0;
         $scope.loading = true;
+        $("#relations").val(JSON.stringify([]));
         _.each($scope.intervals, function (e) {
             $interval.cancel(e);
         });
@@ -284,7 +285,7 @@ cBoard.controller('dashboardViewCtrl', function ($timeout, $rootScope, $scope, $
             });
         });
 
-        //todo add 将点击的参数赋值到filter中
+        //将点击的参数赋值到widgetFilters中
         var relations = JSON.parse($("#relations").val());
         for(var i=0;i<relations.length;i++){
             if(relations[i].targetId && relations[i].params && relations[i].params.length>0){
@@ -388,7 +389,7 @@ cBoard.controller('dashboardViewCtrl', function ($timeout, $rootScope, $scope, $
 
     $scope.reload = function (widget) {
         paramToFilter();
-        widget.widget.data = injectFilter(widget.widget).data; //todo add
+        widget.widget.data = injectFilter(widget.widget).data;
         widget.show = false;
         widget.render = function (content, optionFilter, scope) {
             chartService.render(content, widget.widget.data, optionFilter, scope, true, null, widget.relation).then(function (d) {

@@ -13,8 +13,7 @@ cBoard.service('chartTreeMapService', function () {
         scope ? height = scope.myheight - 20 : null;
         var render = new CBoardEChartRender(containerDom, option);
         render.addClick(chartConfig, relation);
-        render.chart(height, persist);
-        return render;
+        return render.chart(height, persist);
     };
 
     this.parseOption = function (data) {

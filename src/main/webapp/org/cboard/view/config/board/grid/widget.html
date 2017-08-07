@@ -43,12 +43,12 @@
                         {{widget.name}}
                         <div class="box-tools pull-right">
                             <button ng-if="!widget.relation" type="button" class="btn btn-box-tool"
-                                    title="关联"
+                                    title="{{'COMMON.ADD_RELATION'|translate}}"
                                     ng-click="addRelation(widget)">
                                 <i class="fa fa-link"></i>
                             </button>
                             <button ng-if="widget.relation" type="button" class="btn btn-box-tool"
-                                    title="取关"
+                                    title="{{'COMMON.DEL_RELATION'|translate}}"
                                     ng-click="delRelation(widget)">
                                 <i class="fa fa-unlink"></i>
                             </button>
@@ -88,10 +88,9 @@
                                 </ui-select-choices>
                             </ui-select>
                         </div>
-                        <!--todo add-->
                         <div ng-if="widget.relation" class="form-group">
                             <div class="form-group">
-                                <label>关联表</label>
+                                <label>{{'CONFIG.DASHBOARD.WIDGET_TARGET'|translate}}</label>
                                 <ui-select ng-model="widget.relation.targetId" ng-init="changeTargetCol(widget, widget.relation.targetId)" ng-change="changeTargetCol(widget, $select.selected.id)" on-select="widget.relation.name = $item.name">
                                     <ui-select-match>
                                         {{$select.selected.name}} ({{$select.selected.dataset}})
@@ -103,7 +102,7 @@
                                 </ui-select>
                             </div>
                             <div class="form-group">
-                                <label>原表字段</label>
+                                <label>{{'CONFIG.DASHBOARD.WIDGET_FIELDS'|translate}}</label>
                                 <ui-select multiple ng-disabled="disabled" ng-model="widget.relation.sourceField">
                                     <ui-select-match placeholder="">
                                         {{$item}}
@@ -114,7 +113,7 @@
                                 </ui-select>
                             </div>
                             <div class="form-group">
-                                <label>目标表字段</label>
+                                <label>{{'CONFIG.DASHBOARD.WIDGET_TARGET_FIELDS'|translate}}</label>
                                 <ui-select multiple ng-disabled="disabled" ng-model="widget.relation.targetField">
                                     <ui-select-match>
                                         {{$item}}

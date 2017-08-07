@@ -33,7 +33,9 @@
     "ROLL_UP": "Roll Up",
     "WANRING": "WANRING!",
     "COLLAPSE": "Collapse",
-    "REMOVE": "Remove"
+    "REMOVE": "Remove",
+    "ADD_RELATION": "Add Relation",
+    "DEL_RELATION": "Del Relation"
   },
   "TIPS": {
     "CAL_EXPR": "Calculate after aggregation. Use assist click input to avoid typo. e.g: Math.log(sum(columnA)/count(columB))"
@@ -227,7 +229,10 @@
       "VALUE_FORMMAT_ALERT": "Only date type need format",
       "AUTOMATIC_REFRESH_SWITCH": "Automatic refresh switch",
       "REMOVE_EMPTY_LINES": "Remove empty lines",
-      "DATA_REFRESH_TIME":"Data refresh time"
+      "DATA_REFRESH_TIME":"Data refresh time",
+      "WIDGET_TARGET":"Target Widget",
+      "WIDGET_FIELDS":"Widget Fields",
+      "WIDGET_TARGET_FIELDS":"Target Widget Fields"
     },
     "CATEGORY": {
       "NAME": "Category Name",

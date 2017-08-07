@@ -260,9 +260,9 @@ CBoardEChartRender.prototype.addClick = function (chartConfig, relation) {
 
         $("#relations").val(JSON.stringify(relations));
         //触发关联图表刷新
-        var button = document.getElementById("reload_"+relation.targetId);
+        var button = document.getElementsByName("reload_"+relation.targetId);
         if(button){
-            button.click();
+            button[button.length-1].click();
         }
     });
 };

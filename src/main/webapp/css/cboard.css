@@ -153,6 +153,10 @@
 .cMarkLineMap.disabled{ background-image: url(../imgs/markLineMap.png);}
 .cLiquidFill{ background-image: url(../imgs/liquidFill-active.png); }
 .cLiquidFill.disabled{ background-image: url(../imgs/liquidFill.png); }
+.cHotMap{ background-image: url(../imgs/areaMap-active.png); }
+.cHotMap.disabled{ background-image: url(../imgs/areaMap.png); }
+.cMarkLineMapBmap{ background-image: url(../imgs/markLineMap-active.png); }
+.cMarkLineMapBmap.disabled{ background-image: url(../imgs/markLineMap.png);}
 
 
 .chart-type a.active{

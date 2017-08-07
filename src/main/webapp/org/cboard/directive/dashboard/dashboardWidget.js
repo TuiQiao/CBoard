@@ -99,6 +99,9 @@ cBoard.directive('dashboardWidget', function ($compile, $templateCache, dataServ
                         case 'liquidFill':
                             renderEchart(scope, element, attrs);
                             break;
+                        case 'hotMap':
+                            renderEchart(scope, element, attrs);
+                            break;
                     }
                 }
             }

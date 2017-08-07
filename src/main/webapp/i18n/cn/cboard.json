@@ -181,6 +181,7 @@
       "DATE_FORMAT": "日期格式",
       "HEAT_MAP_TABLE": "热点图（表格）",
       "MARK_LINE_MAP":"标线地图(本地)",
+      "MARK_LINE_MAP_BMAP":"标线地图(百度地图)",
       "LIQUID_FILL": "水球图",
       "STATIC": "静态",
       "DYNAMIC": "动态",
@@ -191,7 +192,8 @@
       "TRIANGLE": "三角形",
       "ROUND_RECT": "圆角矩形",
       "SQUARE": "正方形",
-      "DIAMOND": "菱形"
+      "DIAMOND": "菱形",
+      "HOT_MAP":"热点地图"
     },
     "DASHBOARD": {
       "DASHBOARD": "看板",

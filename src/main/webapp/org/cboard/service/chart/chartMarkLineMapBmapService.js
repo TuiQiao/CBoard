@@ -3,70 +3,124 @@
  */
 cBoard.service('chartMarkLineMapBmapService', function () {
     this.render = function (containerDom, option, scope, persist) {
-        return new CBoardEChartRender(containerDom, option).chart(null, persist);
+        return new CboardHotMapRender(containerDom, option).chart(null, persist);
     }
 
     this.parseOption = function (data) {
         var data_keys = data.keys;
         var data_series = data.series;
-        var geoKey;
-        var geoCoordMap = {};
         var seriesData = [];
         var optionData = [];
+        var fromName;
+        var fromN;
+        var fromL;
+        var toName;
+        var toN;
+        var toL;
+        var effectScatterValue;
+        var max = null;
 
-        var max = 0;
-        for (var j = 0; data_keys[0] && j < data_keys.length; j++) {
-            if (data_keys[j].length > 2) {
-                geoKey = data_keys[j][2];
-                geoCoordMap[geoKey] = [data_keys[j][0], data_keys[j][1]];
-            } else if (data_keys[j].length = 2) {
-                geoKey = data_keys[j][1];
-                geoCoordMap[geoKey] = [data_keys[j][0].split(",")[0], data_keys[j][0].split(",")[1]];
+        for(var j = 0; data_series[0] && j < data_series.length; j++){
+            //重置为null，防止脏数据
+            fromName = null;
+            fromN = null;
+            fromL = null;
+            if(data_series[j].length > 3){
+                fromName = data_series[j][2];
+                fromN = parseFloat(data_series[j][0]);
+                fromL = parseFloat(data_series[j][1]);
+            }else if(data_series[j].length == 3){
+                fromName = data_series[j][1];
+                fromN = parseFloat(data_series[j][0].split(",")[0]);
+                fromL = parseFloat(data_series[j][0].split(",")[1]);
             }
-        }
-        for (var j = 0; data_series[0] && j < data_series.length; j++) {
-            if (data_series[j].length > 3) {
-                geoKey = data_series[j][2];
-                geoCoordMap[geoKey] = [data_series[j][0], data_series[j][1]];
-                optionData[j] = data_series[j][2];
-            } else if (data_series[j].length = 3) {
-                geoKey = data_series[j][1];
-                geoCoordMap[geoKey] = [data_series[j][0].split(",")[0], data_series[j][0].split(",")[1]];
-                optionData[j] = data_series[j][1];
-            }
-
-            var serieData = [];
-            for (var i = 0, n = 0; data_keys[0] && i < data_keys.length; i++) {
-                if (data.data[j][i] && data.data[j][i] != 0) {
-                    if (data_keys[i].length > 2) {
-                        serieData[n] = [{name: geoKey}, {name: data_keys[i][2], value: data.data[j][i]}];
-                    } else if (data_keys[i].length = 2) {
-                        serieData[n] = [{name: geoKey}, {name: data_keys[i][1], value: data.data[j][i]}];
-                    }
-                    n++;
-                    if (max < parseInt(data.data[j][i])) {
-                        max = parseInt(data.data[j][i]);
-                    }
-                }
-            }
-            seriesData[j] = [geoKey, serieData]
-        }
-        var convertData = function (data) {
-            var res = [];
-            for (var i = 0; i < data.length; i++) {
-                var dataItem = data[i];
-                var fromCoord = geoCoordMap[dataItem[0].name];
-                var toCoord = geoCoordMap[dataItem[1].name];
-                if (fromCoord && toCoord) {
-                    res.push({
-                        fromName: dataItem[0].name,
-                        toName: dataItem[1].name,
-                        coords: [fromCoord, toCoord]
+            optionData.push(fromName);
+            var lineData = [];
+            var effectScatterData = [];
+            for(var i = 0; data_keys[0] && i < data_keys.length; i++){
+                toName = null;
+                toN = null;
+                toL = null;
+                effectScatterValue = null;
+                if(data_keys[i].length > 2){
+                    toName = data_keys[i][2];
+                    toN = parseFloat(data_keys[i][0]);
+                    toL = parseFloat(data_keys[i][1]);
+                }else if(data_keys[i].length == 2){
+                    toName = data_keys[i][1];
+                    toN = parseFloat(data_keys[j][0].split(",")[0]);
+                    toL = parseFloat(data_keys[j][0].split(",")[1]);
+                };
+                if(data.data[j][i]){
+                    lineData.push({fromName: fromName,
+                        toName: toName,
+                        coords: [[fromN,fromL],
+                            [toN, toL]]
                     });
+
+                    effectScatterData.push({name:toName,value:[toN, toL,parseFloat(data.data[j][i])]});
+
+                    if(max == null || max < parseFloat(data.data[j][i])){
+                        max = parseFloat(data.data[j][i]);
+                    }
                 }
             }
-            return res;
-        };
+            seriesData.push(
+                {
+                    name:fromName,
+                    type: 'lines',
+                    coordinateSystem: 'bmap',
+                    zlevel: 2,
+                    symbol: ['none', 'arrow'],
+                    symbolSize: 10,
+                    effect: {
+                        show: true,
+                        period: 6,
+                        trailLength: 0,
+                        symbol: 'arrow',
+                        symbolSize: 4
+                    },
+                    lineStyle: {
+                        normal: {
+                            width: 1,
+                            opacity: 0.6,
+                            curveness: 0.2
+                        }
+                    },
+                    data: lineData
+                },{
+                    name: fromName,
+                    type: 'effectScatter',
+                    coordinateSystem: 'bmap',
+                    zlevel: 2,
+                    rippleEffect: {
+                        brushType: 'stroke'
+                    },
+                    label: {
+                        normal: {
+                            show: true,
+                            position: 'right',
+                            formatter: '{b}'
+                        }
+                    },
+                    symbolSize: function (val) {
+                        if (max == 0) {
+                            return 0;
+                        }
+                        return val[2] * 20 / max;
+                    },
+                    showEffectOn: 'render',
+                    itemStyle: {
+                        normal: {
+                            color: 'gold'
+                        }
+                    },
+                    data: effectScatterData
+                }
+            )
+        }
+
+
 
         var startPoint = {
             x: 104.114129,
@@ -192,65 +246,6 @@ cBoard.service('chartMarkLineMapBmapService', function () {
             }
         };
 
-        var series = [];
-        seriesData.forEach(function (item, i) {
-            series.push({
-                    name: item[0],
-                    type: 'lines',
-                    coordinateSystem: 'bmap',
-                    zlevel: 2,
-                    symbol: ['none', 'arrow'],
-                    symbolSize: 10,
-                    effect: {
-                        show: true,
-                        period: 6,
-                        trailLength: 0,
-                        symbol: 'arrow',
-                        symbolSize: 4
-                    },
-                    lineStyle: {
-                        normal: {
-                            width: 1,
-                            opacity: 0.6,
-                            curveness: 0.2
-                        }
-                    },
-                    data: convertData(item[1])
-                },
-                {
-                    name: item[0],
-                    type: 'effectScatter',
-                    coordinateSystem: 'bmap',
-                    zlevel: 2,
-                    rippleEffect: {
-                        brushType: 'stroke'
-                    },
-                    label: {
-                        normal: {
-                            show: true,
-                            position: 'right',
-                            formatter: '{b}'
-                        }
-                    },
-                    symbolSize: function (val) {
-                        if (max == 0) {
-                            return 0;
-                        }
-                        return val[2] * 20 / max;
-                    },
-                    itemStyle: {
-                        normal: {
-                            color: 'gold'
-                        }
-                    },
-                    data: item[1].map(function (dataItem) {
-                        return {
-                            name: dataItem[1].name,
-                            value: geoCoordMap[dataItem[1].name].concat([dataItem[1].value])
-                        };
-                    })
-                });
-        });
 
         var mapOption = {
             bmap: bmap,
@@ -265,7 +260,7 @@ cBoard.service('chartMarkLineMapBmapService', function () {
             tooltip: {
                 trigger: 'item'
             },
-            series: series
+            series: seriesData
         };
         return mapOption;
     }

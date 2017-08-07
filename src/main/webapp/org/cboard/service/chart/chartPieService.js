@@ -39,6 +39,11 @@ cBoard.service('chartPieService', function () {
                             formatter: '{b}: {d}%'
                         }
                     },
+                    emphasis: {
+                        shadowBlur: 10,
+                        shadowOffsetX: 0,
+                        shadowColor: 'rgba(0, 0, 0, 0.5)'
+                    },
                     labelLine: {show: true}
                 }
             };

@@ -301,11 +301,7 @@ var crossTable = {
                 }
             }
         }
-<<<<<<< HEAD
         liStr += '<li><a class="nextLink">' + cboardTranslate("CROSS_TABLE.NEXT_PAGE") + '</a></li>';
-=======
-        liStr += '<li><a class="nextLink">' + cboardTranslate("COMMON.NEXT_PAGE") + '</a></li>';
->>>>>>> branch 'branch-0.4' of https://github.com/february/CBoard.git
         if (target) {
             target.innerHTML = liStr;
             if (pageNumber == 1) {

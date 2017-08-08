@@ -1,4 +1,9 @@
 {
+  "BROWSER": {
+    "CUSTOMERS": {
+      "CUSTOMERS": "客户群体"
+    }
+  },
   "COMMON": {
     "OK": "确认",
     "LOAD": "加载",
@@ -54,7 +59,9 @@
     "USER_ADMIN": "用户管理",
     "RES_ADMIN": "资源管理",
     "JOB": "定时任务",
-    "SHARE_RESOURCE": "资源分享"
+    "SHARE_RESOURCE": "资源分享",
+    "BROWSER": "数据浏览器",
+    "BROWSER_CUSTOMERS": "客户群体"
   },
   "HEADER": {
     "SIGN_OUT": "注销",
@@ -65,7 +72,7 @@
     "CONFIRM_PASSWORD": "确认密码"
   },
   "FOOTER": {
-    "COPYRIGHT": "携程支付中心",
+    "COPYRIGHT": "首创金服信息技术部",
     "VERSION": "版本"
   },
   "DASHBOARD": {
@@ -365,12 +372,12 @@
       "START": "开始位置",
       "ROWS": "结果数",
       "FL": "结果字段"
-    },
-    "CROSS_TABLE":{
-      "NEXT_PAGE": "下一页",
-      "LAST_PAGE": "上一页",
-      "SHOW": "显示",
-      "ENTRIES": "条"
     }
+  },
+  "CROSS_TABLE":{
+    "NEXT_PAGE": "下一页",
+    "LAST_PAGE": "上一页",
+    "SHOW": "显示",
+    "ENTRIES": "条"
   }
 }

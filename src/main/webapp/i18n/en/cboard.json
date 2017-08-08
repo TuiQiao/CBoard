@@ -365,12 +365,12 @@
       "START": "start",
       "ROWS": "rows",
       "FL": "fl"
-    },
-    "CROSS_TABLE":{
-      "NEXT_PAGE": "Next",
-      "PREVIOUS_PAGE": "Previous",
-      "SHOW": "Show",
-      "ENTRIES": "entries"
     }
+  },
+  "CROSS_TABLE":{
+    "NEXT_PAGE": "Next",
+    "PREVIOUS_PAGE": "Previous",
+    "SHOW": "Show",
+    "ENTRIES": "entries"
   }
 }

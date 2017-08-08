@@ -264,7 +264,7 @@ var crossTable = {
         });
     },
     renderPagination: function (pageCount, pageNumber, pageObj, target) {
-        var liStr = '<li><a class="previewLink">Preview</a></li>';
+        var liStr = '<li><a class="previewLink">' + cboardTranslate("COMMON.LAST_PAGE") + '</a></li>';
         if (pageCount < 10) {
             for (var a = 0; a < pageCount; a++) {
                 liStr += '<li><a class="pageLink">' + (a + 1) + '</a></li>';
@@ -301,7 +301,7 @@ var crossTable = {
                 }
             }
         }
-        liStr += '<li><a class="nextLink">Next</a></li>';
+        liStr += '<li><a class="nextLink">' + cboardTranslate("COMMON.NEXT_PAGE") + '</a></li>';
         if (target) {
             target.innerHTML = liStr;
             if (pageNumber == 1) {

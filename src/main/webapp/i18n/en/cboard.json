@@ -35,7 +35,9 @@
     "COLLAPSE": "Collapse",
     "REMOVE": "Remove",
     "DATE": "Date",
-    "VALUE": "Value"
+    "VALUE": "Value",
+    "NEXT_PAGE": "Next",
+    "LAST_PAGE": "Preview"
   },
   "TIPS": {
     "CAL_EXPR": "Calculate after aggregation. Use assist click input to avoid typo. e.g: Math.log(sum(columnA)/count(columB))"

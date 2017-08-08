@@ -378,6 +378,7 @@
     "NEXT_PAGE": "下一页",
     "LAST_PAGE": "上一页",
     "SHOW": "显示",
-    "ENTRIES": "条"
+    "ENTRIES": "条",
+    "EXPORT": "导出"
   }
 }

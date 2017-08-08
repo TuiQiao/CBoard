@@ -2,7 +2,7 @@
 .modal-dialog h2,
 .modal-dialog h3,
 .modal-dialog h4,
-.modal-dialogh5,
+.modal-dialog h5,
 .modal-dialog h6,
 .modal-dialog p {
     color: black;
@@ -153,7 +153,8 @@
 .cMarkLineMap.disabled{ background-image: url(../imgs/markLineMap.png);}
 .cLiquidFill{ background-image: url(../imgs/liquidFill-active.png); }
 .cLiquidFill.disabled{ background-image: url(../imgs/liquidFill.png); }
-
+.cRelation{ background-image: url(../imgs/relation-active.png); }
+.cRelation.disabled{ background-image: url(../imgs/relation.png); }
 
 .chart-type a.active{
     background-color: #FFF;

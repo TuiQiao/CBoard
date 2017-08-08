@@ -1445,8 +1445,9 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
                 return e.code == $scope.curWidget.config.province.code;
             });
             if(province && province.cities){
-                $scope.cities = province.cities
+                $scope.cities = province.cities;
             }else if($scope.curWidget.config.city && $scope.curWidget.config.city.code){
+                $scope.cities = [];
                 $scope.curWidget.config.city.code="";
             }
         }

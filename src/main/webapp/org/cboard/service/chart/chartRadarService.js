@@ -82,6 +82,9 @@ cBoard.service('chartRadarService', function () {
                 data: data
             }]
         };
+
+        updateEchartOptions(chartConfig.option, echartOption);
+
         return echartOption;
     };
 });

@@ -13,9 +13,11 @@ import org.apache.http.auth.AuthScope;
 import org.apache.http.auth.UsernamePasswordCredentials;
 import org.apache.http.client.AuthCache;
 import org.apache.http.client.CredentialsProvider;
+import org.apache.http.client.fluent.Request;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.protocol.HttpClientContext;
+import org.apache.http.entity.ContentType;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.BasicAuthCache;
 import org.apache.http.impl.client.BasicCredentialsProvider;
@@ -205,13 +207,21 @@ public class ElasticsearchDataProvider extends DataProvider implements Aggregata
     }
 
     protected JSONObject post(String url, JSONObject request) throws Exception {
-        HttpClientBuilder httpClientBuilder = HttpClientBuilder.create();
-        HttpPost httpPost = new HttpPost(url);
-        StringEntity reqEntity = new StringEntity(request.toString());
-        httpPost.setEntity(reqEntity);
-        HttpResponse httpResponse = httpClientBuilder.build().execute(httpPost, getHttpContext());
+        HttpResponse httpResponse = null;
+        String userName = dataSource.get(USERNAME);
+        String password = dataSource.get(PASSWORD);
+        String chartset = dataSource.get(CHARSET) == null ? "utf-8" : dataSource.get(CHARSET);
+        if (StringUtils.isEmpty(userName) || StringUtils.isEmpty(password)) {
+            httpResponse = Request.Post(url).bodyString(request.toString(), ContentType.APPLICATION_JSON).execute().returnResponse();
+        } else {
+            HttpClientBuilder httpClientBuilder = HttpClientBuilder.create();
+            HttpPost httpPost = new HttpPost(url);
+            StringEntity reqEntity = new StringEntity(request.toString());
+            httpPost.setEntity(reqEntity);
+            httpResponse = httpClientBuilder.build().execute(httpPost, getHttpContext());
+        }
 
-        String response = EntityUtils.toString(httpResponse.getEntity(), dataSource.get(CHARSET));
+        String response = EntityUtils.toString(httpResponse.getEntity(), chartset);
         if (httpResponse.getStatusLine().getStatusCode() == 200) {
             return JSONObject.parseObject(response);
         } else {

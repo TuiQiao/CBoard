@@ -3,9 +3,16 @@
 <mapper namespace="org.cboard.dao.UserDao">
 
     <update id="save">
-        <![CDATA[
-        INSERT INTO dashboard_user(user_id,login_name,user_name,user_password,user_status) VALUES (#{userId},#{loginName},#{userName},#{userPassword},#{userStatus})
-        ]]>
+        INSERT INTO dashboard_user(user_id,login_name,user_name,user_password,user_status) VALUES (#{userId},#{loginName},#{userName},#{userPassword},
+            <choose>
+                <when test="userStatus == null">
+                    null
+                </when>
+                <otherwise>
+                    #{userStatus}
+                 </otherwise>
+            </choose>        
+        )
     </update>
 
     <select id="getUserList" resultType="org.cboard.pojo.DashboardUser">

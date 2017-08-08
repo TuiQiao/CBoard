@@ -11,10 +11,12 @@ cBoard.service('chartScatterService', function (dataService) {
     };
 
     this.parseOption = function (data) {
+        var chartConfig = data.chartConfig;
         var casted_keys = data.keys;
         var casted_values = data.series;
         var aggregate_data = data.data;
         var newValuesConfig = data.seriesConfig;
+        var tunningOpt = chartConfig.option;
 
         var string_keys = _.map(casted_keys, function (key) {
             return key.join('-');
@@ -76,16 +78,18 @@ cBoard.service('chartScatterService', function (dataService) {
         var colorMin = _.max(series, function (s) {
             return Number(s.colorMin);
         }).colorMin;
+
+        if (tunningOpt) {
+            var labelInterval, labelRotate;
+            tunningOpt.ctgLabelInterval ? labelInterval = tunningOpt.ctgLabelInterval : 'auto';
+            tunningOpt.ctgLabelRotate ? labelRotate = tunningOpt.ctgLabelRotate : 0;
+        }
+
         var echartOption = {
             legend: {
                 data: _.map(series, function (v) {
                     return v.name;
                 })
-            },
-            dataZoom: {
-                show: true,
-                start : 0,
-                end: 100
             },
             tooltip: {
                 trigger: 'item',
@@ -104,6 +108,10 @@ cBoard.service('chartScatterService', function (dataService) {
                     lineStyle: {
                         type: 'dashed'
                     }
+                },
+                axisLabel: {
+                    interval: labelInterval,
+                    rotate: labelRotate
                 }
             },
             yAxis: {
@@ -152,6 +160,9 @@ cBoard.service('chartScatterService', function (dataService) {
                 };
             })
         };
+
+        updateEchartOptions(chartConfig.option, echartOption);
+
         return echartOption;
     };
 });

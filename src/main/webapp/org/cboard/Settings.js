@@ -6,3 +6,14 @@ var settings = {
     preferredLanguage: "en" // en/cn: Switch language to Chinese
 };
 
+var CB_I18N;
+
+$.ajax({
+    url: "i18n/" + settings.preferredLanguage + "/cboard.json",
+    type: "GET",
+    dataType: "json",
+    success: function(data) {
+        return CB_I18N = data;
+    },
+    async: false
+});

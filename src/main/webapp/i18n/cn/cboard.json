@@ -367,6 +367,12 @@
       "START": "开始位置",
       "ROWS": "结果数",
       "FL": "结果字段"
+    },
+    "CROSS_TABLE":{
+      "NEXT_PAGE": "下一页",
+      "LAST_PAGE": "上一页",
+      "SHOW": "显示",
+      "ENTRIES": "条"
     }
   }
 }

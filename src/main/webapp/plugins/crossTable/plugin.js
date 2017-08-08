@@ -85,7 +85,7 @@ var crossTable = {
         html = html + trDom + "</tbody></table>";
         var optionDom = "<select><option value='20'>20</option><option value='50'>50</option><option value='100'>100</option><option value='150'>150</option></select>";
         var p_class = "p_" + random;
-        var PaginationDom = "<div class='" + p_class + "'><div class='optionNum'><span>Show</span>" + optionDom + "<span>entries</span></div><div class='page'><ul></ul></div></div>";
+        var PaginationDom = "<div class='" + p_class + "'><div class='optionNum'><span>" + cboardTranslate("CROSS_TABLE.SHOW") + "</span>" + optionDom + "<span>" + cboardTranslate("CROSS_TABLE.ENTRIES") + "</span></div><div class='page'><ul></ul></div></div>";
         var operate = "<div class='toolbar toolbar" + random + "'><span class='info'><b>info: </b>" + rowNum + " x " + colNum + "</span>" +
             "<span class='exportBnt' title='export'></span></div>";
         $(container).html(operate);
@@ -264,7 +264,11 @@ var crossTable = {
         });
     },
     renderPagination: function (pageCount, pageNumber, pageObj, target) {
+<<<<<<< HEAD
+        var liStr = '<li><a class="previewLink">' + cboardTranslate("CROSS_TABLE.PREVIOUS_PAGE") + '</a></li>';
+=======
         var liStr = '<li><a class="previewLink">' + cboardTranslate("COMMON.LAST_PAGE") + '</a></li>';
+>>>>>>> branch 'branch-0.4' of https://github.com/february/CBoard.git
         if (pageCount < 10) {
             for (var a = 0; a < pageCount; a++) {
                 liStr += '<li><a class="pageLink">' + (a + 1) + '</a></li>';
@@ -301,7 +305,11 @@ var crossTable = {
                 }
             }
         }
+<<<<<<< HEAD
+        liStr += '<li><a class="nextLink">' + cboardTranslate("CROSS_TABLE.NEXT_PAGE") + '</a></li>';
+=======
         liStr += '<li><a class="nextLink">' + cboardTranslate("COMMON.NEXT_PAGE") + '</a></li>';
+>>>>>>> branch 'branch-0.4' of https://github.com/february/CBoard.git
         if (target) {
             target.innerHTML = liStr;
             if (pageNumber == 1) {

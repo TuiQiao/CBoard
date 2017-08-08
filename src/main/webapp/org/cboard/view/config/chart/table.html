@@ -24,6 +24,10 @@
                                 ng-click="editSort(o);cleanRowSort(o);">
                             <span class="fa" ng-class="{undefined:'fa-sort','asc':'fa-sort-asc','desc':'fa-sort-desc'}[o.sort]"></span>
                         </button>
+                        <button type="button" class="btn btn-primary btn-sm dropdown-toggle"
+                                ng-click="editAlign(o)">
+                            <span class="fa" ng-class="{undefined:'fa-align-center','left':'fa-align-left','right':'fa-align-right'}[o.align]"></span>
+                        </button>
                         <button type="button" class="btn btn-primary btn-sm dropdown-toggle" data-toggle="dropdown">
                             <span class="fa fa-edit"></span>
                         </button>
@@ -52,6 +56,10 @@
                         <button type="button" class="btn btn-default btn-sm dropdown-toggle"
                                 ng-click="editSort(o);cleanRowSort(o);">
                             <span class="fa" ng-class="{undefined:'fa-sort','asc':'fa-sort-asc','desc':'fa-sort-desc'}[o.sort]"></span>
+                        </button>
+                        <button type="button" class="btn btn-default btn-sm dropdown-toggle"
+                                ng-click="editAlign(o)">
+                            <span class="fa" ng-class="{undefined:'fa-align-center','left':'fa-align-left','right':'fa-align-right'}[o.align]"></span>
                         </button>
                         <button type="button" class="btn btn-default btn-sm dropdown-toggle"
                                 data-toggle="dropdown">

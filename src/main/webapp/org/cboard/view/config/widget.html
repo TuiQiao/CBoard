@@ -152,7 +152,8 @@
                                 <div class="col-md-12">
                                     <div class="form-group">
                                         <div class="col-sm-offset-2 col-sm-10">
-                                            <button type="submit" class="btn btn-danger pull-right">
+                                            <button type="submit" ng-click="doCancel()"
+                                                    class="btn btn-danger pull-right">
                                                 {{'CONFIG.WIDGET.CANCEL'|translate}}
                                             </button>
                                             <button type="submit" ng-click="saveWgt()"
@@ -174,19 +175,36 @@
                                 </div>
                             </div>
                             <div class="row" style="margin: 0px 0px;">
-                                <div class="col-md-{{previewDivWidth}} box box-solid">
-                                    <div ng-show="!viewQueryMoal" id="preview_widget" style="min-height: 300px; user-select: text;"></div>
-                                    <div ng-show="viewQueryMoal" id="viewQuery_widget" style="min-height: 300px; user-select: text;"></div>
-                                    <div class="overlay fa box box-solid" ng-show="loadingPre">
-                                        <div class="box-header with-border">
-                                            <!--<h3 class="box-title"></h3>-->
-                                            <div class="box-tools pull-right">
-                                                <button type="button" class="btn btn-box-tool" data-widget="remove">
-                                                    <i class="fa fa-times" style="font-size: large"></i></button>
+                                <div class="col-md-12">
+                                    <!-- Custom Tabs -->
+                                    <div class="nav-tabs-custom">
+                                        <ul class="nav nav-tabs">
+                                            <li class="active"><a id="preview_widget_tab" href="#preview_widget2" data-toggle="tab" aria-expanded="true">Preview</a></li>
+                                            <li class=""><a id="viewQuery_widget_tab" href="#viewQuery_widget" data-toggle="tab" aria-expanded="false">Query</a></li>
+                                            <li class=""><a id="options_tab" href="#options" data-toggle="tab" aria-expanded="false">Option</a></li>
+                                        </ul>
+                                        <div class="tab-content">
+                                            <div class="tab-pane active" id="preview_widget2" style="min-height: 300px;height: 100%;overflow: hidden;">
+                                                <div ng-show="!loadingPre" id="preview_widget" style="min-height: 300px;"/>
+                                                <div class="overlay fa box box-solid" ng-show="loadingPre" style="min-height: 300px;">
+                                                    <div class="box-header">
+                                                        <!--<h3 class="box-title"></h3>-->
+                                                        <div class="box-tools pull-right">
+                                                            <button type="button" class="btn btn-box-tool" data-widget="remove">
+                                                                <i class="fa fa-times" style="font-size: large"></i></button>
+                                                        </div>
+                                                    </div>
+                                                    <i class="fa fa-spinner fa-spin"></i>
+                                                </div>
                                             </div>
+                                            <div class="tab-pane" id="viewQuery_widget" style="min-height: 300px;height: 100%;overflow: hidden; user-select: text;"/>
+                                            <!-- /.tab-pane -->
+                                            <div class="tab-pane" id="options" style="min-height: 300px;height: 100%;overflow: hidden;" ng-include="getOptionsView()"/>
+                                            <!-- /.tab-pane -->
                                         </div>
-                                        <i class="fa fa-spinner fa-spin"></i>
+                                        <!-- /.tab-content -->
                                     </div>
+                                    <!-- nav-tabs-custom -->
                                 </div>
                             </div>
                         </div>

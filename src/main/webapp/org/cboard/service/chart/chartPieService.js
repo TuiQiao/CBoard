@@ -39,6 +39,11 @@ cBoard.service('chartPieService', function () {
                             formatter: '{b}: {d}%'
                         }
                     },
+                    emphasis: {
+                        shadowBlur: 10,
+                        shadowOffsetX: 0,
+                        shadowColor: 'rgba(0, 0, 0, 0.5)'
+                    },
                     labelLine: {show: true}
                 }
             };
@@ -71,14 +76,7 @@ cBoard.service('chartPieService', function () {
             series: series
         };
 
-        var tunningOpt = chartConfig.option;
-        if (tunningOpt) {
-            if (tunningOpt.legendShow == false) {
-                echartOption.grid = echartsBasicOption.grid;
-                echartOption.grid.top = '5%';
-                echartOption.legend.show =false;
-            }
-        }
+        updateEchartOptions(chartConfig.option, echartOption);
 
         return echartOption;
     };

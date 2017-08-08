@@ -264,11 +264,7 @@ var crossTable = {
         });
     },
     renderPagination: function (pageCount, pageNumber, pageObj, target) {
-<<<<<<< HEAD
         var liStr = '<li><a class="previewLink">' + cboardTranslate("CROSS_TABLE.PREVIOUS_PAGE") + '</a></li>';
-=======
-        var liStr = '<li><a class="previewLink">' + cboardTranslate("COMMON.LAST_PAGE") + '</a></li>';
->>>>>>> branch 'branch-0.4' of https://github.com/february/CBoard.git
         if (pageCount < 10) {
             for (var a = 0; a < pageCount; a++) {
                 liStr += '<li><a class="pageLink">' + (a + 1) + '</a></li>';

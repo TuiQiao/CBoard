@@ -19,6 +19,12 @@
     <link rel="stylesheet" href="plugins/ngJsTree/style.css">
     <link rel="stylesheet" href="plugins/jQueryUI/theme.css">
     <link rel="stylesheet" href="plugins/jQueryUI/jquery-ui.css">
+
+    <!-- bmap-->
+    <script src="http://api.map.baidu.com/api?v=2.0&ak=ZUONbpqGBsYGXNIYHicvbAbM"></script>
+    <script src="plugins/echart/echarts-3.6.2.min.js"></script>
+    <script src="plugins/echart/bmap.js"></script>
+
     <script src="plugins/jQuery/jquery-2.2.3.min.js"></script>
     <script src="org/cboard/Settings.js"></script>
     <!--<script src="http://cdn.bootcss.com/angular.js/1.5.8/angular.js"></script>-->
@@ -43,15 +49,9 @@
     <script src="plugins/ngJsTree/ngJsTree.js"></script>
 
     <!-- ECharts -->
-    <!--<script src="plugins/echart/echarts-3.6.2.min.js"></script>-->
-    <script src="plugins/echart/echarts-3.6.2.min.js"></script>
     <script src="plugins/echart/theme-fin1.js"></script>
     <script src="plugins/echart/echarts-wordcloud.min.js"></script>
     <script src="plugins/echart/echarts-liquidfill.min.js"></script>
-    <!-- bmap-->
-    <script src="plugins/echart/bmap.js"></script>
-    <script type="text/javascript" src="http://api.map.baidu.com/api?v=2.0&ak=ZUONbpqGBsYGXNIYHicvbAbM"></script>
-
 
     <script src="lib/jquery.ba-resize.js"></script>
     <script src="plugins/ace/ace.js"></script>
@@ -168,6 +168,7 @@
 <script src="org/cboard/util/CBoardMapRender.js"></script>
 <script src="org/cboard/util/CBoardJsTreeUtils.js"></script>
 <script src="org/cboard/util/CboardHotMapRender.js"></script>
+<script src="org/cboard/util/CBoardBmapRender.js"></script>
 
 <!-- AngularJS-->
 <script src="org/cboard/ng-app.js"></script>
@@ -199,12 +200,15 @@
 <script src="org/cboard/service/chart/chartLiquidFillService.js"></script>
 <script src="org/cboard/service/chart/chartHotMapService.js"></script>
 <script src="org/cboard/service/chart/chartMarkLineMapBmapService.js"></script>
+<script src="org/cboard/service/chart/chartHotMapBmapService.js"></script>
 <script src="org/cboard/directive/dashboard/dashboardWidget.js"></script>
 
 
 
 <script src="plugins/crossTable/plugin.js"></script>
 <script src="plugins/FineMap/plugin.js"></script>
+
+<script src="plugins/echart/bmap.js"></script>
 
 <script type="text/ng-template" id="echartContent">
     <div class="col-md-{{widget.width}}">

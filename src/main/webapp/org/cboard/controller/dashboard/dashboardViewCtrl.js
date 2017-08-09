@@ -85,10 +85,17 @@ cBoard.controller('dashboardViewCtrl', function ($timeout, $rootScope, $scope, $
 
     var buildRender = function (w, reload) {
         w.render = function (content, optionFilter, scope) {
-            chartService.render(content, injectFilter(w.widget).data, optionFilter, scope, reload, null, w.relation).then(function (d) {
-                w.realTimeTicket = d;
+            // 百度地图特殊处理
+            var charType = injectFilter(w.widget).data.config.chart_type;
+            if(charType == 'markLineMapBmap' || charType == 'hotMapBmap'){
+                chartService.renderBmap(content, injectFilter(w.widget).data, optionFilter, scope, reload);
                 w.loading = false;
-            });
+            } else {
+                chartService.render(content, injectFilter(w.widget).data, optionFilter, scope, reload).then(function (d) {
+                    w.realTimeTicket = d;
+                    w.loading = false;
+                });
+            }
             w.realTimeOption = {optionFilter: optionFilter, scope: scope};
         };
         w.modalRender = function (content, optionFilter, scope) {
@@ -392,10 +399,17 @@ cBoard.controller('dashboardViewCtrl', function ($timeout, $rootScope, $scope, $
         widget.widget.data = injectFilter(widget.widget).data;
         widget.show = false;
         widget.render = function (content, optionFilter, scope) {
-            chartService.render(content, widget.widget.data, optionFilter, scope, true, null, widget.relation).then(function (d) {
-                widget.realTimeTicket = d;
+            //百度地图特殊处理
+            var charType = widget.widget.data.config.chart_type;
+            if(charType == 'markLineMapBmap' || charType == 'hotMapBmap'){
+                chartService.renderBmap(content, widget.widget.data, optionFilter, scope, true);
                 widget.loading = false;
-            });
+            } else {
+                chartService.render(content, widget.widget.data, optionFilter, scope, true).then(function (d) {
+                    widget.realTimeTicket = d;
+                    widget.loading = false;
+                });
+            }
             widget.realTimeOption = {optionFilter: optionFilter, scope: scope};
         };
         $timeout(function () {

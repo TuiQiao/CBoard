@@ -157,6 +157,7 @@ cBoard.service('chartMarkLineMapService', function () {
                         orient: 'vertical',
                         top: 'top',
                         left: 'left',
+                        //text: ['High', 'Low'],
                         selectedMode: 'multiple',
                         data: optionData
                     },

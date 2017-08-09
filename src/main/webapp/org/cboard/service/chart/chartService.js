@@ -6,8 +6,8 @@ cBoard.service('chartService', function ($q, dataService, chartPieService, chart
                                          chartSankeyService, chartTableService, chartKpiService, chartRadarService,
                                          chartMapService, chartScatterService, chartGaugeService, chartWordCloudService,
                                          chartTreeMapService, chartAreaMapService, chartHeatMapCalendarService, chartHeatMapTableService,
-                                         chartLiquidFillService, chartMarkLineMapService,chartHotMapService,chartMarkLineMapBmapService,
-                                         chartHotMapBmapService) {
+                                         chartLiquidFillService, chartMarkLineMapService, chartHeatMapService, chartMarkLineMapBmapService,
+                                         chartHeatMapBmapService) {
 
 
         this.render = function (containerDom, widget, optionFilter, scope, reload, persist, relation) {
@@ -242,14 +242,14 @@ cBoard.service('chartService', function ($q, dataService, chartPieService, chart
                 case 'liquidFill':
                     chart = chartLiquidFillService;
                     break;
-                case 'hotMap':
-                    chart = chartHotMapService;
+                case 'heatMap':
+                    chart = chartHeatMapService;
                     break;
                 case 'markLineMapBmap':
                     chart = chartMarkLineMapBmapService;
                     break;
-                case 'hotMapBmap':
-                    chart = chartHotMapBmapService;
+                case 'heatMapBmap':
+                    chart = chartHeatMapBmapService;
                     break;
             }
             return chart;

@@ -81,12 +81,6 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
                 measure: translate('CONFIG.WIDGET.TIPS_DIM_NUM_1')
             },
             {
-                name: translate('CONFIG.WIDGET.AREA_MAP'), value: 'areaMap', class: 'cAreaMap',
-                row: translate('CONFIG.WIDGET.TIPS_DIM_NUM_1_MORE'),
-                column: translate('CONFIG.WIDGET.TIPS_DIM_NUM_0_MORE'),
-                measure: translate('CONFIG.WIDGET.TIPS_DIM_NUM_1')
-            },
-            {
                 name: translate('CONFIG.WIDGET.HEAT_MAP_CALENDER'), value: 'heatMapCalendar', class: 'cHeatMapCalendar',
                 row: translate('CONFIG.WIDGET.TIPS_DIM_NUM_1'),
                 column: translate('CONFIG.WIDGET.TIPS_DIM_NUM_0'),
@@ -99,19 +93,25 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
                 measure: translate('CONFIG.WIDGET.TIPS_DIM_NUM_1')
             },
             {
-                name: translate('CONFIG.WIDGET.MARK_LINE_MAP'), value: 'markLineMap', class: 'cMarkLineMap',
-                row: translate('CONFIG.WIDGET.TIPS_DIM_NUM_1_MORE'),
-                column: translate('CONFIG.WIDGET.TIPS_DIM_NUM_1_MORE'),
-                measure: translate('CONFIG.WIDGET.TIPS_DIM_NUM_1')
-            },
-            {
                 name: translate('CONFIG.WIDGET.LIQUID_FILL'), value: 'liquidFill', class: 'cLiquidFill',
                 row: translate('CONFIG.WIDGET.TIPS_DIM_NUM_0'),
                 column: translate('CONFIG.WIDGET.TIPS_DIM_NUM_0'),
                 measure: translate('CONFIG.WIDGET.TIPS_DIM_NUM_1')
             },
             {
-                name: translate('CONFIG.WIDGET.HOT_MAP'), value: 'hotMap', class: 'cHotMap',
+                name: translate('CONFIG.WIDGET.AREA_MAP'), value: 'areaMap', class: 'cAreaMap',
+                row: translate('CONFIG.WIDGET.TIPS_DIM_NUM_1_MORE'),
+                column: translate('CONFIG.WIDGET.TIPS_DIM_NUM_0_MORE'),
+                measure: translate('CONFIG.WIDGET.TIPS_DIM_NUM_1')
+            },
+            {
+                name: translate('CONFIG.WIDGET.MARK_LINE_MAP'), value: 'markLineMap', class: 'cMarkLineMap',
+                row: translate('CONFIG.WIDGET.TIPS_DIM_NUM_1_MORE'),
+                column: translate('CONFIG.WIDGET.TIPS_DIM_NUM_1_MORE'),
+                measure: translate('CONFIG.WIDGET.TIPS_DIM_NUM_1')
+            },
+            {
+                name: translate('CONFIG.WIDGET.HEAT_MAP'), value: 'heatMap', class: 'cHeatMap',
                 row: translate('CONFIG.WIDGET.TIPS_DIM_NUM_1_MORE'),
                 column: translate('CONFIG.WIDGET.TIPS_DIM_NUM_0'),
                 measure: translate('CONFIG.WIDGET.TIPS_DIM_NUM_1_MORE')
@@ -123,7 +123,7 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
                 measure: translate('CONFIG.WIDGET.TIPS_DIM_NUM_1')
             },
             {
-                name: translate('CONFIG.WIDGET.HOT_MAP_BMAP'), value: 'hotMapBmap', class: 'cHotMapBmap',
+                name: translate('CONFIG.WIDGET.HEAT_MAP_BMAP'), value: 'heatMapBmap', class: 'cHeatMapBmap',
                 row: translate('CONFIG.WIDGET.TIPS_DIM_NUM_1_MORE'),
                 column: translate('CONFIG.WIDGET.TIPS_DIM_NUM_0'),
                 measure: translate('CONFIG.WIDGET.TIPS_DIM_NUM_1_MORE')
@@ -134,9 +134,9 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
             "line": true, "pie": true, "kpi": true, "table": true,
             "funnel": true, "sankey": true, "radar": true, "map": true,
             "scatter": true, "gauge": true, "wordCloud": true, "treeMap": true,
-            "areaMap": true, "heatMapCalendar": true, "heatMapTable": true,
-            "markLineMap": true, "liquidFill": true , "hotMap": true, 
-            "markLineMapBmap": true, "hotMapBmap": true
+            "heatMapCalendar": true, "heatMapTable": true, "liquidFill": true,
+            "areaMap": true, "markLineMap": true, "heatMap": true,
+            "markLineMapBmap": true, "heatMapBmap": true
         };
 
         $scope.value_series_types = [
@@ -225,9 +225,9 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
             heatMapTable: {keys: -1, groups: -1, filters: -1, values: 1},
             markLineMap: {keys: 2, groups: 2, filters: -1, values: 1},
             liquidFill: {keys: 0, groups: 0, filters: -1, values: 1},
-            hotMap: {keys: 2, groups: 0, filters: -1, values: 1},
+            heatMap: {keys: 2, groups: 0, filters: -1, values: 1},
             markLineMapBmap: {keys: 2, groups: 2, filters: -1, values: 1},
-            hotMapBmap: {keys: 2, groups: 0, filters: -1, values: 1}
+            heatMapBmap: {keys: 2, groups: 0, filters: -1, values: 1}
         };
 
         //界面控制
@@ -699,7 +699,7 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
                         v.style = 'bg-aqua';
                     });
                     break;
-                case 'hotMap':
+                case 'heatMap':
                     $scope.curWidget.config.values.push({name: '', cols: []});
                     _.each(oldConfig.values, function (v) {
                         _.each(v.cols, function (c) {
@@ -723,7 +723,7 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
                         v.style = 'bg-aqua';
                     });
                     break;
-                case 'hotMapBmap':
+                case 'heatMapBmap':
                     $scope.curWidget.config.values.push({name: '', cols: []});
                     _.each(oldConfig.values, function (v) {
                         _.each(v.cols, function (c) {
@@ -896,7 +896,7 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
                     $scope.curWidget.config.filters = new Array();
                     $scope.curWidget.config.animation = 'static';
                     break;
-                case 'hotMap':
+                case 'heatMap':
                     $scope.curWidget.config.selects = angular.copy($scope.columns);
                     $scope.curWidget.config.keys = new Array();
                     $scope.curWidget.config.groups = new Array();
@@ -916,7 +916,7 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
                     }];
                     $scope.curWidget.config.filters = new Array();
                     break;
-                case 'hotMapBmap':
+                case 'heatMapBmap':
                     $scope.curWidget.config.selects = angular.copy($scope.columns);
                     $scope.curWidget.config.keys = new Array();
                     $scope.curWidget.config.groups = new Array();
@@ -963,7 +963,7 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
             $scope.loadingPre = true;
             var charType = $scope.curWidget.config.chart_type;
             //百度地图特殊处理
-            if(charType == 'markLineMapBmap' || charType == 'hotMapBmap'){
+            if(charType == 'markLineMapBmap' || charType == 'heatMapBmap'){
                 chartService.renderBmap($('#preview_widget'), {
                     config: $scope.curWidget.config,
                     datasource: $scope.datasource ? $scope.datasource.id : null,
@@ -1044,7 +1044,7 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
                         case 'markLineMap':
                             $scope.previewDivWidth = 12;
                             break;
-                        case 'hotMap':
+                        case 'heatMap':
                             $scope.previewDivWidth = 12;
                             break;
                     }

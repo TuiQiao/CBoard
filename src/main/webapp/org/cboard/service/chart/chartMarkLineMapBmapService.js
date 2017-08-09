@@ -3,7 +3,7 @@
  */
 cBoard.service('chartMarkLineMapBmapService', function () {
     this.render = function (containerDom, option, scope, persist) {
-        return new CboardBMapRender(containerDom, option).chart(null, persist);
+        return new CBoardBMapRender(containerDom, option).chart(null, persist);
     }
 
     this.parseOption = function (data) {
@@ -258,6 +258,7 @@ cBoard.service('chartMarkLineMapBmapService', function () {
                 orient: 'vertical',
                 top: 'bottom',
                 left: 'right',
+                //text: ['High', 'Low'],
                 data: optionData,
                 selectedMode: 'multiple'
             },

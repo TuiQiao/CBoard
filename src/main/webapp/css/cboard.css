@@ -153,13 +153,12 @@
 .cMarkLineMap.disabled{ background-image: url(../imgs/markLineMap.png);}
 .cLiquidFill{ background-image: url(../imgs/liquidFill-active.png); }
 .cLiquidFill.disabled{ background-image: url(../imgs/liquidFill.png); }
-.cHotMap{ background-image: url(../imgs/areaMap-active.png); }
-.cHotMap.disabled{ background-image: url(../imgs/areaMap.png); }
-.cMarkLineMapBmap{ background-image: url(../imgs/markLineMap-active.png); }
-.cMarkLineMapBmap.disabled{ background-image: url(../imgs/markLineMap.png);}
-.cHotMapBmap{ background-image: url(../imgs/areaMap-active.png); }
-.cHotMapBmap.disabled{ background-image: url(../imgs/areaMap.png); }
-
+.cHeatMap{ background-image: url(../imgs/heatMap-active.png); }
+.cHeatMap.disabled{ background-image: url(../imgs/heatMap.png); }
+.cMarkLineMapBmap{ background-image: url(../imgs/markLineMapBmap-active.png); }
+.cMarkLineMapBmap.disabled{ background-image: url(../imgs/markLineMapBmap.png);}
+.cHeatMapBmap{ background-image: url(../imgs/heatMapBmap-active.png); }
+.cHeatMapBmap.disabled{ background-image: url(../imgs/heatMapBmap.png); }
 
 .chart-type a.active{
     background-color: #FFF;

@@ -1,5 +1,6 @@
 /**
  * Created by jintian on 2017/8/7.
+ *
  */
 
 var echartsBasicOption = {
@@ -21,11 +22,11 @@ var echartsBasicOption = {
     }
 };
 
-var CboardHotMapRender = function (jqContainer, options, isDeepSpec) {
+var CBoardHeatMapRender = function (jqContainer, options, isDeepSpec) {
     this.container = jqContainer; // jquery object
-    var hotMap = jqContainer.get(0);
-    $(hotMap).css("width","100%");
-    $(hotMap).css("height","500px");
+    var heatMap = jqContainer.get(0);
+    $(heatMap).css("width", "100%");
+    $(heatMap).css("height", "500px");
     this.ecc = echarts.init(jqContainer.get(0), this.theme);
     this.isDeppSpec = isDeepSpec;
 
@@ -33,9 +34,9 @@ var CboardHotMapRender = function (jqContainer, options, isDeepSpec) {
     this.options = options;
 };
 
-CboardHotMapRender.prototype.theme = "theme-fin1"; // 主题
+CBoardHeatMapRender.prototype.theme = "theme-fin1"; // 主题
 
-CboardHotMapRender.prototype.chart = function (group, persist) {
+CBoardHeatMapRender.prototype.chart = function (group, persist) {
     var self = this;
     var options = this.isDeppSpec == true ? self.options : $.extend(true, {}, self.basicOption, self.options);
     if (options.visualMap != undefined) {
@@ -46,9 +47,9 @@ CboardHotMapRender.prototype.chart = function (group, persist) {
     }
     if (options.legend.data && options.legend.data.length > 35) {
         options.grid.top = '5%';
-        options.legend.show =false;
+        options.legend.show = false;
     }
-    if(persist){
+    if (persist) {
         options.animation = false;
     }
     self.ecc.setOption(options);
@@ -78,7 +79,7 @@ CboardHotMapRender.prototype.chart = function (group, persist) {
     }
 };
 
-CboardHotMapRender.prototype.changeSize = function (instance) {
+CBoardHeatMapRender.prototype.changeSize = function (instance) {
     var o = instance.getOption();
     var seriesType = o.series[0] ? o.series[0].type : null;
     if (seriesType == 'pie') {

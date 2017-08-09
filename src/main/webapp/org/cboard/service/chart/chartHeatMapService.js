@@ -1,7 +1,7 @@
 /**
  * Created by jintian on 2017/8/3.
  */
-cBoard.service('chartHotMapService', function () {
+cBoard.service('chartHeatMapService', function () {
     this.render = function (containerDom, option, scope, persist) {
         if (option == null) {
             containerDom.html("<div class=\"alert alert-danger\" role=\"alert\">No Data!</div>");
@@ -9,7 +9,7 @@ cBoard.service('chartHotMapService', function () {
         }
         var height;
         scope ? height = scope.myheight - 20 : null;
-        return new CboardHotMapRender(containerDom, option).chart(height, persist);
+        return new CBoardHeatMapRender(containerDom, option).chart(height, persist);
     };
 
     this.parseOption = function (data) {
@@ -55,9 +55,9 @@ cBoard.service('chartHotMapService', function () {
                     visualMap: {
                         min: min,
                         max: max,
-                        left: 'left',
+                        left: 'right',
                         top: 'bottom',
-                        text: ['High','Low'],
+                        //text: ['High', 'Low'],
                         inRange: {
                             color: ['#d94e5d','#eac736','#50a3ba'].reverse()
                         },

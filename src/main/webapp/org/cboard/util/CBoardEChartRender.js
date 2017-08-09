@@ -113,10 +113,6 @@ CBoardEChartRender.prototype.addClick = function (chartConfig, relation) {
         var keys = _.map(chartConfig.keys, function(key, index){
            return {"index":index, "name":key.col};
         });
-        //todo values未处理
-        var values = _.map(chartConfig.values[0].cols, function(value, index){
-            return {"index":index, "name":value.col};
-        });
 
         var paramValues = [];
 
@@ -167,7 +163,7 @@ CBoardEChartRender.prototype.addClick = function (chartConfig, relation) {
                             }
                         });
                     }else{
-                        paramValues.push("no");
+                        paramValues.push("noMatch");
                     }
                 });
                 break;
@@ -192,7 +188,7 @@ CBoardEChartRender.prototype.addClick = function (chartConfig, relation) {
                                 }
                             });
                         } else {
-                            paramValues.push("no");
+                            paramValues.push("noMatch");
                         }
                     });
                 }
@@ -208,7 +204,7 @@ CBoardEChartRender.prototype.addClick = function (chartConfig, relation) {
                                 }
                             });
                         }else{
-                            paramValues.push("no");
+                            paramValues.push("noMatch");
                         }
                     });
                 }else{
@@ -220,7 +216,7 @@ CBoardEChartRender.prototype.addClick = function (chartConfig, relation) {
                                 }
                             });
                         }else{
-                            paramValues.push("no");
+                            paramValues.push("noMatch");
                         }
                     });
                 }
@@ -235,7 +231,7 @@ CBoardEChartRender.prototype.addClick = function (chartConfig, relation) {
                             }
                         });
                     }else{
-                        paramValues.push("no");
+                        paramValues.push("noMatch");
                     }
                 });
                 break;
@@ -249,7 +245,7 @@ CBoardEChartRender.prototype.addClick = function (chartConfig, relation) {
                             }
                         });
                     }else{
-                        paramValues.push("no");
+                        paramValues.push("noMatch");
                     }
                 });
                 break;

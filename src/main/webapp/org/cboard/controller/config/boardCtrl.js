@@ -444,19 +444,29 @@ cBoard.controller('boardCtrl', function ($rootScope, $scope, $http, ModalUtils, 
         if(!w){
             return;
         }
-        $http.get("dashboard/dashboardWidget.do?id="+e.widgetId).then(function (response) {
-            if (!response) {
-                return false;
-            }
-            var config = response.data.data.config;
-            var fields = [];
-            _.map(config.groups,function(e){fields.push(e.col);});
-            _.map(config.keys,function(e){fields.push(e.col);});
-            e.relation.targetFields = fields;
+        var dataSet = _.find($scope.datasetList, function(e){
+            return w.data.datasetId === e.id;
         });
+        var dimension = dataSet.data.schema.dimension;
+        e.relation.targetFields = _.map(dimension, function(e){return e.column});
+        if(dimension.length == 0){
+            dataService.getColumns({
+                datasource: null,
+                query: null,
+                datasetId: w.data.datasetId,
+                callback: function (dps) {
+                    $scope.alerts = [];
+                    if (dps.msg == "1") {
+                        e.relation.targetFields = dps.columns;
+                    } else {
+                        $scope.alerts = [{msg: dps.msg, type: 'danger'}];
+                    }
+                }
+            });
+        };
 
         var w = {};
-        w.name = _.filter($scope.widgetList,function(e){return e.id===widgetId})[0].name;
+        w.name = _.find($scope.widgetList,function(e){return e.id===widgetId}).name;
         w.width = 12;
         w.widgetId = widgetId;
         w.sourceId = e.widgetId;
@@ -470,21 +480,15 @@ cBoard.controller('boardCtrl', function ($rootScope, $scope, $http, ModalUtils, 
         if(!e.relation){
             return;
         }
-        var w = _.find($scope.widgetList, function (w) {
-            return w.id == widgetId;
-        });
-        if(!w){
-            return;
-        }
         //源表字段默认为原表的group key指定字段
-        $http.get("dashboard/dashboardWidget.do?id="+e.widgetId).then(function (response) {
+        $http.get("dashboard/dashboardWidget.do?id="+ e.widgetId).then(function (response) {
             if (!response) {
                 return false;
             }
             var config = response.data.data.config;
             var fields = [];
-            _.map(config.groups,function(e){fields.push(e.col);});
-            _.map(config.keys,function(e){fields.push(e.col);});
+            _.each(config.groups,function(e){fields.push(e.col);});
+            _.each(config.keys,function(e){fields.push(e.col);});
             e.relation.sourceField = fields;
             e.relation.sourceFields = fields;
         });

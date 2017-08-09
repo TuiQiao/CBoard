@@ -86,7 +86,7 @@ cBoard.service('chartHotMapService', function () {
                         type: 'heatmap',
                         mapType:code,
                         coordinateSystem: 'geo',
-                        blurSize:10,
+                        //blurSize:20,
                         data: seriesData
                     }]
                 };

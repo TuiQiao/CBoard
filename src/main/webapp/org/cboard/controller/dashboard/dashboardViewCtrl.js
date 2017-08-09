@@ -165,7 +165,7 @@ cBoard.controller('dashboardViewCtrl', function ($timeout, $rootScope, $scope, $
                     return e.id == w.datasetId;
                 });
                 if (ds && ds.data.interval && ds.data.interval > 0) {
-                    if (!$scope.intervalGroup[w.datasetId]) {
+                    if (!$scope.intervalGroup[w.datasetId] && !widget.sourceId) {
                         $scope.intervalGroup[w.datasetId] = [];
                         $scope.intervals.push($interval(function () {
                             refreshParam();
@@ -391,6 +391,7 @@ cBoard.controller('dashboardViewCtrl', function ($timeout, $rootScope, $scope, $
         paramToFilter();
         widget.widget.data = injectFilter(widget.widget).data;
         widget.show = false;
+        widget.showDiv = true;
         widget.render = function (content, optionFilter, scope) {
             chartService.render(content, widget.widget.data, optionFilter, scope, true, null, widget.relation).then(function (d) {
                 widget.realTimeTicket = d;

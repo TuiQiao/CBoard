@@ -970,7 +970,7 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
                 // 具体原因没有找到，求大神帮忙解决，thanks！
                 $('#preview_widget').html("<div id='preview' style='min-height: 300px; user-select: text;'></div>");
                 // --- end ---
-                chartService.render($('#preview_widget'), {
+                chartService.render($('#preview'), {
                     config: $scope.curWidget.config,
                     datasource: $scope.datasource ? $scope.datasource.id : null,
                     query: $scope.curWidget.query,

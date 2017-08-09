@@ -4,8 +4,10 @@
 'use strict';
 cBoard.service('chartLineService', function () {
 
-    this.render = function (containerDom, option, scope, persist) {
-        return new CBoardEChartRender(containerDom, option).chart(null, persist);
+    this.render = function (containerDom, option, scope, persist, drill, relation, chartConfig) {
+        var render = new CBoardEChartRender(containerDom, option);
+        render.addClick(chartConfig, relation);
+        return render.chart(null, persist);
     };
 
     this.parseOption = function (data) {
@@ -19,6 +21,7 @@ cBoard.service('chartLineService', function () {
         var string_keys = _.map(casted_keys, function (key) {
             return key.join('-');
         });
+        var tunningOpt = chartConfig.option;
 
         var sum_data = [];
         for (var j = 0; aggregate_data[0] && j < aggregate_data[0].length; j++) {
@@ -36,7 +39,7 @@ cBoard.service('chartLineService', function () {
             var s = angular.copy(newValuesConfig[joined_values]);
             s.name = joined_values;
             s.data = aggregate_data[i];
-            s.barMaxWidth = 20;
+            s.barMaxWidth = 40;
             if (s.type == 'stackbar') {
                 s.type = 'bar';
                 s.stack = s.valueAxisIndex.toString();
@@ -65,18 +68,33 @@ cBoard.service('chartLineService', function () {
             if (axis.series_type == "percentbar") {
                 axis.min = 0;
                 axis.max = 100;
+            } else {
+                axis.min = axis.min ? axis.min : null;
+                axis.max = axis.max ? axis.max : null;
             }
             if (index > 0) {
                 axis.splitLine = false;
             }
             axis.scale = true;
         });
+
+        if (tunningOpt) {
+            var labelInterval, labelRotate;
+            tunningOpt.ctgLabelInterval ? labelInterval = tunningOpt.ctgLabelInterval : 'auto';
+            tunningOpt.ctgLabelRotate ? labelRotate = tunningOpt.ctgLabelRotate : 0;
+        }
+
         var categoryAxis = {
             type: 'category',
-            data: string_keys
+            data: string_keys,
+            axisLabel: {
+                interval: labelInterval,
+                rotate: labelRotate
+            }
         };
 
         var echartOption = {
+            grid: angular.copy(echartsBasicOption.grid),
             legend: {
                 data: _.map(casted_values, function (v) {
                     return v.join('-');
@@ -102,50 +120,18 @@ cBoard.service('chartLineService', function () {
             series: series_data
         };
 
-        var basicOption = {
-            title: {},
-            grid: {
-                left: '50',
-                right: '20',
-                bottom: '15%',
-                top: '20%',
-                containLabel: false
-            },
-            tooltip: {
-                trigger: 'axis'
-            },
-            legend: {
-                x: 'left',
-                itemWidth: 15,
-                itemHeight: 10
-            }
-        };
-
-        var tunningOpt = chartConfig.option;
-        if (tunningOpt) {
-            if (tunningOpt.dataZoom == true) {
-                basicOption.dataZoom = {
-                    show: true,
-                    start : 0,
-                    end: 100
-                };
-            }
-            if (tunningOpt.legendShow == false) {
-                echartOption.grid = echartsBasicOption.grid;
-                echartOption.grid.top = '5%';
-                echartOption.legend.show =false;
-            }
-        }
-
         if (chartConfig.valueAxis === 'horizontal') {
-            basicOption.grid.left = 'left';
-            basicOption.grid.containLabel = true;
-            basicOption.grid.bottom = '5%';
+            echartOption.grid.left = 'left';
+            echartOption.grid.containLabel = true;
+            echartOption.grid.bottom = '5%';
         }
         if (chartConfig.valueAxis === 'vertical' && chartConfig.values.length > 1) {
-            basicOption.grid.right = 40;
+            echartOption.grid.right = 40;
         }
 
-        return $.extend(true, {}, echartOption, basicOption);
+        // Apply tunning options
+        updateEchartOptions(tunningOpt, echartOption);
+
+        return echartOption;
     };
 });

@@ -155,10 +155,10 @@ cBoard.service('chartMarkLineMapService', function () {
                 mapOption = {
                     legend: {
                         orient: 'vertical',
-                        top: 'bottom',
-                        left: 'right',
-                        data: optionData,
-                        selectedMode: 'multiple'
+                        top: 'top',
+                        left: 'left',
+                        selectedMode: 'multiple',
+                        data: optionData
                     },
                     geo: {
                         map: code,

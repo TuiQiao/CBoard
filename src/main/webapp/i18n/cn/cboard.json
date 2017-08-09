@@ -34,6 +34,8 @@
     "WANRING": "警告！",
     "COLLAPSE": "最小化",
     "REMOVE": "关闭",
+    "ADD_RELATION": "添加关联",
+    "DEL_RELATION": "删除关联",
     "DATE": "日期",
     "VALUE": "值"
   },
@@ -127,7 +129,7 @@
       "FUNNEL": "漏斗图",
       "SANKEY": "桑基图",
       "TABLE": "表格",
-      "KPI": "KPI",
+      "KPI": "指标卡",
       "PIE": "饼图",
       "LINE_BAR": "折线/柱状图",
       "SCATTER": "散点图/气泡图",
@@ -164,7 +166,7 @@
       "PREVIEW_QUERY": "预览查询",
       "PERCENT_BAR": "百分比堆叠",
       "AGGREGATE_TYPE":"汇总类型",
-      "GAUGE": "仪表",
+      "GAUGE": "计量图",
       "ADD_NEW_STYLE": "添加样式",
       "LINE_STYLE": "线条样式",
       "STYLE_PROPORTION": "比例",
@@ -247,7 +249,10 @@
       "VALUE_FORMMAT_ALERT": "只有日期类型需要格式化",
       "AUTOMATIC_REFRESH_SWITCH": "自动刷新切换",
       "REMOVE_EMPTY_LINES": "清除空行",
-      "DATA_REFRESH_TIME":"数据刷新时间"
+      "DATA_REFRESH_TIME":"数据刷新时间",
+      "WIDGET_TARGET":"关联图表",
+      "WIDGET_FIELDS":"图表维度",
+      "WIDGET_TARGET_FIELDS":"关联图表维度"
     },
     "CATEGORY": {
       "NAME": "看板分类名称",
@@ -369,5 +374,12 @@
       "ROWS": "结果数",
       "FL": "结果字段"
     }
+  },
+  "CROSS_TABLE":{
+    "NEXT_PAGE": "下一页",
+    "LAST_PAGE": "上一页",
+    "SHOW": "显示",
+    "ENTRIES": "条",
+    "EXPORT": "导出"
   }
 }

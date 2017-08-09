@@ -247,9 +247,9 @@
       "AUTOMATIC_REFRESH_SWITCH": "Automatic refresh switch",
       "REMOVE_EMPTY_LINES": "Remove empty lines",
       "DATA_REFRESH_TIME":"Data refresh time",
-      "WIDGET_TARGET":"Target Widget",
+      "WIDGET_TARGET":"Correlation Widget",
       "WIDGET_FIELDS":"Widget Fields",
-      "WIDGET_TARGET_FIELDS":"Target Widget Fields"
+      "WIDGET_TARGET_FIELDS":"Correlation Widget Fields"
     },
     "CATEGORY": {
       "NAME": "Category Name",

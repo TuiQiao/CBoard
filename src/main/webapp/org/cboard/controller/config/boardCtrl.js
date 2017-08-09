@@ -214,6 +214,17 @@ cBoard.controller('boardCtrl', function ($rootScope, $scope, $http, ModalUtils, 
         $scope.curBoard.layout.rows.unshift({type: 'param', params: []});
     };
 
+    $scope.addRelation = function(widget) {
+        widget.relation = {};
+        $scope.changeSourceCol(widget, widget.widgetId);
+    }
+
+    $scope.delRelation = function(widget) {
+        if(widget.relation){
+          delete widget.relation;
+        }
+    }
+
     var validate = function () {
         $scope.alerts = [];
         if (!$scope.curBoard.name) {
@@ -422,4 +433,60 @@ cBoard.controller('boardCtrl', function ($rootScope, $scope, $http, ModalUtils, 
         return baseEventObj;
     }();
     /**  js tree related start **/
+
+    $scope.changeTargetCol = function(e, widgetId, row){
+        if(!e.relation){
+            return;
+        }
+        var w = _.find($scope.widgetList, function (w) {
+            return w.id == widgetId;
+        });
+        if(!w){
+            return;
+        }
+        $http.get("dashboard/dashboardWidget.do?id="+e.widgetId).then(function (response) {
+            if (!response) {
+                return false;
+            }
+            var config = response.data.data.config;
+            var fields = [];
+            _.map(config.groups,function(e){fields.push(e.col);});
+            _.map(config.keys,function(e){fields.push(e.col);});
+            e.relation.targetFields = fields;
+        });
+
+        var w = {};
+        w.name = _.filter($scope.widgetList,function(e){return e.id===widgetId})[0].name;
+        w.width = 12;
+        w.widgetId = widgetId;
+        w.sourceId = e.widgetId;
+        row.widgets = _.filter(row.widgets, function(e){
+           return e.sourceId !== w.sourceId;
+        });
+        row.widgets.push(w);
+    }
+
+    $scope.changeSourceCol = function(e,widgetId){
+        if(!e.relation){
+            return;
+        }
+        var w = _.find($scope.widgetList, function (w) {
+            return w.id == widgetId;
+        });
+        if(!w){
+            return;
+        }
+        //源表字段默认为原表的group key指定字段
+        $http.get("dashboard/dashboardWidget.do?id="+e.widgetId).then(function (response) {
+            if (!response) {
+                return false;
+            }
+            var config = response.data.data.config;
+            var fields = [];
+            _.map(config.groups,function(e){fields.push(e.col);});
+            _.map(config.keys,function(e){fields.push(e.col);});
+            e.relation.sourceField = fields;
+            e.relation.sourceFields = fields;
+        });
+    }
 });

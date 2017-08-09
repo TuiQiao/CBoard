@@ -34,6 +34,8 @@
     "WANRING": "警告！",
     "COLLAPSE": "最小化",
     "REMOVE": "关闭",
+    "ADD_RELATION": "添加关联",
+    "DEL_RELATION": "删除关联",
     "DATE": "日期",
     "VALUE": "值"
   },
@@ -244,7 +246,10 @@
       "VALUE_FORMMAT_ALERT": "只有日期类型需要格式化",
       "AUTOMATIC_REFRESH_SWITCH": "自动刷新切换",
       "REMOVE_EMPTY_LINES": "清除空行",
-      "DATA_REFRESH_TIME":"数据刷新时间"
+      "DATA_REFRESH_TIME":"数据刷新时间",
+      "WIDGET_TARGET":"目标表",
+      "WIDGET_FIELDS":"源表字段",
+      "WIDGET_TARGET_FIELDS":"目标表字段"
     },
     "CATEGORY": {
       "NAME": "看板分类名称",

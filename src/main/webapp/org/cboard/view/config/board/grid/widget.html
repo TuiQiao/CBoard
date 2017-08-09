@@ -42,6 +42,16 @@
                          style="cursor:move">
                         {{widget.name}}
                         <div class="box-tools pull-right">
+                            <button ng-if="!widget.relation" type="button" class="btn btn-box-tool"
+                                    title="{{'COMMON.ADD_RELATION'|translate}}"
+                                    ng-click="addRelation(widget)">
+                                <i class="fa fa-link"></i>
+                            </button>
+                            <button ng-if="widget.relation" type="button" class="btn btn-box-tool"
+                                    title="{{'COMMON.DEL_RELATION'|translate}}"
+                                    ng-click="delRelation(widget)">
+                                <i class="fa fa-unlink"></i>
+                            </button>
                             <button type="button" class="btn btn-box-tool"
                                     data-widget="collapse" title="{{'COMMON.COLLAPSE'|translate}}"><i
                                     class="fa fa-wrench"></i>
@@ -68,7 +78,7 @@
                         </div>
                         <div class="form-group">
                             <label>{{'CONFIG.DASHBOARD.WIDGET'|translate}}</label>
-                            <ui-select ng-model="widget.widgetId" on-select="widget.name = $item.name">
+                            <ui-select ng-model="widget.widgetId" ng-init="changeSourceCol(widget, widget.widgetId)" ng-change="changeSourceCol(widget, $select.selected.id)" on-select="widget.name = $item.name">
                                 <ui-select-match>
                                     {{$select.selected.name}} ({{$select.selected.dataset}})
                                 </ui-select-match>
@@ -77,6 +87,42 @@
                                     {{w.name + "(" + w.dataset + ")"}}
                                 </ui-select-choices>
                             </ui-select>
+                        </div>
+                        <div ng-if="widget.relation" class="form-group">
+                            <div class="form-group">
+                                <label>{{'CONFIG.DASHBOARD.WIDGET_TARGET'|translate}}</label>
+                                <ui-select ng-model="widget.relation.targetId" ng-init="changeTargetCol(widget, widget.relation.targetId)" ng-change="changeTargetCol(widget, $select.selected.id, row)" on-select="widget.relation.name = $item.name">
+                                    <ui-select-match>
+                                        {{$select.selected.name}} ({{$select.selected.dataset}})
+                                    </ui-select-match>
+                                    <ui-select-choices group-by="widgetGroup"
+                                                       repeat="w.id as w in widgetList | filter:$select.search">
+                                        {{w.name + "(" + w.dataset + ")"}}
+                                    </ui-select-choices>
+                                </ui-select>
+                            </div>
+                            <div class="form-group">
+                                <label>{{'CONFIG.DASHBOARD.WIDGET_FIELDS'|translate}}</label>
+                                <ui-select multiple ng-disabled="disabled" ng-model="widget.relation.sourceField">
+                                    <ui-select-match placeholder="">
+                                        {{$item}}
+                                    </ui-select-match>
+                                    <ui-select-choices repeat="v in widget.relation.sourceFields | filter:$select.search">
+                                        {{v}}
+                                    </ui-select-choices>
+                                </ui-select>
+                            </div>
+                            <div class="form-group">
+                                <label>{{'CONFIG.DASHBOARD.WIDGET_TARGET_FIELDS'|translate}}</label>
+                                <ui-select multiple ng-disabled="disabled" ng-model="widget.relation.targetField">
+                                    <ui-select-match>
+                                        {{$item}}
+                                    </ui-select-match>
+                                    <ui-select-choices repeat="v in widget.relation.targetFields | filter:$select.search">
+                                        {{v}}
+                                    </ui-select-choices>
+                                </ui-select>
+                            </div>
                         </div>
                     </div>
                 </div>

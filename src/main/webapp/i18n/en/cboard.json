@@ -34,6 +34,8 @@
     "WANRING": "WANRING!",
     "COLLAPSE": "Collapse",
     "REMOVE": "Remove",
+    "ADD_RELATION": "Add Relation",
+    "DEL_RELATION": "Del Relation",
     "DATE": "Date",
     "VALUE": "Value"
   },
@@ -244,7 +246,10 @@
       "VALUE_FORMMAT_ALERT": "Only date type need format",
       "AUTOMATIC_REFRESH_SWITCH": "Automatic refresh switch",
       "REMOVE_EMPTY_LINES": "Remove empty lines",
-      "DATA_REFRESH_TIME":"Data refresh time"
+      "DATA_REFRESH_TIME":"Data refresh time",
+      "WIDGET_TARGET":"Target Widget",
+      "WIDGET_FIELDS":"Widget Fields",
+      "WIDGET_TARGET_FIELDS":"Target Widget Fields"
     },
     "CATEGORY": {
       "NAME": "Category Name",

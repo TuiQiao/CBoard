@@ -3,7 +3,7 @@
  */
 cBoard.service('chartMarkLineMapBmapService', function () {
     this.render = function (containerDom, option, scope, persist) {
-        return new CboardHotMapRender(containerDom, option).chart(null, persist);
+        return new CboardBMapRender(containerDom, option).chart(null, persist);
     }
 
     this.parseOption = function (data) {
@@ -103,16 +103,20 @@ cBoard.service('chartMarkLineMapBmapService', function () {
                             formatter: '{b}'
                         }
                     },
+                    //使用动态大小圈有bug
                     symbolSize: function (val) {
                         if (max == 0) {
                             return 0;
                         }
                         return val[2] * 20 / max;
                     },
+                    //symbolSize:10,
                     showEffectOn: 'render',
                     itemStyle: {
                         normal: {
-                            color: 'gold'
+                            color: function(val){
+                                return ['#d94e5d','#eac736','#50a3ba'].reverse();
+                            }
                         }
                     },
                     data: effectScatterData
@@ -129,7 +133,7 @@ cBoard.service('chartMarkLineMapBmapService', function () {
         // 地图自定义样式
         var bmap = {
             center: [startPoint.x, startPoint.y],
-            zoom: 5,
+           // zoom: 5,
             roam: true,
             mapStyle: {
                 styleJson: [{

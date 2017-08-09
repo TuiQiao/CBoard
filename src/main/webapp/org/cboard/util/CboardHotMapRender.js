@@ -25,7 +25,7 @@ var CboardHotMapRender = function (jqContainer, options, isDeepSpec) {
     this.container = jqContainer; // jquery object
     var hotMap = jqContainer.get(0);
     $(hotMap).css("width","100%");
-    $(hotMap).css("height","50%");
+    $(hotMap).css("height","500px");
     this.ecc = echarts.init(jqContainer.get(0), this.theme);
     this.isDeppSpec = isDeepSpec;
 

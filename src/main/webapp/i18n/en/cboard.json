@@ -182,6 +182,7 @@
       "HEAT_MAP_TABLE": "Heat Map (Table)",
       "MARK_LINE_MAP":"Mark Line Map (Local)",
       "MARK_LINE_MAP_BMAP":"Mark Line Map (Bmap)",
+      "HOT_MAP_BMAP":"Hot Map (Bmap)",
       "LIQUID_FILL": "Liquid Fill",
       "STATIC": "Static",
       "DYNAMIC": "Dynamic",

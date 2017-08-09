@@ -1,0 +1,44 @@
+<form class="form-horizontal">
+    <div class="row">
+        <div class="form-group col-md-6">
+            <div class="checkbox">
+                <label>
+                    <input type="checkbox" ng-model="curWidget.config.option.gridCustom"
+                           ng-init="curWidget.config.option.gridCustom ? null : curWidget.config.option.gridCustom=false"> Customize
+                </label>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="form-group col-md-6">
+            <label class="col-md-3 control-label">Top</label>
+            <div class="col-md-7">
+                <input type="text" class="form-control" ng-model="curWidget.config.option.gridTop"
+                           placeholder="Input 'n% ' or integer number as pixel" ng-disabled="!curWidget.config.option.gridCustom">
+            </div>
+        </div>
+        <div class="form-group col-md-6">
+            <label class="col-md-3 control-label">Bottom</label>
+            <div class="col-md-7">
+                <input type="text" class="form-control" ng-model="curWidget.config.option.gridBottom"
+                           placeholder="Input 'n% ' or integer number as pixel" ng-disabled="!curWidget.config.option.gridCustom">
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="form-group col-md-6">
+            <label class="col-md-3 control-label">Left</label>
+            <div class="col-md-7">
+                <input type="text" class="form-control" ng-model="curWidget.config.option.gridLeft"
+                           placeholder="Input 'n% ' or integer number as pixel" ng-disabled="!curWidget.config.option.gridCustom">
+            </div>
+        </div>
+        <div class="form-group col-md-6">
+            <label class="col-md-3 control-label">Right</label>
+            <div class="col-md-7">
+                <input type="text" class="form-control" ng-model="curWidget.config.option.gridRight"
+                           placeholder="Input 'n% ' or integer number as pixel" ng-disabled="!curWidget.config.option.gridCustom">
+            </div>
+        </div>
+    </div>
+</form>

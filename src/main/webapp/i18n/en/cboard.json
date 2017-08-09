@@ -35,7 +35,9 @@
     "COLLAPSE": "Collapse",
     "REMOVE": "Remove",
     "ADD_RELATION": "Add Relation",
-    "DEL_RELATION": "Del Relation"
+    "DEL_RELATION": "Del Relation",
+    "DATE": "Date",
+    "VALUE": "Value"
   },
   "TIPS": {
     "CAL_EXPR": "Calculate after aggregation. Use assist click input to avoid typo. e.g: Math.log(sum(columnA)/count(columB))"
@@ -176,7 +178,22 @@
       "RANDOM": "Random",
       "BLUE": "Blue",
       "PURPLE": "Purple",
-      "AREA_MAP": "AREA_MAP"
+      "AREA_MAP": "Area Map",
+      "HEAT_MAP_CALENDER": "Heat Map (Calender)",
+      "DATE_FORMAT": "Date Format",
+      "HEAT_MAP_TABLE": "Heat Map (Table)",
+      "MARK_LINE_MAP":"Mark Line Map (Local)",
+      "LIQUID_FILL": "Liquid Fill",
+      "STATIC": "Static",
+      "DYNAMIC": "Dynamic",
+      "CIRCLE": "Circle",
+      "PIN": "Pin",
+      "RECT": "Rect",
+      "ARROW": "Arrow",
+      "TRIANGLE": "Triangle",
+      "ROUND_RECT": "RoundRect",
+      "SQUARE": "Square",
+      "DIAMOND": "Diamond"
     },
     "DASHBOARD": {
       "CATEGORY": "Category",
@@ -318,7 +335,6 @@
     "BY_ROLE": "By Role",
     "REVOKE": "Revoke",
     "GRANT": "Grant",
-    "BY_ROLE": "By Role",
     "TOGGLE_UPDATE": "Toggle UDATE",
     "TOGGLE_DELETE": "Toggle DELETE"
   },
@@ -355,5 +371,12 @@
       "ROWS": "rows",
       "FL": "fl"
     }
+  },
+  "CROSS_TABLE":{
+    "NEXT_PAGE": "Next",
+    "PREVIOUS_PAGE": "Previous",
+    "SHOW": "Show",
+    "ENTRIES": "entries",
+    "EXPORT": "Export"
   }
 }

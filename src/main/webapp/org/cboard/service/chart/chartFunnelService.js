@@ -11,6 +11,7 @@ cBoard.service('chartFunnelService', function () {
     };
 
     this.parseOption = function (data) {
+        var chartConfig = data.chartConfig;
         var casted_keys = data.keys;
         var casted_values = data.series;
         var aggregate_data = data.data;
@@ -77,6 +78,9 @@ cBoard.service('chartFunnelService', function () {
             toolbox: false,
             series: series
         };
+
+        updateEchartOptions(chartConfig.option, echartOption);
+
         return echartOption;
     };
 });

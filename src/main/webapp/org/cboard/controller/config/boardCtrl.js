@@ -447,9 +447,22 @@ cBoard.controller('boardCtrl', function ($rootScope, $scope, $http, ModalUtils, 
         var dataSet = _.find($scope.datasetList, function(e){
             return w.data.datasetId === e.id;
         });
-        var dimension = dataSet.data.schema.dimension;
-        e.relation.targetFields = _.map(dimension, function(e){return e.column});
-        if(dimension.length == 0){
+        var cols = [];
+        _.each(dataSet.data.schema.dimension, function(e){
+           if(e.type == "column"){
+               if($.inArray(e, cols) == -1){
+                   cols.push(e.column);
+               }
+           }else if(e.type == "level"){
+               _.each(e.columns, function(e){
+                   if($.inArray(e, cols) == -1){
+                       cols.push(e.column);
+                   }
+               });
+           }
+        });
+        e.relation.targetFields = cols;
+        if(cols.length == 0){
             dataService.getColumns({
                 datasource: null,
                 query: null,

@@ -434,7 +434,7 @@ cBoard.controller('boardCtrl', function ($rootScope, $scope, $http, ModalUtils, 
     }();
     /**  js tree related start **/
 
-    $scope.changeTargetCol = function(e, widgetId){
+    $scope.changeTargetCol = function(e, widgetId, row){
         if(!e.relation){
             return;
         }
@@ -444,19 +444,26 @@ cBoard.controller('boardCtrl', function ($rootScope, $scope, $http, ModalUtils, 
         if(!w){
             return;
         }
-        dataService.getColumns({
-            datasource: null,
-            query: null,
-            datasetId: w.data.datasetId,
-            callback: function (dps) {
-                $scope.alerts = [];
-                if (dps.msg == "1") {
-                    e.relation.targetFields = dps.columns;
-                } else {
-                    $scope.alerts = [{msg: dps.msg, type: 'danger'}];
-                }
+        $http.get("dashboard/dashboardWidget.do?id="+e.widgetId).then(function (response) {
+            if (!response) {
+                return false;
             }
+            var config = response.data.data.config;
+            var fields = [];
+            _.map(config.groups,function(e){fields.push(e.col);});
+            _.map(config.keys,function(e){fields.push(e.col);});
+            e.relation.targetFields = fields;
         });
+
+        var w = {};
+        w.name = _.filter($scope.widgetList,function(e){return e.id===widgetId})[0].name;
+        w.width = 12;
+        w.widgetId = widgetId;
+        w.sourceId = e.widgetId;
+        row.widgets = _.filter(row.widgets, function(e){
+           return e.sourceId !== w.sourceId;
+        });
+        row.widgets.push(w);
     }
 
     $scope.changeSourceCol = function(e,widgetId){
@@ -469,18 +476,17 @@ cBoard.controller('boardCtrl', function ($rootScope, $scope, $http, ModalUtils, 
         if(!w){
             return;
         }
-        dataService.getColumns({
-            datasource: null,
-            query: null,
-            datasetId: w.data.datasetId,
-            callback: function (dps) {
-                $scope.alerts = [];
-                if (dps.msg == "1") {
-                    e.relation.sourceFields = dps.columns;
-                } else {
-                    $scope.alerts = [{msg: dps.msg, type: 'danger'}];
-                }
+        //源表字段默认为原表的group key指定字段
+        $http.get("dashboard/dashboardWidget.do?id="+e.widgetId).then(function (response) {
+            if (!response) {
+                return false;
             }
+            var config = response.data.data.config;
+            var fields = [];
+            _.map(config.groups,function(e){fields.push(e.col);});
+            _.map(config.keys,function(e){fields.push(e.col);});
+            e.relation.sourceField = fields;
+            e.relation.sourceFields = fields;
         });
     }
 });

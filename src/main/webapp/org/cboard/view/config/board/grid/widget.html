@@ -91,7 +91,7 @@
                         <div ng-if="widget.relation" class="form-group">
                             <div class="form-group">
                                 <label>{{'CONFIG.DASHBOARD.WIDGET_TARGET'|translate}}</label>
-                                <ui-select ng-model="widget.relation.targetId" ng-init="changeTargetCol(widget, widget.relation.targetId)" ng-change="changeTargetCol(widget, $select.selected.id)" on-select="widget.relation.name = $item.name">
+                                <ui-select ng-model="widget.relation.targetId" ng-init="changeTargetCol(widget, widget.relation.targetId)" ng-change="changeTargetCol(widget, $select.selected.id, row)" on-select="widget.relation.name = $item.name">
                                     <ui-select-match>
                                         {{$select.selected.name}} ({{$select.selected.dataset}})
                                     </ui-select-match>

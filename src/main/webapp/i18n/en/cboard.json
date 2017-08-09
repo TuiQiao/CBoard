@@ -182,9 +182,10 @@
       "HEAT_MAP_CALENDER": "Heat Map (Calender)",
       "DATE_FORMAT": "Date Format",
       "HEAT_MAP_TABLE": "Heat Map (Table)",
-      "MARK_LINE_MAP":"Mark Line Map (Local)",
-      "MARK_LINE_MAP_BMAP":"Mark Line Map (Bmap)",
-      "HOT_MAP_BMAP":"Hot Map (Bmap)",
+      "MARK_LINE_MAP": "Mark Line Map (Local)",
+      "HOT_MAP": "Hot Map (Local)",
+      "MARK_LINE_MAP_BMAP": "Mark Line Map (Bmap)",
+      "HOT_MAP_BMAP": "Hot Map (Bmap)",
       "LIQUID_FILL": "Liquid Fill",
       "STATIC": "Static",
       "DYNAMIC": "Dynamic",
@@ -195,8 +196,7 @@
       "TRIANGLE": "Triangle",
       "ROUND_RECT": "RoundRect",
       "SQUARE": "Square",
-      "DIAMOND": "Diamond",
-      "HOT_MAP":"Hot Map"
+      "DIAMOND": "Diamond"
     },
     "DASHBOARD": {
       "CATEGORY": "Category",

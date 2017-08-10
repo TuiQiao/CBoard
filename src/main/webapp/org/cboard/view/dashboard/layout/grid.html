@@ -10,11 +10,17 @@
                 <span class="fa fa-caret-down"></span>
             </button>
             <ul class="dropdown-menu" style="position: relative">
-                <li ng-repeat="p in boardParams">
-                    <a ng-click="applyBoardParam(p.params)">{{p.name}}<span class="pull-right" ng-click="deleteBoardParam($index);"><i class="fa fa-trash-o"></i></span></a>
-                </li>
                 <li>
-                    <a>{{"COMMON.SAVE_AS" | translate}}&nbsp;<input style="min-width: 120px" ng-model="newBoardParamName" ng-blur="newBoardParam(newBoardParamName);newBoardParamName='';"></a>
+                    <a>
+                    	<div class="input-group" style="width: 257px">
+                    		<span class="input-group-addon"><i class="fa fa-save"></i></span>
+                    		<input class="form-control" placeholder='{{"COMMON.SAVE_AS" | translate}}' style="min-width: 120px" ng-model="newBoardParamName" ng-blur="newBoardParam(newBoardParamName);newBoardParamName='';">
+                    	</div>                    	
+                    </a>
+                </li>
+                <li class="divider"></li>
+                <li ng-repeat="p in boardParams">
+                    <a ng-click="applyBoardParam(p.params)">{{p.name}} &nbsp;<span class="pull-right" ng-click="deleteBoardParam($index);"><i class="fa fa-trash-o"></i></span></a>
                 </li>
             </ul>
         </div>

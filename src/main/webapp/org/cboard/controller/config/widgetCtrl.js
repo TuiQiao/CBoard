@@ -637,18 +637,6 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
                         {proportion: '1', color: '#ff4500'}
                     ];
                     break;
-                case 'areaMap':
-                    $scope.curWidget.config.values.push({name: '', cols: []});
-                    _.each(oldConfig.values, function (v) {
-                        _.each(v.cols, function (c) {
-                            $scope.curWidget.config.values[0].cols.push(c);
-                        });
-                    });
-                    $scope.curWidget.config.selects = angular.copy($scope.columns);
-                    _.each($scope.curWidget.config.values, function (v) {
-                        v.style = 'bg-aqua';
-                    });
-                    break;
                 case 'heatMapCalendar':
                     $scope.curWidget.config.values.push({name: '', cols: []});
                     _.each(oldConfig.values, function (v) {
@@ -687,54 +675,6 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
                         v.style = 'circle';
                     });
                     break;
-                case 'markLineMap':
-                    $scope.curWidget.config.values.push({name: '', cols: []});
-                    _.each(oldConfig.values, function (v) {
-                        _.each(v.cols, function (c) {
-                            $scope.curWidget.config.values[0].cols.push(c);
-                        });
-                    });
-                    $scope.curWidget.config.selects = angular.copy($scope.columns);
-                    _.each($scope.curWidget.config.values, function (v) {
-                        v.style = 'bg-aqua';
-                    });
-                    break;
-                case 'heatMap':
-                    $scope.curWidget.config.values.push({name: '', cols: []});
-                    _.each(oldConfig.values, function (v) {
-                        _.each(v.cols, function (c) {
-                            $scope.curWidget.config.values[0].cols.push(c);
-                        });
-                    });
-                    $scope.curWidget.config.selects = angular.copy($scope.columns);
-                    _.each($scope.curWidget.config.values, function (v) {
-                        v.style = 'bg-aqua';
-                    });
-                    break;
-                case 'markLineMapBmap':
-                    $scope.curWidget.config.values.push({name: '', cols: []});
-                    _.each(oldConfig.values, function (v) {
-                        _.each(v.cols, function (c) {
-                            $scope.curWidget.config.values[0].cols.push(c);
-                        });
-                    });
-                    $scope.curWidget.config.selects = angular.copy($scope.columns);
-                    _.each($scope.curWidget.config.values, function (v) {
-                        v.style = 'bg-aqua';
-                    });
-                    break;
-                case 'heatMapBmap':
-                    $scope.curWidget.config.values.push({name: '', cols: []});
-                    _.each(oldConfig.values, function (v) {
-                        _.each(v.cols, function (c) {
-                            $scope.curWidget.config.values[0].cols.push(c);
-                        });
-                    });
-                    $scope.curWidget.config.selects = angular.copy($scope.columns);
-                    _.each($scope.curWidget.config.values, function (v) {
-                        v.style = 'bg-aqua';
-                    });
-                    break;
                 default:
                     $scope.curWidget.config.values.push({name: '', cols: []});
                     _.each(oldConfig.values, function (v) {
@@ -757,176 +697,11 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
             $scope.curWidget.config.option = {};
             $scope.curWidget.config.chart_type = 'table';
             cleanPreview();
-            switch ($scope.curWidget.config.chart_type) {
-                case 'line':
-                    $scope.curWidget.config.selects = angular.copy($scope.columns);
-                    $scope.curWidget.config.keys = new Array();
-                    $scope.curWidget.config.groups = new Array();
-                    $scope.curWidget.config.values = new Array();
-                    $scope.curWidget.config.filters = new Array();
-                    $scope.curWidget.config.valueAxis = 'vertical';
-                    $scope.add_value();
-                    break;
-                case 'pie':
-                    $scope.curWidget.config.selects = angular.copy($scope.columns);
-                    $scope.curWidget.config.keys = new Array();
-                    $scope.curWidget.config.groups = new Array();
-                    $scope.curWidget.config.values = [{
-                        name: '',
-                        cols: []
-                    }];
-                    $scope.curWidget.config.filters = new Array();
-                    break;
-                case 'kpi':
-                    $scope.curWidget.config.selects = angular.copy($scope.columns);
-                    $scope.curWidget.config.values = [{
-                        name: '',
-                        cols: [],
-                        style: 'bg-aqua'
-                    }];
-                    $scope.curWidget.config.filters = new Array();
-                    break;
-                case 'table':
-                    $scope.curWidget.config.selects = angular.copy($scope.columns);
-                    $scope.curWidget.config.keys = new Array();
-                    $scope.curWidget.config.groups = new Array();
-                    $scope.curWidget.config.values = [{
-                        name: '',
-                        cols: []
-                    }];
-                    $scope.curWidget.config.filters = new Array();
-                    break;
-                case 'funnel':
-                    $scope.curWidget.config.selects = angular.copy($scope.columns);
-                    $scope.curWidget.config.keys = new Array();
-                    $scope.curWidget.config.values = [{
-                        name: '',
-                        cols: []
-                    }];
-                    $scope.curWidget.config.filters = new Array();
-                    break;
-                case 'sankey':
-                    $scope.curWidget.config.selects = angular.copy($scope.columns);
-                    $scope.curWidget.config.keys = new Array();
-                    $scope.curWidget.config.groups = new Array();
-                    $scope.curWidget.config.values = [{
-                        name: '',
-                        cols: []
-                    }];
-                    $scope.curWidget.config.filters = new Array();
-                    break;
-                case 'radar':
-                    $scope.curWidget.config.selects = angular.copy($scope.columns);
-                    $scope.curWidget.config.keys = new Array();
-                    $scope.curWidget.config.groups = new Array();
-                    $scope.curWidget.config.values = [{
-                        name: '',
-                        cols: []
-                    }];
-                    $scope.curWidget.config.filters = new Array();
-                    break;
-                case 'map':
-                    $scope.curWidget.config.selects = angular.copy($scope.columns);
-                    $scope.curWidget.config.keys = new Array();
-                    $scope.curWidget.config.groups = new Array();
-                    $scope.curWidget.config.values = [{
-                        name: '',
-                        cols: []
-                    }];
-                    $scope.curWidget.config.filters = new Array();
-                    break;
-                case 'gauge':
-                    $scope.curWidget.config.selects = angular.copy($scope.columns);
-                    $scope.curWidget.config.values = [{
-                        name: '',
-                        cols: []
-                    }];
-                    $scope.curWidget.config.filters = new Array();
-                    $scope.curWidget.config.styles = [
-                        {proportion: '0.2', color: '#228b22'},
-                        {proportion: '0.8', color: '#48b'},
-                        {proportion: '1', color: '#ff4500'}
-                    ];
-                    break;
-                case 'areaMap':
-                    $scope.curWidget.config.selects = angular.copy($scope.columns);
-                    $scope.curWidget.config.keys = new Array();
-                    $scope.curWidget.config.groups = new Array();
-                    $scope.curWidget.config.values = [{
-                        name: '',
-                        cols: []
-                    }];
-                    $scope.curWidget.config.filters = new Array();
-                    break;
-                case 'heatMapCalendar':
-                    $scope.curWidget.config.selects = angular.copy($scope.columns);
-                    $scope.curWidget.config.values = [{
-                        name: '',
-                        cols: [],
-                        dateFormat: 'yyyy-MM-dd',
-                        style: 'blue'
-                    }];
-                    break;
-                case 'heatMapTable':
-                    $scope.curWidget.config.selects = angular.copy($scope.columns);
-                    $scope.curWidget.config.values = [{
-                        name: '',
-                        cols: [],
-                        style: 'blue'
-                    }];
-                    $scope.curWidget.config.filters = new Array();
-                    break;
-                case 'markLineMap':
-                    $scope.curWidget.config.selects = angular.copy($scope.columns);
-                    $scope.curWidget.config.keys = new Array();
-                    $scope.curWidget.config.groups = new Array();
-                    $scope.curWidget.config.values = [{
-                        name: '',
-                        cols: []
-                    }];
-                    $scope.curWidget.config.filters = new Array();
-                    break;
-                case 'liquidFill':
-                    $scope.curWidget.config.selects = angular.copy($scope.columns);
-                    $scope.curWidget.config.values = [{
-                        name: '',
-                        cols: [],
-                        style: 'circle'
-                    }];
-                    $scope.curWidget.config.filters = new Array();
-                    $scope.curWidget.config.animation = 'static';
-                    break;
-                case 'heatMap':
-                    $scope.curWidget.config.selects = angular.copy($scope.columns);
-                    $scope.curWidget.config.keys = new Array();
-                    $scope.curWidget.config.groups = new Array();
-                    $scope.curWidget.config.values = [{
-                        name: '',
-                        cols: []
-                    }];
-                    $scope.curWidget.config.filters = new Array();
-                    break;
-                case 'markLineMapBmap':
-                    $scope.curWidget.config.selects = angular.copy($scope.columns);
-                    $scope.curWidget.config.keys = new Array();
-                    $scope.curWidget.config.groups = new Array();
-                    $scope.curWidget.config.values = [{
-                        name: '',
-                        cols: []
-                    }];
-                    $scope.curWidget.config.filters = new Array();
-                    break;
-                case 'heatMapBmap':
-                    $scope.curWidget.config.selects = angular.copy($scope.columns);
-                    $scope.curWidget.config.keys = new Array();
-                    $scope.curWidget.config.groups = new Array();
-                    $scope.curWidget.config.values = [{
-                        name: '',
-                        cols: []
-                    }];
-                    $scope.curWidget.config.filters = new Array();
-                    break;
-            }
+            $scope.curWidget.config.selects = angular.copy($scope.columns);
+            $scope.curWidget.config.keys = [];
+            $scope.curWidget.config.groups = [];
+            $scope.curWidget.config.values = [{name: '', cols: []}];
+            $scope.curWidget.config.filters = [];
             addWatch();
         };
 
@@ -963,15 +738,15 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
             $scope.loadingPre = true;
             var charType = $scope.curWidget.config.chart_type;
             //百度地图特殊处理
-            if(charType == 'markLineMapBmap' || charType == 'heatMapBmap'){
-                chartService.renderBmap($('#preview_widget'), {
+            if (charType == 'markLineMapBmap' || charType == 'heatMapBmap') {
+                chartService.render($('#preview_widget'), {
                     config: $scope.curWidget.config,
                     datasource: $scope.datasource ? $scope.datasource.id : null,
                     query: $scope.curWidget.query,
                     datasetId: $scope.customDs ? undefined : $scope.curWidget.datasetId
                 });
                 $scope.loadingPre = false;
-            }else{
+            } else {
                 // --- start ---
                 // 添加echarts3.6.2后这里除了第一次可以加载echarts图表，再次加载无法显示图表。
                 // 完全无法找到问题下，出于无奈嵌套了一层后发现可以显示图表。囧！！

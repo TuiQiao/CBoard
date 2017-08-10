@@ -2,7 +2,7 @@
  * Created by yfyuan on 2016/10/28.
  */
 'use strict';
-cBoard.service('chartLineContrastService', function () {
+cBoard.service('chartContrastService', function () {
 
     this.render = function (containerDom, option, scope, persist, drill, relation, chartConfig) {
         var render = new CBoardEChartRender(containerDom, option);

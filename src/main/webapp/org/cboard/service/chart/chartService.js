@@ -7,7 +7,7 @@ cBoard.service('chartService', function ($q, dataService, chartPieService, chart
                                          chartMapService, chartScatterService, chartGaugeService, chartWordCloudService,
                                          chartTreeMapService, chartAreaMapService, chartHeatMapCalendarService, chartHeatMapTableService,
                                          chartLiquidFillService, chartMarkLineMapService, chartHeatMapService, chartMarkLineMapBmapService,
-                                         chartHeatMapBmapService, chartLineContrastService) {
+                                         chartHeatMapBmapService, chartContrastService) {
 
 
         this.render = function (containerDom, widget, optionFilter, scope, reload, persist, relation) {
@@ -252,7 +252,7 @@ cBoard.service('chartService', function ($q, dataService, chartPieService, chart
                     chart = chartHeatMapBmapService;
                     break;
                 case 'contrast':
-                    chart = chartLineContrastService;
+                    chart = chartContrastService;
                     break;
             }
             return chart;

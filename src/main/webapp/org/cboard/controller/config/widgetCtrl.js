@@ -117,16 +117,16 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
                 measure: translate('CONFIG.WIDGET.TIPS_DIM_NUM_1')
             },
             {
-                name: translate('CONFIG.WIDGET.HEAT_MAP'), value: 'heatMap', class: 'cHeatMap',
-                row: translate('CONFIG.WIDGET.TIPS_DIM_NUM_1_MORE'),
-                column: translate('CONFIG.WIDGET.TIPS_DIM_NUM_0'),
-                measure: translate('CONFIG.WIDGET.TIPS_DIM_NUM_1_MORE')
-            },
-            {
                 name: translate('CONFIG.WIDGET.MARK_LINE_MAP_BMAP'), value: 'markLineMapBmap', class: 'cMarkLineMapBmap',
                 row: translate('CONFIG.WIDGET.TIPS_DIM_NUM_1_MORE'),
                 column: translate('CONFIG.WIDGET.TIPS_DIM_NUM_1_MORE'),
                 measure: translate('CONFIG.WIDGET.TIPS_DIM_NUM_1')
+            },
+            {
+                name: translate('CONFIG.WIDGET.HEAT_MAP'), value: 'heatMap', class: 'cHeatMap',
+                row: translate('CONFIG.WIDGET.TIPS_DIM_NUM_1_MORE'),
+                column: translate('CONFIG.WIDGET.TIPS_DIM_NUM_0'),
+                measure: translate('CONFIG.WIDGET.TIPS_DIM_NUM_1_MORE')
             },
             {
                 name: translate('CONFIG.WIDGET.HEAT_MAP_BMAP'), value: 'heatMapBmap', class: 'cHeatMapBmap',

@@ -199,8 +199,8 @@
       "SQUARE": "Square",
       "DIAMOND": "Diamond",
       "CONTRAST": "Contrast",
-      "SCATTER_MAP":"Scatter Map(Local)",
-      "SCATTER_MAP_BMAP":"Scatter Map(Bmap)"
+      "SCATTER_MAP":"Scatter Map (Local)",
+      "SCATTER_MAP_BMAP":"Scatter Map (Bmap)"
     },
     "DASHBOARD": {
       "CATEGORY": "Category",

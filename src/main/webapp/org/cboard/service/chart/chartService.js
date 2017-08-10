@@ -7,7 +7,7 @@ cBoard.service('chartService', function ($q, dataService, chartPieService, chart
                                          chartMapService, chartScatterService, chartGaugeService, chartWordCloudService,
                                          chartTreeMapService, chartAreaMapService, chartHeatMapCalendarService, chartHeatMapTableService,
                                          chartLiquidFillService, chartMarkLineMapService, chartHeatMapService, chartMarkLineMapBmapService,
-                                         chartHeatMapBmapService,chartScatterMapService,chartScatterMapBmapService,chartContrastService) {
+                                         chartHeatMapBmapService, chartScatterMapService, chartScatterMapBmapService, chartContrastService) {
 
         this.render = function (containerDom, widget, optionFilter, scope, reload, persist, relation) {
             var deferred = $q.defer();

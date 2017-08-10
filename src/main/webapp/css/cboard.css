@@ -159,6 +159,8 @@
 .cMarkLineMapBmap.disabled{ background-image: url(../imgs/markLineMapBmap.png);}
 .cHeatMapBmap{ background-image: url(../imgs/heatMapBmap-active.png); }
 .cHeatMapBmap.disabled{ background-image: url(../imgs/heatMapBmap.png); }
+.cScatterMapBmap{ background-image: url(../imgs/markLineMap-active.png); }
+.cScatterMapBmap.disabled{ background-image: url(../imgs/markLineMap.png);}
 
 .chart-type a.active{
     background-color: #FFF;

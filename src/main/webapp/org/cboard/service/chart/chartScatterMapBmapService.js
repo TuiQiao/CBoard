@@ -1,130 +1,71 @@
 /**
- * Created by jintian on 2017/8/7.
+ * Created by jintian on 2017/8/10.
  */
-cBoard.service('chartMarkLineMapBmapService', function () {
+cBoard.service('chartScatterMapBmapService', function () {
     this.render = function (containerDom, option, scope, persist) {
         return new CBoardBMapRender(containerDom, option).chart(null, persist);
-    };
+    }
 
     this.parseOption = function (data) {
-        var data_keys = data.keys;
-        var data_series = data.series;
-        var seriesData = [];
         var optionData = [];
-        var fromName;
-        var fromN;
-        var fromL;
-        var toName;
-        var toN;
-        var toL;
-        var effectScatterValue;
-        var max = null;
+        var series =[];
+        var serieData = [];
+        var max = 0;
+        var addressN;
+        var addressL;
+        var addressName;
 
-        for(var j = 0; data_series[0] && j < data_series.length; j++){
-            //重置为null，防止脏数据
-            fromName = null;
-            fromN = null;
-            fromL = null;
-            if(data_series[j].length > 3){
-                fromName = data_series[j][2];
-                fromN = parseFloat(data_series[j][0]);
-                fromL = parseFloat(data_series[j][1]);
-            }else if(data_series[j].length == 3){
-                fromName = data_series[j][1];
-                fromN = parseFloat(data_series[j][0].split(",")[0]);
-                fromL = parseFloat(data_series[j][0].split(",")[1]);
-            }
-            optionData.push(fromName);
-            var lineData = [];
-            var effectScatterData = [];
-            for(var i = 0; data_keys[0] && i < data_keys.length; i++){
-                toName = null;
-                toN = null;
-                toL = null;
-                effectScatterValue = null;
-                if(data_keys[i].length > 2){
-                    toName = data_keys[i][2];
-                    toN = parseFloat(data_keys[i][0]);
-                    toL = parseFloat(data_keys[i][1]);
-                }else if(data_keys[i].length == 2){
-                    toName = data_keys[i][1];
-                    toN = parseFloat(data_keys[j][0].split(",")[0]);
-                    toL = parseFloat(data_keys[j][0].split(",")[1]);
-                };
-                if(data.data[j][i]){
-                    lineData.push({fromName: fromName,
-                        toName: toName,
-                        coords: [[fromN,fromL],
-                            [toN, toL]]
-                    });
-
-                    effectScatterData.push({name:toName,value:[toN, toL,parseFloat(data.data[j][i])]});
-
-                    if(max == null || max < parseFloat(data.data[j][i])){
-                        max = parseFloat(data.data[j][i]);
-                    }
+        // series setting
+        for(var j = 0 ; j < data.series.length ; j++){
+            max = 0;
+            serieData = [];
+            for(var i = 0 ; i < data.keys.length ; i++){
+                if(data.keys[i].length > 2){
+                    addressN = parseFloat(data.keys[i][0]);
+                    addressL = parseFloat(data.keys[i][1]);
+                    addressName = data.keys[i][2];
+                }else if(data.keys[i].length == 2){
+                    addressN = parseFloat(data.keys[i][0].split(",")[0]);
+                    addressL = parseFloat(data.keys[i][0].split(",")[1]);
+                    addressName = data.keys[i][1];
+                }else{
+                    addressName = null;
+                    addressN = null;
+                    addressL = null;
                 }
+
+                if(max < parseFloat(data.data[j][i])){
+                    max = parseFloat(data.data[j][i]);
+                }
+                serieData.push({
+                    name:addressName,
+                    value:[addressN,addressL,parseFloat(data.data[j][i])]
+                })
+
             }
-            seriesData.push(
+            optionData.push(data.series[j][0]);
+            series.push(
                 {
-                    name:fromName,
-                    type: 'lines',
+                    name: data.series[j][0],
+                    type: 'scatter',
                     coordinateSystem: 'bmap',
-                    zlevel: 2,
-                    symbol: ['none', 'arrow'],
-                    symbolSize: 10,
-                    effect: {
-                        show: true,
-                        period: 6,
-                        trailLength: 0,
-                        symbol: 'arrow',
-                        symbolSize: 4
-                    },
-                    lineStyle: {
-                        normal: {
-                            width: 1,
-                            opacity: 0.6,
-                            curveness: 0.2
-                        }
-                    },
-                    data: lineData
-                },{
-                    name: fromName,
-                    type: 'effectScatter',
-                    coordinateSystem: 'bmap',
-                    zlevel: 2,
-                    rippleEffect: {
-                        brushType: 'stroke'
+                    data: serieData,
+                    symbolSize: function (val) {
+                        return val[2] * 20 / max;
                     },
                     label: {
                         normal: {
-                            show: true,
+                            formatter: '{b}',
                             position: 'right',
-                            formatter: '{b}'
+                            show: false
+                        },
+                        emphasis: {
+                            show: true
                         }
-                    },
-                    //使用动态大小圈有bug
-                    symbolSize: function (val) {
-                        if (max == 0) {
-                            return 0;
-                        }
-                        return val[2] * 20 / max;
-                    },
-                    //symbolSize:10,
-                    showEffectOn: 'render',
-                    itemStyle: {
-                        normal: {
-                            color: function(val){
-                                return ['#d94e5d','#eac736','#50a3ba'].reverse();
-                            }
-                        }
-                    },
-                    data: effectScatterData
+                    }
                 }
-            )
+            );
         }
-
-
 
         var startPoint = {
             x: 104.114129,
@@ -133,7 +74,7 @@ cBoard.service('chartMarkLineMapBmapService', function () {
         // 地图自定义样式
         var bmap = {
             center: [startPoint.x, startPoint.y],
-           // zoom: 5,
+            zoom: 5,
             roam: true,
             mapStyle: {
                 styleJson: [{
@@ -236,23 +177,20 @@ cBoard.service('chartMarkLineMapBmapService', function () {
             }
         };
 
-
         var mapOption = {
             bmap: bmap,
-            color: ['gold', 'aqua', 'lime'],
             legend: {
                 orient: 'vertical',
-                top: 'bottom',
-                left: 'right',
-                //text: ['High', 'Low'],
-                data: optionData,
-                selectedMode: 'multiple'
+                top: 'top',
+                left: 'left',
+                selectedMode: 'single',
+                data: optionData
             },
             tooltip: {
                 trigger: 'item'
             },
-            series: seriesData
+            series: series
         };
         return mapOption;
-    }
+    };
 });

@@ -83,24 +83,24 @@ cBoard.controller('dashboardViewCtrl', function ($timeout, $rootScope, $scope, $
         $scope.widgetCfg = response;
     });
 
-    var buildRender = function (w, reload) {
-        w.render = function (content, optionFilter, scope) {
+    var buildRender = function (widget, reload) {
+        widget.render = function (content, optionFilter, scope) {
             // 百度地图特殊处理
-            var charType = injectFilter(w.widget).data.config.chart_type;
+            var charType = injectFilter(widget.widget).data.config.chart_type;
             if(charType == 'markLineMapBmap' || charType == 'heatMapBmap'){
-                chartService.render(content, injectFilter(w.widget).data, optionFilter, scope, reload);
-                w.loading = false;
+                chartService.render(content, injectFilter(widget.widget).data, optionFilter, scope, reload);
+                widget.loading = false;
             } else {
-                chartService.render(content, injectFilter(w.widget).data, optionFilter, scope, reload, null, w.relation).then(function (d) {
-                    w.realTimeTicket = d;
-                    w.loading = false;
+                chartService.render(content, injectFilter(widget.widget).data, optionFilter, scope, reload, null, widget.relation).then(function (d) {
+                    widget.realTimeTicket = d;
+                    widget.loading = false;
                 });
             }
-            w.realTimeOption = {optionFilter: optionFilter, scope: scope};
+            widget.realTimeOption = {optionFilter: optionFilter, scope: scope};
         };
-        w.modalRender = function (content, optionFilter, scope) {
-            w.modalRealTimeTicket = chartService.render(content, injectFilter(w.widget).data, optionFilter, scope);
-            w.modalRealTimeOption = {optionFilter: optionFilter, scope: scope};
+        widget.modalRender = function (content, optionFilter, scope) {
+            widget.modalRealTimeTicket = chartService.render(content, injectFilter(widget.widget).data, optionFilter, scope);
+            widget.modalRealTimeOption = {optionFilter: optionFilter, scope: scope};
         };
     };
 
@@ -406,7 +406,7 @@ cBoard.controller('dashboardViewCtrl', function ($timeout, $rootScope, $scope, $
                 chartService.render(content, widget.widget.data, optionFilter, scope, true);
                 widget.loading = false;
             } else {
-                chartService.render(content, widget.widget.data, optionFilter, scope, true).then(function (d) {
+                chartService.render(content, widget.widget.data, optionFilter, scope, true, null, widget.relation).then(function (d) {
                     widget.realTimeTicket = d;
                     widget.loading = false;
                 });

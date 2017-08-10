@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:security="http://www.springframework.org/schema/security"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans-4.2.xsd
+        http://www.springframework.org/schema/security
+        http://www.springframework.org/schema/security/spring-security-4.1.xsd">
+
+    <!--
+        Enable security, let the casAuthenticationEntryPoint handle all intercepted urls.
+        The CAS_FILTER needs to be in the right position within the filter
+        chain.
+    -->
+
+    <security:http pattern="/lib/**" security="none"/>
+    <security:http pattern="/dist/**" security="none"/>
+    <security:http pattern="/plugins/**" security="none"/>
+    <security:http pattern="/bootstrap/**" security="none"/>
+    <security:http pattern="/js/**" security="none"/>
+
+    <security:http use-expressions="true" entry-point-ref="casAuthenticationEntryPoint"
+                   auto-config="true">
+        <security:intercept-url pattern="/**" access="!anonymous"/>
+        <!-- 注销时需要先注销应用程序,再注销cas中心认证服务
+        <security:logout logout-url="/j_spring_cas_security_logout" success-handler-ref="requestSingleLogoutFilter" /> -->
+        <security:custom-filter ref="requestSingleLogoutFilter"
+                                before="LOGOUT_FILTER"/>
+        <security:custom-filter after="CAS_FILTER" ref="casAuthenticationFilter"></security:custom-filter>
+        <security:csrf disabled="true"/>
+    </security:http>
+
+    <!-- Required for the casProcessingFilter, so define it explicitly set and specify an Id
+    Even though the authenticationManager is created by default when namespace based config is used. -->
+    <security:authentication-manager alias="authenticationManager">
+        <security:authentication-provider ref="shareAuthenticationProviderDecorator"/>
+    </security:authentication-manager>
+
+    <bean id="shareAuthenticationProviderDecorator" class="org.cboard.security.service.ShareAuthenticationProviderDecorator">
+        <property name="authenticationProvider" ref="casAuthenticationProvider"/>
+    </bean>
+
+    <!-- This section is used to configure CAS. The service is the actual redirect
+        that will be triggered after the CAS login sequence. -->
+    <bean id="serviceProperties" class="org.springframework.security.cas.ServiceProperties">
+        <!--
+            http://localhost:8088/SpringSecurity 具体应用
+            j_spring_cas_security_check spring的虚拟URL，此标志标识使用 CAS authentication upon return from CAS SSO login.
+        -->
+        <property name="service" value="${caso.client.check}"/>
+        <property name="sendRenew" value="false"/>
+    </bean>
+
+    <!-- The CAS filter handles the redirect from the CAS server and starts the ticket validation. -->
+    <bean id="casAuthenticationFilter"
+          class="org.springframework.security.cas.web.CasAuthenticationFilter">
+        <property name="authenticationManager" ref="authenticationManager"/>
+    </bean>
+
+    <!-- The entryPoint intercepts all the CAS authentication requests. It redirects to the CAS loginUrl for the CAS login page. -->
+    <bean id="casAuthenticationEntryPoint"
+          class="org.springframework.security.cas.web.CasAuthenticationEntryPoint">
+        <property name="loginUrl" value="${caso.server.login}"/>
+        <property name="serviceProperties" ref="serviceProperties"/>
+    </bean>
+
+    <!-- Handles the CAS ticket processing. -->
+    <bean id="casAuthenticationProvider"
+          class="org.springframework.security.cas.authentication.CasAuthenticationProvider">
+        <property name="authenticationUserDetailsService" ref="authenticationUserDetailsService"/>
+        <property name="serviceProperties" ref="serviceProperties"/>
+        <property name="ticketValidator">
+            <bean class="org.jasig.cas.client.validation.Cas20ServiceTicketValidator">
+                <constructor-arg index="0" value="${caso.server.url}"/>
+                <!--SSO验证地址 -->
+                <property name="encoding" value="UTF-8"/>
+            </bean>
+        </property>
+        <property name="key" value="cas"/>
+
+    </bean>
+
+    <!-- authorities对应 CAS server的 登录属性， 在此设置到spirng security中，用于spring security的验证 -->
+    <bean id="authenticationUserDetailsService"
+          class="org.cboard.security.service.UserDetailsService">
+        <constructor-arg>
+            <array>
+                <value>name</value>
+                <value>employee</value>
+                <value>mail</value>
+                <value>givenName</value>
+                <value>sn</value>
+                <value>department</value>
+                <value>company</value>
+            </array>
+        </constructor-arg>
+    </bean>
+
+    <!-- 注销服务器端 -->
+    <bean id="requestSingleLogoutFilter"
+          class="org.springframework.security.web.authentication.logout.LogoutFilter">
+        <constructor-arg value="${caso.server.logout}"/>
+        <constructor-arg>
+            <bean class="org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler"/>
+        </constructor-arg>
+        <property name="filterProcessesUrl" value="/j_spring_cas_security_logout"/>
+    </bean>
+
+    <bean id="casAuthenticationService" class="org.cboard.security.service.DefaultAuthenticationService"/>
+</beans>

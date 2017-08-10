@@ -182,7 +182,10 @@
       "HEAT_MAP_CALENDER": "Heat Map (Calender)",
       "DATE_FORMAT": "Date Format",
       "HEAT_MAP_TABLE": "Heat Map (Table)",
-      "MARK_LINE_MAP":"Mark Line Map (Local)",
+      "MARK_LINE_MAP": "Mark Line Map (Local)",
+      "HEAT_MAP": "Heat Map (Local)",
+      "MARK_LINE_MAP_BMAP": "Mark Line Map (Bmap)",
+      "HEAT_MAP_BMAP": "Heat Map (Bmap)",
       "LIQUID_FILL": "Liquid Fill",
       "STATIC": "Static",
       "DYNAMIC": "Dynamic",
@@ -247,9 +250,9 @@
       "AUTOMATIC_REFRESH_SWITCH": "Automatic refresh switch",
       "REMOVE_EMPTY_LINES": "Remove empty lines",
       "DATA_REFRESH_TIME":"Data refresh time",
-      "WIDGET_TARGET":"Target Widget",
+      "WIDGET_TARGET":"Correlation Widget",
       "WIDGET_FIELDS":"Widget Fields",
-      "WIDGET_TARGET_FIELDS":"Target Widget Fields"
+      "WIDGET_TARGET_FIELDS":"Correlation Widget Fields"
     },
     "CATEGORY": {
       "NAME": "Category Name",

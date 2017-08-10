@@ -25,7 +25,7 @@ cBoard.service('chartRadarService', function () {
         var data = [];
         var max;
         var indicator = [];
-        if (chartConfig.asRow) {
+        if (chartConfig.drawBy === 'row') {
             for (var i = 0; i < string_keys.length; i++) {
                 var d = {value: [], name: string_keys[i]};
                 for (var j = 0; j < casted_values.length; j++) {
@@ -66,7 +66,7 @@ cBoard.service('chartRadarService', function () {
             legend: {
                 orient: 'vertical',
                 left: 'left',
-                data: chartConfig.asRow ? string_keys : string_values
+                data: chartConfig.drawBy === 'row' ? string_keys : string_values
             },
             radar: {
                 indicator: indicator

@@ -12,10 +12,12 @@
             <ul class="dropdown-menu" style="position: relative">
                 <li>
                     <a>
-                    	<div class="input-group" style="width: 257px">
-                    		<span class="input-group-addon"><i class="fa fa-save"></i></span>
+                    	<div class="input-group input-group-sm" style="width: 257px">
                     		<input class="form-control" placeholder='{{"COMMON.SAVE_AS" | translate}}' style="min-width: 120px" ng-model="newBoardParamName" ng-blur="newBoardParam(newBoardParamName);newBoardParamName='';">
-                    	</div>                    	
+                    		<span class="input-group-btn">
+                    		    <button type="button" class="btn btn-info btn-flat"><i class="fa fa-save"></i></button>
+                                </span>
+                    	</div>             	
                     </a>
                 </li>
                 <li class="divider"></li>

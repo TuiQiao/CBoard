@@ -198,7 +198,9 @@
       "ROUND_RECT": "圆角矩形",
       "SQUARE": "正方形",
       "DIAMOND": "菱形",
-      "CONTRAST": "对比图"
+      "CONTRAST": "对比图",
+      "SCATTER_MAP":"散点地图（本地）",
+      "SCATTER_MAP_BMAP":"散点地图（百度）"
     },
     "DASHBOARD": {
       "DASHBOARD": "看板",
@@ -379,7 +381,7 @@
   },
   "CROSS_TABLE":{
     "NEXT_PAGE": "下一页",
-    "LAST_PAGE": "上一页",
+    "PREVIOUS_PAGE": "上一页",
     "SHOW": "显示",
     "ENTRIES": "条",
     "EXPORT": "导出"

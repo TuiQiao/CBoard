@@ -217,13 +217,13 @@ cBoard.controller('boardCtrl', function ($rootScope, $scope, $http, ModalUtils, 
     $scope.addRelation = function(widget) {
         widget.relation = {};
         $scope.changeSourceCol(widget, widget.widgetId);
-    }
+    };
 
     $scope.delRelation = function(widget) {
         if(widget.relation){
           delete widget.relation;
         }
-    }
+    };
 
     var validate = function () {
         $scope.alerts = [];
@@ -434,35 +434,35 @@ cBoard.controller('boardCtrl', function ($rootScope, $scope, $http, ModalUtils, 
     }();
     /**  js tree related start **/
 
-    $scope.changeTargetCol = function(e, widgetId, row){
-        if(!e.relation){
+    $scope.changeTargetCol = function (e, widgetId, row) {
+        if (!e.relation) {
             return;
         }
         var w = _.find($scope.widgetList, function (w) {
             return w.id == widgetId;
         });
-        if(!w){
+        if (!w) {
             return;
         }
-        var dataSet = _.find($scope.datasetList, function(e){
+        var dataSet = _.find($scope.datasetList, function (e) {
             return w.data.datasetId === e.id;
         });
         var cols = [];
-        _.each(dataSet.data.schema.dimension, function(e){
-           if(e.type == "column"){
-               if($.inArray(e, cols) == -1){
-                   cols.push(e.column);
-               }
-           }else if(e.type == "level"){
-               _.each(e.columns, function(e){
-                   if($.inArray(e, cols) == -1){
-                       cols.push(e.column);
-                   }
-               });
-           }
+        _.each(dataSet.data.schema.dimension, function (e) {
+            if (e.type == "column") {
+                if ($.inArray(e, cols) == -1) {
+                    cols.push(e.column);
+                }
+            } else if (e.type == "level") {
+                _.each(e.columns, function (e) {
+                    if ($.inArray(e, cols) == -1) {
+                        cols.push(e.column);
+                    }
+                });
+            }
         });
         e.relation.targetFields = cols;
-        if(cols.length == 0){
+        if (cols.length == 0) {
             dataService.getColumns({
                 datasource: null,
                 query: null,
@@ -476,32 +476,39 @@ cBoard.controller('boardCtrl', function ($rootScope, $scope, $http, ModalUtils, 
                     }
                 }
             });
-        };
+        }
+        ;
 
         var w = {};
-        w.name = _.find($scope.widgetList,function(e){return e.id===widgetId}).name;
+        w.name = _.find($scope.widgetList, function (e) {
+            return e.id === widgetId
+        }).name;
         w.width = 12;
         w.widgetId = widgetId;
         w.sourceId = e.widgetId;
-        row.widgets = _.filter(row.widgets, function(e){
-           return e.sourceId !== w.sourceId;
+        row.widgets = _.filter(row.widgets, function (e) {
+            return e.sourceId !== w.sourceId;
         });
         row.widgets.push(w);
-    }
+    };
 
-    $scope.changeSourceCol = function(e,widgetId){
-        if(!e.relation){
+    $scope.changeSourceCol = function (e, widgetId) {
+        if (!e.relation) {
             return;
         }
         //源表字段默认为原表的group key指定字段
-        $http.get("dashboard/dashboardWidget.do?id="+ e.widgetId).then(function (response) {
+        $http.get("dashboard/dashboardWidget.do?id=" + e.widgetId).then(function (response) {
             if (!response) {
                 return false;
             }
             var config = response.data.data.config;
             var fields = [];
-            _.each(config.groups,function(e){fields.push(e.col);});
-            _.each(config.keys,function(e){fields.push(e.col);});
+            _.each(config.groups, function (e) {
+                fields.push(e.col);
+            });
+            _.each(config.keys, function (e) {
+                fields.push(e.col);
+            });
             e.relation.sourceField = fields;
             e.relation.sourceFields = fields;
         });

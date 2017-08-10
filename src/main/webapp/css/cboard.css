@@ -161,6 +161,10 @@
 .cMarkLineMapBmap.disabled{ background-image: url(../imgs/markLineMapBmap.png);}
 .cHeatMapBmap{ background-image: url(../imgs/heatMapBmap-active.png); }
 .cHeatMapBmap.disabled{ background-image: url(../imgs/heatMapBmap.png); }
+.cScatterMap{ background-image: url(../imgs/scatterMap-active.png); }
+.cScatterMap.disabled{ background-image: url(../imgs/scatterMap.png); }
+.cScatterMapBmap{ background-image: url(../imgs/scatterMapBmap-active.png); }
+.cScatterMapBmap.disabled{ background-image: url(../imgs/scatterMapBmap.png);}
 
 .chart-type a.active{
     background-color: #FFF;

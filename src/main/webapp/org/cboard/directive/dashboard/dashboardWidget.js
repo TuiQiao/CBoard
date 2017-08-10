@@ -111,6 +111,12 @@ cBoard.directive('dashboardWidget', function ($compile, $templateCache, dataServ
                         case 'contrast':
                             renderEchart(scope, element, attrs);
                             break;
+                        case 'scatterMap':
+                            renderEchart(scope, element, attrs);
+                            break;
+                        case 'scatterMapBmap':
+                            renderEchart(scope, element, attrs);
+                            break;
                     }
                 }
             }

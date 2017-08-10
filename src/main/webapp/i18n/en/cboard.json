@@ -198,7 +198,9 @@
       "ROUND_RECT": "RoundRect",
       "SQUARE": "Square",
       "DIAMOND": "Diamond",
-      "CONTRAST": "Contrast"
+      "CONTRAST": "Contrast",
+      "SCATTER_MAP":"Scatter Map(Local)",
+      "SCATTER_MAP_BMAP":"Scatter Map(Bmap)"
     },
     "DASHBOARD": {
       "CATEGORY": "Category",

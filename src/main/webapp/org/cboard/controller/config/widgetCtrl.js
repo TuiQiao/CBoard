@@ -81,12 +81,6 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
                 measure: translate('CONFIG.WIDGET.TIPS_DIM_NUM_1')
             },
             {
-                name: translate('CONFIG.WIDGET.AREA_MAP'), value: 'areaMap', class: 'cAreaMap',
-                row: translate('CONFIG.WIDGET.TIPS_DIM_NUM_1_MORE'),
-                column: translate('CONFIG.WIDGET.TIPS_DIM_NUM_0_MORE'),
-                measure: translate('CONFIG.WIDGET.TIPS_DIM_NUM_1')
-            },
-            {
                 name: translate('CONFIG.WIDGET.HEAT_MAP_CALENDER'), value: 'heatMapCalendar', class: 'cHeatMapCalendar',
                 row: translate('CONFIG.WIDGET.TIPS_DIM_NUM_1'),
                 column: translate('CONFIG.WIDGET.TIPS_DIM_NUM_0'),
@@ -99,16 +93,40 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
                 measure: translate('CONFIG.WIDGET.TIPS_DIM_NUM_1')
             },
             {
+                name: translate('CONFIG.WIDGET.LIQUID_FILL'), value: 'liquidFill', class: 'cLiquidFill',
+                row: translate('CONFIG.WIDGET.TIPS_DIM_NUM_0'),
+                column: translate('CONFIG.WIDGET.TIPS_DIM_NUM_0'),
+                measure: translate('CONFIG.WIDGET.TIPS_DIM_NUM_1')
+            },
+            {
+                name: translate('CONFIG.WIDGET.AREA_MAP'), value: 'areaMap', class: 'cAreaMap',
+                row: translate('CONFIG.WIDGET.TIPS_DIM_NUM_1_MORE'),
+                column: translate('CONFIG.WIDGET.TIPS_DIM_NUM_0_MORE'),
+                measure: translate('CONFIG.WIDGET.TIPS_DIM_NUM_1')
+            },
+            {
                 name: translate('CONFIG.WIDGET.MARK_LINE_MAP'), value: 'markLineMap', class: 'cMarkLineMap',
                 row: translate('CONFIG.WIDGET.TIPS_DIM_NUM_1_MORE'),
                 column: translate('CONFIG.WIDGET.TIPS_DIM_NUM_1_MORE'),
                 measure: translate('CONFIG.WIDGET.TIPS_DIM_NUM_1')
             },
             {
-                name: translate('CONFIG.WIDGET.LIQUID_FILL'), value: 'liquidFill', class: 'cLiquidFill',
-                row: translate('CONFIG.WIDGET.TIPS_DIM_NUM_0'),
+                name: translate('CONFIG.WIDGET.HEAT_MAP'), value: 'heatMap', class: 'cHeatMap',
+                row: translate('CONFIG.WIDGET.TIPS_DIM_NUM_1_MORE'),
                 column: translate('CONFIG.WIDGET.TIPS_DIM_NUM_0'),
+                measure: translate('CONFIG.WIDGET.TIPS_DIM_NUM_1_MORE')
+            },
+            {
+                name: translate('CONFIG.WIDGET.MARK_LINE_MAP_BMAP'), value: 'markLineMapBmap', class: 'cMarkLineMapBmap',
+                row: translate('CONFIG.WIDGET.TIPS_DIM_NUM_1_MORE'),
+                column: translate('CONFIG.WIDGET.TIPS_DIM_NUM_1_MORE'),
                 measure: translate('CONFIG.WIDGET.TIPS_DIM_NUM_1')
+            },
+            {
+                name: translate('CONFIG.WIDGET.HEAT_MAP_BMAP'), value: 'heatMapBmap', class: 'cHeatMapBmap',
+                row: translate('CONFIG.WIDGET.TIPS_DIM_NUM_1_MORE'),
+                column: translate('CONFIG.WIDGET.TIPS_DIM_NUM_0'),
+                measure: translate('CONFIG.WIDGET.TIPS_DIM_NUM_1_MORE')
             }
         ];
 
@@ -116,8 +134,9 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
             "line": true, "pie": true, "kpi": true, "table": true,
             "funnel": true, "sankey": true, "radar": true, "map": true,
             "scatter": true, "gauge": true, "wordCloud": true, "treeMap": true,
-            "areaMap": true, "heatMapCalendar": true, "heatMapTable": true,
-            "markLineMap": true, "liquidFill": true
+            "heatMapCalendar": true, "heatMapTable": true, "liquidFill": true,
+            "areaMap": true, "markLineMap": true, "heatMap": true,
+            "markLineMapBmap": true, "heatMapBmap": true
         };
 
         $scope.value_series_types = [
@@ -205,7 +224,10 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
             heatMapCalendar: {keys: 1, groups: 0, filters: -1, values: 1},
             heatMapTable: {keys: -1, groups: -1, filters: -1, values: 1},
             markLineMap: {keys: 2, groups: 2, filters: -1, values: 1},
-            liquidFill: {keys: 0, groups: 0, filters: -1, values: 1}
+            liquidFill: {keys: 0, groups: 0, filters: -1, values: 1},
+            heatMap: {keys: 2, groups: 0, filters: -1, values: 1},
+            markLineMapBmap: {keys: 2, groups: 2, filters: -1, values: 1},
+            heatMapBmap: {keys: 2, groups: 0, filters: -1, values: 1}
         };
 
         //界面控制
@@ -556,8 +578,11 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
             $scope.curWidget.config.filters = oldConfig.filters;
             switch ($scope.curWidget.config.chart_type) {
                 case 'line':
+                    $scope.curWidget.config.values.push({name: '', cols: []});
                     _.each(oldConfig.values, function (v) {
-                        $scope.curWidget.config.values.push({name: v.name, cols: v.cols});
+                        _.each(v.cols, function (c) {
+                            $scope.curWidget.config.values[0].cols.push(c);
+                        });
                     });
                     $scope.curWidget.config.valueAxis = 'vertical';
                     _.each($scope.curWidget.config.values, function (v) {
@@ -612,18 +637,6 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
                         {proportion: '1', color: '#ff4500'}
                     ];
                     break;
-                case 'areaMap':
-                    $scope.curWidget.config.values.push({name: '', cols: []});
-                    _.each(oldConfig.values, function (v) {
-                        _.each(v.cols, function (c) {
-                            $scope.curWidget.config.values[0].cols.push(c);
-                        });
-                    });
-                    $scope.curWidget.config.selects = angular.copy($scope.columns);
-                    _.each($scope.curWidget.config.values, function (v) {
-                        v.style = 'bg-aqua';
-                    });
-                    break;
                 case 'heatMapCalendar':
                     $scope.curWidget.config.values.push({name: '', cols: []});
                     _.each(oldConfig.values, function (v) {
@@ -662,18 +675,6 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
                         v.style = 'circle';
                     });
                     break;
-                case 'markLineMap':
-                    $scope.curWidget.config.values.push({name: '', cols: []});
-                    _.each(oldConfig.values, function (v) {
-                        _.each(v.cols, function (c) {
-                            $scope.curWidget.config.values[0].cols.push(c);
-                        });
-                    });
-                    $scope.curWidget.config.selects = angular.copy($scope.columns);
-                    _.each($scope.curWidget.config.values, function (v) {
-                        v.style = 'bg-aqua';
-                    });
-                    break;
                 default:
                     $scope.curWidget.config.values.push({name: '', cols: []});
                     _.each(oldConfig.values, function (v) {
@@ -696,146 +697,11 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
             $scope.curWidget.config.option = {};
             $scope.curWidget.config.chart_type = 'table';
             cleanPreview();
-            switch ($scope.curWidget.config.chart_type) {
-                case 'line':
-                    $scope.curWidget.config.selects = angular.copy($scope.columns);
-                    $scope.curWidget.config.keys = new Array();
-                    $scope.curWidget.config.groups = new Array();
-                    $scope.curWidget.config.values = new Array();
-                    $scope.curWidget.config.filters = new Array();
-                    $scope.curWidget.config.valueAxis = 'vertical';
-                    $scope.add_value();
-                    break;
-                case 'pie':
-                    $scope.curWidget.config.selects = angular.copy($scope.columns);
-                    $scope.curWidget.config.keys = new Array();
-                    $scope.curWidget.config.groups = new Array();
-                    $scope.curWidget.config.values = [{
-                        name: '',
-                        cols: []
-                    }];
-                    $scope.curWidget.config.filters = new Array();
-                    break;
-                case 'kpi':
-                    $scope.curWidget.config.selects = angular.copy($scope.columns);
-                    $scope.curWidget.config.values = [{
-                        name: '',
-                        cols: [],
-                        style: 'bg-aqua'
-                    }];
-                    $scope.curWidget.config.filters = new Array();
-                    break;
-                case 'table':
-                    $scope.curWidget.config.selects = angular.copy($scope.columns);
-                    $scope.curWidget.config.keys = new Array();
-                    $scope.curWidget.config.groups = new Array();
-                    $scope.curWidget.config.values = [{
-                        name: '',
-                        cols: []
-                    }];
-                    $scope.curWidget.config.filters = new Array();
-                    break;
-                case 'funnel':
-                    $scope.curWidget.config.selects = angular.copy($scope.columns);
-                    $scope.curWidget.config.keys = new Array();
-                    $scope.curWidget.config.values = [{
-                        name: '',
-                        cols: []
-                    }];
-                    $scope.curWidget.config.filters = new Array();
-                    break;
-                case 'sankey':
-                    $scope.curWidget.config.selects = angular.copy($scope.columns);
-                    $scope.curWidget.config.keys = new Array();
-                    $scope.curWidget.config.groups = new Array();
-                    $scope.curWidget.config.values = [{
-                        name: '',
-                        cols: []
-                    }];
-                    $scope.curWidget.config.filters = new Array();
-                    break;
-                case 'radar':
-                    $scope.curWidget.config.selects = angular.copy($scope.columns);
-                    $scope.curWidget.config.keys = new Array();
-                    $scope.curWidget.config.groups = new Array();
-                    $scope.curWidget.config.values = [{
-                        name: '',
-                        cols: []
-                    }];
-                    $scope.curWidget.config.filters = new Array();
-                    break;
-                case 'map':
-                    $scope.curWidget.config.selects = angular.copy($scope.columns);
-                    $scope.curWidget.config.keys = new Array();
-                    $scope.curWidget.config.groups = new Array();
-                    $scope.curWidget.config.values = [{
-                        name: '',
-                        cols: []
-                    }];
-                    $scope.curWidget.config.filters = new Array();
-                    break;
-                case 'gauge':
-                    $scope.curWidget.config.selects = angular.copy($scope.columns);
-                    $scope.curWidget.config.values = [{
-                        name: '',
-                        cols: []
-                    }];
-                    $scope.curWidget.config.filters = new Array();
-                    $scope.curWidget.config.styles = [
-                        {proportion: '0.2', color: '#228b22'},
-                        {proportion: '0.8', color: '#48b'},
-                        {proportion: '1', color: '#ff4500'}
-                    ];
-                    break;
-                case 'areaMap':
-                    $scope.curWidget.config.selects = angular.copy($scope.columns);
-                    $scope.curWidget.config.keys = new Array();
-                    $scope.curWidget.config.groups = new Array();
-                    $scope.curWidget.config.values = [{
-                        name: '',
-                        cols: []
-                    }];
-                    $scope.curWidget.config.filters = new Array();
-                    break;
-                case 'heatMapCalendar':
-                    $scope.curWidget.config.selects = angular.copy($scope.columns);
-                    $scope.curWidget.config.values = [{
-                        name: '',
-                        cols: [],
-                        dateFormat: 'yyyy-MM-dd',
-                        style: 'blue'
-                    }];
-                    break;
-                case 'heatMapTable':
-                    $scope.curWidget.config.selects = angular.copy($scope.columns);
-                    $scope.curWidget.config.values = [{
-                        name: '',
-                        cols: [],
-                        style: 'blue'
-                    }];
-                    $scope.curWidget.config.filters = new Array();
-                    break;
-                case 'markLineMap':
-                    $scope.curWidget.config.selects = angular.copy($scope.columns);
-                    $scope.curWidget.config.keys = new Array();
-                    $scope.curWidget.config.groups = new Array();
-                    $scope.curWidget.config.values = [{
-                        name: '',
-                        cols: []
-                    }];
-                    $scope.curWidget.config.filters = new Array();
-                    break;
-                case 'liquidFill':
-                    $scope.curWidget.config.selects = angular.copy($scope.columns);
-                    $scope.curWidget.config.values = [{
-                        name: '',
-                        cols: [],
-                        style: 'circle'
-                    }];
-                    $scope.curWidget.config.filters = new Array();
-                    $scope.curWidget.config.animation = 'static';
-                    break;
-            }
+            $scope.curWidget.config.selects = angular.copy($scope.columns);
+            $scope.curWidget.config.keys = [];
+            $scope.curWidget.config.groups = [];
+            $scope.curWidget.config.values = [{name: '', cols: []}];
+            $scope.curWidget.config.filters = [];
             addWatch();
         };
 
@@ -870,81 +736,96 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
                 angular.element('#preview_widget_tab').trigger('click');
             });
             $scope.loadingPre = true;
-            // --- start ---
-            // 添加echarts3.6.2后这里除了第一次可以加载echarts图表，再次加载无法显示图表。
-            // 完全无法找到问题下，出于无奈嵌套了一层后发现可以显示图表。囧！！
-            // 具体原因没有找到，求大神帮忙解决，thanks！
-            $('#preview_widget').html("<div id='preview' style='min-height: 300px; user-select: text;'></div>");
-            // --- end ---
-            chartService.render($('#preview'), {
-                config: $scope.curWidget.config,
-                datasource: $scope.datasource ? $scope.datasource.id : null,
-                query: $scope.curWidget.query,
-                datasetId: $scope.customDs ? undefined : $scope.curWidget.datasetId
-            }, function (option) {
-                switch ($scope.curWidget.config.chart_type) {
-                    case 'line':
-                        $scope.previewDivWidth = 12;
-                        option.toolbox = {
-                            feature: {
-                                dataView: {
-                                    show: true,
-                                    readOnly: true
-                                }
-                            }
-                        };
-                        break;
-                    case 'pie':
-                        $scope.previewDivWidth = 12;
-                        option.toolbox = {
-                            feature: {
-                                dataView: {
-                                    show: true,
-                                    readOnly: true
-                                }
-                            }
-                        };
-                        break;
-                    case 'kpi':
-                        $scope.previewDivWidth = 6;
-                        break;
-                    case 'table':
-                        $scope.previewDivWidth = 12;
-                        break;
-                    case 'funnel':
-                        $scope.previewDivWidth = 12;
-                        option.toolbox = {
-                            feature: {
-                                dataView: {
-                                    show: true,
-                                    readOnly: true
-                                }
-                            }
-                        };
-                        break;
-                    case 'sankey':
-                        $scope.previewDivWidth = 12;
-                        option.toolbox = {
-                            feature: {
-                                dataView: {
-                                    show: true,
-                                    readOnly: true
-                                }
-                            }
-                        };
-                        break;
-                    case 'map':
-                        $scope.previewDivWidth = 12;
-                        break;
-                    case 'areaMap':
-                        $scope.previewDivWidth = 12;
-                        break;
-                    case 'markLineMap':
-                        $scope.previewDivWidth = 12;
-                        break;
-                }
+            var charType = $scope.curWidget.config.chart_type;
+            //百度地图特殊处理
+            if (charType == 'markLineMapBmap' || charType == 'heatMapBmap') {
+                chartService.render($('#preview_widget'), {
+                    config: $scope.curWidget.config,
+                    datasource: $scope.datasource ? $scope.datasource.id : null,
+                    query: $scope.curWidget.query,
+                    datasetId: $scope.customDs ? undefined : $scope.curWidget.datasetId
+                });
                 $scope.loadingPre = false;
-            }, null, !$scope.loadFromCache);
+            } else {
+                // --- start ---
+                // 添加echarts3.6.2后这里除了第一次可以加载echarts图表，再次加载无法显示图表。
+                // 完全无法找到问题下，出于无奈嵌套了一层后发现可以显示图表。囧！！
+                // 具体原因没有找到，求大神帮忙解决，thanks！
+                $('#preview_widget').html("<div id='preview' style='min-height: 300px; user-select: text;'></div>");
+                // --- end ---
+                chartService.render($('#preview'), {
+                    config: $scope.curWidget.config,
+                    datasource: $scope.datasource ? $scope.datasource.id : null,
+                    query: $scope.curWidget.query,
+                    datasetId: $scope.customDs ? undefined : $scope.curWidget.datasetId
+                }, function (option) {
+                    switch ($scope.curWidget.config.chart_type) {
+                        case 'line':
+                            $scope.previewDivWidth = 12;
+                            option.toolbox = {
+                                feature: {
+                                    dataView: {
+                                        show: true,
+                                        readOnly: true
+                                    }
+                                }
+                            };
+                            break;
+                        case 'pie':
+                            $scope.previewDivWidth = 12;
+                            option.toolbox = {
+                                feature: {
+                                    dataView: {
+                                        show: true,
+                                        readOnly: true
+                                    }
+                                }
+                            };
+                            break;
+                        case 'kpi':
+                            $scope.previewDivWidth = 6;
+                            break;
+                        case 'table':
+                            $scope.previewDivWidth = 12;
+                            break;
+                        case 'funnel':
+                            $scope.previewDivWidth = 12;
+                            option.toolbox = {
+                                feature: {
+                                    dataView: {
+                                        show: true,
+                                        readOnly: true
+                                    }
+                                }
+                            };
+                            break;
+                        case 'sankey':
+                            $scope.previewDivWidth = 12;
+                            option.toolbox = {
+                                feature: {
+                                    dataView: {
+                                        show: true,
+                                        readOnly: true
+                                    }
+                                }
+                            };
+                            break;
+                        case 'map':
+                            $scope.previewDivWidth = 12;
+                            break;
+                        case 'areaMap':
+                            $scope.previewDivWidth = 12;
+                            break;
+                        case 'markLineMap':
+                            $scope.previewDivWidth = 12;
+                            break;
+                        case 'heatMap':
+                            $scope.previewDivWidth = 12;
+                            break;
+                    }
+                    $scope.loadingPre = false;
+                }, null, !$scope.loadFromCache);
+            }
         };
 
 // $scope.saveChart = function () {
@@ -1234,8 +1115,6 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
             _.each(cols, function (e) {
                 if (e.type == 'exp') {
                     $scope.expressions.push(e);
-                } else {
-                    $scope.curWidget.config.selects.push(e.col);
                 }
             });
         };
@@ -1637,8 +1516,9 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
                 return e.code == $scope.curWidget.config.province.code;
             });
             if(province && province.cities){
-                $scope.cities = province.cities
+                $scope.cities = province.cities;
             }else if($scope.curWidget.config.city && $scope.curWidget.config.city.code){
+                $scope.cities = [];
                 $scope.curWidget.config.city.code="";
             }
         }

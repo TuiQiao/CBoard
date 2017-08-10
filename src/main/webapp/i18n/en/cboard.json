@@ -34,6 +34,8 @@
     "WANRING": "WANRING!",
     "COLLAPSE": "Collapse",
     "REMOVE": "Remove",
+    "ADD_RELATION": "Add Relation",
+    "DEL_RELATION": "Del Relation",
     "DATE": "Date",
     "VALUE": "Value"
   },
@@ -180,7 +182,10 @@
       "HEAT_MAP_CALENDER": "Heat Map (Calender)",
       "DATE_FORMAT": "Date Format",
       "HEAT_MAP_TABLE": "Heat Map (Table)",
-      "MARK_LINE_MAP":"Mark Line Map (Local)",
+      "MARK_LINE_MAP": "Mark Line Map (Local)",
+      "HEAT_MAP": "Heat Map (Local)",
+      "MARK_LINE_MAP_BMAP": "Mark Line Map (Bmap)",
+      "HEAT_MAP_BMAP": "Heat Map (Bmap)",
       "LIQUID_FILL": "Liquid Fill",
       "STATIC": "Static",
       "DYNAMIC": "Dynamic",
@@ -244,7 +249,10 @@
       "VALUE_FORMMAT_ALERT": "Only date type need format",
       "AUTOMATIC_REFRESH_SWITCH": "Automatic refresh switch",
       "REMOVE_EMPTY_LINES": "Remove empty lines",
-      "DATA_REFRESH_TIME":"Data refresh time"
+      "DATA_REFRESH_TIME":"Data refresh time",
+      "WIDGET_TARGET":"Correlation Widget",
+      "WIDGET_FIELDS":"Widget Fields",
+      "WIDGET_TARGET_FIELDS":"Correlation Widget Fields"
     },
     "CATEGORY": {
       "NAME": "Category Name",
@@ -366,5 +374,12 @@
       "ROWS": "rows",
       "FL": "fl"
     }
+  },
+  "CROSS_TABLE":{
+    "NEXT_PAGE": "Next",
+    "PREVIOUS_PAGE": "Previous",
+    "SHOW": "Show",
+    "ENTRIES": "entries",
+    "EXPORT": "Export"
   }
 }

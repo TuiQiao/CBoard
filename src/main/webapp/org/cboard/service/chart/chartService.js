@@ -6,9 +6,11 @@ cBoard.service('chartService', function ($q, dataService, chartPieService, chart
                                          chartSankeyService, chartTableService, chartKpiService, chartRadarService,
                                          chartMapService, chartScatterService, chartGaugeService, chartWordCloudService,
                                          chartTreeMapService, chartAreaMapService, chartHeatMapCalendarService, chartHeatMapTableService,
-                                         chartLiquidFillService, chartMarkLineMapService) {
+                                         chartLiquidFillService, chartMarkLineMapService, chartHeatMapService, chartMarkLineMapBmapService,
+                                         chartHeatMapBmapService) {
 
-        this.render = function (containerDom, widget, optionFilter, scope, reload, persist) {
+
+        this.render = function (containerDom, widget, optionFilter, scope, reload, persist, relation) {
             var deferred = $q.defer();
             var chart = getChartServices(widget.config);
             dataService.getDataSeries(widget.datasource, widget.query, widget.datasetId, widget.config, function (data) {
@@ -85,7 +87,11 @@ cBoard.service('chartService', function ($q, dataService, chartPieService, chart
                         };
                     }
                 } finally {
-                    deferred.resolve(chart.render(containerDom, option, scope, persist, data.drill));
+                    if (widget.config.chart_type == 'markLineMapBmap' || widget.config.chart_type == 'heatMapBmap') {
+                        chart.render(containerDom, option, scope, persist, data.drill);
+                    } else {
+                        deferred.resolve(chart.render(containerDom, option, scope, persist, data.drill, relation, widget.config));
+                    }
                 }
             }, reload);
             return deferred.promise;
@@ -158,6 +164,15 @@ cBoard.service('chartService', function ($q, dataService, chartPieService, chart
                      break;
                 case 'liquidFill':
                     chart = chartLiquidFillService;
+                    break;
+                case 'heatMap':
+                    chart = chartHeatMapService;
+                    break;
+                case 'markLineMapBmap':
+                    chart = chartMarkLineMapBmapService;
+                    break;
+                case 'heatMapBmap':
+                    chart = chartHeatMapBmapService;
                     break;
             }
             return chart;

@@ -19,7 +19,16 @@ public @interface DatasourceParameter {
 
     int order() default 0;
 
+    // Init value
+    String value() default "";
+
+    String placeholder() default "";
+
     String[] options() default "N/A";
+
+    boolean checked() default false;
+
+    boolean required() default false;
 
     enum Type {
         Input("input"), TextArea("textarea"), Password("password"), Checkbox("checkbox"), Select("select");

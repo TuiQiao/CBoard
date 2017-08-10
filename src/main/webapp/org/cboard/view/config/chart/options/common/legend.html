@@ -1,0 +1,43 @@
+<form class="form-horizontal">
+    <div class="row">
+        <div class="form-group col-md-6">
+            <div class="checkbox">
+                <label>
+                    <input type="checkbox" ng-model="curWidget.config.option.legendShow"
+                           ng-init="curWidget.config.option.legendShow ? null : curWidget.config.option.legendShow=true"> Show Legend
+                </label>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="form-group col-md-4">
+            <label class="col-md-4 control-label">X</label>
+            <div class="col-md-8">
+                <select class="form-control" ng-model="curWidget.config.option.legendX" ng-disabled="!curWidget.config.option.legendShow">
+                    <option value="left">left</option>
+                    <option value="right">right</option>
+                    <option value="center">center</option>
+                </select>
+            </div>
+        </div>
+        <div class="form-group col-md-4">
+            <label class="col-md-4 control-label">Y</label>
+            <div class="col-md-8">
+                <select class="form-control" ng-model="curWidget.config.option.legendY" ng-disabled="!curWidget.config.option.legendShow">
+                    <option value="top">top</option>
+                    <option value="bottom">bottom</option>
+                    <option value="center">center</option>
+                </select>
+            </div>
+        </div>
+        <div class="form-group col-md-4">
+            <label class="col-md-4 control-label">Orient</label>
+            <div class="col-md-8">
+                <select class="form-control" ng-model="curWidget.config.option.legendOrient" ng-disabled="!curWidget.config.option.legendShow">
+                    <option value="horizontal">horizontal</option>
+                    <option value="vertical">vertical</option>
+                </select>
+            </div>
+        </div>
+    </div>
+</form>

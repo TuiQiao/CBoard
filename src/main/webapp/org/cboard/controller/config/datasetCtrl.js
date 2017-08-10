@@ -13,6 +13,7 @@ cBoard.controller('datasetCtrl', function ($scope, $http, dataService, $uibModal
     $scope.queryAceOpt = cbAcebaseOption;
     $scope.hierarchy = translate("CONFIG.DATASET.HIERARCHY");
     $scope.uuid4 = uuid4;
+    $scope.params = [];
 
     var treeID = 'dataSetTreeID'; // Set to a same value with treeDom
     var originalData = [];
@@ -79,6 +80,7 @@ cBoard.controller('datasetCtrl', function ($scope, $http, dataService, $uibModal
         $http.post("dashboard/checkDatasource.do", {id: ds.data.datasource}).success(function (response) {
             if (response.status == '1') {
                 doEditDs(ds);
+                $scope.doConfigParams();
             } else {
                 ModalUtils.alert(translate("ADMIN.CONTACT_ADMIN") + "：Datasource/" + response.msg, "modal-danger", "lg");
             }
@@ -177,6 +179,23 @@ cBoard.controller('datasetCtrl', function ($scope, $http, dataService, $uibModal
             $scope.verify = {dsName: false};
             $("#DatasetName").focus();
             return false;
+        }
+        for (i in $scope.params) {
+            var name = $scope.params[i].name;
+            var label = $scope.params[i].label;
+            var required = $scope.params[i].required;
+            var value = $scope.curWidget.query[name];
+            if (required == true && value != 0 && (value == undefined || value == "")) {
+                var pattern = /([\w_\s\.]+)/;
+                var msg = pattern.exec(label);
+                if (msg && msg.length > 0)
+                    msg = translate(msg[0]);
+                else
+                    msg = label;
+                $scope.alerts = [{msg: "[" + msg + "]" + translate('COMMON.NOT_EMPTY'), type: 'danger'}];
+                $scope.verify[name] = false;
+                return false;
+            }
         }
         return true;
     };
@@ -587,9 +606,37 @@ cBoard.controller('datasetCtrl', function ($scope, $http, dataService, $uibModal
         return baseEventObj;
     }();
 
+    $scope.doConfigParams = function () {
+        $http.get('dashboard/getConfigParams.do?type=' + $scope.datasource.type + '&page=dataset.html').then(function (response) {
+            $scope.params = response.data;
+        });
+    };
+
+    $scope.changeDs = function () {
+        $scope.curWidget.query = {};
+        $http.get('dashboard/getConfigParams.do?type=' + $scope.datasource.type + '&page=dataset.html').then(function (response) {
+            $scope.params = response.data;
+            for (i in $scope.params) {
+                var name = $scope.params[i].name;
+                var value = $scope.params[i].value;
+                var checked = $scope.params[i].checked;
+                var type = $scope.params[i].type;
+                if (type == "checkbox" && checked == true) {
+                    $scope.curWidget.query[name] = true;
+                }
+                if (type == "number" && value != "" && !isNaN(value)) {
+                    $scope.curWidget.query[name] = Number(value);
+                } else if (value != "") {
+                    $scope.curWidget.query[name] = value;
+                }
+            }
+        });
+    };
+
     /**  js tree related end **/
 
 
     /** Ace Editor Starer... **/
     $scope.queryAceOpt = datasetEditorOptions();
+
 });

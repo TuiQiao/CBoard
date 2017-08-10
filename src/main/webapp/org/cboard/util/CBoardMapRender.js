@@ -1,10 +1,11 @@
 /**
  * Created by Fine on 2016/12/13.
  */
-var CBoardMapRender = function (jqContainer, options) {
+var CBoardMapRender = function (jqContainer, options, drill) {
     this.options = options;
     this.tall;
     this.jqContainer = jqContainer;
+    this.drill = drill;
     var _this = this;
     $(jqContainer).html("<div class='map_wrapper'></div>");
     $('.map_wrapper').resize(function () {
@@ -17,12 +18,12 @@ CBoardMapRender.prototype.do = function (tall, persist) {
     this.container = this.jqContainer;
     tall = _.isUndefined(tall) ? 500 : tall;
     var args = {
-        height: tall,
+        height: tall - 20,
         chartConfig: this.options.chartConfig,
         data: this.options.data,
-        container: this.container
+        container: this.container,
+        drill: this.drill
     };
-    threeLevelMap.container = this.container;
     threeLevelMap.map(args);
     $(this.jqContainer).css({
         height: tall + 40 + "px",

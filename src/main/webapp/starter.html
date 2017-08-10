@@ -19,6 +19,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
     <!-- Theme style -->
     <link rel="stylesheet" href="dist/css/AdminLTE.css">
     <link rel="stylesheet" href="css/cboard.css">
+    <link rel="stylesheet" href="css/tabs.sideways.css">
     <!-- ngJsTree -->
     <link rel="stylesheet" href="plugins/ngJsTree/style.css">
     <link rel="stylesheet" href="plugins/jQueryUI/theme.css">
@@ -62,8 +63,13 @@ scratch. This page gets rid of all links and provides the needed markup only.
     <script src="plugins/ngJsTree/jstree.js"></script>
     <script src="plugins/ngJsTree/ngJsTree.js"></script>
 
-    <script src="plugins/echart/echarts.min.js"></script>
+    <!-- ECharts -->
+    <!--<script src="plugins/echart/echarts.min.js"></script>-->
+    <script src="plugins/echart/echarts-3.6.2.min.js"></script>
     <script src="plugins/echart/theme-fin1.js"></script>
+    <script src="plugins/echart/echarts-wordcloud.min.js"></script>
+    <script src="plugins/echart/echarts-liquidfill.min.js"></script>
+
     <script src="lib/jquery.ba-resize.js"></script>
     <!--<script src="plugins/echart/world.json"></script>-->
     <!--<script src="plugins/echart/world.js"></script>-->
@@ -182,12 +188,13 @@ desired effect
 <!-- ./wrapper -->
 
 
-
+<script src="org/cboard/util/CBoardEChartUtils.js"></script>
 <script src="org/cboard/util/CBoardEChartRender.js"></script>
 <script src="org/cboard/util/CBoardCommonUtils.js"></script>
 <script src="org/cboard/util/CBoardKpiRender.js"></script>
 <script src="org/cboard/util/CBoardTableRender.js"></script>
 <script src="org/cboard/util/CBoardMapRender.js"></script>
+<!--<script src="org/cboard/util/CBoardGisRender.js"></script>-->
 <script src="org/cboard/util/CBoardJsTreeUtils.js"></script>
 
 <!-- AngularJS-->
@@ -223,22 +230,32 @@ desired effect
 <script src="org/cboard/service/chart/chartRadarService.js"></script>
 <script src="org/cboard/service/chart/chartService.js"></script>
 <script src="org/cboard/service/chart/chartMapService.js"></script>
+<!--<script src="org/cboard/service/chart/chartGisService.js"></script>-->
 <script src="org/cboard/service/chart/chartTableService.js"></script>
 <script src="org/cboard/service/chart/chartScatterService.js"></script>
+<script src="org/cboard/service/chart/chartGaugeService.js"></script>
+<script src="org/cboard/service/chart/chartWordCloudService.js"></script>
+<script src="org/cboard/service/chart/chartTreeMapService.js"></script>
+<script src="org/cboard/service/chart/chartAreaMapService.js"></script>
+<script src="org/cboard/service/chart/chartHeatMapCalendarService.js"></script>
+<script src="org/cboard/service/chart/chartHeatMapTableService.js"></script>
+<script src="org/cboard/service/chart/chartMarkLineMapService.js"></script>
+<script src="org/cboard/service/chart/chartLiquidFillService.js"></script>
 <script src="org/cboard/directive/dashboard/dashboardWidget.js"></script>
 
 <script src="org/cboard/filter/dashboard/dashboardViewFilter.js"></script>
 
 <script src="plugins/crossTable/plugin.js"></script>
 <script src="plugins/FineMap/plugin.js"></script>
+<!--<script src="plugins/FineMap/.js"></script>-->
 
 <script type="text/ng-template" id="echartContent">
     <div class="col-md-{{widget.width}}">
         <div class="box box-solid" style="z-index: 99;">
-            <div class="box-header">
-                <i class="fa fa-bar-chart-o"></i>
+            <div class="box-header" ng-mouseover="x=true" ng-mouseleave="x=false">
+                <!--<i class="fa fa-bar-chart-o"></i>-->
                 <h3 class="box-title">{{widget.name}}</h3>
-                <div class="box-tools pull-right">
+                <div class="box-tools pull-right" ng-show="x" ng-init="x=false">
                     <button type="button" class="btn btn-box-tool" ng-click="reload(widget)"><i
                             class="fa fa-refresh"></i>
                     </button>
@@ -252,7 +269,7 @@ desired effect
                     </button>
                 </div>
             </div>
-            <div class="box-body" ng-style="{height:myheight+'px'}">
+            <div class="box-body" ng-style="{height:myheight+'px'}" style="padding: 3px 0px 3px 13px;">
             </div>
         </div>
     </div>
@@ -264,10 +281,10 @@ desired effect
 <script type="text/ng-template" id="chartContent">
     <div class="col-md-{{widget.width}}" style="z-index: 99;">
         <div class="box box-solid">
-            <div class="box-header">
-                <i class="fa fa-bar-chart-o"></i>
+            <div class="box-header" ng-mouseover="x=true" ng-mouseleave="x=false" >
+                <!--<i class="fa fa-bar-chart-o"></i>-->
                 <h3 class="box-title">{{widget.name}}</h3>
-                <div class="box-tools pull-right">
+                <div class="box-tools pull-right" ng-show="x" ng-init="x=false">
                     <button type="button" class="btn btn-box-tool" ng-click="reload(widget)"><i
                             class="fa fa-refresh"></i>
                     </button>
@@ -281,7 +298,7 @@ desired effect
                     </button>
                 </div>
             </div>
-            <div class="box-body" ng-style="{height:myheight+'px'}">
+            <div class="box-body" ng-style="{height:myheight+'px'}" style="padding: 3px 0px 3px 13px;">
             </div>
         </div>
     </div>

@@ -1,29 +1,32 @@
 /**
  * Created by zyong on 2016/7/25.
  */
+
+var echartsBasicOption = {
+    title: {},
+    grid: {
+        left: '50',
+        right: '20',
+        bottom: '15%',
+        top: '15%',
+        containLabel: false
+    },
+    tooltip: {
+        trigger: 'axis'
+    },
+    legend: {
+        x: 'left',
+        itemWidth: 15,
+        itemHeight: 10
+    }
+};
+
 var CBoardEChartRender = function (jqContainer, options, isDeepSpec) {
     this.container = jqContainer; // jquery object
     this.ecc = echarts.init(jqContainer.get(0), this.theme);
     this.isDeppSpec = isDeepSpec;
 
-    this.basicOption = {
-        title: {},
-        grid: {
-            left: '50',
-            right: '20',
-            bottom: '15%',
-            top: '20%',
-            containLabel: false
-        },
-        tooltip: {
-            trigger: 'axis'
-        },
-        legend: {
-            x: 'left',
-            itemWidth: 15,
-            itemHeight: 10
-        }
-    };
+    this.basicOption = echartsBasicOption;
     this.options = options;
 };
 
@@ -32,6 +35,16 @@ CBoardEChartRender.prototype.theme = "theme-fin1"; // 主题
 CBoardEChartRender.prototype.chart = function (group, persist) {
     var self = this;
     var options = this.isDeppSpec == true ? self.options : $.extend(true, {}, self.basicOption, self.options);
+    if (options.visualMap != undefined) {
+        $(this.jqContainer).css({
+            height: 500 + "px",
+            width: '100%'
+        });
+    }
+    if (options.legend.data && options.legend.data.length > 35) {
+        options.grid.top = '5%';
+        options.legend.show =false;
+    }
     if(persist){
         options.animation = false;
     }

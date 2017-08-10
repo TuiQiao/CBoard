@@ -85,8 +85,8 @@
     border-top: 1px solid #d5d5d5;
 }
 .tableView th.all_null{
-    background:none;
-    border:0;
+    background: none;
+    border: 0;
 }
 .tableView th.row_null{
     border-left: 1px solid #d5d5d5;
@@ -117,7 +117,7 @@
 
 }
 .cLine{  background-image: url(../imgs/line-active.png);  }
-.cLine.disabled{background-image: url(imgs/line.png); }
+.cLine.disabled{background-image: url(../imgs/line.png); }
 /*.cBar{  background-image: url(../imgs/bar-active.png);  }*/
 /*.cBar.disabled{background-image: url(../imgs/bar.png);  }*/
 .cScatter{  background-image: url(../imgs/scatter-active.png);  }
@@ -137,6 +137,23 @@
 .cTable.disabled{  background-image: url(../imgs/table.png);  }
 .cMap{  background-image: url(../imgs/map-active.png);  }
 .cMap.disabled{  background-image: url(../imgs/map.png);  }
+.cGauge{ background-image: url(../imgs/gauge-active.png); }
+.cGauge.disabled{ background-image: url(../imgs/gauge.png); }
+.cWordCloud{ background-image: url(../imgs/wordCloud-active.png); }
+.cWordCloud.disabled{ background-image: url(../imgs/wordCloud.png); }
+.cTreeMap{ background-image: url(../imgs/treeMap-active.png); }
+.cTreeMap.disabled{ background-image: url(../imgs/treeMap.png); }
+.cAreaMap{ background-image: url(../imgs/areaMap-active.png);}
+.cAreaMap.disabled{ background-image: url(../imgs/areaMap.png);}
+.cHeatMapCalendar{ background-image: url(../imgs/heatMapCalendar-active.png); }
+.cHeatMapCalendar.disabled{ background-image: url(../imgs/heatMapCalendar.png); }
+.cHeatMapTable{ background-image: url(../imgs/heatMapTable-active.png); }
+.cHeatMapTable.disabled{ background-image: url(../imgs/heatMapTable.png); }
+.cMarkLineMap{ background-image: url(../imgs/markLineMap-active.png);}
+.cMarkLineMap.disabled{ background-image: url(../imgs/markLineMap.png);}
+.cLiquidFill{ background-image: url(../imgs/liquidFill-active.png); }
+.cLiquidFill.disabled{ background-image: url(../imgs/liquidFill.png); }
+
 
 .chart-type a.active{
     background-color: #FFF;

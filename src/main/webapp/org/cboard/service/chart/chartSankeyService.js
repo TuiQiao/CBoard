@@ -9,6 +9,7 @@ cBoard.service('chartSankeyService', function () {
     };
 
     this.parseOption = function (data) {
+        var chartConfig = data.chartConfig;
         var casted_keys = data.keys;
         var casted_values = data.series;
         var aggregate_data = data.data;
@@ -68,6 +69,16 @@ cBoard.service('chartSankeyService', function () {
                 }
             }]
         };
+
+        var tunningOpt = chartConfig.option;
+        if (tunningOpt) {
+            if (tunningOpt.legendShow == false) {
+                echartOption.grid = echartsBasicOption.grid;
+                echartOption.grid.top = '5%';
+                echartOption.legend.show =false;
+            }
+        }
+
         return echartOption;
     };
 });

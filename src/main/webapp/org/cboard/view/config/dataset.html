@@ -49,7 +49,7 @@
                                         <label class="col-sm-2 control-label">{{'CONFIG.DATASET.DATASOURCE'|translate}}</label>
                                         <div class="col-sm-10">
                                             <select class="form-control" ng-model="datasource"
-                                                    ng-change="curWidget.query={}"
+                                                    ng-change="changeDs()"
                                                     ng-options="d as d.name+' ('+d.type+')' for d in datasourceList"></select>
                                         </div>
                                     </div>
@@ -64,7 +64,7 @@
                             </div>
                             <div class="row">
                                 <div class="col-md-12" ng-show="datasource.name"
-                                     ng-include="datasource.type?('dashboard/getConfigView.do?type=' + datasource.type):''"></div>
+                                     ng-include="datasource.type?('dashboard/getConfigView.do?type=' + datasource.type + '&page=dataset.html'):''"></div>
                             </div>
                             <div class="row">
                                 <div class="col-md-12">
@@ -190,9 +190,11 @@
                                                     <b>{{'CONFIG.COMMON.CUSTOM_EXPRESSION'|translate}}</b>
                                                 </span>
                                                 <i class="glyphicon glyphicon-plus" ng-click="editExp()" title="{{'COMMON.NEW'|translate}}"></i>
-                                                <ul>
+                                                <ul dnd-list="curDataset.data.expressions" dnd-allowed-types="['exp']">
+                                                    <li class="dndPlaceholder"><span class="sort-highlight btn btn-default btn-sm">+</span>
+                                                    </li>
                                                     <li ng-repeat="o in curDataset.data.expressions">
-                                                        <span dnd-draggable="o" dnd-type="'exp'"><img src="imgs/schema/bullet_red.png">{{o.alias}}</span>
+                                                        <span dnd-draggable="o" dnd-type="'exp'" dnd-moved="curDataset.data.expressions.splice($index, 1)"><img src="imgs/schema/bullet_red.png">{{o.alias}}</span>
                                                         <i class="fa fa-edit" ng-click="editExp(o)" title="{{'COMMON.EDIT'|translate}}"></i>
                                                         <i class="fa fa-trash-o" ng-click="deleteExp($index)" title="{{'COMMON.DELETE'|translate}}"></i>
                                                     </li>
@@ -206,9 +208,11 @@
                                                     <b>{{'COMMON.FILTER_GROUP'|translate}}</b>
                                                 </span>
                                                 <i class="glyphicon glyphicon-plus" ng-click="editFilterGroup()" title="{{'COMMON.DELETE'|translate}}"></i>
-                                                <ul>
+                                                <ul dnd-list="curDataset.data.filters" dnd-allowed-types="['filterGroup']">
+                                                    <li class="dndPlaceholder"><span class="sort-highlight btn btn-default btn-sm">+</span>
+                                                    </li>
                                                     <li ng-repeat="o in curDataset.data.filters">
-                                                        <span dnd-draggable="o" dnd-type="'filterGroup'"><img src="imgs/schema/bullet_green.png">{{o.group}}</span>
+                                                        <span dnd-draggable="o" dnd-type="'filterGroup'" dnd-moved="curDataset.data.filters.splice($index, 1)"><img src="imgs/schema/bullet_green.png">{{o.group}}</span>
                                                         <i class="fa fa-edit" ng-click="editFilterGroup(o)" title="{{'COMMON.EDIT'|translate}}"></i>
                                                         <i class="fa fa-trash-o"  ng-click="deleteFilterGroup($index)" title="{{'COMMON.DELETE'|translate}}"></i>
                                                     </li>

@@ -14,7 +14,7 @@ cBoard.service('ModalUtils', function ($uibModal, $filter) {
             windowClass: style,
             size: size,
             controller: function ($scope, $uibModalInstance) {
-                content ? $scope.content = content : $scope.content = 'There is something wrong.';
+                content ? $scope.content = content : $scope.content = translate('CONFIG.DASHBOARD.DASHBOARD_SOMETHING_WRONG');
                 $scope.ok = function () {
                     $uibModalInstance.close();
                     if (callback) {
@@ -33,7 +33,7 @@ cBoard.service('ModalUtils', function ($uibModal, $filter) {
             windowClass: style,
             size: size,
             controller: function ($scope, $uibModalInstance) {
-                content ? $scope.content = content : $scope.content = 'There is something wrong.';
+                content ? $scope.content = content : $scope.content = translate('CONFIG.DASHBOARD.DASHBOARD_SOMETHING_WRONG');
                 $scope.ok = function () {
                     $uibModalInstance.close();
                     if (ok) {

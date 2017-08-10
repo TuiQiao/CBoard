@@ -3,7 +3,10 @@
  */
 'use strict';
 cBoard.service('chartService', function ($q, dataService, chartPieService, chartLineService, chartFunnelService,
-                                         chartSankeyService, chartTableService, chartKpiService, chartRadarService, chartMapService, chartScatterService) {
+                                         chartSankeyService, chartTableService, chartKpiService, chartRadarService,
+                                         chartMapService, chartScatterService, chartGaugeService, chartWordCloudService,
+                                         chartTreeMapService, chartAreaMapService, chartHeatMapCalendarService, chartHeatMapTableService,
+                                         chartLiquidFillService, chartMarkLineMapService) {
 
         this.render = function (containerDom, widget, optionFilter, scope, reload, persist) {
             var deferred = $q.defer();
@@ -98,7 +101,7 @@ cBoard.service('chartService', function ($q, dataService, chartPieService, chart
                 if (optionFilter) {
                     optionFilter(option);
                 }
-                realTimeTicket(option, data.drill.config);
+                realTimeTicket(option, data.drill ? data.drill.config : null);
             });
         };
 
@@ -131,6 +134,30 @@ cBoard.service('chartService', function ($q, dataService, chartPieService, chart
                     break;
                 case 'scatter':
                     chart = chartScatterService;
+                    break;
+                case 'gauge':
+                    chart = chartGaugeService;
+                    break;
+                case 'wordCloud':
+                    chart = chartWordCloudService;
+                    break;
+                case 'treeMap':
+                    chart = chartTreeMapService;
+                    break;
+                case 'areaMap':
+                    chart = chartAreaMapService;
+                    break;
+                case 'heatMapCalendar':
+                    chart = chartHeatMapCalendarService;
+                    break;
+                case 'heatMapTable':
+                    chart = chartHeatMapTableService;
+                    break;
+                case 'markLineMap':
+                    chart = chartMarkLineMapService;
+                     break;
+                case 'liquidFill':
+                    chart = chartLiquidFillService;
                     break;
             }
             return chart;

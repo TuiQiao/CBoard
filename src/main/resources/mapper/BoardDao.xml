@@ -46,15 +46,31 @@
     </select>
 
     <insert id="save" useGeneratedKeys="true" keyProperty="id" keyColumn="board_id" parameterType="org.cboard.pojo.DashboardBoard">
-        <![CDATA[
-        INSERT INTO dashboard_board(user_id,board_name,layout_json,category_id) VALUES (#{userId},#{name},#{layout},#{categoryId})
-        ]]>
+        INSERT INTO dashboard_board(user_id,board_name,layout_json,category_id)
+        VALUES (#{userId},#{name},#{layout},
+        <choose>
+            <when test="categoryId == null">
+                null
+            </when>
+            <otherwise>
+                #{categoryId}
+            </otherwise>
+        </choose>
+        )
     </insert>
 
     <update id="update" parameterType="org.cboard.pojo.DashboardBoard">
-        <![CDATA[
-        UPDATE dashboard_board SET board_name = #{name},layout_json = #{layout},category_id = #{categoryId} WHERE board_id = #{id}
-        ]]>
+        UPDATE dashboard_board
+        SET board_name = #{name},layout_json = #{layout},
+        <choose>
+            <when test="categoryId == null">
+                category_id = null
+            </when>
+            <otherwise>
+                category_id = #{categoryId}
+            </otherwise>
+        </choose>
+        WHERE board_id = #{id}
     </update>
 
     <select id="countExistBoardName" parameterType="Map" resultType="java.lang.Long">
@@ -79,8 +95,8 @@
                  OR user_id = #{0}
                  OR board_id IN (
                     SELECT res_id
-                      FROM dashboard_user_role AS ur
-                      LEFT JOIN dashboard_role_res AS rr ON ur.role_id = rr.role_id
+                      FROM dashboard_user_role ur
+                      LEFT JOIN dashboard_role_res rr ON ur.role_id = rr.role_id
                      WHERE ur.user_id = #{0} AND rr.res_type = 'board' AND rr.permission LIKE #{2})
                  )
     </select>

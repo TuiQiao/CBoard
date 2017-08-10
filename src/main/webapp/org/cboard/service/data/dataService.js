@@ -141,7 +141,6 @@ cBoard.service('dataService', function ($http, $q, updateService) {
             cfg.columns = getDimensionConfig(chartConfig.groups);
             cfg.filters = getDimensionConfig(chartConfig.filters);
             cfg.filters = cfg.filters.concat(getDimensionConfig(chartConfig.boardFilters));
-            cfg.filters = cfg.filters.concat(getDimensionConfig(chartConfig.boardWidgetFilters));
             cfg.values = _.map(dataSeries, function (s) {
                 return {column: s.name, aggType: s.aggregate};
             });

@@ -39,114 +39,100 @@ cBoard.service('chartHeatMapBmapService', function () {
             roam: true,
             mapStyle: {
                 styleJson: [{
-                    "featureType": "water",
-                    "elementType": "all",
-                    "stylers": {
-                        "color": "#044161"
+                    'featureType': 'water',
+                    'elementType': 'all',
+                    'stylers': {
+                        'color': '#d1d1d1'
                     }
                 }, {
-                    "featureType": "land",
-                    "elementType": "all",
-                    "stylers": {
-                        "color": "#004981"
+                    'featureType': 'land',
+                    'elementType': 'all',
+                    'stylers': {
+                        'color': '#f3f3f3'
                     }
                 }, {
-                    "featureType": "boundary",
-                    "elementType": "geometry",
-                    "stylers": {
-                        "color": "#064f85"
+                    'featureType': 'railway',
+                    'elementType': 'all',
+                    'stylers': {
+                        'visibility': 'off'
                     }
                 }, {
-                    "featureType": "railway",
-                    "elementType": "all",
-                    "stylers": {
-                        "visibility": "off"
+                    'featureType': 'highway',
+                    'elementType': 'all',
+                    'stylers': {
+                        'color': '#fdfdfd'
                     }
                 }, {
-                    "featureType": "highway",
-                    "elementType": "geometry",
-                    "stylers": {
-                        "color": "#004981"
+                    'featureType': 'highway',
+                    'elementType': 'labels',
+                    'stylers': {
+                        'visibility': 'off'
                     }
                 }, {
-                    "featureType": "highway",
-                    "elementType": "geometry.fill",
-                    "stylers": {
-                        "color": "#005b96",
-                        "lightness": 1
+                    'featureType': 'arterial',
+                    'elementType': 'geometry',
+                    'stylers': {
+                        'color': '#fefefe'
                     }
                 }, {
-                    "featureType": "highway",
-                    "elementType": "labels",
-                    "stylers": {
-                        "visibility": "off"
+                    'featureType': 'arterial',
+                    'elementType': 'geometry.fill',
+                    'stylers': {
+                        'color': '#fefefe'
                     }
                 }, {
-                    "featureType": "arterial",
-                    "elementType": "geometry",
-                    "stylers": {
-                        "color": "#004981"
+                    'featureType': 'poi',
+                    'elementType': 'all',
+                    'stylers': {
+                        'visibility': 'off'
                     }
                 }, {
-                    "featureType": "arterial",
-                    "elementType": "geometry.fill",
-                    "stylers": {
-                        "color": "#00508b"
+                    'featureType': 'green',
+                    'elementType': 'all',
+                    'stylers': {
+                        'visibility': 'off'
                     }
                 }, {
-                    "featureType": "poi",
-                    "elementType": "all",
-                    "stylers": {
-                        "visibility": "off"
+                    'featureType': 'subway',
+                    'elementType': 'all',
+                    'stylers': {
+                        'visibility': 'off'
                     }
                 }, {
-                    "featureType": "green",
-                    "elementType": "all",
-                    "stylers": {
-                        "color": "#056197",
-                        "visibility": "off"
+                    'featureType': 'manmade',
+                    'elementType': 'all',
+                    'stylers': {
+                        'color': '#d1d1d1'
                     }
                 }, {
-                    "featureType": "subway",
-                    "elementType": "all",
-                    "stylers": {
-                        "visibility": "off"
+                    'featureType': 'local',
+                    'elementType': 'all',
+                    'stylers': {
+                        'color': '#d1d1d1'
                     }
                 }, {
-                    "featureType": "manmade",
-                    "elementType": "all",
-                    "stylers": {
-                        "visibility": "off"
+                    'featureType': 'arterial',
+                    'elementType': 'labels',
+                    'stylers': {
+                        'visibility': 'off'
                     }
                 }, {
-                    "featureType": "local",
-                    "elementType": "all",
-                    "stylers": {
-                        "visibility": "off"
+                    'featureType': 'boundary',
+                    'elementType': 'all',
+                    'stylers': {
+                        'color': '#fefefe'
                     }
                 }, {
-                    "featureType": "arterial",
-                    "elementType": "labels",
-                    "stylers": {
-                        "visibility": "off"
+                    'featureType': 'building',
+                    'elementType': 'all',
+                    'stylers': {
+                        'color': '#d1d1d1'
                     }
                 }, {
-                    "featureType": "boundary",
-                    "elementType": "geometry.fill",
-                    "stylers": {
-                        "color": "#029fd4"
-                    }
-                }, {
-                    "featureType": "building",
-                    "elementType": "all",
-                    "stylers": {
-                        "color": "#1a5787"
-                    }
-                }, {
-                    "featureType": "label",
-                    "elementType": "all",
-                    "stylers": {
-                        "visibility": "off"
+                    'featureType': 'label',
+                    'elementType': 'all',
+                    'stylers': {
+                        'visibility': 'off'
                     }
                 }]
             }

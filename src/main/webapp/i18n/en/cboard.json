@@ -196,7 +196,9 @@
       "TRIANGLE": "Triangle",
       "ROUND_RECT": "RoundRect",
       "SQUARE": "Square",
-      "DIAMOND": "Diamond"
+      "DIAMOND": "Diamond",
+      "SCATTER_MAP":"Scatter Map(Local)",
+      "SCATTER_MAP_BMAP":"Scatter Map(Bmap)"
     },
     "DASHBOARD": {
       "CATEGORY": "Category",

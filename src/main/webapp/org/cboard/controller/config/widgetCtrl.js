@@ -127,6 +127,18 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
                 row: translate('CONFIG.WIDGET.TIPS_DIM_NUM_1_MORE'),
                 column: translate('CONFIG.WIDGET.TIPS_DIM_NUM_0'),
                 measure: translate('CONFIG.WIDGET.TIPS_DIM_NUM_1_MORE')
+            },
+            {
+                name: translate('CONFIG.WIDGET.SCATTER_MAP'), value: 'scatterMap', class: 'cScatterMap',
+                row: translate('CONFIG.WIDGET.TIPS_DIM_NUM_1_MORE'),
+                column: translate('CONFIG.WIDGET.TIPS_DIM_NUM_0'),
+                measure: translate('CONFIG.WIDGET.TIPS_DIM_NUM_1_MORE')
+            },
+            {
+                name: translate('CONFIG.WIDGET.SCATTER_MAP_BMAP'), value: 'scatterMapBmap', class: 'cScatterMapBmap',
+                row: translate('CONFIG.WIDGET.TIPS_DIM_NUM_1_MORE'),
+                column: translate('CONFIG.WIDGET.TIPS_DIM_NUM_0'),
+                measure: translate('CONFIG.WIDGET.TIPS_DIM_NUM_1_MORE')
             }
         ];
 
@@ -136,7 +148,7 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
             "scatter": true, "gauge": true, "wordCloud": true, "treeMap": true,
             "heatMapCalendar": true, "heatMapTable": true, "liquidFill": true,
             "areaMap": true, "markLineMap": true, "heatMap": true,
-            "markLineMapBmap": true, "heatMapBmap": true
+            "markLineMapBmap": true, "heatMapBmap": true,"scatterMap":true,"scatterMapBmap":true
         };
 
         $scope.value_series_types = [
@@ -227,7 +239,9 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
             liquidFill: {keys: 0, groups: 0, filters: -1, values: 1},
             heatMap: {keys: 2, groups: 0, filters: -1, values: 1},
             markLineMapBmap: {keys: 2, groups: 2, filters: -1, values: 1},
-            heatMapBmap: {keys: 2, groups: 0, filters: -1, values: 1}
+            heatMapBmap: {keys: 2, groups: 0, filters: -1, values: 1},
+            scatterMap:{keys: 2, groups: 0, filters: -1, values: 2},
+            scatterMapBmap:{keys: 2, groups: 0, filters: -1, values: 2}
         };
 
         //界面控制
@@ -738,7 +752,7 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
             $scope.loadingPre = true;
             var charType = $scope.curWidget.config.chart_type;
             //百度地图特殊处理
-            if (charType == 'markLineMapBmap' || charType == 'heatMapBmap') {
+            if (charType == 'markLineMapBmap' || charType == 'heatMapBmap' || charType == 'scatterMapBmap') {
                 chartService.render($('#preview_widget'), {
                     config: $scope.curWidget.config,
                     datasource: $scope.datasource ? $scope.datasource.id : null,
@@ -820,6 +834,9 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
                             $scope.previewDivWidth = 12;
                             break;
                         case 'heatMap':
+                            $scope.previewDivWidth = 12;
+                            break;
+                        case 'scatterMap':
                             $scope.previewDivWidth = 12;
                             break;
                     }

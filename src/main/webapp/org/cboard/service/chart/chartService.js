@@ -7,7 +7,7 @@ cBoard.service('chartService', function ($q, dataService, chartPieService, chart
                                          chartMapService, chartScatterService, chartGaugeService, chartWordCloudService,
                                          chartTreeMapService, chartAreaMapService, chartHeatMapCalendarService, chartHeatMapTableService,
                                          chartLiquidFillService, chartMarkLineMapService, chartHeatMapService, chartMarkLineMapBmapService,
-                                         chartHeatMapBmapService) {
+                                         chartHeatMapBmapService,chartScatterMapService,chartScatterMapBmapService) {
 
 
         this.render = function (containerDom, widget, optionFilter, scope, reload, persist, relation) {
@@ -87,7 +87,7 @@ cBoard.service('chartService', function ($q, dataService, chartPieService, chart
                         };
                     }
                 } finally {
-                    if (widget.config.chart_type == 'markLineMapBmap' || widget.config.chart_type == 'heatMapBmap') {
+                    if (widget.config.chart_type == 'markLineMapBmap' || widget.config.chart_type == 'heatMapBmap' || widget.config.chart_type == 'scatterMapBmap') {
                         chart.render(containerDom, option, scope, persist, data.drill);
                     } else {
                         deferred.resolve(chart.render(containerDom, option, scope, persist, data.drill, relation, widget.config));
@@ -173,6 +173,12 @@ cBoard.service('chartService', function ($q, dataService, chartPieService, chart
                     break;
                 case 'heatMapBmap':
                     chart = chartHeatMapBmapService;
+                    break;
+                case 'scatterMap':
+                    chart = chartScatterMapService;
+                    break;
+                case 'scatterMapBmap':
+                    chart = chartScatterMapBmapService;
                     break;
             }
             return chart;

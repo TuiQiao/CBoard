@@ -236,7 +236,6 @@ desired effect
 <script src="org/cboard/service/chart/chartRadarService.js"></script>
 <script src="org/cboard/service/chart/chartService.js"></script>
 <script src="org/cboard/service/chart/chartMapService.js"></script>
-<!--<script src="org/cboard/service/chart/chartGisService.js"></script>-->
 <script src="org/cboard/service/chart/chartTableService.js"></script>
 <script src="org/cboard/service/chart/chartScatterService.js"></script>
 <script src="org/cboard/service/chart/chartGaugeService.js"></script>
@@ -264,8 +263,7 @@ desired effect
             <div class="box-header" ng-mouseover="x=true" ng-mouseleave="x=false">
                 <!--<i class="fa fa-bar-chart-o"></i>-->
                 <h3 class="box-title">{{widget.name}}</h3>
-
-                <div class="box-tools pull-right">
+                <div class="box-tools pull-right" ng-show="x" ng-init="x=false">
                     <button name="reload_{{widget.widget.id}}" type="button" class="btn btn-box-tool" ng-click="reload(widget)"><i
                             class="fa fa-refresh"></i>
                     </button>
@@ -285,8 +283,7 @@ desired effect
     </div>
 </script>
 <script type="text/ng-template" id="kpiContent">
-    <div class="col-md-{{widget.width}} kpi-body">
-    </div>
+    <div class="col-md-{{widget.width}} kpi-body"/>
 </script>
 <script type="text/ng-template" id="chartContent">
     <div class="col-md-{{widget.width}}" style="z-index: 99;">

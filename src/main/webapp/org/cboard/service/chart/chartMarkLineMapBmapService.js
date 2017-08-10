@@ -4,7 +4,7 @@
 cBoard.service('chartMarkLineMapBmapService', function () {
     this.render = function (containerDom, option, scope, persist) {
         return new CBoardBMapRender(containerDom, option).chart(null, persist);
-    }
+    };
 
     this.parseOption = function (data) {
         var data_keys = data.keys;

@@ -88,10 +88,10 @@ cBoard.controller('dashboardViewCtrl', function ($timeout, $rootScope, $scope, $
             // 百度地图特殊处理
             var charType = injectFilter(w.widget).data.config.chart_type;
             if(charType == 'markLineMapBmap' || charType == 'heatMapBmap'){
-                chartService.renderBmap(content, injectFilter(w.widget).data, optionFilter, scope, reload);
+                chartService.render(content, injectFilter(w.widget).data, optionFilter, scope, reload);
                 w.loading = false;
             } else {
-                chartService.render(content, injectFilter(w.widget).data, optionFilter, scope, reload).then(function (d) {
+                chartService.render(content, injectFilter(w.widget).data, optionFilter, scope, reload, null, w.relation).then(function (d) {
                     w.realTimeTicket = d;
                     w.loading = false;
                 });
@@ -403,7 +403,7 @@ cBoard.controller('dashboardViewCtrl', function ($timeout, $rootScope, $scope, $
             //百度地图特殊处理
             var charType = widget.widget.data.config.chart_type;
             if(charType == 'markLineMapBmap' || charType == 'heatMapBmap'){
-                chartService.renderBmap(content, widget.widget.data, optionFilter, scope, true);
+                chartService.render(content, widget.widget.data, optionFilter, scope, true);
                 widget.loading = false;
             } else {
                 chartService.render(content, widget.widget.data, optionFilter, scope, true).then(function (d) {

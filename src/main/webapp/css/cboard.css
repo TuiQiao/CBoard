@@ -118,6 +118,8 @@
 }
 .cLine{  background-image: url(../imgs/line-active.png);  }
 .cLine.disabled{background-image: url(../imgs/line.png); }
+.cContrast{  background-image: url(../imgs/contrast-active.png);  }
+.cContrast.disabled{background-image: url(../imgs/contrast.png); }
 /*.cBar{  background-image: url(../imgs/bar-active.png);  }*/
 /*.cBar.disabled{background-image: url(../imgs/bar.png);  }*/
 .cScatter{  background-image: url(../imgs/scatter-active.png);  }
@@ -159,6 +161,10 @@
 .cMarkLineMapBmap.disabled{ background-image: url(../imgs/markLineMapBmap.png);}
 .cHeatMapBmap{ background-image: url(../imgs/heatMapBmap-active.png); }
 .cHeatMapBmap.disabled{ background-image: url(../imgs/heatMapBmap.png); }
+.cScatterMap{ background-image: url(../imgs/scatterMap-active.png); }
+.cScatterMap.disabled{ background-image: url(../imgs/scatterMap.png); }
+.cScatterMapBmap{ background-image: url(../imgs/scatterMapBmap-active.png); }
+.cScatterMapBmap.disabled{ background-image: url(../imgs/scatterMapBmap.png);}
 
 .chart-type a.active{
     background-color: #FFF;

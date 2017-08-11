@@ -158,6 +158,7 @@
       "TIPS_MEASURE": "Value",
       "TIPS_DIM_NUM_0": "0",
       "TIPS_DIM_NUM_1": "1",
+      "TIPS_DIM_NUM_2": "2",
       "TIPS_DIM_NUM_0_MORE": "0 or more",
       "TIPS_DIM_NUM_1_MORE": "1 or more",
       "FROM_CACHE": "From Cache",
@@ -196,7 +197,10 @@
       "TRIANGLE": "Triangle",
       "ROUND_RECT": "RoundRect",
       "SQUARE": "Square",
-      "DIAMOND": "Diamond"
+      "DIAMOND": "Diamond",
+      "CONTRAST": "Contrast",
+      "SCATTER_MAP":"Scatter Map (Local)",
+      "SCATTER_MAP_BMAP":"Scatter Map (Bmap)"
     },
     "DASHBOARD": {
       "CATEGORY": "Category",

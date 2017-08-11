@@ -158,6 +158,7 @@
       "TIPS_MEASURE": "指标",
       "TIPS_DIM_NUM_0": "0",
       "TIPS_DIM_NUM_1": "1",
+      "TIPS_DIM_NUM_2": "2",
       "TIPS_DIM_NUM_0_MORE": "0个或多个",
       "TIPS_DIM_NUM_1_MORE": "1个或多个",
       "FROM_CACHE": "从缓存加载",
@@ -196,7 +197,10 @@
       "TRIANGLE": "三角形",
       "ROUND_RECT": "圆角矩形",
       "SQUARE": "正方形",
-      "DIAMOND": "菱形"
+      "DIAMOND": "菱形",
+      "CONTRAST": "对比图",
+      "SCATTER_MAP":"散点地图（本地）",
+      "SCATTER_MAP_BMAP":"散点地图（百度）"
     },
     "DASHBOARD": {
       "DASHBOARD": "看板",

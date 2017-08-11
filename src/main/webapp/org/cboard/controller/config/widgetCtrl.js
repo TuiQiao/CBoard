@@ -493,6 +493,12 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
             $scope.$watch('curWidget.config.groups', changeChartStatus, true);
             $scope.$watch('curWidget.config.values', changeChartStatus, true);
             $scope.$watch('curWidget.config.filters', changeChartStatus, true);
+            $scope.helpMessage = {
+                row:translate('HELP_MESSAGE.'+$scope.curWidget.config.chart_type.toUpperCase()+".row") == 'HELP_MESSAGE.'+$scope.curWidget.config.chart_type.toUpperCase()+".row" ? null : translate('HELP_MESSAGE.'+$scope.curWidget.config.chart_type.toUpperCase()+".row"),
+                column:translate('HELP_MESSAGE.'+$scope.curWidget.config.chart_type.toUpperCase()+".column") == 'HELP_MESSAGE.'+$scope.curWidget.config.chart_type.toUpperCase()+".column" ? null :translate('HELP_MESSAGE.'+$scope.curWidget.config.chart_type.toUpperCase()+".column"),
+                filter:translate('HELP_MESSAGE.'+$scope.curWidget.config.chart_type.toUpperCase()+".filter") == 'HELP_MESSAGE.'+$scope.curWidget.config.chart_type.toUpperCase()+".filter" ? null : translate('HELP_MESSAGE.'+$scope.curWidget.config.chart_type.toUpperCase()+".filter"),
+                value:translate('HELP_MESSAGE.'+$scope.curWidget.config.chart_type.toUpperCase()+".value") == 'HELP_MESSAGE.'+$scope.curWidget.config.chart_type.toUpperCase()+".value" ? null : translate('HELP_MESSAGE.'+$scope.curWidget.config.chart_type.toUpperCase()+".value")
+            };
             addValidateWatch();
         };
 
@@ -595,7 +601,12 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
             $scope.curWidget.config.keys = oldConfig.keys;
             $scope.curWidget.config.groups = oldConfig.groups;
             $scope.curWidget.config.values = [];
-
+            $scope.helpMessage = {
+                row:translate('HELP_MESSAGE.'+chart_type.toUpperCase()+".row") == 'HELP_MESSAGE.'+chart_type.toUpperCase()+".row" ? null :translate('HELP_MESSAGE.'+chart_type.toUpperCase()+".row"),
+                column:translate('HELP_MESSAGE.'+chart_type.toUpperCase()+".column") == 'HELP_MESSAGE.'+chart_type.toUpperCase()+".column" ? null : translate('HELP_MESSAGE.'+chart_type.toUpperCase()+".column"),
+                filter:translate('HELP_MESSAGE.'+chart_type.toUpperCase()+".filter") == 'HELP_MESSAGE.'+chart_type.toUpperCase()+".filter" ? null :translate('HELP_MESSAGE.'+chart_type.toUpperCase()+".filter"),
+                value:translate('HELP_MESSAGE.'+chart_type.toUpperCase()+".value") == 'HELP_MESSAGE.'+chart_type.toUpperCase()+".value" ? null : translate('HELP_MESSAGE.'+chart_type.toUpperCase()+".value")
+            };
             $scope.curWidget.config.filters = oldConfig.filters;
             switch ($scope.curWidget.config.chart_type) {
                 case 'line':

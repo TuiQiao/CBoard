@@ -7,8 +7,7 @@ cBoard.service('chartService', function ($q, dataService, chartPieService, chart
                                          chartMapService, chartScatterService, chartGaugeService, chartWordCloudService,
                                          chartTreeMapService, chartAreaMapService, chartHeatMapCalendarService, chartHeatMapTableService,
                                          chartLiquidFillService, chartMarkLineMapService, chartHeatMapService, chartMarkLineMapBmapService,
-                                         chartHeatMapBmapService,chartScatterMapService,chartScatterMapBmapService) {
-
+                                         chartHeatMapBmapService, chartScatterMapService, chartScatterMapBmapService, chartContrastService) {
 
         this.render = function (containerDom, widget, optionFilter, scope, reload, persist, relation) {
             var deferred = $q.defer();
@@ -174,6 +173,8 @@ cBoard.service('chartService', function ($q, dataService, chartPieService, chart
                 case 'heatMapBmap':
                     chart = chartHeatMapBmapService;
                     break;
+                case 'contrast':
+                    chart = chartContrastService;
                 case 'scatterMap':
                     chart = chartScatterMapService;
                     break;

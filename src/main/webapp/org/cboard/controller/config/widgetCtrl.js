@@ -21,6 +21,12 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
                 measure: translate('CONFIG.WIDGET.TIPS_DIM_NUM_1_MORE')
             },
             {
+                name: translate('CONFIG.WIDGET.CONTRAST'), value: 'contrast', class: 'cContrast',
+                row: translate('CONFIG.WIDGET.TIPS_DIM_NUM_1'),
+                column: translate('CONFIG.WIDGET.TIPS_DIM_NUM_0'),
+                measure: translate('CONFIG.WIDGET.TIPS_DIM_NUM_2')
+            },
+            {
                 name: translate('CONFIG.WIDGET.SCATTER'), value: 'scatter', class: 'cScatter',
                 row: translate('CONFIG.WIDGET.TIPS_DIM_NUM_1_MORE'),
                 column: translate('CONFIG.WIDGET.TIPS_DIM_NUM_0_MORE'),
@@ -111,16 +117,16 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
                 measure: translate('CONFIG.WIDGET.TIPS_DIM_NUM_1')
             },
             {
-                name: translate('CONFIG.WIDGET.HEAT_MAP'), value: 'heatMap', class: 'cHeatMap',
-                row: translate('CONFIG.WIDGET.TIPS_DIM_NUM_1_MORE'),
-                column: translate('CONFIG.WIDGET.TIPS_DIM_NUM_0'),
-                measure: translate('CONFIG.WIDGET.TIPS_DIM_NUM_1_MORE')
-            },
-            {
                 name: translate('CONFIG.WIDGET.MARK_LINE_MAP_BMAP'), value: 'markLineMapBmap', class: 'cMarkLineMapBmap',
                 row: translate('CONFIG.WIDGET.TIPS_DIM_NUM_1_MORE'),
                 column: translate('CONFIG.WIDGET.TIPS_DIM_NUM_1_MORE'),
                 measure: translate('CONFIG.WIDGET.TIPS_DIM_NUM_1')
+            },
+            {
+                name: translate('CONFIG.WIDGET.HEAT_MAP'), value: 'heatMap', class: 'cHeatMap',
+                row: translate('CONFIG.WIDGET.TIPS_DIM_NUM_1_MORE'),
+                column: translate('CONFIG.WIDGET.TIPS_DIM_NUM_0'),
+                measure: translate('CONFIG.WIDGET.TIPS_DIM_NUM_1_MORE')
             },
             {
                 name: translate('CONFIG.WIDGET.HEAT_MAP_BMAP'), value: 'heatMapBmap', class: 'cHeatMapBmap',
@@ -147,7 +153,7 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
             "funnel": true, "sankey": true, "radar": true, "map": true,
             "scatter": true, "gauge": true, "wordCloud": true, "treeMap": true,
             "heatMapCalendar": true, "heatMapTable": true, "liquidFill": true,
-            "areaMap": true, "markLineMap": true, "heatMap": true,
+            "areaMap": true, "markLineMap": true, "heatMap": true,"contrast": true,
             "markLineMapBmap": true, "heatMapBmap": true,"scatterMap":true,"scatterMapBmap":true
         };
 
@@ -240,6 +246,7 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
             heatMap: {keys: 2, groups: 0, filters: -1, values: 1},
             markLineMapBmap: {keys: 2, groups: 2, filters: -1, values: 1},
             heatMapBmap: {keys: 2, groups: 0, filters: -1, values: 1},
+            contrast: {keys: 1, groups: 0, filters: -1, values: 2},
             scatterMap:{keys: 2, groups: 0, filters: -1, values: 2},
             scatterMapBmap:{keys: 2, groups: 0, filters: -1, values: 2}
         };

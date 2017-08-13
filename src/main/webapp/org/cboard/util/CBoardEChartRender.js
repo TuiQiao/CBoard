@@ -93,18 +93,29 @@ CBoardEChartRender.prototype.changeSize = function (instance) {
 
 };
 
-CBoardEChartRender.prototype.addClick = function (chartConfig, relation) {
-    if(!chartConfig || !relation){
+//{"sourceField":[],"relations":[{},{}]}
+CBoardEChartRender.prototype.addClick = function (chartConfig, relations) {
+    if(!chartConfig || !relations){
         return;
     }
     var self = this;
     self.ecc.on('click', function (param){
-        var sourceField = relation.sourceField;
-        var targetField = relation.targetField;
+        var sourceField = relations.sourceField;
+        var links = relations.relations;
         //[{"targetId":relation.targetId, params:[{"targetField":targetField,"value":param.name},{}]}]
-        var relations = JSON.parse($("#relations").val());
-        relations = _.filter(relations, function (e) {
-            return e.targetId != relation.targetId; //删除已存在的
+        var relations_old = JSON.parse($("#relations").val());
+        var relations_new = [];
+        _.each(relations_old, function (relation_old) { //删除已存在的
+            var exists = false;
+            _.each(links, function(relation){
+                if(relation_old.targetId = relation.targetId){
+                    exists = true;
+                    return;
+                }
+            })
+            if(!exists){
+                relations_new.push(relation_old);
+            }
         });
 
         var groups = _.map(chartConfig.groups, function(group, index){
@@ -254,25 +265,30 @@ CBoardEChartRender.prototype.addClick = function (chartConfig, relation) {
                 break;
         }
 
-        var record = {};
-        record.targetId = relation.targetId;
-        record.params = [];
-        for(var i=0;i<targetField.length;i++){
-            var e = {};
-            e.targetField = targetField[i];
-            e.value = paramValues[i];
-            record.params.push(e);
-        }
-        record.params = _.filter(record.params, function(e){
-            return e.value != "noMatch";
+        _.each(links, function(relation){
+            var record = {};
+            record.targetId = relation.targetId;
+            record.params = [];
+            for(var i=0;i<relation.targetField.length;i++){
+                var e = {};
+                e.targetField = relation.targetField[i];
+                e.value = paramValues[i];
+                record.params.push(e);
+            }
+            record.params = _.filter(record.params, function(e){
+                return e.value != "noMatch";
+            });
+            relations_new.push(record);
         });
-        relations.push(record);
 
-        $("#relations").val(JSON.stringify(relations));
+        $("#relations").val(JSON.stringify(relations_new));
         //触发关联图表刷新
-        var button = document.getElementsByName("reload_"+relation.targetId);
-        if(button){
-            button[button.length-1].click();
-        }
+        _.each(links, function(relation){
+            var button = document.getElementsByName("reload_"+relation.targetId);
+            if(button){
+                button[button.length-1].click();
+            }
+        });
+
     });
 };

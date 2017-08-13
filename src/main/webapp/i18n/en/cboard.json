@@ -34,8 +34,8 @@
     "WANRING": "WANRING!",
     "COLLAPSE": "Collapse",
     "REMOVE": "Remove",
-    "ADD_RELATION": "Add Relation",
-    "DEL_RELATION": "Del Relation",
+    "ADD_RELATIONS": "Add Relations",
+    "DEL_RELATIONS": "Del Relations",
     "DATE": "Date",
     "VALUE": "Value"
   },

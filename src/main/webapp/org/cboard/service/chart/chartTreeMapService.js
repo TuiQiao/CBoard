@@ -4,7 +4,7 @@
 'use strict';
 cBoard.service('chartTreeMapService', function () {
 
-    this.render = function (containerDom, option, scope, persist, drill, relation, chartConfig) {
+    this.render = function (containerDom, option, scope, persist, drill, relations, chartConfig) {
         if (option == null) {
             containerDom.html("<div class=\"alert alert-danger\" role=\"alert\">No Data!</div>");
             return;
@@ -12,7 +12,7 @@ cBoard.service('chartTreeMapService', function () {
         var height;
         scope ? height = scope.myheight - 20 : null;
         var render = new CBoardEChartRender(containerDom, option);
-        render.addClick(chartConfig, relation);
+        render.addClick(chartConfig, relations);
         return render.chart(height, persist);
     };
 

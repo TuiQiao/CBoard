@@ -14,6 +14,7 @@ cBoard.controller('dashboardViewCtrl', function ($timeout, $rootScope, $scope, $
         $scope.intervals = [];
         $scope.datasetFilters = {};
         $scope.widgetFilters = {};
+        $scope.relationFilters = {};
         $scope.load(false);
     });
 
@@ -91,7 +92,7 @@ cBoard.controller('dashboardViewCtrl', function ($timeout, $rootScope, $scope, $
                 chartService.render(content, injectFilter(widget.widget).data, optionFilter, scope, reload);
                 widget.loading = false;
             } else {
-                chartService.render(content, injectFilter(widget.widget).data, optionFilter, scope, reload, null, widget.relation).then(function (d) {
+                chartService.render(content, injectFilter(widget.widget).data, optionFilter, scope, reload, null, widget.relations).then(function (d) {
                     widget.realTimeTicket = d;
                     widget.loading = false;
                 });
@@ -250,22 +251,30 @@ cBoard.controller('dashboardViewCtrl', function ($timeout, $rootScope, $scope, $
     };
 
     var injectFilter = function (widget) {
-        widget.data.config.boardFilters = [];
-        widget.data.config.boardWidgetFilters = [];
-        //todo update
-        //if (_.isUndefined(widget.data.datasetId)) {
-        //    widget.data.config.boardFilters = $scope.widgetFilters[widget.id];
-        //} else {
-        //    widget.data.config.boardFilters = $scope.datasetFilters[widget.data.datasetId];
-        //}
-        widget.data.config.boardFilters = $scope.datasetFilters[widget.data.datasetId];
-        widget.data.config.boardWidgetFilters = $scope.widgetFilters[widget.id];
+        var boardFilters = [];
+        if(!_.isUndefined($scope.widgetFilters[widget.id])){
+            _.each($scope.widgetFilters[widget.id], function(e){
+                boardFilters.push(e);
+            });
+        }
+        if(!_.isUndefined($scope.datasetFilters[widget.data.datasetId])){
+            _.each($scope.datasetFilters[widget.data.datasetId], function(e){
+                boardFilters.push(e);
+            });
+        }
+        if(!_.isUndefined($scope.relationFilters[widget.id])){
+            _.each($scope.relationFilters[widget.id], function(e){
+                boardFilters.push(e);
+            });
+        }
+        widget.data.config.boardFilters = boardFilters;
         return widget;
     };
 
     var paramToFilter = function () {
         $scope.widgetFilters = [];
         $scope.datasetFilters = [];
+        $scope.relationFilters = [];
         _.each($scope.board.layout.rows, function (row) {
             _.each(row.params, function (param) {
                 if (param.values.length <= 0) {
@@ -292,7 +301,7 @@ cBoard.controller('dashboardViewCtrl', function ($timeout, $rootScope, $scope, $
             });
         });
 
-        //将点击的参数赋值到widgetFilters中
+        //将点击的参数赋值到relationFilters中
         var relations = JSON.parse($("#relations").val());
         for(var i=0;i<relations.length;i++){
             if(relations[i].targetId && relations[i].params && relations[i].params.length>0){
@@ -302,10 +311,10 @@ cBoard.controller('dashboardViewCtrl', function ($timeout, $rootScope, $scope, $
                         type: "=",
                         values: [relations[i].params[j].value]
                     };
-                    if (!$scope.widgetFilters[relations[i].targetId]) {
-                        $scope.widgetFilters[relations[i].targetId] = [];
+                    if (!$scope.relationFilters[relations[i].targetId]) {
+                        $scope.relationFilters[relations[i].targetId] = [];
                     }
-                    $scope.widgetFilters[relations[i].targetId].push(p); //relation.targetId == widgetId
+                    $scope.relationFilters[relations[i].targetId].push(p); //relation.targetId == widgetId
                 }
             }
         }
@@ -406,7 +415,7 @@ cBoard.controller('dashboardViewCtrl', function ($timeout, $rootScope, $scope, $
                 chartService.render(content, widget.widget.data, optionFilter, scope, true);
                 widget.loading = false;
             } else {
-                chartService.render(content, widget.widget.data, optionFilter, scope, true, null, widget.relation).then(function (d) {
+                chartService.render(content, widget.widget.data, optionFilter, scope, true, null, widget.relations).then(function (d) {
                     widget.realTimeTicket = d;
                     widget.loading = false;
                 });

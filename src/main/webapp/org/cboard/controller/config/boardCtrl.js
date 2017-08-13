@@ -214,14 +214,15 @@ cBoard.controller('boardCtrl', function ($rootScope, $scope, $http, ModalUtils, 
         $scope.curBoard.layout.rows.unshift({type: 'param', params: []});
     };
 
-    $scope.addRelation = function(widget) {
-        widget.relation = {};
+    $scope.addRelations = function(widget) {
+        widget.relations = {};
+        widget.relations.relations = [];
         $scope.changeSourceCol(widget, widget.widgetId);
     };
 
-    $scope.delRelation = function(widget) {
-        if(widget.relation){
-          delete widget.relation;
+    $scope.delRelations = function(widget) {
+        if(widget.relations){
+          delete widget.relations;
         }
     };
 
@@ -434,8 +435,8 @@ cBoard.controller('boardCtrl', function ($rootScope, $scope, $http, ModalUtils, 
     }();
     /**  js tree related start **/
 
-    $scope.changeTargetCol = function (e, widgetId, row) {
-        if (!e.relation) {
+    $scope.changeTargetCol = function (e, widgetId, index, row) {
+        if (!e.relations) {
             return;
         }
         var w = _.find($scope.widgetList, function (w) {
@@ -461,7 +462,7 @@ cBoard.controller('boardCtrl', function ($rootScope, $scope, $http, ModalUtils, 
                 });
             }
         });
-        e.relation.targetFields = cols;
+        e.relations.relations[index].targetFields = cols;
         if (cols.length == 0) {
             dataService.getColumns({
                 datasource: null,
@@ -470,15 +471,15 @@ cBoard.controller('boardCtrl', function ($rootScope, $scope, $http, ModalUtils, 
                 callback: function (dps) {
                     $scope.alerts = [];
                     if (dps.msg == "1") {
-                        e.relation.targetFields = dps.columns;
+                        e.relations.relations[index].targetFields = dps.columns;
                     } else {
                         $scope.alerts = [{msg: dps.msg, type: 'danger'}];
                     }
                 }
             });
         }
-        ;
 
+        //add target widget
         var w = {};
         w.name = _.find($scope.widgetList, function (e) {
             return e.id === widgetId
@@ -486,14 +487,15 @@ cBoard.controller('boardCtrl', function ($rootScope, $scope, $http, ModalUtils, 
         w.width = 12;
         w.widgetId = widgetId;
         w.sourceId = e.widgetId;
+        w.index = index;
         row.widgets = _.filter(row.widgets, function (e) {
-            return e.sourceId !== w.sourceId;
+            return e.sourceId !== w.sourceId || e.index !== index;
         });
         row.widgets.push(w);
     };
 
     $scope.changeSourceCol = function (e, widgetId) {
-        if (!e.relation) {
+        if (!e.relations) {
             return;
         }
         //源表字段默认为原表的group key指定字段
@@ -509,8 +511,12 @@ cBoard.controller('boardCtrl', function ($rootScope, $scope, $http, ModalUtils, 
             _.each(config.keys, function (e) {
                 fields.push(e.col);
             });
-            e.relation.sourceField = fields;
-            e.relation.sourceFields = fields;
+            e.relations.sourceField = fields;
+            e.relations.sourceFields = fields;
         });
+    }
+
+    $scope.addRelation = function(widget){
+        widget.relations.relations.push({});
     }
 });

@@ -34,8 +34,8 @@
     "WANRING": "警告！",
     "COLLAPSE": "最小化",
     "REMOVE": "关闭",
-    "ADD_RELATION": "添加关联",
-    "DEL_RELATION": "删除关联",
+    "ADD_RELATIONS": "添加关联",
+    "DEL_RELATIONS": "删除关联",
     "DATE": "日期",
     "VALUE": "值"
   },

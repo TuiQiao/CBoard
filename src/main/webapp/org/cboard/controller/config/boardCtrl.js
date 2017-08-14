@@ -217,6 +217,7 @@ cBoard.controller('boardCtrl', function ($rootScope, $scope, $http, ModalUtils, 
     $scope.addRelations = function(widget) {
         widget.relations = {};
         widget.relations.relations = [];
+        widget.relations.relations.push({});
         $scope.changeSourceCol(widget, widget.widgetId);
     };
 
@@ -268,16 +269,31 @@ cBoard.controller('boardCtrl', function ($rootScope, $scope, $http, ModalUtils, 
                 });
         });
     };
+
     $scope.saveBoard = function () {
         if (!validate()) {
             return;
         }
+        clearDirty();
         if ($scope.optFlag == 'new') {
             return $http.post("dashboard/saveNewBoard.do", {json: angular.toJson($scope.curBoard)}).success(saveBoardCallBack);
         } else if ($scope.optFlag == 'edit') {
             return $http.post(updateUrl, {json: angular.toJson($scope.curBoard)}).success(saveBoardCallBack);
         }
     };
+
+    var clearDirty = function () {
+        _.each($scope.curBoard.layout.rows, function(row){
+            _.each(row.widgets, function(widget){
+                if(!_.isUndefined(widget.relations)){
+                    delete widget.relations.sourceFields;
+                    _.each(widget.relations.relations, function(relation){
+                        delete relation.targetFields;
+                    });
+                }
+            });
+        })
+    }
 
     $scope.editParam = function (row, index) {
         var status = {i: 0};
@@ -462,6 +478,7 @@ cBoard.controller('boardCtrl', function ($rootScope, $scope, $http, ModalUtils, 
                 });
             }
         });
+        e.relations.relations[index].targetField = [];
         e.relations.relations[index].targetFields = cols;
         if (cols.length == 0) {
             dataService.getColumns({
@@ -480,6 +497,9 @@ cBoard.controller('boardCtrl', function ($rootScope, $scope, $http, ModalUtils, 
         }
 
         //add target widget
+        if(_.isUndefined(row)){
+            return;
+        }
         var w = {};
         w.name = _.find($scope.widgetList, function (e) {
             return e.id === widgetId
@@ -518,5 +538,20 @@ cBoard.controller('boardCtrl', function ($rootScope, $scope, $http, ModalUtils, 
 
     $scope.addRelation = function(widget){
         widget.relations.relations.push({});
+    }
+
+    $scope.changeActive = function(rowIndex, widgetIndex, index){
+        var prefixId = rowIndex+"_"+widgetIndex+"_";
+        var list = $('li[id^='+prefixId+'].active');
+        if(list.length > 0 && list[0].id.split("_")[2] != index){
+            return;
+        }
+        if(index-1<0){
+            index = 0;
+        }else{
+            index = index-1;
+        }
+        $("#"+prefixId+index+"_"+"tab").addClass('active');
+        $("#"+prefixId+index+"_"+"content").addClass('active');
     }
 });

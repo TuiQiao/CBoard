@@ -33,7 +33,7 @@
                 <div class="box sort-highlight"
                      style="height: 40px;display: inline-block;vertical-align: middle;"></div>
             </div>
-            <div class="col-md-{{widget.width}}" ng-repeat="widget in row.widgets">
+            <div class="col-md-{{widget.width}}" ng-repeat="widget in row.widgets" ng-init="widgetIndex = $index">
                 <div class="box box-primary collapsed-box"
                      style="border-left: 1px solid #d2d6de; border-right: 1px solid #d2d6de">
                     <div class="box-header" dnd-draggable="widget" dnd-type="'w'"
@@ -103,57 +103,25 @@
 
                             <div class="nav-tabs-custom">
                                 <ul class="nav nav-tabs" >
-                                    <li class="active" >
-                                        <a href="#{{$index}}" data-toggle="tab" aria-expanded="true">关联1
-                                            <button type="button" class="btn btn-box-tool" title="{{'COMMON.REMOVE'|translate}}"
-                                                    style="position:absolute;top:0px;right:0px;"><i class="fa fa-times"></i>
-                                            </button>
-                                        </a>
-                                    </li>
-                                    <li class="false" ng-repeat="a in widget.relations.relations.slice(1)">
-                                        <a href="#{{$index+1}}" data-toggle="tab" aria-expanded="false">关联{{$index+2}}
-                                            <button type="button" ng-click="widget.relations.relations.splice($index+1, 1)" class="btn btn-box-tool" title="{{'COMMON.REMOVE'|translate}}"
-                                                    style="position:absolute;top:0px;right:0px;"><i class="fa fa-times"></i>
+                                    <li ng-class="{true:'active',false:'false'}[{{$index}}=={{widget.relations.index}}]" id="{{rowIndex}}_{{widgetIndex}}_{{$index}}_tab" ng-repeat="a in widget.relations.relations" ng-init="widget.relations.index=0;">
+                                        <a href="#{{rowIndex}}_{{widgetIndex}}_{{$index}}_content" data-toggle="tab" aria-expanded="false">关联{{$index+1}}
+                                            <button type="button" ng-click="widget.relations.relations.splice($index, 1);changeActive(rowIndex,widgetIndex,$index);widget.relations.index=0" class="btn btn-box-tool" title="{{'COMMON.REMOVE'|translate}}"
+                                            style="position:absolute;top:0px;right:0px;"><i class="fa fa-times"></i>
                                             </button>
                                         </a>
                                     </li>
                                     <li class="pull-right">
-                                        <button type="submit" ng-click="addRelation(widget)"
+                                        <button type="button" ng-click="addRelation(widget)"
                                                 class="btn btn-success btn-sm">
                                             +
                                         </button>
                                     </li>
                                 </ul>
                                 <div class="tab-content">
-                                    <div class="tab-pane active" id="0" style="min-height: 100px;height: 100%;">
+                                    <div ng-class="{true:'tab-pane active',false:'tab-pane'}[{{$index}}=={{widget.relations.index}}]" id="{{rowIndex}}_{{widgetIndex}}_{{$index}}_content" ng-repeat="relation in widget.relations.relations" style="min-height: 100px;height: 100%;" >
                                         <div class="form-group">
                                             <label>{{'CONFIG.DASHBOARD.WIDGET_TARGET'|translate}}</label>
-                                            <ui-select ng-model="widget.relations.relations[0].targetId" ng-init="changeTargetCol(widget, widget.relations.relations[0].targetId, 0)" ng-change="changeTargetCol(widget, $select.selected.id, 0, row)" on-select="widget.relations.relations[0].name = $item.name">
-                                                <ui-select-match>
-                                                    {{$select.selected.name}} ({{$select.selected.dataset}})
-                                                </ui-select-match>
-                                                <ui-select-choices group-by="widgetGroup"
-                                                                   repeat="w.id as w in widgetList | filter:$select.search">
-                                                    {{w.name + "(" + w.dataset + ")"}}
-                                                </ui-select-choices>
-                                            </ui-select>
-                                        </div>
-                                        <div class="form-group">
-                                            <label>{{'CONFIG.DASHBOARD.WIDGET_TARGET_FIELDS'|translate}}</label>
-                                            <ui-select multiple ng-disabled="disabled" ng-model="widget.relations.relations[0].targetField">
-                                                <ui-select-match>
-                                                    {{$item}}
-                                                </ui-select-match>
-                                                <ui-select-choices repeat="v in widget.relations.relations[0].targetFields | filter:$select.search">
-                                                    {{v}}
-                                                </ui-select-choices>
-                                            </ui-select>
-                                        </div>
-                                    </div>
-                                    <div class="tab-pane" id="{{$index+1}}" ng-repeat="relation in widget.relations.relations.slice(1)" style="min-height: 100px;height: 100%;" >
-                                        <div class="form-group">
-                                            <label>{{'CONFIG.DASHBOARD.WIDGET_TARGET'|translate}}</label>
-                                            <ui-select ng-model="relation.targetId" ng-init="changeTargetCol(widget, relation.targetId, $index+1)" ng-change="changeTargetCol(widget, $select.selected.id, $index+1, row)" on-select="relation.name = $item.name">
+                                            <ui-select ng-model="relation.targetId" ng-init="changeTargetCol(widget, relation.targetId, $index)" ng-change="changeTargetCol(widget, $select.selected.id, $index, row)" on-select="relation.name = $item.name">
                                                 <ui-select-match>
                                                     {{$select.selected.name}} ({{$select.selected.dataset}})
                                                 </ui-select-match>
@@ -176,9 +144,7 @@
                                         </div>
                                     </div>
                                 </div>
-
                             </div>
-
                         </div>
                     </div>
                 </div>

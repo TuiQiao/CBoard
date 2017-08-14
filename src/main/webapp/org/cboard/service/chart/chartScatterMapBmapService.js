@@ -2,7 +2,7 @@
  * Created by jintian on 2017/8/10.
  */
 cBoard.service('chartScatterMapBmapService', function () {
-    this.render = function (containerDom, option, scope, persist) {
+    this.render = function (containerDom, option, scope, persist,drill) {
         return new CBoardBMapRender(containerDom, option).chart(null, persist);
     }
 

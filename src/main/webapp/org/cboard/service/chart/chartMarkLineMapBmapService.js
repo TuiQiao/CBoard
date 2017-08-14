@@ -2,7 +2,7 @@
  * Created by jintian on 2017/8/7.
  */
 cBoard.service('chartMarkLineMapBmapService', function () {
-    this.render = function (containerDom, option, scope, persist) {
+    this.render = function (containerDom, option, scope, persist,drill) {
         return new CBoardBMapRender(containerDom, option).chart(null, persist);
     };
 
@@ -48,8 +48,8 @@ cBoard.service('chartMarkLineMapBmapService', function () {
                     toL = parseFloat(data_keys[i][1]);
                 }else if(data_keys[i].length == 2){
                     toName = data_keys[i][1];
-                    toN = parseFloat(data_keys[j][0].split(",")[0]);
-                    toL = parseFloat(data_keys[j][0].split(",")[1]);
+                    toN = parseFloat(data_keys[i][0].split(",")[0]);
+                    toL = parseFloat(data_keys[i][0].split(",")[1]);
                 };
                 if(data.data[j][i]){
                     lineData.push({fromName: fromName,

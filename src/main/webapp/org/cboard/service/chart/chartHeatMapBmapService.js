@@ -2,7 +2,7 @@
  * Created by jintian on 2017/8/8.
  */
 cBoard.service('chartHeatMapBmapService', function () {
-    this.render = function (containerDom, option, scope, persist) {
+    this.render = function (containerDom, option, scope, persist,drill) {
         if (option == null) {
             containerDom.html("<div class=\"alert alert-danger\" role=\"alert\">No Data!</div>");
             return;

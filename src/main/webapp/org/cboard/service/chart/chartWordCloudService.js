@@ -2,7 +2,7 @@
  * Created by Junjie.M on 2017/07/20.
  */
 'use strict';
-cBoard.service('chartWordCloudService', function () {
+cBoard.service('chartWordCloudService', function ($state, $window) {
 
     this.render = function (containerDom, option, scope, persist, drill, relations, chartConfig) {
         if (option == null) {
@@ -12,7 +12,7 @@ cBoard.service('chartWordCloudService', function () {
         var height;
         scope ? height = scope.myheight - 20 : null;
         var render = new CBoardEChartRender(containerDom, option);
-        render.addClick(chartConfig, relations);
+        render.addClick(chartConfig, relations, $state, $window);
         return render.chart(height, persist);
     };
 

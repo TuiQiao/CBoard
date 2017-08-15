@@ -1,10 +1,10 @@
 /**
  * Created by hj on 2017/07/26.
  */
-cBoard.service('chartAreaMapService', function () {
+cBoard.service('chartAreaMapService', function ($state, $window) {
     this.render = function (containerDom, option, scope, persist, drill, relations, chartConfig) {
         var render = new CBoardEChartRender(containerDom, option);
-        render.addClick(chartConfig, relations);
+        render.addClick(chartConfig, relations, $state, $window);
         return render.chart(null, persist);
     };
 

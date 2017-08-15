@@ -94,7 +94,7 @@ CBoardEChartRender.prototype.changeSize = function (instance) {
 };
 
 //{"sourceField":[],"relations":[{},{}]}
-CBoardEChartRender.prototype.addClick = function (chartConfig, relations) {
+CBoardEChartRender.prototype.addClick = function (chartConfig, relations, $state, $window) {
     if(!chartConfig || !relations){
         return;
     }
@@ -138,7 +138,6 @@ CBoardEChartRender.prototype.addClick = function (chartConfig, relations) {
                         || $.inArray(field, _.map(keys, function (key) {
                             return key.name
                         })) != -1
-                    //|| $.inArray(e, _.map(values,function(value){return value.name})) != -1
                     ) {
                         _.each(groups, function (group) {
                             if (group.name == field) {
@@ -150,15 +149,6 @@ CBoardEChartRender.prototype.addClick = function (chartConfig, relations) {
                                 paramValues.push(param.name.split("-")[key.index]);
                             }
                         });
-                        //_.each(values, function (value) {
-                        //    if(value.name == e){
-                        //        if(e == param.seriesName.split("-").pop()){
-                        //            paramValues.push(param.value);
-                        //        }else{
-                        //            paramValues.push("noMatch");
-                        //        }
-                        //    }
-                        //});
                     } else {
                         paramValues.push("noMatch");
                     }
@@ -283,12 +273,18 @@ CBoardEChartRender.prototype.addClick = function (chartConfig, relations) {
 
         $("#relations").val(JSON.stringify(relations_new));
         //触发关联图表刷新
-        _.each(links, function(relation){
+        _.each(_.filter(links,function(e){return e.type=="widget"}), function(relation){
             var button = document.getElementsByName("reload_"+relation.targetId);
             if(button){
                 button[button.length-1].click();
             }
         });
 
+        //触发弹出看板
+        _.each(_.filter(links,function(e){return e.type=="board"}), function(relation){
+            var url = $state.href('mine.view', {id: relation.targetId});
+            var param = JSON.stringify(_.find(relations_new, function(e){return e.targetId == relation.targetId}));
+            $window.open(encodeURI(url+"?"+param), '_blank');
+        });
     });
 };

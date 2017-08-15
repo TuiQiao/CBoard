@@ -217,7 +217,6 @@ cBoard.controller('boardCtrl', function ($rootScope, $scope, $http, ModalUtils, 
     $scope.addRelations = function(widget) {
         widget.relations = {};
         widget.relations.relations = [];
-        widget.relations.relations.push({});
         $scope.changeSourceCol(widget, widget.widgetId);
     };
 
@@ -478,7 +477,6 @@ cBoard.controller('boardCtrl', function ($rootScope, $scope, $http, ModalUtils, 
                 });
             }
         });
-        e.relations.relations[index].targetField = [];
         e.relations.relations[index].targetFields = cols;
         if (cols.length == 0) {
             dataService.getColumns({
@@ -500,6 +498,7 @@ cBoard.controller('boardCtrl', function ($rootScope, $scope, $http, ModalUtils, 
         if(_.isUndefined(row)){
             return;
         }
+        e.relations.relations[index].targetField = [];
         var w = {};
         w.name = _.find($scope.widgetList, function (e) {
             return e.id === widgetId
@@ -522,7 +521,7 @@ cBoard.controller('boardCtrl', function ($rootScope, $scope, $http, ModalUtils, 
         $http.get("dashboard/dashboardWidget.do?id=" + e.widgetId).then(function (response) {
             if (!response) {
                 return false;
-            }
+            }c
             var config = response.data.data.config;
             var fields = [];
             _.each(config.groups, function (e) {
@@ -531,13 +530,46 @@ cBoard.controller('boardCtrl', function ($rootScope, $scope, $http, ModalUtils, 
             _.each(config.keys, function (e) {
                 fields.push(e.col);
             });
-            e.relations.sourceField = fields;
+            if(!e.relations.sourceField || e.relations.sourceField.length<=0){
+                e.relations.sourceField = fields;
+            }
             e.relations.sourceFields = fields;
         });
     }
 
-    $scope.addRelation = function(widget){
-        widget.relations.relations.push({});
+    $scope.changeTargetParam = function (e, boardId, index) {
+        if (!e.relations) {
+            return;
+        }
+        var w = _.find($scope.boardList, function (w) {
+            return w.id == boardId;
+        });
+        if (!w) {
+            return;
+        }
+        var cols = [];
+        _.each(w.layout.rows, function (row) {
+            if (row.type == "param") {
+                _.each(row.params, function(param){
+                    _.each(param.col, function(col){
+                        cols.push(col.column+"("+col.datasetId+")");
+                    });
+                });
+            }
+        });
+        //e.relations.relations[index].targetField = [];
+        e.relations.relations[index].targetFields = cols;
+
+    };
+
+    $scope.addWidgetRelation = function(widget){
+        widget.relations.relations.push({"type":"widget"});
+        $('div.newRelation').addClass('hideOperate');
+    }
+
+    $scope.addBoardRelation = function(widget){
+        widget.relations.relations.push({"type":"board"});
+        $('div.newRelation').addClass('hideOperate');
     }
 
     $scope.changeActive = function(rowIndex, widgetIndex, index){

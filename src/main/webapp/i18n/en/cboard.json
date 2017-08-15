@@ -256,7 +256,10 @@
       "DATA_REFRESH_TIME":"Data refresh time",
       "WIDGET_TARGET":"Correlation Widget",
       "WIDGET_FIELDS":"Widget Fields",
-      "WIDGET_TARGET_FIELDS":"Correlation Widget Fields"
+      "WIDGET_TARGET_FIELDS":"Correlation Widget Fields",
+      "BOARD_TARGET":"Correlation Board",
+      "BOARD_TARGET_PARAMS":"Correlation Board Params",
+      "RELATION":"Relation"
     },
     "CATEGORY": {
       "NAME": "Category Name",

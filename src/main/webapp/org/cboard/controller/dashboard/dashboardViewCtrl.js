@@ -275,6 +275,25 @@ cBoard.controller('dashboardViewCtrl', function ($timeout, $rootScope, $scope, $
         $scope.widgetFilters = [];
         $scope.datasetFilters = [];
         $scope.relationFilters = [];
+
+        //将点击的参数赋值到看板上的参数中
+        if(location.href.split("?")[1]) {
+            var urlParam = JSON.parse(decodeURI(location.href.split("?")[1]));
+            _.each($scope.board.layout.rows, function (row) {
+                _.each(row.params, function (param) {
+                    var p;
+                    _.each(param.col, function (col) {
+                        p = _.find(urlParam.params, function (param) {
+                            return param.targetField.split("(")[0] == col.column && param.targetField.split("(")[1].split(")")[0] == col.datasetId;
+                        });
+                    });
+                    if(p){
+                        param.values.push(p.value);
+                    }
+                });
+            });
+        }
+
         _.each($scope.board.layout.rows, function (row) {
             _.each(row.params, function (param) {
                 if (param.values.length <= 0) {

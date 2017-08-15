@@ -256,9 +256,11 @@ public class JdbcDataProvider extends DataProvider implements Aggregatable, Init
 
         switch (config.getFilterType()) {
             case "=":
+            case "==":
             case "eq":
                 return config.getColumnName() + " IN (" + IntStream.range(0, config.getValues().size()).boxed().map(i -> dimensionConfigHelper.getValueStr(config, i)).collect(Collectors.joining(",")) + ")";
             case "≠":
+            case "!=":
             case "ne":
                 return config.getColumnName() + " NOT IN (" + IntStream.range(0, config.getValues().size()).boxed().map(i -> dimensionConfigHelper.getValueStr(config, i)).collect(Collectors.joining(",")) + ")";
             case ">":

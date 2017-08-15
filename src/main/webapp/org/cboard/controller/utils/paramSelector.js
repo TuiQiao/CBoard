@@ -2,7 +2,7 @@
  * Created by yfyuan on 2017/5/2.
  */
 cBoard.controller('paramSelector', function ($scope, $uibModalInstance, dataService, param, filter, getSelects, ok) {
-    $scope.type = ['=', '≠', '>', '<', '≥', '≤', '(a,b]', '[a,b)', '(a,b)', '[a,b]'];
+    $scope.type = ['=', '≠', '==', '!=', '>', '<', '≥', '≤', '(a,b]', '[a,b)', '(a,b)', '[a,b]'];
     $scope.param = param;
     $scope.operate = {};
     $scope.filter = filter;
@@ -17,15 +17,17 @@ cBoard.controller('paramSelector', function ($scope, $uibModalInstance, dataServ
     };
     var showValues = function () {
         var equal = ['=', '≠'];
+        var equalCustom = ['==', '!='];
         var openInterval = ['>', '<', '≥', '≤'];
         var closeInterval = ['(a,b]', '[a,b)', '(a,b)', '[a,b]'];
         $scope.operate.equal = $.inArray($scope.param.type, equal) > -1 ? true : false;
+        $scope.operate.equalCustom = $.inArray($scope.param.type, equalCustom) > -1 ? true : false;
         $scope.operate.openInterval = $.inArray($scope.param.type, openInterval) > -1 ? true : false;
         $scope.operate.closeInterval = $.inArray($scope.param.type, closeInterval) > -1 ? true : false;
     };
     showValues();
     $scope.dbclickPush = function (o) {
-        if ($scope.operate.equal) {
+        if ($scope.operate.equal || $scope.operate.equalCustom) {
             $scope.param.values.push(o);
         }
         if ($scope.operate.openInterval) {
@@ -56,10 +58,11 @@ cBoard.controller('paramSelector', function ($scope, $uibModalInstance, dataServ
         });
     };
     $scope.selected = function (v) {
-        return _.indexOf($scope.param.values, v) == -1
+        return _.indexOf($scope.param.values, v) == -1;
     };
     $scope.filterType = function () {
         $scope.param.values = [];
+        $scope.param.values.length = 1;
         showValues();
     };
     $scope.close = function () {
@@ -67,6 +70,10 @@ cBoard.controller('paramSelector', function ($scope, $uibModalInstance, dataServ
     };
     $scope.ok = function () {
         $uibModalInstance.close();
+        $scope.param.values = _.filter($scope.param.values, function(e){
+                return e != null && !_.isUndefined(e);
+            }
+        );
         ok($scope.param);
     };
 });

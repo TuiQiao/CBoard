@@ -26,6 +26,7 @@
     "LAST10D_TIMESTAMP": "Last 10 Days(Timestamp)",
     "LAST3H_TIMESTAMP": "Last 3 Hours(Timestamp)",
     "LAST60MIN_TIMESTAMP": "Last 60 Hours(Timestamp)",
+    "LOGIN_USER_ID": "Login UserId",
     "FILTER_GROUP": "Filter Group",
     "SAVE_AS": "Save As",
     "PARAM": "Parameter",

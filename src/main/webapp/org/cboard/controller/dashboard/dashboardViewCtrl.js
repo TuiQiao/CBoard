@@ -6,6 +6,7 @@ cBoard.controller('dashboardViewCtrl', function ($timeout, $rootScope, $scope, $
 
     $scope.loading = true;
     $scope.paramInit = 0;
+    $scope.relations = JSON.stringify([]);
     $http.get("dashboard/getDatasetList.do").success(function (response) {
         $scope.datasetList = response;
         $scope.realtimeDataset = {};
@@ -13,6 +14,7 @@ cBoard.controller('dashboardViewCtrl', function ($timeout, $rootScope, $scope, $
         $scope.intervals = [];
         $scope.datasetFilters = {};
         $scope.widgetFilters = {};
+        $scope.relationFilters = {};
         $scope.load(false);
     });
 
@@ -82,17 +84,24 @@ cBoard.controller('dashboardViewCtrl', function ($timeout, $rootScope, $scope, $
         $scope.widgetCfg = response;
     });
 
-    var buildRender = function (w, reload) {
-        w.render = function (content, optionFilter, scope) {
-            chartService.render(content, injectFilter(w.widget).data, optionFilter, scope, reload).then(function (d) {
-                w.realTimeTicket = d;
-                w.loading = false;
-            });
-            w.realTimeOption = {optionFilter: optionFilter, scope: scope};
+    var buildRender = function (widget, reload) {
+        widget.render = function (content, optionFilter, scope) {
+            // 百度地图特殊处理
+            var charType = injectFilter(widget.widget).data.config.chart_type;
+            if(charType == 'markLineMapBmap' || charType == 'heatMapBmap' || charType == 'scatterMapBmap'){
+                chartService.render(content, injectFilter(widget.widget).data, optionFilter, scope, reload);
+                widget.loading = false;
+            } else {
+                chartService.render(content, injectFilter(widget.widget).data, optionFilter, scope, reload, null, widget.relations).then(function (d) {
+                    widget.realTimeTicket = d;
+                    widget.loading = false;
+                });
+            }
+            widget.realTimeOption = {optionFilter: optionFilter, scope: scope};
         };
-        w.modalRender = function (content, optionFilter, scope) {
-            w.modalRealTimeTicket = chartService.render(content, injectFilter(w.widget).data, optionFilter, scope);
-            w.modalRealTimeOption = {optionFilter: optionFilter, scope: scope};
+        widget.modalRender = function (content, optionFilter, scope) {
+            widget.modalRealTimeTicket = chartService.render(content, injectFilter(widget.widget).data, optionFilter, scope);
+            widget.modalRealTimeOption = {optionFilter: optionFilter, scope: scope};
         };
     };
 
@@ -164,7 +173,7 @@ cBoard.controller('dashboardViewCtrl', function ($timeout, $rootScope, $scope, $
                     return e.id == w.datasetId;
                 });
                 if (ds && ds.data.interval && ds.data.interval > 0) {
-                    if (!$scope.intervalGroup[w.datasetId]) {
+                    if (!$scope.intervalGroup[w.datasetId] && !widget.sourceId) {
                         $scope.intervalGroup[w.datasetId] = [];
                         $scope.intervals.push($interval(function () {
                             refreshParam();
@@ -194,6 +203,7 @@ cBoard.controller('dashboardViewCtrl', function ($timeout, $rootScope, $scope, $
     $scope.load = function (reload) {
         $scope.paramInit = 0;
         $scope.loading = true;
+        $("#relations").val(JSON.stringify([]));
         _.each($scope.intervals, function (e) {
             $interval.cancel(e);
         });
@@ -241,18 +251,49 @@ cBoard.controller('dashboardViewCtrl', function ($timeout, $rootScope, $scope, $
     };
 
     var injectFilter = function (widget) {
-        widget.data.config.boardFilters = [];
-        if (_.isUndefined(widget.data.datasetId)) {
-            widget.data.config.boardFilters = $scope.widgetFilters[widget.id];
-        } else {
-            widget.data.config.boardFilters = $scope.datasetFilters[widget.data.datasetId];
+        var boardFilters = [];
+        if(!_.isUndefined($scope.widgetFilters[widget.id])){
+            _.each($scope.widgetFilters[widget.id], function(e){
+                boardFilters.push(e);
+            });
         }
+        if(!_.isUndefined($scope.datasetFilters[widget.data.datasetId])){
+            _.each($scope.datasetFilters[widget.data.datasetId], function(e){
+                boardFilters.push(e);
+            });
+        }
+        if(!_.isUndefined($scope.relationFilters[widget.id])){
+            _.each($scope.relationFilters[widget.id], function(e){
+                boardFilters.push(e);
+            });
+        }
+        widget.data.config.boardFilters = boardFilters;
         return widget;
     };
 
     var paramToFilter = function () {
         $scope.widgetFilters = [];
         $scope.datasetFilters = [];
+        $scope.relationFilters = [];
+
+        //将点击的参数赋值到看板上的参数中
+        if(location.href.split("?")[1]) {
+            var urlParam = JSON.parse(decodeURI(location.href.split("?")[1]));
+            _.each($scope.board.layout.rows, function (row) {
+                _.each(row.params, function (param) {
+                    var p;
+                    _.each(param.col, function (col) {
+                        p = _.find(urlParam.params, function (param) {
+                            return param.targetField.split("(")[0] == col.column && param.targetField.split("(")[1].split(")")[0] == col.datasetId;
+                        });
+                    });
+                    if(p){
+                        param.values.push(p.value);
+                    }
+                });
+            });
+        }
+
         _.each($scope.board.layout.rows, function (row) {
             _.each(row.params, function (param) {
                 if (param.values.length <= 0) {
@@ -278,6 +319,24 @@ cBoard.controller('dashboardViewCtrl', function ($timeout, $rootScope, $scope, $
                 });
             });
         });
+
+        //将点击的参数赋值到relationFilters中
+        var relations = JSON.parse($("#relations").val());
+        for(var i=0;i<relations.length;i++){
+            if(relations[i].targetId && relations[i].params && relations[i].params.length>0){
+                for(var j=0;j<relations[i].params.length;j++) {
+                    var p = {
+                        col: relations[i].params[j].targetField,
+                        type: "=",
+                        values: [relations[i].params[j].value]
+                    };
+                    if (!$scope.relationFilters[relations[i].targetId]) {
+                        $scope.relationFilters[relations[i].targetId] = [];
+                    }
+                    $scope.relationFilters[relations[i].targetId].push(p); //relation.targetId == widgetId
+                }
+            }
+        }
     };
 
     $scope.applyParamFilter = function () {
@@ -364,12 +423,22 @@ cBoard.controller('dashboardViewCtrl', function ($timeout, $rootScope, $scope, $
     };
 
     $scope.reload = function (widget) {
+        paramToFilter();
+        widget.widget.data = injectFilter(widget.widget).data;
         widget.show = false;
+        widget.showDiv = true;
         widget.render = function (content, optionFilter, scope) {
-            chartService.render(content, widget.widget.data, optionFilter, scope, true).then(function (d) {
-                widget.realTimeTicket = d;
+            //百度地图特殊处理
+            var charType = widget.widget.data.config.chart_type;
+            if(charType == 'markLineMapBmap' || charType == 'heatMapBmap' || charType == 'scatterMapBmap'){
+                chartService.render(content, widget.widget.data, optionFilter, scope, true);
                 widget.loading = false;
-            });
+            } else {
+                chartService.render(content, widget.widget.data, optionFilter, scope, true, null, widget.relations).then(function (d) {
+                    widget.realTimeTicket = d;
+                    widget.loading = false;
+                });
+            }
             widget.realTimeOption = {optionFilter: optionFilter, scope: scope};
         };
         $timeout(function () {

@@ -34,6 +34,8 @@
     "WANRING": "WANRING!",
     "COLLAPSE": "Collapse",
     "REMOVE": "Remove",
+    "ADD_RELATIONS": "Add Relations",
+    "DEL_RELATIONS": "Del Relations",
     "DATE": "Date",
     "VALUE": "Value"
   },
@@ -156,6 +158,7 @@
       "TIPS_MEASURE": "Value",
       "TIPS_DIM_NUM_0": "0",
       "TIPS_DIM_NUM_1": "1",
+      "TIPS_DIM_NUM_2": "2",
       "TIPS_DIM_NUM_0_MORE": "0 or more",
       "TIPS_DIM_NUM_1_MORE": "1 or more",
       "FROM_CACHE": "From Cache",
@@ -180,7 +183,10 @@
       "HEAT_MAP_CALENDER": "Heat Map (Calender)",
       "DATE_FORMAT": "Date Format",
       "HEAT_MAP_TABLE": "Heat Map (Table)",
-      "MARK_LINE_MAP":"Mark Line Map (Local)",
+      "MARK_LINE_MAP": "Mark Line Map (Local)",
+      "HEAT_MAP": "Heat Map (Local)",
+      "MARK_LINE_MAP_BMAP": "Mark Line Map (Bmap)",
+      "HEAT_MAP_BMAP": "Heat Map (Bmap)",
       "LIQUID_FILL": "Liquid Fill",
       "STATIC": "Static",
       "DYNAMIC": "Dynamic",
@@ -192,6 +198,9 @@
       "ROUND_RECT": "RoundRect",
       "SQUARE": "Square",
       "DIAMOND": "Diamond",
+      "CONTRAST": "Contrast",
+      "SCATTER_MAP":"Scatter Map (Local)",
+      "SCATTER_MAP_BMAP":"Scatter Map (Bmap)",
       "AREA_MAP": "AREA_MAP",
       "RELATION": "Relation",
       "SOURCE": "Source",
@@ -249,7 +258,13 @@
       "VALUE_FORMMAT_ALERT": "Only date type need format",
       "AUTOMATIC_REFRESH_SWITCH": "Automatic refresh switch",
       "REMOVE_EMPTY_LINES": "Remove empty lines",
-      "DATA_REFRESH_TIME":"Data refresh time"
+      "DATA_REFRESH_TIME":"Data refresh time",
+      "WIDGET_TARGET":"Correlation Widget",
+      "WIDGET_FIELDS":"Widget Fields",
+      "WIDGET_TARGET_FIELDS":"Correlation Widget Fields",
+      "BOARD_TARGET":"Correlation Board",
+      "BOARD_TARGET_PARAMS":"Correlation Board Params",
+      "RELATION":"Relation"
     },
     "CATEGORY": {
       "NAME": "Category Name",
@@ -381,6 +396,35 @@
       "JSON_TEXT": "Json Text",
       "PAGE_INDEX": "Page Index",
       "PAGE_SIZE": "Page Size"
+    }
+  },
+  "CROSS_TABLE":{
+    "NEXT_PAGE": "Next",
+    "PREVIOUS_PAGE": "Previous",
+    "SHOW": "Show",
+    "ENTRIES": "entries",
+    "EXPORT": "Export"
+  },
+  "HELP_MESSAGE":{
+    "SCATTERMAPBMAP":{
+      "ROW":"The two values are: 'longitude','latitude' ,'geographical name'; 3 values are: 'longitude', 'latitude', 'geographical name'."
+    },
+    "SCATTERMAP":{
+      "ROW":"The two values are: 'longitude', 'latitude', 'geographical name'; 3 values are: 'longitude', 'latitude', 'geographical name'."
+    },
+    "MARKLINEMAP":{
+      "ROW":"The two values are: 'longitude', 'latitude', 'geographical name'; 3 values are: 'longitude', 'latitude', 'geographical name'.",
+      "COLUMN":"Levy needs 2 or 3 values, 2 values are: 'longitude, latitude', 'geographical name'; 3 values are: 'longitude', 'latitude', 'geographical name'."
+    },
+    "MARKLINEMAPBMAP":{
+      "ROW":"The two values are: 'longitude', 'latitude', 'geographical name'; 3 values are: 'longitude', 'latitude', 'geographical name'.",
+      "COLUMN":"Levy needs 2 or 3 values, 2 values are: 'longitude, latitude', 'geographical name'; 3 values are: 'longitude', 'latitude', 'geographical name'."
+    },
+    "HEATMAP":{
+      "ROW":"The 1 values are: 'longitude', 'latitude'; 2 values are: 'longitude', 'latitude'."
+    },
+    "HEATMAPBMAP":{
+      "ROW":"The 1 values are: 'longitude', 'latitude'; 2 values are: 'longitude', 'latitude'."
     }
   }
 }

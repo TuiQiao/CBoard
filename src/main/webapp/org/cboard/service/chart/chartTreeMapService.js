@@ -2,16 +2,18 @@
  * Created by Junjie.M on 2017/07/21.
  */
 'use strict';
-cBoard.service('chartTreeMapService', function () {
+cBoard.service('chartTreeMapService', function ($state, $window) {
 
-    this.render = function (containerDom, option, scope, persist) {
+    this.render = function (containerDom, option, scope, persist, drill, relations, chartConfig) {
         if (option == null) {
             containerDom.html("<div class=\"alert alert-danger\" role=\"alert\">No Data!</div>");
             return;
         }
         var height;
         scope ? height = scope.myheight - 20 : null;
-        return new CBoardEChartRender(containerDom, option).chart(height, persist);
+        var render = new CBoardEChartRender(containerDom, option);
+        render.addClick(chartConfig, relations, $state, $window);
+        return render.chart(height, persist);
     };
 
     this.parseOption = function (data) {

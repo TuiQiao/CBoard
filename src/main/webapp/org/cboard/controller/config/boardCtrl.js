@@ -214,6 +214,18 @@ cBoard.controller('boardCtrl', function ($rootScope, $scope, $http, ModalUtils, 
         $scope.curBoard.layout.rows.unshift({type: 'param', params: []});
     };
 
+    $scope.addRelations = function(widget) {
+        widget.relations = {};
+        widget.relations.relations = [];
+        $scope.changeSourceCol(widget, widget.widgetId);
+    };
+
+    $scope.delRelations = function(widget) {
+        if(widget.relations){
+          delete widget.relations;
+        }
+    };
+
     var validate = function () {
         $scope.alerts = [];
         if (!$scope.curBoard.name) {
@@ -256,16 +268,31 @@ cBoard.controller('boardCtrl', function ($rootScope, $scope, $http, ModalUtils, 
                 });
         });
     };
+
     $scope.saveBoard = function () {
         if (!validate()) {
             return;
         }
+        clearDirty();
         if ($scope.optFlag == 'new') {
             return $http.post("dashboard/saveNewBoard.do", {json: angular.toJson($scope.curBoard)}).success(saveBoardCallBack);
         } else if ($scope.optFlag == 'edit') {
             return $http.post(updateUrl, {json: angular.toJson($scope.curBoard)}).success(saveBoardCallBack);
         }
     };
+
+    var clearDirty = function () {
+        _.each($scope.curBoard.layout.rows, function(row){
+            _.each(row.widgets, function(widget){
+                if(!_.isUndefined(widget.relations)){
+                    delete widget.relations.sourceFields;
+                    _.each(widget.relations.relations, function(relation){
+                        delete relation.targetFields;
+                    });
+                }
+            });
+        })
+    }
 
     $scope.editParam = function (row, index) {
         var status = {i: 0};
@@ -422,4 +449,141 @@ cBoard.controller('boardCtrl', function ($rootScope, $scope, $http, ModalUtils, 
         return baseEventObj;
     }();
     /**  js tree related start **/
+
+    $scope.changeTargetCol = function (e, widgetId, index, row) {
+        if (!e.relations) {
+            return;
+        }
+        var w = _.find($scope.widgetList, function (w) {
+            return w.id == widgetId;
+        });
+        if (!w) {
+            return;
+        }
+        var dataSet = _.find($scope.datasetList, function (e) {
+            return w.data.datasetId === e.id;
+        });
+        var cols = [];
+        _.each(dataSet.data.schema.dimension, function (e) {
+            if (e.type == "column") {
+                if ($.inArray(e, cols) == -1) {
+                    cols.push(e.column);
+                }
+            } else if (e.type == "level") {
+                _.each(e.columns, function (e) {
+                    if ($.inArray(e, cols) == -1) {
+                        cols.push(e.column);
+                    }
+                });
+            }
+        });
+        e.relations.relations[index].targetFields = cols;
+        if (cols.length == 0) {
+            dataService.getColumns({
+                datasource: null,
+                query: null,
+                datasetId: w.data.datasetId,
+                callback: function (dps) {
+                    $scope.alerts = [];
+                    if (dps.msg == "1") {
+                        e.relations.relations[index].targetFields = dps.columns;
+                    } else {
+                        $scope.alerts = [{msg: dps.msg, type: 'danger'}];
+                    }
+                }
+            });
+        }
+
+        //add target widget
+        if(_.isUndefined(row)){
+            return;
+        }
+        e.relations.relations[index].targetField = [];
+        var w = {};
+        w.name = _.find($scope.widgetList, function (e) {
+            return e.id === widgetId
+        }).name;
+        w.width = 12;
+        w.widgetId = widgetId;
+        w.sourceId = e.widgetId;
+        w.index = index;
+        row.widgets = _.filter(row.widgets, function (e) {
+            return e.sourceId !== w.sourceId || e.index !== index;
+        });
+        row.widgets.push(w);
+    };
+
+    $scope.changeSourceCol = function (e, widgetId) {
+        if (!e.relations) {
+            return;
+        }
+        //源表字段默认为原表的group key指定字段
+        $http.get("dashboard/dashboardWidget.do?id=" + e.widgetId).then(function (response) {
+            if (!response) {
+                return false;
+            }
+            var config = response.data.data.config;
+            var fields = [];
+            _.each(config.groups, function (e) {
+                fields.push(e.col);
+            });
+            _.each(config.keys, function (e) {
+                fields.push(e.col);
+            });
+            if(!e.relations.sourceField || e.relations.sourceField.length<=0){
+                e.relations.sourceField = fields;
+            }
+            e.relations.sourceFields = fields;
+        });
+    }
+
+    $scope.changeTargetParam = function (e, boardId, index) {
+        if (!e.relations) {
+            return;
+        }
+        var w = _.find($scope.boardList, function (w) {
+            return w.id == boardId;
+        });
+        if (!w) {
+            return;
+        }
+        var cols = [];
+        _.each(w.layout.rows, function (row) {
+            if (row.type == "param") {
+                _.each(row.params, function(param){
+                    _.each(param.col, function(col){
+                        cols.push(col.column+"("+col.datasetId+")");
+                    });
+                });
+            }
+        });
+        //e.relations.relations[index].targetField = [];
+        e.relations.relations[index].targetFields = cols;
+
+    };
+
+    $scope.addWidgetRelation = function(widget){
+        widget.relations.relations.push({"type":"widget"});
+        $('div.newRelation').addClass('hideOperate');
+    }
+
+    $scope.addBoardRelation = function(widget){
+        widget.relations.relations.push({"type":"board"});
+        $('div.newRelation').addClass('hideOperate');
+    }
+
+    $scope.changeActive = function(rowIndex, widgetIndex, index){
+        var prefixId = rowIndex+"_"+widgetIndex+"_";
+        var list = $('li[id^='+prefixId+'].active');
+        if(list.length > 0 && list[0].id.split("_")[2] != index){
+            return;
+        }
+        if(index-1<0){
+            index = 0;
+        }else{
+            index = index-1;
+        }
+        $("#"+prefixId+index+"_"+"tab").addClass('active');
+        $("#"+prefixId+index+"_"+"content").addClass('active');
+    }
 });

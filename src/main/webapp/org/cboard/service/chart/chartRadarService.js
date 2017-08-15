@@ -2,10 +2,12 @@
  * Created by yfyuan on 2016/10/28.
  */
 'use strict';
-cBoard.service('chartRadarService', function () {
+cBoard.service('chartRadarService', function ($state, $window) {
 
-    this.render = function (containerDom, option, scope, persist) {
-        return new CBoardEChartRender(containerDom, option).chart(null, persist);
+    this.render = function (containerDom, option, scope, persist, drill, relations, chartConfig) {
+        var render = new CBoardEChartRender(containerDom, option);
+        render.addClick(chartConfig, relations, $state, $window);
+        return render.chart(null, persist);
     };
 
     this.parseOption = function (_data) {
@@ -23,7 +25,7 @@ cBoard.service('chartRadarService', function () {
         var data = [];
         var max;
         var indicator = [];
-        if (chartConfig.asRow) {
+        if (chartConfig.drawBy === 'row') {
             for (var i = 0; i < string_keys.length; i++) {
                 var d = {value: [], name: string_keys[i]};
                 for (var j = 0; j < casted_values.length; j++) {
@@ -64,7 +66,7 @@ cBoard.service('chartRadarService', function () {
             legend: {
                 orient: 'vertical',
                 left: 'left',
-                data: chartConfig.asRow ? string_keys : string_values
+                data: chartConfig.drawBy === 'row' ? string_keys : string_values
             },
             radar: {
                 indicator: indicator

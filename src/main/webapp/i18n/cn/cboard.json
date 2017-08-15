@@ -34,8 +34,8 @@
     "WANRING": "警告！",
     "COLLAPSE": "最小化",
     "REMOVE": "关闭",
-    "ADD_RELATION": "添加关联",
-    "DEL_RELATION": "删除关联",
+    "ADD_RELATIONS": "添加关联",
+    "DEL_RELATIONS": "删除关联",
     "DATE": "日期",
     "VALUE": "值"
   },
@@ -256,7 +256,10 @@
       "DATA_REFRESH_TIME":"数据刷新时间",
       "WIDGET_TARGET":"关联图表",
       "WIDGET_FIELDS":"图表维度",
-      "WIDGET_TARGET_FIELDS":"关联图表维度"
+      "WIDGET_TARGET_FIELDS":"关联图表维度",
+      "BOARD_TARGET":"关联看板",
+      "BOARD_TARGET_PARAMS":"关联看板参数",
+      "RELATION":"关联"
     },
     "CATEGORY": {
       "NAME": "看板分类名称",

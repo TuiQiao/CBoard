@@ -521,7 +521,7 @@ cBoard.controller('boardCtrl', function ($rootScope, $scope, $http, ModalUtils, 
         $http.get("dashboard/dashboardWidget.do?id=" + e.widgetId).then(function (response) {
             if (!response) {
                 return false;
-            }c
+            }
             var config = response.data.data.config;
             var fields = [];
             _.each(config.groups, function (e) {

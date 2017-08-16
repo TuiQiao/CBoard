@@ -33,7 +33,7 @@ cBoard.service('chartScatterMapService', function () {
 
         // series setting
         for(var j = 0 ; j < data.series.length ; j++){
-            max = 0;
+            //max = 0;
             serieData = [];
             for(var i = 0 ; i < data.keys.length ; i++){
                 if(data.keys[i].length > 2){
@@ -66,7 +66,7 @@ cBoard.service('chartScatterMapService', function () {
                     coordinateSystem: 'geo',
                     data: serieData,
                     symbolSize : function (val) {
-                        return val[2] * 20 / max;
+                        return val[2] * 30 / max;
                     },
                     label: {
                         normal: {

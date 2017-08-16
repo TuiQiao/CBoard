@@ -240,7 +240,7 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
             treeMap: {keys: 2, groups: 0, filters: -1, values: 1},
             areaMap: {keys: 2, groups: -1, filters: -1, values: 1},
             heatMapCalendar: {keys: 1, groups: 0, filters: -1, values: 1},
-            heatMapTable: {keys: -1, groups: -1, filters: -1, values: 1},
+            heatMapTable: {keys: 2, groups: 2, filters: -1, values: 1},
             markLineMap: {keys: 2, groups: 2, filters: -1, values: 1},
             liquidFill: {keys: 0, groups: 0, filters: -1, values: 1},
             heatMap: {keys: 2, groups: 0, filters: -1, values: 1},

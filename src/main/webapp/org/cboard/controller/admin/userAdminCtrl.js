@@ -559,4 +559,20 @@ cBoard.controller('userAdminCtrl', function ($scope, $http, ModalUtils, $filter)
             });
         });
     }
+
+    $scope.deleteUser = function () {
+        ModalUtils.confirm(translate("COMMON.CONFIRM_DELETE"), "modal-info", "lg", function () {
+            $http.post("admin/deleteUser.do", {
+                userId: $scope.selectUser[0].userId
+            }).success(function (serviceStatus) {
+                if (serviceStatus == '1') {
+                    $scope.selectUser = null;
+                    getUserList();
+                    ModalUtils.alert(translate("COMMON.SUCCESS"), "modal-success", "sm");
+                } else {
+                    $scope.alerts = [{msg: serviceStatus.msg, type: 'danger'}];
+                }
+            });
+        });
+    }
 });

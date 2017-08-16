@@ -15,6 +15,7 @@ import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -64,6 +65,15 @@ public class AdminSerivce {
             user.setUserPassword(md5);
         }
         userDao.update(user);
+        return "1";
+    }
+
+    @Transactional
+    public String deleteUser(String userId) {
+        userDao.deleteUserById(userId);
+        Map param = new HashMap<String,String>();
+        param.put("objUid", userId);
+        userDao.deleteUserRole(param);
         return "1";
     }
 

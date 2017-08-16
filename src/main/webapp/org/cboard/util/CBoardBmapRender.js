@@ -20,10 +20,10 @@ var echartsBasicOption = {
         itemHeight: 10
     }
 };
-var bMap
+
 var CBoardBMapRender = function (jqContainer, options, isDeepSpec) {
     this.container = jqContainer; // jquery object
-    bMap = jqContainer.get(0);
+    var bMap = jqContainer.get(0);
     $(bMap).css("width", "100%");
     $(bMap).css("height", $(bMap).parent().context.clientHeight + "px");
     this.ecc = echarts.init(jqContainer.get(0), this.theme);

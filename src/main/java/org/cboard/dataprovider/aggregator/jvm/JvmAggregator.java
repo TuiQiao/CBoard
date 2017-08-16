@@ -201,11 +201,9 @@ public class JvmAggregator extends InnerAggregator {
             }
             switch (rule.getFilterType()) {
                 case "=":
-                case "==":
                 case "eq":
                     return rule.getValues().stream().anyMatch(e -> e.equals(v));
                 case "≠":
-                case "!=":
                 case "ne":
                     return rule.getValues().stream().allMatch(e -> !e.equals(v));
                 case ">":

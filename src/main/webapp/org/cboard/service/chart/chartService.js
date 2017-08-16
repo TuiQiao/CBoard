@@ -175,6 +175,7 @@ cBoard.service('chartService', function ($q, dataService, chartPieService, chart
                     break;
                 case 'contrast':
                     chart = chartContrastService;
+                    break;
                 case 'scatterMap':
                     chart = chartScatterMapService;
                     break;

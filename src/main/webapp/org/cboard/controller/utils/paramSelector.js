@@ -2,7 +2,7 @@
  * Created by yfyuan on 2017/5/2.
  */
 cBoard.controller('paramSelector', function ($scope, $uibModalInstance, dataService, param, filter, getSelects, ok) {
-    $scope.type = ['=', '≠', '==', '!=', '>', '<', '≥', '≤', '(a,b]', '[a,b)', '(a,b)', '[a,b]'];
+    $scope.type = ['=', '≠', '>', '<', '≥', '≤', '(a,b]', '[a,b)', '(a,b)', '[a,b]'];
     $scope.param = param;
     $scope.operate = {};
     $scope.filter = filter;
@@ -17,17 +17,18 @@ cBoard.controller('paramSelector', function ($scope, $uibModalInstance, dataServ
     };
     var showValues = function () {
         var equal = ['=', '≠'];
-        var equalCustom = ['==', '!='];
         var openInterval = ['>', '<', '≥', '≤'];
         var closeInterval = ['(a,b]', '[a,b)', '(a,b)', '[a,b]'];
         $scope.operate.equal = $.inArray($scope.param.type, equal) > -1 ? true : false;
-        $scope.operate.equalCustom = $.inArray($scope.param.type, equalCustom) > -1 ? true : false;
         $scope.operate.openInterval = $.inArray($scope.param.type, openInterval) > -1 ? true : false;
         $scope.operate.closeInterval = $.inArray($scope.param.type, closeInterval) > -1 ? true : false;
     };
     showValues();
     $scope.dbclickPush = function (o) {
-        if ($scope.operate.equal || $scope.operate.equalCustom) {
+        if ($scope.operate.equal) {
+            if($scope.param.values.length == 1 && (_.isUndefined($scope.param.values[0]) || $scope.param.values[0]=='')){
+                $scope.param.values.length = 0;
+            }
             $scope.param.values.push(o);
         }
         if ($scope.operate.openInterval) {
@@ -47,6 +48,9 @@ cBoard.controller('paramSelector', function ($scope, $uibModalInstance, dataServ
         }
     };
     $scope.pushValues = function (array) {
+        if($scope.param.values.length == 1 && (_.isUndefined($scope.param.values[0]) || $scope.param.values[0]=='')){
+            $scope.param.values.length = 0;
+        }
         if ($scope.operate.openInterval) {
             array.splice(1, array.length - 1);
         }
@@ -75,5 +79,11 @@ cBoard.controller('paramSelector', function ($scope, $uibModalInstance, dataServ
             }
         );
         ok($scope.param);
+    };
+
+    $scope.initValues = function () {
+        if($scope.param.values.length==0){
+            $scope.param.values.length = 1;
+        }
     };
 });

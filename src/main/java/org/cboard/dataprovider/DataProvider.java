@@ -137,8 +137,8 @@ public abstract class DataProvider {
         if (value == null || !(value.startsWith("{") && value.endsWith("}"))) {
             return value;
         }
-        if("{loginUserId}".equals(value)){
-            return authenticationService.getCurrentUser().getUserId();
+        if("{loginName}".equals(value)){
+            return authenticationService.getCurrentUser().getUsername();
         }
         return AviatorEvaluator.compile(value.substring(1, value.length() - 1), true).execute().toString();
     }

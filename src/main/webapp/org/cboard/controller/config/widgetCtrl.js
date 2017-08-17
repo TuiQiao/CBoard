@@ -888,6 +888,17 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
             });
         };
 
+        $scope.initColorPicker =  function (index) {
+            $timeout(function() {
+                $("#color_"+index).colorpicker()
+                    .on("changeColor", function(e){
+                        if($scope.curWidget.config.styles[e.target.id.split("_")[1]]){
+                            $scope.curWidget.config.styles[e.target.id.split("_")[1]].color = e.color.toHex();
+                        }
+                    });
+            }, 100,true);
+        };
+
         var saveWgtCallBack = function (serviceStatus) {
             if (serviceStatus.status == '1') {
                 getWidgetList();

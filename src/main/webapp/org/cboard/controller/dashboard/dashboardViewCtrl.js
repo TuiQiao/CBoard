@@ -321,6 +321,9 @@ cBoard.controller('dashboardViewCtrl', function ($timeout, $rootScope, $scope, $
         });
 
         //将点击的参数赋值到relationFilters中
+        if(_.isUndefined($("#relations").val())){
+            return;
+        }
         var relations = JSON.parse($("#relations").val());
         for(var i=0;i<relations.length;i++){
             if(relations[i].targetId && relations[i].params && relations[i].params.length>0){

@@ -145,12 +145,6 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
                 row: translate('CONFIG.WIDGET.TIPS_DIM_NUM_1_MORE'),
                 column: translate('CONFIG.WIDGET.TIPS_DIM_NUM_0'),
                 measure: translate('CONFIG.WIDGET.TIPS_DIM_NUM_1_MORE')
-            },
-            {
-                name: translate('CONFIG.WIDGET.RELATION'), value: 'relation', class: 'cRelation',
-                row: translate('CONFIG.WIDGET.TIPS_DIM_NUM_0'),
-                column: translate('CONFIG.WIDGET.TIPS_DIM_NUM_0'),
-                measure: translate('CONFIG.WIDGET.TIPS_DIM_NUM_0')
             }
         ];
 
@@ -160,8 +154,7 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
             "scatter": true, "gauge": true, "wordCloud": true, "treeMap": true,
             "heatMapCalendar": true, "heatMapTable": true, "liquidFill": true,
             "areaMap": true, "markLineMap": true, "heatMap": true, "contrast": true,
-            "markLineMapBmap": true, "heatMapBmap": true, "scatterMap": true, "scatterMapBmap": true,
-            "relation": true
+            "markLineMapBmap": true, "heatMapBmap": true, "scatterMap": true, "scatterMapBmap": true
         };
 
         $scope.value_series_types = [
@@ -255,8 +248,7 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
             heatMapBmap: {keys: 2, groups: 0, filters: -1, values: 1},
             contrast: {keys: 1, groups: 0, filters: -1, values: 2},
             scatterMap: {keys: 2, groups: 0, filters: -1, values: 2},
-            scatterMapBmap: {keys: 2, groups: 0, filters: -1, values: 2},
-            relation: {keys: 0, groups: 0, filters: 0, values: 2}
+            scatterMapBmap: {keys: 2, groups: 0, filters: -1, values: 2}
         };
 
         //界面控制
@@ -719,12 +711,6 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
                         v.style = 'circle';
                     });
                     break;
-                case 'relation':
-                    $scope.curWidget.config.selects = angular.copy($scope.columns);
-                    $scope.curWidget.config.sources = new Array();
-                    $scope.curWidget.config.targets = new Array();
-                    $scope.curWidget.config.links = new Array();
-                    break;
                 default:
                     $scope.curWidget.config.values.push({name: '', cols: []});
                     _.each(oldConfig.values, function (v) {
@@ -778,17 +764,6 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
                 $scope.loadingPre = false;
                 $scope.viewQueryMoal = true;
             });
-        };
-  
-        var combineConfig = function () {
-            switch ($scope.curWidget.config.chart_type) {
-                case 'relation':
-                    var config = $scope.curWidget.config;
-                    $scope.curWidget.config.keys = config.sources.concat(config.targets).concat(config.links);
-                    break;
-                default :
-                    break;
-            }
         };
 
         $scope.preview = function () {
@@ -884,9 +859,6 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
                             $scope.previewDivWidth = 12;
                             break;
                         case 'scatterMap':
-                            $scope.previewDivWidth = 12;
-                            break;
-                        case 'relation':
                             $scope.previewDivWidth = 12;
                             break;
                     }

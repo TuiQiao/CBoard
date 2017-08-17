@@ -200,11 +200,7 @@
       "DIAMOND": "菱形",
       "CONTRAST": "对比图",
       "SCATTER_MAP":"散点地图（本地）",
-      "SCATTER_MAP_BMAP":"散点地图（百度）",
-      "RELATION": "关系图",
-      "SOURCE": "源",
-      "TARGET": "目标",
-      "LINK": "关系"
+      "SCATTER_MAP_BMAP":"散点地图（百度）"
     },
     "DASHBOARD": {
       "DASHBOARD": "看板",

@@ -200,12 +200,7 @@
       "DIAMOND": "Diamond",
       "CONTRAST": "Contrast",
       "SCATTER_MAP":"Scatter Map (Local)",
-      "SCATTER_MAP_BMAP":"Scatter Map (Bmap)",
-      "AREA_MAP": "AREA_MAP",
-      "RELATION": "Relation",
-      "SOURCE": "Source",
-      "TARGET": "Target",
-      "LINK": "Link"
+      "SCATTER_MAP_BMAP":"Scatter Map (Bmap)"
     },
     "DASHBOARD": {
       "CATEGORY": "Category",

@@ -2,7 +2,7 @@
  * Created by yfyuan on 2016/10/14.
  */
 cBoard.service('updateService', function () {
-    this.updateConfig = function (config, flag) {
+    this.updateConfig = function (config) {
         var toFilterConfig = function (e) {
             if (_.isString(e)) {
                 return {col: e, type: 'eq', values: []};
@@ -26,9 +26,6 @@ cBoard.service('updateService', function () {
                 if (!config.valueAxis) {
                     config.valueAxis = 'vertical';
                 }
-                break;
-            case 'relation':
-                if(flag) config.keys = [];
                 break;
         }
     };

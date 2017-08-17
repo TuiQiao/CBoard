@@ -431,6 +431,7 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
             $scope.optFlag = 'new';
             $scope.customDs = false;
             $scope.schema = null;
+            cleanPreview();
             addValidateWatch();
         };
 
@@ -772,10 +773,16 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
                 angular.element('#preview_widget_tab').trigger('click');
             });
             $scope.loadingPre = true;
+            // --- start ---
+            // 添加echarts3.6.2后这里除了第一次可以加载echarts图表，再次加载无法显示图表。
+            // 完全无法找到问题下，出于无奈嵌套了一层后发现可以显示图表。囧！！
+            // 具体原因没有找到，求大神帮忙解决，thanks！
+            $('#preview_widget').html("<div id='preview' style='min-height: 300px; user-select: text;'></div>");
+            // --- end ---
             var charType = $scope.curWidget.config.chart_type;
             //百度地图特殊处理
             if (charType == 'markLineMapBmap' || charType == 'heatMapBmap' || charType == 'scatterMapBmap') {
-                chartService.render($('#preview_widget'), {
+                chartService.render($('#preview'), {
                     config: $scope.curWidget.config,
                     datasource: $scope.datasource ? $scope.datasource.id : null,
                     query: $scope.curWidget.query,
@@ -783,12 +790,6 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
                 });
                 $scope.loadingPre = false;
             } else {
-                // --- start ---
-                // 添加echarts3.6.2后这里除了第一次可以加载echarts图表，再次加载无法显示图表。
-                // 完全无法找到问题下，出于无奈嵌套了一层后发现可以显示图表。囧！！
-                // 具体原因没有找到，求大神帮忙解决，thanks！
-                $('#preview_widget').html("<div id='preview' style='min-height: 300px; user-select: text;'></div>");
-                // --- end ---
                 chartService.render($('#preview'), {
                     config: $scope.curWidget.config,
                     datasource: $scope.datasource ? $scope.datasource.id : null,

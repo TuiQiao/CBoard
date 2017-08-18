@@ -145,6 +145,12 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
                 row: translate('CONFIG.WIDGET.TIPS_DIM_NUM_1_MORE'),
                 column: translate('CONFIG.WIDGET.TIPS_DIM_NUM_0'),
                 measure: translate('CONFIG.WIDGET.TIPS_DIM_NUM_1_MORE')
+            },
+            {
+                name: translate('CONFIG.WIDGET.RELATION'), value: 'relation', class: 'cRelation',
+                row: translate('CONFIG.WIDGET.TIPS_DIM_NUM_1_2'),
+                column: translate('CONFIG.WIDGET.TIPS_DIM_NUM_1_2'),
+                measure: translate('CONFIG.WIDGET.TIPS_DIM_NUM_1')
             }
         ];
 
@@ -154,7 +160,7 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
             "scatter": true, "gauge": true, "wordCloud": true, "treeMap": true,
             "heatMapCalendar": true, "heatMapTable": true, "liquidFill": true,
             "areaMap": true, "markLineMap": true, "heatMap": true,"contrast": true,
-            "markLineMapBmap": true, "heatMapBmap": true,"scatterMap":true,"scatterMapBmap":true
+            "markLineMapBmap": true, "heatMapBmap": true,"scatterMap":true,"scatterMapBmap":true,"relation":true
         };
 
         $scope.value_series_types = [
@@ -248,7 +254,8 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
             heatMapBmap: {keys: 2, groups: 0, filters: -1, values: 1},
             contrast: {keys: 1, groups: 0, filters: -1, values: 2},
             scatterMap:{keys: 2, groups: 0, filters: -1, values: 2},
-            scatterMapBmap:{keys: 2, groups: 0, filters: -1, values: 2}
+            scatterMapBmap:{keys: 2, groups: 0, filters: -1, values: 2},
+            relation: {keys: 2, groups: 2, filters: -1, values: 1}
         };
 
         //界面控制
@@ -844,6 +851,9 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
                             $scope.previewDivWidth = 12;
                             break;
                         case 'scatterMap':
+                            $scope.previewDivWidth = 12;
+                            break;
+                        case 'relation':
                             $scope.previewDivWidth = 12;
                             break;
                     }

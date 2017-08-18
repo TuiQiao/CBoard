@@ -2,7 +2,7 @@
  * Created by jintian on 2017/8/8.
  */
 cBoard.service('chartHeatMapBmapService', function () {
-    this.render = function (containerDom, option, scope, persist) {
+    this.render = function (containerDom, option, scope, persist,drill) {
         if (option == null) {
             containerDom.html("<div class=\"alert alert-danger\" role=\"alert\">No Data!</div>");
             return;
@@ -16,14 +16,26 @@ cBoard.service('chartHeatMapBmapService', function () {
         var max = 0;
         var min = 0;
         var seriesData = [];
-        var seriesName = data.series[0][0];
-        for (var j = 0; data.keys[0] && j < data.keys.length; j++) {
-            seriesData[j] = [parseFloat(data.keys[j][0]), parseFloat(data.keys[j][1]), parseFloat(data.data[0][j])];
-            if (max < parseInt(data.data[0][j])) {
-                max = parseInt(data.data[0][j]);
+        var addressN;
+        var addressL;
+        for(var j = 0; data.keys[0] && j < data.keys.length; j++){
+            if(data.keys[j].length > 1){
+                addressN = parseFloat(data.keys[j][0]);
+                addressL = parseFloat(data.keys[j][1]);
+            }else if(data.keys[j].length = 1){
+                addressN = parseFloat(data.keys[j][0].split(",")[0]);
+                addressL = parseFloat(data.keys[j][0].split(",")[1]);
+            }else{
+                addressN = null;
+                addressL = null;
             }
-            if (min > parseInt(data.data[0][j])) {
-                min = parseInt(data.data[0][j]);
+
+            seriesData[j] = [addressN,addressL,parseFloat(data.data[0][j])];
+            if (max < parseFloat(data.data[0][j])) {
+                max = parseFloat(data.data[0][j]);
+            }
+            if (min > parseFloat(data.data[0][j])) {
+                min = parseFloat(data.data[0][j]);
             }
         }
 

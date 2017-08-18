@@ -2,7 +2,7 @@
  * Created by jintian on 2017/8/10.
  */
 cBoard.service('chartScatterMapBmapService', function () {
-    this.render = function (containerDom, option, scope, persist) {
+    this.render = function (containerDom, option, scope, persist,drill) {
         return new CBoardBMapRender(containerDom, option).chart(null, persist);
     }
 
@@ -17,7 +17,7 @@ cBoard.service('chartScatterMapBmapService', function () {
 
         // series setting
         for(var j = 0 ; j < data.series.length ; j++){
-            max = 0;
+           // max = 0;
             serieData = [];
             for(var i = 0 ; i < data.keys.length ; i++){
                 if(data.keys[i].length > 2){
@@ -51,7 +51,7 @@ cBoard.service('chartScatterMapBmapService', function () {
                     coordinateSystem: 'bmap',
                     data: serieData,
                     symbolSize: function (val) {
-                        return val[2] * 20 / max;
+                        return val[2] * 30 / max;
                     },
                     label: {
                         normal: {

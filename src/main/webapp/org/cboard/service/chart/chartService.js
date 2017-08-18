@@ -160,7 +160,7 @@ cBoard.service('chartService', function ($q, dataService, chartPieService, chart
                     break;
                 case 'markLineMap':
                     chart = chartMarkLineMapService;
-                     break;
+                    break;
                 case 'liquidFill':
                     chart = chartLiquidFillService;
                     break;

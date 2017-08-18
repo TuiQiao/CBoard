@@ -393,5 +393,27 @@
     "SHOW": "Show",
     "ENTRIES": "entries",
     "EXPORT": "Export"
+  },
+  "HELP_MESSAGE":{
+    "SCATTERMAPBMAP":{
+      "ROW":"The two values are: 'longitude','latitude' ,'geographical name'; 3 values are: 'longitude', 'latitude', 'geographical name'."
+    },
+    "SCATTERMAP":{
+      "ROW":"The two values are: 'longitude', 'latitude', 'geographical name'; 3 values are: 'longitude', 'latitude', 'geographical name'."
+    },
+    "MARKLINEMAP":{
+      "ROW":"The two values are: 'longitude', 'latitude', 'geographical name'; 3 values are: 'longitude', 'latitude', 'geographical name'.",
+      "COLUMN":"Levy needs 2 or 3 values, 2 values are: 'longitude, latitude', 'geographical name'; 3 values are: 'longitude', 'latitude', 'geographical name'."
+    },
+    "MARKLINEMAPBMAP":{
+      "ROW":"The two values are: 'longitude', 'latitude', 'geographical name'; 3 values are: 'longitude', 'latitude', 'geographical name'.",
+      "COLUMN":"Levy needs 2 or 3 values, 2 values are: 'longitude, latitude', 'geographical name'; 3 values are: 'longitude', 'latitude', 'geographical name'."
+    },
+    "HEATMAP":{
+      "ROW":"The 1 values are: 'longitude', 'latitude'; 2 values are: 'longitude', 'latitude'."
+    },
+    "HEATMAPBMAP":{
+      "ROW":"The 1 values are: 'longitude', 'latitude'; 2 values are: 'longitude', 'latitude'."
+    }
   }
 }

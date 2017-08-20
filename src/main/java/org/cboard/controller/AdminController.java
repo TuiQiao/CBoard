@@ -72,6 +72,11 @@ public class AdminController {
         return adminSerivce.updateUser(jsonObject.getString("userId"), jsonObject.getString("loginName"), jsonObject.getString("userName"), jsonObject.getString("userPassword"));
     }
 
+    @RequestMapping(value = "/deleteUser")
+    public String deleteUser(@RequestParam(name = "userId") String userId) {
+        return adminSerivce.deleteUser(userId);
+    }
+
     @RequestMapping(value = "/getUserList")
     public List<DashboardUser> getUserList() {
         List<DashboardUser> list = userDao.getUserList();

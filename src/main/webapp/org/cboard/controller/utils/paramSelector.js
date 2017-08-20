@@ -26,6 +26,9 @@ cBoard.controller('paramSelector', function ($scope, $uibModalInstance, dataServ
     showValues();
     $scope.dbclickPush = function (o) {
         if ($scope.operate.equal) {
+            if($scope.param.values.length == 1 && (_.isUndefined($scope.param.values[0]) || $scope.param.values[0]=='')){
+                $scope.param.values.length = 0;
+            }
             $scope.param.values.push(o);
         }
         if ($scope.operate.openInterval) {
@@ -45,6 +48,9 @@ cBoard.controller('paramSelector', function ($scope, $uibModalInstance, dataServ
         }
     };
     $scope.pushValues = function (array) {
+        if($scope.param.values.length == 1 && (_.isUndefined($scope.param.values[0]) || $scope.param.values[0]=='')){
+            $scope.param.values.length = 0;
+        }
         if ($scope.operate.openInterval) {
             array.splice(1, array.length - 1);
         }
@@ -56,10 +62,11 @@ cBoard.controller('paramSelector', function ($scope, $uibModalInstance, dataServ
         });
     };
     $scope.selected = function (v) {
-        return _.indexOf($scope.param.values, v) == -1
+        return _.indexOf($scope.param.values, v) == -1;
     };
     $scope.filterType = function () {
         $scope.param.values = [];
+        $scope.param.values.length = 1;
         showValues();
     };
     $scope.close = function () {
@@ -67,6 +74,16 @@ cBoard.controller('paramSelector', function ($scope, $uibModalInstance, dataServ
     };
     $scope.ok = function () {
         $uibModalInstance.close();
+        $scope.param.values = _.filter($scope.param.values, function(e){
+                return e != null && !_.isUndefined(e);
+            }
+        );
         ok($scope.param);
+    };
+
+    $scope.initValues = function () {
+        if($scope.param.values.length==0){
+            $scope.param.values.length = 1;
+        }
     };
 });

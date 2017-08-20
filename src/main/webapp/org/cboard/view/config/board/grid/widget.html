@@ -42,12 +42,12 @@
                          style="cursor:move">
                         {{widget.name}}
                         <div class="box-tools pull-right">
-                            <button ng-if="!widget.relation" type="button" class="btn btn-box-tool"
+                            <button ng-if="!widget.relations" type="button" class="btn btn-box-tool"
                                     title="{{'COMMON.ADD_RELATIONS'|translate}}"
                                     ng-click="addRelations(widget)">
                                 <i class="fa fa-link"></i>
                             </button>
-                            <button ng-if="widget.relation" type="button" class="btn btn-box-tool"
+                            <button ng-if="widget.relations" type="button" class="btn btn-box-tool"
                                     title="{{'COMMON.DEL_RELATIONS'|translate}}"
                                     ng-click="delRelations(widget)">
                                 <i class="fa fa-unlink"></i>

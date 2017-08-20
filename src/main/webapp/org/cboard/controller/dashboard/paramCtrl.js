@@ -50,8 +50,8 @@ cBoard.controller('paramCtrl', function ($scope, $uibModal, $http) {
     $scope.init = function () {
         $scope.param = $scope.$parent.param;
         $scope.param.selects = [];
-        $scope.param.type = '=';
-        $scope.param.values = [];
+        if(!$scope.param.type) $scope.param.type = '=';
+        if(!$scope.param.values) $scope.param.values = [];
         if ($scope.param.paramType == 'slider') {
             var cfg = $scope.param.cfg;
             var _max = evalValue(_.result(cfg, 'max', null));

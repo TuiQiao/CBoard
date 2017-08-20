@@ -23,7 +23,7 @@ public class MenuService {
     static {
         menuList.add(new DashboardMenu(1, -1, "SIDEBAR.CONFIG", "config"));
         menuList.add(new DashboardMenu(2, 1, "SIDEBAR.DATA_SOURCE", "config.datasource"));
-        menuList.add(new DashboardMenu(3, 1, "SIDEBAR.CUBE", "config.dataset"));
+        menuList.add(new DashboardMenu(3, 1, "SIDEBAR.DATASET", "config.dataset"));
         menuList.add(new DashboardMenu(4, 1, "SIDEBAR.WIDGET", "config.widget"));
         menuList.add(new DashboardMenu(5, 1, "SIDEBAR.DASHBOARD", "config.board"));
         menuList.add(new DashboardMenu(6, 1, "SIDEBAR.DASHBOARD_CATEGORY", "config.category"));

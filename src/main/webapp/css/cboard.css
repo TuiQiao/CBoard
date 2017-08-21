@@ -165,6 +165,8 @@
 .cScatterMap.disabled{ background-image: url(../imgs/scatterMap.png); }
 .cScatterMapBmap{ background-image: url(../imgs/scatterMapBmap-active.png); }
 .cScatterMapBmap.disabled{ background-image: url(../imgs/scatterMapBmap.png);}
+.cRelation{ background-image: url(../imgs/relation-active.png); }
+.cRelation.disabled{ background-image: url(../imgs/relation.png); }
 
 .chart-type a.active{
     background-color: #FFF;

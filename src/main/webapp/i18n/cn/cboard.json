@@ -161,6 +161,7 @@
       "TIPS_DIM_NUM_0": "0",
       "TIPS_DIM_NUM_1": "1",
       "TIPS_DIM_NUM_2": "2",
+      "TIPS_DIM_NUM_1_2": "1个或2个",
       "TIPS_DIM_NUM_0_MORE": "0个或多个",
       "TIPS_DIM_NUM_1_MORE": "1个或多个",
       "FROM_CACHE": "从缓存加载",
@@ -173,6 +174,7 @@
       "ADD_NEW_STYLE": "添加样式",
       "LINE_STYLE": "线条样式",
       "STYLE_PROPORTION": "比例",
+      "NODE_PROPORTION": "节点比例",
       "STYLE_COLOR": "颜色",
       "WORD_CLOUD": "标签云",
       "TREE_MAP": "矩形树图",
@@ -202,7 +204,8 @@
       "DIAMOND": "菱形",
       "CONTRAST": "对比图",
       "SCATTER_MAP":"散点地图（本地）",
-      "SCATTER_MAP_BMAP":"散点地图（百度）"
+      "SCATTER_MAP_BMAP":"散点地图（百度）",
+      "RELATION": "力导向图"
     },
     "DASHBOARD": {
       "DASHBOARD": "看板",

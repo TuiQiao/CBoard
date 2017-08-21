@@ -565,6 +565,7 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
             }
             return true;
         };
+
         var changeChartStatus = function () {
             for (var type in $scope.chart_types_status) {
                 var rule = $scope.configRule[type];
@@ -581,6 +582,9 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
                         if (rule[k] == 2) {
                             if (k == 'values') {
                                 r = (_.size(flattenValues) >= 1);
+                                if(type == 'contrast' ){
+                                    r = (_.size(flattenValues) == 2); //严格限制values数量为2
+                                }
                             } else {
                                 r = (_.size(config[k]) >= 1);
                             }

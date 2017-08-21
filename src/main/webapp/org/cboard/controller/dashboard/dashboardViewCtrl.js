@@ -292,6 +292,7 @@ cBoard.controller('dashboardViewCtrl', function ($timeout, $rootScope, $scope, $
                     }
                 });
             });
+            location.href = location.href.split("?")[0];
         }
 
         _.each($scope.board.layout.rows, function (row) {
@@ -319,7 +320,7 @@ cBoard.controller('dashboardViewCtrl', function ($timeout, $rootScope, $scope, $
                 });
             });
         });
-
+        updateParamTitle();
         //将点击的参数赋值到relationFilters中
         if(_.isUndefined($("#relations").val())){
             return;
@@ -353,7 +354,6 @@ cBoard.controller('dashboardViewCtrl', function ($timeout, $rootScope, $scope, $
                 }
             });
         });
-        updateParamTitle();
     };
 
     $scope.paramToString = function (row) {

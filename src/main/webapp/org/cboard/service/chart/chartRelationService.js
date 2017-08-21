@@ -58,12 +58,6 @@ cBoard.service('chartRelationService', function () {
             }
         }
         var option = {
-            title : {
-                text: '力导向图',
-                subtext: '关系图',
-                x:'right',
-                y:'bottom'
-            },
             tooltip : {
                 trigger: 'item',
                 formatter: function(params){

@@ -277,15 +277,13 @@ cBoard.controller('dashboardViewCtrl', function ($timeout, $rootScope, $scope, $
         $scope.relationFilters = [];
 
         //将点击的参数赋值到看板上的参数中
+        //"{"targetId":3,"params":[{"targetField":"logo","value":"iphone"},{"targetField":"logo1","value":"上海市"}]}" targetField==param.name
         if(location.href.split("?")[1]) {
             var urlParam = JSON.parse(decodeURI(location.href.split("?")[1]));
             _.each($scope.board.layout.rows, function (row) {
                 _.each(row.params, function (param) {
-                    var p;
-                    _.each(param.col, function (col) {
-                        p = _.find(urlParam.params, function (param) {
-                            return param.targetField.split("(")[0] == col.column && param.targetField.split("(")[1].split(")")[0] == col.datasetId;
-                        });
+                    var p = _.find(urlParam.params, function (e) {
+                        return e.targetField == param.name;
                     });
                     if(p){
                         param.values.push(p.value);

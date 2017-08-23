@@ -8,13 +8,20 @@ cBoard.controller('renderCtrl', function ($timeout, $rootScope, $scope, $state, 
     var buildRender = function (w, reload) {
         w.render = function (content, optionFilter, scope) {
             w.persist = {};
-            chartService.render(content, w.widget.data, optionFilter, scope, reload, w.persist).then(function (d) {
-                w.realTimeTicket = d;
+            var charType = w.widget.data.config.chart_type;
+            if(charType == 'markLineMapBmap' || charType == 'heatMapBmap' || charType == 'scatterMapBmap'){
+                chartService.render(content, w.widget.data, optionFilter, scope, reload, w.persist);
                 w.loading = false;
                 $scope.l--;
-            }, function (error) {
-                $scope.l--;
-            });
+            } else {
+                chartService.render(content, w.widget.data, optionFilter, scope, reload, w.persist).then(function (d) {
+                    w.realTimeTicket = d;
+                    w.loading = false;
+                    $scope.l--;
+                }, function (error) {
+                    $scope.l--;
+                });
+            }
         };
     };
 

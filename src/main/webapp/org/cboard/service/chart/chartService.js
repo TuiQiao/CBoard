@@ -6,8 +6,7 @@ cBoard.service('chartService', function ($q, dataService, chartPieService, chart
                                          chartSankeyService, chartTableService, chartKpiService, chartRadarService,
                                          chartMapService, chartScatterService, chartGaugeService, chartWordCloudService,
                                          chartTreeMapService, chartAreaMapService, chartHeatMapCalendarService, chartHeatMapTableService,
-                                         chartLiquidFillService, chartMarkLineMapService, chartHeatMapService, chartMarkLineMapBmapService,
-                                         chartHeatMapBmapService, chartScatterMapService, chartScatterMapBmapService, chartContrastService) {
+                                         chartLiquidFillService, chartContrastService,chartChinaMapService, chartChinaMapBmapService) {
 
         this.render = function (containerDom, widget, optionFilter, scope, reload, persist, relations) {
             var deferred = $q.defer();
@@ -86,7 +85,7 @@ cBoard.service('chartService', function ($q, dataService, chartPieService, chart
                         };
                     }
                 } finally {
-                    if (widget.config.chart_type == 'markLineMapBmap' || widget.config.chart_type == 'heatMapBmap' || widget.config.chart_type == 'scatterMapBmap') {
+                    if (widget.config.chart_type == 'chinaMapBmap') {
                         chart.render(containerDom, option, scope, persist, data.drill);
                     } else {
                         deferred.resolve(chart.render(containerDom, option, scope, persist, data.drill, relations, widget.config));
@@ -158,30 +157,18 @@ cBoard.service('chartService', function ($q, dataService, chartPieService, chart
                 case 'heatMapTable':
                     chart = chartHeatMapTableService;
                     break;
-                case 'markLineMap':
-                    chart = chartMarkLineMapService;
-                    break;
                 case 'liquidFill':
                     chart = chartLiquidFillService;
-                    break;
-                case 'heatMap':
-                    chart = chartHeatMapService;
-                    break;
-                case 'markLineMapBmap':
-                    chart = chartMarkLineMapBmapService;
-                    break;
-                case 'heatMapBmap':
-                    chart = chartHeatMapBmapService;
                     break;
                 case 'contrast':
                     chart = chartContrastService;
                     break;
-                case 'scatterMap':
-                    chart = chartScatterMapService;
-                    break;
-                case 'scatterMapBmap':
-                    chart = chartScatterMapBmapService;
-                    break;
+                case 'chinaMap':
+                    chart = chartChinaMapService;
+                    break
+                case 'chinaMapBmap':
+                    chart = chartChinaMapBmapService;
+                    break
             }
             return chart;
         };

@@ -9,7 +9,7 @@ cBoard.controller('renderCtrl', function ($timeout, $rootScope, $scope, $state, 
         w.render = function (content, optionFilter, scope) {
             w.persist = {};
             var charType = w.widget.data.config.chart_type;
-            if(charType == 'markLineMapBmap' || charType == 'heatMapBmap' || charType == 'scatterMapBmap'){
+            if(chartType == 'chinaMapBmap'){
                 chartService.render(content, w.widget.data, optionFilter, scope, reload, w.persist);
                 w.loading = false;
                 $scope.l--;

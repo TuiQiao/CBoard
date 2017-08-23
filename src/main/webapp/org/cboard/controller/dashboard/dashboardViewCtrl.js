@@ -88,7 +88,7 @@ cBoard.controller('dashboardViewCtrl', function ($timeout, $rootScope, $scope, $
         widget.render = function (content, optionFilter, scope) {
             // 百度地图特殊处理
             var charType = injectFilter(widget.widget).data.config.chart_type;
-            if(charType == 'markLineMapBmap' || charType == 'heatMapBmap' || charType == 'scatterMapBmap'){
+            if(charType == 'chinaMapBmap'){
                 chartService.render(content, injectFilter(widget.widget).data, optionFilter, scope, reload);
                 widget.loading = false;
             } else {
@@ -433,7 +433,7 @@ cBoard.controller('dashboardViewCtrl', function ($timeout, $rootScope, $scope, $
         widget.render = function (content, optionFilter, scope) {
             //百度地图特殊处理
             var charType = widget.widget.data.config.chart_type;
-            if(charType == 'markLineMapBmap' || charType == 'heatMapBmap' || charType == 'scatterMapBmap'){
+            if(charType == 'chinaMapBmap'){
                 chartService.render(content, widget.widget.data, optionFilter, scope, true);
                 widget.loading = false;
             } else {

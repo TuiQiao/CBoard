@@ -151,20 +151,13 @@
 .cHeatMapCalendar.disabled{ background-image: url(../imgs/heatMapCalendar.png); }
 .cHeatMapTable{ background-image: url(../imgs/heatMapTable-active.png); }
 .cHeatMapTable.disabled{ background-image: url(../imgs/heatMapTable.png); }
-.cMarkLineMap{ background-image: url(../imgs/markLineMap-active.png);}
-.cMarkLineMap.disabled{ background-image: url(../imgs/markLineMap.png);}
 .cLiquidFill{ background-image: url(../imgs/liquidFill-active.png); }
 .cLiquidFill.disabled{ background-image: url(../imgs/liquidFill.png); }
-.cHeatMap{ background-image: url(../imgs/heatMap-active.png); }
-.cHeatMap.disabled{ background-image: url(../imgs/heatMap.png); }
-.cMarkLineMapBmap{ background-image: url(../imgs/markLineMapBmap-active.png); }
-.cMarkLineMapBmap.disabled{ background-image: url(../imgs/markLineMapBmap.png);}
-.cHeatMapBmap{ background-image: url(../imgs/heatMapBmap-active.png); }
-.cHeatMapBmap.disabled{ background-image: url(../imgs/heatMapBmap.png); }
-.cScatterMap{ background-image: url(../imgs/scatterMap-active.png); }
-.cScatterMap.disabled{ background-image: url(../imgs/scatterMap.png); }
-.cScatterMapBmap{ background-image: url(../imgs/scatterMapBmap-active.png); }
-.cScatterMapBmap.disabled{ background-image: url(../imgs/scatterMapBmap.png);}
+.cChinaMap{ background-image: url(../imgs/chinaMap-active.png); }
+.cChinaMap.disabled{ background-image: url(../imgs/chinaMap.png); }
+.cChinaMapBmap{ background-image: url(../imgs/chinaMapBmap-active.png); }
+.cChinaMapBmap.disabled{ background-image: url(../imgs/chinaMapBmap.png); }
+
 
 .chart-type a.active{
     background-color: #FFF;

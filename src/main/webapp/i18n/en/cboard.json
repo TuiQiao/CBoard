@@ -202,7 +202,9 @@
       "DIAMOND": "Diamond",
       "CONTRAST": "Contrast",
       "SCATTER_MAP":"Scatter Map (Local)",
-      "SCATTER_MAP_BMAP":"Scatter Map (Bmap)"
+      "SCATTER_MAP_BMAP":"Scatter Map (Bmap)",
+      "CHINA_MAP":"China Map Combination",
+      "CHINA_MAP_BMAP":"China Map Bmap"
     },
     "DASHBOARD": {
       "CATEGORY": "Category",

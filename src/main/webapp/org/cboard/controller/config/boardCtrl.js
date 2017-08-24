@@ -552,7 +552,9 @@ cBoard.controller('boardCtrl', function ($rootScope, $scope, $http, ModalUtils, 
             if (row.type == "param") {
                 _.each(row.params, function(param){
                     _.each(param.col, function(col){
-                        cols.push(col.column+"("+col.datasetId+")");
+                        if($.inArray(param.name, cols) == -1){
+                            cols.push(param.name); //col.column+"("+col.datasetId+")"
+                        }
                     });
                 });
             }

@@ -157,7 +157,8 @@
 .cChinaMap.disabled{ background-image: url(../imgs/chinaMap.png); }
 .cChinaMapBmap{ background-image: url(../imgs/chinaMapBmap-active.png); }
 .cChinaMapBmap.disabled{ background-image: url(../imgs/chinaMapBmap.png); }
-
+.cRelation{ background-image: url(../imgs/relation-active.png); }
+.cRelation.disabled{ background-image: url(../imgs/relation.png); }
 
 .chart-type a.active{
     background-color: #FFF;

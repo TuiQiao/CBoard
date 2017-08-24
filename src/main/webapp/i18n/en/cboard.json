@@ -7,7 +7,7 @@
     "LOADING": "Loading...",
     "REFRESH": "Refresh",
     "EDIT": "Edit",
-    "EDIT_PARAM": "Edit Param",
+    "EDIT_DEFAULT_VALUE": "Edit Default Value",
     "CONFIRM_DELETE": "Confirm to Delete?",
     "CONFIRM_SAVE_BEFORE_PREVIEW": "Need save board before preview, confirm to save?",
     "NOT_ALLOWED_TO_DELETE_BECAUSE_BE_DEPENDENT": "Not allowed to delete, because be dependent",
@@ -161,6 +161,7 @@
       "TIPS_DIM_NUM_0": "0",
       "TIPS_DIM_NUM_1": "1",
       "TIPS_DIM_NUM_2": "2",
+      "TIPS_DIM_NUM_1_2": "1 or 2",
       "TIPS_DIM_NUM_0_MORE": "0 or more",
       "TIPS_DIM_NUM_1_MORE": "1 or more",
       "FROM_CACHE": "From Cache",
@@ -173,6 +174,7 @@
       "ADD_NEW_STYLE": "Add New Style",
       "LINE_STYLE": "Line Style",
       "STYLE_PROPORTION": "Proportion",
+      "NODE_PROPORTION": "Node Proportion",
       "STYLE_COLOR": "Color",
       "WORD_CLOUD": "Word Cloud",
       "TREE_MAP": "Tree Map",
@@ -204,7 +206,8 @@
       "SCATTER_MAP":"Scatter Map",
       "SCATTER_MAP_BMAP":"Scatter Map (Bmap)",
       "CHINA_MAP":"China Map Combination",
-      "CHINA_MAP_BMAP":"China Map Bmap"
+      "CHINA_MAP_BMAP":"China Map Bmap",
+      "RELATION": "Force"
     },
     "DASHBOARD": {
       "CATEGORY": "Category",

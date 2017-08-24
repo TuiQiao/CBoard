@@ -8,7 +8,7 @@ cBoard.controller('renderCtrl', function ($timeout, $rootScope, $scope, $state, 
     var buildRender = function (w, reload) {
         w.render = function (content, optionFilter, scope) {
             w.persist = {};
-            var charType = w.widget.data.config.chart_type;
+            var chartType = w.widget.data.config.chart_type;
             if(chartType == 'chinaMapBmap'){
                 chartService.render(content, w.widget.data, optionFilter, scope, reload, w.persist);
                 w.loading = false;

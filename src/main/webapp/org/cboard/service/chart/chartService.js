@@ -6,7 +6,7 @@ cBoard.service('chartService', function ($q, dataService, chartPieService, chart
                                          chartSankeyService, chartTableService, chartKpiService, chartRadarService,
                                          chartMapService, chartScatterService, chartGaugeService, chartWordCloudService,
                                          chartTreeMapService, chartAreaMapService, chartHeatMapCalendarService, chartHeatMapTableService,
-                                         chartLiquidFillService, chartContrastService,chartChinaMapService, chartChinaMapBmapService) {
+                                         chartLiquidFillService, chartContrastService,chartChinaMapService, chartChinaMapBmapService,chartRelationService) {
 
         this.render = function (containerDom, widget, optionFilter, scope, reload, persist, relations) {
             var deferred = $q.defer();
@@ -169,6 +169,9 @@ cBoard.service('chartService', function ($q, dataService, chartPieService, chart
                 case 'chinaMapBmap':
                     chart = chartChinaMapBmapService;
                     break
+                case 'relation':
+                    chart = chartRelationService;
+                    break;
             }
             return chart;
         };

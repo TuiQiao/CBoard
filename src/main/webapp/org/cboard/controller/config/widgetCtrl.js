@@ -119,6 +119,12 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
                 row: translate('CONFIG.WIDGET.TIPS_DIM_NUM_1_MORE'),
                 column: translate('CONFIG.WIDGET.TIPS_DIM_NUM_0_MORE'),
                 measure: translate('CONFIG.WIDGET.TIPS_DIM_NUM_1_MORE')
+            },
+            {
+                name: translate('CONFIG.WIDGET.RELATION'), value: 'relation', class: 'cRelation',
+                row: translate('CONFIG.WIDGET.TIPS_DIM_NUM_1_2'),
+                column: translate('CONFIG.WIDGET.TIPS_DIM_NUM_1_2'),
+                measure: translate('CONFIG.WIDGET.TIPS_DIM_NUM_1')
             }
         ];
 
@@ -127,7 +133,7 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
             "funnel": true, "sankey": true, "radar": true, "map": true,
             "scatter": true, "gauge": true, "wordCloud": true, "treeMap": true,
             "heatMapCalendar": true, "heatMapTable": true, "liquidFill": true,
-            "areaMap": true, "contrast": true,"chinaMap":true,"chinaMapBmap":true
+            "areaMap": true, "contrast": true,"chinaMap":true,"chinaMapBmap":true,"relation":true
         };
 
         $scope.value_series_types = [
@@ -225,7 +231,8 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
             liquidFill: {keys: 0, groups: 0, filters: -1, values: 1},
             contrast: {keys: 1, groups: 0, filters: -1, values: 2},
             chinaMap:{keys: 2, groups: -1, filters: -1, values: 2},
-            chinaMapBmap:{keys: 2, groups: -1, filters: -1, values: 2}
+            chinaMapBmap:{keys: 2, groups: -1, filters: -1, values: 2},
+            relation: {keys: 2, groups: 2, filters: -1, values: 1}
         };
 
         //界面控制
@@ -534,6 +541,7 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
             }
             return true;
         };
+
         var changeChartStatus = function () {
             for (var type in $scope.chart_types_status) {
                 var rule = $scope.configRule[type];
@@ -550,6 +558,9 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
                         if (rule[k] == 2) {
                             if (k == 'values') {
                                 r = (_.size(flattenValues) >= 1);
+                                if(type == 'contrast' ){
+                                    r = (_.size(flattenValues) == 2); //限制values数量为2
+                                }
                             } else {
                                 r = (_.size(config[k]) >= 1);
                             }
@@ -856,6 +867,9 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
                             $scope.previewDivWidth = 12;
                             break;
                         case 'chinaMap':
+                            $scope.previewDivWidth = 12;
+                            break;
+                        case 'relation':
                             $scope.previewDivWidth = 12;
                             break;
                     }

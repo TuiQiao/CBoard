@@ -205,7 +205,7 @@
       "CONTRAST": "对比图",
       "SCATTER_MAP":"散点地图",
       "CHINA_MAP":"中国地图组合",
-      "CHINA_MAP_BMAP":"中国百度地图"
+      "CHINA_MAP_BMAP":"中国百度地图",
       "RELATION": "力导向图"
     },
     "DASHBOARD": {

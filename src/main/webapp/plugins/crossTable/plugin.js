@@ -99,11 +99,10 @@ var crossTable = {
         data.length ? this.renderPagination(dataPage.length, 1, pageObj, $('.' + p_class + ' .page>ul')[0]) : null;
         this.clickPageNum(dataPage, chartConfig, drill, p_class);
         this.clickNextPrev(dataPage.length, pageObj, p_class);
-        this.selectDataNum(data, chartConfig.groups.length + 1, chartConfig, drill, p_class);
+        this.selectDataNum(data, chartConfig.groups.length + 1, chartConfig, drill, p_class, "table_" + random, args.render);
         this.export(random, data);
-        this.clickDrill("table_" + random, drill, args.render);
     },
-    clickDrill: function (t_class, drill, render) {
+    bandDrillEvent: function (t_class, drill, render) {
         $('.' + t_class + ' .table_drill_cell[drill-down]').click(function(){
             var down = $(this).attr('drill-down');
             var value = $(this).html();
@@ -227,7 +226,7 @@ var crossTable = {
         }
         return html;
     },
-    selectDataNum: function (data, num, chartConfig, drill, random) {
+    selectDataNum: function (data, num, chartConfig, drill, random, t_class, render) {
         var _this = this;
         $('.' + random).on('change', '.optionNum select', function (e) {
             var pageDataNum = e.target.value;
@@ -238,7 +237,7 @@ var crossTable = {
             tbody.innerHTML = (_this.render(dataPage[0], chartConfig, drill));
             _this.renderPagination(dataPage.length, 1, null, dom);
             $('.' + random).off('click');
-            _this.clickPageNum(dataPage, chartConfig, random);
+            _this.clickPageNum(dataPage, chartConfig, drill, random);
             var pageObj = {
                 data: dataPage,
                 chartConfig: chartConfig,
@@ -246,6 +245,7 @@ var crossTable = {
             };
             _this.clickNextPrev(dataPage.length, pageObj, random);
         });
+        _this.bandDrillEvent(t_class, drill, render);
     },
     clickPageNum: function (data, chartConfig, drill, random) {
         var _this = this;
@@ -264,6 +264,9 @@ var crossTable = {
         });
     },
     renderPagination: function (pageCount, pageNumber, pageObj, target) {
+        if (pageCount == 1) {
+            return  target.innerHTML = '';
+        }
         var liStr = '<li><a class="previewLink">' + cboardTranslate("CROSS_TABLE.PREVIOUS_PAGE") + '</a></li>';
         if (pageCount < 10) {
             for (var a = 0; a < pageCount; a++) {

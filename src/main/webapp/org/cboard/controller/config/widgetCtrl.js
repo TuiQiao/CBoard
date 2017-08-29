@@ -153,8 +153,8 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
             "funnel": true, "sankey": true, "radar": true, "map": true,
             "scatter": true, "gauge": true, "wordCloud": true, "treeMap": true,
             "heatMapCalendar": true, "heatMapTable": true, "liquidFill": true,
-            "areaMap": true, "markLineMap": true, "heatMap": true,"contrast": true,
-            "markLineMapBmap": true, "heatMapBmap": true,"scatterMap":true,"scatterMapBmap":true
+            "areaMap": true, "markLineMap": true, "heatMap": true, "contrast": true,
+            "markLineMapBmap": true, "heatMapBmap": true, "scatterMap": true, "scatterMapBmap": true
         };
 
         $scope.value_series_types = [
@@ -240,15 +240,15 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
             treeMap: {keys: 2, groups: 0, filters: -1, values: 1},
             areaMap: {keys: 2, groups: -1, filters: -1, values: 1},
             heatMapCalendar: {keys: 1, groups: 0, filters: -1, values: 1},
-            heatMapTable: {keys: -1, groups: -1, filters: -1, values: 1},
+            heatMapTable: {keys: 2, groups: 2, filters: -1, values: 1},
             markLineMap: {keys: 2, groups: 2, filters: -1, values: 1},
             liquidFill: {keys: 0, groups: 0, filters: -1, values: 1},
             heatMap: {keys: 2, groups: 0, filters: -1, values: 1},
             markLineMapBmap: {keys: 2, groups: 2, filters: -1, values: 1},
             heatMapBmap: {keys: 2, groups: 0, filters: -1, values: 1},
             contrast: {keys: 1, groups: 0, filters: -1, values: 2},
-            scatterMap:{keys: 2, groups: 0, filters: -1, values: 2},
-            scatterMapBmap:{keys: 2, groups: 0, filters: -1, values: 2}
+            scatterMap: {keys: 2, groups: 0, filters: -1, values: 2},
+            scatterMapBmap: {keys: 2, groups: 0, filters: -1, values: 2}
         };
 
         //界面控制
@@ -431,6 +431,7 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
             $scope.optFlag = 'new';
             $scope.customDs = false;
             $scope.schema = null;
+            cleanPreview();
             addValidateWatch();
         };
 
@@ -493,7 +494,20 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
             $scope.$watch('curWidget.config.groups', changeChartStatus, true);
             $scope.$watch('curWidget.config.values', changeChartStatus, true);
             $scope.$watch('curWidget.config.filters', changeChartStatus, true);
+            addHelpMessage();
             addValidateWatch();
+        };
+
+        var addHelpMessage = function () {
+            var rowKey = 'HELP_MESSAGE.' + $scope.curWidget.config.chart_type.toUpperCase() + ".ROW";
+            var columnKey = 'HELP_MESSAGE.' + $scope.curWidget.config.chart_type.toUpperCase() + ".COLUMN";
+            var filterKey = 'HELP_MESSAGE.' + $scope.curWidget.config.chart_type.toUpperCase() + ".FILTER";
+            var valueKey = 'HELP_MESSAGE.' + $scope.curWidget.config.chart_type.toUpperCase() + ".VALUE";
+            var row = translate(rowKey) == rowKey ? null : translate(rowKey);
+            var column = translate(columnKey) == columnKey ? null : translate(columnKey);
+            var filter = translate(filterKey) == filterKey ? null : translate(filterKey);
+            var value = translate(valueKey) == valueKey ? null : translate(valueKey);
+            $scope.helpMessage = {row: row, column: column, filter: filter, value: value};
         };
 
         var addValidateWatch = function () {
@@ -549,7 +563,7 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
                 var rule = $scope.configRule[type];
                 var config = $scope.curWidget.config;
                 var flattenValues = [];
-                _.each(config.values, function(v) {
+                _.each(config.values, function (v) {
                     flattenValues = flattenValues.concat(v.cols);
                 });
                 if (_.size(config.keys) == 0 && _.size(config.groups) == 0 && _.size(flattenValues) == 0) {
@@ -595,6 +609,8 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
             $scope.curWidget.config.keys = oldConfig.keys;
             $scope.curWidget.config.groups = oldConfig.groups;
             $scope.curWidget.config.values = [];
+
+            addHelpMessage();
 
             $scope.curWidget.config.filters = oldConfig.filters;
             switch ($scope.curWidget.config.chart_type) {
@@ -734,7 +750,7 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
 
         $scope.previewQuery = function () {
             $('#viewQuery_widget').html("");
-            $timeout(function(){
+            $timeout(function () {
                 angular.element('#viewQuery_widget_tab').trigger('click');
             });
             $scope.loadingPre = true;
@@ -753,14 +769,20 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
 
         $scope.preview = function () {
             $('#preview_widget').html("");
-            $timeout(function(){
+            $timeout(function () {
                 angular.element('#preview_widget_tab').trigger('click');
             });
             $scope.loadingPre = true;
+            // --- start ---
+            // 添加echarts3.6.2后这里除了第一次可以加载echarts图表，再次加载无法显示图表。
+            // 完全无法找到问题下，出于无奈嵌套了一层后发现可以显示图表。囧！！
+            // 具体原因没有找到，求大神帮忙解决，thanks！
+            $('#preview_widget').html("<div id='preview' style='min-height: 300px; user-select: text;'></div>");
+            // --- end ---
             var charType = $scope.curWidget.config.chart_type;
             //百度地图特殊处理
             if (charType == 'markLineMapBmap' || charType == 'heatMapBmap' || charType == 'scatterMapBmap') {
-                chartService.render($('#preview_widget'), {
+                chartService.render($('#preview'), {
                     config: $scope.curWidget.config,
                     datasource: $scope.datasource ? $scope.datasource.id : null,
                     query: $scope.curWidget.query,
@@ -768,12 +790,6 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
                 });
                 $scope.loadingPre = false;
             } else {
-                // --- start ---
-                // 添加echarts3.6.2后这里除了第一次可以加载echarts图表，再次加载无法显示图表。
-                // 完全无法找到问题下，出于无奈嵌套了一层后发现可以显示图表。囧！！
-                // 具体原因没有找到，求大神帮忙解决，thanks！
-                $('#preview_widget').html("<div id='preview' style='min-height: 300px; user-select: text;'></div>");
-                // --- end ---
                 chartService.render($('#preview'), {
                     config: $scope.curWidget.config,
                     datasource: $scope.datasource ? $scope.datasource.id : null,
@@ -872,6 +888,17 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
             });
         };
 
+        $scope.initColorPicker =  function (index) {
+            $timeout(function() {
+                $("#color_"+index).colorpicker()
+                    .on("changeColor", function(e){
+                        if($scope.curWidget.config.styles[e.target.id.split("_")[1]]){
+                            $scope.curWidget.config.styles[e.target.id.split("_")[1]].color = e.color.toHex();
+                        }
+                    });
+            }, 100,true);
+        };
+
         var saveWgtCallBack = function (serviceStatus) {
             if (serviceStatus.status == '1') {
                 getWidgetList();
@@ -954,7 +981,7 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
             $http.post("dashboard/checkWidget.do", {id: widget.id}).success(function (response) {
                 if (response.status == '1') {
                     doEditWgt(widget);
-                    if($scope.customDs == true) $scope.doConfigParams();
+                    if ($scope.customDs == true) $scope.doConfigParams();
                 } else {
                     var d = widget.data.datasetId ? 'CONFIG.WIDGET.DATASET' : 'CONFIG.WIDGET.DATA_SOURCE';
                     ModalUtils.alert(translate("ADMIN.CONTACT_ADMIN") + "：" + translate(d) + '/' + response.msg, "modal-danger", "lg");
@@ -962,7 +989,7 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
             });
         };
 
-        $scope.editCurWgt = function() {
+        $scope.editCurWgt = function () {
             var wgt = _.find($scope.widgetList, function (w) {
                 return w.id == $scope.widgetId;
             });
@@ -1004,7 +1031,7 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
             addWatch();
         };
 
-        $scope.doCancel = function() {
+        $scope.doCancel = function () {
             if ($scope.optFlag == 'new') {
                 $scope.newConfig();
                 $scope.filterSelect = {};
@@ -1128,7 +1155,7 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
             }
         };
 
-        $scope.getOptionsView = function() {
+        $scope.getOptionsView = function () {
             var basePath = 'org/cboard/view/config/chart/options/';
             if ($scope.curWidget.config && $scope.curWidget.config.chart_type) {
                 return basePath + $scope.curWidget.config.chart_type + '.html';
@@ -1539,11 +1566,11 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
             var province = _.find($scope.provinces, function (e) {
                 return e.code == $scope.curWidget.config.province.code;
             });
-            if(province && province.cities){
+            if (province && province.cities) {
                 $scope.cities = province.cities;
-            }else if($scope.curWidget.config.city && $scope.curWidget.config.city.code){
+            } else if ($scope.curWidget.config.city && $scope.curWidget.config.city.code) {
                 $scope.cities = [];
-                $scope.curWidget.config.city.code="";
+                $scope.curWidget.config.city.code = "";
             }
         }
         /** js tree related End... **/

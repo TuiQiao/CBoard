@@ -9,7 +9,7 @@ cBoard.service('chartService', function ($q, dataService, chartPieService, chart
                                          chartLiquidFillService, chartMarkLineMapService, chartHeatMapService, chartMarkLineMapBmapService,
                                          chartHeatMapBmapService, chartScatterMapService, chartScatterMapBmapService, chartContrastService) {
 
-        this.render = function (containerDom, widget, optionFilter, scope, reload, persist, relations) {
+        this.render = function (containerDom, widget, optionFilter, scope, reload, persist, relation) {
             var deferred = $q.defer();
             var chart = getChartServices(widget.config);
             dataService.getDataSeries(widget.datasource, widget.query, widget.datasetId, widget.config, function (data) {
@@ -89,7 +89,7 @@ cBoard.service('chartService', function ($q, dataService, chartPieService, chart
                     if (widget.config.chart_type == 'markLineMapBmap' || widget.config.chart_type == 'heatMapBmap' || widget.config.chart_type == 'scatterMapBmap') {
                         chart.render(containerDom, option, scope, persist, data.drill);
                     } else {
-                        deferred.resolve(chart.render(containerDom, option, scope, persist, data.drill, relations, widget.config));
+                        deferred.resolve(chart.render(containerDom, option, scope, persist, data.drill, relation, widget.config));
                     }
                 }
             }, reload);
@@ -160,7 +160,7 @@ cBoard.service('chartService', function ($q, dataService, chartPieService, chart
                     break;
                 case 'markLineMap':
                     chart = chartMarkLineMapService;
-                    break;
+                     break;
                 case 'liquidFill':
                     chart = chartLiquidFillService;
                     break;
@@ -175,7 +175,6 @@ cBoard.service('chartService', function ($q, dataService, chartPieService, chart
                     break;
                 case 'contrast':
                     chart = chartContrastService;
-                    break;
                 case 'scatterMap':
                     chart = chartScatterMapService;
                     break;

@@ -7,7 +7,6 @@
     "LOADING": "玩命加载中...",
     "REFRESH": "刷新",
     "EDIT": "编辑",
-    "EDIT_PARAM": "设置默认值",
     "CONFIRM_DELETE": "真的想好了要删除吗?",
     "CONFIRM_SAVE_BEFORE_PREVIEW": "预览之前需要保存，确定保存？",
     "NOT_ALLOWED_TO_DELETE_BECAUSE_BE_DEPENDENT": "不允许删除，因为被依赖！",
@@ -27,7 +26,6 @@
     "LAST10D_TIMESTAMP": "最近10天(时间戳)",
     "LAST3H_TIMESTAMP": "最近3小时(时间戳)",
     "LAST60MIN_TIMESTAMP": "最近60分钟(时间戳)",
-    "LOGIN_NAME": "当前登录用户",
     "FILTER_GROUP": "可选过滤",
     "SAVE_AS": "另存为",
     "PARAM": "条件",
@@ -36,8 +34,8 @@
     "WANRING": "警告！",
     "COLLAPSE": "最小化",
     "REMOVE": "关闭",
-    "ADD_RELATIONS": "添加关联",
-    "DEL_RELATIONS": "删除关联",
+    "ADD_RELATION": "添加关联",
+    "DEL_RELATION": "删除关联",
     "DATE": "日期",
     "VALUE": "值"
   },
@@ -69,7 +67,7 @@
     "CONFIRM_PASSWORD": "确认密码"
   },
   "FOOTER": {
-    "COPYRIGHT": "上海致宇信息技术有限公司",
+    "COPYRIGHT": "携程支付中心",
     "VERSION": "版本"
   },
   "DASHBOARD": {
@@ -258,10 +256,7 @@
       "DATA_REFRESH_TIME":"数据刷新时间",
       "WIDGET_TARGET":"关联图表",
       "WIDGET_FIELDS":"图表维度",
-      "WIDGET_TARGET_FIELDS":"关联图表维度",
-      "BOARD_TARGET":"关联看板",
-      "BOARD_TARGET_PARAMS":"关联看板参数",
-      "RELATION":"关联"
+      "WIDGET_TARGET_FIELDS":"关联图表维度"
     },
     "CATEGORY": {
       "NAME": "看板分类名称",
@@ -317,8 +312,7 @@
       "FAIL": "失败",
       "FINISH": "完成",
       "PROCESSING": "处理中",
-      "STATUS": "状态",
-      "SEND_MAIL": "发送邮件"
+      "STATUS": "状态"
     },
     "SHARE_RES": {
       "YOUR_RES": "你的资源",
@@ -383,16 +377,6 @@
       "START": "开始位置",
       "ROWS": "结果数",
       "FL": "结果字段"
-    },
-    "UDSP":{
-      "UDSP_SERVERS": "UDSP服务",
-      "USERNAME": "用户名",
-      "PASSWORD": "密码",
-      "SERVICE_NAME": "服务名",
-      "SQL_TEXT": "SQL查询语句",
-      "JSON_TEXT": "JSON查询语句",
-      "PAGE_INDEX": "分页页号",
-      "PAGE_SIZE": "每页行数"
     }
   },
   "CROSS_TABLE":{
@@ -401,27 +385,5 @@
     "SHOW": "显示",
     "ENTRIES": "条",
     "EXPORT": "导出"
-  },
-  "HELP_MESSAGE":{
-    "SCATTERMAPBMAP":{
-      "ROW":"行维需要2个或3个值，2个值为：‘经度,纬度’、‘地理名称’，3个值为：‘经度’、‘纬度’、‘地理名称’。"
-    },
-    "SCATTERMAP":{
-      "ROW":"行维需要2个或3个值，2个值为：‘经度,纬度’、‘地理名称’，3个值为：‘经度’、‘纬度’、‘地理名称’。"
-    },
-    "MARKLINEMAP":{
-      "ROW":"行维需要2个或3个值，2个值为：‘经度,纬度’、‘地理名称’，3个值为：‘经度’、‘纬度’、‘地理名称’。",
-      "COLUMN":"列维需要2个或3个值，2个值为：‘经度,纬度’、‘地理名称’，3个值为：‘经度’、‘纬度’、‘地理名称’。"
-    },
-    "MARKLINEMAPBMAP":{
-      "ROW":"行维需要2个或3个值，2个值为：‘经度,纬度’、‘地理名称’，3个值为：‘经度’、‘纬度’、‘地理名称’。",
-      "COLUMN":"列维需要2个或3个值，2个值为：‘经度,纬度’、‘地理名称’，3个值为：‘经度’、‘纬度’、‘地理名称’。"
-    },
-    "HEATMAP":{
-      "ROW":"行维需要1个或2个值，1个值为：‘经度,纬度’，2个值为：‘经度’、‘纬度’。"
-    },
-    "HEATMAPBMAP":{
-      "ROW":"行维需要1个或2个值，1个值为：‘经度,纬度’，2个值为：‘经度’、‘纬度’。"
-    }
   }
 }

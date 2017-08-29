@@ -27,7 +27,7 @@ public class DatasetService {
         dataset.setData(jsonObject.getString("data"));
         dataset.setCategoryName(jsonObject.getString("categoryName"));
         if (StringUtils.isEmpty(dataset.getCategoryName())) {
-            dataset.setCategoryName("Default Category");
+            dataset.setCategoryName("默认分类");
         }
         Map<String, Object> paramMap = new HashMap<String, Object>();
         paramMap.put("dataset_name", dataset.getName());
@@ -50,7 +50,7 @@ public class DatasetService {
         dataset.setCategoryName(jsonObject.getString("categoryName"));
         dataset.setData(jsonObject.getString("data"));
         if (StringUtils.isEmpty(dataset.getCategoryName())) {
-            dataset.setCategoryName("Default Category");
+            dataset.setCategoryName("默认分类");
         }
         Map<String, Object> paramMap = new HashMap<String, Object>();
         paramMap.put("dataset_name", dataset.getName());

@@ -28,10 +28,6 @@
         where user_id = #{userId}
     </update>
 
-    <delete id="deleteUserById" parameterType="Map">
-        DELETE FROM dashboard_user WHERE user_id = #{userId}
-    </delete>
-
     <delete id="deleteUserRole" parameterType="Map">
         DELETE FROM dashboard_user_role
          WHERE user_id = #{objUid}

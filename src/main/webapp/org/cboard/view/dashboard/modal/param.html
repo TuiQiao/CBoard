@@ -62,39 +62,17 @@
             </div>
         </div>
         <div class="col-md-5">
-            <!--<div ng-if="operate.equal">-->
-                <!--<div class="row">-->
-                    <!--<div class="col-md-12">-->
-                        <!--<span>{{'DASHBOARD.PARAM.VALUE_LIST'|translate}}</span>-->
-                        <!--<select multiple class="form-control selectsOption" ng-model="$parent.selectValues"-->
-                                <!--style="height: 300px">-->
-                            <!--<option ng-repeat="v in param.values | orderBy"-->
-                                    <!--style="overflow: hidden;white-space: nowrap;text-overflow: ellipsis;" title="{{v}}"-->
-                                    <!--ng-dblclick="param.values.splice($index,1)" value="{{v}}">{{v}}-->
-                            <!--</option>-->
-                        <!--</select>-->
-                    <!--</div>-->
-                <!--</div>-->
-            <!--</div>-->
             <div ng-if="operate.equal">
                 <div class="row">
                     <div class="col-md-12">
-                        <label class="control-label">{{'DASHBOARD.PARAM.VALUE'|translate}}</label>
-                        <button type="button" ng-click="param.values.length=param.values.length+1" ng-init="initValues()" class="btn btn-primary ng-binding">+</button>
-                        <div class="row show-grid" style="margin-bottom: 5px" ng-repeat="value in param.values track by $index">
-                            <div class="col-md-11">
-                                <div class="input-group" >
-                                    <input type="text" class="form-control" ng-model="param.values[$index]">
-                                    <div class="input-group-btn" ng-repeat="_i in [$index]"
-                                         ng-include="'org/cboard/view/dashboard/modal/variable-dropbox.html'">
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-md-1">
-                                <i class="fa fa-trash-o" style="margin-left:-15px;margin-top:7px;"
-                                   ng-click="param.values.splice($index, 1)" title="{{'COMMON.REMOVE'|translate}}"></i>
-                            </div>
-                        </div>
+                        <span>{{'DASHBOARD.PARAM.VALUE_LIST'|translate}}</span>
+                        <select multiple class="form-control selectsOption" ng-model="$parent.selectValues"
+                                style="height: 300px">
+                            <option ng-repeat="v in param.values | orderBy"
+                                    style="overflow: hidden;white-space: nowrap;text-overflow: ellipsis;" title="{{v}}"
+                                    ng-dblclick="param.values.splice($index,1)" value="{{v}}">{{v}}
+                            </option>
+                        </select>
                     </div>
                 </div>
             </div>

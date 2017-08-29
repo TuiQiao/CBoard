@@ -2,11 +2,11 @@
  * Created by yfyuan on 2016/10/28.
  */
 'use strict';
-cBoard.service('chartPieService', function ($state, $window) {
+cBoard.service('chartPieService', function () {
 
-    this.render = function (containerDom, option, scope, persist, drill, relations, chartConfig) {
+    this.render = function (containerDom, option, scope, persist, drill, relation, chartConfig) {
         var render = new CBoardEChartRender(containerDom, option);
-        render.addClick(chartConfig, relations, $state, $window);
+        render.addClick(chartConfig, relation);
         return render.chart(null, persist);
     };
 

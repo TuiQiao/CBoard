@@ -214,15 +214,14 @@ cBoard.controller('boardCtrl', function ($rootScope, $scope, $http, ModalUtils, 
         $scope.curBoard.layout.rows.unshift({type: 'param', params: []});
     };
 
-    $scope.addRelations = function(widget) {
-        widget.relations = {};
-        widget.relations.relations = [];
+    $scope.addRelation = function(widget) {
+        widget.relation = {};
         $scope.changeSourceCol(widget, widget.widgetId);
     };
 
-    $scope.delRelations = function(widget) {
-        if(widget.relations){
-          delete widget.relations;
+    $scope.delRelation = function(widget) {
+        if(widget.relation){
+          delete widget.relation;
         }
     };
 
@@ -268,31 +267,16 @@ cBoard.controller('boardCtrl', function ($rootScope, $scope, $http, ModalUtils, 
                 });
         });
     };
-
     $scope.saveBoard = function () {
         if (!validate()) {
             return;
         }
-        clearDirty();
         if ($scope.optFlag == 'new') {
             return $http.post("dashboard/saveNewBoard.do", {json: angular.toJson($scope.curBoard)}).success(saveBoardCallBack);
         } else if ($scope.optFlag == 'edit') {
             return $http.post(updateUrl, {json: angular.toJson($scope.curBoard)}).success(saveBoardCallBack);
         }
     };
-
-    var clearDirty = function () {
-        _.each($scope.curBoard.layout.rows, function(row){
-            _.each(row.widgets, function(widget){
-                if(!_.isUndefined(widget.relations)){
-                    delete widget.relations.sourceFields;
-                    _.each(widget.relations.relations, function(relation){
-                        delete relation.targetFields;
-                    });
-                }
-            });
-        })
-    }
 
     $scope.editParam = function (row, index) {
         var status = {i: 0};
@@ -450,8 +434,8 @@ cBoard.controller('boardCtrl', function ($rootScope, $scope, $http, ModalUtils, 
     }();
     /**  js tree related start **/
 
-    $scope.changeTargetCol = function (e, widgetId, index, row) {
-        if (!e.relations) {
+    $scope.changeTargetCol = function (e, widgetId, row) {
+        if (!e.relation) {
             return;
         }
         var w = _.find($scope.widgetList, function (w) {
@@ -477,7 +461,7 @@ cBoard.controller('boardCtrl', function ($rootScope, $scope, $http, ModalUtils, 
                 });
             }
         });
-        e.relations.relations[index].targetFields = cols;
+        e.relation.targetFields = cols;
         if (cols.length == 0) {
             dataService.getColumns({
                 datasource: null,
@@ -486,19 +470,15 @@ cBoard.controller('boardCtrl', function ($rootScope, $scope, $http, ModalUtils, 
                 callback: function (dps) {
                     $scope.alerts = [];
                     if (dps.msg == "1") {
-                        e.relations.relations[index].targetFields = dps.columns;
+                        e.relation.targetFields = dps.columns;
                     } else {
                         $scope.alerts = [{msg: dps.msg, type: 'danger'}];
                     }
                 }
             });
         }
+        ;
 
-        //add target widget
-        if(_.isUndefined(row)){
-            return;
-        }
-        e.relations.relations[index].targetField = [];
         var w = {};
         w.name = _.find($scope.widgetList, function (e) {
             return e.id === widgetId
@@ -506,15 +486,14 @@ cBoard.controller('boardCtrl', function ($rootScope, $scope, $http, ModalUtils, 
         w.width = 12;
         w.widgetId = widgetId;
         w.sourceId = e.widgetId;
-        w.index = index;
         row.widgets = _.filter(row.widgets, function (e) {
-            return e.sourceId !== w.sourceId || e.index !== index;
+            return e.sourceId !== w.sourceId;
         });
         row.widgets.push(w);
     };
 
     $scope.changeSourceCol = function (e, widgetId) {
-        if (!e.relations) {
+        if (!e.relation) {
             return;
         }
         //源表字段默认为原表的group key指定字段
@@ -530,60 +509,8 @@ cBoard.controller('boardCtrl', function ($rootScope, $scope, $http, ModalUtils, 
             _.each(config.keys, function (e) {
                 fields.push(e.col);
             });
-            if(!e.relations.sourceField || e.relations.sourceField.length<=0){
-                e.relations.sourceField = fields;
-            }
-            e.relations.sourceFields = fields;
+            e.relation.sourceField = fields;
+            e.relation.sourceFields = fields;
         });
-    }
-
-    $scope.changeTargetParam = function (e, boardId, index) {
-        if (!e.relations) {
-            return;
-        }
-        var w = _.find($scope.boardList, function (w) {
-            return w.id == boardId;
-        });
-        if (!w) {
-            return;
-        }
-        var cols = [];
-        _.each(w.layout.rows, function (row) {
-            if (row.type == "param") {
-                _.each(row.params, function(param){
-                    _.each(param.col, function(col){
-                        cols.push(col.column+"("+col.datasetId+")");
-                    });
-                });
-            }
-        });
-        //e.relations.relations[index].targetField = [];
-        e.relations.relations[index].targetFields = cols;
-
-    };
-
-    $scope.addWidgetRelation = function(widget){
-        widget.relations.relations.push({"type":"widget"});
-        $('div.newRelation').addClass('hideOperate');
-    }
-
-    $scope.addBoardRelation = function(widget){
-        widget.relations.relations.push({"type":"board"});
-        $('div.newRelation').addClass('hideOperate');
-    }
-
-    $scope.changeActive = function(rowIndex, widgetIndex, index){
-        var prefixId = rowIndex+"_"+widgetIndex+"_";
-        var list = $('li[id^='+prefixId+'].active');
-        if(list.length > 0 && list[0].id.split("_")[2] != index){
-            return;
-        }
-        if(index-1<0){
-            index = 0;
-        }else{
-            index = index-1;
-        }
-        $("#"+prefixId+index+"_"+"tab").addClass('active');
-        $("#"+prefixId+index+"_"+"content").addClass('active');
     }
 });

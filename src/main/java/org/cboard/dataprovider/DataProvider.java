@@ -12,11 +12,9 @@ import org.cboard.dataprovider.config.ConfigComponent;
 import org.cboard.dataprovider.config.DimensionConfig;
 import org.cboard.dataprovider.expression.NowFunction;
 import org.cboard.dataprovider.result.AggregateResult;
-import org.cboard.services.AuthenticationService;
 import org.cboard.util.NaturalOrderComparator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.*;
 import java.util.function.Consumer;
@@ -27,8 +25,6 @@ import java.util.stream.Collectors;
  */
 public abstract class DataProvider {
 
-    @Autowired
-    private AuthenticationService authenticationService;
     private InnerAggregator innerAggregator;
     protected Map<String, String> dataSource;
     protected Map<String, String> query;
@@ -136,9 +132,6 @@ public abstract class DataProvider {
     private String getFilterValue(String value) {
         if (value == null || !(value.startsWith("{") && value.endsWith("}"))) {
             return value;
-        }
-        if("{loginName}".equals(value)){
-            return authenticationService.getCurrentUser().getUsername();
         }
         return AviatorEvaluator.compile(value.substring(1, value.length() - 1), true).execute().toString();
     }

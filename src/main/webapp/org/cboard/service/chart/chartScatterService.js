@@ -4,9 +4,9 @@
 'use strict';
 cBoard.service('chartScatterService', function (dataService) {
 
-    this.render = function (containerDom, option, scope, persist, drill, relations, chartConfig) {
+    this.render = function (containerDom, option, scope, persist, drill, relation, chartConfig) {
         var render = new CBoardEChartRender(containerDom, option);
-        render.addClick(chartConfig, relations);
+        render.addClick(chartConfig, relation);
         return render.chart(null, persist);
     };
 

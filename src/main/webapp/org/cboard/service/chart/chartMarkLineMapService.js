@@ -60,8 +60,8 @@ cBoard.service('chartMarkLineMapService', function () {
                         serieData[n] = [{name: geoKey}, {name: data_keys[i][1], value: data.data[j][i]}];
                     }
                     n++;
-                    if (max < parseFloat(data.data[j][i])) {
-                        max = parseFloat(data.data[j][i]);
+                    if (max < parseInt(data.data[j][i])) {
+                        max = parseInt(data.data[j][i]);
                     }
                 }
             }

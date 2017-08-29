@@ -46,16 +46,16 @@
                             </tr>
                             <tr ng-repeat="s in curWidget.config.styles">
                                 <td>
-                                    <span class="text-red" style="display: block;margin-top: 7px;">
-                                        <i class="fa fa-trash-o" style="cursor: pointer;vertical-align: middle;"
-                                           ng-click="deleteValue(v.cols);curWidget.config.styles.splice($index, 1)"></i>
-                                    </span>
+                    <span class="text-red" style="display: block;margin-top: 7px;">
+                        <i class="fa fa-trash-o" style="cursor: pointer;vertical-align: middle;"
+                           ng-click="deleteValue(v.cols);curWidget.config.styles.splice($index, 1)"></i>
+                    </span>
                                 </td>
                                 <td>
                                     <input type="text" ng-model="s.proportion" class="form-control input" style="width: 90%; padding: 6px 6px;"/>
                                 </td>
                                 <td>
-                                    <input type="text" id="color_{{$index}}" ng-init="initColorPicker($index)" ng-model="s.color" class="form-control" style="width: 90%; padding: 6px 6px;"/>
+                                    <input type="text" ng-model="s.color" class="form-control input" style="width: 90%; padding: 6px 6px;"/>
                                 </td>
                             </tr>
                             <tr>
@@ -72,3 +72,5 @@
         </div>
     </div>
 </div>
+
+

@@ -2,9 +2,9 @@
  * Created by Junjie.M on 2017/07/20.
  */
 'use strict';
-cBoard.service('chartWordCloudService', function ($state, $window) {
+cBoard.service('chartWordCloudService', function () {
 
-    this.render = function (containerDom, option, scope, persist, drill, relations, chartConfig) {
+    this.render = function (containerDom, option, scope, persist, drill, relation, chartConfig) {
         if (option == null) {
             containerDom.html("<div class=\"alert alert-danger\" role=\"alert\">No Data!</div>");
             return;
@@ -12,7 +12,7 @@ cBoard.service('chartWordCloudService', function ($state, $window) {
         var height;
         scope ? height = scope.myheight - 20 : null;
         var render = new CBoardEChartRender(containerDom, option);
-        render.addClick(chartConfig, relations, $state, $window);
+        render.addClick(chartConfig, relation);
         return render.chart(height, persist);
     };
 

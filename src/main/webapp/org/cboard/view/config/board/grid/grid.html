@@ -12,7 +12,7 @@
     <div class="dndPlaceholder row margin">
         <div class="box sort-highlight" style="height: 130px"></div>
     </div>
-    <div class="row margin" ng-repeat="row in curBoard.layout.rows" ng-init="rowIndex = $index">
+    <div class="row margin" ng-repeat="row in curBoard.layout.rows">
         <ng-switch on="row.type">
             <div ng-switch-when="param">
                 <div ng-include="'org/cboard/view/config/board/grid/param.html'"></div>

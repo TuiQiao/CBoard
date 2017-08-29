@@ -7,7 +7,6 @@
     "LOADING": "Loading...",
     "REFRESH": "Refresh",
     "EDIT": "Edit",
-    "EDIT_PARAM": "Edit Param",
     "CONFIRM_DELETE": "Confirm to Delete?",
     "CONFIRM_SAVE_BEFORE_PREVIEW": "Need save board before preview, confirm to save?",
     "NOT_ALLOWED_TO_DELETE_BECAUSE_BE_DEPENDENT": "Not allowed to delete, because be dependent",
@@ -27,7 +26,6 @@
     "LAST10D_TIMESTAMP": "Last 10 Days(Timestamp)",
     "LAST3H_TIMESTAMP": "Last 3 Hours(Timestamp)",
     "LAST60MIN_TIMESTAMP": "Last 60 Hours(Timestamp)",
-    "LOGIN_USER_ID": "Login UserId",
     "FILTER_GROUP": "Filter Group",
     "SAVE_AS": "Save As",
     "PARAM": "Parameter",
@@ -36,8 +34,8 @@
     "WANRING": "WANRING!",
     "COLLAPSE": "Collapse",
     "REMOVE": "Remove",
-    "ADD_RELATIONS": "Add Relations",
-    "DEL_RELATIONS": "Del Relations",
+    "ADD_RELATION": "Add Relation",
+    "DEL_RELATION": "Del Relation",
     "DATE": "Date",
     "VALUE": "Value"
   },
@@ -69,7 +67,7 @@
     "CONFIRM_PASSWORD": "Confirm Password"
   },
   "FOOTER": {
-    "COPYRIGHT": "Shanghai Hex Information Technology Co,. Ltd.",
+    "COPYRIGHT": "Ctrip Payment Department",
     "VERSION": "Version"
   },
   "DASHBOARD": {
@@ -258,10 +256,7 @@
       "DATA_REFRESH_TIME":"Data refresh time",
       "WIDGET_TARGET":"Correlation Widget",
       "WIDGET_FIELDS":"Widget Fields",
-      "WIDGET_TARGET_FIELDS":"Correlation Widget Fields",
-      "BOARD_TARGET":"Correlation Board",
-      "BOARD_TARGET_PARAMS":"Correlation Board Params",
-      "RELATION":"Relation"
+      "WIDGET_TARGET_FIELDS":"Correlation Widget Fields"
     },
     "CATEGORY": {
       "NAME": "Category Name",
@@ -317,8 +312,7 @@
       "FAIL": "Fail",
       "FINISH": "Finish",
       "PROCESSING": "Processing",
-      "STATUS": "Status",
-      "SEND_MAIL": "Send Mail"
+      "STATUS": "Status"
     },
     "SHARE_RES": {
       "YOUR_RES": "Your Resources",
@@ -383,16 +377,6 @@
       "START": "start",
       "ROWS": "rows",
       "FL": "fl"
-    },
-    "UDSP":{
-      "UDSP_SERVERS": "UDSP Servers",
-      "USERNAME": "UserName",
-      "PASSWORD": "Password",
-      "SERVICE_NAME": "Service Name",
-      "SQL_TEXT": "Sql Text",
-      "JSON_TEXT": "Json Text",
-      "PAGE_INDEX": "Page Index",
-      "PAGE_SIZE": "Page Size"
     }
   },
   "CROSS_TABLE":{
@@ -401,27 +385,5 @@
     "SHOW": "Show",
     "ENTRIES": "entries",
     "EXPORT": "Export"
-  },
-  "HELP_MESSAGE":{
-    "SCATTERMAPBMAP":{
-      "ROW":"The two values are: 'longitude','latitude' ,'geographical name'; 3 values are: 'longitude', 'latitude', 'geographical name'."
-    },
-    "SCATTERMAP":{
-      "ROW":"The two values are: 'longitude', 'latitude', 'geographical name'; 3 values are: 'longitude', 'latitude', 'geographical name'."
-    },
-    "MARKLINEMAP":{
-      "ROW":"The two values are: 'longitude', 'latitude', 'geographical name'; 3 values are: 'longitude', 'latitude', 'geographical name'.",
-      "COLUMN":"Levy needs 2 or 3 values, 2 values are: 'longitude, latitude', 'geographical name'; 3 values are: 'longitude', 'latitude', 'geographical name'."
-    },
-    "MARKLINEMAPBMAP":{
-      "ROW":"The two values are: 'longitude', 'latitude', 'geographical name'; 3 values are: 'longitude', 'latitude', 'geographical name'.",
-      "COLUMN":"Levy needs 2 or 3 values, 2 values are: 'longitude, latitude', 'geographical name'; 3 values are: 'longitude', 'latitude', 'geographical name'."
-    },
-    "HEATMAP":{
-      "ROW":"The 1 values are: 'longitude', 'latitude'; 2 values are: 'longitude', 'latitude'."
-    },
-    "HEATMAPBMAP":{
-      "ROW":"The 1 values are: 'longitude', 'latitude'; 2 values are: 'longitude', 'latitude'."
-    }
   }
 }

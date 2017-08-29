@@ -109,41 +109,15 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
                 row: translate('CONFIG.WIDGET.TIPS_DIM_NUM_1_MORE'),
                 column: translate('CONFIG.WIDGET.TIPS_DIM_NUM_0_MORE'),
                 measure: translate('CONFIG.WIDGET.TIPS_DIM_NUM_1')
-            },
-            {
-                name: translate('CONFIG.WIDGET.MARK_LINE_MAP'), value: 'markLineMap', class: 'cMarkLineMap',
+            },{
+                name: translate('CONFIG.WIDGET.CHINA_MAP'), value: 'chinaMap', class: 'cChinaMap',
                 row: translate('CONFIG.WIDGET.TIPS_DIM_NUM_1_MORE'),
-                column: translate('CONFIG.WIDGET.TIPS_DIM_NUM_1_MORE'),
-                measure: translate('CONFIG.WIDGET.TIPS_DIM_NUM_1')
-            },
-            {
-                name: translate('CONFIG.WIDGET.MARK_LINE_MAP_BMAP'), value: 'markLineMapBmap', class: 'cMarkLineMapBmap',
-                row: translate('CONFIG.WIDGET.TIPS_DIM_NUM_1_MORE'),
-                column: translate('CONFIG.WIDGET.TIPS_DIM_NUM_1_MORE'),
-                measure: translate('CONFIG.WIDGET.TIPS_DIM_NUM_1')
-            },
-            {
-                name: translate('CONFIG.WIDGET.HEAT_MAP'), value: 'heatMap', class: 'cHeatMap',
-                row: translate('CONFIG.WIDGET.TIPS_DIM_NUM_1_MORE'),
-                column: translate('CONFIG.WIDGET.TIPS_DIM_NUM_0'),
+                column: translate('CONFIG.WIDGET.TIPS_DIM_NUM_0_MORE'),
                 measure: translate('CONFIG.WIDGET.TIPS_DIM_NUM_1_MORE')
-            },
-            {
-                name: translate('CONFIG.WIDGET.HEAT_MAP_BMAP'), value: 'heatMapBmap', class: 'cHeatMapBmap',
+            },{
+                name: translate('CONFIG.WIDGET.CHINA_MAP_BMAP'), value: 'chinaMapBmap', class: 'cChinaMapBmap',
                 row: translate('CONFIG.WIDGET.TIPS_DIM_NUM_1_MORE'),
-                column: translate('CONFIG.WIDGET.TIPS_DIM_NUM_0'),
-                measure: translate('CONFIG.WIDGET.TIPS_DIM_NUM_1_MORE')
-            },
-            {
-                name: translate('CONFIG.WIDGET.SCATTER_MAP'), value: 'scatterMap', class: 'cScatterMap',
-                row: translate('CONFIG.WIDGET.TIPS_DIM_NUM_1_MORE'),
-                column: translate('CONFIG.WIDGET.TIPS_DIM_NUM_0'),
-                measure: translate('CONFIG.WIDGET.TIPS_DIM_NUM_1_MORE')
-            },
-            {
-                name: translate('CONFIG.WIDGET.SCATTER_MAP_BMAP'), value: 'scatterMapBmap', class: 'cScatterMapBmap',
-                row: translate('CONFIG.WIDGET.TIPS_DIM_NUM_1_MORE'),
-                column: translate('CONFIG.WIDGET.TIPS_DIM_NUM_0'),
+                column: translate('CONFIG.WIDGET.TIPS_DIM_NUM_0_MORE'),
                 measure: translate('CONFIG.WIDGET.TIPS_DIM_NUM_1_MORE')
             },
             {
@@ -159,8 +133,7 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
             "funnel": true, "sankey": true, "radar": true, "map": true,
             "scatter": true, "gauge": true, "wordCloud": true, "treeMap": true,
             "heatMapCalendar": true, "heatMapTable": true, "liquidFill": true,
-            "areaMap": true, "markLineMap": true, "heatMap": true,"contrast": true,
-            "markLineMapBmap": true, "heatMapBmap": true,"scatterMap":true,"scatterMapBmap":true,"relation":true
+            "areaMap": true, "contrast": true,"chinaMap":true,"chinaMapBmap":true,"relation":true
         };
 
         $scope.value_series_types = [
@@ -168,6 +141,12 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
             {name: translate('CONFIG.WIDGET.BAR'), value: 'bar'},
             {name: translate('CONFIG.WIDGET.STACKED_BAR'), value: 'stackbar'},
             {name: translate('CONFIG.WIDGET.PERCENT_BAR'), value: 'percentbar'}
+        ];
+
+        $scope.china_map_types = [
+            {name: translate('CONFIG.WIDGET.SCATTER_MAP'), value: 'scatter'},
+            {name: translate('CONFIG.WIDGET.HEAT_MAP'), value: 'heat'},
+            {name: translate('CONFIG.WIDGET.MARK_LINE_MAP'), value: 'markLine'}
         ];
 
         $scope.value_aggregate_types = [
@@ -189,6 +168,8 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
         $.getJSON('plugins/FineMap/mapdata/citycode.json', function (data) {
             $scope.provinces = data.provinces;
         });
+
+
 
         $scope.treemap_styles = [
             {name: translate('CONFIG.WIDGET.RANDOM'), value: 'random'},
@@ -247,14 +228,10 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
             areaMap: {keys: 2, groups: -1, filters: -1, values: 1},
             heatMapCalendar: {keys: 1, groups: 0, filters: -1, values: 1},
             heatMapTable: {keys: 2, groups: 2, filters: -1, values: 1},
-            markLineMap: {keys: 2, groups: 2, filters: -1, values: 1},
             liquidFill: {keys: 0, groups: 0, filters: -1, values: 1},
-            heatMap: {keys: 2, groups: 0, filters: -1, values: 1},
-            markLineMapBmap: {keys: 2, groups: 2, filters: -1, values: 1},
-            heatMapBmap: {keys: 2, groups: 0, filters: -1, values: 1},
             contrast: {keys: 1, groups: 0, filters: -1, values: 2},
-            scatterMap:{keys: 2, groups: 0, filters: -1, values: 2},
-            scatterMapBmap:{keys: 2, groups: 0, filters: -1, values: 2},
+            chinaMap:{keys: 2, groups: -1, filters: -1, values: 2},
+            chinaMapBmap:{keys: 2, groups: -1, filters: -1, values: 2},
             relation: {keys: 2, groups: 2, filters: -1, values: 1}
         };
 
@@ -410,7 +387,6 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
         };
 
         $scope.loadData = function () {
-
             $scope.toChartDisabled = false;
             $scope.newConfig();
             $scope.filterSelect = {};
@@ -723,6 +699,32 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
                         v.style = 'circle';
                     });
                     break;
+                case 'chinaMap':
+                    $scope.curWidget.config.values.push({name: '', cols: []});
+                    _.each(oldConfig.values, function (v) {
+                        _.each(v.cols, function (c) {
+                            $scope.curWidget.config.values[0].cols.push(c);
+                        });
+                    });
+                    $scope.curWidget.config.valueAxis = 'vertical';
+                    _.each($scope.curWidget.config.values, function (v) {
+                        v.series_type = 'scatter';
+                        v.type = 'value';
+                    });
+                    break;
+                case 'chinaMapBmap':
+                    $scope.curWidget.config.values.push({name: '', cols: []});
+                    _.each(oldConfig.values, function (v) {
+                        _.each(v.cols, function (c) {
+                            $scope.curWidget.config.values[0].cols.push(c);
+                        });
+                    });
+                    $scope.curWidget.config.valueAxis = 'vertical';
+                    _.each($scope.curWidget.config.values, function (v) {
+                        v.series_type = 'scatter';
+                        v.type = 'value';
+                    });
+                    break;
                 default:
                     $scope.curWidget.config.values.push({name: '', cols: []});
                     _.each(oldConfig.values, function (v) {
@@ -792,7 +794,7 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
             // --- end ---
             var charType = $scope.curWidget.config.chart_type;
             //百度地图特殊处理
-            if (charType == 'markLineMapBmap' || charType == 'heatMapBmap' || charType == 'scatterMapBmap') {
+            if (charType == 'chinaMapBmap') {
                 chartService.render($('#preview'), {
                     config: $scope.curWidget.config,
                     datasource: $scope.datasource ? $scope.datasource.id : null,
@@ -864,13 +866,7 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
                         case 'areaMap':
                             $scope.previewDivWidth = 12;
                             break;
-                        case 'markLineMap':
-                            $scope.previewDivWidth = 12;
-                            break;
-                        case 'heatMap':
-                            $scope.previewDivWidth = 12;
-                            break;
-                        case 'scatterMap':
+                        case 'chinaMap':
                             $scope.previewDivWidth = 12;
                             break;
                         case 'relation':
@@ -890,6 +886,15 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
             $scope.curWidget.config.values.push({
                 name: '',
                 series_type: 'line',
+                type: 'value',
+                cols: []
+            });
+        };
+
+        $scope.add_china_map_value = function () {
+            $scope.curWidget.config.values.push({
+                name: '',
+                series_type: 'scatter',
                 type: 'value',
                 cols: []
             });

@@ -93,28 +93,16 @@ cBoard.directive('dashboardWidget', function ($compile, $templateCache, dataServ
                         case 'heatMapTable':
                             renderEchart(scope, element, attrs);
                             break;
-                        case 'markLineMap':
-                            renderEchart(scope, element, attrs);
-                            break;
                         case 'liquidFill':
-                            renderEchart(scope, element, attrs);
-                            break;
-                        case 'heatMap':
-                            renderEchart(scope, element, attrs);
-                            break;
-                        case 'markLineMapBmap':
-                            renderEchart(scope, element, attrs);
-                            break;
-                        case 'heatMapBmap':
                             renderEchart(scope, element, attrs);
                             break;
                         case 'contrast':
                             renderEchart(scope, element, attrs);
                             break;
-                        case 'scatterMap':
+                        case 'chinaMap':
                             renderEchart(scope, element, attrs);
                             break;
-                        case 'scatterMapBmap':
+                        case 'chinaMapBmap':
                             renderEchart(scope, element, attrs);
                             break;
                         case 'relation':

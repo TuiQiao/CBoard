@@ -14,6 +14,7 @@ import org.springframework.beans.factory.annotation.Value;
 
 import java.io.*;
 import java.util.*;
+import java.util.stream.IntStream;
 
 import static java.util.stream.Collectors.toList;
 
@@ -95,8 +96,7 @@ public class FileDataProvider extends DataProvider {
         BufferedReader reader = null;
         try {
             FileInputStream fis = new FileInputStream(filePath);
-            InputStreamReader isr = new InputStreamReader(fis, encoding);
-            reader = new BufferedReader(isr);
+            reader = new BufferedReader(new UnicodeReader(fis, encoding));
         } catch (Exception e) {
             LOG.error("ERROR:" + e.getMessage());
             throw new Exception("ERROR:" + e.getMessage(), e);
@@ -150,18 +150,28 @@ public class FileDataProvider extends DataProvider {
         if (StringUtils.isNotBlank(filedNames)) {
             result.add(filedNames.split(","));
         }
+        int columnSize = 0;
         try {
             // read line
             while ((tempString = reader.readLine()) != null) {
+                if (line == 0) {
+                    columnSize = tempString.split(seprator, -1).length;
+                }
                 if (StringUtils.isBlank(tempString.trim())) {
                     continue;
                 }
                 if (line++ > resultLimit) {
                     throw new CBoardException("Cube result count is greater than limit " + resultLimit);
                 }
-                List<String> lineList = Arrays.asList(tempString.split(seprator)).stream().map(column -> {
-                    return column.replaceAll(quoteStr, "");
-                }).collect(toList());
+                List<String> colArr = new ArrayList(Arrays.asList(tempString.split(seprator, -1)));
+                if (colArr.size() < columnSize) {
+                    IntStream.range(colArr.size(), columnSize).forEach(
+                            i -> colArr.add(i, "")
+                    );
+                }
+                List<String> lineList = colArr.stream().map(column ->
+                    column.replaceAll(quoteStr, "")
+                ).collect(toList());
                 result.add(lineList.toArray(new String[lineList.size()]));
             }
         } catch (IOException e) {

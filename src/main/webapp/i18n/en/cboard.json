@@ -397,25 +397,13 @@
     "EXPORT": "Export"
   },
   "HELP_MESSAGE":{
-    "SCATTERMAPBMAP":{
-      "ROW":"The two values are: 'longitude','latitude' ,'geographical name'; 3 values are: 'longitude', 'latitude', 'geographical name'."
+    "CHINAMAP":{
+      "COLUMN":"Only valid for the mark line map, indicating the source of the reticle。column needs 2 or 3 values, 2 values are: 'longitude, latitude', 'geographical name'; 3 values are: 'longitude', 'latitude', 'geographical name'",
+      "ROW":"The two dimensions are: 'longitude, latitude', 'geographical name', 3 values are: 'longitude', 'latitude', 'geographical name', map is the mark line map Indicates the end of the mark"
     },
-    "SCATTERMAP":{
-      "ROW":"The two values are: 'longitude', 'latitude', 'geographical name'; 3 values are: 'longitude', 'latitude', 'geographical name'."
-    },
-    "MARKLINEMAP":{
-      "ROW":"The two values are: 'longitude', 'latitude', 'geographical name'; 3 values are: 'longitude', 'latitude', 'geographical name'.",
-      "COLUMN":"Levy needs 2 or 3 values, 2 values are: 'longitude, latitude', 'geographical name'; 3 values are: 'longitude', 'latitude', 'geographical name'."
-    },
-    "MARKLINEMAPBMAP":{
-      "ROW":"The two values are: 'longitude', 'latitude', 'geographical name'; 3 values are: 'longitude', 'latitude', 'geographical name'.",
-      "COLUMN":"Levy needs 2 or 3 values, 2 values are: 'longitude, latitude', 'geographical name'; 3 values are: 'longitude', 'latitude', 'geographical name'."
-    },
-    "HEATMAP":{
-      "ROW":"The 1 values are: 'longitude', 'latitude'; 2 values are: 'longitude', 'latitude'."
-    },
-    "HEATMAPBMAP":{
-      "ROW":"The 1 values are: 'longitude', 'latitude'; 2 values are: 'longitude', 'latitude'."
+    "CHINAMAPBMAP": {
+      "COLUMN":"Only valid for the mark line map, indicating the source of the reticle。column needs 2 or 3 values, 2 values are: 'longitude, latitude', 'geographical name'; 3 values are: 'longitude', 'latitude', 'geographical name'",
+      "ROW":"The two dimensions are: 'longitude, latitude', 'geographical name', 3 values are: 'longitude', 'latitude', 'geographical name', map is the mark line map Indicates the end of the mark"
     }
   }
 }

@@ -12,7 +12,7 @@
             <option value="">选择省份/州</option>
         </select>
     </div>
-    <div class="col-md-3" ng-if="curWidget.config.province.code.length==2">
+    <div class="col-md-3" ng-if="cities.length>0">
         <select class="form-control" ng-model="curWidget.config.city.code" ng-init="setCities()"
                 ng-options="city.code as city.name for city in cities">
             <option value="">选择城市/县区</option>

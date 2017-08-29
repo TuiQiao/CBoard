@@ -1,31 +1,20 @@
 <div ng-include="'org/cboard/view/config/chart/template/config.html'"></div>
 <div class="form-group">
-    <label class="col-sm-2 control-label">{{'CONFIG.WIDGET.VALUE_AXIS'|translate}}</label>
-    <div class="col-sm-10">
-        <table class="table table-striped">
-            <tr>
-                <th style="width: 25px"></th>
-                <th style="width: 120px">{{'CONFIG.WIDGET.AXIS_NAME'|translate}}</th>
-                <th style="width: 100px">{{'CONFIG.WIDGET.CHART'|translate}}</th>
-                <th>{{'CONFIG.WIDGET.VALUE'|translate}}</th>
-            </tr>
+    <label class="col-sm-2 control-label">
+        {{'CONFIG.WIDGET.VALUE_AXIS'|translate}}
+        <i class="fa fa-plus-square" title="{{'CONFIG.WIDGET.ADD_NEW_AXIS'|translate}}"
+           ng-click="add_value()" style="cursor: pointer;" ng-show="curWidget.config.values.length < 2"/>
+    </label>
+    <div class="col-sm-10" style="'height: {{ curWidget.config.values.length * 45}}px'">
+        <table class="table table-bordered">
             <tr ng-repeat="v in curWidget.config.values">
-                <td>
-                    <span class="text-red" style="display: block;margin-top: 7px;">
-                        <i class="fa fa-trash-o" style="cursor: pointer;vertical-align: middle;"
-                           ng-click="deleteValue(v.cols);curWidget.config.values.splice($index, 1)"></i>
-                    </span>
-                </td>
-                <td>
-                    <input type="text" ng-model="v.name" class="form-control input" style="width: 75px; padding: 6px 6px;"/>
-                </td>
-                <td>
-                    <select class="form-control" ng-model="v.series_type" style="width: 80px; padding: 0px;"
+                <td style="padding: 1px 3px">
+                    <select class="form-control" ng-model="v.series_type" style="width: 150px; padding: 0px;"
                             ng-options="type.value as type.name for type in value_series_types"></select>
                 </td>
                 <td dnd-list="v.cols" dnd-inserted="dndTransfer.toCol(v.cols,index,item,type)"
                     dnd-allowed-types="['measure','select','col','exp']"
-                    style="width: 100%">
+                    style="width: 100%; padding: 1px 3px">
                     <div class="dndPlaceholder sort-highlight"
                          style="height: 24px; width: 93px;margin: 3px 3px;display: inline-block;vertical-align: middle;">
                     </div>
@@ -80,16 +69,12 @@
                         </ng-switch>
                     </div>
                 </td>
-            </tr>
-            <tr>
-                <th colspan="5" style="text-align: center;">
-                    <button type="button" class="btn btn-info btn-sm" ng-click="curWidget.config.valueAxis=curWidget.config.valueAxis == 'horizontal'?'vertical':'horizontal';console.log(curWidget.config.valueAxis);">
-                        {{'CONFIG.WIDGET.'+curWidget.config.valueAxis|uppercase|translate}}
-                    </button>
-                    <button type="button" class="btn btn-info btn-sm" ng-click="add_value()">
-                        {{'CONFIG.WIDGET.ADD_NEW_AXIS'|translate}}
-                    </button>
-                </th>
+                <td style="padding: 1px 3px">
+                    <span class="text-red" style="display: block;margin-top: 7px;">
+                        <i class="fa fa-trash-o" style="cursor: pointer;vertical-align: middle;"
+                           ng-click="deleteValue(v.cols);curWidget.config.values.splice($index, 1)"></i>
+                    </span>
+                </td>
             </tr>
         </table>
     </div>

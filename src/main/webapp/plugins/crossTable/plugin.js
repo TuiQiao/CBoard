@@ -85,9 +85,9 @@ var crossTable = {
         html = html + trDom + "</tbody></table>";
         var optionDom = "<select><option value='20'>20</option><option value='50'>50</option><option value='100'>100</option><option value='150'>150</option></select>";
         var p_class = "p_" + random;
-        var PaginationDom = "<div class='" + p_class + "'><div class='optionNum'><span>Show</span>" + optionDom + "<span>entries</span></div><div class='page'><ul></ul></div></div>";
+        var PaginationDom = "<div class='" + p_class + "'><div class='optionNum'><span>" + cboardTranslate("CROSS_TABLE.SHOW") + "</span>" + optionDom + "<span>" + cboardTranslate("CROSS_TABLE.ENTRIES") + "</span></div><div class='page'><ul></ul></div></div>";
         var operate = "<div class='toolbar toolbar" + random + "'><span class='info'><b>info: </b>" + rowNum + " x " + colNum + "</span>" +
-            "<span class='exportBnt' title='export'></span></div>";
+            "<span class='exportBnt' title='" + cboardTranslate("CROSS_TABLE.EXPORT") + "'></span></div>";
         $(container).html(operate);
         $(container).append("<div class='tableView table_" + random + "' style='width:99%;max-height:" + tall + "px;overflow:auto'>" + html + "</div>");
         $(container).append(PaginationDom);
@@ -264,7 +264,7 @@ var crossTable = {
         });
     },
     renderPagination: function (pageCount, pageNumber, pageObj, target) {
-        var liStr = '<li><a class="previewLink">Preview</a></li>';
+        var liStr = '<li><a class="previewLink">' + cboardTranslate("CROSS_TABLE.PREVIOUS_PAGE") + '</a></li>';
         if (pageCount < 10) {
             for (var a = 0; a < pageCount; a++) {
                 liStr += '<li><a class="pageLink">' + (a + 1) + '</a></li>';
@@ -301,7 +301,7 @@ var crossTable = {
                 }
             }
         }
-        liStr += '<li><a class="nextLink">Next</a></li>';
+        liStr += '<li><a class="nextLink">' + cboardTranslate("CROSS_TABLE.NEXT_PAGE") + '</a></li>';
         if (target) {
             target.innerHTML = liStr;
             if (pageNumber == 1) {

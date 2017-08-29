@@ -24,14 +24,20 @@
             <form class="form-horizontal">
                 <div class="row" ng-repeat="v in curWidget.config.values">
                     <div class="form-group col-md-6">
-                        <label class="col-md-3 control-label">{{$index}}-Min</label>
-                        <div class="col-md-7">
+                        <label class="col-md-4 control-label" style="padding: 7px 2px">{{$index}}-{{'CONFIG.WIDGET.AXIS_NAME'|translate}}</label>
+                        <div class="col-md-8">
+                            <input type="text" class="form-control" ng-model="v.name">
+                        </div>
+                    </div>
+                    <div class="form-group col-md-3">
+                        <label class="col-md-4 control-label" style="padding: 7px 2px">{{$index}}-Min</label>
+                        <div class="col-md-8">
                             <input type="text" class="form-control" ng-model="v.min">
                         </div>
                     </div>
-                    <div class="form-group col-md-6">
-                        <label class="col-md-3 control-label">{{$index}}-Max</label>
-                        <div class="col-md-7">
+                    <div class="form-group col-md-3">
+                        <label class="col-md-4 control-label" style="padding: 7px 2px">{{$index}}-Max</label>
+                        <div class="col-md-8">
                             <input type="text" class="form-control" ng-model="v.max">
                         </div>
                     </div>
@@ -46,6 +52,18 @@
                             <label>
                                 <input type="checkbox" ng-model="curWidget.config.option.dataZoom" ng-init="curWidget.config.option.dataZoom=false"> Show DataZoom
                             </label>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="form-group">
+                        <label class="col-md-4 control-label">Value Orient</label>
+                        <div class="col-md-8">
+                            <select class="form-control" ng-model="curWidget.config.valueAxis"
+                                    ng-init="curWidget.config.valueAxis ? null : curWidget.config.valueAxis='vertical'">
+                                <option value="horizontal">horizontal</option>
+                                <option value="vertical">vertical</option>
+                            </select>
                         </div>
                     </div>
                 </div>

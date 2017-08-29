@@ -1,37 +1,7 @@
 <!-- Content Wrapper. Contains page content -->
-<section class="content-header">
-    <h1>
-        <div ng-show="loading"><i class="fa fa-spinner fa-spin"></i> {{"COMMON.LOADING" | translate}}</div>
-        {{board.name}}
-    </h1>
-    <div class="breadcrumb" style="cursor: pointer" >
-        <div style="display: inline-block">
-            <button type="button" class="btn btn-primary btn-sm dropdown-toggle" data-toggle="dropdown"><i class="fa fa-filter"></i> {{"COMMON.PARAM" | translate}}
-                <span class="fa fa-caret-down"></span>
-            </button>
-            <ul class="dropdown-menu" style="position: relative">
-                <li ng-repeat="p in boardParams">
-                    <a ng-click="applyBoardParam(p.params)">{{p.name}}<span class="pull-right" ng-click="deleteBoardParam($index);"><i class="fa fa-trash-o"></i></span></a>
-                </li>
-                <li>
-                    <a>{{"COMMON.SAVE_AS" | translate}}&nbsp;<input style="min-width: 120px" ng-model="newBoardParamName" ng-blur="newBoardParam(newBoardParamName);newBoardParamName='';"></a>
-                </li>
-            </ul>
-        </div>
-        <div style="display: inline-block" ng-click="load(true)">
-            <button class="btn btn-primary btn-sm">
-                <span><i class="fa fa-refresh"></i>&nbsp;{{"COMMON.REFRESH" | translate}}</span>
-            </button>
-        </div>
-        <div style="display: inline-block" ng-click="export(true)">
-            <button class="btn btn-primary btn-sm">
-                <span ng-show="!exportStatus"><i class="fa fa-download" ></i>&nbsp;{{"COMMON.EXPORT" | translate}}</span>
-                <span ng-show="exportStatus"><i class="fa fa-spinner fa-spin"></i> Loading</span>
-            </button>
-        </div>
-    </div>
-</section>
+<ng-include src="'org/cboard/view/dashboard/layout/header.html'"></ng-include>
 <div id="inner-container" class="content">
+    <input ng-model="relations" ng-hide="true" id="relations"/> <!--json [{},{}]-->
     <div class="row" ng-repeat="row in board.layout.rows track by $index" ng-style="{height:row.height+'px'}">
         <ng-switch on="row.type">
             <div ng-switch-when="param">
@@ -66,7 +36,7 @@
             </div>
             <div ng-switch-default>
                 <div ng-repeat="widget in row.widgets track by $index">
-                    <div ng-if="widget.show">
+                    <div ng-if="widget.show" ng-show="!widget.sourceId || widget.showDiv">
                         <dashboard-widget ng-show="widget.loading == false"></dashboard-widget>
                     </div>
                     <div ng-if="widget.hasRole != false && (widget.loading || !widget.show)" class="col-md-{{widget.width}}" style="height: 50px;">

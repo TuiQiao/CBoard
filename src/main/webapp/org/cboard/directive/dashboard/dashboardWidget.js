@@ -48,11 +48,8 @@ cBoard.directive('dashboardWidget', function ($compile, $templateCache, dataServ
                 },
                 post: function (scope, element, attrs) {
                     switch (scope.widget.widget.data.config.chart_type) {
-                        case 'line':
-                            renderEchart(scope, element, attrs);
-                            break;
-                        case 'pie':
-                            renderEchart(scope, element, attrs);
+                        case 'map':
+                            renderMap(scope, element, attrs);
                             break;
                         case 'kpi':
                             renderKpi(scope, element, attrs);
@@ -60,54 +57,8 @@ cBoard.directive('dashboardWidget', function ($compile, $templateCache, dataServ
                         case 'table':
                             renderTable(scope, element, attrs);
                             break;
-                        case 'funnel':
+                        default:
                             renderEchart(scope, element, attrs);
-                            break;
-                        case 'sankey':
-                            renderEchart(scope, element, attrs);
-                            break;
-                        case 'radar':
-                            renderEchart(scope, element, attrs);
-                            break;
-                        case 'map':
-                            renderMap(scope, element, attrs);
-                            break;
-                        case 'scatter':
-                            renderEchart(scope, element, attrs);
-                            break;
-                        case 'gauge':
-                            renderEchart(scope, element, attrs);
-                            break;
-                        case 'wordCloud':
-                            renderEchart(scope, element, attrs);
-                            break;
-                        case 'treeMap':
-                            renderEchart(scope, element, attrs);
-                            break;
-                        case 'areaMap':
-                            renderEchart(scope, element, attrs);
-                            break;
-                        case 'heatMapCalendar':
-                            renderEchart(scope, element, attrs);
-                            break;
-                        case 'heatMapTable':
-                            renderEchart(scope, element, attrs);
-                            break;
-                        case 'markLineMap':
-                            renderEchart(scope, element, attrs);
-                            break;
-                        case 'liquidFill':
-                            renderEchart(scope, element, attrs);
-                            break;
-                        case 'heatMap':
-                            renderEchart(scope, element, attrs);
-                            break;
-                        case 'markLineMapBmap':
-                            renderEchart(scope, element, attrs);
-                            break;
-                        case 'heatMapBmap':
-                            renderEchart(scope, element, attrs);
-                            break;
                     }
                 }
             }

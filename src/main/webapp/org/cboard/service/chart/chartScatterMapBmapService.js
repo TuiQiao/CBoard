@@ -1,44 +1,71 @@
 /**
- * Created by jintian on 2017/8/8.
+ * Created by jintian on 2017/8/10.
  */
-cBoard.service('chartHeatMapBmapService', function () {
+cBoard.service('chartScatterMapBmapService', function () {
     this.render = function (containerDom, option, scope, persist,drill) {
-        if (option == null) {
-            containerDom.html("<div class=\"alert alert-danger\" role=\"alert\">No Data!</div>");
-            return;
-        }
-        var height;
-        scope ? height = scope.myheight - 20 : null;
-        return new CBoardBMapRender(containerDom, option).chart(height, persist);
-    };
+        return new CBoardBMapRender(containerDom, option).chart(null, persist);
+    }
 
     this.parseOption = function (data) {
+        var optionData = [];
+        var series =[];
+        var serieData = [];
         var max = 0;
-        var min = 0;
-        var seriesData = [];
         var addressN;
         var addressL;
-        for(var j = 0; data.keys[0] && j < data.keys.length; j++){
-            if(data.keys[j].length > 1){
-                addressN = parseFloat(data.keys[j][0]);
-                addressL = parseFloat(data.keys[j][1]);
-            }else if(data.keys[j].length = 1){
-                addressN = parseFloat(data.keys[j][0].split(",")[0]);
-                addressL = parseFloat(data.keys[j][0].split(",")[1]);
-            }else{
-                addressN = null;
-                addressL = null;
-            }
+        var addressName;
 
-            seriesData[j] = [addressN,addressL,parseFloat(data.data[0][j])];
-            if (max < parseFloat(data.data[0][j])) {
-                max = parseFloat(data.data[0][j]);
+        // series setting
+        for(var j = 0 ; j < data.series.length ; j++){
+           // max = 0;
+            serieData = [];
+            for(var i = 0 ; i < data.keys.length ; i++){
+                if(data.keys[i].length > 2){
+                    addressN = parseFloat(data.keys[i][0]);
+                    addressL = parseFloat(data.keys[i][1]);
+                    addressName = data.keys[i][2];
+                }else if(data.keys[i].length == 2){
+                    addressN = parseFloat(data.keys[i][0].split(",")[0]);
+                    addressL = parseFloat(data.keys[i][0].split(",")[1]);
+                    addressName = data.keys[i][1];
+                }else{
+                    addressName = null;
+                    addressN = null;
+                    addressL = null;
+                }
+
+                if(max < parseFloat(data.data[j][i])){
+                    max = parseFloat(data.data[j][i]);
+                }
+                serieData.push({
+                    name:addressName,
+                    value:[addressN,addressL,parseFloat(data.data[j][i])]
+                })
+
             }
-            if (min > parseFloat(data.data[0][j])) {
-                min = parseFloat(data.data[0][j]);
-            }
+            optionData.push(data.series[j][0]);
+            series.push(
+                {
+                    name: data.series[j][0],
+                    type: 'scatter',
+                    coordinateSystem: 'bmap',
+                    data: serieData,
+                    symbolSize: function (val) {
+                        return val[2] * 30 / max;
+                    },
+                    label: {
+                        normal: {
+                            formatter: '{b}',
+                            position: 'right',
+                            show: false
+                        },
+                        emphasis: {
+                            show: true
+                        }
+                    }
+                }
+            );
         }
-
 
         var startPoint = {
             x: 104.114129,
@@ -149,30 +176,21 @@ cBoard.service('chartHeatMapBmapService', function () {
                 }]
             }
         };
+
         var mapOption = {
             bmap: bmap,
-            visualMap: {
-                min: min,
-                max: max,
-                left: 'right',
-                top: 'bottom',
-                //text: ['High', 'Low'],
-                inRange: {
-                    color: ['#d94e5d', '#eac736', '#50a3ba'].reverse()
-                },
-                calculable: true,
-                textStyle: {
-                    color: '#d94e5d'
-                }
+            legend: {
+                orient: 'vertical',
+                top: 'top',
+                left: 'left',
+                selectedMode: 'single',
+                data: optionData
             },
-            series: [{
-                type: 'heatmap',
-                coordinateSystem: 'bmap',
-                //blurSize:10,
-                data: seriesData
-            }]
+            tooltip: {
+                trigger: 'item'
+            },
+            series: series
         };
-
         return mapOption;
     };
 });

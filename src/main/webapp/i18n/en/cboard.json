@@ -7,6 +7,7 @@
     "LOADING": "Loading...",
     "REFRESH": "Refresh",
     "EDIT": "Edit",
+    "EDIT_PARAM": "Edit Param",
     "CONFIRM_DELETE": "Confirm to Delete?",
     "CONFIRM_SAVE_BEFORE_PREVIEW": "Need save board before preview, confirm to save?",
     "NOT_ALLOWED_TO_DELETE_BECAUSE_BE_DEPENDENT": "Not allowed to delete, because be dependent",
@@ -26,6 +27,7 @@
     "LAST10D_TIMESTAMP": "Last 10 Days(Timestamp)",
     "LAST3H_TIMESTAMP": "Last 3 Hours(Timestamp)",
     "LAST60MIN_TIMESTAMP": "Last 60 Hours(Timestamp)",
+    "LOGIN_USER_ID": "Login UserId",
     "FILTER_GROUP": "Filter Group",
     "SAVE_AS": "Save As",
     "PARAM": "Parameter",
@@ -34,8 +36,8 @@
     "WANRING": "WANRING!",
     "COLLAPSE": "Collapse",
     "REMOVE": "Remove",
-    "ADD_RELATION": "Add Relation",
-    "DEL_RELATION": "Del Relation",
+    "ADD_RELATIONS": "Add Relations",
+    "DEL_RELATIONS": "Del Relations",
     "DATE": "Date",
     "VALUE": "Value"
   },
@@ -158,6 +160,7 @@
       "TIPS_MEASURE": "Value",
       "TIPS_DIM_NUM_0": "0",
       "TIPS_DIM_NUM_1": "1",
+      "TIPS_DIM_NUM_2": "2",
       "TIPS_DIM_NUM_0_MORE": "0 or more",
       "TIPS_DIM_NUM_1_MORE": "1 or more",
       "FROM_CACHE": "From Cache",
@@ -196,7 +199,10 @@
       "TRIANGLE": "Triangle",
       "ROUND_RECT": "RoundRect",
       "SQUARE": "Square",
-      "DIAMOND": "Diamond"
+      "DIAMOND": "Diamond",
+      "CONTRAST": "Contrast",
+      "SCATTER_MAP":"Scatter Map (Local)",
+      "SCATTER_MAP_BMAP":"Scatter Map (Bmap)"
     },
     "DASHBOARD": {
       "CATEGORY": "Category",
@@ -252,7 +258,10 @@
       "DATA_REFRESH_TIME":"Data refresh time",
       "WIDGET_TARGET":"Correlation Widget",
       "WIDGET_FIELDS":"Widget Fields",
-      "WIDGET_TARGET_FIELDS":"Correlation Widget Fields"
+      "WIDGET_TARGET_FIELDS":"Correlation Widget Fields",
+      "BOARD_TARGET":"Correlation Board",
+      "BOARD_TARGET_PARAMS":"Correlation Board Params",
+      "RELATION":"Relation"
     },
     "CATEGORY": {
       "NAME": "Category Name",
@@ -381,5 +390,27 @@
     "SHOW": "Show",
     "ENTRIES": "entries",
     "EXPORT": "Export"
+  },
+  "HELP_MESSAGE":{
+    "SCATTERMAPBMAP":{
+      "ROW":"The two values are: 'longitude','latitude' ,'geographical name'; 3 values are: 'longitude', 'latitude', 'geographical name'."
+    },
+    "SCATTERMAP":{
+      "ROW":"The two values are: 'longitude', 'latitude', 'geographical name'; 3 values are: 'longitude', 'latitude', 'geographical name'."
+    },
+    "MARKLINEMAP":{
+      "ROW":"The two values are: 'longitude', 'latitude', 'geographical name'; 3 values are: 'longitude', 'latitude', 'geographical name'.",
+      "COLUMN":"Levy needs 2 or 3 values, 2 values are: 'longitude, latitude', 'geographical name'; 3 values are: 'longitude', 'latitude', 'geographical name'."
+    },
+    "MARKLINEMAPBMAP":{
+      "ROW":"The two values are: 'longitude', 'latitude', 'geographical name'; 3 values are: 'longitude', 'latitude', 'geographical name'.",
+      "COLUMN":"Levy needs 2 or 3 values, 2 values are: 'longitude, latitude', 'geographical name'; 3 values are: 'longitude', 'latitude', 'geographical name'."
+    },
+    "HEATMAP":{
+      "ROW":"The 1 values are: 'longitude', 'latitude'; 2 values are: 'longitude', 'latitude'."
+    },
+    "HEATMAPBMAP":{
+      "ROW":"The 1 values are: 'longitude', 'latitude'; 2 values are: 'longitude', 'latitude'."
+    }
   }
 }

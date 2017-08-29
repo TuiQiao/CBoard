@@ -14,6 +14,8 @@ import java.util.Map;
 public interface UserDao {
     int save(DashboardUser user);
 
+    int deleteUserById(String userId);
+
     List<DashboardUser> getUserList();
 
     int update(DashboardUser user);

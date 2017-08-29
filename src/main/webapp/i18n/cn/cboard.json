@@ -7,6 +7,7 @@
     "LOADING": "玩命加载中...",
     "REFRESH": "刷新",
     "EDIT": "编辑",
+    "EDIT_PARAM": "设置默认值",
     "CONFIRM_DELETE": "真的想好了要删除吗?",
     "CONFIRM_SAVE_BEFORE_PREVIEW": "预览之前需要保存，确定保存？",
     "NOT_ALLOWED_TO_DELETE_BECAUSE_BE_DEPENDENT": "不允许删除，因为被依赖！",
@@ -26,6 +27,7 @@
     "LAST10D_TIMESTAMP": "最近10天(时间戳)",
     "LAST3H_TIMESTAMP": "最近3小时(时间戳)",
     "LAST60MIN_TIMESTAMP": "最近60分钟(时间戳)",
+    "LOGIN_NAME": "当前登录用户",
     "FILTER_GROUP": "可选过滤",
     "SAVE_AS": "另存为",
     "PARAM": "条件",
@@ -34,8 +36,8 @@
     "WANRING": "警告！",
     "COLLAPSE": "最小化",
     "REMOVE": "关闭",
-    "ADD_RELATION": "添加关联",
-    "DEL_RELATION": "删除关联",
+    "ADD_RELATIONS": "添加关联",
+    "DEL_RELATIONS": "删除关联",
     "DATE": "日期",
     "VALUE": "值"
   },
@@ -158,6 +160,7 @@
       "TIPS_MEASURE": "指标",
       "TIPS_DIM_NUM_0": "0",
       "TIPS_DIM_NUM_1": "1",
+      "TIPS_DIM_NUM_2": "2",
       "TIPS_DIM_NUM_0_MORE": "0个或多个",
       "TIPS_DIM_NUM_1_MORE": "1个或多个",
       "FROM_CACHE": "从缓存加载",
@@ -196,7 +199,10 @@
       "TRIANGLE": "三角形",
       "ROUND_RECT": "圆角矩形",
       "SQUARE": "正方形",
-      "DIAMOND": "菱形"
+      "DIAMOND": "菱形",
+      "CONTRAST": "对比图",
+      "SCATTER_MAP":"散点地图（本地）",
+      "SCATTER_MAP_BMAP":"散点地图（百度）"
     },
     "DASHBOARD": {
       "DASHBOARD": "看板",
@@ -252,7 +258,10 @@
       "DATA_REFRESH_TIME":"数据刷新时间",
       "WIDGET_TARGET":"关联图表",
       "WIDGET_FIELDS":"图表维度",
-      "WIDGET_TARGET_FIELDS":"关联图表维度"
+      "WIDGET_TARGET_FIELDS":"关联图表维度",
+      "BOARD_TARGET":"关联看板",
+      "BOARD_TARGET_PARAMS":"关联看板参数",
+      "RELATION":"关联"
     },
     "CATEGORY": {
       "NAME": "看板分类名称",
@@ -381,5 +390,27 @@
     "SHOW": "显示",
     "ENTRIES": "条",
     "EXPORT": "导出"
+  },
+  "HELP_MESSAGE":{
+    "SCATTERMAPBMAP":{
+      "ROW":"行维需要2个或3个值，2个值为：‘经度,纬度’、‘地理名称’，3个值为：‘经度’、‘纬度’、‘地理名称’。"
+    },
+    "SCATTERMAP":{
+      "ROW":"行维需要2个或3个值，2个值为：‘经度,纬度’、‘地理名称’，3个值为：‘经度’、‘纬度’、‘地理名称’。"
+    },
+    "MARKLINEMAP":{
+      "ROW":"行维需要2个或3个值，2个值为：‘经度,纬度’、‘地理名称’，3个值为：‘经度’、‘纬度’、‘地理名称’。",
+      "COLUMN":"列维需要2个或3个值，2个值为：‘经度,纬度’、‘地理名称’，3个值为：‘经度’、‘纬度’、‘地理名称’。"
+    },
+    "MARKLINEMAPBMAP":{
+      "ROW":"行维需要2个或3个值，2个值为：‘经度,纬度’、‘地理名称’，3个值为：‘经度’、‘纬度’、‘地理名称’。",
+      "COLUMN":"列维需要2个或3个值，2个值为：‘经度,纬度’、‘地理名称’，3个值为：‘经度’、‘纬度’、‘地理名称’。"
+    },
+    "HEATMAP":{
+      "ROW":"行维需要1个或2个值，1个值为：‘经度,纬度’，2个值为：‘经度’、‘纬度’。"
+    },
+    "HEATMAPBMAP":{
+      "ROW":"行维需要1个或2个值，1个值为：‘经度,纬度’，2个值为：‘经度’、‘纬度’。"
+    }
   }
 }

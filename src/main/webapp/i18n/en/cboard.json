@@ -187,10 +187,6 @@
       "HEAT_MAP_CALENDER": "Heat Map (Calender)",
       "DATE_FORMAT": "Date Format",
       "HEAT_MAP_TABLE": "Heat Map (Table)",
-      "MARK_LINE_MAP": "Mark Line Map",
-      "HEAT_MAP": "Heat Map",
-      "MARK_LINE_MAP_BMAP": "Mark Line Map (Bmap)",
-      "HEAT_MAP_BMAP": "Heat Map (Bmap)",
       "LIQUID_FILL": "Liquid Fill",
       "STATIC": "Static",
       "DYNAMIC": "Dynamic",
@@ -203,11 +199,12 @@
       "SQUARE": "Square",
       "DIAMOND": "Diamond",
       "CONTRAST": "Contrast",
+      "MARK_LINE_MAP": "Mark Line Map",
+      "HEAT_MAP": "Heat Map",
       "SCATTER_MAP":"Scatter Map",
-      "SCATTER_MAP_BMAP":"Scatter Map (Bmap)",
-      "CHINA_MAP":"China Map Combination",
-      "CHINA_MAP_BMAP":"China Map Bmap",
-      "RELATION": "Force"
+      "CHINA_MAP":"China Map (Local)",
+      "CHINA_MAP_BMAP":"China Map (Bmap)",
+      "RELATION": "Relation"
     },
     "DASHBOARD": {
       "CATEGORY": "Category",
@@ -398,12 +395,12 @@
   },
   "HELP_MESSAGE":{
     "CHINAMAP":{
-      "COLUMN":"Only valid for the mark line map, indicating the source of the reticle。column needs 2 or 3 values, 2 values are: 'longitude, latitude', 'geographical name'; 3 values are: 'longitude', 'latitude', 'geographical name'",
-      "ROW":"The two dimensions are: 'longitude, latitude', 'geographical name', 3 values are: 'longitude', 'latitude', 'geographical name', map is the mark line map Indicates the end of the mark"
+      "COLUMN":"For the [Mark Line Map] indicating the source of the reticle, Needs 2 or 3 values, 2 values are: 'longitude, latitude', 'geographical name'; 3 values are: 'longitude', 'latitude', 'geographical name'.",
+      "ROW":"Needs 2 or 3 values, 2 values are: 'longitude, latitude', 'geographical name', 3 values are: 'longitude', 'latitude', 'geographical name', map is the [Mark Line Map] indicates the end of the mark."
     },
     "CHINAMAPBMAP": {
-      "COLUMN":"Only valid for the mark line map, indicating the source of the reticle。column needs 2 or 3 values, 2 values are: 'longitude, latitude', 'geographical name'; 3 values are: 'longitude', 'latitude', 'geographical name'",
-      "ROW":"The two dimensions are: 'longitude, latitude', 'geographical name', 3 values are: 'longitude', 'latitude', 'geographical name', map is the mark line map Indicates the end of the mark"
+      "COLUMN":"For the [Mark Line Map], indicating the source of the reticle, Needs 2 or 3 values, 2 values are: 'longitude, latitude', 'geographical name'; 3 values are: 'longitude', 'latitude', 'geographical name'.",
+      "ROW":"Needs 2 or 3 values, 2 values are: 'longitude, latitude', 'geographical name', 3 values are: 'longitude', 'latitude', 'geographical name', map is the [Mark Line Map] indicates the end of the mark."
     }
   }
 }

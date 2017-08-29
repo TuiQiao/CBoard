@@ -4,7 +4,6 @@ cBoard.controller('renderCtrl', function ($timeout, $rootScope, $scope, $state, 
     $scope.l = 1;
     $scope.persistFinish = false;
 
-
     var buildRender = function (w, reload) {
         w.render = function (content, optionFilter, scope) {
             w.persist = {};
@@ -58,7 +57,6 @@ cBoard.controller('renderCtrl', function ($timeout, $rootScope, $scope, $state, 
             }
         });
     };
-
 
     $scope.load = function (reload) {
         $scope.loading = true;

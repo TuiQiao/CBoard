@@ -24,6 +24,7 @@ cBoard.service('chartChinaMapService', function () {
         } else if (chartConfig.province && chartConfig.province.code) {
             code = chartConfig.province.code;
         }
+
         var url;
         if (code == 'china') {
             url = 'plugins/FineMap/mapdata/china.json'
@@ -39,13 +40,14 @@ cBoard.service('chartChinaMapService', function () {
         var toName;
         var toN;
         var toL;
-        var effectScatterValue;
         var max;
         var min;
         var j = 0;
         var maxScatter;
         for(var serieConfig in data.seriesConfig){
+
             var serieType = data.seriesConfig[serieConfig].type;
+
             //重置为null，防止脏数据
             fromName = null;
             fromN = null;
@@ -77,7 +79,7 @@ cBoard.service('chartChinaMapService', function () {
                                 toName = data_keys[i][1];
                                 toN = parseFloat(data_keys[i][0].split(",")[0]);
                                 toL = parseFloat(data_keys[i][0].split(",")[1]);
-                            };
+                            }
 
                             if(data.data[j][i] && toN && toL){
                                 lineData.push({fromName: fromName,
@@ -93,7 +95,7 @@ cBoard.service('chartChinaMapService', function () {
                                     min = parseFloat(data.data[j][i]) - 10;
                                 }
                             }
-                        };
+                        }
 
                         if(lineData.length > 0){
                             seriesData.push(
@@ -124,6 +126,7 @@ cBoard.service('chartChinaMapService', function () {
                         }
                     }
                     break;
+
                 case "heat" :
                     var heatmapData = [];
                     for(var i = 0; data_keys[0] && i < data_keys.length; i++){
@@ -138,7 +141,7 @@ cBoard.service('chartChinaMapService', function () {
                             toName = data_keys[i][1];
                             toN = parseFloat(data_keys[i][0].split(",")[0]);
                             toL = parseFloat(data_keys[i][0].split(",")[1]);
-                        };
+                        }
 
                         if(data.data[j][i]){
                             heatmapData.push([toN,toL,parseFloat(data.data[j][i])]);
@@ -151,6 +154,7 @@ cBoard.service('chartChinaMapService', function () {
                             }
                         }
                     }
+
                     if(heatmapData.length > 0){
                         seriesData.push(
                             {
@@ -179,7 +183,7 @@ cBoard.service('chartChinaMapService', function () {
                             toName = data_keys[i][1];
                             toN = parseFloat(data_keys[i][0].split(",")[0]);
                             toL = parseFloat(data_keys[i][0].split(",")[1]);
-                        };
+                        }
 
                         if(data.data[j][i]){
                             scatterData.push({
@@ -198,6 +202,7 @@ cBoard.service('chartChinaMapService', function () {
                             }
                         }
                     }
+
                     if(scatterData.length > 0){
                         seriesData.push(
                             {
@@ -225,7 +230,9 @@ cBoard.service('chartChinaMapService', function () {
             }
             j++;
         }
+
         var mapOption;
+
         $.ajax({
             type: "get",
             url: url,
@@ -278,6 +285,8 @@ cBoard.service('chartChinaMapService', function () {
                 };
             }
         });
+
         return mapOption;
     };
+
 });

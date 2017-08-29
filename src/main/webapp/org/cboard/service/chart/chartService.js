@@ -6,7 +6,8 @@ cBoard.service('chartService', function ($q, dataService, chartPieService, chart
                                          chartSankeyService, chartTableService, chartKpiService, chartRadarService,
                                          chartMapService, chartScatterService, chartGaugeService, chartWordCloudService,
                                          chartTreeMapService, chartAreaMapService, chartHeatMapCalendarService, chartHeatMapTableService,
-                                         chartLiquidFillService, chartContrastService,chartChinaMapService, chartChinaMapBmapService,chartRelationService) {
+                                         chartLiquidFillService, chartContrastService, chartChinaMapService, chartChinaMapBmapService,
+                                         chartRelationService ) {
 
         this.render = function (containerDom, widget, optionFilter, scope, reload, persist, relations) {
             var deferred = $q.defer();
@@ -165,10 +166,10 @@ cBoard.service('chartService', function ($q, dataService, chartPieService, chart
                     break;
                 case 'chinaMap':
                     chart = chartChinaMapService;
-                    break
+                    break;
                 case 'chinaMapBmap':
                     chart = chartChinaMapBmapService;
-                    break
+                    break;
                 case 'relation':
                     chart = chartRelationService;
                     break;

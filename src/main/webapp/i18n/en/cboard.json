@@ -7,7 +7,7 @@
     "LOADING": "Loading...",
     "REFRESH": "Refresh",
     "EDIT": "Edit",
-    "EDIT_PARAM": "Edit Param",
+    "EDIT_DEFAULT_VALUE": "Edit Default Value",
     "CONFIRM_DELETE": "Confirm to Delete?",
     "CONFIRM_SAVE_BEFORE_PREVIEW": "Need save board before preview, confirm to save?",
     "NOT_ALLOWED_TO_DELETE_BECAUSE_BE_DEPENDENT": "Not allowed to delete, because be dependent",
@@ -161,6 +161,7 @@
       "TIPS_DIM_NUM_0": "0",
       "TIPS_DIM_NUM_1": "1",
       "TIPS_DIM_NUM_2": "2",
+      "TIPS_DIM_NUM_1_2": "1 or 2",
       "TIPS_DIM_NUM_0_MORE": "0 or more",
       "TIPS_DIM_NUM_1_MORE": "1 or more",
       "FROM_CACHE": "From Cache",
@@ -173,6 +174,7 @@
       "ADD_NEW_STYLE": "Add New Style",
       "LINE_STYLE": "Line Style",
       "STYLE_PROPORTION": "Proportion",
+      "NODE_PROPORTION": "Node Proportion",
       "STYLE_COLOR": "Color",
       "WORD_CLOUD": "Word Cloud",
       "TREE_MAP": "Tree Map",
@@ -185,10 +187,6 @@
       "HEAT_MAP_CALENDER": "Heat Map (Calender)",
       "DATE_FORMAT": "Date Format",
       "HEAT_MAP_TABLE": "Heat Map (Table)",
-      "MARK_LINE_MAP": "Mark Line Map (Local)",
-      "HEAT_MAP": "Heat Map (Local)",
-      "MARK_LINE_MAP_BMAP": "Mark Line Map (Bmap)",
-      "HEAT_MAP_BMAP": "Heat Map (Bmap)",
       "LIQUID_FILL": "Liquid Fill",
       "STATIC": "Static",
       "DYNAMIC": "Dynamic",
@@ -201,8 +199,12 @@
       "SQUARE": "Square",
       "DIAMOND": "Diamond",
       "CONTRAST": "Contrast",
-      "SCATTER_MAP":"Scatter Map (Local)",
-      "SCATTER_MAP_BMAP":"Scatter Map (Bmap)"
+      "MARK_LINE_MAP": "Mark Line Map",
+      "HEAT_MAP": "Heat Map",
+      "SCATTER_MAP":"Scatter Map",
+      "CHINA_MAP":"China Map (Local)",
+      "CHINA_MAP_BMAP":"China Map (Bmap)",
+      "RELATION": "Relation"
     },
     "DASHBOARD": {
       "CATEGORY": "Category",
@@ -392,25 +394,13 @@
     "EXPORT": "Export"
   },
   "HELP_MESSAGE":{
-    "SCATTERMAPBMAP":{
-      "ROW":"The two values are: 'longitude','latitude' ,'geographical name'; 3 values are: 'longitude', 'latitude', 'geographical name'."
+    "CHINAMAP":{
+      "COLUMN":"For the [Mark Line Map] indicating the source of the reticle, Needs 2 or 3 values, 2 values are: 'longitude, latitude', 'geographical name'; 3 values are: 'longitude', 'latitude', 'geographical name'.",
+      "ROW":"Needs 2 or 3 values, 2 values are: 'longitude, latitude', 'geographical name', 3 values are: 'longitude', 'latitude', 'geographical name', map is the [Mark Line Map] indicates the end of the mark."
     },
-    "SCATTERMAP":{
-      "ROW":"The two values are: 'longitude', 'latitude', 'geographical name'; 3 values are: 'longitude', 'latitude', 'geographical name'."
-    },
-    "MARKLINEMAP":{
-      "ROW":"The two values are: 'longitude', 'latitude', 'geographical name'; 3 values are: 'longitude', 'latitude', 'geographical name'.",
-      "COLUMN":"Levy needs 2 or 3 values, 2 values are: 'longitude, latitude', 'geographical name'; 3 values are: 'longitude', 'latitude', 'geographical name'."
-    },
-    "MARKLINEMAPBMAP":{
-      "ROW":"The two values are: 'longitude', 'latitude', 'geographical name'; 3 values are: 'longitude', 'latitude', 'geographical name'.",
-      "COLUMN":"Levy needs 2 or 3 values, 2 values are: 'longitude, latitude', 'geographical name'; 3 values are: 'longitude', 'latitude', 'geographical name'."
-    },
-    "HEATMAP":{
-      "ROW":"The 1 values are: 'longitude', 'latitude'; 2 values are: 'longitude', 'latitude'."
-    },
-    "HEATMAPBMAP":{
-      "ROW":"The 1 values are: 'longitude', 'latitude'; 2 values are: 'longitude', 'latitude'."
+    "CHINAMAPBMAP": {
+      "COLUMN":"For the [Mark Line Map], indicating the source of the reticle, Needs 2 or 3 values, 2 values are: 'longitude, latitude', 'geographical name'; 3 values are: 'longitude', 'latitude', 'geographical name'.",
+      "ROW":"Needs 2 or 3 values, 2 values are: 'longitude, latitude', 'geographical name', 3 values are: 'longitude', 'latitude', 'geographical name', map is the [Mark Line Map] indicates the end of the mark."
     }
   }
 }

@@ -7,7 +7,7 @@
     "LOADING": "玩命加载中...",
     "REFRESH": "刷新",
     "EDIT": "编辑",
-    "EDIT_PARAM": "设置默认值",
+    "EDIT_DEFAULT_VALUE": "设置默认值",
     "CONFIRM_DELETE": "真的想好了要删除吗?",
     "CONFIRM_SAVE_BEFORE_PREVIEW": "预览之前需要保存，确定保存？",
     "NOT_ALLOWED_TO_DELETE_BECAUSE_BE_DEPENDENT": "不允许删除，因为被依赖！",
@@ -161,6 +161,7 @@
       "TIPS_DIM_NUM_0": "0",
       "TIPS_DIM_NUM_1": "1",
       "TIPS_DIM_NUM_2": "2",
+      "TIPS_DIM_NUM_1_2": "1个或2个",
       "TIPS_DIM_NUM_0_MORE": "0个或多个",
       "TIPS_DIM_NUM_1_MORE": "1个或多个",
       "FROM_CACHE": "从缓存加载",
@@ -173,6 +174,7 @@
       "ADD_NEW_STYLE": "添加样式",
       "LINE_STYLE": "线条样式",
       "STYLE_PROPORTION": "比例",
+      "NODE_PROPORTION": "节点比例",
       "STYLE_COLOR": "颜色",
       "WORD_CLOUD": "标签云",
       "TREE_MAP": "矩形树图",
@@ -185,10 +187,6 @@
       "HEAT_MAP_CALENDER": "热点图（日历）",
       "DATE_FORMAT": "日期格式",
       "HEAT_MAP_TABLE": "热点图（表格）",
-      "MARK_LINE_MAP": "标线地图（本地）",
-      "HEAT_MAP": "热点地图（本地）",
-      "MARK_LINE_MAP_BMAP": "标线地图（百度）",
-      "HEAT_MAP_BMAP": "热点地图（百度）",
       "LIQUID_FILL": "水球图",
       "STATIC": "静态",
       "DYNAMIC": "动态",
@@ -201,8 +199,12 @@
       "SQUARE": "正方形",
       "DIAMOND": "菱形",
       "CONTRAST": "对比图",
-      "SCATTER_MAP":"散点地图（本地）",
-      "SCATTER_MAP_BMAP":"散点地图（百度）"
+      "MARK_LINE_MAP": "标线地图",
+      "HEAT_MAP": "热点地图",
+      "SCATTER_MAP":"散点地图",
+      "CHINA_MAP":"中国地图（本地）",
+      "CHINA_MAP_BMAP":"中国地图（百度）",
+      "RELATION": "关系图"
     },
     "DASHBOARD": {
       "DASHBOARD": "看板",
@@ -392,25 +394,13 @@
     "EXPORT": "导出"
   },
   "HELP_MESSAGE":{
-    "SCATTERMAPBMAP":{
-      "ROW":"行维需要2个或3个值，2个值为：‘经度,纬度’、‘地理名称’，3个值为：‘经度’、‘纬度’、‘地理名称’。"
+    "CHINAMAP":{
+      "COLUMN":"需要2个或3个值, 2个值为：[经度,纬度组合列] + [地理名称]; 3个值为：[经度,纬度组合列] + [地理名称]; 对于[标线地图]表示标线的源坐标",
+      "ROW":   "需要2个或3个值, 2个值为：[经度,纬度组合列] + [地理名称]; 3个值为：[经度,纬度组合列] + [地理名称]; 对于[标线地图]表示标线的目标坐标"
     },
-    "SCATTERMAP":{
-      "ROW":"行维需要2个或3个值，2个值为：‘经度,纬度’、‘地理名称’，3个值为：‘经度’、‘纬度’、‘地理名称’。"
-    },
-    "MARKLINEMAP":{
-      "ROW":"行维需要2个或3个值，2个值为：‘经度,纬度’、‘地理名称’，3个值为：‘经度’、‘纬度’、‘地理名称’。",
-      "COLUMN":"列维需要2个或3个值，2个值为：‘经度,纬度’、‘地理名称’，3个值为：‘经度’、‘纬度’、‘地理名称’。"
-    },
-    "MARKLINEMAPBMAP":{
-      "ROW":"行维需要2个或3个值，2个值为：‘经度,纬度’、‘地理名称’，3个值为：‘经度’、‘纬度’、‘地理名称’。",
-      "COLUMN":"列维需要2个或3个值，2个值为：‘经度,纬度’、‘地理名称’，3个值为：‘经度’、‘纬度’、‘地理名称’。"
-    },
-    "HEATMAP":{
-      "ROW":"行维需要1个或2个值，1个值为：‘经度,纬度’，2个值为：‘经度’、‘纬度’。"
-    },
-    "HEATMAPBMAP":{
-      "ROW":"行维需要1个或2个值，1个值为：‘经度,纬度’，2个值为：‘经度’、‘纬度’。"
+    "CHINAMAPBMAP": {
+      "COLUMN":"需要2个或3个值, 2个值为：[经度,纬度组合列] + [地理名称]; 3个值为：[经度,纬度组合列] + [地理名称]; 对于[标线地图]表示标线的源坐标",
+      "ROW":   "需要2个或3个值, 2个值为：[经度,纬度组合列] + [地理名称]; 3个值为：[经度,纬度组合列] + [地理名称]; 对于[标线地图]表示标线的目标坐标"
     }
   }
 }

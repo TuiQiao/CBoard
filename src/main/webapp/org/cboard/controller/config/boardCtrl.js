@@ -203,7 +203,9 @@ cBoard.controller('boardCtrl', function ($rootScope, $scope, $http, ModalUtils, 
     };
 
     $scope.addRow = function () {
-        $scope.curBoard.layout.rows.push({type: 'widget', widgets: []});
+        var row = {type: 'widget', widgets: []};
+        $scope.curBoard.layout.rows.push(row);
+        return row;
     };
 
     $scope.addNode = function (node) {
@@ -495,7 +497,11 @@ cBoard.controller('boardCtrl', function ($rootScope, $scope, $http, ModalUtils, 
         }
 
         //add target widget
-        if(_.isUndefined(row)){
+        var flattenWgts = [];
+        _.each($scope.curBoard.layout.rows, function (row) {
+            flattenWgts = flattenWgts.concat(row.widgets);
+        });
+        if (_.where(flattenWgts, {"widgetId": widgetId}).length > 0 || _.isUndefined(row)) {
             return;
         }
         e.relations.relations[index].targetField = [];
@@ -552,7 +558,9 @@ cBoard.controller('boardCtrl', function ($rootScope, $scope, $http, ModalUtils, 
             if (row.type == "param") {
                 _.each(row.params, function(param){
                     _.each(param.col, function(col){
-                        cols.push(col.column+"("+col.datasetId+")");
+                        if($.inArray(param.name, cols) == -1){
+                            cols.push(param.name); //col.column+"("+col.datasetId+")"
+                        }
                     });
                 });
             }

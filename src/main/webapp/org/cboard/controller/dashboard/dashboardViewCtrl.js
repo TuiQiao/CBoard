@@ -88,7 +88,7 @@ cBoard.controller('dashboardViewCtrl', function ($timeout, $rootScope, $scope, $
         widget.render = function (content, optionFilter, scope) {
             // 百度地图特殊处理
             var charType = injectFilter(widget.widget).data.config.chart_type;
-            if(charType == 'markLineMapBmap' || charType == 'heatMapBmap' || charType == 'scatterMapBmap'){
+            if(charType == 'chinaMapBmap'){
                 chartService.render(content, injectFilter(widget.widget).data, optionFilter, scope, reload);
                 widget.loading = false;
             } else {
@@ -277,21 +277,20 @@ cBoard.controller('dashboardViewCtrl', function ($timeout, $rootScope, $scope, $
         $scope.relationFilters = [];
 
         //将点击的参数赋值到看板上的参数中
+        //"{"targetId":3,"params":[{"targetField":"logo","value":"iphone"},{"targetField":"logo1","value":"上海市"}]}" targetField==param.name
         if(location.href.split("?")[1]) {
             var urlParam = JSON.parse(decodeURI(location.href.split("?")[1]));
             _.each($scope.board.layout.rows, function (row) {
                 _.each(row.params, function (param) {
-                    var p;
-                    _.each(param.col, function (col) {
-                        p = _.find(urlParam.params, function (param) {
-                            return param.targetField.split("(")[0] == col.column && param.targetField.split("(")[1].split(")")[0] == col.datasetId;
-                        });
+                    var p = _.find(urlParam.params, function (e) {
+                        return e.targetField == param.name;
                     });
                     if(p){
                         param.values.push(p.value);
                     }
                 });
             });
+            location.href = location.href.split("?")[0];
         }
 
         _.each($scope.board.layout.rows, function (row) {
@@ -319,7 +318,7 @@ cBoard.controller('dashboardViewCtrl', function ($timeout, $rootScope, $scope, $
                 });
             });
         });
-
+        updateParamTitle();
         //将点击的参数赋值到relationFilters中
         if(_.isUndefined($("#relations").val())){
             return;
@@ -353,7 +352,6 @@ cBoard.controller('dashboardViewCtrl', function ($timeout, $rootScope, $scope, $
                 }
             });
         });
-        updateParamTitle();
     };
 
     $scope.paramToString = function (row) {
@@ -433,7 +431,7 @@ cBoard.controller('dashboardViewCtrl', function ($timeout, $rootScope, $scope, $
         widget.render = function (content, optionFilter, scope) {
             //百度地图特殊处理
             var charType = widget.widget.data.config.chart_type;
-            if(charType == 'markLineMapBmap' || charType == 'heatMapBmap' || charType == 'scatterMapBmap'){
+            if(charType == 'chinaMapBmap'){
                 chartService.render(content, widget.widget.data, optionFilter, scope, true);
                 widget.loading = false;
             } else {

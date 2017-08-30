@@ -33,7 +33,12 @@ public class AggregateCollector<T> implements Collector<T[], Object[], Double[]>
         if (o instanceof Double) {
             return ((Double) o).doubleValue();
         } else {
-            return Double.parseDouble((String) o);
+            double result = 0;
+            try {
+                result = Double.parseDouble((String) o);
+            } catch (Exception e) {
+            }
+            return result;
         }
     }
 

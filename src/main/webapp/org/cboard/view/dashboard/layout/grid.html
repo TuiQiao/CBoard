@@ -39,7 +39,7 @@
                     <div ng-if="widget.show" ng-show="!widget.sourceId || widget.showDiv">
                         <dashboard-widget ng-show="widget.loading == false"></dashboard-widget>
                     </div>
-                    <div ng-if="widget.hasRole != false && (widget.loading || !widget.show)" class="col-md-{{widget.width}}" style="height: 50px;">
+                    <div ng-if="widget.hasRole != false && (widget.loading || !widget.show)" class="col-md-{{widget.width}}" ng-style="{height:row.height?row.height:300+'px'}">
                         <div class="box box-solid">
                             <div class="box-header">
                                 <i class="fa fa-bar-chart-o"></i>
@@ -52,8 +52,10 @@
                                     </button>
                                 </div>
                             </div>
-                            <div class="box-body" ng-style="{height:row.height?row.height:300+'px'}">
-                                <i class="fa fa-spinner fa-spin"></i> {{"COMMON.LOADING" | translate}}
+                            <div class="box-body" ng-style="{height:row.height?row.height-60 : 240+'px'}">
+                                <div class="overlay">
+                                    <i class="fa fa-refresh fa-spin"></i>
+                                </div>
                             </div>
                         </div>
                     </div>

@@ -315,7 +315,7 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
         };
 
         $scope.editExp = function (col) {
-            var selects = schemaToSelect($scope.schema);
+            var columnObjs = schemaToSelect($scope.schema);
             var aggregate = $scope.value_aggregate_types;
             var curWidget = $scope.curWidget;
             var ok;
@@ -345,13 +345,14 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
                 controller: function ($scope, $uibModalInstance) {
                     $scope.data = data;
                     $scope.curWidget = curWidget;
-                    $scope.selects = selects;
+                    $scope.columnObjs = columnObjs;
                     $scope.aggregate = aggregate;
                     $scope.alerts = [];
                     $scope.close = function () {
                         $uibModalInstance.close();
                     };
-                    $scope.expAceOpt = expEditorOptions(selects, aggregate);
+                    var columns = _.map(columnObjs, function (o) { return o.name; });
+                    $scope.expAceOpt = expEditorOptions(columns, aggregate);
                     $scope.addToken = function (str, agg) {
                         var tc = document.getElementById("expression_area");
                         var tclen = $scope.data.expression.length;
@@ -1331,7 +1332,7 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
         };
 
         $scope.editFilterGroup = function (col) {
-            var selects = schemaToSelect($scope.schema);
+            var columnObjs = schemaToSelect($scope.schema);
             $uibModal.open({
                 templateUrl: 'org/cboard/view/config/modal/filterGroup.html',
                 windowTemplateUrl: 'org/cboard/view/util/modal/window.html',
@@ -1343,7 +1344,7 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
                     } else {
                         $scope.data = {group: '', filters: []};
                     }
-                    $scope.selects = selects;
+                    $scope.columnObjs = columnObjs;
                     $scope.close = function () {
                         $uibModalInstance.close();
                     };

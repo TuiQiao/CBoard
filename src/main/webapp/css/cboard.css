@@ -8,10 +8,29 @@
     color: black;
 }
 
+.box-header .box-title {
+    display: inline-block;
+    font-size: 14px;
+    margin: 0;
+    line-height: 1;
+}
+
+.box-body {
+    padding: 5px;
+}
+
+.box-header {
+    padding: 11px 5px;
+}
+
+.panel-body {
+    padding: 9px 4px;
+}
+
 .toolbar-icon {
     cursor: pointer;
-    font-size: large;
-    padding-top: 6px;
+    font-size: 14px;
+    padding-top: 9px;
 }
 
 .control-label-compact {

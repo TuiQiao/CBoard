@@ -6,6 +6,7 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
 
         var translate = $filter('translate');
         var updateUrl = "dashboard/updateWidget.do";
+        $scope.liteMode = false;
         //图表类型初始化
         $scope.chart_types = [
             {
@@ -237,6 +238,11 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
             relation: {keys: 2, groups: 2, filters: -1, values: 1}
         };
 
+        $scope.switchLiteMode = function () {
+            $scope.liteMode = !$scope.liteMode;
+            $scope.$parent.$parent.liteMode = $scope.liteMode;
+        }
+
         //界面控制
         $scope.loading = false;
         $scope.toChartDisabled = true;
@@ -416,6 +422,7 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
             $scope.optFlag = 'new';
             $scope.customDs = false;
             $scope.schema = null;
+            $scope.liteMode = false;
             cleanPreview();
             addValidateWatch();
         };
@@ -792,7 +799,7 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
             // 添加echarts3.6.2后这里除了第一次可以加载echarts图表，再次加载无法显示图表。
             // 完全无法找到问题下，出于无奈嵌套了一层后发现可以显示图表。囧！！
             // 具体原因没有找到，求大神帮忙解决，thanks！
-            $('#preview_widget').html("<div id='preview' style='min-height: 300px; user-select: text;'></div>");
+            $('#preview_widget').html("<div id='preview' style='min-height: 450px; user-select: text;'></div>");
             // --- end ---
             var charType = $scope.curWidget.config.chart_type;
             //百度地图特殊处理
@@ -931,6 +938,7 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
         };
 
         $scope.saveWgt = function () {
+            $scope.liteMode = false;
             if (!validation()) {
                 return;
             }
@@ -1428,23 +1436,6 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
             });
             $scope.cleanVSort();
             o.sort = sort;
-        };
-
-        $scope.showTooltip = function (chart, e) {
-            if (chart.isDisabled) {
-                return;
-            }
-            var $curTarget = $(e.currentTarget),
-                _tooltip = $curTarget.find(".chart-tip");
-            _tooltip.show();
-        };
-        $scope.hideTooltip = function (chart, e) {
-            if (chart.isDisabled) {
-                return;
-            }
-            var $curTarget = $(e.currentTarget),
-                _tooltip = $curTarget.find(".chart-tip");
-            _tooltip.hide();
         };
 
         /** js tree related start... **/

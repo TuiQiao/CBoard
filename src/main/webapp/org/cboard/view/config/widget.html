@@ -2,21 +2,21 @@
 <!-- Content Wrapper. Contains page content -->
 <div id="inner-container" class="content">
     <div class="row">
-        <div class="col-md-2">
+        <div ng-class="{'col-md-2': liteMode, 'col-md-3': !liteMode}">
             <div class="box box-solid" ng-class="{true:'collapsed-box'}[schema?true:false]">
                 <div class="box-header with-border">
                     <i class="fa fa-bar-chart-o"></i> <h3 class="box-title"> {{'CONFIG.WIDGET.WIDGET'|translate}}</h3>
                     <div class="box-tools pull-right">
-                        <i class="fa fa-plus toolbar-icon" ng-click="newWgt()" title="{{'COMMON.NEW'|translate}}"></i>
-                        <i class="fa fa-copy toolbar-icon" ng-click="copyNode()" title="{{'COMMON.COPY'|translate}}"></i>
-                        <i class="fa fa-edit toolbar-icon" ng-click="editNode()" title="{{'COMMON.EDIT'|translate}}"></i>
-                        <i class="fa fa-trash-o toolbar-icon"  ng-click="deleteNode()" title="{{'COMMON.DELETE'|translate}}"></i>
+                        <i class="fa fa-plus toolbar-icon" ng-click="newWgt()" title="{{'COMMON.NEW'|translate}}"></i>&nbsp;
+                        <i ng-show="!liteMode" class="fa fa-copy toolbar-icon" ng-click="copyNode()" title="{{'COMMON.COPY'|translate}}"></i>
+                        <i ng-show="!liteMode" class="fa fa-edit toolbar-icon" ng-click="editNode()" title="{{'COMMON.EDIT'|translate}}"></i>
+                        <i ng-show="!liteMode" class="fa fa-trash-o toolbar-icon" ng-click="deleteNode()" title="{{'COMMON.DELETE'|translate}}"></i>
                         <i class="fa fa-reorder toolbar-icon" data-widget="collapse"></i>
                     </div>
                 </div>
                 <div class="box-body">
                     <input type="text" class="form-control" placeholder="Search" ng-model="keywords" ng-change="searchNode()" title="dsr:kylin ds:Bill wg:test">
-                    <div class="panel-body" style="padding: 10px 0px; overflow-x: auto; font-size: small;">
+                    <div class="panel-body" style="padding: 10px 0px; overflow-x: auto; font-size: small; max-height: 45vh">
                         <div id="widgetTreeID" js-tree="treeConfig" should-apply="applyModelChanges()" ng-model="treeData" tree="treeInstance"
                              tree-events-obj="treeEventsObj"></div>
                     </div>
@@ -32,7 +32,7 @@
                 <div class="box-body" ng-include="'org/cboard/view/config/chart/template/schema.html'" style="padding: 10px 0px; overflow-x: auto; font-size: small;"></div>
             </div>
         </div>
-        <div class="col-md-10" style="padding-left: 0px;">
+        <div style="padding-left: 0px;" ng-class="{'col-md-10': liteMode, 'col-md-9': !liteMode}">
             <div class="box" ng-show="optFlag == 'new' || optFlag == 'edit'">
                 <div class="box-header with-border">
                     <h3 class="box-title">{{widgetName}}</h3>

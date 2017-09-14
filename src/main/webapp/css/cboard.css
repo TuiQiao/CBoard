@@ -10,7 +10,6 @@
 
 .box-header .box-title {
     display: inline-block;
-    font-size: 14px;
     margin: 0;
     line-height: 1;
 }
@@ -29,8 +28,8 @@
 
 .toolbar-icon {
     cursor: pointer;
-    font-size: 14px;
-    padding-top: 9px;
+    font-size: large;
+    padding-top: 6px;
 }
 
 .control-label-compact {

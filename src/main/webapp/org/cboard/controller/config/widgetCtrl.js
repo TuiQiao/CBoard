@@ -238,9 +238,14 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
             relation: {keys: 2, groups: 2, filters: -1, values: 1}
         };
 
-        $scope.switchLiteMode = function () {
-            $scope.liteMode = !$scope.liteMode;
-            $scope.$parent.$parent.liteMode = $scope.liteMode;
+        $scope.switchLiteMode = function (mode) {
+            if (mode) {
+                $scope.liteMode = mode;
+                $scope.$parent.$parent.liteMode = mode;
+            } else {
+                $scope.liteMode = !$scope.liteMode;
+                $scope.$parent.$parent.liteMode = $scope.liteMode;
+            }
         }
 
         //界面控制
@@ -271,6 +276,7 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
                 $scope.datasetList = response;
                 if (callback) {
                     callback();
+                    $scope.switchLiteMode(true);
                 }
             });
         };
@@ -351,7 +357,7 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
                     $scope.close = function () {
                         $uibModalInstance.close();
                     };
-                    var columns = _.map(columnObjs, function (o) { return o.name; });
+                    var columns = _.map(columnObjs, function (o) { return o.column; });
                     $scope.expAceOpt = expEditorOptions(columns, aggregate);
                     $scope.addToken = function (str, agg) {
                         var tc = document.getElementById("expression_area");

@@ -8,6 +8,24 @@
     color: black;
 }
 
+.box-header .box-title {
+    display: inline-block;
+    margin: 0;
+    line-height: 1;
+}
+
+.box-body {
+    padding: 5px;
+}
+
+.box-header {
+    padding: 11px 5px;
+}
+
+.panel-body {
+    padding: 9px 4px;
+}
+
 .toolbar-icon {
     cursor: pointer;
     font-size: large;

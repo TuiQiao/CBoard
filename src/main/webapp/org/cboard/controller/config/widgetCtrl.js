@@ -6,6 +6,7 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
 
         var translate = $filter('translate');
         var updateUrl = "dashboard/updateWidget.do";
+        $scope.liteMode = false;
         //图表类型初始化
         $scope.chart_types = [
             {
@@ -237,6 +238,16 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
             relation: {keys: 2, groups: 2, filters: -1, values: 1}
         };
 
+        $scope.switchLiteMode = function (mode) {
+            if (mode) {
+                $scope.liteMode = mode;
+                $scope.$parent.$parent.liteMode = mode;
+            } else {
+                $scope.liteMode = !$scope.liteMode;
+                $scope.$parent.$parent.liteMode = $scope.liteMode;
+            }
+        }
+
         //界面控制
         $scope.loading = false;
         $scope.toChartDisabled = true;
@@ -265,6 +276,7 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
                 $scope.datasetList = response;
                 if (callback) {
                     callback();
+                    $scope.switchLiteMode(true);
                 }
             });
         };
@@ -309,7 +321,7 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
         };
 
         $scope.editExp = function (col) {
-            var selects = schemaToSelect($scope.schema);
+            var columnObjs = schemaToSelect($scope.schema);
             var aggregate = $scope.value_aggregate_types;
             var curWidget = $scope.curWidget;
             var ok;
@@ -339,13 +351,14 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
                 controller: function ($scope, $uibModalInstance) {
                     $scope.data = data;
                     $scope.curWidget = curWidget;
-                    $scope.selects = selects;
+                    $scope.columnObjs = columnObjs;
                     $scope.aggregate = aggregate;
                     $scope.alerts = [];
                     $scope.close = function () {
                         $uibModalInstance.close();
                     };
-                    $scope.expAceOpt = expEditorOptions(selects, aggregate);
+                    var columns = _.map(columnObjs, function (o) { return o.column; });
+                    $scope.expAceOpt = expEditorOptions(columns, aggregate);
                     $scope.addToken = function (str, agg) {
                         var tc = document.getElementById("expression_area");
                         var tclen = $scope.data.expression.length;
@@ -416,6 +429,7 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
             $scope.optFlag = 'new';
             $scope.customDs = false;
             $scope.schema = null;
+            $scope.liteMode = false;
             cleanPreview();
             addValidateWatch();
         };
@@ -792,7 +806,7 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
             // 添加echarts3.6.2后这里除了第一次可以加载echarts图表，再次加载无法显示图表。
             // 完全无法找到问题下，出于无奈嵌套了一层后发现可以显示图表。囧！！
             // 具体原因没有找到，求大神帮忙解决，thanks！
-            $('#preview_widget').html("<div id='preview' style='min-height: 300px; user-select: text;'></div>");
+            $('#preview_widget').html("<div id='preview' style='min-height: 450px; user-select: text;'></div>");
             // --- end ---
             var charType = $scope.curWidget.config.chart_type;
             //百度地图特殊处理
@@ -931,6 +945,7 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
         };
 
         $scope.saveWgt = function () {
+            $scope.liteMode = false;
             if (!validation()) {
                 return;
             }
@@ -1323,7 +1338,7 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
         };
 
         $scope.editFilterGroup = function (col) {
-            var selects = schemaToSelect($scope.schema);
+            var columnObjs = schemaToSelect($scope.schema);
             $uibModal.open({
                 templateUrl: 'org/cboard/view/config/modal/filterGroup.html',
                 windowTemplateUrl: 'org/cboard/view/util/modal/window.html',
@@ -1335,7 +1350,7 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
                     } else {
                         $scope.data = {group: '', filters: []};
                     }
-                    $scope.selects = selects;
+                    $scope.columnObjs = columnObjs;
                     $scope.close = function () {
                         $uibModalInstance.close();
                     };
@@ -1428,23 +1443,6 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
             });
             $scope.cleanVSort();
             o.sort = sort;
-        };
-
-        $scope.showTooltip = function (chart, e) {
-            if (chart.isDisabled) {
-                return;
-            }
-            var $curTarget = $(e.currentTarget),
-                _tooltip = $curTarget.find(".chart-tip");
-            _tooltip.show();
-        };
-        $scope.hideTooltip = function (chart, e) {
-            if (chart.isDisabled) {
-                return;
-            }
-            var $curTarget = $(e.currentTarget),
-                _tooltip = $curTarget.find(".chart-tip");
-            _tooltip.hide();
         };
 
         /** js tree related start... **/

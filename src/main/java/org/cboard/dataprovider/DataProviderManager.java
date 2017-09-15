@@ -1,6 +1,8 @@
 package org.cboard.dataprovider;
 
 import org.cboard.dataprovider.aggregator.InnerAggregator;
+import org.cboard.dataprovider.aggregator.h2.H2Aggregator;
+import org.cboard.dataprovider.aggregator.jvm.JvmAggregator;
 import org.cboard.dataprovider.annotation.DatasourceParameter;
 import org.cboard.dataprovider.annotation.ProviderName;
 import org.cboard.dataprovider.annotation.QueryParameter;
@@ -58,7 +60,7 @@ public class DataProviderManager implements ApplicationContextAware {
                 ((Initializing) provider).afterPropertiesSet();
             }
             applicationContext.getAutowireCapableBeanFactory().autowireBean(provider);
-            InnerAggregator innerAggregator = applicationContext.getBean(InnerAggregator.class);
+            InnerAggregator innerAggregator = applicationContext.getBean(H2Aggregator.class);
             innerAggregator.setDataSource(dataSource);
             innerAggregator.setQuery(query);
             provider.setInnerAggregator(innerAggregator);

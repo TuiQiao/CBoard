@@ -28,6 +28,7 @@ import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
 import static org.cboard.dataprovider.DataProvider.NULL_STRING;
+import static org.cboard.dataprovider.DataProvider.separateNull;
 
 /**
  * Created by yfyuan on 2017/1/18.
@@ -37,22 +38,6 @@ import static org.cboard.dataprovider.DataProvider.NULL_STRING;
 public class JvmAggregator extends InnerAggregator {
 
     private Logger logger = LoggerFactory.getLogger(this.getClass());
-
-    @Autowired
-    @Qualifier("rawDataCache")
-    private CacheManager<String[][]> rawDataCache;
-
-    private String getCacheKey() {
-        return Hashing.md5().newHasher().putString(JSONObject.toJSON(dataSource).toString() + JSONObject.toJSON(query).toString(), Charsets.UTF_8).hash().toString();
-    }
-
-    public boolean checkExist() {
-        return rawDataCache.get(getCacheKey()) != null;
-    }
-
-    public void cleanExist() {
-        rawDataCache.remove(getCacheKey());
-    }
 
     public void loadData(String[][] data, long interval) {
         rawDataCache.put(getCacheKey(), data, interval * 1000);

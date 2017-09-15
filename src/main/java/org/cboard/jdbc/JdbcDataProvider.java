@@ -4,6 +4,7 @@ import com.alibaba.druid.pool.DruidDataSource;
 import com.alibaba.druid.pool.DruidDataSourceFactory;
 import com.alibaba.fastjson.JSONObject;
 import com.google.common.base.Charsets;
+import com.google.common.base.Stopwatch;
 import com.google.common.hash.Hashing;
 import org.apache.commons.collections.map.HashedMap;
 import org.apache.commons.lang.StringUtils;
@@ -28,6 +29,7 @@ import java.sql.*;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
+import java.util.concurrent.TimeUnit;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -98,7 +100,7 @@ public class JdbcDataProvider extends DataProvider implements Aggregatable, Init
 
     @Override
     public String[][] getData() throws Exception {
-
+        Stopwatch stopwatch = Stopwatch.createStarted();
         LOG.debug("Execute JdbcDataProvider.getData() Start!");
         String sql = getAsSubQuery(query.get(SQL));
         List<String[]> list = null;
@@ -131,7 +133,8 @@ public class JdbcDataProvider extends DataProvider implements Aggregatable, Init
             LOG.error("ERROR:" + e.getMessage());
             throw new Exception("ERROR:" + e.getMessage(), e);
         }
-
+        stopwatch.stop();
+        LOG.info("getData() using time: {} ms", stopwatch.elapsed(TimeUnit.MILLISECONDS));
         return list.toArray(new String[][]{});
     }
 

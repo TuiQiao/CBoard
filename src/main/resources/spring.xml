@@ -16,4 +16,11 @@
 
     <!--<import resource="spring-cacher-redis.xml"/>-->
     <import resource="spring-cacher-ehcache.xml"/>
+
+    <bean id="h2DataSource" class="org.apache.commons.dbcp.BasicDataSource" destroy-method="close" >
+        <property name="driverClassName" value="org.h2.Driver" />
+        <property name="url" value="jdbc:h2:H:/H2Data/cboard;AUTO_SERVER=TRUE;LOG=0;UNDO_LOG=0" />
+        <property name="username" value="sa" />
+        <property name="password" value="" />
+    </bean>
 </beans>

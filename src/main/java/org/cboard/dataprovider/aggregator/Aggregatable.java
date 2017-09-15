@@ -42,24 +42,4 @@ public interface Aggregatable {
         return "Not Support";
     }
 
-    default ConfigComponent separateNull(ConfigComponent configComponent) {
-        if (configComponent instanceof DimensionConfig) {
-            DimensionConfig cc = (DimensionConfig) configComponent;
-            if (("=".equals(cc.getFilterType()) || "≠".equals(cc.getFilterType())) && cc.getValues().size() > 1 &&
-                    cc.getValues().stream().anyMatch(s -> DataProvider.NULL_STRING.equals(s))) {
-                CompositeConfig compositeConfig = new CompositeConfig();
-                compositeConfig.setType("=".equals(cc.getFilterType()) ? "OR" : "AND");
-                cc.setValues(cc.getValues().stream().filter(s -> !DataProvider.NULL_STRING.equals(s)).collect(Collectors.toList()));
-                compositeConfig.getConfigComponents().add(cc);
-                DimensionConfig nullCc = new DimensionConfig();
-                nullCc.setColumnName(cc.getColumnName());
-                nullCc.setFilterType(cc.getFilterType());
-                nullCc.setValues(new ArrayList<>());
-                nullCc.getValues().add(DataProvider.NULL_STRING);
-                compositeConfig.getConfigComponents().add(nullCc);
-                return compositeConfig;
-            }
-        }
-        return configComponent;
-    }
 }

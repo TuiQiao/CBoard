@@ -86,6 +86,8 @@ public class JdbcDataProvider extends DataProvider implements Aggregatable, Init
 
     private static final ConcurrentMap<String, DataSource> datasourceMap = new ConcurrentHashMap<>();
 
+    private SqlHelper sqlHelper;
+
     @Override
     public boolean doAggregationInDataSource() {
         String v = dataSource.get(aggregateProvider);
@@ -203,7 +205,7 @@ public class JdbcDataProvider extends DataProvider implements Aggregatable, Init
         List<String> filtered = new ArrayList<>();
         String whereStr = "";
         if (config != null) {
-            whereStr = new SqlHelper(sql, getColumnType(), true).assembleFilterSql(config);
+            whereStr = sqlHelper.assembleFilterSql(config);
         }
         fsql = "SELECT cb_view.%s FROM (\n%s\n) cb_view %s GROUP BY cb_view.%s";
         exec = String.format(fsql, columnName, sql, whereStr, columnName);
@@ -281,8 +283,6 @@ public class JdbcDataProvider extends DataProvider implements Aggregatable, Init
 
     @Override
     public AggregateResult queryAggData(AggConfig config) throws Exception {
-        String subQuery = getAsSubQuery(query.get(SQL));
-        SqlHelper sqlHelper = new SqlHelper(subQuery, getColumnType(), true);
         String exec = sqlHelper.assembleAggDataSql(config);
         List<String[]> list = new LinkedList<>();
         LOG.info(exec);
@@ -324,13 +324,18 @@ public class JdbcDataProvider extends DataProvider implements Aggregatable, Init
     @Override
     public String viewAggDataQuery(AggConfig config) throws Exception {
         String subQuery = getAsSubQuery(query.get(SQL));
-        SqlHelper sqlHelper = new SqlHelper(subQuery, getColumnType(), true);
+
+        SqlHelper sqlHelper = new SqlHelper(subQuery, true);
         return sqlHelper.assembleAggDataSql(config);
     }
 
 
     @Override
     public void afterPropertiesSet() throws Exception {
+        String subQuery = getAsSubQuery(query.get(SQL));
+        SqlHelper sqlHelper = new SqlHelper(subQuery, true);
+        sqlHelper.getSqlSyntaxHelper().setColumnTypes(getColumnType());
+        this.sqlHelper = sqlHelper;
     }
 
 }

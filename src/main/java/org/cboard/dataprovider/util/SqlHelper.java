@@ -3,14 +3,13 @@ package org.cboard.dataprovider.util;
 import org.apache.commons.lang.StringUtils;
 import org.cboard.dataprovider.config.*;
 
-import java.sql.Types;
 import java.util.Map;
 import java.util.StringJoiner;
-import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
+
 import static org.cboard.dataprovider.DataProvider.NULL_STRING;
 import static org.cboard.dataprovider.DataProvider.separateNull;
 
@@ -20,15 +19,13 @@ import static org.cboard.dataprovider.DataProvider.separateNull;
  */
 public class SqlHelper {
 
-    private Map<String, Integer> types;
     private String tableName;
     private boolean isSubquery;
     private SqlSyntaxHelper sqlSyntaxHelper = new SqlSyntaxHelper();
 
     public SqlHelper() {}
 
-    public SqlHelper(String tableName, Map<String, Integer> types, boolean isSubquery) {
-        this.types = types;
+    public SqlHelper(String tableName, boolean isSubquery) {
         this.tableName = tableName;
         this.isSubquery = isSubquery;
     }
@@ -57,7 +54,7 @@ public class SqlHelper {
         Stream<DimensionConfig> dimStream = Stream.concat(config.getColumns().stream(), config.getRows().stream());
 
         String dimColsStr = assembleDimColumns(dimStream);
-        String aggColsStr = assembleAggValColumns(config.getValues().stream(), types);
+        String aggColsStr = assembleAggValColumns(config.getValues().stream());
         String whereStr = filterSql(filters, "WHERE");
         String groupByStr = StringUtils.isBlank(dimColsStr) ? "" : "GROUP BY " + dimColsStr;
 
@@ -103,28 +100,6 @@ public class SqlHelper {
     }
 
     /**
-     * use data type property
-     */
-    private BiFunction<DimensionConfig, Integer, String> valuesStr = (dc, index) -> {
-        switch (types.get(dc.getColumnName())) {
-            case Types.VARCHAR:
-            case Types.CHAR:
-            case Types.NVARCHAR:
-            case Types.NCHAR:
-            case Types.CLOB:
-            case Types.NCLOB:
-            case Types.LONGVARCHAR:
-            case Types.LONGNVARCHAR:
-            case Types.DATE:
-            case Types.TIMESTAMP:
-            case Types.TIMESTAMP_WITH_TIMEZONE:
-                return "'" + dc.getValues().get(index) + "'";
-            default:
-                return dc.getValues().get(index);
-        }
-    };
-
-    /**
      * Parser a single filter configuration to sql syntax
      */
     private Function<DimensionConfig, String> filter2SqlCondtion = (config) -> {
@@ -133,10 +108,10 @@ public class SqlHelper {
         }
 
         String fieldName = sqlSyntaxHelper.getColumnStr(config);
-        String v0 = valuesStr.apply(config, 0);
+        String v0 = sqlSyntaxHelper.getDimMemberStr(config, 0);
         String v1 = null;
         if (config.getValues().size() == 2) {
-            v1 = valuesStr.apply(config, 1);
+            v1 = sqlSyntaxHelper.getDimMemberStr(config, 1);
         }
 
         if (NULL_STRING.equals(config.getValues().get(0))) {
@@ -177,7 +152,7 @@ public class SqlHelper {
     private String valueList(DimensionConfig config) {
         String resultList = IntStream.range(0, config.getValues().size())
                 .boxed()
-                .map(i -> valuesStr.apply(config, i))
+                .map(i -> sqlSyntaxHelper.getDimMemberStr(config, i))
                 .collect(Collectors
                 .joining(","));
         return resultList;
@@ -213,10 +188,10 @@ public class SqlHelper {
         return quta + text + quta;
     }
 
-    private String assembleAggValColumns(Stream<ValueConfig> selectStream, Map<String, Integer> types) {
+    private String assembleAggValColumns(Stream<ValueConfig> selectStream) {
         StringJoiner columns = new StringJoiner(", ", "", " ");
         columns.setEmptyValue("");
-        selectStream.map(m -> toAggExp.apply(m, types)).filter(e -> e != null).forEach(columns::add);
+        selectStream.map(vc -> sqlSyntaxHelper.getAggStr(vc)).filter(e -> e != null).forEach(columns::add);
         return columns.toString();
     }
 
@@ -227,44 +202,12 @@ public class SqlHelper {
         return columns.toString();
     }
 
-    private BiFunction<ValueConfig, Map<String, Integer>, String> toAggExp = (config, types) -> {
-        String aggExp;
-        if (config.getColumn().contains(" ")) {
-            aggExp = config.getColumn();
-            for (String column : types.keySet()) {
-                aggExp = aggExp.replaceAll(" " + column + " ", " cb_view." + column + " ");
-            }
-        } else {
-            aggExp = "cb_view." + config.getColumn();
-        }
-        switch (config.getAggType()) {
-            case "sum":
-                return "SUM(" + aggExp + ")";
-            case "avg":
-                return "AVG(" + aggExp + ")";
-            case "max":
-                return "MAX(" + aggExp + ")";
-            case "min":
-                return "MIN(" + aggExp + ")";
-            case "distinct":
-                return "COUNT(DISTINCT " + aggExp + ")";
-            default:
-                return "COUNT(" + aggExp + ")";
-        }
-    };
-
-    public SqlHelper setToAggExp(BiFunction<ValueConfig, Map<String, Integer>, String> toAggExp) {
-        this.toAggExp = toAggExp;
-        return this;
-    }
     public SqlHelper setSqlSyntaxHelper(SqlSyntaxHelper sqlSyntaxHelper) {
         this.sqlSyntaxHelper = sqlSyntaxHelper;
         return this;
     }
-    public SqlHelper setValuesStr(BiFunction<DimensionConfig, Integer, String> valuesStr) {
-        this.valuesStr = valuesStr;
-        return this;
+
+    public SqlSyntaxHelper getSqlSyntaxHelper() {
+        return this.sqlSyntaxHelper;
     }
-
-
 }

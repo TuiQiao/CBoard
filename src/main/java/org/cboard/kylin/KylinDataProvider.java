@@ -145,7 +145,7 @@ public class KylinDataProvider extends DataProvider implements Aggregatable, Ini
                         }
                     });
             SqlHelper sqlHelper = new SqlHelper();
-            sqlHelper.setValuesStr(valuesStr).setSqlSyntaxHelper(new KylinSyntaxHelper(kylinModel));
+            sqlHelper.setSqlSyntaxHelper(new KylinSyntaxHelper(kylinModel));
             whereStr =  sqlHelper.assembleFilterSql(filterHelpers);
         }
         fsql = "SELECT %s FROM %s %s %s GROUP BY %s ORDER BY %s";
@@ -258,8 +258,6 @@ public class KylinDataProvider extends DataProvider implements Aggregatable, Ini
     private String getQueryAggDataSql(AggConfig config) throws Exception {
 
         SqlHelper sqlHelper = new SqlHelper();
-        sqlHelper.setValuesStr(valuesStr);
-
         Stream<DimensionConfig> c = config.getColumns().stream();
         Stream<DimensionConfig> r = config.getRows().stream();
         Stream<ConfigComponent> f = config.getFilters().stream();

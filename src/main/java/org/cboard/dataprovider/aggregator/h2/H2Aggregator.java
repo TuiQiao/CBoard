@@ -10,17 +10,20 @@ import org.cboard.dataprovider.config.ValueConfig;
 import org.cboard.dataprovider.result.AggregateResult;
 import org.cboard.dataprovider.result.ColumnIndex;
 import org.cboard.dataprovider.util.SqlHelper;
+import org.cboard.dataprovider.util.SqlSyntaxHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
+import org.springframework.test.context.jdbc.Sql;
 
 import java.sql.*;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
 import java.util.function.BiFunction;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
@@ -103,7 +106,10 @@ public class H2Aggregator extends InnerAggregator {
         List<String> result = new ArrayList<>();
         String whereStr = "";
         if (config != null) {
-            whereStr = new SqlHelper(getTmpTblName(), getColumnType(), false).assembleFilterSql(config);
+            SqlHelper sqlHelper = new SqlHelper(getTmpTblName(), false);
+            sqlHelper.setSqlSyntaxHelper(new H2SyntaxHelper());
+            sqlHelper.getSqlSyntaxHelper().setColumnTypes(getColumnType());
+            whereStr = sqlHelper.assembleFilterSql(config);
         }
         exec = String.format(fsql, surround(columnName, "`"), getTmpTblName(), whereStr, surround(columnName, "`"));
         LOGGER.info(exec);
@@ -139,8 +145,8 @@ public class H2Aggregator extends InnerAggregator {
     @Override
     public AggregateResult queryAggData(AggConfig config) throws Exception {
         Stopwatch stopwatch = Stopwatch.createStarted();
-        SqlHelper sqlHelper = new SqlHelper(getTmpTblName(), getColumnType(), false);
-        sqlHelper.setToAggExp(this.toAggExp);
+        SqlHelper sqlHelper = new SqlHelper(getTmpTblName(), false);
+        sqlHelper.setSqlSyntaxHelper(new H2SyntaxHelper().setColumnTypes(getColumnType()));
         String exec = sqlHelper.assembleAggDataSql(config);
 
         List<String[]> list = new LinkedList<>();
@@ -250,29 +256,4 @@ public class H2Aggregator extends InnerAggregator {
         return result;
     }
 
-    private BiFunction<ValueConfig, Map<String, Integer>, String> toAggExp = (config, types) -> {
-        String aggExp;
-        if (config.getColumn().contains(" ")) {
-            aggExp = config.getColumn();
-            for (String column : types.keySet()) {
-                aggExp = aggExp.replaceAll(" " + column + " ", " cb_view." + column + " ");
-            }
-        } else {
-            aggExp = "cb_view." + config.getColumn();
-        }
-        switch (config.getAggType()) {
-            case "sum":
-                return "SUM(f_tofloat(" + aggExp + "))";
-            case "avg":
-                return "AVG(f_tofloat(" + aggExp + "))";
-            case "max":
-                return "MAX(" + aggExp + ")";
-            case "min":
-                return "MIN(" + aggExp + ")";
-            case "distinct":
-                return "COUNT(DISTINCT " + aggExp + ")";
-            default:
-                return "COUNT(" + aggExp + ")";
-        }
-    };
 }

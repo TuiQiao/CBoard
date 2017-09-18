@@ -108,7 +108,7 @@ public abstract class DataProvider {
     }
 
     private void checkAndLoad(boolean reload) throws Exception {
-        String key = getLockKey(dataSource, query);
+        String key = getLockKey();
         synchronized (key.intern()) {
             if (reload || !innerAggregator.checkExist()) {
                 String[][] data = getData();
@@ -155,7 +155,7 @@ public abstract class DataProvider {
         return list.stream();
     }
 
-    private String getLockKey(Map<String, String> dataSource, Map<String, String> query) {
+    public String getLockKey() {
         return Hashing.md5().newHasher().putString(JSONObject.toJSON(dataSource).toString() + JSONObject.toJSON(query).toString(), Charsets.UTF_8).hash().toString();
     }
 

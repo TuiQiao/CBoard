@@ -169,10 +169,9 @@ public class SqlHelper {
         if (to != null) {
             if (from != null) {
                 result.append(" AND ");
-            } else {
-                String op = includeUpper ? lte : lt;
-                result.append(fieldName + op + to);
             }
+            String op = includeUpper ? lte : lt;
+            result.append(fieldName + op + to);
         }
         result.append(")");
         return result.toString();

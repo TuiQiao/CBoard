@@ -323,9 +323,6 @@ public class JdbcDataProvider extends DataProvider implements Aggregatable, Init
 
     @Override
     public String viewAggDataQuery(AggConfig config) throws Exception {
-        String subQuery = getAsSubQuery(query.get(SQL));
-
-        SqlHelper sqlHelper = new SqlHelper(subQuery, true);
         return sqlHelper.assembleAggDataSql(config);
     }
 

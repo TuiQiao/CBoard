@@ -55,6 +55,7 @@ public class SqlHelper {
 
         String dimColsStr = assembleDimColumns(dimStream);
         String aggColsStr = assembleAggValColumns(config.getValues().stream());
+
         String whereStr = filterSql(filters, "WHERE");
         String groupByStr = StringUtils.isBlank(dimColsStr) ? "" : "GROUP BY " + dimColsStr;
 
@@ -69,7 +70,7 @@ public class SqlHelper {
         if (isSubquery) {
             fsql = "\nSELECT %s \n FROM (\n%s\n) cb_view \n %s \n %s";
         } else {
-            fsql = "\nSELECT %s \n FROM %s cb_view \n %s \n %s";
+            fsql = "\nSELECT %s \n FROM %s \n %s \n %s";
         }
         String exec = String.format(fsql, selectColsStr, tableName, whereStr, groupByStr);
         return exec;
@@ -198,7 +199,7 @@ public class SqlHelper {
     private String assembleDimColumns(Stream<DimensionConfig> columnsStream) {
         StringJoiner columns = new StringJoiner(", ", "", " ");
         columns.setEmptyValue("");
-        columnsStream.map(g -> g.getColumnName()).distinct().filter(e -> e != null).forEach(columns::add);
+        columnsStream.map(g -> sqlSyntaxHelper.getColumnStr(g)).distinct().filter(e -> e != null).forEach(columns::add);
         return columns.toString();
     }
 

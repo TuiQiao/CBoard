@@ -16,6 +16,7 @@ import org.cboard.dataprovider.config.*;
 import org.cboard.dataprovider.result.AggregateResult;
 import org.cboard.dataprovider.result.ColumnIndex;
 import org.cboard.dataprovider.util.SqlHelper;
+import org.cboard.dataprovider.util.SqlSyntaxHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
@@ -66,7 +67,7 @@ public class KylinDataProvider extends DataProvider implements Aggregatable, Ini
     private static final CacheManager<KylinModel> modelCache = new HeapCacheManager<>();
 
     private KylinModel kylinModel;
-
+    private SqlHelper sqlHelper;
 
     private String getKey(Map<String, String> dataSource, Map<String, String> query) {
         return Hashing.md5().newHasher().putString(JSONObject.toJSON(dataSource).toString() + JSONObject.toJSON(query).toString(), Charsets.UTF_8).hash().toString();
@@ -144,8 +145,6 @@ public class KylinDataProvider extends DataProvider implements Aggregatable, Ini
                             return true;
                         }
                     });
-            SqlHelper sqlHelper = new SqlHelper();
-            sqlHelper.setSqlSyntaxHelper(new KylinSyntaxHelper(kylinModel));
             whereStr =  sqlHelper.assembleFilterSql(filterHelpers);
         }
         fsql = "SELECT %s FROM %s %s %s GROUP BY %s ORDER BY %s";
@@ -163,29 +162,6 @@ public class KylinDataProvider extends DataProvider implements Aggregatable, Ini
         }
         return filtered.toArray(new String[]{});
     }
-
-    private BiFunction<DimensionConfig, Integer, String> valuesStr = (config, index) -> {
-        if (kylinModel.getColumnType(config.getColumnName()).startsWith("varchar")) {
-            return "'" + config.getValues().get(index) + "'";
-        } else {
-            return config.getValues().get(index);
-        }
-    };
-
-    private String assembleAggValColumns(Stream<ValueConfig> selectStream, KylinModel model) {
-        StringJoiner columns = new StringJoiner(", ", "", " ");
-        columns.setEmptyValue("");
-        selectStream.map(s -> toSelect.apply(s, model)).filter(e -> e != null).forEach(columns::add);
-        return columns.toString();
-    }
-
-    private String assembleDimColumns(Stream<DimensionConfig> columnsStream, KylinModel model) {
-        StringJoiner columns = new StringJoiner(", ", "", " ");
-        columns.setEmptyValue("");
-        columnsStream.map(g -> model.getColumnAndAlias(g.getColumnName())).distinct().filter(e -> e != null).forEach(columns::add);
-        return columns.toString();
-    }
-
 
     private KylinModel getModel() throws Exception {
         String modelName = query.get(DATA_MODEL);
@@ -218,7 +194,7 @@ public class KylinDataProvider extends DataProvider implements Aggregatable, Ini
 
     @Override
     public AggregateResult queryAggData(AggConfig config) throws Exception {
-        String exec = getQueryAggDataSql(config);
+        String exec = sqlHelper.assembleAggDataSql(config);
         List<String[]> list = new LinkedList<>();
         LOG.info(exec);
         try (
@@ -255,71 +231,19 @@ public class KylinDataProvider extends DataProvider implements Aggregatable, Ini
         return new AggregateResult(dimensionList, result);
     }
 
-    private String getQueryAggDataSql(AggConfig config) throws Exception {
-
-        SqlHelper sqlHelper = new SqlHelper();
-        Stream<DimensionConfig> c = config.getColumns().stream();
-        Stream<DimensionConfig> r = config.getRows().stream();
-        Stream<ConfigComponent> f = config.getFilters().stream();
-        Stream<ConfigComponent> filters = Stream.concat(Stream.concat(c, r), f);
-        KylinModel model = getModel();
-        Stream<DimensionConfig> dimStream = Stream.concat(config.getColumns().stream(), config.getRows().stream());
-
-        String dimColsStr = assembleDimColumns(dimStream, model);
-        String aggColsStr = assembleAggValColumns(config.getValues().stream(), model);
-
-        String whereStr =  sqlHelper.assembleFilterSql(filters);
-        String groupByStr = StringUtils.isBlank(dimColsStr) ? "" : "GROUP BY " + dimColsStr;
-
-        StringJoiner selectColsStr = new StringJoiner(",");
-        if (!StringUtils.isBlank(dimColsStr)) {
-            selectColsStr.add(dimColsStr);
-        }
-        if (!StringUtils.isBlank(aggColsStr)) {
-            selectColsStr.add(aggColsStr);
-        }
-
-        String fsql = "\nSELECT %s \nFROM %s\n %s \n %s";
-        String exec = String.format(fsql, selectColsStr, model.geModelSql(), whereStr, groupByStr);
-        return exec;
-    }
-
     @Override
     public String viewAggDataQuery(AggConfig config) throws Exception {
-        return getQueryAggDataSql(config);
+        return sqlHelper.assembleAggDataSql(config);
     }
-
-    private BiFunction<ValueConfig, KylinModel, String> toSelect = (config, model) -> {
-        switch (config.getAggType()) {
-            case "sum":
-                return "SUM(" + model.getColumnAndAlias(config.getColumn()) + ") AS sum_" + config.getColumn();
-            case "avg":
-                return "AVG(" + model.getColumnAndAlias(config.getColumn()) + ") AS avg_" + config.getColumn();
-            case "max":
-                return "MAX(" + model.getColumnAndAlias(config.getColumn()) + ") AS max_" + config.getColumn();
-            case "min":
-                return "MIN(" + model.getColumnAndAlias(config.getColumn()) + ") AS min_" + config.getColumn();
-            case "distinct":
-                return "COUNT(DISTINCT " + model.getColumnAndAlias(config.getColumn()) + ") AS count_d_" + config.getColumn();
-            default:
-                return "COUNT(" + model.getColumnAndAlias(config.getColumn()) + ") AS count_" + config.getColumn();
-        }
-    };
 
     @Override
     public void afterPropertiesSet() throws Exception {
         try {
             kylinModel = getModel();
+            sqlHelper = new SqlHelper(kylinModel.geModelSql(), false);
+            sqlHelper.setSqlSyntaxHelper(new KylinSyntaxHelper(kylinModel));
         } catch (Exception e) {
             e.printStackTrace();
-        }
-    }
-
-    public String getValueStr(DimensionConfig config, int index) {
-        if (kylinModel.getColumnType(config.getColumnName()).startsWith("varchar")) {
-            return "'" + config.getValues().get(index) + "'";
-        } else {
-            return config.getValues().get(index);
         }
     }
 

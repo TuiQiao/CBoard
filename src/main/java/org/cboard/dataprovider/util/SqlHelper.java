@@ -11,7 +11,6 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
-
 import static org.cboard.dataprovider.DataProvider.NULL_STRING;
 import static org.cboard.dataprovider.DataProvider.separateNull;
 
@@ -24,6 +23,9 @@ public class SqlHelper {
     private Map<String, Integer> types;
     private String tableName;
     private boolean isSubquery;
+    private SqlSyntaxHelper sqlSyntaxHelper = new SqlSyntaxHelper();
+
+    public SqlHelper() {}
 
     public SqlHelper(String tableName, Map<String, Integer> types, boolean isSubquery) {
         this.types = types;
@@ -41,6 +43,10 @@ public class SqlHelper {
             whereStr = filterSql(filters, "WHERE");
         }
         return whereStr;
+    }
+
+    public String assembleFilterSql(Stream<ConfigComponent> filters) {
+        return filterSql(filters, "WHERE");
     }
 
     public String assembleAggDataSql(AggConfig config) throws Exception {
@@ -97,6 +103,28 @@ public class SqlHelper {
     }
 
     /**
+     * use data type property
+     */
+    private BiFunction<DimensionConfig, Integer, String> valuesStr = (dc, index) -> {
+        switch (types.get(dc.getColumnName())) {
+            case Types.VARCHAR:
+            case Types.CHAR:
+            case Types.NVARCHAR:
+            case Types.NCHAR:
+            case Types.CLOB:
+            case Types.NCLOB:
+            case Types.LONGVARCHAR:
+            case Types.LONGNVARCHAR:
+            case Types.DATE:
+            case Types.TIMESTAMP:
+            case Types.TIMESTAMP_WITH_TIMEZONE:
+                return "'" + dc.getValues().get(index) + "'";
+            default:
+                return dc.getValues().get(index);
+        }
+    };
+
+    /**
      * Parser a single filter configuration to sql syntax
      */
     private Function<DimensionConfig, String> filter2SqlCondtion = (config) -> {
@@ -104,11 +132,11 @@ public class SqlHelper {
             return null;
         }
 
-        String fieldName = config.getColumnName();
-        String v0 = getValueStr(config, 0);
+        String fieldName = sqlSyntaxHelper.getColumnStr(config);
+        String v0 = valuesStr.apply(config, 0);
         String v1 = null;
         if (config.getValues().size() == 2) {
-            v1 = getValueStr(config, 1);
+            v1 = valuesStr.apply(config, 1);
         }
 
         if (NULL_STRING.equals(config.getValues().get(0))) {
@@ -149,7 +177,7 @@ public class SqlHelper {
     private String valueList(DimensionConfig config) {
         String resultList = IntStream.range(0, config.getValues().size())
                 .boxed()
-                .map(i -> getValueStr(config, i))
+                .map(i -> valuesStr.apply(config, i))
                 .collect(Collectors
                 .joining(","));
         return resultList;
@@ -183,25 +211,6 @@ public class SqlHelper {
 
     public static String surround(String text, String quta) {
         return quta + text + quta;
-    }
-
-    public String getValueStr(DimensionConfig dc, int index) {
-        switch (types.get(dc.getColumnName())) {
-            case Types.VARCHAR:
-            case Types.CHAR:
-            case Types.NVARCHAR:
-            case Types.NCHAR:
-            case Types.CLOB:
-            case Types.NCLOB:
-            case Types.LONGVARCHAR:
-            case Types.LONGNVARCHAR:
-            case Types.DATE:
-            case Types.TIMESTAMP:
-            case Types.TIMESTAMP_WITH_TIMEZONE:
-                return "'" + dc.getValues().get(index) + "'";
-            default:
-                return dc.getValues().get(index);
-        }
     }
 
     private String assembleAggValColumns(Stream<ValueConfig> selectStream, Map<String, Integer> types) {
@@ -244,7 +253,18 @@ public class SqlHelper {
         }
     };
 
-    public void setToAggExp(BiFunction<ValueConfig, Map<String, Integer>, String> toAggExp) {
+    public SqlHelper setToAggExp(BiFunction<ValueConfig, Map<String, Integer>, String> toAggExp) {
         this.toAggExp = toAggExp;
+        return this;
     }
+    public SqlHelper setSqlSyntaxHelper(SqlSyntaxHelper sqlSyntaxHelper) {
+        this.sqlSyntaxHelper = sqlSyntaxHelper;
+        return this;
+    }
+    public SqlHelper setValuesStr(BiFunction<DimensionConfig, Integer, String> valuesStr) {
+        this.valuesStr = valuesStr;
+        return this;
+    }
+
+
 }

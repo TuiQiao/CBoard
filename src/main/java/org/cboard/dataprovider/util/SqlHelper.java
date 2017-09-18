@@ -208,7 +208,7 @@ public class SqlHelper {
     private String assembleAggValColumns(Stream<ValueConfig> selectStream, Map<String, Integer> types) {
         StringJoiner columns = new StringJoiner(", ", "", " ");
         columns.setEmptyValue("");
-        selectStream.map(m -> toSelect.apply(m, types)).filter(e -> e != null).forEach(columns::add);
+        selectStream.map(m -> toAggExp.apply(m, types)).filter(e -> e != null).forEach(columns::add);
         return columns.toString();
     }
 
@@ -219,7 +219,7 @@ public class SqlHelper {
         return columns.toString();
     }
 
-    private BiFunction<ValueConfig, Map<String, Integer>, String> toSelect = (config, types) -> {
+    private BiFunction<ValueConfig, Map<String, Integer>, String> toAggExp = (config, types) -> {
         String aggExp;
         if (config.getColumn().contains(" ")) {
             aggExp = config.getColumn();
@@ -244,4 +244,8 @@ public class SqlHelper {
                 return "COUNT(" + aggExp + ")";
         }
     };
+
+    public void setToAggExp(BiFunction<ValueConfig, Map<String, Integer>, String> toAggExp) {
+        this.toAggExp = toAggExp;
+    }
 }

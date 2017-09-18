@@ -3,10 +3,10 @@ package org.cboard.dataprovider.aggregator.h2;
 import com.google.common.base.Stopwatch;
 import org.apache.commons.collections.map.HashedMap;
 import org.apache.commons.dbcp.BasicDataSource;
-import org.cboard.cache.CacheManager;
 import org.cboard.dataprovider.aggregator.InnerAggregator;
 import org.cboard.dataprovider.config.AggConfig;
 import org.cboard.dataprovider.config.DimensionConfig;
+import org.cboard.dataprovider.config.ValueConfig;
 import org.cboard.dataprovider.result.AggregateResult;
 import org.cboard.dataprovider.result.ColumnIndex;
 import org.cboard.dataprovider.util.SqlHelper;
@@ -20,12 +20,13 @@ import org.springframework.stereotype.Service;
 import java.sql.*;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
+import java.util.function.BiFunction;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
-import static org.cboard.dataprovider.util.SqlHelper.*;
 import static org.cboard.dataprovider.DataProvider.NULL_STRING;
+import static org.cboard.dataprovider.util.SqlHelper.surround;
 
 /**
  * Created by zyong on 2017/9/14.
@@ -138,14 +139,19 @@ public class H2Aggregator extends InnerAggregator {
     @Override
     public AggregateResult queryAggData(AggConfig config) throws Exception {
         Stopwatch stopwatch = Stopwatch.createStarted();
-        String exec = new SqlHelper(getTmpTblName(), getColumnType(), false).assembleAggDataSql(config);
+        SqlHelper sqlHelper = new SqlHelper(getTmpTblName(), getColumnType(), false);
+        sqlHelper.setToAggExp(this.toAggExp);
+        String exec = sqlHelper.assembleAggDataSql(config);
+
         List<String[]> list = new LinkedList<>();
         LOGGER.info(exec);
+        ResultSet rs = null;
         try (
                 Connection conn = jdbcDataSource.getConnection();
                 Statement stat = conn.createStatement();
-                ResultSet rs = stat.executeQuery(exec)
         ) {
+            stat.execute("CREATE ALIAS IF NOT EXISTS f_tofloat FOR \"org.cboard.dataprovider.aggregator.h2.Functions.parserString2Float\" ");
+            rs = stat.executeQuery(exec);
             ResultSetMetaData metaData = rs.getMetaData();
             int columnCount = metaData.getColumnCount();
             while (rs.next()) {
@@ -158,6 +164,8 @@ public class H2Aggregator extends InnerAggregator {
         } catch (Exception e) {
             LOGGER.error("ERROR:" + e.getMessage());
             throw new Exception("ERROR:" + e.getMessage(), e);
+        } finally {
+            rs.close();
         }
 
         // recreate a dimension stream
@@ -241,4 +249,30 @@ public class H2Aggregator extends InnerAggregator {
         }
         return result;
     }
+
+    private BiFunction<ValueConfig, Map<String, Integer>, String> toAggExp = (config, types) -> {
+        String aggExp;
+        if (config.getColumn().contains(" ")) {
+            aggExp = config.getColumn();
+            for (String column : types.keySet()) {
+                aggExp = aggExp.replaceAll(" " + column + " ", " cb_view." + column + " ");
+            }
+        } else {
+            aggExp = "cb_view." + config.getColumn();
+        }
+        switch (config.getAggType()) {
+            case "sum":
+                return "SUM(f_tofloat(" + aggExp + "))";
+            case "avg":
+                return "AVG(f_tofloat(" + aggExp + "))";
+            case "max":
+                return "MAX(" + aggExp + ")";
+            case "min":
+                return "MIN(" + aggExp + ")";
+            case "distinct":
+                return "COUNT(DISTINCT " + aggExp + ")";
+            default:
+                return "COUNT(" + aggExp + ")";
+        }
+    };
 }

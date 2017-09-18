@@ -54,29 +54,40 @@ public class H2Aggregator extends InnerAggregator {
             StringJoiner ddlJoiner = new StringJoiner(", ", "CREATE TABLE " + tableName + "(", ");");
             Arrays.stream(header).map(col -> col + " VARCHAR(255)").forEach(ddlJoiner::add);
 
-            try (Connection conn = jdbcDataSource.getConnection();
-                 Statement statmt = conn.createStatement();
-            ) {
-                synchronized (tableName.intern()) {
+            StringJoiner insertJoiner = new StringJoiner(", ", "INSERT INTO " + tableName + " VALUES (", ");");
+            IntStream.range(0, data[0].length).forEach(i -> insertJoiner.add("?"));
+
+            synchronized (tableName.intern()) {
+                // Recreate table
+                try (Connection conn = jdbcDataSource.getConnection();
+                     Statement statmt = conn.createStatement();) {
                     String dropTableStr = "DROP TABLE IF EXISTS " + tableName;
                     LOGGER.info("Execute: {}", dropTableStr);
                     statmt.execute(dropTableStr);
                     LOGGER.info("Execute: {}", ddlJoiner.toString());
                     statmt.execute(ddlJoiner.toString());
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+
+                // Load data
+                try (Connection conn = jdbcDataSource.getConnection();
+                     PreparedStatement ps = conn.prepareStatement(insertJoiner.toString());
+                ) {
                     for (int i = 1; i < data.length; i++) {
-                        StringJoiner insertJoiner = new StringJoiner(", ", "INSERT INTO " + tableName + " VALUES (", ");");
-                        Arrays.stream(data[i]).map((s) -> surround(s, "'")).forEach(insertJoiner::add);
-                        statmt.addBatch(insertJoiner.toString());
+                        for (int j = 1; j <= data[i].length; j++) {
+                            ps.setString(j, data[i][j - 1]);
+                        }
+                        ps.addBatch();
                         if (++count % batchSize == 0) {
-                            statmt.executeBatch();
+                            ps.executeBatch();
                             LOGGER.info("H2 load batch {}", count);
                         }
                     }
+                    ps.executeBatch();
+                } catch (SQLException e) {
+                    e.printStackTrace();
                 }
-                statmt.executeBatch();
-                statmt.close();
-            } catch (SQLException e) {
-                e.printStackTrace();
             }
         }
         h2AggMetaCacher.put(getTmpTblName(), System.currentTimeMillis());
@@ -168,12 +179,46 @@ public class H2Aggregator extends InnerAggregator {
     }
 
     public boolean checkExist() {
-        Long createTimeStamp =  h2AggMetaCacher.get(getTmpTblName());
-        if (createTimeStamp == null || System.currentTimeMillis() - createTimeStamp > (12 * 60 * 60 * 1000)) {
+        if (isTimeout() || !isTableExists()) {
             return false;
         } else {
             return true;
         }
+    }
+
+    private boolean isTimeout() {
+        Long createTimeStamp = h2AggMetaCacher.get(getTmpTblName());
+        if (createTimeStamp == null || System.currentTimeMillis() - createTimeStamp > (12 * 60 * 60 * 1000)) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    /**
+     * Check if the temporary table exists in h2 db
+     *
+     * @return
+     */
+    private boolean isTableExists() {
+        boolean exists = false;
+        String template = "SELECT count(*) FROM INFORMATION_SCHEMA.tables WHERE table_name = upper('%s')";
+        String colsQuery = String.format(template, getTmpTblName());
+        try (Connection conn = jdbcDataSource.getConnection();
+             Statement stat = conn.createStatement();
+             ResultSet rs = stat.executeQuery(colsQuery)
+        ) {
+            int count = 0;
+            while (rs.next()) {
+                count = rs.getInt(1);
+            }
+            if (count > 0) {
+                exists = true;
+            }
+        } catch (Exception e) {
+            LOGGER.error("ERROR:" + e.getMessage());
+        }
+        return exists;
     }
 
     private String getTmpTblName() {

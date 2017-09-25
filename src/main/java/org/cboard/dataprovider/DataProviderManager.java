@@ -49,14 +49,23 @@ public class DataProviderManager implements ApplicationContextAware {
         return getDataProvider(type, null, null);
     }*/
 
-    public static DataProvider getDataProvider(String type, Map<String, String> dataSource, Map<String, String> query) throws Exception {
+    public static DataProvider getDataProvider(
+            String type, Map<String, String> dataSource,
+            Map<String, String> query) throws Exception {
+        return getDataProvider(type, dataSource, query, false);
+    }
+
+    public static DataProvider getDataProvider(
+            String type, Map<String, String> dataSource,
+            Map<String, String> query,
+            boolean isUseForTest) throws Exception {
         Class c = providers.get(type);
         ProviderName providerName = (ProviderName) c.getAnnotation(ProviderName.class);
         if (providerName.name().equals(type)) {
             DataProvider provider = (DataProvider) c.newInstance();
             provider.setQuery(query);
             provider.setDataSource(dataSource);
-            if (provider instanceof Initializing) {
+            if (provider instanceof Initializing && !isUseForTest) {
                 ((Initializing) provider).afterPropertiesSet();
             }
             applicationContext.getAutowireCapableBeanFactory().autowireBean(provider);

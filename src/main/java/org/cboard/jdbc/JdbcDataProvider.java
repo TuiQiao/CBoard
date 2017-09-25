@@ -134,6 +134,21 @@ public class JdbcDataProvider extends DataProvider implements Aggregatable, Init
         return list.toArray(new String[][]{});
     }
 
+    @Override
+    public void test() throws Exception {
+        String queryStr = query.get(SQL);
+        LOG.info("Execute query: {}", queryStr);
+        try (Connection con = getConnection();
+             Statement ps = con.createStatement()) {
+            ps.executeQuery(queryStr);
+        } catch (Exception e) {
+            LOG.error("Error when execute: {}",  queryStr);
+            e.printStackTrace();
+            throw new Exception("ERROR:" + e.getMessage(), e);
+        }
+    }
+
+
     /**
      * Convert the sql text to subquery string:
      * remove blank line

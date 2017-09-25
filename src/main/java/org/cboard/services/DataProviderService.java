@@ -104,9 +104,11 @@ public class DataProviderService {
 
     public ServiceStatus test(JSONObject dataSource, Map<String, String> query) {
         try {
-            DataProvider dataProvider = DataProviderManager.getDataProvider(dataSource.getString("type"),
-                    Maps.transformValues(dataSource.getJSONObject("config"), Functions.toStringFunction()), query);
-            dataProvider.getData();
+            DataProvider dataProvider = DataProviderManager.getDataProvider(
+                    dataSource.getString("type"),
+                    Maps.transformValues(dataSource.getJSONObject("config"), Functions.toStringFunction()),
+                    query, true);
+            dataProvider.test();
             return new ServiceStatus(ServiceStatus.Status.Success, null);
         } catch (Exception e) {
             e.printStackTrace();

@@ -183,6 +183,10 @@ public abstract class DataProvider {
 
     abstract public String[][] getData() throws Exception;
 
+    public void test() throws Exception {
+        getData();
+    }
+
     public void setDataSource(Map<String, String> dataSource) {
         this.dataSource = dataSource;
     }

@@ -276,7 +276,6 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
                 $scope.datasetList = response;
                 if (callback) {
                     callback();
-                    $scope.switchLiteMode(true);
                 }
             });
         };
@@ -1144,6 +1143,7 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
                             _.each(dps.columns, function (e) {
                                 $scope.schema.selects.push({column: e});
                             });
+                            $scope.switchLiteMode(true);
                         } else {
                             $scope.alerts = [{msg: dps.msg, type: 'danger'}];
                         }

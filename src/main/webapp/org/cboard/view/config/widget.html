@@ -44,7 +44,7 @@
                 <div class="box-body">
                     <div class="row">
                         <div class="col-md-12 form-horizontal">
-                            <div ng-show="!liteMode">
+                            <div ng-show="!liteMode || alerts.length != 0">
                                 <div class="row" ng-show="!customDs">
                                     <div class="col-md-12">
                                         <div class="form-group">
@@ -100,8 +100,7 @@
                                         </div>
                                         <div class="form-group" ng-repeat="alert in alerts">
                                             <div class="col-sm-offset-2 col-sm-10">
-                                                <div uib-alert ng-class="'alert-' + (alert.type || 'warning')"
-                                                close="alerts.splice($index, 1)">{{alert.msg}}
+                                                <div uib-alert ng-class="'alert-' + (alert.type || 'warning')">{{alert.msg}}
                                                 </div>
                                             </div>
                                         </div>

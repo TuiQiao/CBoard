@@ -38,6 +38,7 @@ public abstract class DataProvider {
     protected Map<String, String> dataSource;
     protected Map<String, String> query;
     private int resultLimit;
+    private boolean isUsedForTest = false;
     private long interval = 12 * 60 * 60; // second
 
     public static final String NULL_STRING = "#NULL";
@@ -209,6 +210,14 @@ public abstract class DataProvider {
 
     public void setInnerAggregator(InnerAggregator innerAggregator) {
         this.innerAggregator = innerAggregator;
+    }
+
+    public boolean isUsedForTest() {
+        return isUsedForTest;
+    }
+
+    public void setUsedForTest(boolean usedForTest) {
+        isUsedForTest = usedForTest;
     }
 
     public static ConfigComponent separateNull(ConfigComponent configComponent) {

@@ -65,7 +65,8 @@ public class DataProviderManager implements ApplicationContextAware {
             DataProvider provider = (DataProvider) c.newInstance();
             provider.setQuery(query);
             provider.setDataSource(dataSource);
-            if (provider instanceof Initializing && !isUseForTest) {
+            provider.setUsedForTest(isUseForTest);
+            if (provider instanceof Initializing) {
                 ((Initializing) provider).afterPropertiesSet();
             }
             applicationContext.getAutowireCapableBeanFactory().autowireBean(provider);

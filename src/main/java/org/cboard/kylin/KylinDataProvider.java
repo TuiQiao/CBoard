@@ -80,8 +80,12 @@ public class KylinDataProvider extends DataProvider implements Aggregatable, Ini
 
     @Override
     public String[][] getData() throws Exception {
+        return null;
+    }
 
-        LOG.debug("Execute JdbcDataProvider.getData() Start!");
+    @Override
+    public void test() throws Exception {
+        LOG.debug("Execute Kylin DataProvider.test() Start!");
         List<String[]> list = null;
         LOG.info("Model: " + kylinModel);
 
@@ -107,8 +111,6 @@ public class KylinDataProvider extends DataProvider implements Aggregatable, Ini
             LOG.error("ERROR:" + e.getMessage());
             throw new Exception("ERROR:" + e.getMessage(), e);
         }
-
-        return list.toArray(new String[][]{});
     }
 
     private Connection getConnection() throws Exception {

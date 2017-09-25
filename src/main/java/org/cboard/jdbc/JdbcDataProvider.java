@@ -96,6 +96,7 @@ public class JdbcDataProvider extends DataProvider implements Aggregatable, Init
 
     @Override
     public String[][] getData() throws Exception {
+        final int batchSize = 20000;
         Stopwatch stopwatch = Stopwatch.createStarted();
         LOG.debug("Execute JdbcDataProvider.getData() Start!");
         String sql = getAsSubQuery(query.get(SQL));
@@ -116,8 +117,11 @@ public class JdbcDataProvider extends DataProvider implements Aggregatable, Init
             int resultCount = 0;
             while (rs.next()) {
                 resultCount++;
+                if (resultCount % batchSize == 0) {
+                    LOG.info("JDBC load batch {}", resultCount);
+                }
                 if (resultCount > resultLimit) {
-                    throw new CBoardException("Cube result count is greater than limit " + resultLimit);
+                    throw new CBoardException("Cube result count " + resultCount + ", is greater than limit " + resultLimit);
                 }
                 row = new String[columnCount];
                 for (int j = 0; j < columnCount; j++) {
@@ -346,7 +350,9 @@ public class JdbcDataProvider extends DataProvider implements Aggregatable, Init
     public void afterPropertiesSet() throws Exception {
         String subQuery = getAsSubQuery(query.get(SQL));
         SqlHelper sqlHelper = new SqlHelper(subQuery, true);
-        sqlHelper.getSqlSyntaxHelper().setColumnTypes(getColumnType());
+        if (!isUsedForTest()) {
+            sqlHelper.getSqlSyntaxHelper().setColumnTypes(getColumnType());
+        }
         this.sqlHelper = sqlHelper;
     }
 

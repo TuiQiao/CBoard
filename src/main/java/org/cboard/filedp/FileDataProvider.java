@@ -46,7 +46,7 @@ public class FileDataProvider extends DataProvider {
     @QueryParameter(label = "{{'DATAPROVIDER.TEXTFILE.FIELD_NAMES'|translate}}", placeholder = "<fieldName>[,<fieldName>]...(The file has fields header without input)", type = QueryParameter.Type.Input, order = 4)
     private String QUERY_PARAM_FIELD_NAMES = "fieldNames";
 
-    @QueryParameter(label = "{{'DATAPROVIDER.TEXTFILE.SEPRATOR'|translate}}", value = "\\\\t", placeholder = "default value is \\t (The DataType is JSON without input)", type = QueryParameter.Type.Input, order = 5)
+    @QueryParameter(label = "{{'DATAPROVIDER.TEXTFILE.SEPRATOR'|translate}}", value = "\\t", placeholder = "default value is \\t (The DataType is JSON without input)", type = QueryParameter.Type.Input, order = 5)
     private String QUERY_PARAM_SEPRATOR = "seprator";
 
     @QueryParameter(label = "{{'DATAPROVIDER.TEXTFILE.QUOTE_CHAR'|translate}}", value = "\\\"", placeholder = "default value is guillemets (The DataType is CSV must input)", type = QueryParameter.Type.Input, order = 6)

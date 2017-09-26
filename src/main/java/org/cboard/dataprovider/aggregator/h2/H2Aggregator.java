@@ -45,7 +45,7 @@ public class H2Aggregator extends InnerAggregator {
     public void beforeLoad(String[] header) {
         String tableName = getTmpTblName();
         StringJoiner ddl = new StringJoiner(", ", "CREATE TABLE " + tableName + "(", ");");
-        Arrays.stream(header).map(col -> col + " VARCHAR(255)").forEach(ddl::add);
+        Arrays.stream(header).map(col -> surround(col, "`") + " VARCHAR(255)").forEach(ddl::add);
         // Recreate table
         try (Connection conn = jdbcDataSource.getConnection();
              Statement statmt = conn.createStatement();) {

@@ -17,6 +17,10 @@ public class ViewDashboardBoard {
     private String userId;
     private Long categoryId;
     private String name;
+    private String userName;
+    private String loginName;
+    private String createTime;
+    private String updateTime;
     private Map<String, Object> layout;
     private String categoryName;
     private boolean edit;
@@ -35,6 +39,10 @@ public class ViewDashboardBoard {
         this.userId = board.getUserId();
         this.categoryId = board.getCategoryId();
         this.name = board.getName();
+        this.userName = board.getUserName();
+        this.loginName = board.getLoginName();
+        this.createTime = board.getCreateTime().toString();
+        this.updateTime = board.getUpdateTime().toString();
         this.layout = JSONObject.parseObject(board.getLayout());
         this.categoryName = board.getCategoryName();
         this.edit = RolePermission.isEdit(board.getPermission());
@@ -79,6 +87,38 @@ public class ViewDashboardBoard {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public String getUserName() {
+        return userName;
+    }
+
+    public void setUserName(String userName) {
+        this.userName = userName;
+    }
+
+    public String getLoginName() {
+        return loginName;
+    }
+
+    public void setLoginName(String loginName) {
+        this.loginName = loginName;
+    }
+
+    public String getCreateTime() {
+        return createTime;
+    }
+
+    public void setCreateTime(String createTime) {
+        this.createTime = createTime;
+    }
+
+    public String getUpdateTime() {
+        return updateTime;
+    }
+
+    public void setUpdateTime(String updateTime) {
+        this.updateTime = updateTime;
     }
 
     public Map<String, Object> getLayout() {

@@ -15,13 +15,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import java.io.ByteArrayOutputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
+import java.sql.Timestamp;
+import java.text.SimpleDateFormat;
+import java.util.*;
+
 
 /**
  * Created by yfyuan on 2016/8/23.
@@ -99,6 +97,8 @@ public class BoardService {
         board.setCategoryId(jsonObject.getLong("categoryId"));
         board.setLayout(jsonObject.getString("layout"));
         board.setId(jsonObject.getLong("id"));
+        board.setUpdateTime(new Timestamp(Calendar.getInstance().getTimeInMillis()));
+
 
         Map<String, Object> paramMap = new HashMap<String, Object>();
         paramMap.put("board_id", board.getId());

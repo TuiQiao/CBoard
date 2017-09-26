@@ -20,6 +20,10 @@ public class ViewDashboardDatasource {
     private Map<String, Object> config;
     private boolean edit;
     private boolean delete;
+    private String userName;
+    private String loginName;
+    private String createTime;
+    private String updateTime;
 
     public static final Function TO = new Function<DashboardDatasource, ViewDashboardDatasource>() {
         @Nullable
@@ -37,6 +41,10 @@ public class ViewDashboardDatasource {
         this.config = JSONObject.parseObject(datasource.getConfig());
         this.edit = RolePermission.isEdit(datasource.getPermission());
         this.delete = RolePermission.isDelete(datasource.getPermission());
+        this.userName = datasource.getUserName();
+        this.loginName = datasource.getLoginName();
+        this.createTime = datasource.getCreateTime().toString();
+        this.updateTime = datasource.getUpdateTime().toString();
     }
 
     public boolean isEdit() {
@@ -93,5 +101,37 @@ public class ViewDashboardDatasource {
 
     public void setConfig(Map<String, Object> config) {
         this.config = config;
+    }
+
+    public String getUserName() {
+        return userName;
+    }
+
+    public void setUserName(String userName) {
+        this.userName = userName;
+    }
+
+    public String getLoginName() {
+        return loginName;
+    }
+
+    public void setLoginName(String loginName) {
+        this.loginName = loginName;
+    }
+
+    public String getCreateTime() {
+        return createTime;
+    }
+
+    public void setCreateTime(String createTime) {
+        this.createTime = createTime;
+    }
+
+    public String getUpdateTime() {
+        return updateTime;
+    }
+
+    public void setUpdateTime(String updateTime) {
+        this.updateTime = updateTime;
     }
 }

@@ -7,6 +7,8 @@ import org.cboard.pojo.DashboardDataset;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
+import java.sql.Timestamp;
+import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -49,6 +51,7 @@ public class DatasetService {
         dataset.setName(jsonObject.getString("name"));
         dataset.setCategoryName(jsonObject.getString("categoryName"));
         dataset.setData(jsonObject.getString("data"));
+        dataset.setUpdateTime(new Timestamp(Calendar.getInstance().getTimeInMillis()));
         if (StringUtils.isEmpty(dataset.getCategoryName())) {
             dataset.setCategoryName("默认分类");
         }

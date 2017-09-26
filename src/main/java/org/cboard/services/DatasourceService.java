@@ -11,6 +11,8 @@ import org.cboard.services.role.RolePermission;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
+import java.sql.Timestamp;
+import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -72,6 +74,7 @@ public class DatasourceService {
         datasource.setType(jsonObject.getString("type"));
         datasource.setConfig(jsonObject.getString("config"));
         datasource.setId(jsonObject.getLong("id"));
+        datasource.setUpdateTime(new Timestamp(Calendar.getInstance().getTimeInMillis()));
 
         Map<String, Object> paramMap = new HashMap<String, Object>();
         paramMap.put("datasource_id", datasource.getId());

@@ -11,6 +11,8 @@ import org.cboard.services.role.RolePermission;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
+import java.sql.Timestamp;
+import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -60,6 +62,7 @@ public class WidgetService {
         widget.setName(jsonObject.getString("name"));
         widget.setCategoryName(jsonObject.getString("categoryName"));
         widget.setData(jsonObject.getString("data"));
+        widget.setUpdateTime(new Timestamp(Calendar.getInstance().getTimeInMillis()));
         if (StringUtils.isEmpty(widget.getCategoryName())) {
             widget.setCategoryName("默认分类");
         }

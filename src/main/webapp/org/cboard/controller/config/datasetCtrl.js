@@ -559,6 +559,11 @@ cBoard.controller('datasetCtrl', function ($scope, $http, dataService, $uibModal
         if (!checkTreeNode("delete")) return;
         $scope.deleteDs(getSelectedDataSet());
     };
+    $scope.showInfo = function () {
+        if (!checkTreeNode("info")) return;
+        var content = getSelectedDataSet();
+        ModalUtils.info(content,"modal-info", "lg");
+    };
     $scope.searchNode = function () {
         var para = {dsName: '', dsrName: ''};
         //map datasetList to list (add datasourceName)

@@ -41,7 +41,12 @@
     "ADD_RELATIONS": "Add Relations",
     "DEL_RELATIONS": "Del Relations",
     "DATE": "Date",
-    "VALUE": "Value"
+    "VALUE": "Value",
+    "INFORMATION": "Information",
+    "USER_ID": "creator ID",
+    "LOGIN_NAME": "creator login name",
+    "CREATE_TIME": "create time",
+    "UPDATE_TIM": "last update time"
   },
   "TIPS": {
     "CAL_EXPR": "Calculate after aggregation. Use assist click input to avoid typo. e.g: Math.log(sum(columnA)/count(columB))"

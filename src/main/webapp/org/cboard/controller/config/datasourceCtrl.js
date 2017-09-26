@@ -101,7 +101,9 @@ cBoard.controller('datasourceCtrl', function ($scope, $http, ModalUtils, $uibMod
             }
         });
     };
-
+    $scope.showInfo = function (ds) {
+        ModalUtils.info(ds,"modal-info", "lg");
+    };
     $scope.changeDsView = function () {
         $scope.dsView = 'dashboard/getDatasourceView.do?type=' + $scope.curDatasource.type;
     };

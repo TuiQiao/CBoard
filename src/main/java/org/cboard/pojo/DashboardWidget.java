@@ -1,5 +1,7 @@
 package org.cboard.pojo;
 
+import java.sql.Timestamp;
+
 /**
  * Created by yfyuan on 2016/8/22.
  */
@@ -9,8 +11,12 @@ public class DashboardWidget {
     private String userId;
     private String name;
     private String categoryName;
+    private String userName;
+    private String loginName;
     private String data;
     private String permission;
+    private Timestamp createTime;
+    private Timestamp updateTime;
 
     public String getPermission() {
         return permission;
@@ -58,5 +64,37 @@ public class DashboardWidget {
 
     public void setCategoryName(String categoryName) {
         this.categoryName = categoryName;
+    }
+
+    public String getUserName() {
+        return userName;
+    }
+
+    public void setUserName(String userName) {
+        this.userName = userName;
+    }
+
+    public String getLoginName() {
+        return loginName;
+    }
+
+    public void setLoginName(String loginName) {
+        this.loginName = loginName;
+    }
+
+    public Timestamp getCreateTime() {
+        return createTime;
+    }
+
+    public void setCreateTime(Timestamp createTime) {
+        this.createTime = createTime;
+    }
+
+    public Timestamp getUpdateTime() {
+        return updateTime;
+    }
+
+    public void setUpdateTime(Timestamp updateTime) {
+        this.updateTime = updateTime;
     }
 }

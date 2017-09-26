@@ -14,8 +14,12 @@
               user_id       AS userId,
               source_name   AS name,
               source_type   AS type,
-              config        AS config
-         FROM dashboard_datasource
+              config        AS config,
+              (select u.user_name from dashboard_user u where u.user_id = s.user_id) as userName,
+              (select u.login_name from dashboard_user u where u.user_id = s.user_id) as loginName,
+              create_time   AS createTime,
+              update_time   AS updateTime
+         FROM dashboard_datasource s
         WHERE #{0} = '${admin_user_id}' OR user_id = #{0} OR datasource_id IN (
              SELECT res_id
                FROM dashboard_user_role ur
@@ -31,8 +35,12 @@
                user_id       AS userId,
                source_name   AS name,
                source_type   AS type,
-               config        AS config
-         FROM dashboard_datasource
+               config        AS config,
+               (select u.user_name from dashboard_user u where u.user_id = s.user_id) as userName,
+               (select u.login_name from dashboard_user u where u.user_id = s.user_id) as loginName,
+               create_time   AS createTime,
+               update_time   AS updateTime
+         FROM dashboard_datasource s
         WHERE #{0} = '${admin_user_id}'
           OR user_id = #{0}
           OR datasource_id IN (
@@ -45,7 +53,7 @@
     </select>
 
     <select id="getDatasource" resultType="org.cboard.pojo.DashboardDatasource">
-        SELECT datasource_id id,user_id userId,source_name name,source_type type ,config FROM dashboard_datasource WHERE datasource_id = #{0}
+        SELECT datasource_id id,user_id userId,source_name name,source_type type ,config,create_time createTime,update_time updateTime FROM dashboard_datasource WHERE datasource_id = #{0}
     </select>
 
     <insert id="save" parameterType="org.cboard.pojo.DashboardDatasource">
@@ -56,7 +64,7 @@
 
     <update id="update" parameterType="org.cboard.pojo.DashboardDatasource">
         <![CDATA[
-        UPDATE dashboard_datasource SET source_name = #{name},config = #{config} where datasource_id = #{id}
+        UPDATE dashboard_datasource SET source_name = #{name},config = #{config},update_time = #{updateTime} where datasource_id = #{id}
         ]]>
     </update>
 

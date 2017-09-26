@@ -22,3 +22,4 @@ CREATE TABLE dashboard_board_param (
   config text,
   PRIMARY KEY (board_param_id)
 );
+

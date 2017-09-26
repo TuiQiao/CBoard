@@ -1477,7 +1477,11 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
         $scope.applyModelChanges = function () {
             return !$scope.ignoreChanges;
         };
-
+        $scope.showInfo = function () {
+            if (!checkTreeNode("info")) return;
+            var content = getSelectedWidget();
+            ModalUtils.info(content,"modal-info", "lg");
+        };
         $scope.copyNode = function () {
             if (!checkTreeNode("copy")) return;
             $scope.copyWgt(getSelectedWidget());

@@ -17,6 +17,10 @@ public class ViewDashboardWidget {
     private String userId;
     private String name;
     private String categoryName;
+    private String userName;
+    private String loginName;
+    private String createTime;
+    private String updateTime;
     private Map<String, Object> data;
     private boolean edit;
     private boolean delete;
@@ -34,6 +38,10 @@ public class ViewDashboardWidget {
         this.userId = widget.getUserId();
         this.name = widget.getName();
         this.categoryName = widget.getCategoryName();
+        this.userName = widget.getUserName();
+        this.loginName = widget.getLoginName();
+        this.createTime = widget.getCreateTime().toString();
+        this.updateTime = widget.getUpdateTime().toString();
         this.data = JSONObject.parseObject(widget.getData());
         this.edit = RolePermission.isEdit(widget.getPermission());
         this.delete = RolePermission.isDelete(widget.getPermission());
@@ -93,5 +101,37 @@ public class ViewDashboardWidget {
 
     public void setCategoryName(String categoryName) {
         this.categoryName = categoryName;
+    }
+
+    public String getUserName() {
+        return userName;
+    }
+
+    public void setUserName(String userName) {
+        this.userName = userName;
+    }
+
+    public String getLoginName() {
+        return loginName;
+    }
+
+    public void setLoginName(String loginName) {
+        this.loginName = loginName;
+    }
+
+    public String getCreateTime() {
+        return createTime;
+    }
+
+    public void setCreateTime(String createTime) {
+        this.createTime = createTime;
+    }
+
+    public String getUpdateTime() {
+        return updateTime;
+    }
+
+    public void setUpdateTime(String updateTime) {
+        this.updateTime = updateTime;
     }
 }

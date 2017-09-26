@@ -276,7 +276,6 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
                 $scope.datasetList = response;
                 if (callback) {
                     callback();
-                    $scope.switchLiteMode(true);
                 }
             });
         };
@@ -1144,6 +1143,7 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
                             _.each(dps.columns, function (e) {
                                 $scope.schema.selects.push({column: e});
                             });
+                            $scope.switchLiteMode(true);
                         } else {
                             $scope.alerts = [{msg: dps.msg, type: 'danger'}];
                         }
@@ -1564,7 +1564,7 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
             $scope.curWidget.query = {};
             $http.get('dashboard/getConfigParams.do?type=' + $scope.datasource.type + '&page=widget.html').then(function (response) {
                 $scope.params = response.data;
-                for (i in $scope.params) {
+                for (var i in $scope.params) {
                     var name = $scope.params[i].name;
                     var value = $scope.params[i].value;
                     var checked = $scope.params[i].checked;

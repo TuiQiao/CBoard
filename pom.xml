@@ -16,8 +16,15 @@
         <jackson.version>1.9.10</jackson.version>
         <jdk.version>1.8</jdk.version>
         <presto.version>0.161</presto.version>
+        <h2.version>1.4.196</h2.version>
     </properties>
+
     <dependencies>
+        <dependency>
+            <groupId>com.h2database</groupId>
+            <artifactId>h2</artifactId>
+            <version>${h2.version}</version>
+        </dependency>
         <dependency>
             <groupId>com.google.guava</groupId>
             <artifactId>guava</artifactId>
@@ -315,6 +322,19 @@
             <artifactId>opencsv</artifactId>
             <version>2.4</version>
         </dependency>
+
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-dbcp2</artifactId>
+            <version>2.1.1</version>
+        </dependency>
+
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>4.12</version>
+        </dependency>
+
     </dependencies>
 
     <build>

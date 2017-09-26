@@ -15,6 +15,8 @@ import org.cboard.dataprovider.annotation.QueryParameter;
 import org.cboard.dataprovider.config.*;
 import org.cboard.dataprovider.result.AggregateResult;
 import org.cboard.dataprovider.result.ColumnIndex;
+import org.cboard.dataprovider.util.SqlHelper;
+import org.cboard.dataprovider.util.SqlSyntaxHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
@@ -24,7 +26,6 @@ import org.springframework.web.client.RestTemplate;
 import java.sql.*;
 import java.util.*;
 import java.util.function.BiFunction;
-import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
@@ -65,10 +66,8 @@ public class KylinDataProvider extends DataProvider implements Aggregatable, Ini
 
     private static final CacheManager<KylinModel> modelCache = new HeapCacheManager<>();
 
-    private DimensionConfigHelper dimensionConfigHelper = new DimensionConfigHelper();
-
     private KylinModel kylinModel;
-
+    private SqlHelper sqlHelper;
 
     private String getKey(Map<String, String> dataSource, Map<String, String> query) {
         return Hashing.md5().newHasher().putString(JSONObject.toJSON(dataSource).toString() + JSONObject.toJSON(query).toString(), Charsets.UTF_8).hash().toString();
@@ -81,14 +80,18 @@ public class KylinDataProvider extends DataProvider implements Aggregatable, Ini
 
     @Override
     public String[][] getData() throws Exception {
+        return null;
+    }
 
-        LOG.debug("Execute JdbcDataProvider.getData() Start!");
+    @Override
+    public void test() throws Exception {
+        LOG.debug("Execute Kylin DataProvider.test() Start!");
         List<String[]> list = null;
         LOG.info("Model: " + kylinModel);
 
         try (Connection con = getConnection()) {
             Statement ps = con.createStatement();
-            ResultSet rs = ps.executeQuery("select * from " + kylinModel.geModelSql());
+            ResultSet rs = ps.executeQuery("select * from " + kylinModel.geModelSql() + " limit 10");
             ResultSetMetaData metaData = rs.getMetaData();
             int columnCount = metaData.getColumnCount();
             list = new LinkedList<>();
@@ -108,8 +111,6 @@ public class KylinDataProvider extends DataProvider implements Aggregatable, Ini
             LOG.error("ERROR:" + e.getMessage());
             throw new Exception("ERROR:" + e.getMessage(), e);
         }
-
-        return list.toArray(new String[][]{});
     }
 
     private Connection getConnection() throws Exception {
@@ -146,7 +147,7 @@ public class KylinDataProvider extends DataProvider implements Aggregatable, Ini
                             return true;
                         }
                     });
-            whereStr = assembleSqlFilter(filterHelpers, "WHERE", kylinModel);
+            whereStr =  sqlHelper.assembleFilterSql(filterHelpers);
         }
         fsql = "SELECT %s FROM %s %s %s GROUP BY %s ORDER BY %s";
         exec = String.format(fsql, columnAliasName, tableName, kylinModel.getTableAlias(tableName), whereStr, columnAliasName, columnAliasName);
@@ -163,104 +164,6 @@ public class KylinDataProvider extends DataProvider implements Aggregatable, Ini
         }
         return filtered.toArray(new String[]{});
     }
-
-    /**
-     * Parser a single filter configuration to sql syntax
-     */
-    private Function<DimensionConfig, String> filter2SqlCondtion = (config) -> {
-        if (config.getValues().size() == 0) {
-            return null;
-        }
-        if (NULL_STRING.equals(config.getValues().get(0))) {
-            switch (config.getFilterType()) {
-                case "=":
-                case "≠":
-                    return kylinModel.getColumnAndAlias(config.getColumnName()) + ("=".equals(config.getFilterType()) ? " IS NULL" : " IS NOT NULL");
-            }
-        }
-
-        switch (config.getFilterType()) {
-            case "=":
-            case "eq":
-                return kylinModel.getColumnAndAlias(config.getColumnName()) + " IN (" + IntStream.range(0, config.getValues().size()).boxed().map(i -> dimensionConfigHelper.getValueStr(config, i)).collect(Collectors.joining(",")) + ")";
-            case "≠":
-            case "ne":
-                return kylinModel.getColumnAndAlias(config.getColumnName()) + " NOT IN (" + IntStream.range(0, config.getValues().size()).boxed().map(i -> dimensionConfigHelper.getValueStr(config, i)).collect(Collectors.joining(",")) + ")";
-            case ">":
-                return kylinModel.getColumnAndAlias(config.getColumnName()) + " > " + dimensionConfigHelper.getValueStr(config, 0);
-            case "<":
-                return kylinModel.getColumnAndAlias(config.getColumnName()) + " < " + dimensionConfigHelper.getValueStr(config, 0);
-            case "≥":
-                return kylinModel.getColumnAndAlias(config.getColumnName()) + " >= " + dimensionConfigHelper.getValueStr(config, 0);
-            case "≤":
-                return kylinModel.getColumnAndAlias(config.getColumnName()) + " <= " + dimensionConfigHelper.getValueStr(config, 0);
-            case "(a,b]":
-                if (config.getValues().size() >= 2) {
-                    return "(" + kylinModel.getColumnAndAlias(config.getColumnName()) + " > '" + dimensionConfigHelper.getValueStr(config, 0) + "' AND " + kylinModel.getColumnAndAlias(config.getColumnName()) + " <= " + dimensionConfigHelper.getValueStr(config, 1) + ")";
-                } else {
-                    return null;
-                }
-            case "[a,b)":
-                if (config.getValues().size() >= 2) {
-                    return "(" + kylinModel.getColumnAndAlias(config.getColumnName()) + " >= " + dimensionConfigHelper.getValueStr(config, 0) + " AND " + kylinModel.getColumnAndAlias(config.getColumnName()) + " < " + dimensionConfigHelper.getValueStr(config, 1) + ")";
-                } else {
-                    return null;
-                }
-            case "(a,b)":
-                if (config.getValues().size() >= 2) {
-                    return "(" + kylinModel.getColumnAndAlias(config.getColumnName()) + " > " + dimensionConfigHelper.getValueStr(config, 0) + " AND " + kylinModel.getColumnAndAlias(config.getColumnName()) + " < " + dimensionConfigHelper.getValueStr(config, 1) + ")";
-                } else {
-                    return null;
-                }
-            case "[a,b]":
-                if (config.getValues().size() >= 2) {
-                    return "(" + kylinModel.getColumnAndAlias(config.getColumnName()) + " >= " + dimensionConfigHelper.getValueStr(config, 0) + " AND " + kylinModel.getColumnAndAlias(config.getColumnName()) + " <= " + dimensionConfigHelper.getValueStr(config, 1) + ")";
-                } else {
-                    return null;
-                }
-        }
-        return null;
-    };
-
-    private String configComponentToSql(ConfigComponent cc) {
-        if (cc instanceof DimensionConfig) {
-            return filter2SqlCondtion.apply((DimensionConfig) cc);
-        } else if (cc instanceof CompositeConfig) {
-            CompositeConfig compositeConfig = (CompositeConfig) cc;
-            String sql = compositeConfig.getConfigComponents().stream().map(e -> separateNull(e)).map(e -> configComponentToSql(e)).collect(Collectors.joining(" " + compositeConfig.getType() + " "));
-            return "(" + sql + ")";
-        }
-        return null;
-    }
-
-    /**
-     * Assemble all the filter to a legal sal where script
-     *
-     * @param filterStream
-     * @param prefix       HAVING or WHERE
-     * @return
-     */
-    private String assembleSqlFilter(Stream<ConfigComponent> filterStream, String prefix, KylinModel model) {
-        StringJoiner where = new StringJoiner("\nAND ", prefix + " ", "");
-        where.setEmptyValue("");
-        filterStream.map(e -> separateNull(e)).map(s -> configComponentToSql(s)).filter(e -> e != null).forEach(where::add);
-        return where.toString();
-    }
-
-    private String assembleAggValColumns(Stream<ValueConfig> selectStream, KylinModel model) {
-        StringJoiner columns = new StringJoiner(", ", "", " ");
-        columns.setEmptyValue("");
-        selectStream.map(s -> toSelect.apply(s, model)).filter(e -> e != null).forEach(columns::add);
-        return columns.toString();
-    }
-
-    private String assembleDimColumns(Stream<DimensionConfig> columnsStream, KylinModel model) {
-        StringJoiner columns = new StringJoiner(", ", "", " ");
-        columns.setEmptyValue("");
-        columnsStream.map(g -> model.getColumnAndAlias(g.getColumnName())).distinct().filter(e -> e != null).forEach(columns::add);
-        return columns.toString();
-    }
-
 
     private KylinModel getModel() throws Exception {
         String modelName = query.get(DATA_MODEL);
@@ -293,7 +196,7 @@ public class KylinDataProvider extends DataProvider implements Aggregatable, Ini
 
     @Override
     public AggregateResult queryAggData(AggConfig config) throws Exception {
-        String exec = getQueryAggDataSql(dataSource, query, config);
+        String exec = sqlHelper.assembleAggDataSql(config);
         List<String[]> list = new LinkedList<>();
         LOG.info(exec);
         try (
@@ -330,71 +233,19 @@ public class KylinDataProvider extends DataProvider implements Aggregatable, Ini
         return new AggregateResult(dimensionList, result);
     }
 
-    private String getQueryAggDataSql(Map<String, String> dataSource, Map<String, String> query, AggConfig config) throws Exception {
-        Stream<DimensionConfig> c = config.getColumns().stream();
-        Stream<DimensionConfig> r = config.getRows().stream();
-        Stream<ConfigComponent> f = config.getFilters().stream();
-        Stream<ConfigComponent> filters = Stream.concat(Stream.concat(c, r), f);
-        KylinModel model = getModel();
-        Stream<DimensionConfig> dimStream = Stream.concat(config.getColumns().stream(), config.getRows().stream());
-
-        String dimColsStr = assembleDimColumns(dimStream, model);
-        String aggColsStr = assembleAggValColumns(config.getValues().stream(), model);
-        String whereStr = assembleSqlFilter(filters, "WHERE", model);
-        String groupByStr = StringUtils.isBlank(dimColsStr) ? "" : "GROUP BY " + dimColsStr;
-
-        StringJoiner selectColsStr = new StringJoiner(",");
-        if (!StringUtils.isBlank(dimColsStr)) {
-            selectColsStr.add(dimColsStr);
-        }
-        if (!StringUtils.isBlank(aggColsStr)) {
-            selectColsStr.add(aggColsStr);
-        }
-
-        String fsql = "\nSELECT %s \nFROM %s\n %s \n %s";
-        String exec = String.format(fsql, selectColsStr, model.geModelSql(), whereStr, groupByStr);
-        return exec;
-    }
-
     @Override
     public String viewAggDataQuery(AggConfig config) throws Exception {
-        return getQueryAggDataSql(dataSource, query, config);
+        return sqlHelper.assembleAggDataSql(config);
     }
-
-    private BiFunction<ValueConfig, KylinModel, String> toSelect = (config, model) -> {
-        switch (config.getAggType()) {
-            case "sum":
-                return "SUM(" + model.getColumnAndAlias(config.getColumn()) + ") AS sum_" + config.getColumn();
-            case "avg":
-                return "AVG(" + model.getColumnAndAlias(config.getColumn()) + ") AS avg_" + config.getColumn();
-            case "max":
-                return "MAX(" + model.getColumnAndAlias(config.getColumn()) + ") AS max_" + config.getColumn();
-            case "min":
-                return "MIN(" + model.getColumnAndAlias(config.getColumn()) + ") AS min_" + config.getColumn();
-            case "distinct":
-                return "COUNT(DISTINCT " + model.getColumnAndAlias(config.getColumn()) + ") AS count_d_" + config.getColumn();
-            default:
-                return "COUNT(" + model.getColumnAndAlias(config.getColumn()) + ") AS count_" + config.getColumn();
-        }
-    };
 
     @Override
     public void afterPropertiesSet() throws Exception {
         try {
             kylinModel = getModel();
+            sqlHelper = new SqlHelper(kylinModel.geModelSql(), false);
+            sqlHelper.setSqlSyntaxHelper(new KylinSyntaxHelper(kylinModel));
         } catch (Exception e) {
             e.printStackTrace();
-        }
-    }
-
-    private class DimensionConfigHelper {
-
-        public String getValueStr(DimensionConfig config, int index) {
-            if (kylinModel.getColumnType(config.getColumnName()).startsWith("varchar")) {
-                return "'" + config.getValues().get(index) + "'";
-            } else {
-                return config.getValues().get(index);
-            }
         }
     }
 

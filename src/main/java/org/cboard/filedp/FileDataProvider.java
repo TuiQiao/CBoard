@@ -2,6 +2,7 @@ package org.cboard.filedp;
 
 import au.com.bytecode.opencsv.CSVReader;
 import com.alibaba.fastjson.JSON;
+import com.google.common.base.Stopwatch;
 import org.apache.commons.lang.StringUtils;
 import org.cboard.dataprovider.DataProvider;
 import org.cboard.dataprovider.annotation.DatasourceParameter;
@@ -14,6 +15,7 @@ import org.springframework.beans.factory.annotation.Value;
 
 import java.io.*;
 import java.util.*;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.IntStream;
 
 import static java.util.stream.Collectors.toList;
@@ -44,7 +46,7 @@ public class FileDataProvider extends DataProvider {
     @QueryParameter(label = "{{'DATAPROVIDER.TEXTFILE.FIELD_NAMES'|translate}}", placeholder = "<fieldName>[,<fieldName>]...(The file has fields header without input)", type = QueryParameter.Type.Input, order = 4)
     private String QUERY_PARAM_FIELD_NAMES = "fieldNames";
 
-    @QueryParameter(label = "{{'DATAPROVIDER.TEXTFILE.SEPRATOR'|translate}}", value = "\\\\t", placeholder = "default value is \\t (The DataType is JSON without input)", type = QueryParameter.Type.Input, order = 5)
+    @QueryParameter(label = "{{'DATAPROVIDER.TEXTFILE.SEPRATOR'|translate}}", value = "\\t", placeholder = "default value is \\t (The DataType is JSON without input)", type = QueryParameter.Type.Input, order = 5)
     private String QUERY_PARAM_SEPRATOR = "seprator";
 
     @QueryParameter(label = "{{'DATAPROVIDER.TEXTFILE.QUOTE_CHAR'|translate}}", value = "\\\"", placeholder = "default value is guillemets (The DataType is CSV must input)", type = QueryParameter.Type.Input, order = 6)
@@ -60,6 +62,7 @@ public class FileDataProvider extends DataProvider {
 
     @Override
     public String[][] getData() throws Exception {
+        Stopwatch stopwatch = Stopwatch.createStarted();
         String basePath = dataSource.get(DS_PARAM_BASE_PATH);
         String fileName = query.get(QUERY_PARAM_FILE_NAME);
         String encoding = StringUtils.isBlank(query.get(QUERY_PARAM_ENCODING)) ? "UTF-8" : query.get(QUERY_PARAM_ENCODING);
@@ -71,7 +74,6 @@ public class FileDataProvider extends DataProvider {
 
         String fullPath = basePath + fileName;
         LOG.info("INFO: Read file from {}", fullPath);
-
         BufferedReader reader = null;
         String[][] strings = null;
         try {
@@ -88,7 +90,8 @@ public class FileDataProvider extends DataProvider {
                 reader.close();
             }
         }
-
+        stopwatch.stop();
+        LOG.info("getData() using time: {}s", stopwatch.elapsed(TimeUnit.SECONDS));
         return strings;
     }
 

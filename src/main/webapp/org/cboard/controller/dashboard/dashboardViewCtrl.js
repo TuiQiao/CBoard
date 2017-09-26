@@ -151,14 +151,36 @@ cBoard.controller('dashboardViewCtrl', function ($timeout, $rootScope, $scope, $
         paramToFilter();
     };
 
+    var initDsReloadStatus = function() {
+        var dsReloadStatus = new Map();
+        _.each($scope.board.layout.rows, function(row) {
+            _.each(row.widgets, function (widget) {
+                var dataSetId = widget.widget.data.datasetId;
+                if (dataSetId != undefined) {
+                    dsReloadStatus.set(dataSetId, true);
+                }
+            });
+        });
+        return dsReloadStatus;
+    };
+
     var loadWidget = function (reload) {
         paramToFilter();
+        var dsReloadStatus = initDsReloadStatus();
         _.each($scope.board.layout.rows, function (row) {
             _.each(row.widgets, function (widget) {
                 if (!_.isUndefined(widget.hasRole) && !widget.hasRole) {
                     return;
                 }
-                buildRender(widget, reload);
+                var dataSetId = widget.widget.data.datasetId;
+                var needReload = reload;
+                if (dataSetId != undefined) {
+                    var needReload = dsReloadStatus.get(dataSetId);
+                }
+                buildRender(widget, needReload);
+                if (dataSetId != undefined) {
+                    dsReloadStatus.set(dataSetId, false);
+                }
                 widget.loading = true;
                 if ($scope.board.layout.type == 'timeline') {
                     if (row.show) {

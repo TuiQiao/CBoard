@@ -243,7 +243,7 @@ cBoard.controller('datasetCtrl', function ($scope, $http, dataService, $uibModal
     };
 
     $scope.editFilterGroup = function (col) {
-        var selects = schemaToSelect($scope.curDataset.data.schema);
+        var columnObjs = schemaToSelect($scope.curDataset.data.schema);
         $uibModal.open({
             templateUrl: 'org/cboard/view/config/modal/filterGroup.html',
             windowTemplateUrl: 'org/cboard/view/util/modal/window.html',
@@ -255,7 +255,7 @@ cBoard.controller('datasetCtrl', function ($scope, $http, dataService, $uibModal
                 } else {
                     $scope.data = {group: '', filters: [], id: uuid4.generate()};
                 }
-                $scope.selects = selects;
+                $scope.columnObjs = columnObjs;
                 $scope.close = function () {
                     $uibModalInstance.close();
                 };
@@ -317,7 +317,7 @@ cBoard.controller('datasetCtrl', function ($scope, $http, dataService, $uibModal
         );
     };
 
-    var schemaToSelect = function (schema) {
+    var schemaToSelect = function (schema, rawSelects) {
         if (schema.selects) {
             return angular.copy(schema.selects);
         } else {
@@ -332,18 +332,25 @@ cBoard.controller('datasetCtrl', function ($scope, $http, dataService, $uibModal
                     selects.push(e);
                 }
             });
+            _.each(rawSelects, function(col) {
+               if (_.find(selects, function(o) { return col == o.column;}) === undefined) {
+                    selects.push({
+                        column: col
+                    });
+               }
+            });
             return angular.copy(selects);
         }
     };
 
     $scope.editExp = function (col) {
-        var selects = schemaToSelect($scope.curDataset.data.schema);
         var aggregate = [
             {name: 'sum', value: 'sum'},
             {name: 'count', value: 'count'},
             {name: 'avg', value: 'avg'},
             {name: 'max', value: 'max'},
-            {name: 'min', value: 'min'}
+            {name: 'min', value: 'min'},
+            {name: 'distinct', value: 'distinct'}
         ];
         var ok;
         var data = {expression: ''};
@@ -364,19 +371,19 @@ cBoard.controller('datasetCtrl', function ($scope, $http, dataService, $uibModal
                 col.alias = data.alias;
             }
         }
-
+        var columnObjs = schemaToSelect($scope.curDataset.data.schema, $scope.selects);
         $uibModal.open({
             templateUrl: 'org/cboard/view/config/modal/exp.html',
             windowTemplateUrl: 'org/cboard/view/util/modal/window.html',
             backdrop: false,
             size: 'lg',
+            scope: $scope,
             controller: function ($scope, $uibModalInstance) {
                 $scope.data = data;
-                $scope.selects = selects;
+                $scope.columnObjs = columnObjs;
                 $scope.aggregate = aggregate;
                 $scope.alerts = [];
-                $scope.expAceOpt = expEditorOptions(selects, aggregate);
-
+                $scope.expAceOpt = expEditorOptions($scope.selects, aggregate);
                 $scope.close = function () {
                     $uibModalInstance.close();
                 };

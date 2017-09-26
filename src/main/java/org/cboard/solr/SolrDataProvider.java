@@ -180,6 +180,15 @@ public class SolrDataProvider extends DataProvider implements Aggregatable, Init
 
     @Override
     public String[][] getData() throws Exception {
+        return null;
+    }
+
+    @Override
+    public void test() throws Exception {
+        getSolrData();
+    }
+
+    public String[][] getSolrData() throws Exception {
         String solrServers = dataSource.get("solrServers");
         if (StringUtils.isBlank(solrServers))
             throw new CBoardException("Datasource config Solr Servers can not be empty.");
@@ -220,7 +229,7 @@ public class SolrDataProvider extends DataProvider implements Aggregatable, Init
         return strings;
     }
 
-    public String[][] getData(String dimColsStr, SolrDocumentList results) throws Exception {
+    public String[][] getSolrData(String dimColsStr, SolrDocumentList results) throws Exception {
         if (StringUtils.isEmpty(dimColsStr) || results == null || results.size() <= 0) {
             throw new CBoardException("Cube result is null");
         }
@@ -253,7 +262,7 @@ public class SolrDataProvider extends DataProvider implements Aggregatable, Init
 
     @Override
     public String[] queryDimVals(String columnName, AggConfig config) throws Exception {
-        String[][] data = getData();
+        String[][] data = getSolrData();
         Map<String, Integer> columnIndex = getColumnIndex(data);
         final int fi = columnIndex.get(columnName);
         String[] result = Arrays.stream(data).parallel().skip(1)
@@ -311,7 +320,7 @@ public class SolrDataProvider extends DataProvider implements Aggregatable, Init
         List<ColumnIndex> dimensionList = dimStream.get().map(ColumnIndex::fromDimensionConfig).collect(Collectors.toList());
         //没有聚合参数直接返回
         if (config.getValues().size() <= 0) {
-            String[][] strings = getData(dimColsStr, response.getResults());
+            String[][] strings = getSolrData(dimColsStr, response.getResults());
             IntStream.range(0, dimensionList.size()).forEach(j -> dimensionList.get(j).setIndex(j));
             return new AggregateResult(dimensionList, strings);
         }

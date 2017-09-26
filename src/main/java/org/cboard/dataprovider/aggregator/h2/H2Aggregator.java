@@ -2,28 +2,23 @@ package org.cboard.dataprovider.aggregator.h2;
 
 import com.google.common.base.Stopwatch;
 import org.apache.commons.collections.map.HashedMap;
-import org.apache.commons.dbcp.BasicDataSource;
+import org.apache.commons.dbcp2.BasicDataSource;
 import org.cboard.dataprovider.aggregator.InnerAggregator;
 import org.cboard.dataprovider.config.AggConfig;
 import org.cboard.dataprovider.config.DimensionConfig;
-import org.cboard.dataprovider.config.ValueConfig;
 import org.cboard.dataprovider.result.AggregateResult;
 import org.cboard.dataprovider.result.ColumnIndex;
 import org.cboard.dataprovider.util.SqlHelper;
-import org.cboard.dataprovider.util.SqlSyntaxHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
-import org.springframework.test.context.jdbc.Sql;
 
 import java.sql.*;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
-import java.util.function.BiFunction;
-import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
@@ -47,36 +42,80 @@ public class H2Aggregator extends InnerAggregator {
     protected static Map<String, Long> h2AggMetaCacher = new HashMap<>();
 
     @Override
+    public void beforeLoad(String[] header) {
+        String tableName = getTmpTblName();
+        StringJoiner ddl = new StringJoiner(", ", "CREATE TABLE " + tableName + "(", ");");
+        Arrays.stream(header).map(col -> col + " VARCHAR(255)").forEach(ddl::add);
+        // Recreate table
+        try (Connection conn = jdbcDataSource.getConnection();
+             Statement statmt = conn.createStatement();) {
+            String dropTableStr = "DROP TABLE IF EXISTS " + tableName;
+            LOGGER.info("Execute: {}", dropTableStr);
+            statmt.execute(dropTableStr);
+            LOGGER.info("Execute: {}", ddl.toString());
+            statmt.execute(ddl.toString());
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Override
+    public void loadBatch(String[] header, String[][] data) {
+        Stopwatch stopwatch = Stopwatch.createStarted();
+        final int batchSize = 20000;
+        int count = 0;
+
+        if (data != null && data.length > 0) {
+            // Load data
+            try (Connection conn = jdbcDataSource.getConnection();
+                 PreparedStatement ps = conn.prepareStatement(buildPreparedStatment(header));
+            ) {
+                for (int i = 0; i < data.length; i++) {
+                    for (int j = 1; j <= header.length; j++) {
+                        ps.setString(j, data[i][j - 1]);
+                    }
+                    ps.addBatch();
+                    if (++count % batchSize == 0) {
+                        ps.executeBatch();
+                        LOGGER.info("Thread id: {}, H2 load batch {}", Thread.currentThread().getName(), count);
+                    }
+                }
+                ps.executeBatch();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
+        stopwatch.stop();
+        LOGGER.info("H2 Database loadBatch using time: {} ms", stopwatch.elapsed(TimeUnit.MILLISECONDS));
+    }
+
+    @Override
+    public void afterLoad() {
+        h2AggMetaCacher.put(getTmpTblName(), System.currentTimeMillis());
+    }
+
+    private String buildPreparedStatment(String[] header) {
+        String tableName = getTmpTblName();
+        StringJoiner insertJoiner = new StringJoiner(", ", "INSERT INTO " + tableName + " VALUES (", ");");
+        IntStream.range(0, header.length).forEach(i -> insertJoiner.add("?"));
+        return insertJoiner.toString();
+    }
+
+    @Override
     public void loadData(String[][] data, long interval) {
         Stopwatch stopwatch = Stopwatch.createStarted();
+
         final int batchSize = 20000;
         int count = 0;
 
         if (data != null && data.length > 1) {
             String[] header = data[0];
-            String tableName = TBL_PREFIX + getCacheKey();
-            StringJoiner ddlJoiner = new StringJoiner(", ", "CREATE TABLE " + tableName + "(", ");");
-            Arrays.stream(header).map(col -> col + " VARCHAR(255)").forEach(ddlJoiner::add);
-
-            StringJoiner insertJoiner = new StringJoiner(", ", "INSERT INTO " + tableName + " VALUES (", ");");
-            IntStream.range(0, data[0].length).forEach(i -> insertJoiner.add("?"));
-
+            String tableName = getTmpTblName();
+            beforeLoad(header);
+            // Load data
             synchronized (tableName.intern()) {
-                // Recreate table
                 try (Connection conn = jdbcDataSource.getConnection();
-                     Statement statmt = conn.createStatement();) {
-                    String dropTableStr = "DROP TABLE IF EXISTS " + tableName;
-                    LOGGER.info("Execute: {}", dropTableStr);
-                    statmt.execute(dropTableStr);
-                    LOGGER.info("Execute: {}", ddlJoiner.toString());
-                    statmt.execute(ddlJoiner.toString());
-                } catch (SQLException e) {
-                    e.printStackTrace();
-                }
-
-                // Load data
-                try (Connection conn = jdbcDataSource.getConnection();
-                     PreparedStatement ps = conn.prepareStatement(insertJoiner.toString());
+                     PreparedStatement ps = conn.prepareStatement(buildPreparedStatment(header));
                 ) {
                     for (int i = 1; i < data.length; i++) {
                         for (int j = 1; j <= data[i].length; j++) {
@@ -94,7 +133,8 @@ public class H2Aggregator extends InnerAggregator {
                 }
             }
         }
-        h2AggMetaCacher.put(getTmpTblName(), System.currentTimeMillis());
+
+        afterLoad();
         stopwatch.stop();
         LOGGER.info("H2 Database loading using time: {} ms", stopwatch.elapsed(TimeUnit.MILLISECONDS));
     }

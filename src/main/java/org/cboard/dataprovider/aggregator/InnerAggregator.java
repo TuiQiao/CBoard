@@ -46,4 +46,8 @@ public abstract class InnerAggregator implements Aggregatable {
     public void cleanExist() {
         rawDataCache.remove(getCacheKey());
     }
+
+    public void beforeLoad(String[] header) {}
+    public void loadBatch(String[] header, String[][] data) {}
+    public void afterLoad(){}
 }

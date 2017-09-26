@@ -113,7 +113,9 @@ public abstract class DataProvider {
         synchronized (key.intern()) {
             if (reload || !innerAggregator.checkExist()) {
                 String[][] data = getData();
-                innerAggregator.loadData(data, interval);
+                if (data != null) {
+                    innerAggregator.loadData(data, interval);
+                }
                 logger.info("loadData {}", key);
             }
         }
@@ -206,6 +208,10 @@ public abstract class DataProvider {
 
     public void setInterval(long interval) {
         this.interval = interval;
+    }
+
+    public InnerAggregator getInnerAggregator() {
+        return innerAggregator;
     }
 
     public void setInnerAggregator(InnerAggregator innerAggregator) {

@@ -29,9 +29,7 @@ import org.springframework.beans.factory.annotation.Value;
 import javax.sql.DataSource;
 import java.sql.*;
 import java.util.*;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentMap;
-import java.util.concurrent.TimeUnit;
+import java.util.concurrent.*;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
@@ -96,16 +94,17 @@ public class JdbcDataProvider extends DataProvider implements Aggregatable, Init
 
     @Override
     public String[][] getData() throws Exception {
-        final int batchSize = 20000;
+        final int batchSize = 100000;
         Stopwatch stopwatch = Stopwatch.createStarted();
         LOG.debug("Execute JdbcDataProvider.getData() Start!");
         String sql = getAsSubQuery(query.get(SQL));
         List<String[]> list = null;
         LOG.info("SQL String: " + sql);
 
-        try (Connection con = getConnection()) {
-            Statement ps = con.createStatement();
-            ResultSet rs = ps.executeQuery(sql);
+        try (Connection con = getConnection();
+             Statement ps = con.createStatement();
+             ResultSet rs = ps.executeQuery(sql)) {
+
             ResultSetMetaData metaData = rs.getMetaData();
             int columnCount = metaData.getColumnCount();
             list = new LinkedList<>();
@@ -113,29 +112,46 @@ public class JdbcDataProvider extends DataProvider implements Aggregatable, Init
             for (int i = 0; i < columnCount; i++) {
                 row[i] = metaData.getColumnLabel(i + 1);
             }
-            list.add(row);
+
+            String[] header = row;
+            getInnerAggregator().beforeLoad(header);
+
             int resultCount = 0;
+            int threadId = 0;
+            ExecutorService executor = Executors.newFixedThreadPool(5);
             while (rs.next()) {
                 resultCount++;
-                if (resultCount % batchSize == 0) {
-                    LOG.info("JDBC load batch {}", resultCount);
-                }
-                if (resultCount > resultLimit) {
-                    throw new CBoardException("Cube result count " + resultCount + ", is greater than limit " + resultLimit);
-                }
                 row = new String[columnCount];
                 for (int j = 0; j < columnCount; j++) {
                     row[j] = rs.getString(j + 1);
                 }
                 list.add(row);
+
+                if (resultCount % batchSize == 0) {
+                    LOG.info("JDBC load batch {}", resultCount);
+                    final String[][] batchData = list.toArray(new String[][]{});
+                    Thread loadThread = new Thread(() -> {
+                        getInnerAggregator().loadBatch(header, batchData);
+                    }, threadId++ + "");
+                    executor.execute(loadThread);
+                    list.clear();
+                }
+                if (resultCount > resultLimit) {
+                    throw new CBoardException("Cube result count " + resultCount + ", is greater than limit " + resultLimit);
+                }
             }
+            executor.shutdown();
+            while (!executor.awaitTermination(10, TimeUnit.SECONDS));
+            final String[][] batchData = list.toArray(new String[][]{});
+            getInnerAggregator().loadBatch(header, batchData);
         } catch (Exception e) {
             LOG.error("ERROR:" + e.getMessage());
             throw new Exception("ERROR:" + e.getMessage(), e);
         }
+        getInnerAggregator().afterLoad();
         stopwatch.stop();
         LOG.info("getData() using time: {} ms", stopwatch.elapsed(TimeUnit.MILLISECONDS));
-        return list.toArray(new String[][]{});
+        return null;
     }
 
     @Override

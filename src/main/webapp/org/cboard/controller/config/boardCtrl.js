@@ -286,6 +286,7 @@ cBoard.controller('boardCtrl', function ($rootScope, $scope, $http, ModalUtils, 
     var clearDirty = function () {
         _.each($scope.curBoard.layout.rows, function(row){
             _.each(row.widgets, function(widget){
+                delete widget.sourceId;
                 if(!_.isUndefined(widget.relations)){
                     delete widget.relations.sourceFields;
                     _.each(widget.relations.relations, function(relation){
@@ -294,7 +295,7 @@ cBoard.controller('boardCtrl', function ($rootScope, $scope, $http, ModalUtils, 
                 }
             });
         })
-    }
+    };
 
     $scope.editParam = function (row, index) {
         var status = {i: 0};

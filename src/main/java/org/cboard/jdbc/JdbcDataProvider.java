@@ -275,7 +275,7 @@ public class JdbcDataProvider extends DataProvider implements Aggregatable, Init
                 int columnCount = metaData.getColumnCount();
                 result = new HashedMap();
                 for (int i = 0; i < columnCount; i++) {
-                    result.put(metaData.getColumnLabel(i + 1), metaData.getColumnType(i + 1));
+                    result.put(metaData.getColumnLabel(i + 1).toUpperCase(), metaData.getColumnType(i + 1));
                 }
                 typeCahce.put(key, result, 12 * 60 * 60 * 1000);
                 return result;

@@ -18,7 +18,7 @@ public class SqlSyntaxHelper {
     }
 
     public String getDimMemberStr(DimensionConfig config, int index) {
-        switch (columnTypes.get(config.getColumnName())) {
+        switch (columnTypes.get(config.getColumnName().toUpperCase())) {
             case Types.VARCHAR:
             case Types.CHAR:
             case Types.NVARCHAR:

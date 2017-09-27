@@ -44,7 +44,7 @@
     "VALUE": "Value",
     "INFORMATION": "Information",
     "USER_ID": "creator ID",
-    "LOGIN_NAME": "creator login name",
+    "CREATOR_NAME": "creator login name",
     "CREATE_TIME": "create time",
     "UPDATE_TIM": "last update time"
   },

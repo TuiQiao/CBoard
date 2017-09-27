@@ -16,7 +16,7 @@ public class KylinSyntaxHelper extends SqlSyntaxHelper {
     }
 
     @Override
-    public String getColumnStr(DimensionConfig config) {
+    public String getProjectStr(DimensionConfig config) {
         return kylinModel.getColumnAndAlias(config.getColumnName());
     }
 

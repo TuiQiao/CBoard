@@ -3,7 +3,6 @@ package org.cboard.dataprovider.util;
 import org.apache.commons.lang.StringUtils;
 import org.cboard.dataprovider.config.*;
 
-import java.util.Map;
 import java.util.StringJoiner;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -108,7 +107,7 @@ public class SqlHelper {
             return null;
         }
 
-        String fieldName = sqlSyntaxHelper.getColumnStr(config);
+        String fieldName = sqlSyntaxHelper.getProjectStr(config);
         String v0 = sqlSyntaxHelper.getDimMemberStr(config, 0);
         String v1 = null;
         if (config.getValues().size() == 2) {
@@ -199,7 +198,7 @@ public class SqlHelper {
     private String assembleDimColumns(Stream<DimensionConfig> columnsStream) {
         StringJoiner columns = new StringJoiner(", ", "", " ");
         columns.setEmptyValue("");
-        columnsStream.map(g -> sqlSyntaxHelper.getColumnStr(g)).distinct().filter(e -> e != null).forEach(columns::add);
+        columnsStream.map(g -> sqlSyntaxHelper.getProjectStr(g)).distinct().filter(e -> e != null).forEach(columns::add);
         return columns.toString();
     }
 

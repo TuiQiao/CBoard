@@ -13,7 +13,7 @@ public class SqlSyntaxHelper {
 
     private Map<String, Integer> columnTypes;
 
-    public String getColumnStr(DimensionConfig config) {
+    public String getProjectStr(DimensionConfig config) {
         return config.getColumnName();
     }
 

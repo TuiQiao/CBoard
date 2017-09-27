@@ -3,7 +3,13 @@
 <mapper namespace="org.cboard.dao.BoardDao">
 
     <select id="getBoard" resultType="org.cboard.pojo.DashboardBoard">
-        SELECT board_id id,user_id userId,board_name name,layout_json layout,category_id categoryId FROM dashboard_board WHERE board_id = #{0}
+        SELECT board_id id,user_id userId,board_name name,layout_json layout,category_id categoryId,
+        u.user_name AS userName,
+        create_time createTime,
+        update_time updateTime
+        FROM dashboard_board b
+        LEFT JOIN dashboard_user u ON u.user_id = b.user_id
+        WHERE board_id = #{0}
     </select>
 
     <select id="getBoardList" resultType="org.cboard.pojo.DashboardBoard">
@@ -13,8 +19,13 @@
                board_name      AS NAME,
                layout_json     AS layout,
                a.category_id   AS categoryId,
-               b.category_name AS categoryName
+               b.category_name AS categoryName,
+               u.user_name     AS userName,
+               u.login_name    AS loginName,
+               create_time     AS createTime,
+               update_time     AS updateTime
           FROM dashboard_board a
+          LEFT JOIN dashboard_user u ON u.user_id = a.user_id
           LEFT JOIN dashboard_category b ON a.category_id = b.category_id
          WHERE #{0} = '${admin_user_id}' OR a.user_id = #{0} OR a.board_id IN (
              SELECT res_id
@@ -31,8 +42,13 @@
                board_name      AS NAME,
                layout_json     AS layout,
                a.category_id   AS categoryId,
-               b.category_name AS categoryName
+               b.category_name AS categoryName,
+               u.user_name     AS userName,
+               u.login_name    AS loginName,
+               create_time     AS createTime,
+               update_time     AS updateTime
           FROM dashboard_board a
+          LEFT JOIN dashboard_user u ON u.user_id = a.user_id
           LEFT JOIN dashboard_category b ON a.category_id = b.category_id
          WHERE #{0} = '${admin_user_id}'
             OR a.user_id = #{0}
@@ -61,7 +77,7 @@
 
     <update id="update" parameterType="org.cboard.pojo.DashboardBoard">
         UPDATE dashboard_board
-        SET board_name = #{name},layout_json = #{layout},
+        SET board_name = #{name},layout_json = #{layout},update_time = #{updateTime},
         <choose>
             <when test="categoryId == null">
                 category_id = null

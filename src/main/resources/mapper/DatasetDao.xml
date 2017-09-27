@@ -9,22 +9,32 @@
     <select id="getAllDatasetList" resultType="org.cboard.pojo.DashboardDataset">
         SELECT
         dataset_id    AS id,
-        user_id       AS userId,
+        s.user_id     AS userId,
         dataset_name  AS name,
         data_json     AS data,
-        category_name AS categoryName
-        FROM dashboard_dataset
+        category_name AS categoryName,
+        u.user_name   AS userName,
+        u.login_name  AS loginName,
+        create_time   AS createTime,
+        update_time   AS updateTime
+        FROM dashboard_dataset s
+        LEFT JOIN dashboard_user u ON u.user_id = s.user_id
     </select>
 
     <select id="getDatasetList" resultType="org.cboard.pojo.DashboardDataset">
       SELECT
               dataset_id    AS id,
-              user_id       AS userId,
+              s.user_id     AS userId,
               dataset_name  AS name,
               data_json     AS data,
-              category_name AS categoryName
-         FROM dashboard_dataset
-               WHERE #{0} = '${admin_user_id}' OR user_id = #{0} OR dataset_id IN (
+              category_name AS categoryName,
+              u.user_name   AS userName,
+              u.login_name  AS loginName,
+              create_time   AS createTime,
+              update_time   AS updateTime
+         FROM dashboard_dataset s
+         LEFT JOIN dashboard_user u ON u.user_id = s.user_id
+               WHERE #{0} = '${admin_user_id}' OR s.user_id = #{0} OR dataset_id IN (
              SELECT res_id
                FROM dashboard_user_role ur
                LEFT JOIN dashboard_role_res rr ON ur.role_id = rr.role_id
@@ -36,12 +46,17 @@
     <select id="getDatasetListAdmin" resultType="org.cboard.pojo.DashboardDataset">
         SELECT
               dataset_id    AS id,
-              user_id       AS userId,
+              s.user_id     AS userId,
               dataset_name  AS name,
               data_json     AS data,
-              category_name AS categoryName
-        FROM dashboard_dataset
-        WHERE #{0} = '${admin_user_id}' OR user_id = #{0}
+              category_name AS categoryName,
+              u.user_name   AS userName,
+              u.login_name  AS loginName,
+              create_time   AS createTime,
+              update_time   AS updateTime
+        FROM dashboard_dataset s
+        LEFT JOIN dashboard_user u ON u.user_id = s.user_id
+        WHERE #{0} = '${admin_user_id}' OR s.user_id = #{0}
            OR user_id = #{0}
            OR dataset_id IN (
               SELECT res_id
@@ -53,7 +68,7 @@
     </select>
 
     <select id="getDataset" resultType="org.cboard.pojo.DashboardDataset">
-       SELECT dataset_id id,user_id userId,dataset_name name,data_json data,category_name categoryName FROM dashboard_dataset WHERE dataset_id = #{0}
+       SELECT dataset_id id,user_id userId,dataset_name name,data_json data,category_name categoryName,create_time createTime,update_time updateTime FROM dashboard_dataset WHERE dataset_id = #{0}
     </select>
 
     <insert id="save" parameterType="org.cboard.pojo.DashboardDataset">
@@ -64,7 +79,7 @@
 
     <update id="update" parameterType="org.cboard.pojo.DashboardDataset">
         <![CDATA[
-        UPDATE dashboard_dataset SET dataset_name = #{name},data_json = #{data},category_name = #{categoryName} where dataset_id = #{id}
+        UPDATE dashboard_dataset SET dataset_name = #{name},data_json = #{data},category_name = #{categoryName}, update_time = #{updateTime} where dataset_id = #{id}
         ]]>
     </update>
 

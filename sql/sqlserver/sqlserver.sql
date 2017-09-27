@@ -101,3 +101,15 @@ CREATE TABLE dashboard_board_param (
   config text,
   PRIMARY KEY CLUSTERED (board_param_id)
 );
+
+ALTER  TABLE  dbo.dashboard_dataset ADD create_time DATETIME2 DEFAULT GETDATE();
+ALTER  TABLE  dbo.dashboard_dataset ADD update_time DATETIME2 DEFAULT GETDATE();
+
+ALTER  TABLE  dbo.dashboard_datasource ADD create_time DATETIME2 DEFAULT GETDATE();
+ALTER  TABLE  dbo.dashboard_datasource ADD update_time DATETIME2 DEFAULT GETDATE();
+
+ALTER  TABLE  dbo.dashboard_widget ADD create_time DATETIME2 DEFAULT GETDATE();
+ALTER  TABLE  dbo.dashboard_widget ADD update_time DATETIME2 DEFAULT GETDATE();
+
+ALTER  TABLE  dbo.dashboard_board ADD create_time DATETIME2 DEFAULT GETDATE();
+ALTER  TABLE  dbo.dashboard_board change COLUMN update_time DATETIME2 DEFAULT GETDATE();

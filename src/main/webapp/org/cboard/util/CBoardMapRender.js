@@ -24,7 +24,10 @@ CBoardMapRender.prototype.do = function (tall, persist) {
         container: this.container,
         drill: this.drill
     };
-    threeLevelMap.map(args);
+    try {
+        threeLevelMap.map(args);
+    } catch (err) {
+    }
     $(this.jqContainer).css({
         height: tall + 40 + "px",
         width: '100%'

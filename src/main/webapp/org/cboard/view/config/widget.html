@@ -113,12 +113,12 @@
                                         <div class="form-group" ng-class="{'has-error': !(verify.widgetName || widgetName.length)}">
                                         <label class="col-sm-2 control-label">{{'CONFIG.WIDGET.WIDGET_NAME'|translate}}</label>
                                         <div class="col-sm-10">
-                                            <input id="widgetName" ng-model="widgetName" class="form-control col-sm-10" placeholder="{{'CONFIG.WIDGET.CATEGORY'|translate}}/{{'CONFIG.WIDGET.WIDGET_NAME'|translate}}"/>
+                                                <input id="widgetName" ng-model="widgetName" class="form-control col-sm-10" placeholder="{{'CONFIG.WIDGET.CATEGORY'|translate}}/{{'CONFIG.WIDGET.WIDGET_NAME'|translate}}"/>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
                             </div>
-
                             <div class="row" ng-show="schema">
                                 <div class="col-md-12">
                                     <div class="form-group" style="margin-bottom: 0px">
@@ -126,21 +126,17 @@
                                         <div class="col-sm-10 chart-type">
                                             <ul class="list-inline" ng-model="curWidget.config.chart_type">
                                                 <li ng-repeat="chart in chart_types" class="ng-scope nav-item"
-                                                    ng-mouseover="showTooltip(chart, $event)"
-                                                    ng-mouseout="hideTooltip(chart, $event)"
+                                                    popover-trigger="'mouseenter'"
+                                                    popover-title="{{chart.name}}"
+                                                    popover-placement="bottom"
+                                                    popover-animation="false"
+                                                    uib-popover-template="'widgetTipTemplate'"
                                                     ng-click="changeChart(chart.value)">
                                                     <a class="ng-scope"
                                                        ng-class="[chart_types_status[chart.value]] && chart.value == curWidget.config.chart_type ? 'active':''">
                                                         <i class="chart-type-icon {{chart.class}} "
                                                            ng-class="{true:'',false:'disabled' }[chart_types_status[chart.value]]"></i>
                                                     </a>
-                                                    <div class="chart-tip">
-                                                        <em class="arrow"></em>
-                                                        <span class="tooltip-title">{{chart.name}}</span>
-                                                        <span><b>{{chart.row}}</b> &nbsp; {{'CONFIG.WIDGET.TIPS_ROW_DIM'|translate}} </span>
-                                                        <span><b>{{chart.column}}</b> &nbsp; {{'CONFIG.WIDGET.TIPS_COLUMN_DIM'|translate}} </span>
-                                                        <span><b>{{chart.measure}}</b> &nbsp; {{'CONFIG.WIDGET.TIPS_MEASURE'|translate}} </span>
-                                                    </div>
                                                 </li>
                                             </ul>
                                         </div>
@@ -173,6 +169,10 @@
                                                 <button type="submit" ng-click="doCancel()"
                                                         class="btn btn-danger btn-sm">
                                                     {{'CONFIG.WIDGET.CANCEL'|translate}}
+                                                </button>
+                                                <button type="submit" ng-click="switchLiteMode()"
+                                                        class="btn btn-info btn-sm">
+                                                    {{liteMode ? 'S' : 'L'}}
                                                 </button>
                                             </li>
                                         </ul>

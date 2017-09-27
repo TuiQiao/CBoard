@@ -2,6 +2,7 @@ package org.cboard.services;
 
 import com.alibaba.fastjson.JSONObject;
 import org.apache.commons.lang3.StringUtils;
+import org.cboard.exception.CBoardException;
 import org.cboard.security.service.LocalSecurityFilter;
 import org.cboard.services.persist.PersistContext;
 import org.slf4j.Logger;
@@ -84,9 +85,9 @@ public class PersistService {
             if (process != null) {
                 process.destroy();
             }
-            e.printStackTrace();
+            LOG.error(getClass().getName(), e);
+            throw new CBoardException(e.getMessage());
         }
-        return null;
     }
 
     public String persistCallback(String persistId, JSONObject data) {

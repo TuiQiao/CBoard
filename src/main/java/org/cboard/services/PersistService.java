@@ -10,6 +10,8 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.io.File;
+import java.io.InputStreamReader;
+import java.io.LineNumberReader;
 import java.net.URLDecoder;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
@@ -57,6 +59,21 @@ public class PersistService {
             String cmd = String.format("%s %s %s", phantomjsPath, scriptPath, phantomUrl);
             LOG.info("Run phantomjs command: {}", cmd);
             process = Runtime.getRuntime().exec(cmd);
+            final Process p = process;
+            new Thread(() -> {
+                InputStreamReader ir = new InputStreamReader(p.getInputStream());
+                LineNumberReader input = new LineNumberReader(ir);
+                String line;
+                try {
+                    while ((line = input.readLine()) != null) {
+                        LOG.info(line);
+                    }
+                    LOG.info("Finished command " + cmd);
+                } catch (Exception e) {
+                    LOG.error("Error", e);
+                    p.destroy();
+                }
+            }).start();
             synchronized (context) {
                 context.wait(10 * 60 * 1000);
             }

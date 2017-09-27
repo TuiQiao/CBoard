@@ -151,13 +151,13 @@ cBoard.controller('dashboardViewCtrl', function ($timeout, $rootScope, $scope, $
         paramToFilter();
     };
 
-    var initDsReloadStatus = function() {
+    var initDsReloadStatus = function(reload) {
         var dsReloadStatus = new Map();
         _.each($scope.board.layout.rows, function(row) {
             _.each(row.widgets, function (widget) {
                 var dataSetId = widget.widget.data.datasetId;
                 if (dataSetId != undefined) {
-                    dsReloadStatus.set(dataSetId, true);
+                    dsReloadStatus.set(dataSetId, reload);
                 }
             });
         });
@@ -166,7 +166,7 @@ cBoard.controller('dashboardViewCtrl', function ($timeout, $rootScope, $scope, $
 
     var loadWidget = function (reload) {
         paramToFilter();
-        var dsReloadStatus = initDsReloadStatus();
+        var dsReloadStatus = initDsReloadStatus(reload);
         _.each($scope.board.layout.rows, function (row) {
             _.each(row.widgets, function (widget) {
                 if (!_.isUndefined(widget.hasRole) && !widget.hasRole) {
@@ -174,13 +174,12 @@ cBoard.controller('dashboardViewCtrl', function ($timeout, $rootScope, $scope, $
                 }
                 var dataSetId = widget.widget.data.datasetId;
                 var needReload = reload;
-                if (dataSetId != undefined) {
-                    var needReload = dsReloadStatus.get(dataSetId);
-                }
-                buildRender(widget, needReload);
-                if (dataSetId != undefined) {
+                // avoid repeat load offline dataset data
+                if (dataSetId != undefined && reload) {
+                    var needReload = dsReloadStatus.get(dataSetId) ? true : false;
                     dsReloadStatus.set(dataSetId, false);
                 }
+                buildRender(widget, needReload);
                 widget.loading = true;
                 if ($scope.board.layout.type == 'timeline') {
                     if (row.show) {

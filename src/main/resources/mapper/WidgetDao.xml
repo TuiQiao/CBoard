@@ -9,48 +9,51 @@
     <select id="getAllWidgetList" resultType="org.cboard.pojo.DashboardWidget">
         SELECT
         widget_id     AS id,
-        user_id       AS userId,
+        w.user_id     AS userId,
         widget_name   AS name,
         data_json     AS data,
         category_name AS categoryName,
-        (select u.user_name from dashboard_user u where u.user_id = w.user_id) as userName,
-        (select u.login_name from dashboard_user u where u.user_id = w.user_id) as loginName,
+        u.user_name   AS userName,
+        u.login_name  AS loginName,
         create_time   AS createTime,
         update_time   AS updateTime
         FROM dashboard_widget w
+        LEFT JOIN dashboard_user u ON u.user_id = w.user_id
     </select>
 
     <select id="getWidgetList" resultType="org.cboard.pojo.DashboardWidget">
       SELECT
               widget_id     AS id,
-              user_id       AS userId,
+              w.user_id     AS userId,
               widget_name   AS name,
               data_json     AS data,
               category_name AS categoryName,
-              (select u.user_name from dashboard_user u where u.user_id = w.user_id) as userName,
-              (select u.login_name from dashboard_user u where u.user_id = w.user_id) as loginName,
-              create_time   AS createTime,
-              update_time   AS updateTime
+              u.user_name   AS userName,
+              u.login_name AS loginName,
+              create_time  AS createTime,
+              update_time  AS updateTime
          FROM dashboard_widget w
-        WHERE (#{0} = '${admin_user_id}' OR user_id = #{0} OR widget_id IN (SELECT res_id FROM dashboard_user_role ur LEFT JOIN dashboard_role_res rr ON ur.role_id = rr.role_id WHERE ur.user_id = #{0} AND rr.res_type = 'widget'))
+         LEFT JOIN dashboard_user u ON u.user_id = w.user_id
+        WHERE (#{0} = '${admin_user_id}' OR w.user_id = #{0} OR widget_id IN (SELECT res_id FROM dashboard_user_role ur LEFT JOIN dashboard_role_res rr ON ur.role_id = rr.role_id WHERE ur.user_id = #{0} AND rr.res_type = 'widget'))
         ORDER BY widget_name
     </select>
 
     <select id="getWidgetListAdmin" resultType="org.cboard.pojo.DashboardWidget">
         SELECT
                widget_id     AS id,
-               user_id       AS userId,
+               w.user_id     AS userId,
                widget_name   AS name,
                data_json     AS data,
                category_name AS categoryName,
-               (select u.user_name from dashboard_user u where u.user_id = w.user_id) as userName,
-               (select u.login_name from dashboard_user u where u.user_id = w.user_id) as loginName,
+               u.user_name   AS userName,
+               u.login_name  AS loginName,
                create_time   AS createTime,
                update_time   AS updateTime
           FROM dashboard_widget w
+          LEFT JOIN dashboard_user u ON u.user_id = w.user_id
          WHERE (
             #{0} = '${admin_user_id}'
-            OR user_id = #{0}
+            OR w.user_id = #{0}
             OR widget_id IN (
               SELECT res_id FROM dashboard_role r
                 LEFT JOIN dashboard_role_res rr ON r.role_id = rr.role_id

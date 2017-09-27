@@ -3,10 +3,15 @@
 <mapper namespace="org.cboard.dao.BoardDao">
 
     <select id="getBoard" resultType="org.cboard.pojo.DashboardBoard">
-        SELECT board_id id,user_id userId,board_name name,layout_json layout,category_id categoryId,
-        u.user_name AS userName,
-        create_time createTime,
-        update_time updateTime
+        SELECT
+          board_id    AS id,
+          b.user_id   AS userId,
+          board_name  AS name,
+          layout_json AS layout,
+          category_id AS categoryId,
+          u.user_name AS userName,
+          create_time AS createTime,
+          update_time AS updateTime
         FROM dashboard_board b
         LEFT JOIN dashboard_user u ON u.user_id = b.user_id
         WHERE board_id = #{0}

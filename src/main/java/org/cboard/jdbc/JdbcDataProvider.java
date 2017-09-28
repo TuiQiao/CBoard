@@ -17,9 +17,8 @@ import org.cboard.dataprovider.annotation.DatasourceParameter;
 import org.cboard.dataprovider.annotation.ProviderName;
 import org.cboard.dataprovider.annotation.QueryParameter;
 import org.cboard.dataprovider.config.AggConfig;
-import org.cboard.dataprovider.config.DimensionConfig;
 import org.cboard.dataprovider.result.AggregateResult;
-import org.cboard.dataprovider.result.ColumnIndex;
+import org.cboard.dataprovider.util.DPCommonUtils;
 import org.cboard.dataprovider.util.SqlHelper;
 import org.cboard.exception.CBoardException;
 import org.slf4j.Logger;
@@ -30,9 +29,6 @@ import javax.sql.DataSource;
 import java.sql.*;
 import java.util.*;
 import java.util.concurrent.*;
-import java.util.stream.Collectors;
-import java.util.stream.IntStream;
-import java.util.stream.Stream;
 
 /**
  * Created by yfyuan on 2016/8/17.
@@ -337,20 +333,7 @@ public class JdbcDataProvider extends DataProvider implements Aggregatable, Init
             LOG.error("ERROR:" + e.getMessage());
             throw new Exception("ERROR:" + e.getMessage(), e);
         }
-
-        // recreate a dimension stream
-        Stream<DimensionConfig> dimStream = Stream.concat(config.getColumns().stream(), config.getRows().stream());
-        List<ColumnIndex> dimensionList = dimStream.map(ColumnIndex::fromDimensionConfig).collect(Collectors.toList());
-        int dimSize = dimensionList.size();
-        dimensionList.addAll(config.getValues().stream().map(ColumnIndex::fromValueConfig).collect(Collectors.toList()));
-        IntStream.range(0, dimensionList.size()).forEach(j -> dimensionList.get(j).setIndex(j));
-        list.forEach(row -> {
-            IntStream.range(0, dimSize).forEach(i -> {
-                if (row[i] == null) row[i] = NULL_STRING;
-            });
-        });
-        String[][] result = list.toArray(new String[][]{});
-        return new AggregateResult(dimensionList, result);
+        return DPCommonUtils.transform2AggResult(config, list);
     }
 
 

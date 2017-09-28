@@ -5,9 +5,8 @@ import org.apache.commons.collections.map.HashedMap;
 import org.apache.commons.dbcp2.BasicDataSource;
 import org.cboard.dataprovider.aggregator.InnerAggregator;
 import org.cboard.dataprovider.config.AggConfig;
-import org.cboard.dataprovider.config.DimensionConfig;
 import org.cboard.dataprovider.result.AggregateResult;
-import org.cboard.dataprovider.result.ColumnIndex;
+import org.cboard.dataprovider.util.DPCommonUtils;
 import org.cboard.dataprovider.util.SqlHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -19,11 +18,8 @@ import org.springframework.stereotype.Service;
 import java.sql.*;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
-import java.util.stream.Collectors;
 import java.util.stream.IntStream;
-import java.util.stream.Stream;
 
-import static org.cboard.dataprovider.DataProvider.NULL_STRING;
 import static org.cboard.dataprovider.util.SqlHelper.surround;
 
 /**
@@ -213,23 +209,9 @@ public class H2Aggregator extends InnerAggregator {
         } finally {
             rs.close();
         }
-
-        // recreate a dimension stream
-        Stream<DimensionConfig> dimStream = Stream.concat(config.getColumns().stream(), config.getRows().stream());
-        List<ColumnIndex> dimensionList = dimStream.map(ColumnIndex::fromDimensionConfig).collect(Collectors.toList());
-        int dimSize = dimensionList.size();
-        dimensionList.addAll(config.getValues().stream().map(ColumnIndex::fromValueConfig).collect(Collectors.toList()));
-        IntStream.range(0, dimensionList.size()).forEach(j -> dimensionList.get(j).setIndex(j));
-        list.forEach(row -> {
-            IntStream.range(0, dimSize).forEach(i -> {
-                if (row[i] == null) row[i] = NULL_STRING;
-            });
-        });
-        String[][] result = list.toArray(new String[][]{});
-
-        stopwatch.stop();
+        AggregateResult result = DPCommonUtils.transform2AggResult(config, list);
         LOG.info("H2 Database queryAggData using time: {} ms", stopwatch.elapsed(TimeUnit.MILLISECONDS));
-        return new AggregateResult(dimensionList, result);
+        return result;
     }
 
     public boolean checkExist() {

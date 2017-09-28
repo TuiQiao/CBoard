@@ -163,7 +163,6 @@ public class JdbcDataProvider extends DataProvider implements Aggregatable, Init
             ps.executeQuery(queryStr);
         } catch (Exception e) {
             LOG.error("Error when execute: {}",  queryStr);
-            e.printStackTrace();
             throw new Exception("ERROR:" + e.getMessage(), e);
         }
     }
@@ -213,7 +212,6 @@ public class JdbcDataProvider extends DataProvider implements Aggregatable, Init
             try {
                 conn = ds.getConnection();
             } catch (SQLException e) {
-                e.printStackTrace();
                 datasourceMap.remove(key);
                 throw e;
             }

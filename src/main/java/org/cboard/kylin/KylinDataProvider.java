@@ -245,7 +245,7 @@ public class KylinDataProvider extends DataProvider implements Aggregatable, Ini
             sqlHelper = new SqlHelper(kylinModel.geModelSql(), false);
             sqlHelper.setSqlSyntaxHelper(new KylinSyntaxHelper(kylinModel));
         } catch (Exception e) {
-            e.printStackTrace();
+            LOG.error("", e);
         }
     }
 

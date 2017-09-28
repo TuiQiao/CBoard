@@ -22,7 +22,7 @@ import java.util.Date;
 @Component
 public class CleanerService implements InitializingBean {
 
-    private Logger LOGGER = LoggerFactory.getLogger(this.getClass());
+    private Logger LOG = LoggerFactory.getLogger(this.getClass());
 
     @Autowired
     private SchedulerFactoryBean schedulerFactoryBean;
@@ -39,7 +39,7 @@ public class CleanerService implements InitializingBean {
 
     @Override
     public void afterPropertiesSet() throws Exception {
-        LOGGER.info("========================Initialize H2 DataBase CleanerJob=================================");
+        LOG.info("========================Initialize H2 DataBase CleanerJob=================================");
         Scheduler scheduler = schedulerFactoryBean.getScheduler();
         JobDetail jobDetail = JobBuilder.newJob(CleanJobExecutor.class).build();
         CronTrigger trigger = TriggerBuilder.newTrigger()
@@ -54,10 +54,10 @@ public class CleanerService implements InitializingBean {
         try (Connection conn = jdbcDataSource.getConnection();
              Statement statmt = conn.createStatement();) {
             String resetDB = "DROP ALL OBJECTS DELETE FILES";
-            LOGGER.info("Execute: {}", resetDB);
+            LOG.info("Execute: {}", resetDB);
             statmt.execute(resetDB);
         } catch (SQLException e) {
-            e.printStackTrace();
+            LOG.error("", e);
         }
     }
 

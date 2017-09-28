@@ -15,6 +15,9 @@ import org.cboard.pojo.*;
 import org.cboard.services.*;
 import org.cboard.services.job.JobService;
 import org.cboard.services.persist.excel.XlsProcessService;
+import org.cboard.solr.SolrDataProvider;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -40,6 +43,8 @@ import java.util.stream.Collectors;
 @RestController
 @RequestMapping("/dashboard")
 public class DashboardController {
+
+    private final Logger LOG = LoggerFactory.getLogger(this.getClass());
 
     @Autowired
     private BoardDao boardDao;
@@ -398,7 +403,7 @@ public class DashboardController {
             headers.setContentDispositionFormData("attachment", "table.xls");
             return new ResponseEntity<>(out.toByteArray(), headers, HttpStatus.CREATED);
         } catch (IOException e) {
-            e.printStackTrace();
+            LOG.error("", e);
         }
         return null;
     }
@@ -433,6 +438,7 @@ public class DashboardController {
     @ExceptionHandler
     public ServiceStatus exp(HttpServletResponse response, Exception ex) {
         response.setStatus(500);
+        LOG.error("Gloal exception Handler", ex);
         return new ServiceStatus(ServiceStatus.Status.Fail, ex.getMessage());
     }
 }

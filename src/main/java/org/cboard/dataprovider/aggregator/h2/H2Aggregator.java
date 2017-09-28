@@ -33,7 +33,7 @@ import static org.cboard.dataprovider.util.SqlHelper.surround;
 @Scope("prototype")
 public class H2Aggregator extends InnerAggregator {
 
-    private Logger LOGGER = LoggerFactory.getLogger(this.getClass());
+    private Logger LOG = LoggerFactory.getLogger(this.getClass());
 
     @Autowired
     @Qualifier("h2DataSource")
@@ -50,12 +50,12 @@ public class H2Aggregator extends InnerAggregator {
         try (Connection conn = jdbcDataSource.getConnection();
              Statement statmt = conn.createStatement();) {
             String dropTableStr = "DROP TABLE IF EXISTS " + tableName;
-            LOGGER.info("Execute: {}", dropTableStr);
+            LOG.info("Execute: {}", dropTableStr);
             statmt.execute(dropTableStr);
-            LOGGER.info("Execute: {}", ddl.toString());
+            LOG.info("Execute: {}", ddl.toString());
             statmt.execute(ddl.toString());
         } catch (SQLException e) {
-            e.printStackTrace();
+            LOG.error("", e);
         }
     }
 
@@ -77,16 +77,16 @@ public class H2Aggregator extends InnerAggregator {
                     ps.addBatch();
                     if (++count % batchSize == 0) {
                         ps.executeBatch();
-                        LOGGER.info("Thread id: {}, H2 load batch {}", Thread.currentThread().getName(), count);
+                        LOG.info("Thread id: {}, H2 load batch {}", Thread.currentThread().getName(), count);
                     }
                 }
                 ps.executeBatch();
             } catch (SQLException e) {
-                e.printStackTrace();
+                LOG.error("", e);
             }
         }
         stopwatch.stop();
-        LOGGER.info("H2 Database loadBatch using time: {} ms", stopwatch.elapsed(TimeUnit.MILLISECONDS));
+        LOG.info("H2 Database loadBatch using time: {} ms", stopwatch.elapsed(TimeUnit.MILLISECONDS));
     }
 
     @Override
@@ -124,19 +124,19 @@ public class H2Aggregator extends InnerAggregator {
                         ps.addBatch();
                         if (++count % batchSize == 0) {
                             ps.executeBatch();
-                            LOGGER.info("H2 load batch {}", count);
+                            LOG.info("H2 load batch {}", count);
                         }
                     }
                     ps.executeBatch();
                 } catch (SQLException e) {
-                    e.printStackTrace();
+                    LOG.error("", e);
                 }
             }
         }
 
         afterLoad();
         stopwatch.stop();
-        LOGGER.info("H2 Database loading using time: {} ms", stopwatch.elapsed(TimeUnit.MILLISECONDS));
+        LOG.info("H2 Database loading using time: {} ms", stopwatch.elapsed(TimeUnit.MILLISECONDS));
     }
 
     @Override
@@ -152,7 +152,7 @@ public class H2Aggregator extends InnerAggregator {
             whereStr = sqlHelper.assembleFilterSql(config);
         }
         exec = String.format(fsql, surround(columnName, "`"), getTmpTblName(), whereStr, surround(columnName, "`"));
-        LOGGER.info(exec);
+        LOG.info(exec);
         try (Connection conn = jdbcDataSource.getConnection();
              Statement stat = conn.createStatement();
              ResultSet rs = stat.executeQuery(exec)) {
@@ -160,7 +160,7 @@ public class H2Aggregator extends InnerAggregator {
                 result.add(rs.getString(1));
             }
         } catch (Exception e) {
-            LOGGER.error("ERROR:" + e.getMessage());
+            LOG.error("ERROR:" + e.getMessage());
             throw new Exception("ERROR:" + e.getMessage(), e);
         }
         return result.toArray(new String[]{});
@@ -190,7 +190,7 @@ public class H2Aggregator extends InnerAggregator {
         String exec = sqlHelper.assembleAggDataSql(config);
 
         List<String[]> list = new LinkedList<>();
-        LOGGER.info(exec);
+        LOG.info(exec);
         ResultSet rs = null;
         try (
                 Connection conn = jdbcDataSource.getConnection();
@@ -208,7 +208,7 @@ public class H2Aggregator extends InnerAggregator {
                 list.add(row);
             }
         } catch (Exception e) {
-            LOGGER.error("ERROR:" + e.getMessage());
+            LOG.error("ERROR:" + e.getMessage());
             throw new Exception("ERROR:" + e.getMessage(), e);
         } finally {
             rs.close();
@@ -228,7 +228,7 @@ public class H2Aggregator extends InnerAggregator {
         String[][] result = list.toArray(new String[][]{});
 
         stopwatch.stop();
-        LOGGER.info("H2 Database queryAggData using time: {} ms", stopwatch.elapsed(TimeUnit.MILLISECONDS));
+        LOG.info("H2 Database queryAggData using time: {} ms", stopwatch.elapsed(TimeUnit.MILLISECONDS));
         return new AggregateResult(dimensionList, result);
     }
 
@@ -270,7 +270,7 @@ public class H2Aggregator extends InnerAggregator {
                 exists = true;
             }
         } catch (Exception e) {
-            LOGGER.error("ERROR:" + e.getMessage());
+            LOG.error("ERROR:" + e.getMessage());
         }
         return exists;
     }

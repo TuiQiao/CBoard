@@ -8,4 +8,8 @@ public class CBoardException extends RuntimeException {
     public CBoardException(String message) {
         super(message);
     }
+
+    public CBoardException(String message, Throwable cause) {
+        super(message, cause);
+    }
 }

@@ -135,8 +135,9 @@ cBoard.controller('dashboardViewCtrl', function ($timeout, $rootScope, $scope, $
             $(".forExcel").click();
             aForExcel.remove();
             $scope.exportStatus = false;
-        }).error(function (data, status, headers, config) {
+        }).error(function (data, status, headers, config, statusText) {
             $scope.exportStatus = false;
+            ModalUtils.alert("Export error, please ask admin to check server side log.", "modal-warning", "lg");
         });
     };
 

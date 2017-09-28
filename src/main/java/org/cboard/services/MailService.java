@@ -9,6 +9,8 @@ import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.cboard.pojo.DashboardJob;
 import org.cboard.services.persist.PersistContext;
 import org.cboard.services.persist.excel.XlsProcessService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -27,6 +29,8 @@ import java.util.stream.Collectors;
  */
 @Service
 public class MailService {
+
+    private Logger LOG = LoggerFactory.getLogger(this.getClass());
 
     @Autowired
     private XlsProcessService xlsProcessService;
@@ -77,7 +81,7 @@ public class MailService {
             try {
                 workbook.write(baos);
             } catch (IOException e) {
-                e.printStackTrace();
+                LOG.error("", e);
             }
         }
 
@@ -97,7 +101,7 @@ public class MailService {
                 String cid = email.embed(ds, e.getDashboardId() + ".jpg");
                 sb.append("<img src='cid:").append(cid).append("'></img></br>");
             } catch (EmailException e1) {
-                e1.printStackTrace();
+                LOG.error("", e);
             }
         });
         email.setHtmlMsg(sb.append("</html>").toString());

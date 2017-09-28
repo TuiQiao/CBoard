@@ -8,6 +8,8 @@ import org.cboard.dataprovider.annotation.ProviderName;
 import org.cboard.dataprovider.annotation.QueryParameter;
 import org.reflections.ReflectionUtils;
 import org.reflections.Reflections;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
@@ -25,6 +27,8 @@ import java.util.stream.Collectors;
  */
 @Service
 public class DataProviderManager implements ApplicationContextAware {
+
+    private static Logger LOG = LoggerFactory.getLogger(DataProviderManager.class);
 
     private static Map<String, Class<? extends DataProvider>> providers = new HashMap<>();
 
@@ -94,7 +98,7 @@ public class DataProviderManager implements ApplicationContextAware {
                 e.setAccessible(true);
                 return e.get(o).toString();
             } catch (IllegalAccessException e1) {
-                e1.printStackTrace();
+                LOG.error("" , e);
             }
             return null;
         }).collect(Collectors.toList());

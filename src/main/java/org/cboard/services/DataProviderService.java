@@ -16,6 +16,8 @@ import org.cboard.dto.DataProviderResult;
 import org.cboard.exception.CBoardException;
 import org.cboard.pojo.DashboardDataset;
 import org.cboard.pojo.DashboardDatasource;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
@@ -28,6 +30,8 @@ import java.util.function.Predicate;
  */
 @Repository
 public class DataProviderService {
+
+    private final Logger LOG = LoggerFactory.getLogger(this.getClass());
 
     @Autowired
     private DatasourceDao datasourceDao;
@@ -57,7 +61,7 @@ public class DataProviderService {
             DataProvider dataProvider = getDataProvider(datasourceId, query, dataset);
             return dataProvider.getAggData(config, reload);
         } catch (Exception e) {
-            e.printStackTrace();
+            LOG.error("", e);
             throw new CBoardException(e.getMessage());
         }
     }
@@ -71,7 +75,7 @@ public class DataProviderService {
             dps.setColumns(result);
             dps.setMsg("1");
         } catch (Exception e) {
-            e.printStackTrace();
+            LOG.error("", e);
             dps.setMsg(e.getMessage());
         }
         return dps;
@@ -85,7 +89,7 @@ public class DataProviderService {
             String[] result = dataProvider.getDimVals(columnName, config, reload);
             return result;
         } catch (Exception e) {
-            e.printStackTrace();
+            LOG.error("", e);
         }
         return null;
     }
@@ -97,7 +101,7 @@ public class DataProviderService {
             DataProvider dataProvider = getDataProvider(datasourceId, query, dataset);
             return dataProvider.getViewAggDataQuery(config);
         } catch (Exception e) {
-            e.printStackTrace();
+            LOG.error("", e);
             throw new CBoardException(e.getMessage());
         }
     }
@@ -107,11 +111,11 @@ public class DataProviderService {
             DataProvider dataProvider = DataProviderManager.getDataProvider(
                     dataSource.getString("type"),
                     Maps.transformValues(dataSource.getJSONObject("config"), Functions.toStringFunction()),
-                    query);
+                    query, true);
             dataProvider.test();
             return new ServiceStatus(ServiceStatus.Status.Success, null);
         } catch (Exception e) {
-            e.printStackTrace();
+            LOG.error("", e);
             return new ServiceStatus(ServiceStatus.Status.Fail, e.getMessage());
         }
     }

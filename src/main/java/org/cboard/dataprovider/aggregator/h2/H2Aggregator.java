@@ -5,9 +5,8 @@ import org.apache.commons.collections.map.HashedMap;
 import org.apache.commons.dbcp2.BasicDataSource;
 import org.cboard.dataprovider.aggregator.InnerAggregator;
 import org.cboard.dataprovider.config.AggConfig;
-import org.cboard.dataprovider.config.DimensionConfig;
 import org.cboard.dataprovider.result.AggregateResult;
-import org.cboard.dataprovider.result.ColumnIndex;
+import org.cboard.dataprovider.util.DPCommonUtils;
 import org.cboard.dataprovider.util.SqlHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -19,11 +18,8 @@ import org.springframework.stereotype.Service;
 import java.sql.*;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
-import java.util.stream.Collectors;
 import java.util.stream.IntStream;
-import java.util.stream.Stream;
 
-import static org.cboard.dataprovider.DataProvider.NULL_STRING;
 import static org.cboard.dataprovider.util.SqlHelper.surround;
 
 /**
@@ -33,7 +29,7 @@ import static org.cboard.dataprovider.util.SqlHelper.surround;
 @Scope("prototype")
 public class H2Aggregator extends InnerAggregator {
 
-    private Logger LOGGER = LoggerFactory.getLogger(this.getClass());
+    private Logger LOG = LoggerFactory.getLogger(this.getClass());
 
     @Autowired
     @Qualifier("h2DataSource")
@@ -50,12 +46,12 @@ public class H2Aggregator extends InnerAggregator {
         try (Connection conn = jdbcDataSource.getConnection();
              Statement statmt = conn.createStatement();) {
             String dropTableStr = "DROP TABLE IF EXISTS " + tableName;
-            LOGGER.info("Execute: {}", dropTableStr);
+            LOG.info("Execute: {}", dropTableStr);
             statmt.execute(dropTableStr);
-            LOGGER.info("Execute: {}", ddl.toString());
+            LOG.info("Execute: {}", ddl.toString());
             statmt.execute(ddl.toString());
         } catch (SQLException e) {
-            e.printStackTrace();
+            LOG.error("", e);
         }
     }
 
@@ -77,16 +73,16 @@ public class H2Aggregator extends InnerAggregator {
                     ps.addBatch();
                     if (++count % batchSize == 0) {
                         ps.executeBatch();
-                        LOGGER.info("Thread id: {}, H2 load batch {}", Thread.currentThread().getName(), count);
+                        LOG.info("Thread id: {}, H2 load batch {}", Thread.currentThread().getName(), count);
                     }
                 }
                 ps.executeBatch();
             } catch (SQLException e) {
-                e.printStackTrace();
+                LOG.error("", e);
             }
         }
         stopwatch.stop();
-        LOGGER.info("H2 Database loadBatch using time: {} ms", stopwatch.elapsed(TimeUnit.MILLISECONDS));
+        LOG.info("H2 Database loadBatch using time: {} ms", stopwatch.elapsed(TimeUnit.MILLISECONDS));
     }
 
     @Override
@@ -124,19 +120,19 @@ public class H2Aggregator extends InnerAggregator {
                         ps.addBatch();
                         if (++count % batchSize == 0) {
                             ps.executeBatch();
-                            LOGGER.info("H2 load batch {}", count);
+                            LOG.info("H2 load batch {}", count);
                         }
                     }
                     ps.executeBatch();
                 } catch (SQLException e) {
-                    e.printStackTrace();
+                    LOG.error("", e);
                 }
             }
         }
 
         afterLoad();
         stopwatch.stop();
-        LOGGER.info("H2 Database loading using time: {} ms", stopwatch.elapsed(TimeUnit.MILLISECONDS));
+        LOG.info("H2 Database loading using time: {} ms", stopwatch.elapsed(TimeUnit.MILLISECONDS));
     }
 
     @Override
@@ -152,7 +148,7 @@ public class H2Aggregator extends InnerAggregator {
             whereStr = sqlHelper.assembleFilterSql(config);
         }
         exec = String.format(fsql, surround(columnName, "`"), getTmpTblName(), whereStr, surround(columnName, "`"));
-        LOGGER.info(exec);
+        LOG.info(exec);
         try (Connection conn = jdbcDataSource.getConnection();
              Statement stat = conn.createStatement();
              ResultSet rs = stat.executeQuery(exec)) {
@@ -160,7 +156,7 @@ public class H2Aggregator extends InnerAggregator {
                 result.add(rs.getString(1));
             }
         } catch (Exception e) {
-            LOGGER.error("ERROR:" + e.getMessage());
+            LOG.error("ERROR:" + e.getMessage());
             throw new Exception("ERROR:" + e.getMessage(), e);
         }
         return result.toArray(new String[]{});
@@ -190,7 +186,7 @@ public class H2Aggregator extends InnerAggregator {
         String exec = sqlHelper.assembleAggDataSql(config);
 
         List<String[]> list = new LinkedList<>();
-        LOGGER.info(exec);
+        LOG.info(exec);
         ResultSet rs = null;
         try (
                 Connection conn = jdbcDataSource.getConnection();
@@ -208,28 +204,14 @@ public class H2Aggregator extends InnerAggregator {
                 list.add(row);
             }
         } catch (Exception e) {
-            LOGGER.error("ERROR:" + e.getMessage());
+            LOG.error("ERROR:" + e.getMessage());
             throw new Exception("ERROR:" + e.getMessage(), e);
         } finally {
             rs.close();
         }
-
-        // recreate a dimension stream
-        Stream<DimensionConfig> dimStream = Stream.concat(config.getColumns().stream(), config.getRows().stream());
-        List<ColumnIndex> dimensionList = dimStream.map(ColumnIndex::fromDimensionConfig).collect(Collectors.toList());
-        int dimSize = dimensionList.size();
-        dimensionList.addAll(config.getValues().stream().map(ColumnIndex::fromValueConfig).collect(Collectors.toList()));
-        IntStream.range(0, dimensionList.size()).forEach(j -> dimensionList.get(j).setIndex(j));
-        list.forEach(row -> {
-            IntStream.range(0, dimSize).forEach(i -> {
-                if (row[i] == null) row[i] = NULL_STRING;
-            });
-        });
-        String[][] result = list.toArray(new String[][]{});
-
-        stopwatch.stop();
-        LOGGER.info("H2 Database queryAggData using time: {} ms", stopwatch.elapsed(TimeUnit.MILLISECONDS));
-        return new AggregateResult(dimensionList, result);
+        AggregateResult result = DPCommonUtils.transform2AggResult(config, list);
+        LOG.info("H2 Database queryAggData using time: {} ms", stopwatch.elapsed(TimeUnit.MILLISECONDS));
+        return result;
     }
 
     public boolean checkExist() {
@@ -270,7 +252,7 @@ public class H2Aggregator extends InnerAggregator {
                 exists = true;
             }
         } catch (Exception e) {
-            LOGGER.error("ERROR:" + e.getMessage());
+            LOG.error("ERROR:" + e.getMessage());
         }
         return exists;
     }

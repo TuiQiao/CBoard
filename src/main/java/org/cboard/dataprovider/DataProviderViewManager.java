@@ -10,6 +10,8 @@ import org.apache.velocity.runtime.RuntimeConstants;
 import org.cboard.dataprovider.annotation.DatasourceParameter;
 import org.cboard.dataprovider.annotation.QueryParameter;
 import org.reflections.ReflectionUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Field;
@@ -21,6 +23,8 @@ import java.util.*;
  */
 public class DataProviderViewManager {
 
+    private static Logger LOG = LoggerFactory.getLogger(DataProviderViewManager.class);
+
     private static VelocityEngine velocityEngine;
 
     static {
@@ -29,7 +33,7 @@ public class DataProviderViewManager {
         try {
             fileDir = URLDecoder.decode(fileDir, "UTF-8");
         } catch (UnsupportedEncodingException e) {
-            e.printStackTrace();
+            LOG.error("", e);
         }
         props.setProperty(RuntimeConstants.RUNTIME_LOG_LOGSYSTEM_CLASS, "org.apache.velocity.runtime.log.Log4JLogChute");
         props.setProperty(velocityEngine.FILE_RESOURCE_LOADER_PATH, fileDir);
@@ -79,7 +83,7 @@ public class DataProviderViewManager {
                 }
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            LOG.error("", e);
         }
         return params;
     }
@@ -119,7 +123,7 @@ public class DataProviderViewManager {
                 params.add(param);
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            LOG.error("", e);
         }
         return params;
     }

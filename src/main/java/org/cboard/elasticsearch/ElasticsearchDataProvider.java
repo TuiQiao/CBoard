@@ -296,7 +296,7 @@ public class ElasticsearchDataProvider extends DataProvider implements Aggregata
                 aggregation = json(d.getColumnName(), JSONObject.parseObject(d.getCustom()).get("esBucket"));
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            LOG.error("", e);
         }
         return aggregation;
     }
@@ -350,7 +350,7 @@ public class ElasticsearchDataProvider extends DataProvider implements Aggregata
             long minTs = coalesce(response.getJSONObject("aggregations").getJSONObject(minKey).getLong("value"), 0l);
             intervalStr = dateInterval(minTs, maxTs);
         } catch (Exception e) {
-            e.printStackTrace();
+            LOG.error("", e);
         }
         return json(columnName, dateHistAggregation(columnName, intervalStr, 0));
     }

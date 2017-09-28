@@ -11,6 +11,8 @@ import org.cboard.pojo.DashboardBoard;
 import org.cboard.pojo.DashboardWidget;
 import org.cboard.services.persist.PersistContext;
 import org.cboard.services.persist.excel.XlsProcessService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
@@ -27,6 +29,7 @@ import java.util.*;
 @Repository
 public class BoardService {
 
+    private Logger LOG = LoggerFactory.getLogger(this.getClass());
     @Autowired
     private BoardDao boardDao;
 
@@ -117,7 +120,7 @@ public class BoardService {
             boardDao.delete(id, userId);
             return new ServiceStatus(ServiceStatus.Status.Success, "success");
         } catch (Exception e) {
-            e.printStackTrace();
+            LOG.error("", e);
             return new ServiceStatus(ServiceStatus.Status.Fail, e.getMessage());
         }
     }
@@ -133,7 +136,7 @@ public class BoardService {
             outputStream.close();
             return outputStream.toByteArray();
         } catch (IOException e) {
-            e.printStackTrace();
+            LOG.error("", e);
         }
         return null;
     }

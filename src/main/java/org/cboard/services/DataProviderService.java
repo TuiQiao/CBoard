@@ -111,7 +111,7 @@ public class DataProviderService {
             DataProvider dataProvider = DataProviderManager.getDataProvider(
                     dataSource.getString("type"),
                     Maps.transformValues(dataSource.getJSONObject("config"), Functions.toStringFunction()),
-                    query);
+                    query, true);
             dataProvider.test();
             return new ServiceStatus(ServiceStatus.Status.Success, null);
         } catch (Exception e) {

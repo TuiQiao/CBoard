@@ -1,9 +1,11 @@
 package org.cboard.controller;
 
 import com.alibaba.fastjson.JSONObject;
+import com.google.common.base.Charsets;
 import com.google.common.base.Functions;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+import com.google.common.hash.Hashing;
 import org.apache.commons.lang.StringUtils;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.cboard.dao.*;
@@ -34,6 +36,7 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.UUID;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -288,14 +291,26 @@ public class DashboardController extends BaseController {
     }
 
     @RequestMapping(value = "/getAggregateData")
-    public AggregateResult getAggregateData(@RequestParam(name = "datasourceId", required = false) Long datasourceId, @RequestParam(name = "query", required = false) String query, @RequestParam(name = "datasetId", required = false) Long datasetId, @RequestParam(name = "cfg") String cfg, @RequestParam(name = "reload", required = false, defaultValue = "false") Boolean reload) {
+    public AggregateResult getAggregateData(@RequestParam(name = "datasourceId", required = false) Long datasourceId,
+                                            @RequestParam(name = "query", required = false) String query,
+                                            @RequestParam(name = "datasetId", required = false) Long datasetId,
+                                            @RequestParam(name = "cfg") String cfg,
+                                            @RequestParam(name = "reload", required = false, defaultValue = "false") Boolean reload) {
         Map<String, String> strParams = null;
-        if (query != null) {
-            JSONObject queryO = JSONObject.parseObject(query);
-            strParams = Maps.transformValues(queryO, Functions.toStringFunction());
+        AggregateResult aggResult = null;
+        String reloadFlag = reload ? "true" : UUID.randomUUID().toString();
+        String lockString = Hashing.md5().newHasher()
+                .putString(datasourceId + query + datasetId + user.getUserId() + reloadFlag, Charsets.UTF_8)
+                .hash().toString();
+        synchronized (lockString.intern()) {
+            if (query != null) {
+                JSONObject queryO = JSONObject.parseObject(query);
+                strParams = Maps.transformValues(queryO, Functions.toStringFunction());
+            }
+            AggConfig config = ViewAggConfig.getAggConfig(JSONObject.parseObject(cfg, ViewAggConfig.class));
+            aggResult = dataProviderService.queryAggData(datasourceId, strParams, datasetId, config, reload);
         }
-        AggConfig config = ViewAggConfig.getAggConfig(JSONObject.parseObject(cfg, ViewAggConfig.class));
-        return dataProviderService.queryAggData(datasourceId, strParams, datasetId, config, reload);
+        return aggResult;
     }
 
     @RequestMapping(value = "/viewAggDataQuery")

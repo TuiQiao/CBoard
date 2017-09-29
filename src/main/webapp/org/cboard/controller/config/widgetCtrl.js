@@ -1128,6 +1128,7 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
             if (loadFromDataset) {
                 $scope.schema = $scope.dataset.data.schema;
                 $scope.alerts = [];
+                $scope.switchLiteMode(true);
             } else {
                 $scope.loading = true;
                 dataService.getColumns({

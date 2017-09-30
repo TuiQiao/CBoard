@@ -50,6 +50,13 @@ public abstract class DataProvider {
 
     public abstract boolean doAggregationInDataSource();
 
+    public boolean isDataSourceAggInstance() {
+        if (this instanceof Aggregatable && doAggregationInDataSource()) {
+            return true;
+        } else {
+            return false;
+        }
+    }
     /**
      * get the aggregated data by user's widget designer
      *
@@ -57,7 +64,7 @@ public abstract class DataProvider {
      */
     public final AggregateResult getAggData(AggConfig ac, boolean reload) throws Exception {
         evalValueExpression(ac);
-        if (this instanceof Aggregatable && doAggregationInDataSource()) {
+        if (isDataSourceAggInstance()) {
             return ((Aggregatable) this).queryAggData(ac);
         } else {
             checkAndLoad(reload);
@@ -67,7 +74,7 @@ public abstract class DataProvider {
 
     public final String getViewAggDataQuery(AggConfig config) throws Exception {
         evalValueExpression(config);
-        if (this instanceof Aggregatable && doAggregationInDataSource()) {
+        if (isDataSourceAggInstance()) {
             return ((Aggregatable) this).viewAggDataQuery(config);
         } else {
             return "Not Support";
@@ -83,7 +90,7 @@ public abstract class DataProvider {
     public final String[] getDimVals(String columnName, AggConfig config, boolean reload) throws Exception {
         String[] dimVals = null;
         evalValueExpression(config);
-        if (this instanceof Aggregatable && doAggregationInDataSource()) {
+        if (isDataSourceAggInstance()) {
             dimVals = ((Aggregatable) this).queryDimVals(columnName, config);
         } else {
             checkAndLoad(reload);
@@ -98,7 +105,7 @@ public abstract class DataProvider {
 
     public final String[] getColumn(boolean reload) throws Exception {
         String[] columns = null;
-        if (this instanceof Aggregatable && doAggregationInDataSource()) {
+        if (isDataSourceAggInstance()) {
             columns = ((Aggregatable) this).getColumn();
         } else {
             checkAndLoad(reload);
@@ -159,7 +166,9 @@ public abstract class DataProvider {
     }
 
     public String getLockKey() {
-        return Hashing.md5().newHasher().putString(JSONObject.toJSON(dataSource).toString() + JSONObject.toJSON(query).toString(), Charsets.UTF_8).hash().toString();
+        String dataSourceStr = JSONObject.toJSON(dataSource).toString();
+        String queryStr = JSONObject.toJSON(query).toString();
+        return Hashing.md5().newHasher().putString(dataSourceStr + queryStr, Charsets.UTF_8).hash().toString();
     }
 
     public List<DimensionConfig> filterCCList2DCList(List<ConfigComponent> filters) {

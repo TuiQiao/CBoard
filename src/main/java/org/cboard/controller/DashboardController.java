@@ -297,16 +297,18 @@ public class DashboardController extends BaseController {
                                             @RequestParam(name = "cfg") String cfg,
                                             @RequestParam(name = "reload", required = false, defaultValue = "false") Boolean reload) {
         Map<String, String> strParams = null;
+        if (query != null) {
+            JSONObject queryO = JSONObject.parseObject(query);
+            strParams = Maps.transformValues(queryO, Functions.toStringFunction());
+        }
         AggregateResult aggResult = null;
-        String reloadFlag = reload ? "true" : UUID.randomUUID().toString();
+        // data source aggreagtor instance need not lock
+        boolean isDataSourceAggInstance = dataProviderService.isDataSourceAggInstance(datasourceId, strParams, datasetId);
+        String randomFlag = isDataSourceAggInstance ? UUID.randomUUID().toString() : "1";
         String lockString = Hashing.md5().newHasher()
-                .putString(datasourceId + query + datasetId + user.getUserId() + reloadFlag, Charsets.UTF_8)
+                .putString(datasourceId + query + datasetId + user.getUserId() + randomFlag, Charsets.UTF_8)
                 .hash().toString();
         synchronized (lockString.intern()) {
-            if (query != null) {
-                JSONObject queryO = JSONObject.parseObject(query);
-                strParams = Maps.transformValues(queryO, Functions.toStringFunction());
-            }
             AggConfig config = ViewAggConfig.getAggConfig(JSONObject.parseObject(cfg, ViewAggConfig.class));
             aggResult = dataProviderService.queryAggData(datasourceId, strParams, datasetId, config, reload);
         }

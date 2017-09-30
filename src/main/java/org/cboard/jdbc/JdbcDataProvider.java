@@ -345,7 +345,10 @@ public class JdbcDataProvider extends DataProvider implements Aggregatable, Init
 
     @Override
     public void afterPropertiesSet() throws Exception {
-        String subQuery = getAsSubQuery(query.get(SQL));
+        String subQuery = null;
+        if (query != null) {
+            subQuery = getAsSubQuery(query.get(SQL));
+        }
         SqlHelper sqlHelper = new SqlHelper(subQuery, true);
         if (!isUsedForTest()) {
             Map<String, Integer> columnTypes = null;

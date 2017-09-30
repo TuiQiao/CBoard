@@ -120,6 +120,17 @@ public class DataProviderService {
         }
     }
 
+    public boolean isDataSourceAggInstance(Long datasourceId, Map<String, String> query, Long datasetId) {
+        try {
+            Dataset dataset = getDataset(datasetId);
+            DataProvider dataProvider = getDataProvider(datasourceId, query, dataset);
+            return dataProvider.isDataSourceAggInstance();
+        } catch (Exception e) {
+            LOG.error("", e);
+            throw new CBoardException(e.getMessage());
+        }
+    }
+
     private void attachCustom(Dataset dataset, AggConfig aggConfig) {
         if (dataset == null || aggConfig == null) {
             return;

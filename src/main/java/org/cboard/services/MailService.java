@@ -5,6 +5,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.mail.EmailAttachment;
 import org.apache.commons.mail.EmailException;
 import org.apache.commons.mail.HtmlEmail;
+import org.apache.poi.hssf.record.crypto.Biff8EncryptionKey;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.cboard.pojo.DashboardJob;
 import org.cboard.services.persist.PersistContext;
@@ -15,7 +16,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
-import javax.mail.Authenticator;
 import javax.mail.util.ByteArrayDataSource;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -77,12 +77,16 @@ public class MailService {
         ByteArrayOutputStream baos = null;
         if (workbookList != null && workbookList.size() > 0) {
             HSSFWorkbook workbook = xlsProcessService.dashboardToXls(workbookList);
+            if (StringUtils.isNotEmpty(config.getString("xlspwd"))) {
+                Biff8EncryptionKey.setCurrentUserPassword(config.getString("xlspwd"));
+            }
             baos = new ByteArrayOutputStream();
             try {
                 workbook.write(baos);
             } catch (IOException e) {
                 LOG.error("", e);
             }
+
         }
 
 

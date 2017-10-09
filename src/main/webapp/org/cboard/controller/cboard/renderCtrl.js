@@ -12,17 +12,18 @@ cBoard.controller('renderCtrl', function ($timeout, $rootScope, $scope, $state, 
                 if (chartType == 'chinaMapBmap') {
                     chartService.render(content, w.widget.data, optionFilter, scope, reload, w.persist);
                     w.loading = false;
+                    $scope.l--;
                 } else {
                     chartService.render(content, w.widget.data, optionFilter, scope, reload, w.persist).then(function (d) {
                         w.realTimeTicket = d;
                         w.loading = false;
+                        $scope.l--;
                     }, function (error) {
+                        $scope.l--;
                     });
                 }
             } catch (e) {
                 console.error(e);
-            } finally {
-                $scope.l--;
             }
         };
     };

@@ -326,7 +326,8 @@
       "FAIL": "失败",
       "FINISH": "完成",
       "PROCESSING": "处理中",
-      "STATUS": "状态"
+      "STATUS": "状态",
+      "XLSPWD": "xls密码"
     },
     "SHARE_RES": {
       "YOUR_RES": "你的资源",

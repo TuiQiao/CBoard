@@ -357,6 +357,9 @@
     "BY_ROLE": "按角色",
     "REVOKE": "撤销",
     "GRANT": "授予",
+    "DELETE_USER_IN_ROLE": "从组中移除用户",
+    "ADD_USER2ROLE": "添加用户到角色组",
+    "ADD_RES2ROLE": "更新角色资源权限",
     "TOGGLE_UPDATE": "切换UDATE权限",
     "TOGGLE_DELETE": "切换DELETE权限"
   },

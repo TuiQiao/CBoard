@@ -10,11 +10,11 @@
                     <input type="text" class="form-control" placeholder="Search">
                 </div>-->
                 <div class="panel-body">
-                    <div js-tree="treeConfig" ng-model="resList" tree="treeInstance" tree-events="changed:changed;" style="height: 510px; overflow: auto;" ></div>
+                    <div js-tree="treeConfig" ng-model="resList" tree="treeInstance" tree-events="changed:changed;" style="height: 80vh; overflow: auto;" ></div>
                 </div>
             </div>
         </div>
-        <div class="col-md-3" style="height: 590px; overflow: auto;">
+        <div class="col-md-3">
             <div class="row" style="margin-bottom: 10px">
                 <div class="col-md-12">
                     <div class="input-group">
@@ -26,7 +26,7 @@
             <div class="row">
                 <div class="col-md-12">
                     <select multiple class="form-control" ng-model="selectRole" ng-options="u.roleName for u in roleList | filter:{roleName:roleKeyword}"
-                            style="height: 500px; overflow: auto;">
+                            style="height: 65vh; overflow: auto;">
                     </select>
                 </div>
             </div>

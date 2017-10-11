@@ -383,31 +383,19 @@ cBoard.controller('datasetCtrl', function ($scope, $http, dataService, $uibModal
                 $scope.columnObjs = columnObjs;
                 $scope.aggregate = aggregate;
                 $scope.alerts = [];
-                $scope.expAceOpt = expEditorOptions($scope.selects, aggregate);
+                $scope.expAceOpt = expEditorOptions($scope.selects, aggregate, function(_editor) {
+                    $scope.expAceEditor = _editor;
+                    $scope.expAceSession = _editor.getSession();
+                    _editor.focus();
+                });
                 $scope.close = function () {
                     $uibModalInstance.close();
                 };
                 $scope.addToken = function (str, agg) {
-                    var tc = document.getElementById("expression_area");
-                    var tclen = $scope.data.expression.length;
-                    tc.focus();
-                    var selectionIdx = 0;
-                    if (typeof document.selection != "undefined") {
-                        document.selection.createRange().text = str;
-                        selectionIdx = str.length - 1;
-                    }
-                    else {
-                        var a = $scope.data.expression.substr(0, tc.selectionStart);
-                        var b = $scope.data.expression.substring(tc.selectionStart, tclen);
-                        $scope.data.expression = a + str;
-                        selectionIdx = $scope.data.expression.length - 1;
-                        $scope.data.expression += b;
-                    }
-                    if (!agg) {
-                        selectionIdx++;
-                    }
-                    tc.selectionStart = selectionIdx;
-                    tc.selectionEnd = selectionIdx;
+                    var editor = $scope.expAceEditor;
+                    editor.session.insert(editor.getCursorPosition(), str);
+                    editor.focus();
+                    if (agg) editor.getSelection().moveCursorLeft();
                 };
                 $scope.verify = function () {
                     $scope.alerts = [];

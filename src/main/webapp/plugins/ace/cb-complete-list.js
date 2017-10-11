@@ -190,7 +190,7 @@ var schemaCustomOpt = function(selects, sourceType) {
     return result;
 };
 
-var expEditorOptions = function (selects, aggs) {
+var expEditorOptions = function (selects, aggs, extOnload) {
     var result = angular.copy(cbAcebaseOption);
     var selectsCompleter = {
         getCompletions: function(editor, session, pos, prefix, callback) {
@@ -226,6 +226,11 @@ var expEditorOptions = function (selects, aggs) {
         _editor.completers.push(cbEsExpFilterCompleter);
         _editor.completers.push(selectsCompleter);
         _editor.completers.push(aggsCompleter);
+        if (extOnload) {
+            extOnload(_editor);
+        }
+        _editor.focus();
+
     };
     return result;
 };

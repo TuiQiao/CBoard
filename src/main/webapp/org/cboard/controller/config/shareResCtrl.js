@@ -194,7 +194,13 @@ cBoard.controller('shareResCtrl', function ($scope, $http, ModalUtils, $filter) 
                 return e.roleId == r;
             })
         });
+    };
 
-
+    $scope.jstree_open_all = function () {
+        $scope.treeInstance.jstree(true).open_all();
+    };
+    
+    $scope.jstree_close_all = function () {
+        $scope.treeInstance.jstree(true).close_all();
     }
 });

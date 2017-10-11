@@ -46,7 +46,9 @@
     "USER_ID": "creator ID",
     "CREATOR_NAME": "creator login name",
     "CREATE_TIME": "create time",
-    "UPDATE_TIM": "last update time"
+    "UPDATE_TIM": "last update time",
+    "FOLD_TREE": "Fold all nodes",
+    "UNFOLD_TREE": "Unflod all nodes"
   },
   "TIPS": {
     "CAL_EXPR": "Calculate after aggregation. Use assist click input to avoid typo. e.g: Math.log(sum(columnA)/count(columB))"

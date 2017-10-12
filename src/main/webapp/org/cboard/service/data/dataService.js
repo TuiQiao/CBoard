@@ -56,9 +56,27 @@ cBoard.service('dataService', function ($http, $q, updateService) {
                                 c.exp = exp.exp;
                                 c.alias = exp.alias;
                             }
+                            // replace variable in exp
+                            c.exp = replaceVariable(dataset.data.expressions, c);
                         }
                     });
                 });
+                function replaceVariable(expList, exp) {
+                    var value = exp.exp;
+                    var loopCnt = 0;
+                    var context = {};
+                    for (var i = 0; i < expList.length; i++) {
+                        context[expList[i].alias] = expList[i].exp;
+                    }
+                    value = value.render2(context);
+                    while (value.match(/\$\{.*?\}/g) != null) {
+                        value = value.render2(context);
+                        if (loopCnt++ > 10) {
+                            throw `Parser expresion [${exp.exp}] with error`;
+                        }
+                    }
+                    return value;
+                }
                 //link dimension
                 var linkFunction = function (k) {
                     if (k.id) {

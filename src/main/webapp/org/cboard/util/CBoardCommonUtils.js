@@ -14,6 +14,10 @@ function randomStr() {
  */
 function render(template, context) {
     var tokenReg = /(\\)?\{([^\{\}\\]+)(\\)?\}/g;
+    return render(template, context, tokenReg);
+}
+
+function render(template, context, tokenReg) {
     return template.replace(tokenReg, function (word, slash1, token, slash2) {
         if (slash1 || slash2) {
             return word.replace('\\', '');
@@ -34,6 +38,27 @@ String.prototype.render = function (context) {
     return render(this, context);
 };
 
+/**
+ * 字符串模板变量替换 replace ${name} style variable
+ * @param template
+ * @param context
+ * @returns {void|string|XML|*|{by}|{state, paramExpr}}
+ */
+String.prototype.render2 = function(context) {
+    var tokenReg = /(\\)?\$\{([^\{\}\\]+)(\\)?\}/g;
+    return render(this, context, tokenReg);
+};
+
+String.prototype.hashCode = function() {
+    var hash = 0, i, chr;
+    if (this.length === 0) return hash;
+    for (i = 0; i < this.length; i++) {
+        chr   = this.charCodeAt(i);
+        hash  = ((hash << 5) - hash) + chr;
+        hash |= 0; // Convert to 32bit integer
+    }
+    return hash;
+};
 
 function dataStructure(d) {
     var dataString = d ? d.toString(): "";
@@ -83,4 +108,10 @@ function cboardTranslate(path) {
     }
     var result = eval(exp);
     return result ? result : path;
+}
+
+
+function UserException(message) {
+    this.message = message;
+    this.name = 'UserException';
 }

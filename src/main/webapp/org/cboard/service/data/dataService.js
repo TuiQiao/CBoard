@@ -68,7 +68,9 @@ cBoard.service('dataService', function ($http, $q, updateService) {
                     for (var i = 0; i < expList.length; i++) {
                         context[expList[i].alias] = expList[i].exp;
                     }
-                    value = value.render2(context);
+                    value = value.render2(context, function(v) {
+                        return `(${v})`;
+                    });
                     while (value.match(/\$\{.*?\}/g) != null) {
                         value = value.render2(context);
                         if (loopCnt++ > 10) {

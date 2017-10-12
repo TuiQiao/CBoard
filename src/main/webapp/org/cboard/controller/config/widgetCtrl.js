@@ -347,38 +347,28 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
                 windowTemplateUrl: 'org/cboard/view/util/modal/window.html',
                 backdrop: false,
                 size: 'lg',
+                scope: $scope,
                 controller: function ($scope, $uibModalInstance) {
                     $scope.data = data;
                     $scope.curWidget = curWidget;
                     $scope.columnObjs = columnObjs;
                     $scope.aggregate = aggregate;
+                    $scope.expressions = curWidget.expressions;
                     $scope.alerts = [];
                     $scope.close = function () {
                         $uibModalInstance.close();
                     };
                     var columns = _.map(columnObjs, function (o) { return o.column; });
-                    $scope.expAceOpt = expEditorOptions(columns, aggregate);
+                    $scope.expAceOpt = expEditorOptions($scope.selects, aggregate, function(_editor) {
+                        $scope.expAceEditor = _editor;
+                        $scope.expAceSession = _editor.getSession();
+                        _editor.focus();
+                    });
                     $scope.addToken = function (str, agg) {
-                        var tc = document.getElementById("expression_area");
-                        var tclen = $scope.data.expression.length;
-                        tc.focus();
-                        var selectionIdx = 0;
-                        if (typeof document.selection != "undefined") {
-                            document.selection.createRange().text = str;
-                            selectionIdx = str.length - 1;
-                        }
-                        else {
-                            var a = $scope.data.expression.substr(0, tc.selectionStart);
-                            var b = $scope.data.expression.substring(tc.selectionStart, tclen);
-                            $scope.data.expression = a + str;
-                            selectionIdx = $scope.data.expression.length - 1;
-                            $scope.data.expression += b;
-                        }
-                        if (!agg) {
-                            selectionIdx++;
-                        }
-                        tc.selectionStart = selectionIdx;
-                        tc.selectionEnd = selectionIdx;
+                        var editor = $scope.expAceEditor;
+                        editor.session.insert(editor.getCursorPosition(), str);
+                        editor.focus();
+                        if (agg) editor.getSelection().moveCursorLeft();
                     };
                     $scope.verify = function () {
                         $scope.alerts = [];
@@ -393,6 +383,7 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
                             ModalUtils.alert(translate('CONFIG.WIDGET.ALIAS') + translate('COMMON.NOT_EMPTY'), "modal-warning", "lg");
                             return;
                         }
+                        $scope.data.expression = $scope.expAceSession.getValue();
                         ok($scope.data);
                         $uibModalInstance.close();
                     };

@@ -372,6 +372,7 @@ cBoard.controller('datasetCtrl', function ($scope, $http, dataService, $uibModal
             }
         }
         var columnObjs = schemaToSelect($scope.curDataset.data.schema, $scope.selects);
+        var expressions = $scope.curDataset.data.expressions;
         $uibModal.open({
             templateUrl: 'org/cboard/view/config/modal/exp.html',
             windowTemplateUrl: 'org/cboard/view/util/modal/window.html',
@@ -382,6 +383,7 @@ cBoard.controller('datasetCtrl', function ($scope, $http, dataService, $uibModal
                 $scope.data = data;
                 $scope.columnObjs = columnObjs;
                 $scope.aggregate = aggregate;
+                $scope.expressions = expressions;
                 $scope.alerts = [];
                 $scope.expAceOpt = expEditorOptions($scope.selects, aggregate, function(_editor) {
                     $scope.expAceEditor = _editor;
@@ -410,6 +412,7 @@ cBoard.controller('datasetCtrl', function ($scope, $http, dataService, $uibModal
                         ModalUtils.alert(translate('CONFIG.WIDGET.ALIAS') + translate('COMMON.NOT_EMPTY'), "modal-warning", "lg");
                         return;
                     }
+                    $scope.data.expression = $scope.expAceSession.getValue();
                     ok($scope.data);
                     $uibModalInstance.close();
                 };

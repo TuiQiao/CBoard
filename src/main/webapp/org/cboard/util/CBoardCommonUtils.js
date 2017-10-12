@@ -17,7 +17,7 @@ function render(template, context) {
     return render(template, context, tokenReg);
 }
 
-function render(template, context, tokenReg) {
+function render(template, context, tokenReg, hasDollarPrefix, resultProcessor) {
     return template.replace(tokenReg, function (word, slash1, token, slash2) {
         if (slash1 || slash2) {
             return word.replace('\\', '');
@@ -28,9 +28,19 @@ function render(template, context, tokenReg) {
         for (i = 0, length = variables.length; i < length; ++i) {
             variable = variables[i];
             currentObject = currentObject[variable];
-            if (currentObject === undefined || currentObject === null) return '{'+token+'}';
+            if (currentObject === undefined || currentObject === null) {
+                if (hasDollarPrefix === true) {
+                    return '${'+token+'}';
+                } else {
+                    return '{'+token+'}';
+                }
+            }
         }
-        return currentObject;
+        if (resultProcessor) {
+            return resultProcessor(currentObject);
+        } else {
+            return currentObject;
+        }
     })
 }
 
@@ -44,9 +54,9 @@ String.prototype.render = function (context) {
  * @param context
  * @returns {void|string|XML|*|{by}|{state, paramExpr}}
  */
-String.prototype.render2 = function(context) {
+String.prototype.render2 = function(context, resultProcessor) {
     var tokenReg = /(\\)?\$\{([^\{\}\\]+)(\\)?\}/g;
-    return render(this, context, tokenReg);
+    return render(this, context, tokenReg, true, resultProcessor);
 };
 
 String.prototype.hashCode = function() {

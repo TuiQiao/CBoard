@@ -104,7 +104,8 @@ cBoard.controller('datasetCtrl', function ($scope, $http, dataService, $uibModal
             return ds.id == $scope.curDataset.data.datasource;
         });
         $scope.curWidget.query = $scope.curDataset.data.query;
-        $scope.loadData();
+        $scope.selects = ds.data.selects;
+        //$scope.loadData();
     };
 
     $scope.checkExist = function (column) {
@@ -504,6 +505,7 @@ cBoard.controller('datasetCtrl', function ($scope, $http, dataService, $uibModal
                         values: []
                     });
                 });
+                $scope.curDataset.data.selects = $scope.selects;
             }
         });
     };

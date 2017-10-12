@@ -6,17 +6,6 @@ function randomStr() {
     return Math.random().toString(36).substring(2);
 }
 
-/**
- * 字符串模板变量替换
- * @param template
- * @param context
- * @returns {void|string|XML|*|{by}|{state, paramExpr}}
- */
-function render(template, context) {
-    var tokenReg = /(\\)?\{([^\{\}\\]+)(\\)?\}/g;
-    return render(template, context, tokenReg);
-}
-
 function render(template, context, tokenReg, hasDollarPrefix, resultProcessor) {
     return template.replace(tokenReg, function (word, slash1, token, slash2) {
         if (slash1 || slash2) {
@@ -45,7 +34,8 @@ function render(template, context, tokenReg, hasDollarPrefix, resultProcessor) {
 }
 
 String.prototype.render = function (context) {
-    return render(this, context);
+    var tokenReg = /(\\)?\{([^\{\}\\]+)(\\)?\}/g;
+    return render(this, context, tokenReg);
 };
 
 /**

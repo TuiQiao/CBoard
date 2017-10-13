@@ -5,7 +5,10 @@
             <ul>
                 <li ng-repeat="o in schema.dimension|filter:filterDimension" ng-switch="o.type" ng-class="{'level':'parent_li'}[o.type]">
                     <span ng-switch-when="level" style="cursor: not-allowed;"><i class="fa fa-caret-down"/><img src="imgs/schema/hierarchy.gif">{{o.alias}}</span>
-                    <span ng-switch-when="column" dnd-draggable="o" dnd-type="'dimension'">
+                    <span ng-switch-when="column"
+                          dnd-draggable="o"
+                          dnd-type="'dimension'"
+                          dnd-dragstart="onDragstart('dimension')" dnd-canceled="onDragCancle()" dnd-dragend="onDragCancle()">
                         <img src="imgs/schema/bullet_blue.png">{{o.alias?o.alias:o.column}}
                     </span>
                     <ul ng-switch-when="level">

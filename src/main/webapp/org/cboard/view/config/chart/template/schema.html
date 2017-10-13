@@ -45,6 +45,7 @@
                 <li ng-repeat="o in curWidget.expressions|filter:filterExpressions">
                     <span dnd-draggable="o" dnd-type="'exp'"><img src="imgs/schema/bullet_red.png">{{o.alias}}</span>
                     <i class="fa fa-edit" ng-click="editExp(o)" ng-if="!isDsExpression(o)"></i>
+                    <i class="text-blue fa fa-info-circle" ng-click="viewExp(o)"></i>
                     <i class="fa fa-trash-o"  ng-click="curWidget.expressions.splice($index, 1)" ng-if="!isDsExpression(o)"></i>
                 </li>
             </ul>

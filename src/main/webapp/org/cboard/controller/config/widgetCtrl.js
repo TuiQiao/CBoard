@@ -319,6 +319,11 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
             });
         };
 
+        $scope.viewExp = function(exp) {
+            ModalUtils.alert({title: translate('CONFIG.COMMON.CUSTOM_EXPRESSION') + ': ' + exp.alias, body: exp.exp},
+                "modal-info", 'lg');
+        }
+
         $scope.editExp = function (col) {
             var columnObjs = schemaToSelect($scope.schema);
             var aggregate = $scope.value_aggregate_types;
@@ -445,7 +450,7 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
                     return ds.id == $scope.curWidget.datasetId;
                 }).data.expressions;
                 var exp = _.find(dsExp, function (e) {
-                    return e.id && o.id == e.id;
+                    return (e.id && o.id == e.id) || o.alias == e.alias;
                 });
                 return !_.isUndefined(exp);
             }

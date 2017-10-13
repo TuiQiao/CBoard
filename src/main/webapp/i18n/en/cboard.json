@@ -46,7 +46,9 @@
     "USER_ID": "creator ID",
     "CREATOR_NAME": "creator login name",
     "CREATE_TIME": "create time",
-    "UPDATE_TIM": "last update time"
+    "UPDATE_TIM": "last update time",
+    "FOLD_TREE": "Fold all nodes",
+    "UNFOLD_TREE": "Unflod all nodes"
   },
   "TIPS": {
     "CAL_EXPR": "Calculate after aggregation. Use assist click input to avoid typo. e.g: Math.log(sum(columnA)/count(columB))"
@@ -357,6 +359,9 @@
     "BY_ROLE": "By Role",
     "REVOKE": "Revoke",
     "GRANT": "Grant",
+    "DELETE_USER_IN_ROLE": "Revoke User's Role(s)",
+    "ADD_USER2ROLE": "Grant User Role(s)",
+    "ADD_RES2ROLE": "Upate Resource of Role",
     "TOGGLE_UPDATE": "Toggle UDATE",
     "TOGGLE_DELETE": "Toggle DELETE"
   },

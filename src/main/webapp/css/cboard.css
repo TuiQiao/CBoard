@@ -742,3 +742,9 @@ treecontrol.tree-dark {
     -webkit-box-shadow: none;
     box-shadow: none;
 }
+
+.highlight {
+    -webkit-transition: border linear 7.2s,-webkit-box-shadow linear -2.5s;
+    border-color: rgba(47, 165, 255, 0.75);
+    -webkit-box-shadow: 0 0 4px rgba(54, 131, 255, 0.86);
+}

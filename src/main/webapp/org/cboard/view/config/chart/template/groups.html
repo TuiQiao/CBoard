@@ -5,7 +5,8 @@
     <div dnd-list="curWidget.config.groups"
          dnd-inserted="dndTransfer.toKeysGroups(curWidget.config.groups,index,item,type)"
          dnd-allowed-types="['dimension','select','group','key','filter']"
-         class="form-control" style="min-height: 35px;height: auto;padding: 0px">
+         class="form-control" style="min-height: 35px;height: auto;padding: 0px"
+         ng-class="{highlight: targetHighlight.column}">
         <div class="dndPlaceholder sort-highlight"
              style="height: 24px; width: 93px;margin: 3px 3px;display: inline-block;vertical-align: middle;">
         </div>

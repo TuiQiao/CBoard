@@ -49,7 +49,6 @@ cBoard.service('chartAreaMapService', function ($state, $window) {
                 name: groups[i],
                 type: 'map',
                 map: code,
-                roam: true,
                 tooltip: {
                     trigger: 'item'
                 },

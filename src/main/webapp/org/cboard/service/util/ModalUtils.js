@@ -14,7 +14,14 @@ cBoard.service('ModalUtils', function ($uibModal, $filter) {
             windowClass: style,
             size: size,
             controller: function ($scope, $uibModalInstance) {
-                content ? $scope.content = content : $scope.content = translate('CONFIG.DASHBOARD.DASHBOARD_SOMETHING_WRONG');
+                var emptyBody = translate('CONFIG.DASHBOARD.DASHBOARD_SOMETHING_WRONG');
+                if (content instanceof Object) {
+                    content.title ? $scope.title = content.title : $scope.title = translate('COMMON.TIP');
+                    $scope.content = content.body ? content.body : emptyBody;
+                } else {
+                    $scope.title = translate('COMMON.TIP');
+                    $scope.content = content ? content : emptyBody;
+                }
                 $scope.ok = function () {
                     $uibModalInstance.close();
                     if (callback) {

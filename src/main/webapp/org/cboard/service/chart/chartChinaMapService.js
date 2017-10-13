@@ -269,7 +269,6 @@ cBoard.service('chartChinaMapService', function () {
                                 show: false
                             }
                         },
-                        roam: true,
                         itemStyle: {
                             normal: {
                                 areaColor: '#EFF0F0',

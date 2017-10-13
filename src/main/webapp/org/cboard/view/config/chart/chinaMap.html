@@ -31,6 +31,7 @@
                 </td>
                 <td dnd-list="v.cols" dnd-inserted="dndTransfer.toCol(v.cols,index,item,type)"
                     dnd-allowed-types="['measure','select','col','exp']"
+                    ng-class="{highlight: targetHighlight.value}"
                     style="width: 100%; padding: 1px 3px">
                     <div class="dndPlaceholder sort-highlight"
                          style="height: 24px; width: 93px;margin: 3px 3px;display: inline-block;vertical-align: middle;">

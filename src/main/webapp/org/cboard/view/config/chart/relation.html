@@ -6,6 +6,7 @@
              dnd-inserted="dndTransfer.toCol(curWidget.config.values[0].cols,index,item,type)"
              dnd-allowed-types="['measure','select','col','exp']"
              dnd-drop="curWidget.config.values[0].cols.length<1 ? item:false"
+             ng-class="{highlight: targetHighlight.value}"
              class="form-control" style="min-height: 35px;height: auto;padding: 0px">
             <div class="dndPlaceholder sort-highlight"
                  style="height: 24px; width: 93px;margin: 3px 3px;display: inline-block;vertical-align: middle;">

@@ -1595,6 +1595,33 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
         }
         /** js tree related End... **/
 
+        $scope.targetHighlight = {
+            row: false, column: false, value: false, filter: false
+        };
+
+        $scope.onDragstart = function (type) {
+            switch (type) {
+                case 'dimension':
+                    $scope.targetHighlight = {row: true, column: true, value: false, filter: true};
+                    break;
+                case 'measure':
+                case 'exp':
+                    $scope.targetHighlight = {row: false, column: false, value: true, filter: false};
+                    break;
+                case 'filterGroup':
+                    $scope.targetHighlight.filter = true;
+                    break;
+                case 'select':
+                    $scope.targetHighlight = {row: true, column: true, value: true, filter: true};
+                    break;
+            }
+        };
+
+        $scope.onDragCancle = function () {
+            $scope.targetHighlight = {
+                row: false, column: false, value: false, filter: false
+            };
+        };
 
         /** Ace Editor Starer... **/
         $scope.queryAceOpt = datasetEditorOptions();

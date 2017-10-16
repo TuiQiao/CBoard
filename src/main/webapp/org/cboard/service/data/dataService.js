@@ -69,12 +69,12 @@ cBoard.service('dataService', function ($http, $q, updateService) {
                         context[expList[i].alias] = expList[i].exp;
                     }
                     value = value.render2(context, function(v) {
-                        return `(${v})`;
+                        return '(' + v + ')';
                     });
                     while (value.match(/\$\{.*?\}/g) != null) {
                         value = value.render2(context);
                         if (loopCnt++ > 10) {
-                            throw `Parser expresion [${exp.exp}] with error`;
+                            throw 'Parser expresion [ ' + exp.exp + ' ] with error';
                         }
                     }
                     return value;

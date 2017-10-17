@@ -190,7 +190,7 @@ cBoard.controller('boardCtrl', function ($rootScope, $scope, $http, ModalUtils, 
         });
     };
 
-    $scope.showInfo = function (board) {
+    $scope.showInfo = function () {
         if (!checkTreeNode("info")) return;
         var content = getSelectedBoard();
         ModalUtils.info(content, "modal-info", "lg");

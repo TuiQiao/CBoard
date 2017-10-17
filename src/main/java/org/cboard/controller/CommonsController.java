@@ -18,10 +18,7 @@ import java.util.List;
  */
 @RestController
 @RequestMapping("/commons")
-public class CommonsController {
-
-    @Autowired
-    private AuthenticationService authenticationService;
+public class CommonsController extends BaseController {
 
     @Autowired
     private MenuService menuService;
@@ -44,7 +41,7 @@ public class CommonsController {
 
     @RequestMapping(value = "/changePwd")
     public ServiceStatus changePwd(@RequestParam(name = "curPwd") String curPwd, @RequestParam(name = "newPwd") String newPwd, @RequestParam(name = "cfmPwd") String cfmPwd) {
-        return adminSerivce.changePwd(authenticationService.getCurrentUser().getUserId(), curPwd, newPwd, cfmPwd);
+        return adminSerivce.changePwd(user.getUserId(), curPwd, newPwd, cfmPwd);
     }
 
     @RequestMapping(value = "/persist")

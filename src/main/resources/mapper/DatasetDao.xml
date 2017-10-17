@@ -9,30 +9,32 @@
     <select id="getAllDatasetList" resultType="org.cboard.pojo.DashboardDataset">
         SELECT
         dataset_id    AS id,
-        user_id       AS userId,
+        s.user_id     AS userId,
         dataset_name  AS name,
         data_json     AS data,
         category_name AS categoryName,
-        (select u.user_name from dashboard_user u where u.user_id = s.user_id) as userName,
-        (select u.login_name from dashboard_user u where u.user_id = s.user_id) as loginName,
+        u.user_name   AS userName,
+        u.login_name  AS loginName,
         create_time   AS createTime,
         update_time   AS updateTime
         FROM dashboard_dataset s
+        LEFT JOIN dashboard_user u ON u.user_id = s.user_id
     </select>
 
     <select id="getDatasetList" resultType="org.cboard.pojo.DashboardDataset">
       SELECT
               dataset_id    AS id,
-              user_id       AS userId,
+              s.user_id     AS userId,
               dataset_name  AS name,
               data_json     AS data,
               category_name AS categoryName,
-              (select u.user_name from dashboard_user u where u.user_id = s.user_id) as userName,
-              (select u.login_name from dashboard_user u where u.user_id = s.user_id) as loginName,
+              u.user_name   AS userName,
+              u.login_name  AS loginName,
               create_time   AS createTime,
               update_time   AS updateTime
          FROM dashboard_dataset s
-               WHERE #{0} = '${admin_user_id}' OR user_id = #{0} OR dataset_id IN (
+         LEFT JOIN dashboard_user u ON u.user_id = s.user_id
+               WHERE #{0} = '${admin_user_id}' OR s.user_id = #{0} OR dataset_id IN (
              SELECT res_id
                FROM dashboard_user_role ur
                LEFT JOIN dashboard_role_res rr ON ur.role_id = rr.role_id
@@ -44,17 +46,18 @@
     <select id="getDatasetListAdmin" resultType="org.cboard.pojo.DashboardDataset">
         SELECT
               dataset_id    AS id,
-              user_id       AS userId,
+              s.user_id     AS userId,
               dataset_name  AS name,
               data_json     AS data,
               category_name AS categoryName,
-              (select u.user_name from dashboard_user u where u.user_id = s.user_id) as userName,
-              (select u.login_name from dashboard_user u where u.user_id = s.user_id) as loginName,
+              u.user_name   AS userName,
+              u.login_name  AS loginName,
               create_time   AS createTime,
               update_time   AS updateTime
         FROM dashboard_dataset s
-        WHERE #{0} = '${admin_user_id}' OR user_id = #{0}
-           OR user_id = #{0}
+        LEFT JOIN dashboard_user u ON u.user_id = s.user_id
+        WHERE #{0} = '${admin_user_id}' OR s.user_id = #{0}
+           OR s.user_id = #{0}
            OR dataset_id IN (
               SELECT res_id
                 FROM dashboard_role r

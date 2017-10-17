@@ -5,12 +5,18 @@
             <ul>
                 <li ng-repeat="o in schema.dimension|filter:filterDimension" ng-switch="o.type" ng-class="{'level':'parent_li'}[o.type]">
                     <span ng-switch-when="level" style="cursor: not-allowed;"><i class="fa fa-caret-down"/><img src="imgs/schema/hierarchy.gif">{{o.alias}}</span>
-                    <span ng-switch-when="column" dnd-draggable="o" dnd-type="'dimension'">
+                    <span ng-switch-when="column"
+                          dnd-draggable="o"
+                          dnd-type="'dimension'"
+                          dnd-dragstart="onDragstart('dimension')" dnd-canceled="onDragCancle()" dnd-dragend="onDragCancle()">
                         <img src="imgs/schema/bullet_blue.png">{{o.alias?o.alias:o.column}}
                     </span>
                     <ul ng-switch-when="level">
                         <li ng-repeat="c in o.columns|filter:filterDimension" >
-                            <span dnd-draggable="dndTransfer.attachLevel(c,o)" dnd-type="'dimension'"><img src="imgs/schema/bullet_blue.png">{{c.alias?c.alias:c.column}}</span>
+                            <span dnd-draggable="dndTransfer.attachLevel(c,o)"
+                                  dnd-type="'dimension'"
+                                  dnd-dragstart="onDragstart('dimension')" dnd-canceled="onDragCancle()" dnd-dragend="onDragCancle()"
+                            ><img src="imgs/schema/bullet_blue.png">{{c.alias?c.alias:c.column}}</span>
                         </li>
                     </ul>
                 </li>
@@ -22,7 +28,10 @@
             <span><img src="imgs/schema/measure.gif"><b>{{'CONFIG.DATASET.MEASURE'|translate}}</b></span>
             <ul>
                 <li ng-repeat="o in schema.measure">
-                    <span dnd-draggable="o" dnd-type="'measure'"><img src="imgs/schema/bullet_red.png">{{o.alias?o.alias:o.column}}</span>
+                    <span dnd-draggable="o"
+                          dnd-type="'measure'"
+                          dnd-dragstart="onDragstart('measure')" dnd-canceled="onDragCancle()" dnd-dragend="onDragCancle()"
+                    ><img src="imgs/schema/bullet_red.png">{{o.alias?o.alias:o.column}}</span>
                 </li>
             </ul>
         </li>
@@ -32,7 +41,10 @@
             <span><b>{{'CONFIG.DATASET.UNCLASSIFY'|translate}}</b></span>
             <ul>
                 <li ng-repeat="o in schema.selects|filter:filterDimension">
-                    <span dnd-draggable="o" dnd-type="'select'"><img src="imgs/schema/bullet_red.png">{{o.column}}</span>
+                    <span dnd-draggable="o"
+                          dnd-type="'select'"
+                          dnd-dragstart="onDragstart('select')" dnd-canceled="onDragCancle()" dnd-dragend="onDragCancle()"
+                    ><img src="imgs/schema/bullet_red.png">{{o.column}}</span>
                 </li>
             </ul>
         </li>
@@ -40,11 +52,16 @@
     <ul style="padding-left: 5px">
         <li class="parent_li">
             <span><img src="imgs/schema/measure.gif"/><b>{{'CONFIG.COMMON.CUSTOM_EXPRESSION'|translate}}</b></span>
-            <i class="glyphicon glyphicon-plus" ng-click="editExp()"></i>
+            <i ng-if="customDs" class="glyphicon glyphicon-plus" ng-click="editExp()"></i>
             <ul>
                 <li ng-repeat="o in curWidget.expressions|filter:filterExpressions">
-                    <span dnd-draggable="o" dnd-type="'exp'"><img src="imgs/schema/bullet_red.png">{{o.alias}}</span>
+                    <span dnd-draggable="o"
+                          dnd-type="'exp'"
+                          dnd-dragstart="onDragstart('exp')" dnd-canceled="onDragCancle()" dnd-dragend="onDragCancle()"
+                    >
+                        <img src="imgs/schema/bullet_red.png">{{o.alias}}</span>
                     <i class="fa fa-edit" ng-click="editExp(o)" ng-if="!isDsExpression(o)"></i>
+                    <i class="text-blue fa fa-info-circle" ng-click="viewExp(o)"></i>
                     <i class="fa fa-trash-o"  ng-click="curWidget.expressions.splice($index, 1)" ng-if="!isDsExpression(o)"></i>
                 </li>
             </ul>
@@ -56,7 +73,10 @@
             <i class="glyphicon glyphicon-plus" ng-click="editFilterGroup()"></i>
             <ul>
                 <li ng-repeat="o in curWidget.filterGroups|filter:filterFilterGroup">
-                    <span dnd-draggable="o" dnd-type="'filterGroup'"><img src="imgs/schema/bullet_green.png">{{o.group}}</span>
+                    <span dnd-draggable="o"
+                          dnd-type="'filterGroup'"
+                          dnd-dragstart="onDragstart('filterGroup')" dnd-canceled="onDragCancle()" dnd-dragend="onDragCancle()"
+                    ><img src="imgs/schema/bullet_green.png">{{o.group}}</span>
                     <i class="fa fa-edit" ng-click="editFilterGroup(o)" ng-if="!isDsFilter(o)"></i>
                     <i class="fa fa-trash-o"  ng-click="curWidget.filterGroups.splice($index, 1)" ng-if="!isDsFilter(o)"></i>
                 </li>

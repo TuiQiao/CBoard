@@ -3,7 +3,7 @@
  */
 // CBoard settings
 var settings = {
-    preferredLanguage: "cn" // en/cn: Switch language to Chinese
+    preferredLanguage: "en" // en/cn: Switch language to Chinese
 };
 
 var CB_I18N;

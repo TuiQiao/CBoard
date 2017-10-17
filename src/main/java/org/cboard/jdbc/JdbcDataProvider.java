@@ -17,9 +17,8 @@ import org.cboard.dataprovider.annotation.DatasourceParameter;
 import org.cboard.dataprovider.annotation.ProviderName;
 import org.cboard.dataprovider.annotation.QueryParameter;
 import org.cboard.dataprovider.config.AggConfig;
-import org.cboard.dataprovider.config.DimensionConfig;
 import org.cboard.dataprovider.result.AggregateResult;
-import org.cboard.dataprovider.result.ColumnIndex;
+import org.cboard.dataprovider.util.DPCommonUtils;
 import org.cboard.dataprovider.util.SqlHelper;
 import org.cboard.exception.CBoardException;
 import org.slf4j.Logger;
@@ -30,9 +29,6 @@ import javax.sql.DataSource;
 import java.sql.*;
 import java.util.*;
 import java.util.concurrent.*;
-import java.util.stream.Collectors;
-import java.util.stream.IntStream;
-import java.util.stream.Stream;
 
 /**
  * Created by yfyuan on 2016/8/17.
@@ -163,7 +159,6 @@ public class JdbcDataProvider extends DataProvider implements Aggregatable, Init
             ps.executeQuery(queryStr);
         } catch (Exception e) {
             LOG.error("Error when execute: {}",  queryStr);
-            e.printStackTrace();
             throw new Exception("ERROR:" + e.getMessage(), e);
         }
     }
@@ -213,7 +208,6 @@ public class JdbcDataProvider extends DataProvider implements Aggregatable, Init
             try {
                 conn = ds.getConnection();
             } catch (SQLException e) {
-                e.printStackTrace();
                 datasourceMap.remove(key);
                 throw e;
             }
@@ -339,20 +333,7 @@ public class JdbcDataProvider extends DataProvider implements Aggregatable, Init
             LOG.error("ERROR:" + e.getMessage());
             throw new Exception("ERROR:" + e.getMessage(), e);
         }
-
-        // recreate a dimension stream
-        Stream<DimensionConfig> dimStream = Stream.concat(config.getColumns().stream(), config.getRows().stream());
-        List<ColumnIndex> dimensionList = dimStream.map(ColumnIndex::fromDimensionConfig).collect(Collectors.toList());
-        int dimSize = dimensionList.size();
-        dimensionList.addAll(config.getValues().stream().map(ColumnIndex::fromValueConfig).collect(Collectors.toList()));
-        IntStream.range(0, dimensionList.size()).forEach(j -> dimensionList.get(j).setIndex(j));
-        list.forEach(row -> {
-            IntStream.range(0, dimSize).forEach(i -> {
-                if (row[i] == null) row[i] = NULL_STRING;
-            });
-        });
-        String[][] result = list.toArray(new String[][]{});
-        return new AggregateResult(dimensionList, result);
+        return DPCommonUtils.transform2AggResult(config, list);
     }
 
 
@@ -364,10 +345,21 @@ public class JdbcDataProvider extends DataProvider implements Aggregatable, Init
 
     @Override
     public void afterPropertiesSet() throws Exception {
-        String subQuery = getAsSubQuery(query.get(SQL));
+        String subQuery = null;
+        if (query != null) {
+            subQuery = getAsSubQuery(query.get(SQL));
+        }
         SqlHelper sqlHelper = new SqlHelper(subQuery, true);
         if (!isUsedForTest()) {
-            sqlHelper.getSqlSyntaxHelper().setColumnTypes(getColumnType());
+            Map<String, Integer> columnTypes = null;
+            try {
+                columnTypes = getColumnType();
+            } catch (Exception e) {
+                //  getColumns() and test() methods do not need columnTypes properties,
+                // it doesn't matter for these methods even getMeta failed
+                LOG.warn("getColumnType failed: {}", e.getMessage());
+            }
+            sqlHelper.getSqlSyntaxHelper().setColumnTypes(columnTypes);
         }
         this.sqlHelper = sqlHelper;
     }

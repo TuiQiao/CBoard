@@ -8,6 +8,8 @@ import org.cboard.dataprovider.annotation.DatasourceParameter;
 import org.cboard.dto.ViewDashboardDatasource;
 import org.cboard.pojo.DashboardDatasource;
 import org.cboard.services.role.RolePermission;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
@@ -26,6 +28,8 @@ import java.util.stream.Collectors;
 @Repository
 public class DatasourceService {
 
+    private Logger LOG = LoggerFactory.getLogger(this.getClass());
+
     @Autowired
     private DatasourceDao datasourceDao;
 
@@ -41,7 +45,7 @@ public class DatasourceService {
                     }
                 });
             } catch (Exception ex) {
-                ex.printStackTrace();
+                LOG.error("", e);
             }
         });
         return vlist;

@@ -6,6 +6,8 @@ import com.google.common.cache.LoadingCache;
 import org.apache.commons.lang.StringUtils;
 import org.cboard.dto.User;
 import org.cboard.security.ShareAuthenticationToken;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 
@@ -19,6 +21,8 @@ import java.util.concurrent.TimeUnit;
  * Created by yfyuan on 2017/2/22.
  */
 public class LocalSecurityFilter implements Filter {
+
+    private Logger LOG = LoggerFactory.getLogger(this.getClass());
 
     private static LoadingCache<String, String> sidCache = CacheBuilder.newBuilder().expireAfterAccess(1, TimeUnit.MINUTES).build(new CacheLoader<String, String>() {
         @Override
@@ -50,7 +54,7 @@ public class LocalSecurityFilter implements Filter {
                     ((HttpServletRequest) servletRequest).getSession().setAttribute("SPRING_SECURITY_CONTEXT", context);
                 }
             } catch (Exception e) {
-                //e.printStackTrace();
+                LOG.error("", e);
             }
         }
         filterChain.doFilter(servletRequest, servletResponse);

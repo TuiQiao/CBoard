@@ -6,14 +6,7 @@ function randomStr() {
     return Math.random().toString(36).substring(2);
 }
 
-/**
- * 字符串模板变量替换
- * @param template
- * @param context
- * @returns {void|string|XML|*|{by}|{state, paramExpr}}
- */
-function render(template, context) {
-    var tokenReg = /(\\)?\{([^\{\}\\]+)(\\)?\}/g;
+function render(template, context, tokenReg, hasDollarPrefix, resultProcessor) {
     return template.replace(tokenReg, function (word, slash1, token, slash2) {
         if (slash1 || slash2) {
             return word.replace('\\', '');
@@ -24,16 +17,48 @@ function render(template, context) {
         for (i = 0, length = variables.length; i < length; ++i) {
             variable = variables[i];
             currentObject = currentObject[variable];
-            if (currentObject === undefined || currentObject === null) return '{'+token+'}';
+            if (currentObject === undefined || currentObject === null) {
+                if (hasDollarPrefix === true) {
+                    return '${'+token+'}';
+                } else {
+                    return '{'+token+'}';
+                }
+            }
         }
-        return currentObject;
+        if (resultProcessor) {
+            return resultProcessor(currentObject);
+        } else {
+            return currentObject;
+        }
     })
 }
 
 String.prototype.render = function (context) {
-    return render(this, context);
+    var tokenReg = /(\\)?\{([^\{\}\\]+)(\\)?\}/g;
+    return render(this, context, tokenReg);
 };
 
+/**
+ * 字符串模板变量替换 replace ${name} style variable
+ * @param template
+ * @param context
+ * @returns {void|string|XML|*|{by}|{state, paramExpr}}
+ */
+String.prototype.render2 = function(context, resultProcessor) {
+    var tokenReg = /(\\)?\$\{([^\{\}\\]+)(\\)?\}/g;
+    return render(this, context, tokenReg, true, resultProcessor);
+};
+
+String.prototype.hashCode = function() {
+    var hash = 0, i, chr;
+    if (this.length === 0) return hash;
+    for (i = 0; i < this.length; i++) {
+        chr   = this.charCodeAt(i);
+        hash  = ((hash << 5) - hash) + chr;
+        hash |= 0; // Convert to 32bit integer
+    }
+    return hash;
+};
 
 function dataStructure(d) {
     var dataString = d ? d.toString(): "";
@@ -83,4 +108,10 @@ function cboardTranslate(path) {
     }
     var result = eval(exp);
     return result ? result : path;
+}
+
+
+function UserException(message) {
+    this.message = message;
+    this.name = 'UserException';
 }

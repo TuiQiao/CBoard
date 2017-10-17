@@ -3,6 +3,8 @@ package org.cboard.solr;
 import org.apache.commons.pool2.impl.GenericObjectPool;
 import org.apache.commons.pool2.impl.GenericObjectPoolConfig;
 import org.apache.solr.client.solrj.SolrClient;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 
@@ -10,7 +12,7 @@ import java.io.IOException;
  * Created by JunjieM on 2017-7-7.
  */
 public class SolrServerPoolFactory {
-
+    private Logger LOG = LoggerFactory.getLogger(this.getClass());
     private GenericObjectPool<SolrClient> pool;
 
     public SolrServerPoolFactory(GenericObjectPoolConfig config, String solrServices, String collectionName) {
@@ -22,7 +24,7 @@ public class SolrServerPoolFactory {
         try {
             return pool.borrowObject();
         } catch (Exception e) {
-            e.printStackTrace();
+            LOG.error("", e);
             return null;
         }
     }
@@ -35,10 +37,11 @@ public class SolrServerPoolFactory {
                 try {
                     solrClient.close();
                 } catch (IOException e1) {
-                    e1.printStackTrace();
+                    LOG.error("", e1);
                 }
                 solrClient = null;
             }
+            LOG.error("", e);
         }
     }
 
@@ -48,7 +51,7 @@ public class SolrServerPoolFactory {
                 pool.close();
                 pool = null;
             } catch (Exception e) {
-                e.printStackTrace();
+                LOG.error("", e);
             }
         }
     }

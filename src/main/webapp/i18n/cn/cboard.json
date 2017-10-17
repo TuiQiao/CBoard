@@ -44,9 +44,11 @@
     "VALUE": "值",
     "INFORMATION": "信息",
     "USER_ID": "创建人ID",
-    "LOGIN_NAME": "创建人登录名",
+    "CREATOR_NAME": "创建人登录名",
     "CREATE_TIME": "创建时间",
-    "UPDATE_TIM": "最后修改时间"
+    "UPDATE_TIM": "最后修改时间",
+    "FOLD_TREE": "展开所有树节点",
+    "UNFOLD_TREE": "收起所有树节点"
   },
   "TIPS": {
     "CAL_EXPR": "用于聚合后再计算. 使用上面的点击辅助输入避免输入错误. 如: Math.log(sum(columnA)/count(columB))"
@@ -326,7 +328,8 @@
       "FAIL": "失败",
       "FINISH": "完成",
       "PROCESSING": "处理中",
-      "STATUS": "状态"
+      "STATUS": "状态",
+      "XLSPWD": "xls密码"
     },
     "SHARE_RES": {
       "YOUR_RES": "你的资源",
@@ -356,6 +359,9 @@
     "BY_ROLE": "按角色",
     "REVOKE": "撤销",
     "GRANT": "授予",
+    "DELETE_USER_IN_ROLE": "从组中移除用户",
+    "ADD_USER2ROLE": "添加用户到角色组",
+    "ADD_RES2ROLE": "更新角色资源权限",
     "TOGGLE_UPDATE": "切换UDATE权限",
     "TOGGLE_DELETE": "切换DELETE权限"
   },

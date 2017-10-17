@@ -104,7 +104,8 @@ cBoard.controller('datasetCtrl', function ($scope, $http, dataService, $uibModal
             return ds.id == $scope.curDataset.data.datasource;
         });
         $scope.curWidget.query = $scope.curDataset.data.query;
-        $scope.loadData();
+        $scope.selects = ds.data.selects;
+        //$scope.loadData();
     };
 
     $scope.checkExist = function (column) {
@@ -372,6 +373,7 @@ cBoard.controller('datasetCtrl', function ($scope, $http, dataService, $uibModal
             }
         }
         var columnObjs = schemaToSelect($scope.curDataset.data.schema, $scope.selects);
+        var expressions = $scope.curDataset.data.expressions;
         $uibModal.open({
             templateUrl: 'org/cboard/view/config/modal/exp.html',
             windowTemplateUrl: 'org/cboard/view/util/modal/window.html',
@@ -382,32 +384,21 @@ cBoard.controller('datasetCtrl', function ($scope, $http, dataService, $uibModal
                 $scope.data = data;
                 $scope.columnObjs = columnObjs;
                 $scope.aggregate = aggregate;
+                $scope.expressions = expressions;
                 $scope.alerts = [];
-                $scope.expAceOpt = expEditorOptions($scope.selects, aggregate);
+                $scope.expAceOpt = expEditorOptions($scope.selects, aggregate, function(_editor) {
+                    $scope.expAceEditor = _editor;
+                    $scope.expAceSession = _editor.getSession();
+                    _editor.focus();
+                });
                 $scope.close = function () {
                     $uibModalInstance.close();
                 };
                 $scope.addToken = function (str, agg) {
-                    var tc = document.getElementById("expression_area");
-                    var tclen = $scope.data.expression.length;
-                    tc.focus();
-                    var selectionIdx = 0;
-                    if (typeof document.selection != "undefined") {
-                        document.selection.createRange().text = str;
-                        selectionIdx = str.length - 1;
-                    }
-                    else {
-                        var a = $scope.data.expression.substr(0, tc.selectionStart);
-                        var b = $scope.data.expression.substring(tc.selectionStart, tclen);
-                        $scope.data.expression = a + str;
-                        selectionIdx = $scope.data.expression.length - 1;
-                        $scope.data.expression += b;
-                    }
-                    if (!agg) {
-                        selectionIdx++;
-                    }
-                    tc.selectionStart = selectionIdx;
-                    tc.selectionEnd = selectionIdx;
+                    var editor = $scope.expAceEditor;
+                    editor.session.insert(editor.getCursorPosition(), str);
+                    editor.focus();
+                    if (agg) editor.getSelection().moveCursorLeft();
                 };
                 $scope.verify = function () {
                     $scope.alerts = [];
@@ -422,6 +413,7 @@ cBoard.controller('datasetCtrl', function ($scope, $http, dataService, $uibModal
                         ModalUtils.alert(translate('CONFIG.WIDGET.ALIAS') + translate('COMMON.NOT_EMPTY'), "modal-warning", "lg");
                         return;
                     }
+                    $scope.data.expression = $scope.expAceSession.getValue();
                     ok($scope.data);
                     $uibModalInstance.close();
                 };
@@ -513,6 +505,7 @@ cBoard.controller('datasetCtrl', function ($scope, $http, dataService, $uibModal
                         values: []
                     });
                 });
+                $scope.curDataset.data.selects = $scope.selects;
             }
         });
     };

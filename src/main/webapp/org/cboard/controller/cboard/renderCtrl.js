@@ -8,18 +8,22 @@ cBoard.controller('renderCtrl', function ($timeout, $rootScope, $scope, $state, 
         w.render = function (content, optionFilter, scope) {
             w.persist = {};
             var chartType = w.widget.data.config.chart_type;
-            if(chartType == 'chinaMapBmap'){
-                chartService.render(content, w.widget.data, optionFilter, scope, reload, w.persist);
-                w.loading = false;
-                $scope.l--;
-            } else {
-                chartService.render(content, w.widget.data, optionFilter, scope, reload, w.persist).then(function (d) {
-                    w.realTimeTicket = d;
+            try {
+                if (chartType == 'chinaMapBmap') {
+                    chartService.render(content, w.widget.data, optionFilter, scope, reload, w.persist);
                     w.loading = false;
                     $scope.l--;
-                }, function (error) {
-                    $scope.l--;
-                });
+                } else {
+                    chartService.render(content, w.widget.data, optionFilter, scope, reload, w.persist).then(function (d) {
+                        w.realTimeTicket = d;
+                        w.loading = false;
+                        $scope.l--;
+                    }, function (error) {
+                        $scope.l--;
+                    });
+                }
+            } catch (e) {
+                console.error(e);
             }
         };
     };

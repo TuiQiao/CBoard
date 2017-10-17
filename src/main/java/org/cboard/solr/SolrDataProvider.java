@@ -146,7 +146,7 @@ public class SolrDataProvider extends DataProvider implements Aggregatable, Init
             solrServer = getConnection(solrServers, collectionName);
             res = solrServer.query(solrQuery);
         } catch (Exception e) {
-            e.printStackTrace();
+            LOG.error("", e);
         } finally {
             if (solrServer != null) {
                 releaseConnection(solrServers, collectionName, solrServer);
@@ -173,7 +173,7 @@ public class SolrDataProvider extends DataProvider implements Aggregatable, Init
         try {
             solrServer = new LBHttpSolrClient(servers);
         } catch (MalformedURLException e) {
-            e.printStackTrace();
+            LOG.error("", e);
         }
         return solrServer;
     }

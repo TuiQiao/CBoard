@@ -7,7 +7,6 @@ import org.cboard.dao.DatasetDao;
 import org.cboard.dao.WidgetDao;
 import org.cboard.pojo.DashboardDataset;
 import org.cboard.pojo.DashboardWidget;
-import org.cboard.services.AuthenticationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -22,7 +21,7 @@ import java.util.function.Consumer;
  */
 @RestController
 @RequestMapping("/update")
-public class UpdateController {
+public class UpdateController extends BaseController {
 
     @Value("${admin_user_id}")
     private String adminUserId;
@@ -33,12 +32,9 @@ public class UpdateController {
     @Autowired
     private WidgetDao widgetDao;
 
-    @Autowired
-    private AuthenticationService authenticationService;
-
     @RequestMapping(value = "/dataset")
     public String dataset() {
-        String userId = authenticationService.getCurrentUser().getUserId();
+        String userId = user.getUserId();
         if (!adminUserId.equals(userId)) {
             return "";
         }
@@ -78,7 +74,7 @@ public class UpdateController {
 
     @RequestMapping(value = "/widget")
     public String widget() {
-        String userId = authenticationService.getCurrentUser().getUserId();
+        String userId = user.getUserId();
         if (!adminUserId.equals(userId)) {
             return "";
         }

@@ -13,6 +13,7 @@
                     dnd-list="v.cols" dnd-inserted="dndTransfer.toCol(v.cols,index,item,type)"
                     dnd-allowed-types="['measure','select','col','exp']"
                     dnd-drop="v.cols.length == 0 ? item:false"
+                    ng-class="{highlight: targetHighlight.value}"
                     style="width: 33%; height: 40px;padding: 0px 5px;">
                     <div class="dndPlaceholder sort-highlight"
                          style="height: 24px; width: 93px;margin: 3px 3px;display: inline-block;vertical-align: middle;">

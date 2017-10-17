@@ -44,9 +44,11 @@
     "VALUE": "Value",
     "INFORMATION": "Information",
     "USER_ID": "creator ID",
-    "LOGIN_NAME": "creator login name",
+    "CREATOR_NAME": "creator login name",
     "CREATE_TIME": "create time",
-    "UPDATE_TIM": "last update time"
+    "UPDATE_TIM": "last update time",
+    "FOLD_TREE": "Fold all nodes",
+    "UNFOLD_TREE": "Unflod all nodes"
   },
   "TIPS": {
     "CAL_EXPR": "Calculate after aggregation. Use assist click input to avoid typo. e.g: Math.log(sum(columnA)/count(columB))"
@@ -326,7 +328,8 @@
       "FAIL": "Fail",
       "FINISH": "Finish",
       "PROCESSING": "Processing",
-      "STATUS": "Status"
+      "STATUS": "Status",
+      "XLSPWD": "Password for Xls"
     },
     "SHARE_RES": {
       "YOUR_RES": "Your Resources",
@@ -356,6 +359,9 @@
     "BY_ROLE": "By Role",
     "REVOKE": "Revoke",
     "GRANT": "Grant",
+    "DELETE_USER_IN_ROLE": "Revoke User's Role(s)",
+    "ADD_USER2ROLE": "Grant User Role(s)",
+    "ADD_RES2ROLE": "Upate Resource of Role",
     "TOGGLE_UPDATE": "Toggle UDATE",
     "TOGGLE_DELETE": "Toggle DELETE"
   },

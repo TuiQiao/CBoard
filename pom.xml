@@ -401,7 +401,7 @@
                                     <outputDirectory>${project.build.outputDirectory}</outputDirectory>
                                     <resources>
                                         <resource>
-                                            <directory>src/main/resources/{env}</directory>
+                                            <directory>src/main/resources/${env}</directory>
                                             <filtering>false</filtering>
                                         </resource>
                                     </resources>

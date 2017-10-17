@@ -1,7 +1,6 @@
 package org.cboard.services;
 
 import com.alibaba.fastjson.JSONObject;
-import org.apache.commons.lang3.StringUtils;
 import org.cboard.exception.CBoardException;
 import org.cboard.security.service.LocalSecurityFilter;
 import org.cboard.services.persist.PersistContext;
@@ -30,28 +29,19 @@ public class PersistService {
     private String phantomjsPath;
     private String scriptPath = new File(this.getClass().getResource("/phantom.js").getFile()).getPath();
 
-    @Value("${web_port}")
-    private String webPort;
-    @Value("${web_context}")
-    private String webContext;
-
     private static final ConcurrentMap<String, PersistContext> TASK_MAP = new ConcurrentHashMap<>();
 
     public PersistContext persist(Long dashboardId, String userId) {
         String persistId = UUID.randomUUID().toString().replaceAll("-", "");
         Process process = null;
         try {
-            String web = webPort + "/";
-            if (StringUtils.isNotBlank(webContext)) {
-                web += webContext + "/";
-            }
             PersistContext context = new PersistContext(dashboardId);
             TASK_MAP.put(persistId, context);
             String uuid = UUID.randomUUID().toString().replaceAll("-", "");
             LocalSecurityFilter.put(uuid, userId);
             String phantomUrl = new StringBuffer("http://127.0.0.1:")
-                    .append(web)
-                    .append("render.html")
+                    .append(LocalSecurityFilter.getContext())
+                    .append("/render.html")
                     .append("?sid=").append(uuid)
                     .append("#?id=").append(dashboardId)
                     .append("&pid=").append(persistId)

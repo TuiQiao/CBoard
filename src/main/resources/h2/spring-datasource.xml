@@ -12,15 +12,15 @@
 
     <bean id="dataSource" class="org.apache.commons.dbcp2.BasicDataSource" destroy-method="close" >
         <property name="driverClassName" value="org.h2.Driver" />
-        <property name="url" value="jdbc:h2:~/H2Data/metadata" />
+        <property name="url" value="jdbc:h2:~/H2Data/metadata;AUTO_SERVER=TRUE" />
         <property name="username" value="sa" />
         <property name="password" value="" />
         <property name="maxTotal" value="20" />
     </bean>
 
     <jdbc:initialize-database data-source="dataSource" ignore-failures="ALL">
-        <jdbc:script location="classpath:h2/h2.sql" />
-        <!--<jdbc:script location="classpath:database/h2/import-data.sql" />-->
+        <jdbc:script location="classpath:h2-demo/h2.sql" />
+        <jdbc:script location="classpath:h2-demo/sample_data.sql" />
     </jdbc:initialize-database>
 
 </beans>

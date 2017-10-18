@@ -10,13 +10,13 @@ RUN yum install -y java-1.8.0-openjdk java-1.8.0-openjdk-devel wget vim
 
 # Donwload resources
 # local http resources
-RUN mkdir install \
-    && wget http://10.15.110.8/tomcat/apache-tomcat-8.5.23.tar.gz -P install \
-    && wget http://10.15.110.8/etc/phantomjs-2.1.1-linux-i686.tar.bz2 -P install
+#RUN mkdir install \
+#    && wget http://10.15.110.8/tomcat/apache-tomcat-8.5.23.tar.gz -P install \
+#    && wget http://10.15.110.8/etc/phantomjs-2.1.1-linux-i686.tar.bz2 -P install
 
 # remote download
-#RUN wget http://mirror.bit.edu.cn/apache/tomcat/tomcat-8/v8.5.23/bin/apache-tomcat-8.5.23-windows-x64.zip -P install \
-#    && wget https://bitbucket.org/ariya/phantomjs/downloads/phantomjs-2.1.1-linux-i686.tar.bz2 -P install \
+RUN wget http://mirror.bit.edu.cn/apache/tomcat/tomcat-8/v8.5.23/bin/apache-tomcat-8.5.23-windows-x64.zip -P install \
+    && wget https://bitbucket.org/ariya/phantomjs/downloads/phantomjs-2.1.1-linux-i686.tar.bz2 -P install
 
 RUN tar -zxf install/apache-tomcat-8.5.23.tar.gz -C /opt \
     && tar -jxf install/phantomjs-2.1.1-linux-i686.tar.bz2 -C /opt \

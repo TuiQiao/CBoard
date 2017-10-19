@@ -60,17 +60,17 @@ CBoardEChartRender.prototype.chart = function (group, persist) {
     }
     if (persist) {
         setTimeout(function () {
-            self.container.css('background', '#fff');
-            html2canvas(self.container[0], {
-                onrendered: function (canvas) {
-                    persist.data = canvas.toDataURL("image/jpeg");
-                    persist.type = "jpg"
-                }
+            persist.data = self.ecc.getDataURL({
+                type: 'jpeg',
+                pixelRatio: 2,
+                backgroundColor: '#fff'
             });
+            persist.type = "jpg";
+            persist.widgetType = "echarts";
         }, 1000);
     }
     return function (o) {
-        o = $.extend(true, {}, self.basicOption, o)
+        o = $.extend(true, {}, self.basicOption, o);
         self.ecc.setOption(o, true);
     }
 };

@@ -39,18 +39,20 @@ angular.module('cBoard').config(['$stateProvider', function ($stateProvider) {
             template: '<div ui-view></div>'
         })
         .state('config.board', {
-            url: '/board',
+            url: '/board/{boardId}',
+            params: {boardId: null},
             templateUrl: 'org/cboard/view/config/board.html',
             controller: 'boardCtrl'
         })
         .state('config.widget', {
-            url: '/widget',
+            url: '/widget/{id}',
             params: {id: null},
             templateUrl: 'org/cboard/view/config/widget.html',
             controller: 'widgetCtrl'
         })
         .state('config.datasource', {
-            url: '/datasource',
+            url: '/datasource/{id}',
+            params: {id: null},
             templateUrl: 'org/cboard/view/config/datasource.html',
             controller: 'datasourceCtrl'
         })
@@ -60,7 +62,8 @@ angular.module('cBoard').config(['$stateProvider', function ($stateProvider) {
             controller: 'categoryCtrl'
         })
         .state('config.dataset', {
-            url: '/dataset',
+            url: '/dataset/{id}',
+            params: {id: null},
             templateUrl: 'org/cboard/view/config/dataset.html',
             controller: 'datasetCtrl'
         })

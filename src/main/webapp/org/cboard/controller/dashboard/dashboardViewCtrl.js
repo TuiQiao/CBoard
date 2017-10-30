@@ -498,6 +498,10 @@ cBoard.controller('dashboardViewCtrl', function ($timeout, $rootScope, $scope, $
         });
     };
 
+    $scope.editBoard = function() {
+        $state.go('config.board', {boardId: $stateParams.id});
+    };
+
     $scope.deleteBoardParam = function (index) {
         $scope.boardParams.splice(index,1);
         $http.post("dashboard/saveBoardParam.do", {

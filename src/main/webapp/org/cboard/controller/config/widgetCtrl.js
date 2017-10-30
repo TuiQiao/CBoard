@@ -293,6 +293,10 @@ cBoard.controller('widgetCtrl', function ($scope, $state, $stateParams, $http, $
                         return w.id == $stateParams.id;
                     }));
                 }
+                if ($stateParams.datasetId) {
+                    $scope.newWgt({datasetId: $stateParams.datasetId});
+                    $scope.loadData();
+                }
             });
         });
 
@@ -410,8 +414,11 @@ cBoard.controller('widgetCtrl', function ($scope, $state, $stateParams, $http, $
             cleanPreview();
         };
 
-        $scope.newWgt = function () {
+        $scope.newWgt = function (curWidget) {
             $scope.curWidget = {};
+            if (curWidget) {
+                $scope.curWidget = curWidget;
+            }
             $scope.curWidget.config = {};
             $scope.curWidget.config.option = {};
             $scope.curWidget.expressions = [];

@@ -45,8 +45,8 @@ angular.module('cBoard').config(['$stateProvider', function ($stateProvider) {
             controller: 'boardCtrl'
         })
         .state('config.widget', {
-            url: '/widget/{id}',
-            params: {id: null},
+            url: '/widget?id&datasetId',
+            params: {id: null, datasetId: null},
             templateUrl: 'org/cboard/view/config/widget.html',
             controller: 'widgetCtrl'
         })

@@ -7,6 +7,7 @@ cBoard.controller('widgetCtrl', function ($scope, $state, $stateParams, $http, $
         var translate = $filter('translate');
         var updateUrl = "dashboard/updateWidget.do";
         $scope.liteMode = false;
+        $scope.tab = 'preview_widget2';
         //图表类型初始化
         $scope.chart_types = [
             {
@@ -269,6 +270,7 @@ cBoard.controller('widgetCtrl', function ($scope, $state, $stateParams, $http, $
         $scope.filterSelect = {};
         $scope.verify = {widgetName: true};
         $scope.params = [];
+        $scope.curDataset;
 
 
         var loadDataset = function (callback) {
@@ -280,9 +282,6 @@ cBoard.controller('widgetCtrl', function ($scope, $state, $stateParams, $http, $
             });
         };
         loadDataset();
-        // $http.get("dashboard/getDatasetCategoryList.do").success(function (response) {
-        //     $scope.datasetCategoryList = response;
-        // });
 
         $http.get("dashboard/getDatasourceList.do").success(function (response) {
             $scope.datasourceList = response;
@@ -292,13 +291,23 @@ cBoard.controller('widgetCtrl', function ($scope, $state, $stateParams, $http, $
                     $scope.editWgt(_.find($scope.widgetList, function (w) {
                         return w.id == $stateParams.id;
                     }));
-                }
-                if ($stateParams.datasetId) {
-                    $scope.newWgt({datasetId: $stateParams.datasetId});
+                } else if ($stateParams.id == null && $stateParams.datasetId) {
+                    $scope.newWgt({datasetId: parseInt($stateParams.datasetId)});
                     $scope.loadData();
                 }
             });
         });
+
+        $scope.getCurDatasetName = function() {
+            if ($scope.customDs) {
+                return translate('CONFIG.WIDGET.NEW_QUERY');
+            } else {
+                var curDS = _.find($scope.datasetList, function (ds) {
+                    return ds.id == $scope.curWidget.datasetId;
+                });
+                return curDS ? curDS.name : null;
+            }
+        }
 
         $scope.datasetGroup = function (item) {
             return item.categoryName;
@@ -1503,7 +1512,7 @@ cBoard.controller('widgetCtrl', function ($scope, $state, $stateParams, $http, $
         $scope.editNode = function () {
             if (!checkTreeNode("edit")) return;
             var selectedNode = jstree_GetSelectedNodes(treeID)[0];
-            $state.go('config.widget', {id: selectedNode.id}, {notify: false});
+            $state.go('config.widget', {id: selectedNode.id}, {notify: false, inherit: false});
             $scope.editWgt(getSelectedWidget());
         };
 

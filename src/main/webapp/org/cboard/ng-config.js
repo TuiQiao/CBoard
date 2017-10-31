@@ -5,6 +5,11 @@
 
 angular.module('cBoard').config(['$stateProvider', function ($stateProvider) {
     $stateProvider
+        .state('home', {
+            url: '',
+            templateUrl: 'org/cboard/view/cboard/homepage.html',
+            controller: 'homepageCtrl'
+        })
         .state('dashboard', {
             url: '/dashboard',
             abstract: true,

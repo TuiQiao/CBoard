@@ -65,6 +65,35 @@ Server side framework is Spring+MyBatis and front-end is based on AngularJS1 and
 ![image](https://yzhang921.gitbooks.io/cboard-git-book/content/assets/UserAdmin_Snap.png)
 
 
+# Quick start
+## Quick Start from docker
+We provide a docker image build on centos6 with a sample dataset in it.
+```bash
+docker pull peterzhang921/cboard:0.4.1
+docker run --rm -itd --name=cboard -p 8026:8080 --privileged=true peterzhang921/cboard:0.4.1
+
+# after docker container is start then attach into it and start tomcat server
+docker attach cboard
+/opt/apache-tomcat/bin/startup.sh
+
+# wait after server successfully started
+tail -f /opt/apache-tomcat/logs/catalina.out
+```
+
+### Acccess cboard with url http://docker-hostip:8026/cboard
+
+- username: admin , password: root123
+- There is no prepared charts and dashboard in it
+- Meta data of CBoard is stotred in embedded DB H2 with file storage, user can change or add your own configuration by yourself then build project and docker image again
+  - how to rebuild docker
+  ```bash
+  # use configuration files in h2 folder, use env parameter then all the files in h2 folder will overwrite same files in resource folder
+  maven clean package -Denv=h2
+  # build docker image
+  docker build --network=host -t cboard .
+  ```
+
+# Build project by yourself
 ## Prerequisite
 Before the start, make sure you have setup environment:
 - JDK version above 1.8
@@ -167,3 +196,8 @@ You can check in at this issue page [https://github.com/yzhang921/CBoard/issues/
 
 # Donate (请我们喝咖啡)
 ![image](https://cloud.githubusercontent.com/assets/6037522/26662085/3eb1f00e-46b4-11e7-900f-77d9b1499f6b.png)
+
+
+# 相关博文推荐
+  [Gitbook文档](https://yzhang921.gitbooks.io/cboard-git-book/content/)
+  [villare关于CBoard二次开发的总结](http://blog.csdn.net/villare/article/category/7039297)

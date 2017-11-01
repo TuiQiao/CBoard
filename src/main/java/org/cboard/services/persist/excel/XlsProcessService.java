@@ -68,7 +68,11 @@ public class XlsProcessService {
         JSONArray rows = JSONObject.parseObject(board.getLayout()).getJSONArray("rows");
         List<JSONArray> arr = rows.stream().map(e -> (JSONObject) e)
                 .filter(e -> e.getString("type") == null || "widget".equals(e.getString("type")))
-                .map(e -> e.getJSONArray("widgets"))
+                .map(e -> {
+                    JSONArray array = e.getJSONArray("widgets");
+                    array.forEach(a -> ((JSONObject) a).put("height", e.get("height")));
+                    return array;
+                })
                 .collect(Collectors.toList());
 
         int widgets = 0;

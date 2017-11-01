@@ -1111,6 +1111,16 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
             return !result;
         };
 
+        $scope.refreshSchema = function () {
+            loadDataset(function () {
+                $scope.curWidget.expressions = [];
+                loadDsExpressions();
+                $scope.curWidget.filterGroups = [];
+                loadDsFilterGroups();
+                buildSchema();
+            });
+        }
+
         var buildSchema = function () {
             var loadFromDataset = false;
             if (!$scope.customDs) {
@@ -1210,6 +1220,7 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
                 } else if (type == 'select' || type == 'measure') {
                     list[index] = {col: item.column, aggregate_type: 'sum'};
                 }
+                $scope.onDragCancle();
             },
             toSelect: function (list, index, item, type) {
                 if (type == 'col') {
@@ -1618,9 +1629,9 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
         };
 
         $scope.onDragCancle = function () {
-            $scope.targetHighlight = {
+            $timeout($scope.targetHighlight = {
                 row: false, column: false, value: false, filter: false
-            };
+            }, 500);
         };
 
         /** Ace Editor Starer... **/

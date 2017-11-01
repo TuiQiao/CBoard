@@ -1,12 +1,14 @@
 package org.cboard.services;
 
 import com.alibaba.fastjson.JSONObject;
-import org.apache.commons.lang3.StringUtils;
+import org.cboard.dao.BoardDao;
 import org.cboard.exception.CBoardException;
+import org.cboard.pojo.DashboardBoard;
 import org.cboard.security.service.LocalSecurityFilter;
 import org.cboard.services.persist.PersistContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
@@ -28,12 +30,9 @@ public class PersistService {
 
     @Value("${phantomjs_path}")
     private String phantomjsPath;
+    @Autowired
+    private BoardDao boardDao;
     private String scriptPath = new File(this.getClass().getResource("/phantom.js").getFile()).getPath();
-
-    @Value("${web_port}")
-    private String webPort;
-    @Value("${web_context}")
-    private String webContext;
 
     private static final ConcurrentMap<String, PersistContext> TASK_MAP = new ConcurrentHashMap<>();
 
@@ -41,17 +40,16 @@ public class PersistService {
         String persistId = UUID.randomUUID().toString().replaceAll("-", "");
         Process process = null;
         try {
-            String web = webPort + "/";
-            if (StringUtils.isNotBlank(webContext)) {
-                web += webContext + "/";
+            if (boardDao.getBoard(dashboardId) == null) {
+                throw new CBoardException(String.format("Dashbaord ID [%s] doesn't exist!", dashboardId));
             }
             PersistContext context = new PersistContext(dashboardId);
             TASK_MAP.put(persistId, context);
             String uuid = UUID.randomUUID().toString().replaceAll("-", "");
             LocalSecurityFilter.put(uuid, userId);
             String phantomUrl = new StringBuffer("http://127.0.0.1:")
-                    .append(web)
-                    .append("render.html")
+                    .append(LocalSecurityFilter.getContext())
+                    .append("/render.html")
                     .append("?sid=").append(uuid)
                     .append("#?id=").append(dashboardId)
                     .append("&pid=").append(persistId)

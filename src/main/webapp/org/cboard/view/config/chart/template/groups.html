@@ -12,6 +12,7 @@
         </div>
         <div ng-repeat="o in curWidget.config.groups" dnd-draggable="o" dnd-effect-allowed="move"
              dnd-moved="curWidget.config.groups.splice($index, 1)" dnd-type="'group'"
+             dnd-dragstart="onDragstart('dimension')" dnd-dragend="onDragCancle()"
              class="btn-group" style="cursor: move;margin: 3px 3px;">
             <button type="button" class="btn btn-default btn-sm" style="cursor: move;"
                     ng-click="curWidget.config.groups.splice($index, 1);">

@@ -58,7 +58,10 @@ public class MailService {
 
     private Function<Object, PersistContext> getPersistBoard(List<PersistContext> persistContextList) {
         return e -> persistContextList.stream()
-                .filter(board -> board.getDashboardId() == ((JSONObject) e).getLong("id"))
+                .filter(board -> {
+                    Long boardId = board.getDashboardId();
+                    return boardId != null && boardId.equals((((JSONObject) e).getLong("id")));
+                })
                 .findFirst().get();
     }
 

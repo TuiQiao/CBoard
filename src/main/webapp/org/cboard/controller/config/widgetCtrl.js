@@ -1111,6 +1111,16 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
             return !result;
         };
 
+        $scope.refreshSchema = function () {
+            loadDataset(function () {
+                $scope.curWidget.expressions = [];
+                loadDsExpressions();
+                $scope.curWidget.filterGroups = [];
+                loadDsFilterGroups();
+                buildSchema();
+            });
+        }
+
         var buildSchema = function () {
             var loadFromDataset = false;
             if (!$scope.customDs) {

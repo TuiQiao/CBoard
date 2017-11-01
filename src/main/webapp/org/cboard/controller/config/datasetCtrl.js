@@ -73,6 +73,7 @@ cBoard.controller('datasetCtrl', function ($scope, $http, dataService, $uibModal
         $scope.optFlag = 'new';
         $scope.curDataset = {data: {expressions: [], filters: [], schema: {dimension: [], measure: []}}};
         $scope.curWidget = {};
+        $scope.selects = [];
         cleanPreview();
     };
 

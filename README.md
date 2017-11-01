@@ -69,10 +69,11 @@ Server side framework is Spring+MyBatis and front-end is based on AngularJS1 and
 ## Quick Start from docker
 We provide a docker image build on centos6 with a sample dataset in it.
 ```bash
-docker pull peterzhang921/cboard
-docker run --rm -itd --name=cboard -p 8026:8080 --privileged=true cboard
+docker pull peterzhang921/cboard:0.4.1
+docker run --rm -itd --name=cboard -p 8026:8080 --privileged=true peterzhang921/cboard:0.4.1
 
 # after docker container is start then attach into it and start tomcat server
+docker attach cboard
 /opt/apache-tomcat/bin/startup.sh
 
 # wait after server successfully started

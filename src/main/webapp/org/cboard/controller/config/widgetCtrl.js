@@ -2,11 +2,12 @@
  * Created by yfyuan on 2016/8/12.
  */
 'use strict';
-cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal, dataService, ModalUtils, updateService, $filter, chartService, $timeout) {
+cBoard.controller('widgetCtrl', function ($scope, $state, $stateParams, $http, $uibModal, dataService, ModalUtils, updateService, $filter, chartService, $timeout) {
 
         var translate = $filter('translate');
         var updateUrl = "dashboard/updateWidget.do";
         $scope.liteMode = false;
+        $scope.tab = 'preview_widget2';
         //图表类型初始化
         $scope.chart_types = [
             {
@@ -269,6 +270,7 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
         $scope.filterSelect = {};
         $scope.verify = {widgetName: true};
         $scope.params = [];
+        $scope.curDataset;
 
 
         var loadDataset = function (callback) {
@@ -280,9 +282,6 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
             });
         };
         loadDataset();
-        // $http.get("dashboard/getDatasetCategoryList.do").success(function (response) {
-        //     $scope.datasetCategoryList = response;
-        // });
 
         $http.get("dashboard/getDatasourceList.do").success(function (response) {
             $scope.datasourceList = response;
@@ -292,9 +291,23 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
                     $scope.editWgt(_.find($scope.widgetList, function (w) {
                         return w.id == $stateParams.id;
                     }));
+                } else if ($stateParams.id == null && $stateParams.datasetId) {
+                    $scope.newWgt({datasetId: parseInt($stateParams.datasetId)});
+                    $scope.loadData();
                 }
             });
         });
+
+        $scope.getCurDatasetName = function() {
+            if ($scope.customDs) {
+                return translate('CONFIG.WIDGET.NEW_QUERY');
+            } else {
+                var curDS = _.find($scope.datasetList, function (ds) {
+                    return ds.id == $scope.curWidget.datasetId;
+                });
+                return curDS ? curDS.name : null;
+            }
+        }
 
         $scope.datasetGroup = function (item) {
             return item.categoryName;
@@ -410,8 +423,11 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
             cleanPreview();
         };
 
-        $scope.newWgt = function () {
+        $scope.newWgt = function (curWidget) {
             $scope.curWidget = {};
+            if (curWidget) {
+                $scope.curWidget = curWidget;
+            }
             $scope.curWidget.config = {};
             $scope.curWidget.config.option = {};
             $scope.curWidget.expressions = [];
@@ -1495,6 +1511,8 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
 
         $scope.editNode = function () {
             if (!checkTreeNode("edit")) return;
+            var selectedNode = jstree_GetSelectedNodes(treeID)[0];
+            $state.go('config.widget', {id: selectedNode.id}, {notify: false, inherit: false});
             $scope.editWgt(getSelectedWidget());
         };
 

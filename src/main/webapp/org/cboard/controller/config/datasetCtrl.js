@@ -1,7 +1,7 @@
 /**
  * Created by yfyuan on 2016/10/11.
  */
-cBoard.controller('datasetCtrl', function ($scope, $http, dataService, $uibModal, ModalUtils, $filter, chartService, $timeout, uuid4) {
+cBoard.controller('datasetCtrl', function ($scope, $http, $state, $stateParams, dataService, $uibModal, ModalUtils, $filter, chartService, $timeout, uuid4) {
 
     var translate = $filter('translate');
     $scope.optFlag = 'none';
@@ -53,8 +53,12 @@ cBoard.controller('datasetCtrl', function ($scope, $http, dataService, $uibModal
         $http.get("dashboard/getDatasetList.do").success(function (response) {
             $scope.datasetList = response;
             $scope.searchNode();
+            if ($stateParams.id) {
+                $scope.editDs(_.find($scope.datasetList, function (ds) {
+                    return ds.id == $stateParams.id;
+                }));
+            }
         });
-
     };
 
     var getCategoryList = function () {
@@ -553,6 +557,8 @@ cBoard.controller('datasetCtrl', function ($scope, $http, dataService, $uibModal
 
     $scope.editNode = function () {
         if (!checkTreeNode("edit")) return;
+        var selectedNode = jstree_GetSelectedNodes(treeID)[0];
+        $state.go('config.dataset', {id: selectedNode.id}, {notify: false});
         $scope.editDs(getSelectedDataSet());
     };
 

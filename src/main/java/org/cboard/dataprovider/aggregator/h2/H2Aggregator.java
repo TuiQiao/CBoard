@@ -103,6 +103,7 @@ public class H2Aggregator extends InnerAggregator {
 
         final int batchSize = 20000;
         int count = 0;
+        this.interval = interval;
 
         if (data != null && data.length > 1) {
             String[] header = data[0];
@@ -224,7 +225,7 @@ public class H2Aggregator extends InnerAggregator {
 
     private boolean isTimeout() {
         Long createTimeStamp = h2AggMetaCacher.get(getTmpTblName());
-        if (createTimeStamp == null || System.currentTimeMillis() - createTimeStamp > (12 * 60 * 60 * 1000)) {
+        if (createTimeStamp == null || System.currentTimeMillis() - createTimeStamp > (this.interval * 1000)) {
             return true;
         } else {
             return false;

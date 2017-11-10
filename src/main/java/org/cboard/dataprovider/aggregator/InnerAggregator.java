@@ -16,6 +16,7 @@ public abstract class InnerAggregator implements Aggregatable {
 
     protected Map<String, String> dataSource;
     protected Map<String, String> query;
+    protected Long interval;
 
     @Autowired
     @Qualifier("rawDataCache")
@@ -45,6 +46,14 @@ public abstract class InnerAggregator implements Aggregatable {
 
     public void cleanExist() {
         rawDataCache.remove(getCacheKey());
+    }
+
+    public Long getInterval() {
+        return interval;
+    }
+
+    public void setInterval(Long interval) {
+        this.interval = interval;
     }
 
     public void beforeLoad(String[] header) {}

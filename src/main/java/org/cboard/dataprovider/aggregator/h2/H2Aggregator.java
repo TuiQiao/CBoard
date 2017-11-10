@@ -103,7 +103,6 @@ public class H2Aggregator extends InnerAggregator {
 
         final int batchSize = 20000;
         int count = 0;
-        this.interval = interval;
 
         if (data != null && data.length > 1) {
             String[] header = data[0];

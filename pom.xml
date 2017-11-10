@@ -374,24 +374,24 @@
                     <showWarnings>true</showWarnings>
                 </configuration>
             </plugin>
-            
-			<plugin>  
-	           <groupId>org.apache.maven.plugins</groupId>  
-	           <artifactId>maven-war-plugin</artifactId>  
-	           <version>2.3</version>  
-	           <configuration>  
-	               <warName>${project.artifactId}</warName>  
-	               <webResources>  
-	                   <resource>  
-	                       <directory>lib/</directory>  
-	                       <targetPath>WEB-INF/lib</targetPath>  
-	                       <includes>  
-	                           <include>**/*.jar</include>  
-	                       </includes>  
-	                   </resource>  
-	               </webResources>  
-	           </configuration>  
-	       </plugin>            
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-war-plugin</artifactId>
+                <version>2.3</version>
+                <configuration>
+                    <warName>${project.artifactId}</warName>
+                    <webResources>
+                        <resource>
+                            <directory>lib/</directory>
+                            <targetPath>WEB-INF/lib</targetPath>
+                            <includes>
+                                <include>**/*.jar</include>
+                            </includes>
+                        </resource>
+                    </webResources>
+                </configuration>
+            </plugin>
         </plugins>
     </build>
     <profiles>

@@ -117,7 +117,6 @@ public abstract class DataProvider {
 
     private void checkAndLoad(boolean reload) throws Exception {
         String key = getLockKey();
-        innerAggregator.setInterval(this.interval);
         synchronized (key.intern()) {
             if (reload || !innerAggregator.checkExist()) {
                 String[][] data = getData();

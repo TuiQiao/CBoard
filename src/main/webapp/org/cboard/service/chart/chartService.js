@@ -101,13 +101,14 @@ cBoard.service('chartService', function ($q, dataService, chartPieService, chart
                 return;
             }
             var chart = getChartServices(widget.config);
-            dataService.getDataSeries(widget.datasource, widget.query, widget.datasetId, widget.config, function (data) {
+            var callback = function (data) {
                 var option = chart.parseOption(data);
                 if (optionFilter) {
                     optionFilter(option);
                 }
                 realTimeTicket(option, data.drill ? data.drill.config : null);
-            });
+            };
+            dataService.getDataSeries(widget.datasource, widget.query, widget.datasetId, widget.config, callback, true);
         };
 
         var getChartServices = function (chartConfig) {

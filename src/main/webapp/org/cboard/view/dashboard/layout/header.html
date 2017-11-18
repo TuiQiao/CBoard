@@ -4,7 +4,7 @@
         {{board.name}}
     </h1>
     <div class="breadcrumb" style="cursor: pointer" >
-        <div style="display: inline-block">
+        <div style="display: inline-block" ng-if="board.layout.containsParam" >
             <button type="button" class="btn btn-primary btn-sm dropdown-toggle" data-toggle="dropdown"><i class="fa fa-filter"></i> {{"COMMON.PARAM" | translate}}
                 <span class="fa fa-caret-down"></span>
             </button>

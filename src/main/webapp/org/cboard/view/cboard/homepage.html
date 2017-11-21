@@ -1,4 +1,4 @@
-<section class="content-header">
+<section class="content-header" ng-if="isShowMenu('config.widget')">
     <h1>
         {{'HOMEPAGE.TITLE'|translate}}
         <small>{{'HOMEPAGE.QUICK_START'|translate}}</small>
@@ -7,7 +7,7 @@
         <li><a href=""><i class="fa fa-dashboard"></i> {{'HOMEPAGE.LINK_CAPTION'|translate}}</a></li>
     </ol>
 </section>
-    <div id="inner-container" class="content">
+    <div id="inner-container" class="content" ng-if="isShowMenu('config.widget')">
         <div class="row">
             <div class="col-md-4">
                 <div class="box box-solid">

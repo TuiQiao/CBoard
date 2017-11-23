@@ -66,18 +66,18 @@ public class XlsProcessService {
     private XlsProcesserContext dashboardToXls(PersistContext persistContext, XlsProcesserContext context) {
         DashboardBoard board = boardDao.getBoard(persistContext.getDashboardId());
         JSONArray rows = JSONObject.parseObject(board.getLayout()).getJSONArray("rows");
-        List<JSONArray> arr = rows.stream().map(e -> (JSONObject) e)
-                .filter(e -> e.getString("type") == null || "widget".equals(e.getString("type")))
-                .map(e -> {
-                    JSONArray array = e.getJSONArray("widgets");
-                    array.forEach(a -> ((JSONObject) a).put("height", e.get("height")));
-                    return array;
+        List<JSONArray> widgetRows = rows.stream().map(row -> (JSONObject) row)
+                .filter(row -> row.getString("type") == null || "widget".equals(row.getString("type")))
+                .map(row -> {
+                    JSONArray widgets = row.getJSONArray("widgets");
+                    widgets.forEach(a -> ((JSONObject) a).put("height", row.get("height")));
+                    return widgets;
                 })
                 .collect(Collectors.toList());
 
         int widgets = 0;
         int tables = 0;
-        for (JSONArray rw : arr) {
+        for (JSONArray rw : widgetRows) {
             for (int i = 0; i < rw.size(); i++) {
                 JSONObject widget = rw.getJSONObject(i);
                 JSONObject v = persistContext.getData().getJSONObject(widget.getLong("widgetId").toString());
@@ -118,7 +118,7 @@ public class XlsProcessService {
             sheet.setDisplayGridlines(false);
             IntStream.range(0, 180).forEach(i -> sheet.setColumnWidth(i, 365));
             context.setBoardSheet(sheet);
-            for (JSONArray rw : arr) {
+            for (JSONArray rw : widgetRows) {
                 dCol = Math.round(30.0f / 1700 * columns);
                 dRow = eachRow + 3;
                 widthInRow = 0;
@@ -158,7 +158,7 @@ public class XlsProcessService {
         dRow = 0;
         Sheet dataSheet = context.getWb().createSheet(board.getName() + "_table");
         context.setBoardSheet(dataSheet);
-        for (JSONArray rw : arr) {
+        for (JSONArray rw : widgetRows) {
             for (int i = 0; i < rw.size(); i++) {
                 JSONObject widget = rw.getJSONObject(i);
                 JSONObject v = persistContext.getData().getJSONObject(widget.getLong("widgetId").toString());
@@ -166,7 +166,8 @@ public class XlsProcessService {
                     continue;
                 }
                 context.setC1(0);
-                context.setC2(v.getJSONArray("data").getJSONArray(0).size() - 1);
+                int c2 = v.getJSONArray("data").getJSONArray(0).size() - 1;
+                context.setC2(c2 == 0 ? 1 : c2);
                 context.setR1(dRow);
                 context.setR2(dRow);
                 context.setWidget(widget);
@@ -185,8 +186,9 @@ public class XlsProcessService {
         int max = 0;
         Iterator<Row> i = dataSheet.rowIterator();
         while (i.hasNext()) {
-            if (i.next().getLastCellNum() > max) {
-                max = i.next().getLastCellNum();
+            Row r = i.next();
+            if (r.getLastCellNum() > max) {
+                max = r.getLastCellNum();
             }
         }
         for (int colNum = 0; colNum < max; colNum++) {

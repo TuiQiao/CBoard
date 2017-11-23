@@ -88,6 +88,12 @@ public class DashboardController extends BaseController {
     private JobDao jobDao;
 
     @Autowired
+    private FolderService folderService;
+
+    @Autowired
+    private FolderDao folderDao;
+
+    @Autowired
     private XlsProcessService xlsProcessService;
 
 
@@ -404,6 +410,33 @@ public class DashboardController extends BaseController {
         boardDao.deleteBoardParam(boardId, user.getUserId());
         boardDao.saveBoardParam(boardParam);
         return "1";
+    }
+
+    @RequestMapping(value = "/getFolderList")
+    public List<ViewDashboardFolder> getFolderList() {
+        List<DashboardFolder> list = folderDao.getAllFolderList();
+        return Lists.transform(list, ViewDashboardFolder.TO);
+    }
+
+    @RequestMapping(value = "/getFolder")
+    public ViewDashboardFolder getFolder(@RequestParam(name = "parentId") int parentId, @RequestParam(name = "name") String name) {
+        DashboardFolder folder = folderDao.getFolder(parentId, name);
+        return folder == null ? null : new ViewDashboardFolder(folder);
+    }
+
+    @RequestMapping(value = "/saveNewFolder")
+    public ServiceStatus saveNewFolder(@RequestParam(name = "json") String json) {
+        return folderService.save(user.getUserId(), json);
+    }
+
+    @RequestMapping(value = "/updateFolder")
+    public ServiceStatus updateFolder(@RequestParam(name = "json") String json) {
+        return folderService.update(user.getUserId(), json);
+    }
+
+    @RequestMapping(value = "/deleteFolder")
+    public ServiceStatus deleteFolder(@RequestParam(name = "id") int id) {
+        return folderService.delete(id);
     }
 
     @ExceptionHandler

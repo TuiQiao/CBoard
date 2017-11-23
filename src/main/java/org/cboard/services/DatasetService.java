@@ -28,13 +28,14 @@ public class DatasetService {
         dataset.setName(jsonObject.getString("name"));
         dataset.setData(jsonObject.getString("data"));
         dataset.setCategoryName(jsonObject.getString("categoryName"));
+        dataset.setFolderId(jsonObject.getInteger("folderId"));
         if (StringUtils.isEmpty(dataset.getCategoryName())) {
             dataset.setCategoryName("默认分类");
         }
         Map<String, Object> paramMap = new HashMap<String, Object>();
         paramMap.put("dataset_name", dataset.getName());
         paramMap.put("user_id", dataset.getUserId());
-        paramMap.put("category_name", dataset.getCategoryName());
+        paramMap.put("folder_id", dataset.getFolderId());
         if (datasetDao.countExistDatasetName(paramMap) <= 0) {
             datasetDao.save(dataset);
             return new ServiceStatus(ServiceStatus.Status.Success, "success");
@@ -50,6 +51,7 @@ public class DatasetService {
         dataset.setId(jsonObject.getLong("id"));
         dataset.setName(jsonObject.getString("name"));
         dataset.setCategoryName(jsonObject.getString("categoryName"));
+        dataset.setFolderId(jsonObject.getInteger("folderId"));
         dataset.setData(jsonObject.getString("data"));
         dataset.setUpdateTime(new Timestamp(Calendar.getInstance().getTimeInMillis()));
         if (StringUtils.isEmpty(dataset.getCategoryName())) {
@@ -59,7 +61,7 @@ public class DatasetService {
         paramMap.put("dataset_name", dataset.getName());
         paramMap.put("user_id", dataset.getUserId());
         paramMap.put("dataset_id", dataset.getId());
-        paramMap.put("category_name", dataset.getCategoryName());
+        paramMap.put("folder_id", dataset.getFolderId());
         if (datasetDao.countExistDatasetName(paramMap) <= 0) {
             datasetDao.update(dataset);
             return new ServiceStatus(ServiceStatus.Status.Success, "success");

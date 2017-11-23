@@ -17,6 +17,7 @@ public class ViewDashboardWidget {
     private String userId;
     private String name;
     private String categoryName;
+    private int folderId;
     private String userName;
     private String loginName;
     private String createTime;
@@ -38,6 +39,7 @@ public class ViewDashboardWidget {
         this.userId = widget.getUserId();
         this.name = widget.getName();
         this.categoryName = widget.getCategoryName();
+        this.folderId = widget.getFolderId();
         this.userName = widget.getUserName();
         this.loginName = widget.getLoginName();
         this.createTime = widget.getCreateTime().toString();
@@ -101,6 +103,14 @@ public class ViewDashboardWidget {
 
     public void setCategoryName(String categoryName) {
         this.categoryName = categoryName;
+    }
+
+    public int getFolderId() {
+        return folderId;
+    }
+
+    public void setFolderId(int folderId) {
+        this.folderId = folderId;
     }
 
     public String getUserName() {

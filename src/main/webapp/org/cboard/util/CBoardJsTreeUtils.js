@@ -2,6 +2,49 @@
  * Created by zyong on 2016/12/27.
  */
 
+
+var getContextMenu =function ($node) {
+   
+    if ($node.parent != '#' && !$node.original.ischild) {
+        return {
+            create: {
+                label: function () {
+                    return 'CREATE';
+                },
+                action: function (obj) {
+                    node = $(obj.reference).jstree(true).create_node($node);
+                }
+            },
+            rename: {
+                label: function () {
+                    return 'RENAME';
+                },
+                action: function (obj) {
+                    $(obj.reference).jstree(true).edit($node);
+                }
+            },
+            delete: {
+                label: function () {
+                    return 'DELETE';
+                },
+                action: function (obj) {
+                    $(obj.reference).jstree(true).delete_node($node);
+                }
+            }
+        };
+    } else if($node.parent == '#') {
+        return{
+            create: {
+                label: function () {
+                    return 'CREATE';
+                },
+                action: function (obj) {
+                    $node = $(obj.reference).jstree(true).create_node($node);
+                }
+            }
+        };
+    }
+};
 /**
  *
  * Configuration for DataSet/Widget/Dashboard tree
@@ -16,8 +59,14 @@ var jsTreeConfig1 = {
         check_callback : function(operation, node, node_parent, node_position, more) {
             if (operation === "move_node") {
                 //only allow dropping inside nodes of type 'Parent'
-                return node_parent.id.substring(0,6) == 'parent' || node_parent.id.substring(0,4) == 'root';
+                return node_parent.icon == true;
             }
+            // else if(operation === "delete_node"){
+                // if(!confirm('Are you sure?')){
+                //     return false;
+                // }
+            // }
+
             return true;  //allow all other operations
         },
         worker : true
@@ -33,10 +82,15 @@ var jsTreeConfig1 = {
     dnd : {
         check_while_dragging: true
     },
+    contextmenu: {
+        items: getContextMenu,
+        select_node: false
+    },
     state: {"key": "cboard"},
     version: 1,
-    plugins: ['types', 'unique', 'state', 'sort', 'dnd']
+    plugins: ['types', 'unique', 'state', 'sort', 'dnd', 'contextmenu']
 };
+
 
 /**
  * Holds all jstree related functions and variables, including the actual class and methods to create, access and manipulate instances.
@@ -52,52 +106,21 @@ function jstree_GetWholeTree(domID) {
 function jstree_GetSelectedNodes(domID) {
     return jstree_GetWholeTree(domID).get_selected(true);
 }
-/**
- *
- * @param listIn [{
- *      "id": id,
- *      "name": name,
- *      "categoryName": folder[/subfolder]*
- *      }]
- * @returns {Array}
- */
+
 function jstree_CvtVPath2TreeData (listIn) {
-    var newParentId = 1;
     var listOut = [];
-    listOut.push({"id": "root", "parent": "#", "text": "Root", state: {opened: true}});
+    // listOut.push({"id": "-1", "parent": "#", "text": "Root", state: {opened: true}});
     for (var i = 0; i < listIn.length; i++) {
-        var arr = listIn[i].categoryName.split('/');
-        arr.push(listIn[i].name);
-        var parent = 'root';
-        for (var j = 0; j < arr.length; j++) {
-            var flag = false;
-            var a = arr[j];
-            for (var m = 0; m < listOut.length; m++) {
-                if (listOut[m].text == a && listOut[m].parent == parent && listOut[m].id.substring(0, 6) == 'parent') {
-                    flag = true;
-                    break;
-                }
-            }
-            if (!flag) {
-                if (j == arr.length - 1) {
-                    listOut.push({
-                        "id": listIn[i].id.toString(),
-                        "parent": parent,
-                        "text": a,
-                        icon: 'glyphicon glyphicon-file'
-                    });
-                } else {
-                    listOut.push({
-                        "id": 'parent' + newParentId,
-                        "parent": parent,
-                        "text": a
-                    });
-                }
-                parent = 'parent' + newParentId;
-                newParentId++;
-            } else {
-                parent = listOut[m].id;
-            }
+        if(listIn[i].type == "child") {
+
+            listOut.push({
+                "id": listIn[i].id.toString(),
+                "parent": listIn[i].parentId.toString(),
+                "text": listIn[i].name.toString(),
+                "type": listIn[i].type.toString,
+                icon: 'glyphicon glyphicon-file',
+                ischild: true
+            });
         }
     }
     return listOut;
@@ -176,37 +199,124 @@ function jstree_baseTreeEventsObj(option) {
                 if (selectedNodes.length == 0) return; // Ignore double click folder action
                 option.ngScope.editNode();
             },
-            move_node: function (e, data) {
+            create_node: function (obj, node ) {
 
-                var updateItem = function (nodeid, newCategory) {
-                    var item = _.find(option.ngScope[option.listName], function (i) { return i.id == nodeid; });
-                    item.categoryName = newCategory;
-                    option.ngHttp.post(option.updateUrl, {json: angular.toJson(item)}).success(function (serviceStatus) {
+                var rename = function (node) {
+                    var myJsTree = jstree_GetWholeTree(option.treeID);
+                    
+                    var data = myJsTree.get_node(node.sysid);
+                    if (data) {
+                        data.newid = node.id;
+                        myJsTree.edit(data);
+                    }
+                };
+                
+                var item = {"sysid": node.node.id, "name": node.node.text,"parentId":node.parent};
+
+                option.ngHttp.post("dashboard/saveNewFolder.do", {json: angular.toJson(item)}).success(function (serviceStatus) {
+                    if (serviceStatus.status == '1') {
+                        item.id = serviceStatus.id;
+                        rename(item);
+                    } else {
+                        console.log(serviceStatus.msg);
+                    }
+                });
+
+                // option.ngTimeout(function () {
+                //     option.ngScope.searchNode();
+                // }, 5000);
+            },
+            rename_node: function (obj, node) {
+                var item = {};
+                if(node.node.newid != null){
+                    item.id = node.node.newid;
+                    item.parentId = node.node.parent;
+                    node.node.id = item.id.toString();
+                }else {
+                    item = _.find(option.ngScope["folderList"], function (i) {
+                        return i.id == node.node.id;
+                    });
+                }
+                item.name = node.node.text;
+                
+                option.ngHttp.post("dashboard/updateFolder.do", {json: angular.toJson(item)}).success(function (serviceStatus) {
+                    if (serviceStatus.status == '1') {
+                        option.ngScope.getFolderList();
+                    } else {
+                        console.log(serviceStatus.msg);
+                    }
+                });                
+            },
+            delete_node: function (obj, node) {
+                var items = angular.copy(node.node.children);
+                items.push(node.node.id);
+                for(var i=0;i<items.length;i++) {
+                    option.ngHttp.post("dashboard/deleteFolder.do?id=" + items[i]).success(function (serviceStatus) {
                         if (serviceStatus.status == '1') {
                             //console.log('success!');
+                        } else {
+                            option.ModalUtils.alert(serviceStatus.msg, "modal-warning", "lg");
+                            option.ngScope.searchNode();
+                            return false;
+                        }
+                    });
+                }
+                
+                var folders = node.node.children;
+                var childs = node.node.children_d;
+                var items = childs.sort().splice(childs.length - folders.length);
+                if(items.length > 0){
+                    // var items = node.node.children;
+                    for(var i=0;i<items.length;i++){
+                        option.ngHttp.post(option.deleteUrl, {id: items[i]}).success(function (serviceStatus) {
+                            if (serviceStatus.status == '1') {
+                                //console.log('success!');
+                            } else {
+                                ModalUtils.alert(serviceStatus.msg, "modal-warning", "lg");
+                            }
+                        });
+                    }
+                }
+            },
+            move_node: function (e, data) {
+
+                var updateItem = function (nodeid, newParent) {
+                    var item = _.find(option.ngScope[option.listName], function (i) { return i.id == nodeid; });
+                    item.folderId = newParent;
+                    option.ngHttp.post(option.updateUrl, {json: angular.toJson(item)}).success(function (serviceStatus) {
+                        if (serviceStatus.status == '1') {
+                            
                         } else {
                             ModalUtils.alert(serviceStatus.msg, "modal-warning", "lg");
                         }
                     });
                 };
 
+                var updateFolder = function (nodeid, newParent) {
+                    var item = _.find(option.ngScope["folderList"], function (i) { return i.id == nodeid; });
+                    item.parentId = newParent;
+                    option.ngHttp.post("dashboard/updateFolder.do", {json: angular.toJson(item)}).success(function (serviceStatus) {
+                        if (serviceStatus.status == '1') {
+                            //console.log('success!');
+                        } else {
+                            //ModalUtils.alert(serviceStatus.msg, "modal-warning", "lg");
+                            console.log(serviceStatus.msg);
+                        }
+                    });
+                };
+
                 var updateNode = function (node, tarPath) {
-                    var children = node.children;
-                    if (children.length == 0) {
+                    if (node.children.length == 0) {
                         updateItem(node.id, tarPath);
                     } else {
-                        var newTarPath = tarPath == "" ? node.text : tarPath + "/" + node.text;
-                        for (var i = 0; i < children.length; i++) {
-                            var child = myJsTree.get_node(children[i]);
-                            updateNode(child, newTarPath);
-                        }
+                        updateFolder(node.id, tarPath);
                     }
                 };
 
                 var myJsTree = jstree_GetWholeTree(option.treeID),
                     curNode = data.node,
                     tarNodeID = data.parent;
-                var tarPath = myJsTree.get_path(tarNodeID, "/").substring(5);
+                var tarPath = tarNodeID;
                 updateNode(curNode, tarPath);
             }
         };

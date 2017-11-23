@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="org.cboard.dao.FolderDao">
+    <select id="getAllFolderList" resultType="org.cboard.pojo.DashboardFolder">
+        SELECT
+        folder_id     AS id,
+        folder_name   AS name,
+        parent_id     AS parentId,
+        create_time   AS createTime,
+        update_time   AS updateTime
+        FROM dashboard_folder
+    </select>
+
+    <select id="getFolder" resultType="org.cboard.pojo.DashboardFolder">
+        SELECT folder_id id,folder_name name,parent_id parentId,create_time createTime,update_time updateTime
+        FROM dashboard_folder
+        WHERE parent_id = #{0} AND folder_name = #{1}
+    </select>
+
+    <select id="getFolderById" resultType="org.cboard.pojo.DashboardFolder">
+        SELECT folder_id id,folder_name name,parent_id parentId,create_time createTime,update_time updateTime
+        FROM dashboard_folder
+        WHERE folder_id = #{0}
+    </select>
+
+    <insert id="save" parameterType="org.cboard.pojo.DashboardFolder" useGeneratedKeys="true" keyColumn="folder_id" keyProperty="id">
+        <![CDATA[
+        INSERT INTO dashboard_folder(folder_name,parent_id) VALUES (#{name},#{parentId})
+        ]]>
+    </insert>
+
+    <update id="update" parameterType="org.cboard.pojo.DashboardFolder">
+        <![CDATA[
+        UPDATE dashboard_folder SET folder_name = #{name}, parent_id = #{parentId}, update_time = #{updateTime} where folder_id = #{id}
+        ]]>
+    </update>
+
+    <delete id="delete">
+        delete from dashboard_folder where folder_id = #{0}
+    </delete>
+
+    <select id="countExistFolderName" resultType="java.lang.Long">
+        SELECT count(1)
+        FROM dashboard_folder
+        WHERE 1=1
+        AND folder_name = #{folder_name}
+        AND parent_id = #{parent_id}
+    </select>
+</mapper>

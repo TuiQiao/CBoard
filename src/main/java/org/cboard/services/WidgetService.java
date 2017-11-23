@@ -38,13 +38,14 @@ public class WidgetService {
         widget.setName(jsonObject.getString("name"));
         widget.setData(jsonObject.getString("data"));
         widget.setCategoryName(jsonObject.getString("categoryName"));
+        widget.setFolderId(jsonObject.getInteger("folderId"));
         if (StringUtils.isEmpty(widget.getCategoryName())) {
             widget.setCategoryName("默认分类");
         }
         Map<String, Object> paramMap = new HashMap<String, Object>();
         paramMap.put("widget_name", widget.getName());
         paramMap.put("user_id", widget.getUserId());
-        paramMap.put("category_name", widget.getCategoryName());
+        paramMap.put("folder_id", widget.getFolderId());
 
         if (widgetDao.countExistWidgetName(paramMap) <= 0) {
             widgetDao.save(widget);
@@ -61,6 +62,7 @@ public class WidgetService {
         widget.setId(jsonObject.getLong("id"));
         widget.setName(jsonObject.getString("name"));
         widget.setCategoryName(jsonObject.getString("categoryName"));
+        widget.setFolderId(jsonObject.getInteger("folderId"));
         widget.setData(jsonObject.getString("data"));
         widget.setUpdateTime(new Timestamp(Calendar.getInstance().getTimeInMillis()));
         if (StringUtils.isEmpty(widget.getCategoryName())) {
@@ -70,7 +72,7 @@ public class WidgetService {
         paramMap.put("widget_name", widget.getName());
         paramMap.put("user_id", widget.getUserId());
         paramMap.put("widget_id", widget.getId());
-        paramMap.put("category_name", widget.getCategoryName());
+        paramMap.put("folder_id", widget.getFolderId());
         if (widgetDao.countExistWidgetName(paramMap) <= 0) {
             widgetDao.update(widget);
             return new ServiceStatus(ServiceStatus.Status.Success, "success");

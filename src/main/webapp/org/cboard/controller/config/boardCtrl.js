@@ -7,34 +7,71 @@ cBoard.controller('boardCtrl',
               $timeout, dataService, $state, $window, $stateParams) {
     var translate = $filter('translate');
 
-    $scope.optFlag = 'none';
     $scope.curBoard = {layout: {rows: []}};
     $scope.alerts = [];
     $scope.verify = {boardName: true};
     $rootScope.freeLayout = false;
     $scope.treeData = [];
 
+    $scope.folderData = [];
+    $scope.openFolder = false;
+    $scope.selectedFold = {};
+    $scope.showBox = false;
+    
     var treeID = "boardTreeID";
     var originalData = [];
     var updateUrl = "dashboard/updateBoard.do";
+    var deleteUrl = "dashboard/deleteBoard.do";
 
+    $scope.getFolderList = function () {
+        $http.get('dashboard/getFolderList.do').success(function (response) {
+            $scope.folderList = response;
+
+            $scope.folderData = [];
+            for (var i=0; i<$scope.folderList.length; i++){
+                if($scope.folderList[i].parentId == 10000 || $scope.folderList[i].id == 10000) {
+                    $scope.folderData.push({
+                        "id": $scope.folderList[i].id.toString(),
+                        "parent": $scope.folderList[i].parentId == -1 ? "#" : $scope.folderList[i].parentId.toString(),
+                        "text": $scope.folderList[i].name.toString(),
+                        "type": "parent"
+                    });
+                }
+            }
+            getBoardList();
+        });
+    };
+    
     var getBoardList = function () {
         return $http.get("dashboard/getBoardList.do").success(function (response) {
             $scope.boardList = response;
+            var list = $scope.boardList.map(function (ds) {
+                return {
+                    "id": ds.id,
+                    "name": ds.name,
+                    "parentId": ds.folderId,
+                    "type": "child"
+                };
+            });
+
             originalData = jstree_CvtVPath2TreeData(
-                $scope.boardList.map(function (ds) {
-                    var categoryName = ds.categoryName == null ? translate('CONFIG.DASHBOARD.MY_DASHBOARD') : ds.categoryName;
-                    return {
-                        "id": ds.id,
-                        "name": ds.name,
-                        "categoryName": categoryName
-                    };
-                })
+                list
             );
+            
+            for (var i=0; i<$scope.folderList.length; i++){
+                if($scope.folderList[i].parentId == 10000 || $scope.folderList[i].id == 10000) {
+                    originalData.push({
+                        "id": $scope.folderList[i].id.toString(),
+                        "parent": $scope.folderList[i].parentId == -1 ? "#" : $scope.folderList[i].parentId.toString(),
+                        "text": $scope.folderList[i].name.toString(),
+                        "type": "parent"
+                    });
+                }
+            }
             jstree_ReloadTree(treeID, originalData);
         });
     };
-
+    
     var getCategoryList = function () {
         $http.get("dashboard/getCategoryList.do").success(function (response) {
             $scope.categoryList = [{id: null, name: translate('CONFIG.DASHBOARD.MY_DASHBOARD')}];
@@ -134,20 +171,21 @@ cBoard.controller('boardCtrl',
     getCategoryList();
     getDatasetList();
 
+
     $scope.newOperate = function () {
         $('div.newBoard').toggleClass('hideOperate');
     };
 
     $scope.newGridLayout = function () {
+        $scope.showBox = true;
         $rootScope.freeLayout = false;
-        $scope.optFlag = 'new';
         $scope.curBoard = {layout: {rows: []}};
         $('div.newBoard').addClass('hideOperate');
     };
 
     $scope.newTimelineLayout = function () {
+        $scope.showBox = true;
         $rootScope.freeLayout = false;
-        $scope.optFlag = 'new';
         $scope.curBoard = {
             layout: {
                 type: 'timeline', rows: [{
@@ -166,9 +204,9 @@ cBoard.controller('boardCtrl',
     };
     $scope.editBoard = function (board) {
         var b = angular.copy(board);
+        b.folderId = $scope.selectedFold.id;
         updateService.updateBoard(b);
         $scope.curBoard = b;
-        $scope.optFlag = 'edit';
     };
 
     $scope.copyBoard = function (board) {
@@ -181,13 +219,12 @@ cBoard.controller('boardCtrl',
         ModalUtils.confirm(translate("COMMON.CONFIRM_DELETE"), "modal-warning", "lg", function () {
             $http.post("dashboard/deleteBoard.do", {id: board.id}).success(function (serviceStatus) {
                 if (serviceStatus.status == '1') {
-                    getBoardList();
+                    $scope.getFolderList();
                     boardChange();
                     ModalUtils.alert(serviceStatus.msg, "modal-success", "sm");
                 } else {
                     ModalUtils.alert(serviceStatus.msg, "modal-warning", "lg");
                 }
-                $scope.optFlag == 'none';
             });
         });
     };
@@ -199,7 +236,7 @@ cBoard.controller('boardCtrl',
     };
 
     $scope.widgetGroup = function (item) {
-        return item.categoryName;
+        // return item.categoryName;
     };
 
     $scope.addWidget = function (row) {
@@ -249,11 +286,10 @@ cBoard.controller('boardCtrl',
 
     function saveBoardCallBack(serviceStatus) {
         if (serviceStatus.status == '1') {
-            getBoardList();
+            $scope.getFolderList();
             if (!$scope.curBoard.id) {
                 $scope.curBoard.id = serviceStatus.id;
             }
-            $scope.optFlag = 'edit';
             ModalUtils.alert(serviceStatus.msg, "modal-success", "sm");
             boardChange();
         } else {
@@ -277,18 +313,73 @@ cBoard.controller('boardCtrl',
         });
     };
 
-    $scope.saveBoard = function (notify) {
+    $scope.saveBoard = function (notify, type) {
+    $scope.saveWin = function (type) {
+        var o = angular.copy($scope.curBoard);
+        $uibModal.open({
+            templateUrl: 'org/cboard/view/config/modal/saveWin.html',
+            windowTemplateUrl: 'org/cboard/view/util/modal/window.html',
+            backdrop: false,
+            size: '40%',
+            scope: $scope,
+            controller: function ($scope, $uibModalInstance) {
+
+                $scope.folderConfig = angular.copy(jsTreeConfig1);
+                $scope.folderConfig.plugins = ['types', 'unique', 'sort'];
+
+                $scope.folderConfig.core.data = $scope.folderData;
+
+                $scope.o = o;
+                $scope.type = type;
+                $scope.ok = function () {
+                    if (!o.name) {
+                        $scope.alerts = [{msg: translate('CONFIG.WIDGET.WIDGET_NAME') + translate('COMMON.NOT_EMPTY'), type: 'danger'}];
+
+                        $("#Name").focus();
+                        return false;
+                    }
+
+                    $scope.curBoard.name = o.name;
+                    $scope.saveBoard($scope.type);
+                    $uibModalInstance.close();
+                };
+                
+                $scope.cancel = function () {
+                    $uibModalInstance.close();
+                };
+                $scope.selectedFolder = function () {
+                    var selectedNodes = jstree_GetWholeTree("selectFolderID").get_selected(true);
+
+                    if(selectedNodes.length > 0){
+                        $scope.$parent.selectedFold = _.find($scope.folderList, function (f) {
+                            return f.id == selectedNodes[0].id;
+                        });
+                    }
+                };
+            }
+        }).rendered.then(function () {
+            $timeout(function () {
+                var instance = jstree_GetWholeTree("selectFolderID");
+                instance.deselect_all();
+                instance.open_all();
+                instance.select_node($scope.selectedFold.id);
+            }, 100);
+        });
+    };
+    
+    $scope.saveBoard = function (notify, type) {
         if (!validate()) {
             return;
         }
         clearDirty();
+        $scope.curBoard.folderId = $scope.selectedFold.id;
         var callBack = saveBoardCallBack;
         if (notify == false) {
             callBack = function() {};
         }
-        if ($scope.optFlag == 'new') {
+        if (type == 'new' || $scope.curBoard.id == null) {
             return $http.post("dashboard/saveNewBoard.do", {json: angular.toJson($scope.curBoard)}).success(callBack);
-        } else if ($scope.optFlag == 'edit') {
+        } else if (type == 'edit') {
             return $http.post(updateUrl, {json: angular.toJson($scope.curBoard)}).success(callBack);
         }
     };
@@ -407,8 +498,8 @@ cBoard.controller('boardCtrl',
 
 
     /**  js tree related start **/
-    $scope.treeConfig = angular.copy(jsTreeConfig1);
-    $scope.treeConfig.plugins = ['types', 'unique', 'state', 'sort'];
+    $scope.treeConfig = jsTreeConfig1;//angular.copy(jsTreeConfig1);
+    // $scope.treeConfig.plugins = ['types', 'unique', 'state', 'sort', 'contextmenu'];
 
     $("#" + treeID).keyup(function (e) {
         if (e.keyCode == 46) {
@@ -416,8 +507,30 @@ cBoard.controller('boardCtrl',
         }
     });
 
+    // $scope.loadFolders = function () {
+    //     $scope.openFolder = !$scope.openFolder;
+    //
+    //     jstree_ReloadTree("selectFolderID", $scope.folderData);
+    // };
+
+    $scope.selectedFolder = function () {
+        var selectedNodes = jstree_GetWholeTree("selectFolderID").get_selected(true);
+        if(selectedNodes.length > 0){
+
+            $scope.selectedFold = _.find($scope.folderList, function (f) {
+                return f.id == selectedNodes[0].id;
+            });
+        }
+        $scope.openFolder = !$scope.openFolder;
+    };
+    
     var getSelectedBoard = function () {
         var selectedNode = jstree_GetSelectedNodes(treeID)[0];
+
+        $scope.selectedFold = _.find($scope.folderList, function (f) {
+            return f.id == selectedNode.parent;
+        });
+        
         return _.find($scope.boardList, function (ds) {
             return ds.id == selectedNode.id;
         });
@@ -444,6 +557,7 @@ cBoard.controller('boardCtrl',
     };
 
     $scope.editNode = function () {
+        $scope.showBox = true;
         if (!checkTreeNode("edit")) return;
         $scope.editBoard(getSelectedBoard());
         var selectedNode = jstree_GetSelectedNodes(treeID)[0];
@@ -457,9 +571,10 @@ cBoard.controller('boardCtrl',
 
     $scope.treeEventsObj = function () {
         var baseEventObj = jstree_baseTreeEventsObj({
-            ngScope: $scope, ngHttp: $http, ngTimeout: $timeout,
+            ngScope: $scope, ngHttp: $http, ngTimeout: $timeout, ModalUtils: ModalUtils,
             treeID: treeID, listName: "boardList"
-            //, updateUrl: updateUrl
+            , updateUrl: updateUrl
+            , deleteUrl: deleteUrl
         });
         return baseEventObj;
     }();

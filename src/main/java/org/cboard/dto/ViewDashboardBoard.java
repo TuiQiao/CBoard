@@ -15,7 +15,7 @@ public class ViewDashboardBoard {
 
     private Long id;
     private String userId;
-    private Long categoryId;
+    private int folderId;
     private String name;
     private String userName;
     private String loginName;
@@ -37,7 +37,7 @@ public class ViewDashboardBoard {
     public ViewDashboardBoard(DashboardBoard board) {
         this.id = board.getId();
         this.userId = board.getUserId();
-        this.categoryId = board.getCategoryId();
+        this.folderId = board.getFolderId();
         this.name = board.getName();
         this.userName = board.getUserName();
         this.loginName = board.getLoginName();
@@ -129,12 +129,12 @@ public class ViewDashboardBoard {
         this.layout = layout;
     }
 
-    public Long getCategoryId() {
-        return categoryId;
+    public int getFolderId() {
+        return folderId;
     }
 
-    public void setCategoryId(Long categoryId) {
-        this.categoryId = categoryId;
+    public void setFolderId(int folderId) {
+        this.folderId = folderId;
     }
 
     public String getCategoryName() {

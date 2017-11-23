@@ -79,12 +79,13 @@ public class BoardService {
         DashboardBoard board = new DashboardBoard();
         board.setUserId(userId);
         board.setName(jsonObject.getString("name"));
-        board.setCategoryId(jsonObject.getLong("categoryId"));
+        board.setFolderId(jsonObject.getInteger("folderId"));
         board.setLayout(jsonObject.getString("layout"));
 
         Map<String, Object> paramMap = new HashMap<String, Object>();
         paramMap.put("user_id", board.getUserId());
         paramMap.put("board_name", board.getName());
+        paramMap.put("folder_id", board.getFolderId());
         if (boardDao.countExistBoardName(paramMap) <= 0) {
             boardDao.save(board);
             return new ServiceStatus(ServiceStatus.Status.Success, "success", board.getId());
@@ -98,7 +99,7 @@ public class BoardService {
         DashboardBoard board = new DashboardBoard();
         board.setUserId(userId);
         board.setName(jsonObject.getString("name"));
-        board.setCategoryId(jsonObject.getLong("categoryId"));
+        board.setFolderId(jsonObject.getInteger("folderId"));
         board.setLayout(jsonObject.getString("layout"));
         board.setId(jsonObject.getLong("id"));
         board.setUpdateTime(new Timestamp(Calendar.getInstance().getTimeInMillis()));
@@ -108,6 +109,7 @@ public class BoardService {
         paramMap.put("board_id", board.getId());
         paramMap.put("user_id", board.getUserId());
         paramMap.put("board_name", board.getName());
+        paramMap.put("folder_id", board.getFolderId());
         if (boardDao.countExistBoardName(paramMap) <= 0) {
             boardDao.update(board);
             return new ServiceStatus(ServiceStatus.Status.Success, "success");

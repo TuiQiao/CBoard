@@ -9,7 +9,7 @@ public class DashboardBoard {
 
     private Long id;
     private String userId;
-    private Long categoryId;
+    private int folderId;
     private String name;
     private String layout;
     private String categoryName;
@@ -60,12 +60,12 @@ public class DashboardBoard {
         this.layout = layout;
     }
 
-    public Long getCategoryId() {
-        return categoryId;
+    public int getFolderId() {
+        return folderId;
     }
 
-    public void setCategoryId(Long categoryId) {
-        this.categoryId = categoryId;
+    public void setFolderId(int folderId) {
+        this.folderId = folderId;
     }
 
     public String getCategoryName() {

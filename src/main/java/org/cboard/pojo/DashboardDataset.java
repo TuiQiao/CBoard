@@ -11,6 +11,7 @@ public class DashboardDataset {
     private String userId;
     private String name;
     private String categoryName;
+    private int folderId;
     private String data;
     private String permission;
     private String userName;
@@ -56,6 +57,14 @@ public class DashboardDataset {
 
     public void setCategoryName(String categoryName) {
         this.categoryName = categoryName;
+    }
+
+    public int getFolderId() {
+        return folderId;
+    }
+
+    public void setFolderId(int folderId) {
+        this.folderId = folderId;
     }
 
     public String getData() {

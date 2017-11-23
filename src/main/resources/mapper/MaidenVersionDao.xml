@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="org.cboard.dao.MaidenVersionDao">
+
+    <select id="getMaidenVersion" resultType="org.cboard.pojo.MaidenVersion">
+        SELECT
+        id          AS id,
+        name        AS name,
+        status      AS status,
+        create_time AS createTime,
+        update_time AS updateTime
+        FROM maiden_version
+        WHERE name = #{0}
+    </select>
+
+    <update id="update" parameterType="org.cboard.pojo.MaidenVersion">
+        UPDATE maiden_version
+        SET name = #{name},status = #{status},update_time = #{updateTime}
+        WHERE id = #{id}
+    </update>
+
+    <select id="countExistVersionName" parameterType="Map" resultType="java.lang.Long">
+        SELECT count(1) FROM maiden_version WHERE name = #{name}
+    </select>
+
+    <delete id="delete">
+        DELETE FROM maiden_version WHERE id = #{0}
+    </delete>
+
+</mapper>

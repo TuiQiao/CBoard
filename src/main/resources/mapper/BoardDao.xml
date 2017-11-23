@@ -8,7 +8,7 @@
           b.user_id   AS userId,
           board_name  AS name,
           layout_json AS layout,
-          category_id AS categoryId,
+          folder_id   AS folderId,
           u.user_name AS userName,
           create_time AS createTime,
           update_time AS updateTime
@@ -23,15 +23,13 @@
                a.user_id       AS userId,
                board_name      AS NAME,
                layout_json     AS layout,
-               a.category_id   AS categoryId,
-               b.category_name AS categoryName,
+               a.folder_id     AS folderId,
                u.user_name     AS userName,
                u.login_name    AS loginName,
                create_time     AS createTime,
                update_time     AS updateTime
           FROM dashboard_board a
           LEFT JOIN dashboard_user u ON u.user_id = a.user_id
-          LEFT JOIN dashboard_category b ON a.category_id = b.category_id
          WHERE #{0} = '${admin_user_id}' OR a.user_id = #{0} OR a.board_id IN (
              SELECT res_id
                FROM dashboard_user_role ur
@@ -46,15 +44,13 @@
                a.user_id       AS userId,
                board_name      AS NAME,
                layout_json     AS layout,
-               a.category_id   AS categoryId,
-               b.category_name AS categoryName,
+               a.folder_id     AS folderId,
                u.user_name     AS userName,
                u.login_name    AS loginName,
                create_time     AS createTime,
                update_time     AS updateTime
           FROM dashboard_board a
           LEFT JOIN dashboard_user u ON u.user_id = a.user_id
-          LEFT JOIN dashboard_category b ON a.category_id = b.category_id
          WHERE #{0} = '${admin_user_id}'
             OR a.user_id = #{0}
             OR a.board_id IN (
@@ -67,14 +63,14 @@
     </select>
 
     <insert id="save" useGeneratedKeys="true" keyProperty="id" keyColumn="board_id" parameterType="org.cboard.pojo.DashboardBoard">
-        INSERT INTO dashboard_board(user_id,board_name,layout_json,category_id)
+        INSERT INTO dashboard_board(user_id,board_name,layout_json,folder_id)
         VALUES (#{userId},#{name},#{layout},
         <choose>
-            <when test="categoryId == null">
+            <when test="folderId == null">
                 null
             </when>
             <otherwise>
-                #{categoryId}
+                #{folderId}
             </otherwise>
         </choose>
         )
@@ -82,15 +78,7 @@
 
     <update id="update" parameterType="org.cboard.pojo.DashboardBoard">
         UPDATE dashboard_board
-        SET board_name = #{name},layout_json = #{layout},update_time = #{updateTime},
-        <choose>
-            <when test="categoryId == null">
-                category_id = null
-            </when>
-            <otherwise>
-                category_id = #{categoryId}
-            </otherwise>
-        </choose>
+        SET board_name = #{name},layout_json = #{layout},update_time = #{updateTime},folder_id = #{folderId}
         WHERE board_id = #{id}
     </update>
 
@@ -102,6 +90,7 @@
             ]]>
         </if>
         AND board_name = #{board_name}
+        AND folder_id = #{folder_id}
     </select>
 
     <delete id="delete">

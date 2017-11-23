@@ -24,4 +24,5 @@
         <property name="password" value="" />
         <property name="maxTotal" value="20" />
     </bean>
+
 </beans>

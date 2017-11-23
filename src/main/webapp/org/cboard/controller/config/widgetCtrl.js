@@ -6,6 +6,7 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
 
         var translate = $filter('translate');
         var updateUrl = "dashboard/updateWidget.do";
+        var deleteUrl = "dashboard/deleteWidget.do";
         $scope.liteMode = false;
         //图表类型初始化
         $scope.chart_types = [
@@ -251,7 +252,6 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
         //界面控制
         $scope.loading = false;
         $scope.toChartDisabled = true;
-        $scope.optFlag = '';
         $scope.alerts = [];
         $scope.treeData = [];
         var originalData = [];
@@ -269,6 +269,11 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
         $scope.filterSelect = {};
         $scope.verify = {widgetName: true};
         $scope.params = [];
+    
+        $scope.folderData = [];
+        $scope.openFolder = false;
+        $scope.selectedFold = {};
+        $scope.showBox = false;
 
 
         var loadDataset = function (callback) {
@@ -280,10 +285,25 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
             });
         };
         loadDataset();
-        // $http.get("dashboard/getDatasetCategoryList.do").success(function (response) {
-        //     $scope.datasetCategoryList = response;
-        // });
 
+        $scope.getFolderList = function () {
+            $http.get('dashboard/getFolderList.do').success(function (response) {
+                $scope.folderList = response;
+
+                $scope.folderData = [];
+                for (var i=0; i<$scope.folderList.length; i++){
+                    $scope.folderData.push({
+                        "id": $scope.folderList[i].id.toString(),
+                        "parent": $scope.folderList[i].parentId == -1 ? "#" : $scope.folderList[i].parentId.toString(),
+                        "text": $scope.folderList[i].name.toString(),
+                        "type": "parent"
+                    });
+                }
+                $scope.searchNode();
+            });
+        };
+        
+    
         $http.get("dashboard/getDatasourceList.do").success(function (response) {
             $scope.datasourceList = response;
             getCategoryList();
@@ -306,7 +326,7 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
                 if (callback) {
                     callback();
                 }
-                $scope.searchNode();
+                $scope.getFolderList();
             });
         };
 
@@ -411,6 +431,7 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
         };
 
         $scope.newWgt = function () {
+            $scope.showBox = true;
             $scope.curWidget = {};
             $scope.curWidget.config = {};
             $scope.curWidget.config.option = {};
@@ -421,7 +442,6 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
             $scope.widgetName = null;
             $scope.widgetCategory = null;
             $scope.widgetId = null;
-            $scope.optFlag = 'new';
             $scope.customDs = false;
             $scope.schema = null;
             $scope.liteMode = false;
@@ -515,15 +535,7 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
         var validation = function () {
             $scope.alerts = [];
             $scope.verify = {widgetName: true};
-            if (!$scope.widgetName) {
-                $scope.alerts = [{
-                    msg: translate('CONFIG.WIDGET.WIDGET_NAME') + translate('COMMON.NOT_EMPTY'),
-                    type: 'danger'
-                }];
-                $scope.verify = {widgetName: false};
-                $("#widgetName").focus();
-                return false;
-            }
+
             if ($scope.customDs == false && $scope.curWidget.datasetId == undefined) {
                 $scope.alerts = [{
                     msg: translate('CONFIG.WIDGET.DATASET') + translate('COMMON.NOT_EMPTY'),
@@ -889,10 +901,6 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
             }
         };
 
-// $scope.saveChart = function () {
-//     dashboardService.saveWidget('123', $scope.datasource, $scope.config);
-// };
-
         $scope.add_value = function () {
             $scope.curWidget.config.values.push({
                 name: '',
@@ -929,28 +937,79 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
             }, 100,true);
         };
 
+    $scope.saveWin = function (type) {
+        var o = {"name": $scope.widgetName};
+        $uibModal.open({
+            templateUrl: 'org/cboard/view/config/modal/saveWin.html',
+            windowTemplateUrl: 'org/cboard/view/util/modal/window.html',
+            backdrop: false,
+            size: '40%',
+            scope: $scope,
+            controller: function ($scope, $uibModalInstance) {
+
+                $scope.folderConfig = angular.copy(jsTreeConfig1);
+                $scope.folderConfig.plugins = ['types', 'unique', 'sort'];
+
+                $scope.folderConfig.core.data = $scope.folderData;
+
+                $scope.o = o;
+                $scope.type = type;
+                $scope.ok = function () {
+                    if (!o.name) {
+                        $scope.alerts = [{msg: translate('CONFIG.WIDGET.WIDGET_NAME') + translate('COMMON.NOT_EMPTY'), type: 'danger'}];
+                        $("#Name").focus();
+                        return false;
+                    }
+
+                    $scope.$parent.widgetName = o.name;
+                    $scope.saveWgt($scope.type);
+                    $uibModalInstance.close();
+                };
+
+                $scope.cancel = function () {
+                    $uibModalInstance.close();
+                };
+                $scope.selectedFolder = function () {
+                    var selectedNodes = jstree_GetWholeTree("selectFolderID").get_selected(true);
+
+                    if(selectedNodes.length > 0){
+                        $scope.$parent.selectedFold = _.find($scope.folderList, function (f) {
+                            return f.id == selectedNodes[0].id;
+                        });
+                    }
+                };
+            }
+        }).rendered.then(function () {
+            $timeout(function () {
+                var instance = jstree_GetWholeTree("selectFolderID");
+                instance.deselect_all();
+                instance.open_all();
+                instance.select_node($scope.selectedFold.id);
+            }, 100);
+        });
+    };
+    
         var saveWgtCallBack = function (serviceStatus) {
             if (serviceStatus.status == '1') {
                 getWidgetList();
                 getCategoryList();
+                $scope.getFolderList();
                 ModalUtils.alert(translate("COMMON.SUCCESS"), "modal-success", "sm");
             } else {
                 ModalUtils.alert(serviceStatus.msg, "modal-warning", "lg");
             }
         };
 
-        $scope.saveWgt = function () {
+        $scope.saveWgt = function (type) {
             $scope.liteMode = false;
             if (!validation()) {
                 return;
             }
 
             var o = {};
-            o.name = $scope.widgetName.slice($scope.widgetName.lastIndexOf("/") + 1).trim();
-            o.categoryName = $scope.widgetName.substring(0, $scope.widgetName.lastIndexOf("/")).trim();
-            if (o.categoryName == '') {
-                o.categoryName = translate("COMMON.DEFAULT_CATEGORY");
-            }
+            o.name = $scope.widgetName;
+            o.folderId = $scope.selectedFold.id;
+            
             o.data = {};
             o.data.config = $scope.curWidget.config;
             if ($scope.customDs) {
@@ -968,15 +1027,16 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
             $scope.alerts = [];
             $scope.verify = {widgetName: true};
 
-            if (o.name == null || o.name == "") {
-                $scope.alerts = [{
-                    msg: translate('CONFIG.WIDGET.WIDGET_NAME') + translate('COMMON.NOT_EMPTY'),
-                    type: 'danger'
-                }];
-                $scope.verify = {widgetName: false};
-                $("#widgetName").focus();
-                return;
-            } else if (o.data.datasetId == undefined && $scope.customDs == false) {
+            // if (o.name == null || o.name == "") {
+            //     $scope.alerts = [{
+            //         msg: translate('CONFIG.WIDGET.WIDGET_NAME') + translate('COMMON.NOT_EMPTY'),
+            //         type: 'danger'
+            //     }];
+            //     $scope.verify = {widgetName: false};
+            //     $("#widgetName").focus();
+            //     return;
+            // } else
+            if (o.data.datasetId == undefined && $scope.customDs == false) {
                 $scope.alerts = [{
                     msg: translate('CONFIG.WIDGET.DATASET') + translate('COMMON.NOT_EMPTY'),
                     type: 'danger'
@@ -984,22 +1044,24 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
                 return;
             }
 
-            if ($scope.optFlag == 'new') {
+            if (type == 'new' || $scope.widgetId == null) {
                 $http.post("dashboard/saveNewWidget.do", {json: angular.toJson(o)}).success(function (serviceStatus) {
                     if (serviceStatus.status == '1') {
                         getWidgetList();
                         getCategoryList();
+                        $scope.getFolderList();
                         ModalUtils.alert(translate("COMMON.SUCCESS"), "modal-success", "sm");
                     } else {
                         $scope.alerts = [{msg: serviceStatus.msg, type: 'danger'}];
                     }
                 });
-            } else if ($scope.optFlag == 'edit') {
+            } else if (type == 'edit') {
                 o.id = $scope.widgetId;
                 $http.post(updateUrl, {json: angular.toJson(o)}).success(function (serviceStatus) {
                     if (serviceStatus.status == '1') {
                         getWidgetList();
                         getCategoryList();
+                        $scope.getFolderList();
                         ModalUtils.alert(translate("COMMON.SUCCESS"), "modal-success", "sm");
                     } else {
                         $scope.alerts = [{msg: serviceStatus.msg, type: 'danger'}];
@@ -1048,10 +1110,9 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
                 return ds.id == widget.data.datasource;
             });
 
-            $scope.widgetName = angular.copy(widget.categoryName + "/" + widget.name);
+            $scope.widgetName = angular.copy(widget.name);
 
             $scope.widgetId = widget.id;
-            $scope.optFlag = 'edit';
             $scope.customDs = _.isUndefined($scope.curWidget.datasetId);
             loadDataset(function () {
                 loadDsExpressions();
@@ -1063,7 +1124,7 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
         };
 
         $scope.doCancel = function () {
-            if ($scope.optFlag == 'new') {
+            if (!$scope.widgetId) {
                 $scope.newConfig();
                 $scope.filterSelect = {};
                 cleanPreview();
@@ -1157,7 +1218,6 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
                     } else {
                         ModalUtils.alert(serviceStatus.msg, "modal-warning", "lg");
                     }
-                    $scope.optFlag == 'none';
                 });
             });
         };
@@ -1172,7 +1232,6 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
                 } else {
                     ModalUtils.alert(serviceStatus.msg, "modal-warning", "lg");
                 }
-                $scope.optFlag == 'none';
             });
         };
 
@@ -1450,9 +1509,31 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
                 $scope.deleteNode();
             }
         });
+    
+        $scope.loadFolders = function () {
+            $scope.openFolder = !$scope.openFolder;
 
+            jstree_ReloadTree("selectFolderID", $scope.folderData);
+        };
+    
+        $scope.selectedFolder = function () {
+            var selectedNodes = jstree_GetWholeTree("selectFolderID").get_selected(true);
+            if(selectedNodes.length > 0){
+
+                $scope.selectedFold = _.find($scope.folderList, function (f) {
+                    return f.id == selectedNodes[0].id;
+                });
+            }
+            $scope.openFolder = !$scope.openFolder;
+        };
+    
         var getSelectedWidget = function () {
             var selectedNode = jstree_GetSelectedNodes(treeID)[0];
+
+            $scope.selectedFold = _.find($scope.folderList, function (f) {
+                return f.id == selectedNode.parent;
+            });
+            
             return _.find($scope.widgetList, function (w) {
                 return w.id == selectedNode.id;
             });
@@ -1483,6 +1564,7 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
         };
 
         $scope.editNode = function () {
+            $scope.showBox = true;
             if (!checkTreeNode("edit")) return;
             $scope.editWgt(getSelectedWidget());
         };
@@ -1492,6 +1574,8 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
             $scope.deleteWgt(getSelectedWidget());
         };
         $scope.searchNode = function () {
+            // getFolderList();
+            
             var para = {wgtName: '', dsName: '', dsrName: ''};
 
             //map widgetList to list (add datasetName and datasourceName)
@@ -1513,9 +1597,10 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
                 return {
                     "id": w.id,
                     "name": w.name,
-                    "categoryName": w.categoryName,
+                    "parentId": w.folderId,
                     "datasetName": ds ? ds.name : '',
-                    "datasourceName": dsr ? dsr.name : dsrName
+                    "datasourceName": dsr ? dsr.name : dsrName,
+                    "type": "child"
                 };
             });
 
@@ -1539,18 +1624,59 @@ cBoard.controller('widgetCtrl', function ($scope, $stateParams, $http, $uibModal
                     }
                 }
             }
+
             //filter data by keywords
             originalData = jstree_CvtVPath2TreeData(
                 $filter('filter')(list, {name: para.wgtName, datasetName: para.dsName, datasourceName: para.dsrName})
             );
 
+            if(para.dsName == '' && para.dsrName == '') {
+                for (var i=0; i<$scope.folderList.length; i++){
+                    originalData.push({
+                        "id": $scope.folderList[i].id.toString(),
+                        "parent": $scope.folderList[i].parentId == -1 ? "#" : $scope.folderList[i].parentId.toString(),
+                        "text": $scope.folderList[i].name.toString(),
+                        "type": "parent"
+                    });
+                }
+            }else{
+                var file = angular.copy(originalData);
+                for (var i=0; i<file.length; i++){
+                    if(file[i].id != "-1") {
+                        var item = getFolders(file[i].parent);
+                        var exists = $filter('filter')(originalData, {id: item[0].id});
+                        if(exists.length == 0) {
+                            originalData = [].concat(originalData, item);
+                        }
+                    }
+                }
+            }
+
             jstree_ReloadTree(treeID, originalData);
         };
 
+        function getFolders(parentId) {
+            var list = [];
+            for (var i=0; i<$scope.folderList.length; i++){
+                if($scope.folderList[i].id == parentId) {
+                    list.push({
+                        "id": $scope.folderList[i].id.toString(),
+                        "parent": $scope.folderList[i].parentId == -1 ? "#" : $scope.folderList[i].parentId.toString(),
+                        "text": $scope.folderList[i].name.toString(),
+                        "type": "parent"
+                    });
+                    if($scope.folderList[i].parentId != -1) {
+                        list = [].concat(list, getFolders($scope.folderList[i].parentId));
+                    }
+                }
+            }
+            return list;
+        };
+    
         $scope.treeEventsObj = function () {
             var baseEventObj = jstree_baseTreeEventsObj({
-                ngScope: $scope, ngHttp: $http, ngTimeout: $timeout,
-                treeID: treeID, listName: "widgetList", updateUrl: updateUrl
+                ngScope: $scope, ngHttp: $http, ngTimeout: $timeout, ModalUtils: ModalUtils,
+                treeID: treeID, listName: "widgetList", updateUrl: updateUrl, deleteUrl: deleteUrl
             });
             return baseEventObj;
         }();

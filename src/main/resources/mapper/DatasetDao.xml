@@ -13,6 +13,7 @@
         dataset_name  AS name,
         data_json     AS data,
         category_name AS categoryName,
+        folder_id     AS folderId,
         u.user_name   AS userName,
         u.login_name  AS loginName,
         create_time   AS createTime,
@@ -28,6 +29,7 @@
               dataset_name  AS name,
               data_json     AS data,
               category_name AS categoryName,
+              folder_id     AS folderId,
               u.user_name   AS userName,
               u.login_name  AS loginName,
               create_time   AS createTime,
@@ -50,6 +52,7 @@
               dataset_name  AS name,
               data_json     AS data,
               category_name AS categoryName,
+              folder_id     AS folderId,
               u.user_name   AS userName,
               u.login_name  AS loginName,
               create_time   AS createTime,
@@ -68,18 +71,18 @@
     </select>
 
     <select id="getDataset" resultType="org.cboard.pojo.DashboardDataset">
-       SELECT dataset_id id,user_id userId,dataset_name name,data_json data,category_name categoryName,create_time createTime,update_time updateTime FROM dashboard_dataset WHERE dataset_id = #{0}
+       SELECT dataset_id id,user_id userId,dataset_name name,data_json data,category_name categoryName,folder_id folderId,create_time createTime,update_time updateTime FROM dashboard_dataset WHERE dataset_id = #{0}
     </select>
 
     <insert id="save" parameterType="org.cboard.pojo.DashboardDataset">
         <![CDATA[
-        INSERT INTO dashboard_dataset(user_id,dataset_name,data_json,category_name) VALUES (#{userId},#{name},#{data},#{categoryName})
+        INSERT INTO dashboard_dataset(user_id,dataset_name,data_json,category_name,folder_id) VALUES (#{userId},#{name},#{data},#{categoryName},#{folderId})
         ]]>
     </insert>
 
     <update id="update" parameterType="org.cboard.pojo.DashboardDataset">
         <![CDATA[
-        UPDATE dashboard_dataset SET dataset_name = #{name},data_json = #{data},category_name = #{categoryName}, update_time = #{updateTime} where dataset_id = #{id}
+        UPDATE dashboard_dataset SET dataset_name = #{name},data_json = #{data},category_name = #{categoryName}, folder_id = #{folderId}, update_time = #{updateTime} where dataset_id = #{id}
         ]]>
     </update>
 
@@ -93,7 +96,7 @@
           ]]>
         </if>
             AND dataset_name = #{dataset_name}
-            AND category_name = #{category_name}
+            AND folder_id = #{folder_id}
     </select>
 
     <delete id="delete">

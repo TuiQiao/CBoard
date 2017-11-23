@@ -15,6 +15,13 @@ cBoard.controller('userAdminCtrl', function ($scope, $http, ModalUtils, $filter)
         $scope.isAdmin = response;
     });
 
+    var getFolderList = function () {
+        $http.get('dashboard/getFolderList.do').success(function (response) {
+            $scope.folderList = response;
+        });
+    };
+    getFolderList();
+    
     var getUserList = function () {
         $http.get("admin/getUserList.do").success(function (response) {
             $scope.userList = response;
@@ -45,33 +52,33 @@ cBoard.controller('userAdminCtrl', function ($scope, $http, ModalUtils, $filter)
         state: {disabled: true}
     }];
     $scope.tree.board.resList = [{
-        id: 'Dashboard',
+        id: '10000',
         text: translate('ADMIN.BOARD'),
         parent: '#',
         /*icon: 'fa fa-fw fa-folder-o',*/
         state: {disabled: true}
     }];
     $scope.tree.datasource.resList = [{
-        id: 'Datasource',
+        id: '10000',
         text: translate('ADMIN.DATASOURCE'),
         parent: '#',
         /*icon: 'fa fa-fw fa-folder-o',*/
         state: {disabled: true}
     }];
     $scope.tree.dataset.resList = [{
-        id: 'Dataset', text: translate('ADMIN.DATASET'), parent: '#',
+        id: '10000', text: translate('ADMIN.DATASET'), parent: '#',
         /*icon: 'fa fa-fw fa-folder-o',*/
         state: {disabled: true}
     }];
     $scope.tree.widget.resList = [{
-        id: 'Widget',
+        id: '10000',
         text: translate('ADMIN.WIDGET'),
         parent: '#',
         /*icon: 'fa fa-fw fa-folder-o',*/
         state: {disabled: true}
     }];
     $scope.tree.job.resList = [{
-        id: 'Job',
+        id: '10000',
         text: translate('ADMIN.JOB'),
         parent: '#',
         /*icon: 'fa fa-fw fa-folder-o',*/
@@ -81,7 +88,7 @@ cBoard.controller('userAdminCtrl', function ($scope, $http, ModalUtils, $filter)
     var getBoardList = function () {
         return $http.get("admin/getBoardList.do").success(function (response) {
             _.each(buildNodeByCategory(_.filter(response, function (e) {
-                return e.categoryId;
+                return e.folderId;
             }), 'Dashboard', 'board', 'fa fa-puzzle-piece'), function (e) {
                 $scope.tree.board.resList.push(e);
             })
@@ -147,52 +154,32 @@ cBoard.controller('userAdminCtrl', function ($scope, $http, ModalUtils, $filter)
     };
 
     var buildNodeByCategory = function (listIn, rParent, type, icon) {
-        var newParentId = 1;
         var listOut = [];
+        
         for (var i = 0; i < listIn.length; i++) {
-            var arr = [];
-            if (listIn[i].categoryName) {
-                arr = listIn[i].categoryName.split('/');
-                arr.push(listIn[i].name);
-            } else {
-                arr.push(listIn[i].name);
-            }
-            var parent = rParent;
-            for (var j = 0; j < arr.length; j++) {
-                var flag = false;
-                var a = arr[j];
-                for (var m = 0; m < listOut.length; m++) {
-                    if (listOut[m].text == a && listOut[m].parent == parent && listOut[m].id.substring(0, 6) == 'parent') {
-                        flag = true;
-                        break;
-                    }
-                }
-                if (!flag) {
-                    if (j == arr.length - 1) {
-                        listOut.push({
-                            "id": type + '_' + listIn[i].id.toString(),
-                            "parent": parent,
-                            "text": a,//+ getCUDRlabel(true, true),
-                            resId: listIn[i].id,
-                            type: type,
-                            icon: icon,
-                            name: a
-                        });
-                    } else {
-                        listOut.push({
-                            "id": 'parent' + '_' + type + '_' + newParentId,
-                            "parent": parent,
-                            "text": a
-                            /*icon: 'fa fa-fw fa-folder-o'*/
-                        });
-                    }
-                    parent = 'parent' + '_' + type + '_' + newParentId;
-                    newParentId++;
-                } else {
-                    parent = listOut[m].id;
+            listOut.push({
+                "id": listIn[i].id.toString(),
+                "parent": type == 'datasource' || type == 'job' ? 10000 : listIn[i].folderId,
+                "text": listIn[i].name.toString(),
+                resId: listIn[i].id,
+                type: type,
+                icon: icon,
+                name: listIn[i].name
+            });
+        }
+
+        if(listOut.length >0 && type != 'datasource' && type != 'job') {
+            for (var i = 0; i < $scope.folderList.length; i++) {
+                if($scope.folderList[i].parentId != -1) {
+                    listOut.push({
+                        "id": $scope.folderList[i].id.toString(),
+                        "parent": $scope.folderList[i].parentId.toString(),
+                        "text": $scope.folderList[i].name.toString()
+                    });
                 }
             }
         }
+
         return listOut;
     };
 

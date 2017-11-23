@@ -1,0 +1,23 @@
+<div class="modal-header">
+    <h3>保存报表</h3>
+</div>
+<div class="modal-body">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="form-group" ng-class="{'has-error': !(o.name || o.name.length)}">
+                <label class="control-label">{{'CONFIG.DATASET.NAME'|translate}}</label>
+                <input id="Name" ng-model="o.name" class="form-control" placeholder="{{'CONFIG.DATASET.NAME'|translate}}"/>
+            </div>
+
+            <div class="list-group">
+                <div id="selectFolderID" js-tree="folderConfig" class="list-group-item" ng-model="folderData" tree-events="activate_node:selectedFolder"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal-footer">
+    <button class="btn btn-success" ng-click="ok()">{{'COMMON.SAVE'|translate}}</button>
+    <!--<button class="btn btn-success" ng-click="new()">另存为</button>-->
+    <button class="btn btn-danger" ng-click="cancel()">{{'COMMON.CANCEL'|translate}}</button>
+</div>

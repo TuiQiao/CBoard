@@ -4,7 +4,6 @@
 cBoard.controller('datasetCtrl', function ($scope, $http, dataService, $uibModal, ModalUtils, $filter, chartService, $timeout, uuid4) {
 
     var translate = $filter('translate');
-    $scope.optFlag = 'none';
     $scope.curDataset = {data: {expressions: [], filters: [], schema: {dimension: [], measure: []}}};
     $scope.curWidget = {};
     $scope.alerts = [];
@@ -14,10 +13,16 @@ cBoard.controller('datasetCtrl', function ($scope, $http, dataService, $uibModal
     $scope.hierarchy = translate("CONFIG.DATASET.HIERARCHY");
     $scope.uuid4 = uuid4;
     $scope.params = [];
+    $scope.showBox = false;
+
+    $scope.folderData = [];
+    $scope.openSaveWindow = false;
+    $scope.selectedFold = {};
 
     var treeID = 'dataSetTreeID'; // Set to a same value with treeDom
     var originalData = [];
     var updateUrl = "dashboard/updateDataset.do";
+    var deleteUrl = "dashboard/deleteDataset.do";
 
     var trash = {};
 
@@ -45,6 +50,24 @@ cBoard.controller('datasetCtrl', function ($scope, $http, dataService, $uibModal
         }
     };
 
+    $scope.getFolderList = function () {
+        $http.get('dashboard/getFolderList.do').success(function (response) {
+            $scope.folderList = response;
+
+            $scope.folderData = [];
+            for (var i=0; i<$scope.folderList.length; i++){
+                $scope.folderData.push({
+                    "id": $scope.folderList[i].id.toString(),
+                    "parent": $scope.folderList[i].parentId == -1 ? "#" : $scope.folderList[i].parentId.toString(),
+                    "text": $scope.folderList[i].name.toString(),
+                    "type": "parent"
+                });
+            }
+            $scope.searchNode();
+        });
+    };
+    
+    
     $http.get("dashboard/getDatasourceList.do").success(function (response) {
         $scope.datasourceList = response;
     });
@@ -52,11 +75,12 @@ cBoard.controller('datasetCtrl', function ($scope, $http, dataService, $uibModal
     var getDatasetList = function () {
         $http.get("dashboard/getDatasetList.do").success(function (response) {
             $scope.datasetList = response;
-            $scope.searchNode();
+            $scope.getFolderList();
+            // $scope.searchNode();
         });
 
     };
-
+    
     var getCategoryList = function () {
         $http.get("dashboard/getDatasetCategoryList.do").success(function (response) {
             $scope.categoryList = response;
@@ -68,15 +92,17 @@ cBoard.controller('datasetCtrl', function ($scope, $http, dataService, $uibModal
 
     getCategoryList();
     getDatasetList();
+    // $scope.getFolderList();
 
     $scope.newDs = function () {
-        $scope.optFlag = 'new';
+        $scope.showBox = true;
         $scope.curDataset = {data: {expressions: [], filters: [], schema: {dimension: [], measure: []}}};
         $scope.curWidget = {};
         cleanPreview();
     };
 
     $scope.editDs = function (ds) {
+        $scope.showBox = true;
         $http.post("dashboard/checkDatasource.do", {id: ds.data.datasource}).success(function (response) {
             if (response.status == '1') {
                 doEditDs(ds);
@@ -88,9 +114,8 @@ cBoard.controller('datasetCtrl', function ($scope, $http, dataService, $uibModal
     };
 
     var doEditDs = function (ds) {
-        $scope.optFlag = 'edit';
         $scope.curDataset = angular.copy(ds);
-        $scope.curDataset.name = $scope.curDataset.categoryName + '/' + $scope.curDataset.name;
+        $scope.curDataset.name = $scope.curDataset.name;
         if (!$scope.curDataset.data.expressions) {
             $scope.curDataset.data.expressions = [];
         }
@@ -153,7 +178,6 @@ cBoard.controller('datasetCtrl', function ($scope, $http, dataService, $uibModal
                     } else {
                         ModalUtils.alert(serviceStatus.msg, "modal-warning", "lg");
                     }
-                    $scope.optFlag = 'none';
                 });
             });
         });
@@ -164,7 +188,6 @@ cBoard.controller('datasetCtrl', function ($scope, $http, dataService, $uibModal
         data.name = data.name + "_copy";
         $http.post("dashboard/saveNewDataset.do", {json: angular.toJson(data)}).success(function (serviceStatus) {
             if (serviceStatus.status == '1') {
-                $scope.optFlag = 'none';
                 getDatasetList();
                 ModalUtils.alert(translate("COMMON.SUCCESS"), "modal-success", "sm");
             } else {
@@ -175,12 +198,7 @@ cBoard.controller('datasetCtrl', function ($scope, $http, dataService, $uibModal
 
     var validate = function () {
         $scope.alerts = [];
-        if (!$scope.curDataset.name) {
-            $scope.alerts = [{msg: translate('CONFIG.DATASET.NAME') + translate('COMMON.NOT_EMPTY'), type: 'danger'}];
-            $scope.verify = {dsName: false};
-            $("#DatasetName").focus();
-            return false;
-        }
+
         for (i in $scope.params) {
             var name = $scope.params[i].name;
             var label = $scope.params[i].label;
@@ -201,7 +219,62 @@ cBoard.controller('datasetCtrl', function ($scope, $http, dataService, $uibModal
         return true;
     };
 
-    $scope.save = function () {
+    $scope.saveWin = function (type) {
+        var o = angular.copy($scope.curDataset);
+        $uibModal.open({
+            templateUrl: 'org/cboard/view/config/modal/saveWin.html',
+            windowTemplateUrl: 'org/cboard/view/util/modal/window.html',
+            backdrop: false,
+            size: '40%',
+            scope: $scope,
+            controller: function ($scope, $uibModalInstance) {
+
+                $scope.folderConfig = angular.copy(jsTreeConfig1);
+                $scope.folderConfig.plugins = ['types', 'unique', 'sort'];
+                
+                $scope.folderConfig.core.data = $scope.folderData;
+                
+                $scope.o = o;
+                $scope.type = type;
+                $scope.ok = function () {
+
+                    if (!o.name) {
+                        $scope.alerts = [{msg: translate('CONFIG.DATASET.NAME') + translate('COMMON.NOT_EMPTY'), type: 'danger'}];
+                        
+                        $("#Name").focus();
+                        return false;
+                    }
+                    
+                    $scope.curDataset.name = o.name;
+
+                    $scope.save($scope.type);
+                    
+                    $uibModalInstance.close();
+                };
+                $scope.cancel = function () {
+                    $uibModalInstance.close();
+                };
+                $scope.selectedFolder = function () {
+                    var selectedNodes = jstree_GetWholeTree("selectFolderID").get_selected(true);
+
+                    if(selectedNodes.length > 0){
+                        $scope.$parent.selectedFold = _.find($scope.folderList, function (f) {
+                            return f.id == selectedNodes[0].id;
+                        });
+                    }
+                };
+            }
+        }).rendered.then(function () {
+            $timeout(function () {
+                var instance = jstree_GetWholeTree("selectFolderID");
+                instance.deselect_all();
+                instance.open_all();
+                instance.select_node($scope.selectedFold.id);
+            }, 100);            
+        });
+    };
+    
+    $scope.save = function (type) {
         $scope.datasource ? $scope.curDataset.data.datasource = $scope.datasource.id : null;
         $scope.curDataset.data.query = $scope.curWidget.query;
 
@@ -209,14 +282,11 @@ cBoard.controller('datasetCtrl', function ($scope, $http, dataService, $uibModal
             return;
         }
         var ds = angular.copy($scope.curDataset);
-        var index = ds.name.lastIndexOf('/');
-        ds.categoryName = $scope.curDataset.name.substring(0, index).trim();
-        ds.name = $scope.curDataset.name.slice(index + 1).trim();
-        if (ds.categoryName == '') {
-            ds.categoryName = translate("COMMON.DEFAULT_CATEGORY");
-        }
+        
+        ds.name = $scope.curDataset.name;
+        ds.folderId = $scope.selectedFold.id;
 
-        if ($scope.optFlag == 'new') {
+        if(type == 'new' || ds.id == null){
             $http.post("dashboard/saveNewDataset.do", {json: angular.toJson(ds)}).success(function (serviceStatus) {
                 if (serviceStatus.status == '1') {
                     getCategoryList();
@@ -227,10 +297,9 @@ cBoard.controller('datasetCtrl', function ($scope, $http, dataService, $uibModal
                     $scope.alerts = [{msg: serviceStatus.msg, type: 'danger'}];
                 }
             });
-        } else {
+        }else if(type == 'edit') {
             $http.post(updateUrl, {json: angular.toJson(ds)}).success(function (serviceStatus) {
                 if (serviceStatus.status == '1') {
-                    $scope.optFlag = 'edit';
                     getCategoryList();
                     getDatasetList();
                     $scope.verify = {dsName: true};
@@ -240,9 +309,8 @@ cBoard.controller('datasetCtrl', function ($scope, $http, dataService, $uibModal
                 }
             });
         }
-
     };
-
+    
     $scope.editFilterGroup = function (col) {
         var columnObjs = schemaToSelect($scope.curDataset.data.schema);
         $uibModal.open({
@@ -525,6 +593,10 @@ cBoard.controller('datasetCtrl', function ($scope, $http, dataService, $uibModal
 
     var getSelectedDataSet = function () {
         var selectedNode = jstree_GetSelectedNodes(treeID)[0];
+
+        $scope.selectedFold = _.find($scope.folderList, function (f) {
+            return f.id == selectedNode.parent;
+        });
         return _.find($scope.datasetList, function (ds) {
             return ds.id == selectedNode.id;
         });
@@ -564,7 +636,9 @@ cBoard.controller('datasetCtrl', function ($scope, $http, dataService, $uibModal
         var content = getSelectedDataSet();
         ModalUtils.info(content,"modal-info", "lg");
     };
+
     $scope.searchNode = function () {
+        // $scope.getFolderList();
         var para = {dsName: '', dsrName: ''};
         //map datasetList to list (add datasourceName)
         var list = $scope.datasetList.map(function (ds) {
@@ -574,8 +648,9 @@ cBoard.controller('datasetCtrl', function ($scope, $http, dataService, $uibModal
             return {
                 "id": ds.id,
                 "name": ds.name,
-                "categoryName": ds.categoryName,
-                "datasourceName": dsr ? dsr.name : ''
+                "parentId": ds.folderId,
+                "datasourceName": dsr ? dsr.name : '',
+                "type": "child"
             };
         });
         //split search keywords
@@ -595,18 +670,60 @@ cBoard.controller('datasetCtrl', function ($scope, $http, dataService, $uibModal
                 }
             }
         }
+        
         //filter data by keywords
         originalData = jstree_CvtVPath2TreeData(
             $filter('filter')(list, {name: para.dsName, datasourceName: para.dsrName})
         );
 
+        if(para.dsName == '' && para.dsrName == '')
+        {
+            for (var i=0; i<$scope.folderList.length; i++){
+                originalData.push({
+                    "id": $scope.folderList[i].id.toString(),
+                    "parent": $scope.folderList[i].parentId == -1 ? "#" : $scope.folderList[i].parentId.toString(),
+                    "text": $scope.folderList[i].name.toString(),
+                    "type": "parent"
+                });
+            }
+        }else {
+            var file = angular.copy(originalData);
+            for (var i = 0; i < file.length; i++) {
+                if (file[i].id != "-1") {
+                    var item = getFolders(file[i].parent);
+                    var exists = $filter('filter')(originalData, {id: item[0].id});
+                    if (exists.length == 0) {
+                        originalData = [].concat(originalData, item);
+                    }
+                }
+            }
+        }
+
         jstree_ReloadTree(treeID, originalData);
+    };
+
+    function getFolders(parentId) {
+        var list = [];
+        for (var i=0; i<$scope.folderList.length; i++){
+            if($scope.folderList[i].id == parentId) {
+                list.push({
+                    "id": $scope.folderList[i].id.toString(),
+                    "parent": $scope.folderList[i].parentId == -1 ? "#" : $scope.folderList[i].parentId.toString(),
+                    "text": $scope.folderList[i].name.toString(),
+                    "type": "parent"
+                });
+                if($scope.folderList[i].parentId != -1) {
+                    list = [].concat(list, getFolders($scope.folderList[i].parentId));
+                }
+            }
+        }
+        return list;
     };
 
     $scope.treeEventsObj = function () {
         var baseEventObj = jstree_baseTreeEventsObj({
-            ngScope: $scope, ngHttp: $http, ngTimeout: $timeout,
-            treeID: treeID, listName: "datasetList", updateUrl: updateUrl
+            ngScope: $scope, ngHttp: $http, ngTimeout: $timeout, ModalUtils: ModalUtils,
+            treeID: treeID, listName: "datasetList", updateUrl: updateUrl, deleteUrl: deleteUrl
         });
         return baseEventObj;
     }();

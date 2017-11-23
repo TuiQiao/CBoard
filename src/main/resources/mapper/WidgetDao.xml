@@ -13,6 +13,7 @@
         widget_name   AS name,
         data_json     AS data,
         category_name AS categoryName,
+        folder_id     AS folderId,
         u.user_name   AS userName,
         u.login_name  AS loginName,
         create_time   AS createTime,
@@ -28,6 +29,7 @@
               widget_name   AS name,
               data_json     AS data,
               category_name AS categoryName,
+              folder_id     AS folderId,
               u.user_name   AS userName,
               u.login_name AS loginName,
               create_time  AS createTime,
@@ -45,6 +47,7 @@
                widget_name   AS name,
                data_json     AS data,
                category_name AS categoryName,
+               folder_id     AS folderId,
                u.user_name   AS userName,
                u.login_name  AS loginName,
                create_time   AS createTime,
@@ -71,13 +74,13 @@
 
     <insert id="save" parameterType="org.cboard.pojo.DashboardWidget">
         <![CDATA[
-        INSERT INTO dashboard_widget(user_id,widget_name,data_json,category_name) VALUES (#{userId},#{name},#{data},#{categoryName})
+        INSERT INTO dashboard_widget(user_id,widget_name,data_json,category_name,folder_id) VALUES (#{userId},#{name},#{data},#{categoryName},#{folderId})
         ]]>
     </insert>
 
     <update id="update" parameterType="org.cboard.pojo.DashboardWidget">
         <![CDATA[
-        UPDATE dashboard_widget SET widget_name = #{name},data_json = #{data},category_name = #{categoryName},update_time = #{updateTime} where widget_id = #{id}
+        UPDATE dashboard_widget SET widget_name = #{name},data_json = #{data},category_name = #{categoryName}, folder_id = #{folderId}, update_time = #{updateTime} where widget_id = #{id}
         ]]>
     </update>
 
@@ -91,7 +94,7 @@
           ]]>
         </if>
           AND widget_name = #{widget_name}
-          AND category_name = #{category_name}
+          AND folder_id = #{folder_id}
     </select>
 
     <delete id="delete">

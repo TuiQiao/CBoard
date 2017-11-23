@@ -96,17 +96,25 @@ cBoard.service('chartService', function ($q, dataService, chartPieService, chart
             return deferred.promise;
         };
 
-        this.realTimeRender = function (realTimeTicket, widget, optionFilter, scope) {
+        this.realTimeRender = function (realTimeTicket, widget, optionFilter, scope, widgetWraper, isParamEvent) {
             if (!realTimeTicket) {
                 return;
             }
             var chart = getChartServices(widget.config);
+
+            if (isParamEvent && widgetWraper) {
+                widgetWraper.loading = true;
+            }
+
             var callback = function (data) {
                 var option = chart.parseOption(data);
                 if (optionFilter) {
                     optionFilter(option);
                 }
                 realTimeTicket(option, data.drill ? data.drill.config : null);
+                if (widgetWraper) {
+                    widgetWraper.loading = false;
+                }
             };
             dataService.getDataSeries(widget.datasource, widget.query, widget.datasetId, widget.config, callback, true);
         };

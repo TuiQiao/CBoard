@@ -100,7 +100,11 @@ cBoard.controller('dashboardViewCtrl', function ($timeout, $rootScope, $scope, $
             widget.realTimeOption = {optionFilter: optionFilter, scope: scope};
         };
         widget.modalRender = function (content, optionFilter, scope) {
-            widget.modalRealTimeTicket = chartService.render(content, injectFilter(widget.widget).data, optionFilter, scope);
+            widget.modalLoading = true;
+            widget.modalRealTimeTicket = chartService.render(content, injectFilter(widget.widget).data, optionFilter, scope)
+                .then(function () {
+                    widget.modalLoading = false;
+                });
             widget.modalRealTimeOption = {optionFilter: optionFilter, scope: scope};
         };
     };
@@ -368,7 +372,7 @@ cBoard.controller('dashboardViewCtrl', function ($timeout, $rootScope, $scope, $
         _.each($scope.board.layout.rows, function (row) {
             _.each(row.widgets, function (w) {
                 try {
-                    chartService.realTimeRender(w.realTimeTicket, injectFilter(w.widget).data);
+                    chartService.realTimeRender(w.realTimeTicket, injectFilter(w.widget).data, null, null, w, true);
                 } catch (e) {
                     console.error(e);
                 }

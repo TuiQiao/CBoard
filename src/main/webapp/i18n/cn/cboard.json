@@ -50,6 +50,13 @@
     "FOLD_TREE": "展开所有树节点",
     "UNFOLD_TREE": "收起所有树节点"
   },
+  "HOMEPAGE": {
+    "TITLE": "首页",
+    "LINK_CAPTION": "首页",
+    "QUICK_START": "快速启动",
+    "CUBES": "数据集",
+    "CUBES_TIP": "双击数据集，开始设计图表！"
+  },
   "TIPS": {
     "CAL_EXPR": "用于聚合后再计算. 使用上面的点击辅助输入避免输入错误. 如: Math.log(sum(columnA)/count(columB))"
   },

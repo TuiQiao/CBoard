@@ -15,11 +15,11 @@
 }
 
 .box-body {
-    padding: 5px;
+    /*padding: 5px;*/
 }
 
 .box-header {
-    padding: 11px 5px;
+    padding: 11px 10px;
 }
 
 .panel-body {

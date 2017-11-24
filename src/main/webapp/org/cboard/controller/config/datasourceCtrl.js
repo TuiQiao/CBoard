@@ -1,7 +1,7 @@
 /**
  * Created by yfyuan on 2016/8/19.
  */
-cBoard.controller('datasourceCtrl', function ($scope, $http, ModalUtils, $uibModal, $filter, $q) {
+cBoard.controller('datasourceCtrl', function ($scope, $state, $stateParams, $http, ModalUtils, $uibModal, $filter, $q) {
 
     var translate = $filter('translate');
     $scope.optFlag = 'none';
@@ -14,6 +14,11 @@ cBoard.controller('datasourceCtrl', function ($scope, $http, ModalUtils, $uibMod
     var getDatasourceList = function () {
         $http.get("dashboard/getDatasourceList.do").success(function (response) {
             $scope.datasourceList = response;
+            if ($stateParams.id) {
+                $scope.editDs(_.find($scope.datasourceList, function (dsr) {
+                    return dsr.id == $stateParams.id;
+                }));
+            }
         });
     };
 
@@ -33,6 +38,7 @@ cBoard.controller('datasourceCtrl', function ($scope, $http, ModalUtils, $uibMod
         $scope.curDatasource = angular.copy(ds);
         $scope.changeDsView();
         $scope.doDatasourceParams();
+        $state.go('config.datasource', {id: ds.id}, {notify: false});
     };
     $scope.deleteDs = function (ds) {
         // var isDependent = false;

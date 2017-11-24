@@ -53,6 +53,7 @@ public class BoardService {
         for (Object row : rows) {
             JSONObject o = (JSONObject) row;
             if ("param".equals(o.getString("type"))) {
+                layout.put("containsParam", true);
                 continue;
             }
             JSONArray widgets = o.getJSONArray("widgets");

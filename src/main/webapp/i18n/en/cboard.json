@@ -50,6 +50,13 @@
     "FOLD_TREE": "Fold all nodes",
     "UNFOLD_TREE": "Unflod all nodes"
   },
+  "HOMEPAGE": {
+    "TITLE": "HOMEPAGE",
+    "LINK_CAPTION": "Home",
+    "QUICK_START": "Quick Start",
+    "CUBES": "Cubes",
+    "CUBES_TIP": "Double click a cube, start chart design!"
+  },
   "TIPS": {
     "CAL_EXPR": "Calculate after aggregation. Use assist click input to avoid typo. e.g: Math.log(sum(columnA)/count(columB))"
   },

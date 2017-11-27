@@ -62,3 +62,10 @@
         </ul>
     </div>
 </nav>
+<script type="text/javascript">
+function logout(){
+	// 删除sessionStorage，下次登录不回显目录位置
+	sessionStorage.removeItem('menuActive');
+	document.getElementById('logoutBtn').click();
+}
+</script>

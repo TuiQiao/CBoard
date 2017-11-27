@@ -149,6 +149,31 @@ var crossTable = {
         }
         return pageData;
     },
+    dataWrap: function (data){
+    	if(data == null || data == "" || !isNaN(Number(data))){
+            return data;
+        }
+    	var result = data, len = data.length, s = 40;
+        if(data && len > s){
+        	result = "";
+        	/*for(var i = 0; i < len; i = i+s){
+        		if(i != 0){
+        			celData += "<br />";
+        		}
+        		celData += temData.substr(i, s);
+        	}*/
+        	var curlen = 0, patten = /.*[\u4e00-\u9fa5]+.*$/;
+            for(var i = 0; i < len; i++){
+                patten.test(data[i]) ? curlen += 2 : curlen++;
+                if(curlen >= s){
+                    curlen = 0;
+                    result += "<br />";
+                }
+                result += data[i];
+            }
+        }
+        return result;
+    },
     render: function (data, chartConfig, drill) {
         var html = '';
         if (data === undefined) {
@@ -191,7 +216,7 @@ var crossTable = {
             for (var m = 0; m < chartConfig.keys.length; m++) {
                 var currentCell = data[n][m];
                 var rowParentCell = data[n][m - 1];
-                var cur_data = currentCell.data ? currentCell.data : "";
+                var cur_data = this.dataWrap(currentCell.data ? currentCell.data : "");
                 var keyId = chartConfig.keys[m].id;
                 var align = chartConfig.keys[m].align;
                 if (drill && drill.config[keyId] && (drill.config[keyId].down || drill.config[keyId].up)) {
@@ -204,14 +229,15 @@ var crossTable = {
                     }
                     cur_data = "<div class='table_drill_cell' " + d + ">" + cur_data + "</div>";
                 }
-                if (m > 0) {
+                var sort = chartConfig.keys[m].sort;
+                if (m > 0 && sort) {
                     if (currentCell.rowSpan == 'row_null' && rowParentCell.rowSpan == 'row_null' && !isFirstLine) {
                         rowContent += "<th class=row_null><div></div></th>";
                     } else {
                         rowContent += "<th style='text-align:"+align+"' class=row><div>" + cur_data + "</div></th>";
                     }
                 } else {
-                    if (currentCell.rowSpan == 'row_null' && !isFirstLine) {
+                    if (currentCell.rowSpan == 'row_null' && !isFirstLine && sort) {
                         rowContent += "<th class=row_null><div></div></th>";
                     } else {
                         rowContent += "<th style='text-align:"+align+"' class=row><div>" + cur_data + "</div></th>";
@@ -220,7 +246,9 @@ var crossTable = {
             }
             for (var y = chartConfig.keys.length; y < data[n].length; y++) {
                 var align = chartConfig.values[0].cols[(y-chartConfig.keys.length)%chartConfig.values[0].cols.length].align;
-                rowContent += "<td style='text-align:"+align+"'class=" + data[n][m].property + "><div>" + data[n][y].data + "</div></td>";
+                var temData = data[n][y].data/* === "" ? "" : data[n][y].data + " ABCD EFG HIJKLMNO PQ RST"*/;
+                var celData = this.dataWrap(temData);
+                rowContent += "<td style='text-align:"+align+"'class=" + data[n][m].property + "><div>" + celData + "</div></td>";
             }
             html = html + rowContent + "</tr>";
         }

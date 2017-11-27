@@ -1,4 +1,4 @@
-package org.cboard.kylin;
+package org.cboard.kylin.kylin1x;
 
 import java.io.Serializable;
 import java.util.HashMap;

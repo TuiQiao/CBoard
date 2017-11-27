@@ -1,4 +1,4 @@
-package org.cboard.kylin;
+package org.cboard.kylin.kylin1x;
 
 import com.alibaba.fastjson.JSONObject;
 import org.apache.commons.collections.map.HashedMap;

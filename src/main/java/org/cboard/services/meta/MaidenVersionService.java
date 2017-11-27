@@ -40,29 +40,4 @@ public class MaidenVersionService {
     @Autowired
     private XlsProcessService xlsProcessService;
 
-
-//    public ServiceStatus update(String json) {
-//        JSONObject jsonObject = JSONObject.parseObject(json);
-//        MaidenVersion version = new MaidenVersion();
-//        version.setName(jsonObject.getString("name"));
-//        version.setstatus(jsonObject.getInteger("status"));
-//        version.setUpdateTime(new Timestamp(Calendar.getInstance().getTimeInMillis()));
-//
-//        if (versionDao.countExistVersionName(version.getName()) <= 0) {
-//            versionDao.update(version);
-//            return new ServiceStatus(ServiceStatus.Status.Success, "success");
-//        } else {
-//            return new ServiceStatus(ServiceStatus.Status.Fail, "Duplicated name");
-//        }
-//    }
-//
-//    public ServiceStatus delete(int id) {
-//        try {
-//            versionDao.delete(id);
-//            return new ServiceStatus(ServiceStatus.Status.Success, "success");
-//        } catch (Exception e) {
-//            LOG.error("", e);
-//            return new ServiceStatus(ServiceStatus.Status.Fail, e.getMessage());
-//        }
-//    }
 }

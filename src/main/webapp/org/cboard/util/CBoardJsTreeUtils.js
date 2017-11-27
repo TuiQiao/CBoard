@@ -221,10 +221,6 @@ function jstree_baseTreeEventsObj(option) {
                         console.log(serviceStatus.msg);
                     }
                 });
-
-                // option.ngTimeout(function () {
-                //     option.ngScope.searchNode();
-                // }, 5000);
             },
             rename_node: function (obj, node) {
                 var item = {};
@@ -272,7 +268,7 @@ function jstree_baseTreeEventsObj(option) {
                             if (serviceStatus.status == '1') {
                                 //console.log('success!');
                             } else {
-                                ModalUtils.alert(serviceStatus.msg, "modal-warning", "lg");
+                                option.ModalUtils.alert(serviceStatus.msg, "modal-warning", "lg");
                             }
                         });
                     }
@@ -287,7 +283,7 @@ function jstree_baseTreeEventsObj(option) {
                         if (serviceStatus.status == '1') {
                             
                         } else {
-                            ModalUtils.alert(serviceStatus.msg, "modal-warning", "lg");
+                            option.ModalUtils.alert(serviceStatus.msg, "modal-warning", "lg");
                         }
                     });
                 };
@@ -299,14 +295,13 @@ function jstree_baseTreeEventsObj(option) {
                         if (serviceStatus.status == '1') {
                             //console.log('success!');
                         } else {
-                            //ModalUtils.alert(serviceStatus.msg, "modal-warning", "lg");
-                            console.log(serviceStatus.msg);
+                            option.ModalUtils.alert(serviceStatus.msg, "modal-warning", "lg");
                         }
                     });
                 };
 
                 var updateNode = function (node, tarPath) {
-                    if (node.children.length == 0) {
+                    if (node.children.length == 0 && node.original.type != "parent") {
                         updateItem(node.id, tarPath);
                     } else {
                         updateFolder(node.id, tarPath);

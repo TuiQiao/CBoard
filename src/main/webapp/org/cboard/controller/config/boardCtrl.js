@@ -167,10 +167,10 @@ cBoard.controller('boardCtrl',
         $scope.$emit("boardChange");
     };
 
+    $scope.getFolderList();
     var boardListPromise = getBoardList();
     getCategoryList();
     getDatasetList();
-
 
     $scope.newOperate = function () {
         $('div.newBoard').toggleClass('hideOperate');
@@ -313,7 +313,6 @@ cBoard.controller('boardCtrl',
         });
     };
 
-    $scope.saveBoard = function (notify, type) {
     $scope.saveWin = function (type) {
         var o = angular.copy($scope.curBoard);
         $uibModal.open({
@@ -340,7 +339,7 @@ cBoard.controller('boardCtrl',
                     }
 
                     $scope.curBoard.name = o.name;
-                    $scope.saveBoard($scope.type);
+                    $scope.saveBoard(true, $scope.type);
                     $uibModalInstance.close();
                 };
                 
@@ -498,21 +497,14 @@ cBoard.controller('boardCtrl',
 
 
     /**  js tree related start **/
-    $scope.treeConfig = jsTreeConfig1;//angular.copy(jsTreeConfig1);
-    // $scope.treeConfig.plugins = ['types', 'unique', 'state', 'sort', 'contextmenu'];
+    $scope.treeConfig = jsTreeConfig1;
 
     $("#" + treeID).keyup(function (e) {
         if (e.keyCode == 46) {
             $scope.deleteBoard(getSelectedBoard());
         }
     });
-
-    // $scope.loadFolders = function () {
-    //     $scope.openFolder = !$scope.openFolder;
-    //
-    //     jstree_ReloadTree("selectFolderID", $scope.folderData);
-    // };
-
+        
     $scope.selectedFolder = function () {
         var selectedNodes = jstree_GetWholeTree("selectFolderID").get_selected(true);
         if(selectedNodes.length > 0){

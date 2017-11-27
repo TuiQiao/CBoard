@@ -10,10 +10,27 @@ cBoard.controller('homepageCtrl', function ($rootScope, $scope, $state, $http, $
     var getDatasetList = function () {
         $http.get("dashboard/getDatasetList.do").success(function (response) {
             $scope.datasetList = response;
-            $scope.searchNode();
+            $scope.getFolderList();
         });
     };
 
+    $scope.getFolderList = function () {
+        $http.get('dashboard/getFolderList.do').success(function (response) {
+            $scope.folderList = response;
+
+            $scope.folderData = [];
+            for (var i=0; i<$scope.folderList.length; i++){
+                $scope.folderData.push({
+                    "id": $scope.folderList[i].id.toString(),
+                    "parent": $scope.folderList[i].parentId == -1 ? "#" : $scope.folderList[i].parentId.toString(),
+                    "text": $scope.folderList[i].name.toString(),
+                    "type": "parent"
+                });
+            }
+            $scope.searchNode();
+        });
+    };
+    
     /**  js tree related start **/
     $scope.treeConfig = jsTreeConfig1;
 
@@ -62,8 +79,9 @@ cBoard.controller('homepageCtrl', function ($rootScope, $scope, $state, $http, $
             return {
                 "id": ds.id,
                 "name": ds.name,
-                "categoryName": ds.categoryName,
-                "datasourceName": dsr ? dsr.name : ''
+                "parentId": ds.folderId,
+                "datasourceName": dsr ? dsr.name : '',
+                "type": "child"
             };
         });
         //split search keywords
@@ -88,6 +106,15 @@ cBoard.controller('homepageCtrl', function ($rootScope, $scope, $state, $http, $
             $filter('filter')(list, {name: para.dsName, datasourceName: para.dsrName})
         );
 
+        for (var i=0; i<$scope.folderList.length; i++){
+            originalData.push({
+                "id": $scope.folderList[i].id.toString(),
+                "parent": $scope.folderList[i].parentId == -1 ? "#" : $scope.folderList[i].parentId.toString(),
+                "text": $scope.folderList[i].name.toString(),
+                "type": "parent"
+            });
+        }
+        
         jstree_ReloadTree(treeID, originalData);
         $timeout(function() {$scope.treeInstance.jstree(true).open_all()}, 500);
     };

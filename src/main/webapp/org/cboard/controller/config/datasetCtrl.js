@@ -75,7 +75,7 @@ cBoard.controller('datasetCtrl', function ($scope, $http, $state, $stateParams, 
     var getDatasetList = function () {
         $http.get("dashboard/getDatasetList.do").success(function (response) {
             $scope.datasetList = response;
-            //$scope.searchNode();
+            $scope.getFolderList();
             if ($stateParams.id) {
                 $scope.editDs(_.find($scope.datasetList, function (ds) {
                     return ds.id == $stateParams.id;
@@ -644,7 +644,6 @@ cBoard.controller('datasetCtrl', function ($scope, $http, $state, $stateParams, 
     };
 
     $scope.searchNode = function () {
-        // $scope.getFolderList();
         var para = {dsName: '', dsrName: ''};
         //map datasetList to list (add datasourceName)
         var list = $scope.datasetList.map(function (ds) {

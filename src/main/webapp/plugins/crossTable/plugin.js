@@ -150,19 +150,13 @@ var crossTable = {
         return pageData;
     },
     dataWrap: function (data){
-    	if(data == null || data == "" || !isNaN(Number(data))){
+        if(data == null || data == "" || !isNaN(Number(data))){
             return data;
         }
-    	var result = data, len = data.length, s = 40;
+        var result = data, len = data.length, s = 40;
         if(data && len > s){
-        	result = "";
-        	/*for(var i = 0; i < len; i = i+s){
-        		if(i != 0){
-        			celData += "<br />";
-        		}
-        		celData += temData.substr(i, s);
-        	}*/
-        	var curlen = 0, patten = /.*[\u4e00-\u9fa5]+.*$/;
+            result = "";
+            var curlen = 0, patten = /.*[\u4e00-\u9fa5]+.*$/;
             for(var i = 0; i < len; i++){
                 patten.test(data[i]) ? curlen += 2 : curlen++;
                 if(curlen >= s){

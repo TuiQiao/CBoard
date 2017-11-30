@@ -163,7 +163,7 @@ public class H2Aggregator extends InnerAggregator {
     }
 
     @Override
-    public String[] getColumn() throws Exception {
+    public String[] getColumn(boolean reload) throws Exception {
         String template = "SELECT column_name FROM INFORMATION_SCHEMA.columns WHERE table_name = upper('%s')";
         String colsQuery = String.format(template, getTmpTblName());
         List<String> columns = new ArrayList<>();

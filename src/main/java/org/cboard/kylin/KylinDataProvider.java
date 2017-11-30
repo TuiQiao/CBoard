@@ -160,7 +160,7 @@ public class KylinDataProvider extends DataProvider implements Aggregatable, Ini
         return filtered.toArray(new String[]{});
     }
 
-    private KylinModel getModel() throws Exception {
+    private KylinModel getModel(boolean reload) throws Exception {
         String modelName = query.get(DATA_MODEL);
         String serverIp = dataSource.get(SERVERIP);
         String username = dataSource.get(USERNAME);
@@ -168,15 +168,16 @@ public class KylinDataProvider extends DataProvider implements Aggregatable, Ini
 
         String key = getKey(dataSource, query);
         KylinModel model = modelCache.get(key);
-        if (model == null) {
+        if (model == null || reload) {
             synchronized (key.intern()) {
                 model = modelCache.get(key);
-                if (model == null) {
+                if (model == null || reload) {
                     RestTemplate restTemplate = new RestTemplate();
                     restTemplate.getInterceptors().add(new BasicAuthorizationInterceptor(username, password));
-                    ResponseEntity<String> a = restTemplate.getForEntity("http://" + serverIp + "/kylin/api/model/{modelName}", String.class, modelName);
-                    JSONObject jsonObject = JSONObject.parseObject(a.getBody());
-                    model = new KylinModel(jsonObject, serverIp, username, password);
+                    ResponseEntity<String> restful = restTemplate.getForEntity(
+                            "http://" + serverIp + "/kylin/api/model/{modelName}", String.class, modelName);
+                    JSONObject jsonModel = JSONObject.parseObject(restful.getBody());
+                    model = new KylinModel(jsonModel, serverIp, username, password);
                     modelCache.put(key, model, 1 * 60 * 60 * 1000);
                 }
             }
@@ -185,8 +186,8 @@ public class KylinDataProvider extends DataProvider implements Aggregatable, Ini
     }
 
     @Override
-    public String[] getColumn() throws Exception {
-        return getModel().getColumns();
+    public String[] getColumn(boolean reload) throws Exception {
+        return getModel(reload).getColumns();
     }
 
     @Override
@@ -223,7 +224,7 @@ public class KylinDataProvider extends DataProvider implements Aggregatable, Ini
     @Override
     public void afterPropertiesSet() throws Exception {
         try {
-            kylinModel = getModel();
+            kylinModel = getModel(false);
             sqlHelper = new SqlHelper(kylinModel.geModelSql(), false);
             sqlHelper.setSqlSyntaxHelper(new KylinSyntaxHelper(kylinModel));
         } catch (Exception e) {

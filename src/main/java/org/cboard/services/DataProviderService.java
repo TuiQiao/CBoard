@@ -23,7 +23,6 @@ import org.springframework.stereotype.Repository;
 
 import java.util.Map;
 import java.util.function.Consumer;
-import java.util.function.Predicate;
 
 /**
  * Created by yfyuan on 2016/8/15.
@@ -71,7 +70,7 @@ public class DataProviderService {
         try {
             Dataset dataset = getDataset(datasetId);
             DataProvider dataProvider = getDataProvider(datasourceId, query, dataset);
-            String[] result = dataProvider.getColumn(reload);
+            String[] result = dataProvider.invokeGetColumn(reload);
             dps.setColumns(result);
             dps.setMsg("1");
         } catch (Exception e) {

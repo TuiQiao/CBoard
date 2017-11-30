@@ -28,7 +28,7 @@ public interface Aggregatable {
      *
      * @return
      */
-    String[] getColumn() throws Exception;
+    String[] getColumn(boolean reload) throws Exception;
 
     /**
      * The data provider that support DataSource side Aggregation must implement this method.

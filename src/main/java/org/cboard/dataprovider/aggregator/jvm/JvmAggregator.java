@@ -65,7 +65,7 @@ public class JvmAggregator extends InnerAggregator {
     }
 
     @Override
-    public String[] getColumn() throws Exception {
+    public String[] getColumn(boolean reload) throws Exception {
         String[][] data = rawDataCache.get(getCacheKey());
         try {
             return data[0];

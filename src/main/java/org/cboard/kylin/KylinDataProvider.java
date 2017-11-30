@@ -42,14 +42,22 @@ public class KylinDataProvider extends DataProvider implements Aggregatable, Ini
             order = 1)
     private String SERVERIP = "serverIp";
 
+    @DatasourceParameter(label = "Kylin Version *",
+            value = "1.x", options = {"1.x", "2.x"},
+            type = DatasourceParameter.Type.Select,
+            order = 2)
+    private String KYLIN_VERSION = "kylinVersion";
+
     @DatasourceParameter(label = "User Name (for Kylin Server) *",
             type = DatasourceParameter.Type.Input,
             required = true,
-            order = 2)
+            order = 3)
     private String USERNAME = "username";
 
-    @DatasourceParameter(label = "Password", type = DatasourceParameter.Type.Password, order = 3)
+    @DatasourceParameter(label = "Password", type = DatasourceParameter.Type.Password, order = 4)
     private String PASSWORD = "password";
+
+    // ----------- QueryParameter Start
 
     @QueryParameter(label = "Kylin Project *",
             type = QueryParameter.Type.Input,

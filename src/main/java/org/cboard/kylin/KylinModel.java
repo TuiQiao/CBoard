@@ -52,32 +52,26 @@ class KylinModel implements Serializable {
             throw new CBoardException("Model not found");
         }
         this.model = model;
+        String factTable = model.getString("fact_table");
+        tableAlias.put(factTable, "fact");
         model.getJSONArray("dimensions").forEach(e -> {
-                    String t = ((JSONObject) e).getString("table");
-                    Map<String, String> types = getColumnsType(t, serverIp, username, password);
-                    types.entrySet().forEach(et -> columnType.put(et.getKey(), et.getValue()));
-                    ((JSONObject) e).getJSONArray("columns").stream().map(c -> c.toString()).forEach(s -> {
-                                String alias = tableAlias.get(t);
-                                if (alias == null) {
-                                    alias = "_t" + tableAlias.keySet().size() + 1;
-                                    tableAlias.put(t, alias);
-                                }
-                                columnTable.put(s, t);
-                            }
-                    );
-                }
-        );
-        model.getJSONArray("metrics").stream().map(e -> e.toString()).forEach(s ->
-                {
-                    String t = model.getString("fact_table");
-                    String alias = tableAlias.get(t);
-                    if (alias == null) {
-                        alias = "_t" + tableAlias.keySet().size() + 1;
-                        tableAlias.put(t, alias);
-                    }
-                    columnTable.put(s, t);
-                }
-        );
+            JSONObject dims = (JSONObject) e;
+            String t = dims.getString("table");
+            Map<String, String> types = getColumnsType(t, serverIp, username, password);
+            types.entrySet().forEach(et -> columnType.put(et.getKey(), et.getValue()));
+            dims.getJSONArray("columns").stream()
+                    .map(c -> c.toString())
+                    .forEach(s -> {
+                        String alias = tableAlias.get(t);
+                        if (alias == null) {
+                            alias = "_t" + tableAlias.keySet().size() + 1;
+                            tableAlias.put(t, alias);
+                        }
+                        columnTable.put(s, t);
+                    });
+        });
+        model.getJSONArray("metrics").stream()
+                .forEach(metric -> columnTable.put(metric.toString(), factTable));
     }
 
     public String geModelSql() {

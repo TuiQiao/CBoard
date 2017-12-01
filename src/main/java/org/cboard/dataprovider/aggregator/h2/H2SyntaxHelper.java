@@ -20,9 +20,9 @@ public class H2SyntaxHelper extends SqlSyntaxHelper {
         String aggExp = SqlHelper.surround(vConfig.getColumn(), "`");
         switch (vConfig.getAggType()) {
             case "sum":
-                return "SUM(f_tofloat(" + aggExp + "))";
+                return "SUM(f_todouble(" + aggExp + "))";
             case "avg":
-                return "AVG(f_tofloat(" + aggExp + "))";
+                return "AVG(f_todouble(" + aggExp + "))";
             case "max":
                 return "MAX(" + aggExp + ")";
             case "min":

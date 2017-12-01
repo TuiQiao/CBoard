@@ -192,12 +192,12 @@ public class H2Aggregator extends InnerAggregator {
                 Connection conn = jdbcDataSource.getConnection();
                 Statement stat = conn.createStatement();
         ) {
-            stat.execute("CREATE ALIAS IF NOT EXISTS f_tofloat FOR \"org.cboard.dataprovider.aggregator.h2.Functions.parserString2Float\" ");
+            stat.execute("CREATE ALIAS IF NOT EXISTS f_todouble FOR \"org.cboard.dataprovider.aggregator.h2.Functions.parserString2Double\" ");
             rs = stat.executeQuery(exec);
             ResultSetMetaData metaData = rs.getMetaData();
             int columnCount = metaData.getColumnCount();
             while (rs.next()) {
-                String[] row = new String[columnCount];
+            	String[] row = new String[columnCount];
                 for (int j = 0; j < columnCount; j++) {
                     row[j] = rs.getString(j + 1);
                 }

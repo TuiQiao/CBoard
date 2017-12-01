@@ -33,7 +33,7 @@ public class KylinModel2x extends KylinBaseModel {
      */
     @Override
     public String getColumnWithAliasPrefix(String column) {
-        return tableAlias.get(column) + "." + surroundWithQuta(column);
+        return formatTableName(column);
     }
 
     /**
@@ -57,10 +57,11 @@ public class KylinModel2x extends KylinBaseModel {
     @Override
     void initMetaData() throws Exception {
         String factTable = model.getString("fact_table");
-        tableAlias.put(factTable, StringUtils.substringAfter(factTable, "."));
-
+        
+        tableAlias.put(StringUtils.substringAfter(factTable, "."),factTable);
+        
         model.getJSONArray("lookups").stream().map(e -> (JSONObject) e)
-                .forEach(s -> tableAlias.put(s.getString("table"), s.getString("alias")));
+                .forEach(s -> tableAlias.put(s.getString("alias"),s.getString("table")));
 
         model.getJSONArray("dimensions").forEach(e -> {
             JSONObject dims = (JSONObject) e;
@@ -80,7 +81,8 @@ public class KylinModel2x extends KylinBaseModel {
         String factTable = formatTableName(model.getString("fact_table"));
         return String.format("%s %s", getTableWithAliasSuffix(factTable), getJoinSql(tableAlias.get(factTable)));
     }
-
+    
+    
     private String getJoinSql(String factAlias) {
         String s = model.getJSONArray("lookups").stream().map(e -> {
             JSONObject j = (JSONObject) e;
@@ -93,9 +95,14 @@ public class KylinModel2x extends KylinBaseModel {
             String type = j.getJSONObject("join").getString("type").toUpperCase();
             String pTable = j.getString("table");
             String onStr = on.stream().collect(Collectors.joining(" and "));
-            return String.format("\n %s JOIN %s %s ON %s", type, pTable, j.getString("alias"), onStr);
+            return String.format("\n %s JOIN %s %s ON %s", type, formatTableName(pTable), j.getString("alias"), onStr);
         }).collect(Collectors.joining(" "));
         return s;
+    }
+    
+    @Override
+    public String getTableWithAliasSuffix(String table) {
+        return table + " " + StringUtils.substringAfter(table, ".");
     }
 
 }

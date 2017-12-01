@@ -189,7 +189,7 @@ public class KylinDataProvider extends DataProvider implements Aggregatable, Ini
                     ResponseEntity<String> restful = restTemplate.getForEntity(
                             "http://" + serverIp + "/kylin/api/model/{modelName}", String.class, modelName);
                     JSONObject jsonModel = JSONObject.parseObject(restful.getBody());
-                    switch (SqlMethod.coalesce(query.get(KYLIN_VERSION), "1.x")) {
+                    switch (SqlMethod.coalesce(dataSource.get(KYLIN_VERSION), "1.x")) {
                         case "1.x":
                             model = new KylinModel1x(jsonModel, serverIp, username, password);
                             break;

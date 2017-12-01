@@ -5,6 +5,8 @@ import org.cboard.dataprovider.config.ValueConfig;
 import org.cboard.dataprovider.util.SqlSyntaxHelper;
 import org.cboard.kylin.model.KylinBaseModel;
 
+import net.logstash.logback.encoder.org.apache.commons.lang.StringUtils;
+
 /**
  * Created by zyong on 2017/9/18.
  */
@@ -34,17 +36,17 @@ public class KylinSyntaxHelper extends SqlSyntaxHelper {
     public String getAggStr(ValueConfig vConfig) {
         switch (vConfig.getAggType()) {
             case "sum":
-                return "SUM(" + kylinModel.getColumnWithAliasPrefix(vConfig.getColumn()) + ") AS sum_" + vConfig.getColumn();
+                return "SUM(" + kylinModel.getColumnWithAliasPrefix(vConfig.getColumn()) + ") AS sum_" + StringUtils.substringAfter(vConfig.getColumn(), ".");
             case "avg":
-                return "AVG(" + kylinModel.getColumnWithAliasPrefix(vConfig.getColumn()) + ") AS avg_" + vConfig.getColumn();
+                return "AVG(" + kylinModel.getColumnWithAliasPrefix(vConfig.getColumn()) + ") AS avg_" + StringUtils.substringAfter(vConfig.getColumn(), ".");
             case "max":
-                return "MAX(" + kylinModel.getColumnWithAliasPrefix(vConfig.getColumn()) + ") AS max_" + vConfig.getColumn();
+                return "MAX(" + kylinModel.getColumnWithAliasPrefix(vConfig.getColumn()) + ") AS max_" + StringUtils.substringAfter(vConfig.getColumn(), ".");
             case "min":
-                return "MIN(" + kylinModel.getColumnWithAliasPrefix(vConfig.getColumn()) + ") AS min_" + vConfig.getColumn();
+                return "MIN(" + kylinModel.getColumnWithAliasPrefix(vConfig.getColumn()) + ") AS min_" + StringUtils.substringAfter(vConfig.getColumn(), ".");
             case "distinct":
-                return "COUNT(DISTINCT " + kylinModel.getColumnWithAliasPrefix(vConfig.getColumn()) + ") AS count_d_" + vConfig.getColumn();
+                return "COUNT(DISTINCT " + kylinModel.getColumnWithAliasPrefix(vConfig.getColumn()) + ") AS count_d_" + StringUtils.substringAfter(vConfig.getColumn(), ".");
             default:
-                return "COUNT(" + kylinModel.getColumnWithAliasPrefix(vConfig.getColumn()) + ") AS count_" + vConfig.getColumn();
+                return "COUNT(" + kylinModel.getColumnWithAliasPrefix(vConfig.getColumn()) + ") AS count_" + StringUtils.substringAfter(vConfig.getColumn(), ".");
         }
     }
 

@@ -15,13 +15,17 @@ var crossTable = {
             colContent = "<tr>";
         for (var i = 0; i < chartConfig.groups.length; i++) {
             var groupId = chartConfig.groups[i].id;
+            var rowHeaderSortg = true;
             var colspan = 1;
             var colList = [];
+            _.each(chartConfig.groups, function(g, index) {
+               index <= i && g.sort === undefined ? rowHeaderSortg = false : null;
+            });
             for (var t = 0; t < chartConfig.keys.length; t++) {
                 colContent += "<th class=" + data[i][t].property + "><div></div></th>";
             }
             for (var y = chartConfig.keys.length; y < data[i].length; y++) {
-                if ((data[i][y + 1]) && (data[i][y].data == data[i][y + 1].data)) {
+                if (data[i][y + 1] && (data[i][y].data == data[i][y + 1].data) && rowHeaderSortg) {
                     if (i > 0) {
                         var noEqual = false;
                         for (var s = i - 1; s > -1; s--) {
@@ -30,7 +34,7 @@ var crossTable = {
                                 break;
                             }
                         }
-                        if (noEqual) {
+                        if (noEqual ) {
                             colList.push({
                                 data: data[i][y].data,
                                 colSpan: colspan,
@@ -223,15 +227,18 @@ var crossTable = {
                     }
                     cur_data = "<div class='table_drill_cell' " + d + ">" + cur_data + "</div>";
                 }
-                var sort = chartConfig.keys[m].sort;
-                if (m > 0 && sort) {
+                var sortg = true;
+                _.each(chartConfig.keys, function(key, index) {
+                    index <= m && key.sort === undefined ? sortg = false : null;
+                });
+                if (m > 0 && sortg) {
                     if (currentCell.rowSpan == 'row_null' && rowParentCell.rowSpan == 'row_null' && !isFirstLine) {
                         rowContent += "<th class=row_null><div></div></th>";
                     } else {
                         rowContent += "<th style='text-align:"+align+"' class=row><div>" + cur_data + "</div></th>";
                     }
                 } else {
-                    if (currentCell.rowSpan == 'row_null' && !isFirstLine && sort) {
+                    if (currentCell.rowSpan == 'row_null' && !isFirstLine && sortg) {
                         rowContent += "<th class=row_null><div></div></th>";
                     } else {
                         rowContent += "<th style='text-align:"+align+"' class=row><div>" + cur_data + "</div></th>";

@@ -15,6 +15,10 @@ import org.cboard.dataprovider.config.*;
 import org.cboard.dataprovider.result.AggregateResult;
 import org.cboard.dataprovider.util.DPCommonUtils;
 import org.cboard.dataprovider.util.SqlHelper;
+import org.cboard.kylin.model.KylinBaseModel;
+import org.cboard.kylin.model.KylinModel1x;
+import org.cboard.kylin.model.KylinModel2x;
+import org.cboard.util.SqlMethod;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
@@ -67,9 +71,9 @@ public class KylinDataProvider extends DataProvider implements Aggregatable, Ini
     @QueryParameter(label = "Data Model *", type = QueryParameter.Type.Input, required = true)
     private String DATA_MODEL = "datamodel";
 
-    private static final CacheManager<KylinModel> modelCache = new HeapCacheManager<>();
+    private static final CacheManager<KylinBaseModel> modelCache = new HeapCacheManager<>();
 
-    private KylinModel kylinModel;
+    private KylinBaseModel kylinModel;
     private SqlHelper sqlHelper;
 
     private String getKey(Map<String, String> dataSource, Map<String, String> query) {
@@ -132,8 +136,8 @@ public class KylinDataProvider extends DataProvider implements Aggregatable, Ini
         String fsql = null;
         String exec = null;
         List<String> filtered = new ArrayList<>();
-        String tableName = kylinModel.getTable(columnName);
-        String columnAliasName = kylinModel.getColumnAndAlias(columnName);
+        String tableName = kylinModel.getTableOfColumn(columnName);
+        String columnAliasName = kylinModel.getColumnWithAliasPrefix(columnName);
         String whereStr = "";
         if (config != null) {
             Stream<DimensionConfig> c = config.getColumns().stream();
@@ -145,7 +149,7 @@ public class KylinDataProvider extends DataProvider implements Aggregatable, Ini
                     .filter(e -> {
                         if (e instanceof DimensionConfig) {
                             DimensionConfig dc = (DimensionConfig) e;
-                            return tableName.equals(kylinModel.getTable(dc.getColumnName()));
+                            return tableName.equals(kylinModel.getTableOfColumn(dc.getColumnName()));
                         } else {
                             return true;
                         }
@@ -168,14 +172,14 @@ public class KylinDataProvider extends DataProvider implements Aggregatable, Ini
         return filtered.toArray(new String[]{});
     }
 
-    private KylinModel getModel(boolean reload) throws Exception {
+    private KylinBaseModel getModel(boolean reload) throws Exception {
         String modelName = query.get(DATA_MODEL);
         String serverIp = dataSource.get(SERVERIP);
         String username = dataSource.get(USERNAME);
         String password = dataSource.get(PASSWORD);
 
         String key = getKey(dataSource, query);
-        KylinModel model = modelCache.get(key);
+        KylinBaseModel model = modelCache.get(key);
         if (model == null || reload) {
             synchronized (key.intern()) {
                 model = modelCache.get(key);
@@ -185,7 +189,17 @@ public class KylinDataProvider extends DataProvider implements Aggregatable, Ini
                     ResponseEntity<String> restful = restTemplate.getForEntity(
                             "http://" + serverIp + "/kylin/api/model/{modelName}", String.class, modelName);
                     JSONObject jsonModel = JSONObject.parseObject(restful.getBody());
-                    model = new KylinModel(jsonModel, serverIp, username, password);
+                    switch (SqlMethod.coalesce(query.get(KYLIN_VERSION), "1.x")) {
+                        case "1.x":
+                            model = new KylinModel1x(jsonModel, serverIp, username, password);
+                            break;
+                        case "2.x":
+                            model = new KylinModel2x(jsonModel, serverIp, username, password);
+                            break;
+                        default:
+                            model = new KylinModel1x(jsonModel, serverIp, username, password);
+                    }
+
                     modelCache.put(key, model, 1 * 60 * 60 * 1000);
                 }
             }

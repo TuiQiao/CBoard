@@ -11,19 +11,16 @@ import org.cboard.dataprovider.aggregator.Aggregatable;
 import org.cboard.dataprovider.annotation.DatasourceParameter;
 import org.cboard.dataprovider.annotation.ProviderName;
 import org.cboard.dataprovider.annotation.QueryParameter;
-import org.cboard.dataprovider.config.*;
+import org.cboard.dataprovider.config.AggConfig;
+import org.cboard.dataprovider.config.ConfigComponent;
+import org.cboard.dataprovider.config.DimensionConfig;
 import org.cboard.dataprovider.result.AggregateResult;
 import org.cboard.dataprovider.util.DPCommonUtils;
 import org.cboard.dataprovider.util.SqlHelper;
 import org.cboard.kylin.model.KylinBaseModel;
-import org.cboard.kylin.model.KylinModel1x;
-import org.cboard.kylin.model.KylinModel2x;
-import org.cboard.util.SqlMethod;
+import org.cboard.kylin.model.KylinModelFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.http.ResponseEntity;
-import org.springframework.http.client.support.BasicAuthorizationInterceptor;
-import org.springframework.web.client.RestTemplate;
 
 import java.sql.*;
 import java.util.*;
@@ -44,32 +41,26 @@ public class KylinDataProvider extends DataProvider implements Aggregatable, Ini
             value = "domain:port",
             placeholder = "domain:port",
             order = 1)
-    private String SERVERIP = "serverIp";
-
-    @DatasourceParameter(label = "Kylin Version *",
-            value = "1.x", options = {"1.x", "2.x"},
-            type = DatasourceParameter.Type.Select,
-            order = 2)
-    private String KYLIN_VERSION = "kylinVersion";
+    public static final String SERVERIP = "serverIp";
 
     @DatasourceParameter(label = "User Name (for Kylin Server) *",
             type = DatasourceParameter.Type.Input,
             required = true,
             order = 3)
-    private String USERNAME = "username";
+    public static final String USERNAME = "username";
 
     @DatasourceParameter(label = "Password", type = DatasourceParameter.Type.Password, order = 4)
-    private String PASSWORD = "password";
+    public static final String PASSWORD = "password";
 
     // ----------- QueryParameter Start
 
     @QueryParameter(label = "Kylin Project *",
             type = QueryParameter.Type.Input,
             required = true)
-    private String PROJECT = "project";
+    public static final String PROJECT = "project";
 
     @QueryParameter(label = "Data Model *", type = QueryParameter.Type.Input, required = true)
-    private String DATA_MODEL = "datamodel";
+    public static final String DATA_MODEL = "datamodel";
 
     private static final CacheManager<KylinBaseModel> modelCache = new HeapCacheManager<>();
 
@@ -173,33 +164,13 @@ public class KylinDataProvider extends DataProvider implements Aggregatable, Ini
     }
 
     private KylinBaseModel getModel(boolean reload) throws Exception {
-        String modelName = query.get(DATA_MODEL);
-        String serverIp = dataSource.get(SERVERIP);
-        String username = dataSource.get(USERNAME);
-        String password = dataSource.get(PASSWORD);
-
         String key = getKey(dataSource, query);
         KylinBaseModel model = modelCache.get(key);
         if (model == null || reload) {
             synchronized (key.intern()) {
                 model = modelCache.get(key);
                 if (model == null || reload) {
-                    RestTemplate restTemplate = new RestTemplate();
-                    restTemplate.getInterceptors().add(new BasicAuthorizationInterceptor(username, password));
-                    ResponseEntity<String> restful = restTemplate.getForEntity(
-                            "http://" + serverIp + "/kylin/api/model/{modelName}", String.class, modelName);
-                    JSONObject jsonModel = JSONObject.parseObject(restful.getBody());
-                    switch (SqlMethod.coalesce(dataSource.get(KYLIN_VERSION), "1.x")) {
-                        case "1.x":
-                            model = new KylinModel1x(jsonModel, serverIp, username, password);
-                            break;
-                        case "2.x":
-                            model = new KylinModel2x(jsonModel, serverIp, username, password);
-                            break;
-                        default:
-                            model = new KylinModel1x(jsonModel, serverIp, username, password);
-                    }
-
+                    model = KylinModelFactory.getKylinModel(dataSource, query);
                     modelCache.put(key, model, 1 * 60 * 60 * 1000);
                 }
             }

@@ -3,6 +3,7 @@ package org.cboard.kylin.model;
 import com.alibaba.fastjson.JSONObject;
 import org.apache.commons.collections.map.HashedMap;
 import org.cboard.exception.CBoardException;
+import org.cboard.kylin.KylinDataProvider;
 import org.cboard.kylin.TableMap;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.client.support.BasicAuthorizationInterceptor;
@@ -18,6 +19,8 @@ import java.util.stream.Collectors;
 public abstract class KylinBaseModel implements Serializable {
 
     JSONObject model;
+    String[] kylinVersion;
+    Map<String, String> query, dataSource;
     Map<String, String> columnTable = new HashedMap();
     /**
      * key: db.tablename, alias: anystring
@@ -28,14 +31,17 @@ public abstract class KylinBaseModel implements Serializable {
 
     String serverIp, username, password;
 
-    public KylinBaseModel(JSONObject model, String serverIp, String username, String password) throws Exception {
+    public KylinBaseModel(JSONObject model, Map<String, String> dataSource, Map<String, String> query, String[] version) throws Exception {
         if (model == null) {
             throw new CBoardException("Model not found");
         }
+        this.serverIp = dataSource.get(KylinDataProvider.SERVERIP);
+        this.username = dataSource.get(KylinDataProvider.USERNAME);
+        this.password = dataSource.get(KylinDataProvider.PASSWORD);
         this.model = model;
-        this.serverIp = serverIp;
-        this.username = username;
-        this.password = password;
+        this.dataSource = dataSource;
+        this.query = query;
+        this.kylinVersion = version;
         initMetaData();
     }
 
@@ -45,6 +51,10 @@ public abstract class KylinBaseModel implements Serializable {
      */
     public String getColumnWithAliasPrefix(String column) {
         return tableAlias.get(columnTable.get(column)) + "." + surroundWithQuta(column);
+    }
+
+    public ResponseEntity<String> getTableInfoRest(RestTemplate restTemplate, String table) {
+        return restTemplate.getForEntity("http://" + serverIp + "/kylin/api/tables/{tableName}", String.class, table);
     }
 
     /**
@@ -66,7 +76,7 @@ public abstract class KylinBaseModel implements Serializable {
     public Map<String, String> initColumnsDataType(String table) {
         RestTemplate restTemplate = new RestTemplate();
         restTemplate.getInterceptors().add(new BasicAuthorizationInterceptor(username, password));
-        ResponseEntity<String> a = restTemplate.getForEntity("http://" + serverIp + "/kylin/api/tables/{tableName}", String.class, table);
+        ResponseEntity<String> a = getTableInfoRest(restTemplate, table);
         JSONObject jsonObject = JSONObject.parseObject(a.getBody());
         Map<String, String> result = new HashedMap();
         jsonObject.getJSONArray("columns").stream().map(e -> (JSONObject) e).forEach(e -> result.put(e.getString("name"), e.getString("datatype")));

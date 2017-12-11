@@ -1,16 +1,15 @@
 package org.cboard.kylin.model;
 
 import com.alibaba.fastjson.JSONObject;
-import org.apache.commons.collections.map.HashedMap;
 import org.apache.commons.lang.StringUtils;
-import org.cboard.exception.CBoardException;
-import org.cboard.kylin.TableMap;
+import org.cboard.kylin.KylinDataProvider;
 import org.springframework.http.ResponseEntity;
-import org.springframework.http.client.support.BasicAuthorizationInterceptor;
 import org.springframework.web.client.RestTemplate;
 
-import java.io.Serializable;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 /**
@@ -22,8 +21,8 @@ import java.util.stream.Collectors;
  */
 public class KylinModel2x extends KylinBaseModel {
 
-    public KylinModel2x(JSONObject model, String serverIp, String username, String password) throws Exception {
-        super(model, serverIp, username, password);
+    public KylinModel2x(JSONObject model, Map<String, String> dataSource, Map<String, String> query, String[] version) throws Exception {
+        super(model, dataSource, query, version);
     }
 
     /**
@@ -34,6 +33,21 @@ public class KylinModel2x extends KylinBaseModel {
     @Override
     public String getColumnWithAliasPrefix(String column) {
         return formatTableName(column);
+    }
+
+    @Override
+    public ResponseEntity<String> getTableInfoRest(RestTemplate restTemplate, String table) {
+
+        if ("0".equals(this.kylinVersion[1])) {
+            // 2.0
+            return super.getTableInfoRest(restTemplate, table);
+        } else {
+            String project = this.query.get(KylinDataProvider.PROJECT);
+            Map<String, Object> urlParams = new HashMap<>();
+            urlParams.put("project", project);
+            urlParams.put("tableName", table);
+            return restTemplate.getForEntity("http://" + serverIp + "/kylin/api/tables/{project}/{tableName}", String.class, urlParams);
+        }
     }
 
     /**

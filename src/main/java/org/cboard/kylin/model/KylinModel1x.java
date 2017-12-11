@@ -15,8 +15,8 @@ import java.util.Map;
  */
 public class KylinModel1x extends KylinBaseModel {
 
-    public KylinModel1x(JSONObject model, String serverIp, String username, String password) throws Exception {
-        super(model, serverIp, username, password);
+    public KylinModel1x(JSONObject model, Map<String, String> dataSource, Map<String, String> query, String[] version) throws Exception {
+        super(model, dataSource, query, version);
     }
 
     @Override

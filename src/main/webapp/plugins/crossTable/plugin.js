@@ -1,428 +1,507 @@
 /**
  * Created by Fine on 2016/12/4.
  */
+var CBCrossTable = function(args) {
+    this.args = args;
+    this.data = args.data;
+    this.chartConfig = args.chartConfig;
+    this.tall = args.tall;
+    this.pageDataNum = 20;
+    this.drill = args.drill;
+    this.random = Math.random().toString(36).substring(2);
+    this.toolbarDivId = "toolbar_" + this.random;
+    this.tableDivId = "table_" + this.random;
+    this.pageDivId = "page_" + this.random;
+    this.container = args.container;
+};
 
-var crossTable = {
-    table: function (args) {
-        var data = args.data,
-            chartConfig = args.chartConfig,
-            tall = args.tall,
-            pageDataNum = 20,
-            drill = args.drill,
-            random = Math.random().toString(36).substring(2),
-            container = args.container;
-        var html = "<table class = 'table_wrapper' id='tableWrapper" + random + "'><thead class='fixedHeader'>",
-            colContent = "<tr>";
-        for (var i = 0; i < chartConfig.groups.length; i++) {
-            var groupId = chartConfig.groups[i].id;
-            var rowHeaderSortg = true;
-            var colspan = 1;
-            var colList = [];
-            _.each(chartConfig.groups, function(g, index) {
-               index <= i && g.sort === undefined ? rowHeaderSortg = false : null;
-            });
-            for (var t = 0; t < chartConfig.keys.length; t++) {
-                colContent += "<th class=" + data[i][t].property + "><div></div></th>";
-            }
-            for (var y = chartConfig.keys.length; y < data[i].length; y++) {
-                if (data[i][y + 1] && (data[i][y].data == data[i][y + 1].data) && rowHeaderSortg) {
-                    if (i > 0) {
-                        var noEqual = false;
-                        for (var s = i - 1; s > -1; s--) {
-                            if (data[s][y].data != data[s][y + 1].data) {
-                                noEqual = true;
-                                break;
-                            }
-                        }
-                        if (noEqual ) {
-                            colList.push({
-                                data: data[i][y].data,
-                                colSpan: colspan,
-                                property: data[i][y].property
-                            });
-                            colspan = 1;
-                        }
-                        else {
-                            colspan++;
-                        }
-                    }
-                    else if (i == 0) {
-                        colspan++;
+CBCrossTable.prototype.table = function() {
+    // --------------------------------------------- Render Start ---------------------------------------------//
+    // Infomation and Operation Bannder
+    var toolbarTemplate = "\
+        <div class='toolbar' id='{toolbarDivId}'> \
+            {bannerContent} \
+        </div>";
+    $(this.container).html(toolbarTemplate.render({toolbarDivId: this.toolbarDivId, randomId: this.random, bannerContent: this.getToolBarContent()}));
+
+    // Table Body
+    var bodyTemplate = "\
+        <div class='tableView' id='{tableDivId}' style='width:99%;max-height:{height}px;overflow:auto;'>\
+            <table class='table_wrapper'>\
+                <thead class='fixedHeader'>\
+                    {columnHeader}\
+                    {valueHeader}\
+                </thead>\
+                <tbody class='scrollContent'>\
+                    {dataContent}\
+                </tbody>\
+            </table>\
+        </div>";
+    var columnHeader = this.genColumnHeader();
+    var valueHeader = this.getValueHeader();
+    var pagedData = this.paginationProcessData(this.pageDataNum);
+    var dataContent = this.getDataContent(pagedData[0]);
+    var bodyHtml = bodyTemplate.render({
+        tableDivId: this.tableDivId,
+        columnHeader: columnHeader,
+        valueHeader: valueHeader,
+        dataContent: dataContent,
+        height: this.tall
+    });
+    $(this.container).append(bodyHtml);
+
+    // Pagination
+    var pageOptionDom = "<select><option value='20'>20</option><option value='50'>50</option><option value='100'>100</option><option value='150'>150</option></select>";
+    var pageinationTemplate = "\
+        <div id='{pageDivId}'>\
+            <div class='optionNum'>\
+                <span>{text_show}</span> {pageOptionDom} <span>{text_items}</span>\
+            </div>\
+            <div class='page'><ul></ul></div>\
+        </div>";
+    $(this.container).append(pageinationTemplate.render({
+        pageDivId: this.pageDivId,
+        pageOptionDom: pageOptionDom,
+        text_show: cboardTranslate("CROSS_TABLE.SHOW"),
+        text_items: cboardTranslate("CROSS_TABLE.ENTRIES")
+    }));
+    // --------------------------------------------- Render End ---------------------------------------------//
+
+    // Bind Event
+    this.export();
+    if (this.data.length) {
+        this.renderPagination(pagedData, 1);
+        this.clickPageNum(pagedData);
+        this.clickNextPrev(pagedData);
+        this.selectPageSize();
+    }
+
+};
+
+CBCrossTable.prototype.getValueHeader = function() {
+    var vHeaderHtml = "<tr>";
+    var vHeaderRowIdx = this.chartConfig.groups.length;
+    var vHeaderData = this.data[vHeaderRowIdx];
+    var cellTemplate = "<th class='{thClass}'><div>{value}</div></th>";
+    for (var k = 0; k < vHeaderData.length; k++) {
+        vHeaderHtml += cellTemplate.render({thClass: vHeaderData[k].property, value: vHeaderData[k].data});
+    }
+    vHeaderHtml += "</tr>";
+    return vHeaderHtml;
+};
+
+CBCrossTable.prototype.getToolBarContent = function() {
+    var headerLines = this.chartConfig.groups.length + 1;
+    var colNum = this.data[0].length;
+    var rowNum = colNum ? this.data.length - headerLines : 0;
+    var contentTemplate = "<span class='info'><b>info: </b>{rowNum} x {colNum}</span> <span class='exportBnt' title='Export'></span>";
+    return contentTemplate.render({rowNum: rowNum, colNum: colNum});
+};
+
+// Is all configs, from first index to current index, have sort property
+CBCrossTable.prototype.checkSortG = function(configs) {
+    var sortg = [];
+    for (var idx = 0; idx < configs.length; idx++) {
+        var isSortg = true;
+        _.each(configs, function (g, i) {
+            i <= idx && g.sort === undefined ? isSortg = false : null;
+        });
+        sortg[idx] = isSortg;
+    }
+    return sortg;
+};
+
+CBCrossTable.prototype.genColumnHeader = function() {
+    var drill = this.drill;
+    var columnHeader = "<tr>";
+    var rowLengthOfColHeader = this.chartConfig.groups.length;
+    var COLUM_HEADER_SORT_G = this.checkSortG(this.chartConfig.groups);
+
+    for (var r = 0; r < rowLengthOfColHeader; r++) {
+        var dataStartColIdx = this.chartConfig.keys.length;
+        var rowData = this.data[r];
+        var colspan = 1;
+        var colList = [];
+        /* Top-Left empty corner */
+        for (var t = 0; t < dataStartColIdx; t++) {
+            columnHeader += "<th class='header_empty'><div></div></th>";
+        }
+        for (cidx = dataStartColIdx; cidx < rowData.length; cidx++) {
+            if (
+                rowData[cidx + 1] &&  // has next column
+                (rowData[cidx].data === rowData[cidx + 1].data) && // equal with next column
+                COLUM_HEADER_SORT_G[r]
+            ) {
+                // Compare parent cell
+                var equalG = true;
+                for (var pRow = r - 1; pRow >= 0; pRow--) {
+                    if (this.data[pRow][cidx].data !== this.data[pRow][cidx + 1].data) {
+                        equalG = false;
+                        break;
                     }
                 }
-                else {
-                    data[i][y] != data[i][y - 1] ? colList.push({
-                        data: data[i][y].data,
+                if (!equalG) {
+                    colList.push({
+                        data: rowData[cidx].data,
                         colSpan: colspan,
-                        property: data[i][y].property
-                    }) : null;
+                        property: rowData[cidx].property
+                    });
                     colspan = 1;
-                }
-            }
-            for (var c = 0; c < colList.length; c++) {
-                var d = ""
-                if (drill && drill.config[groupId] && (drill.config[groupId].down || drill.config[groupId].up)) {
-                    d += "class='table_drill_cell'";
-                    if (drill.config[groupId].down) {
-                        d += " drill-down='" + groupId + "' ";
-                    }
-                    if (drill.config[groupId].up) {
-                        d += " drill-up='" + groupId + "' ";
-                    }
-                }
-                var value = "<div " + d + ">" + colList[c].data + "</div>";
-                colContent += colList[c].colSpan > 1 ? "<th colspan=" + colList[c].colSpan +
-                    " class=" + colList[c].property + ">" + value + "</th>" :
-                    "<th class=" + colList[c].property + ">" + value + "</th>";
-            }
-            colContent += "</tr><tr>";
-        }
-        for (var k = 0; k < data[chartConfig.groups.length].length; k++) {
-            colContent += "<th class=" + data[chartConfig.groups.length][k].property + "><div>" + data[chartConfig.groups.length][k].data + "</div></th>";
-        }
-        html += colContent + "</tr></thead><tbody class='scrollContent'>";
-        var headerLines = chartConfig.groups.length + 1;
-        var dataPage = this.paginationProcessData(data, headerLines, pageDataNum);
-        var colNum = data[0].length;
-        var rowNum = colNum ? data.length - headerLines : 0;
-        var trDom = this.render(dataPage[0], chartConfig, drill);
-        html = html + trDom + "</tbody></table>";
-        var optionDom = "<select><option value='20'>20</option><option value='50'>50</option><option value='100'>100</option><option value='150'>150</option></select>";
-        var p_class = "p_" + random;
-        var PaginationDom = "<div class='" + p_class + "'><div class='optionNum'><span>" + cboardTranslate("CROSS_TABLE.SHOW") + "</span>" + optionDom + "<span>" + cboardTranslate("CROSS_TABLE.ENTRIES") + "</span></div><div class='page'><ul></ul></div></div>";
-        var operate = "<div class='toolbar toolbar" + random + "'><span class='info'><b>info: </b>" + rowNum + " x " + colNum + "</span>" +
-            "<span class='exportBnt' title='" + cboardTranslate("CROSS_TABLE.EXPORT") + "'></span></div>";
-        $(container).html(operate);
-        $(container).append("<div class='tableView table_" + random + "' style='width:99%;max-height:" + tall + "px;overflow:auto'>" + html + "</div>");
-        $(container).append(PaginationDom);
-        var pageObj = {
-            data: dataPage,
-            chartConfig: chartConfig,
-            drill: drill
-        };
-        data.length ? this.renderPagination(dataPage.length, 1, pageObj, $('.' + p_class + ' .page>ul')[0]) : null;
-        this.clickPageNum(dataPage, chartConfig, drill, p_class);
-        this.clickNextPrev(dataPage.length, pageObj, p_class);
-        this.selectDataNum(data, chartConfig.groups.length + 1, chartConfig, drill, p_class, "table_" + random, args.render);
-        this.export(random, data);
-    },
-    bandDrillEvent: function (t_class, drill, render) {
-        $('.' + t_class + ' .table_drill_cell[drill-down]').click(function(){
-            var down = $(this).attr('drill-down');
-            var value = $(this).html();
-            drill.drillDown(down, value, render);
-        });
-        $.contextMenu({
-            selector: '.' + t_class + ' .table_drill_cell',
-            build: function ($trigger, e) {
-                var down = $trigger.attr('drill-down');
-                var up = $trigger.attr('drill-up');
-                var value = $trigger.html();
-                var items = {};
-                if (up) {
-                    items.up = {name: cboardTranslate("COMMON.ROLL_UP"), icon: "fa-arrow-up"}
-                }
-                if (down) {
-                    items.down = {name: cboardTranslate("COMMON.DRILL_DOWN"), icon: "fa-arrow-down"}
-                }
-                return {
-                    callback: function (key, options) {
-                        if ('up' == key) {
-                            drill.drillUp(up, render);
-                        } else if ('down' == key) {
-                            drill.drillDown(down, value, render);
-                        }
-                    },
-                    items: items
-                };
-            }
-        });
-
-    },
-    paginationProcessData: function (rawData, headerLines, pageSize) {
-        var dataLength = rawData.length - headerLines;
-        var lastPageLines = dataLength % pageSize;
-        var fullSizePages = parseInt(dataLength / pageSize);
-        var totalPages;
-        lastPageLines == 0 ? totalPages = fullSizePages : totalPages = fullSizePages + 1;
-        var pageData = [];
-        for (var currentPage = 1; currentPage < totalPages + 1; currentPage++) {
-            var startRow = (currentPage - 1) * pageSize + headerLines;
-            var partData = rawData.slice(startRow, startRow + pageSize);
-            pageData.push(partData);
-        }
-        return pageData;
-    },
-    dataWrap: function (data){
-    	if(data == null || data == "" || !isNaN(Number(data))){
-            return data;
-        }
-    	var result = data, len = data.length, s = 40;
-        if(data && len > s){
-        	result = "";
-        	var curlen = 0, patten = /.*[\u4e00-\u9fa5]+.*$/;
-            for(var i = 0; i < len; i++){
-                patten.test(data[i]) ? curlen += 2 : curlen++;
-                if(curlen >= s){
-                    curlen = 0;
-                    result += "<br />";
-                }
-                result += data[i];
-            }
-        }
-        return result;
-    },
-    render: function (data, chartConfig, drill) {
-        var html = '';
-        if (data === undefined) {
-            return html;
-        }
-        
-        for(var n = 1; n < data.length; n++){
-        	for (var r = 0; r < chartConfig.keys.length; r++) {
-        		var node = data[n][r].data;
-        		if (r > 0) {
-        			var flag= true;
-        			for(var x = r; x >= 0; x--){
-        				if(data[n][x].data != data[n-1][x].data && chartConfig.keys[x].sort){
-        					flag = false;
-        					break;
-        				}
-        			}
-        			flag ? data[n][r] = {
-                            data: data[n][r].data,
-                            rowSpan: 'row_null',
-                            property: data[n][r].property
-                        } : data[n][r] = {
-                            data: data[n][r].data,
-                            rowSpan: 'row',
-                            property: data[n][r].property
-                        };
-        		}
-                else if (r == 0) {
-                    var preNode = n > 0 ? data[n - 1][r].data : null;
-                    (node == preNode) ? data[n][r] = {
-                        data: data[n][r].data,
-                        rowSpan: 'row_null',
-                        property: data[n][r].property
-                    } : data[n][r] = {
-                        data: data[n][r].data,
-                        rowSpan: 'row',
-                        property: data[n][r].property
-                    };
-                }
-        	}
-        }
-        
-        for (var n = 0; n < data.length; n++) {
-            var rowContent = "<tr>";
-            var isFirstLine = (n == 0) ? true : false;
-            for (var m = 0; m < chartConfig.keys.length; m++) {
-                var currentCell = data[n][m];
-                var rowParentCell = data[n][m - 1];
-                var cur_data = this.dataWrap(currentCell.data ? currentCell.data : "");
-                var keyId = chartConfig.keys[m].id;
-                var align = chartConfig.keys[m].align;
-                if (drill && drill.config[keyId] && (drill.config[keyId].down || drill.config[keyId].up)) {
-                    var d = "";
-                    if (drill.config[keyId].down) {
-                        d += " drill-down='" + keyId + "' ";
-                    }
-                    if (drill.config[keyId].up) {
-                        d += " drill-up='" + keyId + "' ";
-                    }
-                    cur_data = "<div class='table_drill_cell' " + d + ">" + cur_data + "</div>";
-                }
-/**
-                
-                var sort = chartConfig.keys[m].sort;
-                if (m > 0 && sort) {
-                	if (currentCell.rowSpan == 'row_null' && rowParentCell.rowSpan == 'row_null' && !isFirstLine) {
-*/
-                var sortg = true;
-                _.each(chartConfig.keys, function(key, index) {
-                    index <= m && key.sort === undefined ? sortg = false : null;
-                });
-                if (m > 0 && sortg) {
-                    if (currentCell.rowSpan == 'row_null' && rowParentCell.rowSpan == 'row_null' && !isFirstLine) {
-                        rowContent += "<th class=row_null><div></div></th>";
-                    } else {
-                        rowContent += "<th style='text-align:"+align+"' class=row><div>" + cur_data + "</div></th>";
-                    }
                 } else {
-                    if (currentCell.rowSpan == 'row_null' && !isFirstLine && sortg) {
-                        rowContent += "<th class=row_null><div></div></th>";
-                    } else {
-                        rowContent += "<th style='text-align:"+align+"' class=row><div>" + cur_data + "</div></th>";
-                    }
-                }
-            }
-            for (var y = chartConfig.keys.length; y < data[n].length; y++) {
-                var align = chartConfig.values[0].cols[(y-chartConfig.keys.length)%chartConfig.values[0].cols.length].align;
-                var temData = data[n][y].data/* === "" ? "" : data[n][y].data + " ABCD EFG HIJKLMNO PQ RST"*/;
-                var celData = this.dataWrap(temData);
-                rowContent += "<td style='text-align:"+align+"'class=" + data[n][m].property + "><div>" + celData + "</div></td>";
-            }
-            html = html + rowContent + "</tr>";
-        }
-        return html;
-    },
-    selectDataNum: function (data, num, chartConfig, drill, random, t_class, render) {
-        var _this = this;
-        $('.' + random).on('change', '.optionNum select', function (e) {
-            var pageDataNum = e.target.value;
-            var dataPage = _this.paginationProcessData(data, num, pageDataNum);
-
-            var dom = $(e.target.offsetParent).find('.page>ul')[0];
-            var tbody = $(e.target.offsetParent).find('tbody')[0];
-            tbody.innerHTML = (_this.render(dataPage[0], chartConfig, drill));
-            _this.renderPagination(dataPage.length, 1, null, dom);
-            $('.' + random).off('click');
-            _this.clickPageNum(dataPage, chartConfig, drill, random);
-            var pageObj = {
-                data: dataPage,
-                chartConfig: chartConfig,
-                drill: drill
-            };
-            _this.clickNextPrev(dataPage.length, pageObj, random);
-        });
-        _this.bandDrillEvent(t_class, drill, render);
-    },
-    clickPageNum: function (data, chartConfig, drill, random) {
-        var _this = this;
-        $('.' + random).on('click', 'a.pageLink', function (e) {
-            var pageNum = e.target.innerText - 1;
-            var pageObj = {
-                data: data,
-                chartConfig: chartConfig,
-                drill: drill
-            };
-
-            var dom = $(e.target.offsetParent).find('.page>ul')[0];
-            var tbody = $(e.target.offsetParent).find('tbody')[0];
-            tbody.innerHTML = _this.render(data[pageNum], chartConfig, drill);
-            _this.renderPagination(data.length, parseInt(e.target.innerText), pageObj, dom);
-        });
-    },
-    renderPagination: function (pageCount, pageNumber, pageObj, target) {
-        if (pageCount == 1) {
-            return  target.innerHTML = '';
-        }
-        var liStr = '<li><a class="previewLink">' + cboardTranslate("CROSS_TABLE.PREVIOUS_PAGE") + '</a></li>';
-        if (pageCount < 10) {
-            for (var a = 0; a < pageCount; a++) {
-                liStr += '<li><a class="pageLink">' + (a + 1) + '</a></li>';
-            }
-        }
-        else {
-            if (pageNumber < 6) {
-                for (var a = 0; a < pageNumber + 2; a++) {
-                    liStr += '<li><a class="pageLink">' + (a + 1) + '</a></li>';
-                }
-                liStr += '<li class="disable"><span class="ellipse">...</span></li>';
-                for (var i = pageCount - 2; i < pageCount; i++) {
-                    liStr += '<li><a class="pageLink">' + (i + 1) + '</a></li>';
-                }
-            } else if (pageNumber <= (pageCount - 5)) {
-                for (var c = 0; c < 2; c++) {
-                    liStr += '<li><a class="pageLink">' + (c + 1) + '</a></li>';
-                }
-                liStr += '<li class="disable"><span class="ellipse">...</span></li>';
-                for (var j = pageNumber - 2; j < pageNumber + 3; j++) {
-                    liStr += '<li><a class="pageLink">' + j + '</a></li>';
-                }
-                liStr += '<li class="disable"><span class="ellipse">...</span></li>';
-                for (var i = pageCount - 2; i < pageCount; i++) {
-                    liStr += '<li><a class="pageLink">' + (i + 1) + '</a></li>';
+                    colspan++;
                 }
             } else {
-                for (var c = 0; c < 2; c++) {
-                    liStr += '<li><a class="pageLink">' + (c + 1) + '</a></li>';
+                if (rowData[cidx] !== rowData[cidx - 1]) {
+                    colList.push({
+                        data: rowData[cidx].data,
+                        colSpan: colspan,
+                        property: rowData[cidx].property
+                    });
                 }
-                liStr += '<li class="disable"><span class="ellipse">...</span></li>';
-                for (var i = pageNumber - 2; i < pageCount + 1; i++) {
-                    liStr += '<li><a class="pageLink">' + i + '</a></li>';
-                }
+                colspan = 1;
             }
         }
-        liStr += '<li><a class="nextLink">' + cboardTranslate("CROSS_TABLE.NEXT_PAGE") + '</a></li>';
-        if (target) {
-            target.innerHTML = liStr;
-            if (pageNumber == 1) {
-                target.childNodes[0].setAttribute('class', 'hide');
-            } else if (pageNumber == pageCount) {
-                target.childNodes[target.childNodes.length - 1].setAttribute('class', 'hide');
-            }
-            this.buttonColor(pageNumber, target);
-        }
-        // else {
-        //     $('.page>ul').html(liStr);
-        //     if (pageNumber == 1) {
-        //         $('.page a.previewLink').addClass('hide');
-        //     } else if (pageNumber == pageCount) {
-        //         $('.page a.nextLink').addClass('hide');
-        //     }
-        //     this.buttonColor(pageNumber);
-        //     this.clickNextPrev(pageCount, pageObj);
-        // }
-    },
-    buttonColor: function (pageNum, target) {
-        if (target) {
-            var buttons = target.childNodes;
-            for (var i = 0; i < buttons.length; i++) {
-                buttons[i].childNodes[0].innerText == pageNum ? $(buttons[i].childNodes[0]).addClass('current') : null;
-            }
-        }
-    },
-    clickNextPrev: function (pageCount, pageObj, random) {
-        var _this = this;
-        $('.' + random).on('click', '.page a.previewLink', function (e) {
-            var kids = e.target.parentNode.parentNode.childNodes;
-            var dom = e.target.parentNode.parentNode.parentNode.childNodes[0];
-            var tbody = $(e.target.offsetParent).find('tbody')[0];
+        var headerDataHtml = "";
 
-            for (var i = 0; i < kids.length; i++) {
-                if (kids[i].childNodes[0].className.indexOf('current') > -1) {
-                    var pageNum = parseInt(kids[i].childNodes[0].text) - 1;
-                }
-            }
-            tbody.innerHTML = _this.render(pageObj.data[pageNum - 1], pageObj.chartConfig, pageObj.drill);
-            _this.renderPagination(pageCount, pageNum, pageObj, dom);
-            //_this.clickPageNum(pageObj.data, pageObj.chartConfig);
-        });
-        $('.' + random).on('click', '.page a.nextLink', function (e) {
-            var kids = e.target.parentNode.parentNode.childNodes;
-            var dom = e.target.parentNode.parentNode.parentNode.childNodes[0];
-            var tbody = $(e.target.offsetParent).find('tbody')[0];
+        var groupId = this.chartConfig.groups[r].id;
+        for (var cidx = 0; cidx < colList.length; cidx++) {
+            var drillAttr = this.getDrillAttr(groupId);
+            headerDataHtml += "\
+                 <th colspan='{colspan}' class='{thClass}'> \
+                    <div {drill}>{value}</div> \
+                 </th>".render({
+                colspan: colList[cidx].colSpan,
+                thClass: colList[cidx].property,
+                value: colList[cidx].data,
+                drill: drillAttr
+            });
+        }
+        columnHeader += headerDataHtml;
+        columnHeader += "</tr>";
+    }
+    return columnHeader;
+};
 
-            for (var i = 0; i < kids.length; i++) {
-                if (kids[i].childNodes[0].className.indexOf('current') > -1) {
-                    var pageNum = parseInt(kids[i].childNodes[0].text) + 1;
-                }
+CBCrossTable.prototype.getDrillAttr = function(drillKey) {
+    var drill = this.drill;
+    var drillAttr = "";
+    if (drill && drill.config[drillKey] && (drill.config[drillKey].down || drill.config[drillKey].up)) {
+        drillAttr += "class='table_drill_cell'";
+        if (drill.config[drillKey].down) {
+            drillAttr += " drill-down='" + drillKey + "' ";
+        }
+        if (drill.config[drillKey].up) {
+            drillAttr += " drill-up='" + drillKey + "' ";
+        }
+    }
+    return drillAttr;
+};
+
+CBCrossTable.prototype.bandDrillEvent = function (render) {
+    var drillCellSelector = '#' + this.tableDivId + ' .table_drill_cell[drill-down]';
+    var _this = this;
+    $(drillCellSelector).click(function(){
+        var down = $(this).attr('drill-down');
+        var value = $(this).html();
+        _this.drill.drillDown(down, value, render);
+    });
+    $.contextMenu({
+        selector: '#' + this.tableDivId + ' .table_drill_cell',
+        build: function ($trigger, e) {
+            var down = $trigger.attr('drill-down');
+            var up = $trigger.attr('drill-up');
+            var value = $trigger.html();
+            var items = {};
+            if (up) {
+                items.up = {name: cboardTranslate("COMMON.ROLL_UP"), icon: "fa-arrow-up"}
             }
-            tbody.innerHTML = _this.render(pageObj.data[pageNum - 1], pageObj.chartConfig, pageObj.drill);
-            _this.renderPagination(pageCount, pageNum, pageObj, dom);
-            //_this.clickPageNum(pageObj.data, pageObj.chartConfig);
-        });
-    },
-    export: function (random, data) {
-        $(".toolbar" + random + " .exportBnt").on('click', function () {
-            var xhr = new XMLHttpRequest();
-            var formData = new FormData();
-            formData.append('data', JSON.stringify({data: data, type: 'table'}));
-            xhr.open('POST', 'dashboard/tableToxls.do');
-            xhr.responseType = 'arraybuffer';
-            xhr.onload = function (e) {
-                var blob = new Blob([this.response], {type: "application/vnd.ms-excel"});
-                var objectUrl = URL.createObjectURL(blob);
-                var aForExcel = $("<a><span class='forExcel'>下载excel</span></a>").attr("href", objectUrl);
-                aForExcel.attr("download", "table.xls");
-                $("body").append(aForExcel);
-                $(".forExcel").click();
-                aForExcel.remove();
+            if (down) {
+                items.down = {name: cboardTranslate("COMMON.DRILL_DOWN"), icon: "fa-arrow-down"}
+            }
+            return {
+                callback: function (key, options) {
+                    if ('up' === key) {
+                        _this.drill.drillUp(up, render);
+                    } else if ('down' === key) {
+                        _this.drill.drillDown(down, value, render);
+                    }
+                },
+                items: items
             };
-            xhr.send(formData);
-        });
+        }
+    });
+};
 
+CBCrossTable.prototype.paginationProcessData = function (pageSize) {
+    var rawData = this.data;
+    var headerLines = this.chartConfig.groups.length + 1;
+    var dataLength = rawData.length - headerLines;
+    var lastPageLines = dataLength % pageSize;
+    var fullSizePages = parseInt(dataLength / pageSize);
+    var totalPages;
+    lastPageLines === 0 ? totalPages = fullSizePages : totalPages = fullSizePages + 1;
+    var pageData = [];
+    for (var currentPage = 1; currentPage < totalPages + 1; currentPage++) {
+        var startRow = (currentPage - 1) * pageSize + headerLines;
+        var partData = rawData.slice(startRow, startRow + pageSize);
+        pageData.push(partData);
+    }
+    return pageData;
+};
+
+CBCrossTable.prototype.dataWrap = function (data){
+    if(data === null || data === "" || !isNaN(Number(data))){
+        return data;
+    }
+    var result = data, len = data.length, s = 40;
+    if(data && len > s){
+        result = "";
+        var curlen = 0, patten = /.*[\u4e00-\u9fa5]+.*$/;
+        for(var i = 0; i < len; i++){
+            patten.test(data[i]) ? curlen += 2 : curlen++;
+            if(curlen >= s){
+                curlen = 0;
+                result += "<br />";
+            }
+            result += data[i];
+        }
+    }
+    return result;
+};
+
+CBCrossTable.prototype.getDataContent = function (data) {
+    var chartConfig = this.chartConfig, drill = this.drill;
+    var rowHeaderWidth = chartConfig.keys.length;
+    var ROW_HEADER_SORT_G = this.checkSortG(this.chartConfig.keys);
+    var html = '';
+    if (data === undefined) {
+        return html;
+    }
+
+    // Process row header
+    for(var r = 1; r < data.length; r++) {
+        for (var c = 0; c < rowHeaderWidth; c++) {
+            var cell = data[r][c];
+            var needMerge = true;
+            if (!ROW_HEADER_SORT_G[c]) {
+                needMerge = false;
+            } else {
+                for (var x = c; x >= 0; x--) {
+                    if (data[r][x].data !== data[r - 1][x].data) {
+                        needMerge = false;
+                        break;
+                    }
+                }
+            }
+            cell.rowSpan = needMerge ? 'row_null' : 'row';
+        }
+    }
+
+    for (var r = 0; r < data.length; r++) {
+        var rowContent = "<tr>";
+        var isFirstLine = (r === 0);
+        for (var c = 0; c < rowHeaderWidth; c++) {
+            var currentCell = data[r][c];
+            // add drill event
+            var keyId = chartConfig.keys[c].id;
+            var drillAttr = this.getDrillAttr(keyId);
+            // Align
+            var thStyle = "";
+            var colAlign = chartConfig.keys[c].align;
+            if (colAlign) {
+                thStyle = "style='text-align:" + colAlign + "'";
+            }
+            var rowHeaderDataHtml = "";
+            var dataWrap = this.dataWrap(currentCell.data ? currentCell.data : "");
+            if (currentCell.rowSpan === 'row_null' && !isFirstLine) {
+                rowHeaderDataHtml = "<th class='row_null'><div></div></th>";
+            } else {
+                rowHeaderDataHtml = "\
+                <th class='{class}' {thStyle}>\
+                  <div>\
+                    <div {drill}>{value}</div>\
+                  </div>\
+                </th>".render({
+                    class: isFirstLine ? 'row' : currentCell.rowSpan,
+                    thStyle: thStyle,
+                    drill: drillAttr,
+                    value: dataWrap
+                });
+            }
+            rowContent += rowHeaderDataHtml;
+        }
+
+        // Process row data
+        var dataCellStartIdx = chartConfig.keys.length;
+        for (var c = dataCellStartIdx; c < data[r].length; c++) {
+            var dataAlign = chartConfig.values[0].cols[(c - dataCellStartIdx) % chartConfig.values[0].cols.length].align;
+            thStyle = "";
+            if (dataAlign) {
+                thStyle = "style='text-align:" + dataAlign + "'";
+            }
+            var celData = this.dataWrap(data[r][c].data);
+            var dataHtml = "\
+            <td {thStyle} class='{class}'>\
+              <div>{value}</div>\
+            </td>\
+            ".render({thStyle: thStyle, value: celData, class: data[r][c].property});
+            rowContent += dataHtml;
+        }
+        html += (rowContent + "</tr>");
+    }
+    return html;
+};
+
+CBCrossTable.prototype.selectPageSize = function () {
+    var chartConfig = this.chartConfig,
+        drill = this.drill,
+        render = this.args.render;
+    var _this = this;
+    var selector = "#" + this.pageDivId;
+    $(selector).on('change', '.optionNum select', function (e) {
+        var pageDataNum = e.target.value;
+        var pagedData = _this.paginationProcessData(pageDataNum);
+
+        var dom = $(e.target.offsetParent).find('.page>ul')[0];
+        var tbody = $(e.target.offsetParent).find('tbody')[0];
+        tbody.innerHTML = (_this.getDataContent(pagedData[0], chartConfig, drill));
+        _this.renderPagination(pagedData, 1);
+        $(selector).off('click');
+        _this.clickPageNum(pagedData);
+        _this.clickNextPrev(pagedData);
+    });
+    _this.bandDrillEvent(render);
+};
+    
+CBCrossTable.prototype.clickPageNum = function (data) {
+    var _this = this;
+    var chartConfig = this.chartConfig, drill = this.drill;
+    var pageDivselector = "#" + this.pageDivId;
+    $(pageDivselector).on('click', 'a.pageLink', function (e) {
+        var pageNum = e.target.innerText - 1;
+        var tbody = $(e.target.offsetParent).find('tbody')[0];
+        tbody.innerHTML = _this.getDataContent(data[pageNum]);
+        _this.renderPagination(data, parseInt(e.target.innerText));
+    });
+};
+    
+CBCrossTable.prototype.renderPagination = function (pagedData, pageNumber) {
+    var pageCount = pagedData.length;
+    var ulSelector = "#" + this.pageDivId + ' .page>ul';
+    var target = $(ulSelector)[0];
+    if (pageCount == 1) {
+        return  target.innerHTML = '';
+    }
+    var liStr = '<li><a class="previewLink">' + cboardTranslate("CROSS_TABLE.PREVIOUS_PAGE") + '</a></li>';
+    if (pageCount < 10) {
+        for (var a = 0; a < pageCount; a++) {
+            liStr += '<li><a class="pageLink">' + (a + 1) + '</a></li>';
+        }
+    }
+    else {
+        if (pageNumber < 6) {
+            for (var a = 0; a < pageNumber + 2; a++) {
+                liStr += '<li><a class="pageLink">' + (a + 1) + '</a></li>';
+            }
+            liStr += '<li class="disable"><span class="ellipse">...</span></li>';
+            for (var i = pageCount - 2; i < pageCount; i++) {
+                liStr += '<li><a class="pageLink">' + (i + 1) + '</a></li>';
+            }
+        } else if (pageNumber <= (pageCount - 5)) {
+            for (var c = 0; c < 2; c++) {
+                liStr += '<li><a class="pageLink">' + (c + 1) + '</a></li>';
+            }
+            liStr += '<li class="disable"><span class="ellipse">...</span></li>';
+            for (var j = pageNumber - 2; j < pageNumber + 3; j++) {
+                liStr += '<li><a class="pageLink">' + j + '</a></li>';
+            }
+            liStr += '<li class="disable"><span class="ellipse">...</span></li>';
+            for (var i = pageCount - 2; i < pageCount; i++) {
+                liStr += '<li><a class="pageLink">' + (i + 1) + '</a></li>';
+            }
+        } else {
+            for (var c = 0; c < 2; c++) {
+                liStr += '<li><a class="pageLink">' + (c + 1) + '</a></li>';
+            }
+            liStr += '<li class="disable"><span class="ellipse">...</span></li>';
+            for (var i = pageNumber - 2; i < pageCount + 1; i++) {
+                liStr += '<li><a class="pageLink">' + i + '</a></li>';
+            }
+        }
+    }
+    liStr += '<li><a class="nextLink">' + cboardTranslate("CROSS_TABLE.NEXT_PAGE") + '</a></li>';
+    if (target) {
+        target.innerHTML = liStr;
+        if (pageNumber == 1) {
+            target.childNodes[0].setAttribute('class', 'hide');
+        } else if (pageNumber == pageCount) {
+            target.childNodes[target.childNodes.length - 1].setAttribute('class', 'hide');
+        }
+        this.buttonColor(pageNumber, target);
     }
 };
+    
+CBCrossTable.prototype.buttonColor = function (pageNum, target) {
+    if (target) {
+        var buttons = target.childNodes;
+        for (var i = 0; i < buttons.length; i++) {
+            buttons[i].childNodes[0].innerText == pageNum ? $(buttons[i].childNodes[0]).addClass('current') : null;
+        }
+    }
+};
+    
+CBCrossTable.prototype.clickNextPrev = function (pagedData) {
+    var _this = this;
+    var pageCount = pagedData.length;
+    var selector = "#" + this.pageDivId;
+    $(selector).on('click', '.page a.previewLink', function (e) {
+        var kids = e.target.parentNode.parentNode.childNodes;
+        var dom = e.target.parentNode.parentNode.parentNode.childNodes[0];
+        var tbody = $(e.target.offsetParent).find('tbody')[0];
+
+        for (var i = 0; i < kids.length; i++) {
+            if (kids[i].childNodes[0].className.indexOf('current') > -1) {
+                var pageNum = parseInt(kids[i].childNodes[0].text) - 1;
+            }
+        }
+        tbody.innerHTML = _this.getDataContent(pagedData[pageNum - 1]);
+        _this.renderPagination(pagedData, pageNum);
+    });
+    $(selector).on('click', '.page a.nextLink', function (e) {
+        var kids = e.target.parentNode.parentNode.childNodes;
+        var dom = e.target.parentNode.parentNode.parentNode.childNodes[0];
+        var tbody = $(e.target.offsetParent).find('tbody')[0];
+
+        for (var i = 0; i < kids.length; i++) {
+            if (kids[i].childNodes[0].className.indexOf('current') > -1) {
+                var pageNum = parseInt(kids[i].childNodes[0].text) + 1;
+            }
+        }
+        tbody.innerHTML = _this.getDataContent(pagedData[pageNum - 1]);
+        _this.renderPagination(pagedData, pageNum);
+    });
+};
+    
+CBCrossTable.prototype.export = function () {
+    var selector = "#" + this.toolbarDivId + " .exportBnt";
+    var _this = this;
+    $(selector).on('click', function () {
+        var xhr = new XMLHttpRequest();
+        var formData = new FormData();
+        formData.append('data', JSON.stringify({data: _this.data, type: 'table'}));
+        xhr.open('POST', 'dashboard/tableToxls.do');
+        xhr.responseType = 'arraybuffer';
+        xhr.onload = function (e) {
+            var blob = new Blob([this.response], {type: "application/vnd.ms-excel"});
+            var objectUrl = URL.createObjectURL(blob);
+            var aForExcel = $("<a><span class='forExcel'>下载excel</span></a>").attr("href", objectUrl);
+            aForExcel.attr("download", "table.xls");
+            $("body").append(aForExcel);
+            $(".forExcel").click();
+            aForExcel.remove();
+        };
+        xhr.send(formData);
+    });
+
+};
+

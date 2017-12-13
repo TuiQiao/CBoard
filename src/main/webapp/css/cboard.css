@@ -38,89 +38,6 @@
     text-align: right;
 }
 
-.tableView table {
-    border-bottom: 1px solid #d5d5d5;
-    border-right: 1px solid #d5d5d5;
-    margin-bottom: 0;
-    /*table-layout: fixed;*/
-    width: auto;
-    border-collapse: separate;
-    border-spacing: 0;
-}
-
-.tableView td,
-.tableView th {
-    /*border-left: 1px solid #d5d5d5;*/
-    /*border-top: 1px solid #d5d5d5;*/
-    /*text-align: right;*/
-    white-space: nowrap;
-    font-weight: normal;
-    font-size: 10px;
-    padding: 3px 0px;
-}
-
-.tableView th {
-    font-size: 10px;
-    /*font-weight: normal;*/
-    /*padding: 3px 9px 3px 4px;*/
-}
-
-.tableView .table {
-    font-weight: normal;
-    font-size: 10px;
-    width: 100%;
-    max-width: 100%;
-    margin-bottom: 20px;
-}
-
-
-.tableView table th.row {
-    border-top: 1px solid #d5d5d5;
-    white-space: nowrap;
-    text-align: center;
-}
-.tableView table td.data, .tableView table th.header_key {
-    border-left: 1px solid #d5d5d5;
-    border-top: 1px solid #d5d5d5;
-    text-align: center;
-    white-space: nowrap;
-}
-
-.tableView .header_key {
-    font-weight: bold;
-}
-
-.tableView table th.header_empty {
-    border-left: none;
-    border-top: none;
-    background: none;
-}
-.tableView table th {
-    background: #f9f9f9;
-    border-left: 1px solid #d5d5d5;
-}
-.tableView th.col {
-    border-top: 1px solid #d5d5d5;
-}
-.tableView th.all_null{
-    background: none;
-    border: 0;
-}
-.tableView th.row_null{
-    border-left: 1px solid #d5d5d5;
-}
-.tableView th.col_null{
-    border-left: 0px;
-    border-top: 1px solid #d5d5d5;
-}
-.tableView .table_drill_cell {
-    color: royalblue;
-    cursor: url(../imgs/right_click.png), auto;
-}
-.table_drill_cell:hover {
-    background-color: #999;
-    color: white !important;
-}
 .ui-select-choices-group{
     z-index: 1000;
 }
@@ -254,54 +171,6 @@
     top: 100%;
     left: 0;
 }
-.page {
-    margin: 10px auto;
-    width: 60%;
-    overflow: auto;
-    padding: 0 5px 5px 0;
-    float: right;
-}
-.page>ul {
-    margin: 10px auto;
-    list-style: none;
-    padding: 0;
-    margin: 0;
-    overflow: auto;
-    float: right;
-}
-.page li {
-    list-style: none;
-    padding: 0;
-    margin: 0;
-    float: left;
-    cursor: pointer;
-}
-a.pageLink, a.nextLink, a.previewLink {
-    float: left;
-    color: #666;
-    font-size: 14px;
-    line-height: 24px;
-    font-weight: normal;
-    text-align: center;
-    border: 1px solid #BBB;
-    width: 30px;
-    margin: 0 5px 0 0;
-    border-radius: 3px;
-    box-shadow: 0 1px 2px rgba(0,0,0,0.2);
-}
-a.pageLink:hover, a.nextLink:hover, a.previewLink:hover {
-    background-color: #585858;
-    color: white !important;
-}
-a.current {
-    background-color: #ccc;
-}
-a.nextLink, a.previewLink{
-    width: 80px;
-}
-a.hide{
-    display: none;
-}
 
 span.ellipse {
     background: none;
@@ -319,54 +188,11 @@ span.ellipse {
     padding: 0 7px;
     margin: 0 5px 0 0;
 }
-.optionNum {
-    float: left;
-    height: 26px;
-    width: 200px;
-    margin: 7px 20px 0 0;
-}
-.optionNum select {
-    margin: 0 6px 0 6px;
-    width: 60px;
-    height: 26px;
-}
+
 .header_key {
     font-weight: bold;
 }
-.toolbar {
-    width: 99%;
-    height: 30px;
-    margin: 0 0 10px 0;
-    box-shadow: 1px 1px 5px #ccc;
-    background-color: #F9F9F9;
-}
-.info {
-    display: inline-block;
-    float: left;
-    margin: 4px 0 0 5px;
-}
-.exportBnt, .drillUp, .drillDown{
-    margin:7px 5px 10px 5px;
-    float: right;
-    width: 15px;
-    height: 15px;
-    cursor: pointer;
-}
-.drillUp{
-    background: url("../imgs/drillup.png");
-    background-size: cover;
-}
-.drillDown{
-    background: url("../imgs/drilldown.svg");
-    background-size: cover;
-}
-.exportBnt{
-    background: url("../imgs/excel.svg");
-    background-size: cover;
-}
-div.operateBox {
-    position: relative;
-}
+
 div.newBoard {
     position: absolute;
     top: 20px;

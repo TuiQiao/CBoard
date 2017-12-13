@@ -22,11 +22,11 @@ CBCrossTable.prototype.table = function() {
         <div class='toolbar' id='{toolbarDivId}'> \
             {bannerContent} \
         </div>";
-    $(this.container).html(toolbarTemplate.render({toolbarDivId: this.toolbarDivId, randomId: this.random, bannerContent: this.getToolBarContent()}));
+    var toolbar = toolbarTemplate.render({toolbarDivId: this.toolbarDivId, bannerContent: this.getToolBarContent()});
 
     // Table Body
     var bodyTemplate = "\
-        <div class='tableView' id='{tableDivId}' style='width:99%;max-height:{height}px;overflow:auto;'>\
+        <div id='{tableDivId}' style='width:99%;max-height:{height}px;overflow:auto;'>\
             <table class='table_wrapper'>\
                 <thead class='fixedHeader'>\
                     {columnHeader}\
@@ -48,7 +48,6 @@ CBCrossTable.prototype.table = function() {
         dataContent: dataContent,
         height: this.tall
     });
-    $(this.container).append(bodyHtml);
 
     // Pagination
     var pageOptionDom = "<select><option value='20'>20</option><option value='50'>50</option><option value='100'>100</option><option value='150'>150</option></select>";
@@ -59,13 +58,21 @@ CBCrossTable.prototype.table = function() {
             </div>\
             <div class='page'><ul></ul></div>\
         </div>";
-    $(this.container).append(pageinationTemplate.render({
+    var pageination = pageinationTemplate.render({
         pageDivId: this.pageDivId,
         pageOptionDom: pageOptionDom,
         text_show: cboardTranslate("CROSS_TABLE.SHOW"),
         text_items: cboardTranslate("CROSS_TABLE.ENTRIES")
-    }));
+    });
     // --------------------------------------------- Render End ---------------------------------------------//
+
+    $(this.container).html(
+        "<div class='cross_table_view'>\
+          {toolbar}\
+          {body}\
+          {pageination}\
+        </div>".render({toolbar: toolbar, body: bodyHtml, pageination: pageination})
+    );
 
     // Bind Event
     this.export();

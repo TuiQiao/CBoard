@@ -57,7 +57,7 @@
 }
 
 .cross_table_view table th {
-    background: #f9f9f9;
+    background: rgba(238, 238, 238, 0.83);
     border-left: 1px solid #d5d5d5;
 }
 

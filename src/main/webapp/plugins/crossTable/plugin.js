@@ -86,12 +86,30 @@ CBCrossTable.prototype.table = function() {
 };
 
 CBCrossTable.prototype.getValueHeader = function() {
+    var chartConfig = this.chartConfig;
     var vHeaderHtml = "<tr>";
     var vHeaderRowIdx = this.chartConfig.groups.length;
     var vHeaderData = this.data[vHeaderRowIdx];
-    var cellTemplate = "<th class='{thClass}'><div>{value}</div></th>";
-    for (var k = 0; k < vHeaderData.length; k++) {
-        vHeaderHtml += cellTemplate.render({thClass: vHeaderData[k].property, value: vHeaderData[k].data});
+    var cellTemplate = "<th class='{thClass}' {thStyle}><div>{value}</div></th>";
+    for (var c = 0; c < vHeaderData.length; c++) {
+        var headerType = vHeaderData[c].column_header_header;
+        var style = "";
+        if (headerType) {
+            var align = chartConfig.keys[c].align;
+            if (align) {
+                style = this.styleObjToStr({'text-align': align});
+            }
+        } else {
+            var dataCellStartIdx = chartConfig.keys.length;
+            var dataAlign = chartConfig.values[0].cols[(c - dataCellStartIdx) % chartConfig.values[0].cols.length].align;
+            if (dataAlign) {
+                style = this.styleObjToStr({'text-align': dataAlign});
+            }
+        }
+        vHeaderHtml += cellTemplate.render({
+            thClass: vHeaderData[c].property,
+            thStyle: style,
+            value: vHeaderData[c].data});
     }
     vHeaderHtml += "</tr>";
     return vHeaderHtml;
@@ -316,7 +334,7 @@ CBCrossTable.prototype.getDataContent = function (data) {
             var thStyle = "";
             var colAlign = chartConfig.keys[c].align;
             if (colAlign) {
-                thStyle = "style='text-align:" + colAlign + "'";
+                thStyle = this.styleObjToStr({'text-align': colAlign});
             }
             var rowHeaderDataHtml = "";
             var dataWrap = this.dataWrap(currentCell.data ? currentCell.data : "");
@@ -344,7 +362,7 @@ CBCrossTable.prototype.getDataContent = function (data) {
             var dataAlign = chartConfig.values[0].cols[(c - dataCellStartIdx) % chartConfig.values[0].cols.length].align;
             thStyle = "";
             if (dataAlign) {
-                thStyle = "style='text-align:" + dataAlign + "'";
+                thStyle = this.styleObjToStr({'text-align': dataAlign});
             }
             var celData = this.dataWrap(data[r][c].data);
             var dataHtml = "\
@@ -357,6 +375,14 @@ CBCrossTable.prototype.getDataContent = function (data) {
         html += (rowContent + "</tr>");
     }
     return html;
+};
+
+CBCrossTable.prototype.styleObjToStr = function(styleObj) {
+    var styleStr = _.chain(styleObj).keys()
+        .reduce(function(result, key) {
+            return result.concat(key, ": ", styleObj[key], ";")
+        }, "style='").value();
+    return styleStr.concat("'");
 };
 
 CBCrossTable.prototype.selectPageSize = function () {

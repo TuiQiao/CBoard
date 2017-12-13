@@ -258,6 +258,7 @@ CBCrossTable.prototype.bandDrillEvent = function (render) {
 };
 
 CBCrossTable.prototype.paginationProcessData = function (pageSize) {
+    pageSize = parseInt(pageSize);
     var rawData = this.data;
     var headerLines = this.chartConfig.groups.length + 1;
     var dataLength = rawData.length - headerLines;

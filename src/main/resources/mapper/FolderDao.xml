@@ -6,26 +6,34 @@
         folder_id     AS id,
         folder_name   AS name,
         parent_id     AS parentId,
+        is_private    AS isPrivate,
+        user_id       AS userId,
         create_time   AS createTime,
         update_time   AS updateTime
         FROM dashboard_folder
     </select>
 
     <select id="getFolder" resultType="org.cboard.pojo.DashboardFolder">
-        SELECT folder_id id,folder_name name,parent_id parentId,create_time createTime,update_time updateTime
+        SELECT folder_id id,folder_name name,parent_id parentId,is_private isPrivate,user_id userId,create_time createTime,update_time updateTime
         FROM dashboard_folder
         WHERE parent_id = #{0} AND folder_name = #{1}
     </select>
 
     <select id="getFolderById" resultType="org.cboard.pojo.DashboardFolder">
-        SELECT folder_id id,folder_name name,parent_id parentId,create_time createTime,update_time updateTime
+        SELECT folder_id id,folder_name name,parent_id parentId,is_private isPrivate,user_id userId,create_time createTime,update_time updateTime
         FROM dashboard_folder
         WHERE folder_id = #{0}
     </select>
 
+    <select id="getFolderByUserId" resultType="org.cboard.pojo.DashboardFolder">
+        SELECT folder_id id,folder_name name,parent_id parentId,is_private isPrivate,user_id userId,create_time createTime,update_time updateTime
+        FROM dashboard_folder
+        WHERE user_id = #{0} and is_private = 0 and folder_id != 10000
+    </select>
+
     <insert id="save" parameterType="org.cboard.pojo.DashboardFolder" useGeneratedKeys="true" keyColumn="folder_id" keyProperty="id">
         <![CDATA[
-        INSERT INTO dashboard_folder(folder_name,parent_id) VALUES (#{name},#{parentId})
+        INSERT INTO dashboard_folder(folder_name,parent_id,is_private,user_id) VALUES (#{name},#{parentId},#{isPrivate},#{userId})
         ]]>
     </insert>
 

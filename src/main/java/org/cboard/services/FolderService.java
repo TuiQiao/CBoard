@@ -13,10 +13,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import java.sql.Timestamp;
-import java.util.Calendar;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * Created by jx_luo on 2017/10/13.
@@ -31,12 +29,18 @@ public class FolderService {
     private WidgetDao widgetDao;
     @Autowired
     private BoardDao boardDao;
+    @Autowired
+    private RoleService roleService;
+    @Autowired
+    private AuthenticationService authenticationService;
 
     public ServiceStatus save(String userId, String json){
         JSONObject jsonObject = JSONObject.parseObject(json);
         DashboardFolder folder = new DashboardFolder();
         folder.setName(jsonObject.getString("name"));
         folder.setParentId(jsonObject.getInteger("parentId"));
+        folder.setIsPrivate(0);
+        folder.setUserId(userId);
 
         Map<String, Object> paramMap = new HashMap<String, Object>();
         paramMap.put("folder_name", folder.getName());
@@ -84,5 +88,92 @@ public class FolderService {
             folderDao.delete(id);
             return new ServiceStatus(ServiceStatus.Status.Success, "success");
         }
+    }
+
+    public String getFolderPath(int folderId){
+        String ret = "";
+        Set<Integer> folderIds = new HashSet<>();
+        folderIds.add(folderId);
+
+        Set<DashboardFolder> folders = getAncestry(folderIds);
+
+        for (DashboardFolder f : folders){
+            ret += "\\" + f.getName();
+        }
+
+        return ret.length() > 0 ? ret.substring(1) : ret;
+    }
+
+    public Set<DashboardFolder> getFolderFamilyTree(Set<Integer> folderIds){
+        //get folders descendant
+        Set<DashboardFolder> ret = getFolderDescendant(folderIds);
+
+        ret.addAll(getAncestry(folderIds));
+
+        return ret;
+    }
+
+    public Set<DashboardFolder> getAncestry(Set<Integer> folderIds){
+        Set<DashboardFolder> ret = new HashSet<>();
+
+        List<DashboardFolder> folders = folderDao.getAllFolderList();
+        for (int folderId : folderIds) {
+            //get Ancestry
+            //Root.parentId == -1
+            while (folderId != -1) {
+                for (DashboardFolder f : folders) {
+                    if (f.getId() == folderId) {
+                        ret.add(f);
+                        folderId = f.getParentId();
+                        break;
+                    }
+                }
+            }
+        }
+        return ret;
+    }
+
+    public Set<DashboardFolder> getFolderDescendant(Set<Integer> folderIds){
+        if (folderIds == null || folderIds.size() == 0){
+            return null;
+        }
+
+        Set<DashboardFolder> ret = new HashSet<>();
+
+        List<DashboardFolder> folders = folderDao.getAllFolderList();
+
+        for (int folderId : folderIds) {
+            int parentId = folderId;
+
+            //get itself
+            ret.addAll(folders.stream().filter(f -> f.getId() == folderId).collect(Collectors.toSet()));
+
+            //get decsendant
+            List<DashboardFolder> children = folders.stream().filter(f -> f.getParentId() == parentId).collect(Collectors.toList());
+            List<DashboardFolder> tmp = new ArrayList<>();
+            while (children.size() != 0) {
+
+                for (DashboardFolder c : children) {
+                    ret.add(c);
+                    int cid = c.getId();
+
+                    tmp.addAll(folders.stream().filter(f -> f.getParentId() == cid).collect(Collectors.toList()));
+                }
+                children.clear();
+                children.addAll(tmp);
+                tmp.clear();
+            }
+        }
+        return ret;
+    }
+
+    public boolean checkFolderAuth(String userId, int folderId){
+        Set<DashboardFolder> ret = getFolderDescendant(roleService.getFolderIds(userId));
+
+        for (DashboardFolder f : ret){
+            if (f.getId() == folderId)
+                return true;
+        }
+        return false;
     }
 }

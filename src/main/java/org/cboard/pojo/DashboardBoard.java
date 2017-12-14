@@ -10,6 +10,8 @@ public class DashboardBoard {
     private Long id;
     private String userId;
     private int folderId;
+    private String folderName;
+    private int folderIsPrivate;
     private String name;
     private String layout;
     private String categoryName;
@@ -68,6 +70,22 @@ public class DashboardBoard {
         this.folderId = folderId;
     }
 
+    public String getFolderName() {
+        return folderName;
+    }
+
+    public void setFolderName(String folderName) {
+        this.folderName = folderName;
+    }
+
+    public int getFolderIsPrivate() {
+        return folderIsPrivate;
+    }
+
+    public void setFolderIsPrivate(int folderIsPrivate) {
+        this.folderIsPrivate = folderIsPrivate;
+    }
+
     public String getCategoryName() {
         return categoryName;
     }
@@ -106,5 +124,23 @@ public class DashboardBoard {
 
     public void setUpdateTime(Timestamp updateTime) {
         this.updateTime = updateTime;
+    }
+    @Override
+    public int hashCode(){
+        return this.getId().hashCode();
+    }
+
+    @Override
+    public boolean equals(Object obj){
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        DashboardBoard other = (DashboardBoard) obj;
+        if (id != other.getId())
+            return false;
+        return true;
     }
 }

@@ -106,4 +106,23 @@ public class DashboardWidget {
     public void setUpdateTime(Timestamp updateTime) {
         this.updateTime = updateTime;
     }
+
+    @Override
+    public int hashCode(){
+        return this.getId().hashCode();
+    }
+
+    @Override
+    public boolean equals(Object obj){
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        DashboardWidget other = (DashboardWidget) obj;
+        if (id != other.getId())
+            return false;
+        return true;
+    }
 }

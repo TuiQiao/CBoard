@@ -276,6 +276,7 @@ cBoard.controller('widgetCtrl', function ($scope, $state, $stateParams, $http, $
         $scope.openFolder = false;
         $scope.selectedFold = {};
         $scope.showBox = false;
+        $scope.folderIds = {};
 
 
         var loadDataset = function (callback) {
@@ -290,7 +291,7 @@ cBoard.controller('widgetCtrl', function ($scope, $state, $stateParams, $http, $
 
 
         $scope.getFolderList = function () {
-            $http.get('dashboard/getFolderList.do').success(function (response) {
+            $http.post('dashboard/getFolderFamilyTree.do', {folderIds: $scope.folderIds}).success(function (response) {
                 $scope.folderList = response;
 
                 $scope.folderData = [];
@@ -302,7 +303,47 @@ cBoard.controller('widgetCtrl', function ($scope, $state, $stateParams, $http, $
                         "type": "parent"
                     });
                 }
-                $scope.searchNode();
+
+                //map widgetList to list (add datasetName and datasourceName)
+                var list = $scope.widgetList.map(function (w) {
+                    var ds = _.find($scope.datasetList, function (obj) {
+                        return obj.id == w.data.datasetId
+                    });
+                    var dsrName = '';
+                    var dsr;
+                    if (ds) {
+                        dsr = _.find($scope.datasourceList, function (obj) {
+                            return obj.id == ds.data.datasource
+                        });
+                    } else if (w.data.datasource) {
+                        dsr = _.find($scope.datasourceList, function (obj) {
+                            return obj.id == w.data.datasource
+                        });
+                    }
+                    return {
+                        "id": w.id,
+                        "name": w.name,
+                        "parentId": w.folderId,
+                        "datasetName": ds ? ds.name : '',
+                        "datasourceName": dsr ? dsr.name : dsrName,
+                        "type": "child"
+                    };
+                });
+
+
+                //filter data by keywords
+                originalData = jstree_CvtVPath2TreeData(list);
+
+                for (var i=0; i<$scope.folderList.length; i++){
+                    originalData.push({
+                        "id": $scope.folderList[i].id.toString(),
+                        "parent": $scope.folderList[i].parentId == -1 ? "#" : $scope.folderList[i].parentId.toString(),
+                        "text": $scope.folderList[i].name.toString(),
+                        "type": "parent"
+                    });
+                }
+
+                jstree_ReloadTree(treeID, originalData);
             });
         };
         
@@ -334,12 +375,15 @@ cBoard.controller('widgetCtrl', function ($scope, $state, $stateParams, $http, $
         }
 
         $scope.datasetGroup = function (item) {
-            return item.categoryName;
+            return item.folderPath;
         };
 
         var getWidgetList = function (callback) {
             $http.get("dashboard/getWidgetList.do").success(function (response) {
                 $scope.widgetList = response;
+                $scope.folderIds = angular.toJson(_.uniq($scope.widgetList.map(function (item) {
+                    return item.folderId;
+                })));
                 if (callback) {
                     callback();
                 }
@@ -980,6 +1024,10 @@ cBoard.controller('widgetCtrl', function ($scope, $state, $stateParams, $http, $
                         $("#Name").focus();
                         return false;
                     }
+                    if(!$scope.$parent.selectedFold.id){
+                        $scope.alerts = [{msg: translate('CONFIG.COMMON.PLEASE_SELECT_FOLDER'), type: 'danger'}];
+                        return false;
+                    }
 
                     $scope.$parent.widgetName = o.name;
                     $scope.saveWgt($scope.type);
@@ -1047,15 +1095,6 @@ cBoard.controller('widgetCtrl', function ($scope, $state, $stateParams, $http, $
             $scope.alerts = [];
             $scope.verify = {widgetName: true};
 
-            // if (o.name == null || o.name == "") {
-            //     $scope.alerts = [{
-            //         msg: translate('CONFIG.WIDGET.WIDGET_NAME') + translate('COMMON.NOT_EMPTY'),
-            //         type: 'danger'
-            //     }];
-            //     $scope.verify = {widgetName: false};
-            //     $("#widgetName").focus();
-            //     return;
-            // } else
             if (o.data.datasetId == undefined && $scope.customDs == false) {
                 $scope.alerts = [{
                     msg: translate('CONFIG.WIDGET.DATASET') + translate('COMMON.NOT_EMPTY'),
@@ -1607,85 +1646,10 @@ cBoard.controller('widgetCtrl', function ($scope, $state, $stateParams, $http, $
             $scope.deleteWgt(getSelectedWidget());
         };
         $scope.searchNode = function () {
-            // getFolderList();
-            
-            var para = {wgtName: '', dsName: '', dsrName: ''};
-
-            //map widgetList to list (add datasetName and datasourceName)
-            var list = $scope.widgetList.map(function (w) {
-                var ds = _.find($scope.datasetList, function (obj) {
-                    return obj.id == w.data.datasetId
-                });
-                var dsrName = '';
-                var dsr;
-                if (ds) {
-                    dsr = _.find($scope.datasourceList, function (obj) {
-                        return obj.id == ds.data.datasource
-                    });
-                } else if (w.data.datasource) {
-                    dsr = _.find($scope.datasourceList, function (obj) {
-                        return obj.id == w.data.datasource
-                    });
-                }
-                return {
-                    "id": w.id,
-                    "name": w.name,
-                    "parentId": w.folderId,
-                    "datasetName": ds ? ds.name : '',
-                    "datasourceName": dsr ? dsr.name : dsrName,
-                    "type": "child"
-                };
-            });
-
-            //split search keywords
-            if ($scope.keywords) {
-                if ($scope.keywords.indexOf(' ') == -1 && $scope.keywords.indexOf(':') == -1) {
-                    para.wgtName = $scope.keywords;
-                } else {
-                    var keys = $scope.keywords.split(' ');
-                    for (var i = 0; i < keys.length; i++) {
-                        var w = keys[i].trim();
-                        if (w.split(':')[0] == 'wg') {
-                            para["wgtName"] = w.split(':')[1];
-                        }
-                        if (w.split(':')[0] == 'ds') {
-                            para["dsName"] = w.split(':')[1];
-                        }
-                        if (w.split(':')[0] == 'dsr') {
-                            para["dsrName"] = w.split(':')[1];
-                        }
-                    }
-                }
-            }
-
-            //filter data by keywords
-            originalData = jstree_CvtVPath2TreeData(
-                $filter('filter')(list, {name: para.wgtName, datasetName: para.dsName, datasourceName: para.dsrName})
-            );
-
-            if(para.dsName == '' && para.dsrName == '') {
-                for (var i=0; i<$scope.folderList.length; i++){
-                    originalData.push({
-                        "id": $scope.folderList[i].id.toString(),
-                        "parent": $scope.folderList[i].parentId == -1 ? "#" : $scope.folderList[i].parentId.toString(),
-                        "text": $scope.folderList[i].name.toString(),
-                        "type": "parent"
-                    });
-                }
-            }else{
-                var file = angular.copy(originalData);
-                for (var i=0; i<file.length; i++){
-                    if(file[i].id != "-1") {
-                        var item = getFolders(file[i].parent);
-                        var exists = $filter('filter')(originalData, {id: item[0].id});
-                        if(exists.length == 0) {
-                            originalData = [].concat(originalData, item);
-                        }
-                    }
-                }
-            }
-
-            jstree_ReloadTree(treeID, originalData);
+            if($scope.keywords == "")
+                $("#" + treeID).jstree('clear_search');
+            else if($scope.keywords != undefined)
+                $("#" + treeID).jstree('search', $scope.keywords);
         };
 
         function getFolders(parentId) {

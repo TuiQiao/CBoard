@@ -14,10 +14,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -217,6 +214,5 @@ public class AdminSerivce {
             return widgetDao.getWidgetList(userId).stream().filter(e -> resIdList.contains(e.getId()) || e.getUserId().equals(userId)).collect(Collectors.toList());
         }
     }
-
 
 }

@@ -14,6 +14,8 @@ public class ViewDashboardFolder {
     private int id;
     private String name;
     private int parentId;
+    private int isPrivate;
+    private String userId;
     private Timestamp createTime;
     private Timestamp updateTime;
 
@@ -29,6 +31,8 @@ public class ViewDashboardFolder {
         this.id = folder.getId();
         this.name = folder.getName();
         this.parentId = folder.getParentId();
+        this.isPrivate = folder.getIsPrivate();
+        this.userId = folder.getUserId();
         this.createTime = folder.getCreateTime();
         this.updateTime = folder.getUpdateTime();
     }
@@ -47,6 +51,22 @@ public class ViewDashboardFolder {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public int getIsPrivate() {
+        return isPrivate;
+    }
+
+    public void setIsPrivate(int isPrivate) {
+        this.isPrivate = isPrivate;
+    }
+
+    public String getUserId() {
+        return userId;
+    }
+
+    public void setUserId(String userId) {
+        this.userId = userId;
     }
 
     public int getParentId() {

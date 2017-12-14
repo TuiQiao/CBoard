@@ -6,16 +6,22 @@ cBoard.controller('homepageCtrl', function ($rootScope, $scope, $state, $http, $
     var translate = $filter('translate');
     var treeID = 'dataSetTreeID';
     var originalData = [];
+    $scope.folderIds = [];
 
     var getDatasetList = function () {
         $http.get("dashboard/getDatasetList.do").success(function (response) {
             $scope.datasetList = response;
+
+            $scope.folderIds = angular.toJson(_.uniq($scope.datasetList.map(function (item) {
+                return item.folderId;
+            })));
+
             $scope.getFolderList();
         });
     };
 
     $scope.getFolderList = function () {
-        $http.get('dashboard/getFolderList.do').success(function (response) {
+        $http.post('dashboard/getFolderFamilyTree.do', {folderIds: $scope.folderIds}).success(function (response) {
             $scope.folderList = response;
 
             $scope.folderData = [];
@@ -70,41 +76,18 @@ cBoard.controller('homepageCtrl', function ($rootScope, $scope, $state, $http, $
     };
 
     $scope.searchNode = function () {
-        var para = {dsName: '', dsrName: ''};
         //map datasetList to list (add datasourceName)
         var list = $scope.datasetList.map(function (ds) {
-            var dsr = _.find($scope.datasourceList, function (obj) {
-                return obj.id == ds.data.datasource
-            });
             return {
                 "id": ds.id,
                 "name": ds.name,
                 "parentId": ds.folderId,
-                "datasourceName": dsr ? dsr.name : '',
                 "type": "child"
             };
         });
-        //split search keywords
-        if ($scope.keywords) {
-            if ($scope.keywords.indexOf(' ') == -1 && $scope.keywords.indexOf(':') == -1) {
-                para.dsName = $scope.keywords;
-            } else {
-                var keys = $scope.keywords.split(' ');
-                for (var i = 0; i < keys.length; i++) {
-                    var w = keys[i].trim();
-                    if (w.split(':')[0] == 'ds') {
-                        para["dsName"] = w.split(':')[1];
-                    }
-                    if (w.split(':')[0] == 'dsr') {
-                        para["dsrName"] = w.split(':')[1];
-                    }
-                }
-            }
-        }
+
         //filter data by keywords
-        originalData = jstree_CvtVPath2TreeData(
-            $filter('filter')(list, {name: para.dsName, datasourceName: para.dsrName})
-        );
+        originalData = jstree_CvtVPath2TreeData(list);
 
         for (var i=0; i<$scope.folderList.length; i++){
             originalData.push({

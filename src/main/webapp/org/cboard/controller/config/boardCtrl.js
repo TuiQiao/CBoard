@@ -17,34 +17,38 @@ cBoard.controller('boardCtrl',
     $scope.openFolder = false;
     $scope.selectedFold = {};
     $scope.showBox = false;
+    $scope.folderIds = [];
+    $scope.privateFolder = {};
     
     var treeID = "boardTreeID";
     var originalData = [];
     var updateUrl = "dashboard/updateBoard.do";
     var deleteUrl = "dashboard/deleteBoard.do";
 
+    var getPrivateFolder = function () {
+        $http.post('dashboard/getFolder.do', {parentId: 10000, name: ".private"}).success(function (response) {
+            $scope.privateFolder = response;
+        });
+    };
+    getPrivateFolder();
+
     $scope.getFolderList = function () {
-        $http.get('dashboard/getFolderList.do').success(function (response) {
+        $http.post('dashboard/getFolderFamilyTree.do', {folderIds: $scope.folderIds}).success(function (response) {
             $scope.folderList = response;
 
             $scope.folderData = [];
             for (var i=0; i<$scope.folderList.length; i++){
+                var folderName = $scope.folderList[i].name.toString();
                 if($scope.folderList[i].parentId == 10000 || $scope.folderList[i].id == 10000) {
                     $scope.folderData.push({
                         "id": $scope.folderList[i].id.toString(),
                         "parent": $scope.folderList[i].parentId == -1 ? "#" : $scope.folderList[i].parentId.toString(),
-                        "text": $scope.folderList[i].name.toString(),
+                        "text": folderName == ".private" ? translate("CONFIG.DASHBOARD.MY_DASHBOARD") : folderName,
                         "type": "parent"
                     });
                 }
             }
-            getBoardList();
-        });
-    };
-    
-    var getBoardList = function () {
-        return $http.get("dashboard/getBoardList.do").success(function (response) {
-            $scope.boardList = response;
+
             var list = $scope.boardList.map(function (ds) {
                 return {
                     "id": ds.id,
@@ -54,21 +58,26 @@ cBoard.controller('boardCtrl',
                 };
             });
 
-            originalData = jstree_CvtVPath2TreeData(
-                list
-            );
-            
-            for (var i=0; i<$scope.folderList.length; i++){
-                if($scope.folderList[i].parentId == 10000 || $scope.folderList[i].id == 10000) {
-                    originalData.push({
-                        "id": $scope.folderList[i].id.toString(),
-                        "parent": $scope.folderList[i].parentId == -1 ? "#" : $scope.folderList[i].parentId.toString(),
-                        "text": $scope.folderList[i].name.toString(),
-                        "type": "parent"
-                    });
-                }
-            }
+            originalData = jstree_CvtVPath2TreeData(list);
+
+            originalData = _.union(originalData, $scope.folderData);
+
             jstree_ReloadTree(treeID, originalData);
+        });
+    };
+    
+    var getBoardList = function () {
+        return $http.get("dashboard/getBoardList.do").success(function (response) {
+            $scope.boardList = response;
+            var tmp = $scope.boardList.map(function (item) {
+                return item.folderId;
+            });
+            tmp.push($scope.privateFolder.id);
+            $scope.folderIds = angular.toJson(tmp);
+
+
+            $scope.getFolderList();
+
         });
     };
     
@@ -167,13 +176,14 @@ cBoard.controller('boardCtrl',
         $scope.$emit("boardChange");
     };
 
-    $scope.getFolderList();
+    getBoardList();
     var boardListPromise = getBoardList();
     getCategoryList();
     getDatasetList();
 
     $scope.newOperate = function () {
         $('div.newBoard').toggleClass('hideOperate');
+        $scope.type = 'new';
     };
 
     $scope.newGridLayout = function () {
@@ -207,6 +217,7 @@ cBoard.controller('boardCtrl',
         b.folderId = $scope.selectedFold.id;
         updateService.updateBoard(b);
         $scope.curBoard = b;
+        $scope.type = 'edit';
     };
 
     $scope.copyBoard = function (board) {
@@ -219,7 +230,7 @@ cBoard.controller('boardCtrl',
         ModalUtils.confirm(translate("COMMON.CONFIRM_DELETE"), "modal-warning", "lg", function () {
             $http.post("dashboard/deleteBoard.do", {id: board.id}).success(function (serviceStatus) {
                 if (serviceStatus.status == '1') {
-                    $scope.getFolderList();
+                    getBoardList();
                     boardChange();
                     ModalUtils.alert(serviceStatus.msg, "modal-success", "sm");
                 } else {
@@ -286,7 +297,7 @@ cBoard.controller('boardCtrl',
 
     function saveBoardCallBack(serviceStatus) {
         if (serviceStatus.status == '1') {
-            $scope.getFolderList();
+            getBoardList();
             if (!$scope.curBoard.id) {
                 $scope.curBoard.id = serviceStatus.id;
             }
@@ -299,17 +310,21 @@ cBoard.controller('boardCtrl',
 
     $scope.checkBeforPreview = function (Id) {
         $scope.isPreview = true;
-        if (!validate()) {
-            return;
-        }
+        // if (!validate()) {
+        //     return;
+        // }
         ModalUtils.confirm(translate("COMMON.CONFIRM_SAVE_BEFORE_PREVIEW"), "modal-warning", "lg", function () {
-            $scope.saveBoard(false)
-                .then(function () {
-                    if (!Id) {
-                        Id = $scope.curBoard.id;
-                    }
-                    $state.go('mine.view', {id: Id});
-                });
+            if(_.isUndefined(Id)){
+                $scope.saveWin($scope.type);
+            }else{
+                $scope.saveBoard(false, $scope.type)
+                    .then(function () {
+                        if (!Id) {
+                            Id = $scope.curBoard.id;
+                        }
+                        $state.go('mine.view', {id: Id});
+                    });
+            }
         });
     };
 
@@ -335,6 +350,10 @@ cBoard.controller('boardCtrl',
                         $scope.alerts = [{msg: translate('CONFIG.WIDGET.WIDGET_NAME') + translate('COMMON.NOT_EMPTY'), type: 'danger'}];
 
                         $("#Name").focus();
+                        return false;
+                    }
+                    if(!$scope.$parent.selectedFold.id){
+                        $scope.alerts = [{msg: translate('CONFIG.COMMON.PLEASE_SELECT_FOLDER'), type: 'danger'}];
                         return false;
                     }
 

@@ -25,7 +25,7 @@ public interface RoleDao {
 
     int deleteRoleRes(String roleId);
 
-    int deleteRoleResByResId(Long resId,String resType);
+    int deleteRoleResByResId(Long resId, String resType);
 
     List<Long> getRoleResByResIds(String userId, String resType);
 

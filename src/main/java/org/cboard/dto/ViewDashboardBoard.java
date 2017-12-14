@@ -16,6 +16,8 @@ public class ViewDashboardBoard {
     private Long id;
     private String userId;
     private int folderId;
+    private String folderName;
+    private int folderIsPrivate;
     private String name;
     private String userName;
     private String loginName;
@@ -38,6 +40,8 @@ public class ViewDashboardBoard {
         this.id = board.getId();
         this.userId = board.getUserId();
         this.folderId = board.getFolderId();
+        this.folderName = board.getFolderName();
+        this.folderIsPrivate = board.getFolderIsPrivate();
         this.name = board.getName();
         this.userName = board.getUserName();
         this.loginName = board.getLoginName();
@@ -135,6 +139,22 @@ public class ViewDashboardBoard {
 
     public void setFolderId(int folderId) {
         this.folderId = folderId;
+    }
+
+    public String getFolderName() {
+        return folderName;
+    }
+
+    public void setFolderName(String folderName) {
+        this.folderName = folderName;
+    }
+
+    public int getFolderIsPrivate() {
+        return folderIsPrivate;
+    }
+
+    public void setFolderIsPrivate(int folderIsPrivate) {
+        this.folderIsPrivate = folderIsPrivate;
     }
 
     public String getCategoryName() {

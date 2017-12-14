@@ -1,6 +1,7 @@
 package org.cboard.services;
 
 import com.alibaba.fastjson.JSONObject;
+import org.apache.commons.collections.map.HashedMap;
 import org.apache.commons.lang3.StringUtils;
 import org.cboard.dao.DatasetDao;
 import org.cboard.dao.DatasourceDao;
@@ -14,6 +15,7 @@ import org.springframework.stereotype.Repository;
 import java.sql.Timestamp;
 import java.util.Calendar;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -108,5 +110,11 @@ public class WidgetService {
                 return new ServiceStatus(ServiceStatus.Status.Fail, datasourceDao.getDatasource(datasourceId).getName());
             }
         }
+    }
+
+    public List<DashboardWidget> getWidgetListByFolderIds(Integer[] folderIds){
+        Map<String, Object> params = new HashedMap();
+        params.put("folderIds", folderIds);
+        return widgetDao.getWidgetListByFolderIds(params);
     }
 }

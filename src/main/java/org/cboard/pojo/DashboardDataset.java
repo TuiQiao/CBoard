@@ -12,6 +12,7 @@ public class DashboardDataset {
     private String name;
     private String categoryName;
     private int folderId;
+    private String folderPath;
     private String data;
     private String permission;
     private String userName;
@@ -67,6 +68,14 @@ public class DashboardDataset {
         this.folderId = folderId;
     }
 
+    public String getFolderPath() {
+        return folderPath;
+    }
+
+    public void setFolderPath(String folderPath) {
+        this.folderPath = folderPath;
+    }
+
     public String getData() {
         return data;
     }
@@ -105,5 +114,24 @@ public class DashboardDataset {
 
     public void setUpdateTime(Timestamp updateTime) {
         this.updateTime = updateTime;
+    }
+
+    @Override
+    public int hashCode(){
+        return this.getId().hashCode();
+    }
+
+    @Override
+    public boolean equals(Object obj){
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        DashboardDataset other = (DashboardDataset) obj;
+        if (id != other.getId())
+            return false;
+        return true;
     }
 }

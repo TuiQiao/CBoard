@@ -61,12 +61,6 @@ var jsTreeConfig1 = {
                 //only allow dropping inside nodes of type 'Parent'
                 return node_parent.icon == true;
             }
-            // else if(operation === "delete_node"){
-                // if(!confirm('Are you sure?')){
-                //     return false;
-                // }
-            // }
-
             return true;  //allow all other operations
         },
         worker : true
@@ -86,9 +80,30 @@ var jsTreeConfig1 = {
         items: getContextMenu,
         select_node: false
     },
+    search: {
+        show_only_matches : true,
+        // show_only_matches_children : true,
+        search_callback: function(str, node){
+            var word;
+            var keys = str.split(':');
+            if (keys.length == 2) {
+                if (keys[0] == 'dsr' || keys[0] == 'ds') {
+                    word = keys[1];
+                }
+                if(word != '' && node.original.dsrName != undefined && node.original.dsrName.indexOf(word) >= 0)
+                    return true;
+                if(word != '' && node.original.dsName != undefined && node.original.dsName.indexOf(word) >= 0)
+                    return true;
+            }else {
+                word = str;
+                if(node.text.indexOf(word) >= 0)
+                    return true;
+            }
+        }
+    },
     state: {"key": "cboard"},
     version: 1,
-    plugins: ['types', 'unique', 'state', 'sort', 'dnd', 'contextmenu']
+    plugins: ['types', 'unique', 'state', 'sort', 'dnd', 'contextmenu', 'search']
 };
 
 
@@ -118,6 +133,8 @@ function jstree_CvtVPath2TreeData (listIn) {
                 "parent": listIn[i].parentId.toString(),
                 "text": listIn[i].name.toString(),
                 "type": listIn[i].type.toString,
+                "dsName": listIn[i].datasetName,
+                "dsrName": listIn[i].datasourceName,
                 icon: 'glyphicon glyphicon-file',
                 ischild: true
             });
@@ -252,7 +269,7 @@ function jstree_baseTreeEventsObj(option) {
                             //console.log('success!');
                         } else {
                             option.ModalUtils.alert(serviceStatus.msg, "modal-warning", "lg");
-                            option.ngScope.searchNode();
+                            // option.ngScope.searchNode();
                             return false;
                         }
                     });

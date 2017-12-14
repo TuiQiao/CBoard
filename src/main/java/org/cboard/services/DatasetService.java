@@ -1,6 +1,7 @@
 package org.cboard.services;
 
 import com.alibaba.fastjson.JSONObject;
+import org.apache.commons.collections.map.HashedMap;
 import org.apache.commons.lang3.StringUtils;
 import org.cboard.dao.DatasetDao;
 import org.cboard.pojo.DashboardDataset;
@@ -10,6 +11,7 @@ import org.springframework.stereotype.Repository;
 import java.sql.Timestamp;
 import java.util.Calendar;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -73,5 +75,11 @@ public class DatasetService {
     public ServiceStatus delete(String userId, Long id) {
         datasetDao.delete(id, userId);
         return new ServiceStatus(ServiceStatus.Status.Success, "success");
+    }
+
+    public List<DashboardDataset> getDatasetListByFolderIds(Integer[] folderIds){
+        Map<String, Object> params = new HashedMap();
+        params.put("folderIds", folderIds);
+        return datasetDao.getDatasetListByFolderIds(params);
     }
 }

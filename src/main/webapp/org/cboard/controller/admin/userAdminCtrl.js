@@ -15,13 +15,6 @@ cBoard.controller('userAdminCtrl', function ($scope, $http, ModalUtils, $filter)
         $scope.isAdmin = response;
     });
 
-    var getFolderList = function () {
-        $http.get('dashboard/getFolderList.do').success(function (response) {
-            $scope.folderList = response;
-        });
-    };
-    getFolderList();
-    
     var getUserList = function () {
         $http.get("admin/getUserList.do").success(function (response) {
             $scope.userList = response;
@@ -43,10 +36,17 @@ cBoard.controller('userAdminCtrl', function ($scope, $http, ModalUtils, $filter)
     };
     getUserRoleList();
 
-    $scope.tree = {menu: {}, board: {}, datasource: {}, dataset: {}, widget: {}, job: {}};
+    $scope.tree = {menu: {}, folder: {}, board: {}, datasource: {}, dataset: {}, widget: {}, job: {}};
     $scope.tree.menu.resList = [{
         id: 'Menu',
         text: translate('ADMIN.MENU'),
+        parent: '#',
+        /*icon: 'fa fa-fw fa-folder-o',*/
+        state: {disabled: true}
+    }];
+    $scope.tree.folder.resList = [{
+        id: '10000',
+        text: translate('ADMIN.FOLDER'),
         parent: '#',
         /*icon: 'fa fa-fw fa-folder-o',*/
         state: {disabled: true}
@@ -94,6 +94,17 @@ cBoard.controller('userAdminCtrl', function ($scope, $http, ModalUtils, $filter)
             })
         });
     };
+
+    var getFolderList = function () {
+        return $http.get('dashboard/getFolderList.do').success(function (response) {
+            $scope.folderList = response;
+
+            _.each(buildNodeByCategory(response, 'Folder', 'folder', 'fa fa-puzzle-piece'), function (e) {
+                $scope.tree.folder.resList.push(e);
+            })
+        });
+    };
+    // getFolderList();
 
     var getMenuList = function () {
         return $http.get("admin/getMenuList.do").success(function (response) {
@@ -155,26 +166,33 @@ cBoard.controller('userAdminCtrl', function ($scope, $http, ModalUtils, $filter)
 
     var buildNodeByCategory = function (listIn, rParent, type, icon) {
         var listOut = [];
-        
-        for (var i = 0; i < listIn.length; i++) {
-            listOut.push({
-                "id": listIn[i].id.toString(),
-                "parent": type == 'datasource' || type == 'job' ? 10000 : listIn[i].folderId,
-                "text": listIn[i].name.toString(),
-                resId: listIn[i].id,
-                type: type,
-                icon: icon,
-                name: listIn[i].name
-            });
+
+        if(type != 'folder') {
+            for (var i = 0; i < listIn.length; i++) {
+                if (listIn[i].folderIsPrivate != undefined && listIn[i].folderIsPrivate == 1)
+                    continue;
+                listOut.push({
+                    "id": listIn[i].id.toString(),
+                    "parent": type == 'datasource' || type == 'job' ? 10000 : listIn[i].folderId,
+                    "text": listIn[i].name.toString(),
+                    resId: listIn[i].id,
+                    type: type,
+                    icon: icon,
+                    name: listIn[i].name
+                });
+            }
         }
 
-        if(listOut.length >0 && type != 'datasource' && type != 'job') {
+        if(type == 'folder' || (listOut.length >0 && type != 'datasource' && type != 'job')) {
             for (var i = 0; i < $scope.folderList.length; i++) {
-                if($scope.folderList[i].parentId != -1) {
+                if($scope.folderList[i].parentId != -1 && $scope.folderList[i].name != '.private') {
                     listOut.push({
                         "id": $scope.folderList[i].id.toString(),
                         "parent": $scope.folderList[i].parentId.toString(),
-                        "text": $scope.folderList[i].name.toString()
+                        "text": $scope.folderList[i].name.toString(),
+                        resId: $scope.folderList[i].id,
+                        type: "folder",
+                        state: type != 'folder' ? {disabled: true} : {}
                     });
                 }
             }
@@ -242,7 +260,9 @@ cBoard.controller('userAdminCtrl', function ($scope, $http, ModalUtils, $filter)
     };
 
     var loadResData = function () {
-        getBoardList().then(function () {
+        getFolderList().then(function () {
+            return getBoardList();
+        }).then(function () {
             return getMenuList();
         }).then(function () {
             return getDatasourceList();
@@ -263,7 +283,8 @@ cBoard.controller('userAdminCtrl', function ($scope, $http, ModalUtils, $filter)
                     worker: true
                 },
                 checkbox: {
-                    three_state: true
+                    three_state: false,
+                    cascade: 'undetermined'
                 },
                 contextmenu: {
                     items: getContextMenu,
@@ -455,6 +476,7 @@ cBoard.controller('userAdminCtrl', function ($scope, $http, ModalUtils, $filter)
 
     $scope.changeResSelect = function () {
         changeResSelectByTree($scope.tree.menu);
+        changeResSelectByTree($scope.tree.folder);
         changeResSelectByTree($scope.tree.board);
         changeResSelectByTree($scope.tree.dataset);
         changeResSelectByTree($scope.tree.datasource);
@@ -477,7 +499,7 @@ cBoard.controller('userAdminCtrl', function ($scope, $http, ModalUtils, $filter)
                     return rr.resId == e.resId && rr.resType == e.type;
                 });
                 var _n = tree.treeInstance.jstree(true).get_node(e);
-                if (!_.isUndefined(f)) {
+                if (!_.isUndefined(f) && (!_.isUndefined(e.state) && !e.state.disabled || _.isUndefined(e.state))) {
                     tree.treeInstance.jstree(true).check_node(e);
                     if (e.name) { //菜单节点不需要更新权限标记
                         _n.original.edit = f.edit;
@@ -503,7 +525,8 @@ cBoard.controller('userAdminCtrl', function ($scope, $http, ModalUtils, $filter)
         var resIds = [];
         for (var key in $scope.tree) {
             _.each(_.filter($scope.tree[key].treeInstance.jstree(true).get_checked(true), function (e) {
-                return !_.isUndefined(e.original.resId);
+                // if(e.original.type == 'folder' && e.text == 'Dashboard' || e.original.type != 'folder')
+                return e.original.resId; //.isUndefined(e.original.resId);
             }), function (e) {
                 resIds.push({
                     resId: e.original.resId,

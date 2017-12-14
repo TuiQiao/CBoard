@@ -18,6 +18,8 @@ public interface WidgetDao {
 
     List<DashboardWidget> getWidgetList(String userId);
 
+    List<DashboardWidget> getWidgetListByFolderIds(Map<String, Object> param);
+
     List<DashboardWidget> getWidgetListAdmin(String userId);
 
     int save(DashboardWidget dashboardWidget);

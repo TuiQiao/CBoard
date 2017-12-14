@@ -18,6 +18,7 @@ public class ViewDashboardDataset {
     private String name;
     private String categoryName;
     private int folderId;
+    private String folderPath;
     private String userName;
     private String loginName;
     private String createTime;
@@ -42,6 +43,7 @@ public class ViewDashboardDataset {
         this.userName = dataset.getUserName();
         this.categoryName = dataset.getCategoryName();
         this.folderId = dataset.getFolderId();
+        this.folderPath = dataset.getFolderPath();
         this.loginName = dataset.getLoginName();
         this.createTime = dataset.getCreateTime().toString();
         this.updateTime = dataset.getUpdateTime().toString();
@@ -112,6 +114,14 @@ public class ViewDashboardDataset {
 
     public void setFolderId(int folderId) {
         this.folderId = folderId;
+    }
+
+    public String getFolderPath() {
+        return folderPath;
+    }
+
+    public void setFolderPath(String folderPath) {
+        this.folderPath = folderPath;
     }
 
     public String getUserName() {

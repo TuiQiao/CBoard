@@ -6,7 +6,9 @@ import org.aspectj.lang.annotation.Aspect;
 import org.cboard.dao.DatasetDao;
 import org.cboard.dao.DatasourceDao;
 import org.cboard.dao.RoleDao;
+import org.cboard.pojo.DashboardDataset;
 import org.cboard.services.AuthenticationService;
+import org.cboard.services.FolderService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.annotation.Order;
@@ -29,6 +31,9 @@ public class DataProviderRoleService {
     @Autowired
     private DatasetDao datasetDao;
 
+    @Autowired
+    private FolderService folderService;
+
     @Value("${admin_user_id}")
     private String adminUserId;
 
@@ -40,8 +45,10 @@ public class DataProviderRoleService {
         Long datasourceId = (Long) proceedingJoinPoint.getArgs()[0];
         Long datasetId = (Long) proceedingJoinPoint.getArgs()[2];
         String userid = authenticationService.getCurrentUser().getUserId();
-        if (datasetId != null) {
-            if (datasetDao.checkDatasetRole(userid, datasetId, RolePermission.PATTERN_READ) > 0) {
+        DashboardDataset ds = datasetDao.getDataset(datasetId);
+        if (ds != null) {
+            if (datasetDao.checkDatasetRole(userid, datasetId, RolePermission.PATTERN_READ) > 0
+                    || folderService.checkFolderAuth(userid, ds.getFolderId())) {
                 return proceedingJoinPoint.proceed();
             }
         } else {

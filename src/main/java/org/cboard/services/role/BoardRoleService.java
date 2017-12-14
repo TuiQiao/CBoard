@@ -10,8 +10,10 @@ import org.cboard.dao.DatasetDao;
 import org.cboard.dao.DatasourceDao;
 import org.cboard.dao.WidgetDao;
 import org.cboard.dto.ViewDashboardBoard;
+import org.cboard.pojo.DashboardBoard;
 import org.cboard.pojo.DashboardDataset;
 import org.cboard.services.AuthenticationService;
+import org.cboard.services.FolderService;
 import org.cboard.services.ServiceStatus;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
@@ -37,6 +39,9 @@ public class BoardRoleService {
 
     @Autowired
     private DatasourceDao datasourceDao;
+
+    @Autowired
+    private FolderService folderService;
 
     @Autowired
     private AuthenticationService authenticationService;
@@ -86,7 +91,8 @@ public class BoardRoleService {
         String json = (String) proceedingJoinPoint.getArgs()[1];
         JSONObject jsonObject = JSONObject.parseObject(json);
         String userid = authenticationService.getCurrentUser().getUserId();
-        if (boardDao.checkBoardRole(userid, jsonObject.getLong("id"), RolePermission.PATTERN_EDIT) > 0) {
+        if (boardDao.checkBoardRole(userid, jsonObject.getLong("id"), RolePermission.PATTERN_EDIT) > 0
+                || folderService.checkFolderAuth(userid, jsonObject.getInteger("folderId"))) {
             Object value = proceedingJoinPoint.proceed();
             return value;
         } else {
@@ -98,7 +104,13 @@ public class BoardRoleService {
     public Object delete(ProceedingJoinPoint proceedingJoinPoint) throws Throwable {
         Long id = (Long) proceedingJoinPoint.getArgs()[1];
         String userid = authenticationService.getCurrentUser().getUserId();
-        if (boardDao.checkBoardRole(userid, id, RolePermission.PATTERN_DELETE) > 0) {
+        DashboardBoard board = boardDao.getBoard(id);
+        int folderId = 0;
+        if (board != null){
+            folderId = board.getFolderId();
+        }
+        if (boardDao.checkBoardRole(userid, id, RolePermission.PATTERN_DELETE) > 0
+                || folderService.checkFolderAuth(userid, folderId)) {
             Object value = proceedingJoinPoint.proceed();
             return value;
         } else {

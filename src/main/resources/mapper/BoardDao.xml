@@ -24,18 +24,46 @@
                board_name      AS NAME,
                layout_json     AS layout,
                a.folder_id     AS folderId,
+               f.folder_name   AS folderName,
+               f.is_private    AS folderIsPrivate,
                u.user_name     AS userName,
                u.login_name    AS loginName,
-               create_time     AS createTime,
-               update_time     AS updateTime
+               a.create_time   AS createTime,
+               a.update_time   AS updateTime
           FROM dashboard_board a
           LEFT JOIN dashboard_user u ON u.user_id = a.user_id
+          LEFT JOIN dashboard_folder f ON a.folder_id = f.folder_id
          WHERE #{0} = '${admin_user_id}' OR a.user_id = #{0} OR a.board_id IN (
              SELECT res_id
                FROM dashboard_user_role ur
                LEFT JOIN dashboard_role_res rr ON ur.role_id = rr.role_id
               WHERE ur.user_id = #{0} AND rr.res_type = 'board'
           ) ORDER BY a.board_name
+    </select>
+
+    <select id="getBoardListByFolderIds" resultType="org.cboard.pojo.DashboardBoard" parameterType="Map">
+        SELECT
+        board_id        AS id,
+        a.user_id       AS userId,
+        a.folder_id     AS folderId,
+        f.folder_name   AS folderName,
+        f.is_private    AS folderIsPrivate,
+        board_name      AS NAME,
+        layout_json     AS layout,
+        a.folder_id     AS folderId,
+        u.user_name     AS userName,
+        u.login_name    AS loginName,
+        a.create_time     AS createTime,
+        a.update_time     AS updateTime
+        FROM dashboard_board a
+        LEFT JOIN dashboard_user u ON u.user_id = a.user_id
+        LEFT JOIN dashboard_folder f ON a.folder_id = f.folder_id
+        WHERE a.folder_id IN
+        <foreach item="item" index="index" collection="folderIds" open="("
+                 separator="," close=")">
+            #{item}
+        </foreach>
+        ORDER BY a.board_name
     </select>
 
     <select id="getBoardListAdmin" resultType="org.cboard.pojo.DashboardBoard">
@@ -45,12 +73,16 @@
                board_name      AS NAME,
                layout_json     AS layout,
                a.folder_id     AS folderId,
+               a.folder_id     AS folderId,
+               f.folder_name   AS folderName,
+               f.is_private    AS folderIsPrivate,
                u.user_name     AS userName,
                u.login_name    AS loginName,
-               create_time     AS createTime,
-               update_time     AS updateTime
+               a.create_time     AS createTime,
+               a.update_time     AS updateTime
           FROM dashboard_board a
           LEFT JOIN dashboard_user u ON u.user_id = a.user_id
+          LEFT JOIN dashboard_folder f ON a.folder_id = f.folder_id
          WHERE #{0} = '${admin_user_id}'
             OR a.user_id = #{0}
             OR a.board_id IN (

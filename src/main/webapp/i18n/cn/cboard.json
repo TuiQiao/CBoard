@@ -104,7 +104,8 @@
   },
   "CONFIG": {
     "COMMON": {
-      "CUSTOM_EXPRESSION": "可选表达式"
+      "CUSTOM_EXPRESSION": "可选表达式",
+      "PLEASE_SELECT_FOLDER": "请选择文件夹"
     },
     "DATA_SOURCE": {
       "DATA_SOURCE_HEADER": "数据源",
@@ -356,6 +357,7 @@
       "ADMIN": "管理员"
     },
     "BOARD": "看板",
+    "FOLDER": "文件夹",
     "MENU": "菜单",
     "DATASOURCE": "数据源",
     "DATASET": "数据集",

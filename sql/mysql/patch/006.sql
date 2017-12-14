@@ -3,6 +3,8 @@ create TABLE dashboard_folder (
   folder_id int PRIMARY KEY AUTO_INCREMENT,
   folder_name VARCHAR(50),
   parent_id int DEFAULT -1,
+  is_private int DEFAULT 0,
+  user_id VARCHAR(50) DEFAULT '1',
   create_time TIMESTAMP DEFAULT now(),
   update_time TIMESTAMP DEFAULT now()
 );
@@ -19,7 +21,7 @@ ALTER  TABLE  dashboard_board  MODIFY COLUMN folder_id int DEFAULT 10000;
 
 
 #脚本更新board的目录
-INSERT into dashboard_folder (folder_name, parent_id) VALUEs('我的看板', 10000);
+INSERT into dashboard_folder (folder_name, parent_id, is_private) VALUEs('.private', 10000, 1);
 INSERT into dashboard_folder (folder_name, parent_id)
     SELECT category_name, 10000 FROM dashboard_category
 ;
@@ -30,7 +32,7 @@ UPDATE dashboard_board a
     set a.folder_id = f.folder_id;
 
 UPDATE dashboard_board a
-set a.folder_id = (SELECT folder_id FROM dashboard_folder where folder_name = '我的看板' and parent_id=10000)
+set a.folder_id = (SELECT folder_id FROM dashboard_folder where folder_name = '.private' and parent_id=10000)
 WHERE a.folder_id is NULL ;
 
 #add version
@@ -44,4 +46,6 @@ CREATE TABLE Maiden_Version (
 );
 
 INSERT INTO maiden_version (name) values('Folder');
+
+
 

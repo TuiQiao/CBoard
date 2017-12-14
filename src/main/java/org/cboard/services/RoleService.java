@@ -2,10 +2,13 @@ package org.cboard.services;
 
 import org.cboard.dao.RoleDao;
 import org.cboard.pojo.DashboardRole;
+import org.cboard.pojo.DashboardRoleRes;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
  * Created by yfyuan on 2016/12/14.
@@ -29,5 +32,15 @@ public class RoleService {
     public List<DashboardRole> getCurrentRoleList(){
         String userid = authenticationService.getCurrentUser().getUserId();
         return roleDao.getRoleList(userid);
+    }
+
+    public Set<Integer> getFolderIds(String userId){
+        Set<Integer> resIds = null;
+        //get Folder's auth
+        List<DashboardRoleRes> roleres = roleDao.getUserRoleResList(userId, "folder");
+        if (roleres != null && roleres.size() > 0) {
+            resIds = roleres.stream().map(r -> r.getResId().intValue()).collect(Collectors.toSet());
+        }
+        return resIds;
     }
 }

@@ -17,6 +17,8 @@ public interface BoardDao {
 
     List<DashboardBoard> getBoardList(String userId);
 
+    List<DashboardBoard> getBoardListByFolderIds(Map<String, Object> param);
+
     List<DashboardBoard> getBoardListAdmin(String userId);
 
     long countExistBoardName(Map<String, Object> map);

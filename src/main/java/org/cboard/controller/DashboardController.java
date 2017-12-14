@@ -1,11 +1,13 @@
 package org.cboard.controller;
 
+import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.google.common.base.Charsets;
 import com.google.common.base.Functions;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.hash.Hashing;
+import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.cboard.dao.*;
@@ -33,10 +35,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -94,7 +93,14 @@ public class DashboardController extends BaseController {
     private FolderDao folderDao;
 
     @Autowired
+    private RoleDao roleDao;
+
+    @Autowired
+    private RoleService roleService;
+
+    @Autowired
     private XlsProcessService xlsProcessService;
+
 
 
     @RequestMapping(value = "/test")
@@ -163,6 +169,22 @@ public class DashboardController extends BaseController {
     @RequestMapping(value = "/getWidgetList")
     public List<ViewDashboardWidget> getWidgetList() {
         List<DashboardWidget> list = widgetDao.getWidgetList(user.getUserId());
+
+        //get Folder's auth
+        List<DashboardRoleRes> roleres = roleDao.getUserRoleResList(user.getUserId(), "folder");
+        Set<Integer> resIds = roleres.stream().map(r -> r.getResId().intValue()).collect(Collectors.toSet());
+
+        //get folder decsendant
+        Set<DashboardFolder> itemFolders = folderService.getFolderDescendant(resIds);
+
+        Integer[] para = itemFolders.stream().map(i -> i.getId()).collect(Collectors.toSet()).toArray(new Integer[itemFolders.size()]);
+
+        Set<DashboardWidget> merge = new LinkedHashSet<>(list);
+
+        merge.addAll(widgetService.getWidgetListByFolderIds(para));
+
+        list = new ArrayList<>(merge);
+
         return Lists.transform(list, ViewDashboardWidget.TO);
     }
 
@@ -179,6 +201,18 @@ public class DashboardController extends BaseController {
     @RequestMapping(value = "/getBoardList")
     public List<ViewDashboardBoard> getBoardList() {
         List<DashboardBoard> list = boardService.getBoardList(user.getUserId());
+
+        //get folder decsendant
+        Set<DashboardFolder> itemFolders = folderService.getFolderDescendant(roleService.getFolderIds(user.getUserId()));
+
+        Integer[] para = itemFolders.stream().map(i -> i.getId()).collect(Collectors.toSet()).toArray(new Integer[itemFolders.size()]);
+
+        Set<DashboardBoard> merge = new LinkedHashSet<>(list);
+
+        merge.addAll(boardService.getBoardListByFolderIds(para));
+
+        list = new ArrayList<>(merge);
+
         return Lists.transform(list, ViewDashboardBoard.TO);
     }
 
@@ -241,7 +275,35 @@ public class DashboardController extends BaseController {
 
     @RequestMapping(value = "/getDatasetList")
     public List<ViewDashboardDataset> getDatasetList() {
+        //get list
         List<DashboardDataset> list = datasetDao.getDatasetList(user.getUserId());
+
+        //get Folder's auth
+        List<DashboardRoleRes> roleres = roleDao.getUserRoleResList(user.getUserId(), "folder");
+        Set<Integer> resIds = roleres.stream().map(r -> r.getResId().intValue()).collect(Collectors.toSet());
+
+        //get folder decsendant
+        Set<DashboardFolder> itemFolders = folderService.getFolderDescendant(resIds);
+
+        Integer[] para = itemFolders.stream().map(i -> i.getId()).collect(Collectors.toSet()).toArray(new Integer[itemFolders.size()]);
+
+        Set<DashboardDataset> merge = new LinkedHashSet<>(list);
+
+        merge.addAll(datasetService.getDatasetListByFolderIds(para));
+
+        list = new ArrayList<>(merge);
+
+        //get folder path
+        for (DashboardDataset ds : list){
+            ds.setFolderPath(folderService.getFolderPath(ds.getFolderId()));
+        }
+
+        return Lists.transform(list, ViewDashboardDataset.TO);
+    }
+
+    @RequestMapping(value = "/getDatasetListByFolderIds")
+    public List<ViewDashboardDataset> getDatasetListByFolderIds(@RequestParam(name = "folderIds") Integer[] folderIds) {
+        List<DashboardDataset> list = datasetService.getDatasetListByFolderIds(folderIds);
         return Lists.transform(list, ViewDashboardDataset.TO);
     }
 
@@ -415,6 +477,33 @@ public class DashboardController extends BaseController {
     @RequestMapping(value = "/getFolderList")
     public List<ViewDashboardFolder> getFolderList() {
         List<DashboardFolder> list = folderDao.getAllFolderList();
+        return Lists.transform(list, ViewDashboardFolder.TO);
+    }
+
+    @RequestMapping(value = "/getFolderFamilyTree")
+    public List<ViewDashboardFolder> getFolderFamilyTree(@RequestParam(name = "folderIds") String folderIds) {
+        //get Folder's auth
+        List<DashboardRoleRes> roleres = roleDao.getUserRoleResList(user.getUserId(), "folder");
+        Set<Integer> resIds = roleres.stream().map(r -> r.getResId().intValue()).collect(Collectors.toSet());
+
+        //get creators
+        List<DashboardFolder> creator = folderDao.getFolderByUserId(user.getUserId());
+
+        Integer[] folders = JSONArray.parseArray(folderIds).toArray(new Integer[]{});
+
+        //merg folderids and auth folderids and creator
+        for (int f : folders){
+            resIds.add(f);
+        }
+        for (DashboardFolder fo : creator){
+            resIds.add(fo.getId());
+        }
+
+        //get family tree
+        Set<DashboardFolder> itemFolders = folderService.getFolderFamilyTree(resIds);
+
+        List<DashboardFolder> list = new ArrayList<>();
+        list.addAll(itemFolders);
         return Lists.transform(list, ViewDashboardFolder.TO);
     }
 

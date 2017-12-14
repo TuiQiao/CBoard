@@ -2,12 +2,14 @@ package org.cboard.services;
 
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import org.apache.commons.collections.map.HashedMap;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.cboard.dao.BoardDao;
 import org.cboard.dao.WidgetDao;
 import org.cboard.dto.ViewDashboardBoard;
 import org.cboard.dto.ViewDashboardWidget;
 import org.cboard.pojo.DashboardBoard;
+import org.cboard.pojo.DashboardDataset;
 import org.cboard.pojo.DashboardWidget;
 import org.cboard.services.persist.PersistContext;
 import org.cboard.services.persist.excel.XlsProcessService;
@@ -144,4 +146,9 @@ public class BoardService {
         return null;
     }
 
+    public List<DashboardBoard> getBoardListByFolderIds(Integer[] folderIds){
+        Map<String, Object> params = new HashedMap();
+        params.put("folderIds", folderIds);
+        return boardDao.getBoardListByFolderIds(params);
+    }
 }

@@ -5,6 +5,7 @@ import org.springframework.stereotype.Repository;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * Created by jx_luo on 2017/10/13.
@@ -13,6 +14,8 @@ import java.util.Map;
 public interface FolderDao {
 
     List<DashboardFolder> getAllFolderList();
+
+    List<DashboardFolder> getFolderByUserId(String userId);
 
     DashboardFolder getFolder(int parentId, String name);
 

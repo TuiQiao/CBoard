@@ -147,6 +147,7 @@
                 <div class="nav-tabs-custom">
                     <ul class="nav nav-tabs">
                         <li class="active"><a ng-click="tab='menu'" data-toggle="tab" aria-expanded="true">{{'ADMIN.MENU'|translate}}</a></li>
+                        <li class=""><a ng-click="tab='folder'" data-toggle="tab" aria-expanded="false">{{'ADMIN.FOLDER'|translate}}</a></li>
                         <li class=""><a ng-click="tab='board'" data-toggle="tab" aria-expanded="false">{{'ADMIN.BOARD'|translate}}</a></li>
                         <li class=""><a ng-click="tab='datasource'" data-toggle="tab" aria-expanded="false">{{'ADMIN.DATASOURCE'|translate}}</a></li>
                         <li class=""><a ng-click="tab='dataset'" data-toggle="tab" aria-expanded="false">{{'ADMIN.DATASET'|translate}}</a></li>
@@ -156,6 +157,9 @@
                     <div class="tab-content">
                         <div class="tab-pane" ng-class="{'menu': 'active'}[tab]">
                             <div js-tree="treeMenuConfig" ng-model="tree.menu.resList" tree="tree.menu.treeInstance" style="height: 70vh; overflow: auto;" ></div>
+                        </div>
+                        <div class="tab-pane" ng-class="{'folder': 'active'}[tab]">
+                            <div js-tree="treeConfig" ng-model="tree.folder.resList" tree="tree.folder.treeInstance" style="height: 70vh; overflow: auto;" ></div>
                         </div>
                         <div class="tab-pane" ng-class="{'board': 'active'}[tab]">
                             <div js-tree="treeConfig" ng-model="tree.board.resList" tree="tree.board.treeInstance" style="height: 70vh; overflow: auto;" ></div>

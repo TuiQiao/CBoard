@@ -40,6 +40,28 @@
         ORDER BY widget_name
     </select>
 
+    <select id="getWidgetListByFolderIds" resultType="org.cboard.pojo.DashboardWidget" parameterType="Map">
+        SELECT
+        widget_id     AS id,
+        w.user_id     AS userId,
+        widget_name   AS name,
+        data_json     AS data,
+        category_name AS categoryName,
+        folder_id     AS folderId,
+        u.user_name   AS userName,
+        u.login_name AS loginName,
+        create_time  AS createTime,
+        update_time  AS updateTime
+        FROM dashboard_widget w
+        LEFT JOIN dashboard_user u ON u.user_id = w.user_id
+        WHERE folder_id IN
+        <foreach item="item" index="index" collection="folderIds" open="("
+                 separator="," close=")">
+            #{item}
+        </foreach>
+        ORDER BY widget_name
+    </select>
+
     <select id="getWidgetListAdmin" resultType="org.cboard.pojo.DashboardWidget">
         SELECT
                widget_id     AS id,
@@ -67,7 +89,7 @@
     </select>
 
     <select id="getWidget" resultType="org.cboard.pojo.DashboardWidget">
-       SELECT widget_id id,user_id userId,widget_name name,data_json data,category_name categoryName,create_time createTime,update_time updateTime
+       SELECT widget_id id,user_id userId,widget_name name,data_json data,category_name categoryName,folder_id folderId,create_time createTime,update_time updateTime
          FROM dashboard_widget
         WHERE widget_id = #{0}
     </select>

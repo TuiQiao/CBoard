@@ -18,6 +18,8 @@ public interface DatasetDao {
 
     List<DashboardDataset> getDatasetList(String userId);
 
+    List<DashboardDataset> getDatasetListByFolderIds(Map<String, Object> param);
+
     List<DashboardDataset> getDatasetListAdmin(String userId);
 
     int save(DashboardDataset dataset);

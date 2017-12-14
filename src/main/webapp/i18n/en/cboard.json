@@ -104,7 +104,8 @@
   },
   "CONFIG": {
     "COMMON": {
-      "CUSTOM_EXPRESSION": "Calculated Measures"
+      "CUSTOM_EXPRESSION": "Calculated Measures",
+      "PLEASE_SELECT_FOLDER": "Please select a folder"
     },
     "DATA_SOURCE": {
       "DATA_SOURCE_HEADER": "Data Source",
@@ -356,6 +357,7 @@
       "ADMIN": "Administrator"
     },
     "BOARD": "Dashboard",
+    "FOLDER": "Folder",
     "MENU": "Menu",
     "DATASOURCE": "Datasource",
     "DATASET": "Cube",

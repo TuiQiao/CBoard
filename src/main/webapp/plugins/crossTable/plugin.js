@@ -1,18 +1,46 @@
 /**
  * Created by Fine on 2016/12/4.
+ * Refactored by Peter on 2017/12/14.
+ *  Change object to a class, simplify main function of table. Use render util to build html.
+ *  Add dynamic pagination and dynamic row height.
+ *  Refactor and simplify merge logical.
+ *  Fix some bugs.
  */
 var CBCrossTable = function(args) {
     this.args = args;
     this.data = args.data;
     this.chartConfig = args.chartConfig;
-    this.tall = args.tall;
-    this.pageDataNum = 20;
     this.drill = args.drill;
+    this.tall = args.tall;
     this.random = Math.random().toString(36).substring(2);
     this.toolbarDivId = "toolbar_" + this.random;
     this.tableDivId = "table_" + this.random;
     this.pageDivId = "page_" + this.random;
     this.container = args.container;
+    this.totalRow = this.data.length;
+
+    this.vHeaderRowIdx = this.chartConfig.groups.length;
+    this.colHeaderRows = this.chartConfig.groups.length;
+    this.dataStartColIdx = this.chartConfig.keys.length;
+    this.rowHeaderWidth = this.chartConfig.keys.length;
+
+    this.pageDataNum = this.dynamicPageSize();
+    this.pagedData = this.paginationProcessData(this.pageDataNum);
+    this.rowHeight = this.adjustRowHeight();
+};
+
+CBCrossTable.prototype.dynamicPageSize = function() {
+    return Math.floor(this.tall/24) - (this.colHeaderRows + 1);
+};
+
+CBCrossTable.prototype.buildPageSelectOpts = function() {
+    var opts = [];
+    opts.push(this.pageDataNum);
+    opts = opts.concat([20, 50, 100, 200]);
+    var result = _.chain(opts).reduce(function(result, opt) {
+        return result.concat("<option value='{opt}'>{opt}</option>".render({opt: opt}))
+    }, "<select>").value();
+    return result.concat("</select>");
 };
 
 CBCrossTable.prototype.table = function() {
@@ -50,7 +78,7 @@ CBCrossTable.prototype.table = function() {
     });
 
     // Pagination
-    var pageOptionDom = "<select><option value='20'>20</option><option value='50'>50</option><option value='100'>100</option><option value='150'>150</option></select>";
+    var pageOptionDom = this.buildPageSelectOpts();
     var pageinationTemplate = "\
         <div id='{pageDivId}'>\
             <div class='optionNum'>\
@@ -74,9 +102,9 @@ CBCrossTable.prototype.table = function() {
         </div>".render({toolbar: toolbar, body: bodyHtml, pageination: pageination})
     );
 
-    // Bind Event
-    this.export();
     if (this.data.length) {
+        // Bind Event
+        this.export();
         this.renderPagination(pagedData, 1);
         this.clickPageNum(pagedData);
         this.clickNextPrev(pagedData);
@@ -85,11 +113,27 @@ CBCrossTable.prototype.table = function() {
 
 };
 
+CBCrossTable.prototype.adjustRowHeight = function() {
+    // 23 is a experiment total row of table content
+    var standardRowHeight = 24;
+    var firstPageRows;
+    var h = standardRowHeight;
+    if (this.pagedData.length > 1) {
+        firstPageRows = this.colHeaderRows + 1 + this.pageDataNum;
+    } else {
+        firstPageRows = this.data.length;
+    }
+    if (this.tall/firstPageRows > standardRowHeight) {
+        h = Math.floor((this.tall - 4)/firstPageRows);
+        h = h > 70 ? 70 : h;
+    }
+    return h;
+};
+
 CBCrossTable.prototype.getValueHeader = function() {
     var chartConfig = this.chartConfig;
-    var vHeaderHtml = "<tr>";
-    var vHeaderRowIdx = this.chartConfig.groups.length;
-    var vHeaderData = this.data[vHeaderRowIdx];
+    var vHeaderHtml = "<tr style='height: " + this.rowHeight + "px'>";
+    var vHeaderData = this.data[this.vHeaderRowIdx];
     var cellTemplate = "<th class='{thClass}' {thStyle}><div>{value}</div></th>";
     for (var c = 0; c < vHeaderData.length; c++) {
         var headerType = vHeaderData[c].column_header_header;
@@ -100,8 +144,7 @@ CBCrossTable.prototype.getValueHeader = function() {
                 style = this.styleObjToStr({'text-align': align});
             }
         } else {
-            var dataCellStartIdx = chartConfig.keys.length;
-            var dataAlign = chartConfig.values[0].cols[(c - dataCellStartIdx) % chartConfig.values[0].cols.length].align;
+            var dataAlign = chartConfig.values[0].cols[(c - this.dataStartColIdx) % chartConfig.values[0].cols.length].align;
             if (dataAlign) {
                 style = this.styleObjToStr({'text-align': dataAlign});
             }
@@ -116,9 +159,9 @@ CBCrossTable.prototype.getValueHeader = function() {
 };
 
 CBCrossTable.prototype.getToolBarContent = function() {
-    var headerLines = this.chartConfig.groups.length + 1;
+    var headerLines = this.colHeaderRows + 1;
     var colNum = this.data[0].length;
-    var rowNum = colNum ? this.data.length - headerLines : 0;
+    var rowNum = colNum ? this.totalRow - headerLines : 0;
     var contentTemplate = "<span class='info'><b>info: </b>{rowNum} x {colNum}</span> <span class='exportBnt' title='Export'></span>";
     return contentTemplate.render({rowNum: rowNum, colNum: colNum});
 };
@@ -138,16 +181,17 @@ CBCrossTable.prototype.checkSortG = function(configs) {
 
 CBCrossTable.prototype.genColumnHeader = function() {
     var drill = this.drill;
-    var columnHeader = "<tr>";
-    var rowLengthOfColHeader = this.chartConfig.groups.length;
+    var columnHeader = "";
+    var rowLengthOfColHeader = this.colHeaderRows;
     var COLUM_HEADER_SORT_G = this.checkSortG(this.chartConfig.groups);
 
     for (var r = 0; r < rowLengthOfColHeader; r++) {
-        var dataStartColIdx = this.chartConfig.keys.length;
+        var dataStartColIdx = this.dataStartColIdx;
         var rowData = this.data[r];
         var colspan = 1;
         var colList = [];
         /* Top-Left empty corner */
+        columnHeader += "<tr style='height: " + this.rowHeight + "px'>";
         for (var t = 0; t < dataStartColIdx; t++) {
             columnHeader += "<th class='header_empty'><div></div></th>";
         }
@@ -260,7 +304,7 @@ CBCrossTable.prototype.bandDrillEvent = function (render) {
 CBCrossTable.prototype.paginationProcessData = function (pageSize) {
     pageSize = parseInt(pageSize);
     var rawData = this.data;
-    var headerLines = this.chartConfig.groups.length + 1;
+    var headerLines = this.colHeaderRows + 1;
     var dataLength = rawData.length - headerLines;
     var lastPageLines = dataLength % pageSize;
     var fullSizePages = parseInt(dataLength / pageSize);
@@ -297,7 +341,7 @@ CBCrossTable.prototype.dataWrap = function (data){
 
 CBCrossTable.prototype.getDataContent = function (data) {
     var chartConfig = this.chartConfig, drill = this.drill;
-    var rowHeaderWidth = chartConfig.keys.length;
+    var rowHeaderWidth = this.rowHeaderWidth;
     var ROW_HEADER_SORT_G = this.checkSortG(this.chartConfig.keys);
     var html = '';
     if (data === undefined) {
@@ -324,7 +368,7 @@ CBCrossTable.prototype.getDataContent = function (data) {
     }
 
     for (var r = 0; r < data.length; r++) {
-        var rowContent = "<tr>";
+        var rowContent = "<tr style='height: " + this.rowHeight + "px'>";
         var isFirstLine = (r === 0);
         for (var c = 0; c < rowHeaderWidth; c++) {
             var currentCell = data[r][c];
@@ -358,7 +402,7 @@ CBCrossTable.prototype.getDataContent = function (data) {
         }
 
         // Process row data
-        var dataCellStartIdx = chartConfig.keys.length;
+        var dataCellStartIdx = this.dataStartColIdx;
         for (var c = dataCellStartIdx; c < data[r].length; c++) {
             var dataAlign = chartConfig.values[0].cols[(c - dataCellStartIdx) % chartConfig.values[0].cols.length].align;
             thStyle = "";

@@ -9,7 +9,6 @@ cBoard.controller('datasetCtrl', function ($scope, $http, $state, $stateParams, 
     $scope.curWidget = {};
     $scope.alerts = [];
     $scope.verify = {dsName: true};
-    $scope.loadFromCache = true;
     $scope.queryAceOpt = cbAcebaseOption;
     $scope.hierarchy = translate("CONFIG.DATASET.HIERARCHY");
     $scope.uuid4 = uuid4;
@@ -473,7 +472,12 @@ cBoard.controller('datasetCtrl', function ($scope, $http, $state, $stateParams, 
         });
     };
 
-    $scope.loadData = function () {
+    $scope.loadData = function (reload) {
+
+        if (reload != true) {
+            reload = false;
+        }
+
         cleanPreview();
         $scope.loading = true;
 
@@ -481,7 +485,7 @@ cBoard.controller('datasetCtrl', function ($scope, $http, $state, $stateParams, 
             datasource: $scope.datasource.id,
             query: $scope.curWidget.query,
             datasetId: null,
-            reload: !$scope.loadFromCache,
+            reload: reload,
             callback: function (dps) {
                 $scope.loading = false;
                 $scope.toChartDisabled = false;

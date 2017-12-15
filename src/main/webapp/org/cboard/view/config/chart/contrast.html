@@ -29,10 +29,10 @@
                         </button>
                         <ul class="dropdown-menu multi-level" role="menu" aria-labelledby="dropdownMenu">
                             <li ng-if="!isDsExpression(o)">
-                                <a href="#" ng-click="editExp(o)">{{'COMMON.EDIT'|translate}}</a>
+                                <a ng-click="editExp(o)">{{'COMMON.EDIT'|translate}}</a>
                             </li>
                             <li>
-                                <a href="#" ng-click="editVFilter(o)">{{'CONFIG.WIDGET.FILTER'|translate}}</a>
+                                <a ng-click="editVFilter(o)">{{'CONFIG.WIDGET.FILTER'|translate}}</a>
                             </li>
                         </ul>
                     </div>
@@ -56,7 +56,7 @@
                                        placeholder="{{'CONFIG.WIDGET.ALIAS'|translate}}">
                             </li>
                             <li class="dropdown-submenu">
-                                <a tabindex="-1" href="#">{{'CONFIG.WIDGET.AGGREGATE_TYPE'|translate}}</a>
+                                <a tabindex="-1">{{'CONFIG.WIDGET.AGGREGATE_TYPE'|translate}}</a>
                                 <ul class="dropdown-menu">
                                     <li ng-repeat="a in value_aggregate_types">
                                         <a ng-click="o.aggregate_type=a.value">{{a.name+'('+o.col+')'}}</a>
@@ -64,7 +64,7 @@
                                 </ul>
                             </li>
                             <li>
-                                <a href="#" ng-click="editVFilter(o)">{{'CONFIG.WIDGET.FILTER'|translate}}</a>
+                                <a ng-click="editVFilter(o)">{{'CONFIG.WIDGET.FILTER'|translate}}</a>
                             </li>
                         </ul>
                     </div>

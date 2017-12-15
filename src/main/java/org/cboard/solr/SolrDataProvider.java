@@ -282,7 +282,7 @@ public class SolrDataProvider extends DataProvider implements Aggregatable, Init
     }
 
     @Override
-    public String[] getColumn() throws Exception {
+    public String[] getColumn(boolean reload) throws Exception {
         String solrServers = dataSource.get("solrServers");
         if (StringUtils.isBlank(solrServers))
             throw new CBoardException("Datasource config Solr Servers can not be empty.");

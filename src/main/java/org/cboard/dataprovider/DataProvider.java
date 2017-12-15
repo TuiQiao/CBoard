@@ -103,13 +103,13 @@ public abstract class DataProvider {
                 .sorted(new NaturalOrderComparator()).limit(1000).toArray(String[]::new);
     }
 
-    public final String[] getColumn(boolean reload) throws Exception {
+    public final String[] invokeGetColumn(boolean reload) throws Exception {
         String[] columns = null;
         if (isDataSourceAggInstance()) {
-            columns = ((Aggregatable) this).getColumn();
+            columns = ((Aggregatable) this).getColumn(reload);
         } else {
             checkAndLoad(reload);
-            columns = innerAggregator.getColumn();
+            columns = innerAggregator.getColumn(reload);
         }
         Arrays.sort(columns);
         return columns;

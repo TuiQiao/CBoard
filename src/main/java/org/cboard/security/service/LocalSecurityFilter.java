@@ -24,6 +24,7 @@ public class LocalSecurityFilter implements Filter {
 
     private Logger LOG = LoggerFactory.getLogger(this.getClass());
     private static String context = "";
+    private static String schema = "";
     private static LoadingCache<String, String> sidCache = CacheBuilder.newBuilder().expireAfterAccess(3, TimeUnit.MINUTES).build(new CacheLoader<String, String>() {
         @Override
         public String load(String key) throws Exception {
@@ -39,6 +40,10 @@ public class LocalSecurityFilter implements Filter {
         return context;
     }
 
+    public static String getSchema() {
+        return schema;
+    }
+
     @Override
     public void init(FilterConfig filterConfig) throws ServletException {
 
@@ -47,8 +52,9 @@ public class LocalSecurityFilter implements Filter {
     @Override
     public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain) throws IOException, ServletException {
         HttpServletRequest hsr = (HttpServletRequest) servletRequest;
-        if (StringUtils.isBlank(context)) {
+        if (StringUtils.isBlank(context) || StringUtils.isBlank(schema)) {
             context = hsr.getLocalPort() + hsr.getContextPath();
+            schema = hsr.getScheme();
         }
         if ("/render.html".equals(hsr.getServletPath())) {
             String sid = hsr.getParameter("sid");

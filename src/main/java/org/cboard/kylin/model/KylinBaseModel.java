@@ -1,8 +1,10 @@
-package org.cboard.kylin;
+package org.cboard.kylin.model;
 
 import com.alibaba.fastjson.JSONObject;
 import org.apache.commons.collections.map.HashedMap;
 import org.cboard.exception.CBoardException;
+import org.cboard.kylin.KylinDataProvider;
+import org.cboard.kylin.TableMap;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.client.support.BasicAuthorizationInterceptor;
 import org.springframework.web.client.RestTemplate;
@@ -12,20 +14,58 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 /**
- * Created by zyong on 2017/4/11.
+ * Created by zyong on 2017/11/30.
  */
-class KylinModel implements Serializable {
-    private JSONObject model;
-    private Map<String, String> columnTable = new HashedMap();
-    private Map<String, String> tableAlias = new TableMap();
-    private Map<String, String> columnType = new HashedMap();
-    private static final String QUOTATAION = "\"";
+public abstract class KylinBaseModel implements Serializable {
 
-    public String getColumnAndAlias(String column) {
+    JSONObject model;
+    String[] kylinVersion;
+    Map<String, String> query, dataSource;
+    Map<String, String> columnTable = new HashedMap();
+    /**
+     * key: db.tablename, alias: anystring
+     */
+    Map<String, String> tableAlias = new TableMap();
+    Map<String, String> columnType = new HashedMap();
+    static final String QUOTATAION = "\"";
+
+    String serverIp, username, password;
+
+    public KylinBaseModel(JSONObject model, Map<String, String> dataSource, Map<String, String> query, String[] version) throws Exception {
+        if (model == null) {
+            throw new CBoardException("Model not found");
+        }
+        this.serverIp = dataSource.get(KylinDataProvider.SERVERIP);
+        this.username = dataSource.get(KylinDataProvider.USERNAME);
+        this.password = dataSource.get(KylinDataProvider.PASSWORD);
+        this.model = model;
+        this.dataSource = dataSource;
+        this.query = query;
+        this.kylinVersion = version;
+        initMetaData();
+    }
+
+    /**
+     * @param column
+     * @return alias."column"
+     */
+    public String getColumnWithAliasPrefix(String column) {
         return tableAlias.get(columnTable.get(column)) + "." + surroundWithQuta(column);
     }
 
-    public String getTable(String column) {
+    public ResponseEntity<String> getTableInfoRest(RestTemplate restTemplate, String table) {
+        return restTemplate.getForEntity("http://" + serverIp + "/kylin/api/tables/{tableName}", String.class, table);
+    }
+
+    /**
+     *
+     * @param table
+     */
+    public String getTableWithAliasSuffix(String table) {
+        return table + " " + tableAlias.get(table);
+    }
+
+    public String getTableOfColumn(String column) {
         return columnTable.get(column);
     }
 
@@ -33,10 +73,10 @@ class KylinModel implements Serializable {
         return tableAlias.get(table);
     }
 
-    private Map<String, String> getColumnsType(String table, String serverIp, String username, String password) {
+    public Map<String, String> initColumnsDataType(String table) {
         RestTemplate restTemplate = new RestTemplate();
         restTemplate.getInterceptors().add(new BasicAuthorizationInterceptor(username, password));
-        ResponseEntity<String> a = restTemplate.getForEntity("http://" + serverIp + "/kylin/api/tables/{tableName}", String.class, table);
+        ResponseEntity<String> a = getTableInfoRest(restTemplate, table);
         JSONObject jsonObject = JSONObject.parseObject(a.getBody());
         Map<String, String> result = new HashedMap();
         jsonObject.getJSONArray("columns").stream().map(e -> (JSONObject) e).forEach(e -> result.put(e.getString("name"), e.getString("datatype")));
@@ -47,38 +87,7 @@ class KylinModel implements Serializable {
         return columnType.get(column);
     }
 
-    public KylinModel(JSONObject model, String serverIp, String username, String password) throws Exception {
-        if (model == null) {
-            throw new CBoardException("Model not found");
-        }
-        this.model = model;
-        model.getJSONArray("dimensions").forEach(e -> {
-                    String t = ((JSONObject) e).getString("table");
-                    Map<String, String> types = getColumnsType(t, serverIp, username, password);
-                    types.entrySet().forEach(et -> columnType.put(et.getKey(), et.getValue()));
-                    ((JSONObject) e).getJSONArray("columns").stream().map(c -> c.toString()).forEach(s -> {
-                                String alias = tableAlias.get(t);
-                                if (alias == null) {
-                                    alias = "_t" + tableAlias.keySet().size() + 1;
-                                    tableAlias.put(t, alias);
-                                }
-                                columnTable.put(s, t);
-                            }
-                    );
-                }
-        );
-        model.getJSONArray("metrics").stream().map(e -> e.toString()).forEach(s ->
-                {
-                    String t = model.getString("fact_table");
-                    String alias = tableAlias.get(t);
-                    if (alias == null) {
-                        alias = "_t" + tableAlias.keySet().size() + 1;
-                        tableAlias.put(t, alias);
-                    }
-                    columnTable.put(s, t);
-                }
-        );
-    }
+    abstract void initMetaData() throws Exception;
 
     public String geModelSql() {
         String factTable = formatTableName(model.getString("fact_table"));
@@ -103,14 +112,11 @@ class KylinModel implements Serializable {
         return s;
     }
 
-    public String[] getColumns() {
-        List<String> result = new ArrayList<>();
-        model.getJSONArray("dimensions").forEach(e ->
-                ((JSONObject) e).getJSONArray("columns").stream().map(c -> c.toString()).forEach(result::add)
-        );
-        model.getJSONArray("metrics").stream().map(e -> e.toString()).forEach(result::add);
-        return result.toArray(new String[0]);
-    }
+    /**
+     * Return Array[alias.column]
+     * @return
+     */
+    public abstract String[] getColumns();
 
     public String formatTableName(String rawName) {
         String tmp = rawName.replaceAll("\"", "");
@@ -119,8 +125,7 @@ class KylinModel implements Serializable {
         return joiner.toString();
     }
 
-    private String surroundWithQuta(String text) {
+    protected String surroundWithQuta(String text) {
         return QUOTATAION + text + QUOTATAION;
     }
-
 }

@@ -11,15 +11,16 @@ import org.cboard.dataprovider.aggregator.Aggregatable;
 import org.cboard.dataprovider.annotation.DatasourceParameter;
 import org.cboard.dataprovider.annotation.ProviderName;
 import org.cboard.dataprovider.annotation.QueryParameter;
-import org.cboard.dataprovider.config.*;
+import org.cboard.dataprovider.config.AggConfig;
+import org.cboard.dataprovider.config.ConfigComponent;
+import org.cboard.dataprovider.config.DimensionConfig;
 import org.cboard.dataprovider.result.AggregateResult;
 import org.cboard.dataprovider.util.DPCommonUtils;
 import org.cboard.dataprovider.util.SqlHelper;
+import org.cboard.kylin.model.KylinBaseModel;
+import org.cboard.kylin.model.KylinModelFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.http.ResponseEntity;
-import org.springframework.http.client.support.BasicAuthorizationInterceptor;
-import org.springframework.web.client.RestTemplate;
 
 import java.sql.*;
 import java.util.*;
@@ -40,28 +41,30 @@ public class KylinDataProvider extends DataProvider implements Aggregatable, Ini
             value = "domain:port",
             placeholder = "domain:port",
             order = 1)
-    private String SERVERIP = "serverIp";
+    public static final String SERVERIP = "serverIp";
 
     @DatasourceParameter(label = "User Name (for Kylin Server) *",
             type = DatasourceParameter.Type.Input,
             required = true,
-            order = 2)
-    private String USERNAME = "username";
+            order = 3)
+    public static final String USERNAME = "username";
 
-    @DatasourceParameter(label = "Password", type = DatasourceParameter.Type.Password, order = 3)
-    private String PASSWORD = "password";
+    @DatasourceParameter(label = "Password", type = DatasourceParameter.Type.Password, order = 4)
+    public static final String PASSWORD = "password";
+
+    // ----------- QueryParameter Start
 
     @QueryParameter(label = "Kylin Project *",
             type = QueryParameter.Type.Input,
             required = true)
-    private String PROJECT = "project";
+    public static final String PROJECT = "project";
 
     @QueryParameter(label = "Data Model *", type = QueryParameter.Type.Input, required = true)
-    private String DATA_MODEL = "datamodel";
+    public static final String DATA_MODEL = "datamodel";
 
-    private static final CacheManager<KylinModel> modelCache = new HeapCacheManager<>();
+    private static final CacheManager<KylinBaseModel> modelCache = new HeapCacheManager<>();
 
-    private KylinModel kylinModel;
+    private KylinBaseModel kylinModel;
     private SqlHelper sqlHelper;
 
     private String getKey(Map<String, String> dataSource, Map<String, String> query) {
@@ -124,8 +127,8 @@ public class KylinDataProvider extends DataProvider implements Aggregatable, Ini
         String fsql = null;
         String exec = null;
         List<String> filtered = new ArrayList<>();
-        String tableName = kylinModel.getTable(columnName);
-        String columnAliasName = kylinModel.getColumnAndAlias(columnName);
+        String tableName = kylinModel.getTableOfColumn(columnName);
+        String columnAliasName = kylinModel.getColumnWithAliasPrefix(columnName);
         String whereStr = "";
         if (config != null) {
             Stream<DimensionConfig> c = config.getColumns().stream();
@@ -137,7 +140,7 @@ public class KylinDataProvider extends DataProvider implements Aggregatable, Ini
                     .filter(e -> {
                         if (e instanceof DimensionConfig) {
                             DimensionConfig dc = (DimensionConfig) e;
-                            return tableName.equals(kylinModel.getTable(dc.getColumnName()));
+                            return tableName.equals(kylinModel.getTableOfColumn(dc.getColumnName()));
                         } else {
                             return true;
                         }
@@ -160,23 +163,14 @@ public class KylinDataProvider extends DataProvider implements Aggregatable, Ini
         return filtered.toArray(new String[]{});
     }
 
-    private KylinModel getModel() throws Exception {
-        String modelName = query.get(DATA_MODEL);
-        String serverIp = dataSource.get(SERVERIP);
-        String username = dataSource.get(USERNAME);
-        String password = dataSource.get(PASSWORD);
-
+    private KylinBaseModel getModel(boolean reload) throws Exception {
         String key = getKey(dataSource, query);
-        KylinModel model = modelCache.get(key);
-        if (model == null) {
+        KylinBaseModel model = modelCache.get(key);
+        if (model == null || reload) {
             synchronized (key.intern()) {
                 model = modelCache.get(key);
-                if (model == null) {
-                    RestTemplate restTemplate = new RestTemplate();
-                    restTemplate.getInterceptors().add(new BasicAuthorizationInterceptor(username, password));
-                    ResponseEntity<String> a = restTemplate.getForEntity("http://" + serverIp + "/kylin/api/model/{modelName}", String.class, modelName);
-                    JSONObject jsonObject = JSONObject.parseObject(a.getBody());
-                    model = new KylinModel(jsonObject, serverIp, username, password);
+                if (model == null || reload) {
+                    model = KylinModelFactory.getKylinModel(dataSource, query);
                     modelCache.put(key, model, 1 * 60 * 60 * 1000);
                 }
             }
@@ -185,8 +179,8 @@ public class KylinDataProvider extends DataProvider implements Aggregatable, Ini
     }
 
     @Override
-    public String[] getColumn() throws Exception {
-        return getModel().getColumns();
+    public String[] getColumn(boolean reload) throws Exception {
+        return getModel(reload).getColumns();
     }
 
     @Override
@@ -223,7 +217,7 @@ public class KylinDataProvider extends DataProvider implements Aggregatable, Ini
     @Override
     public void afterPropertiesSet() throws Exception {
         try {
-            kylinModel = getModel();
+            kylinModel = getModel(false);
             sqlHelper = new SqlHelper(kylinModel.geModelSql(), false);
             sqlHelper.setSqlSyntaxHelper(new KylinSyntaxHelper(kylinModel));
         } catch (Exception e) {

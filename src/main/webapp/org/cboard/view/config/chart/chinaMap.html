@@ -53,10 +53,10 @@
                                 </button>
                                 <ul class="dropdown-menu multi-level" role="menu" aria-labelledby="dropdownMenu">
                                     <li ng-if="!isDsExpression(o)">
-                                        <a href="#" ng-click="editExp(o)">{{'COMMON.EDIT'|translate}}</a>
+                                        <a ng-click="editExp(o)">{{'COMMON.EDIT'|translate}}</a>
                                     </li>
                                     <li>
-                                        <a href="#" ng-click="editVFilter(o)">{{'CONFIG.WIDGET.FILTER'|translate}}</a>
+                                        <a ng-click="editVFilter(o)">{{'CONFIG.WIDGET.FILTER'|translate}}</a>
                                     </li>
                                 </ul>
                             </div>
@@ -80,7 +80,7 @@
                                         <a ng-click="o.aggregate_type=a.value">{{a.name+'('+o.col+')'}}</a>
                                     </li>
                                     <li>
-                                        <a href="#" ng-click="editVFilter(o)">{{'CONFIG.WIDGET.FILTER'|translate}}</a>
+                                        <a ng-click="editVFilter(o)">{{'CONFIG.WIDGET.FILTER'|translate}}</a>
                                     </li>
                                 </ul>
                             </div>

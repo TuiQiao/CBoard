@@ -294,7 +294,7 @@ public class JdbcDataProvider extends DataProvider implements Aggregatable, Init
     }
 
     @Override
-    public String[] getColumn() throws Exception {
+    public String[] getColumn(boolean reload) throws Exception {
         String subQuerySql = getAsSubQuery(query.get(SQL));
         try (
                 Connection connection = getConnection();

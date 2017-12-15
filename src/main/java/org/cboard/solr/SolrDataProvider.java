@@ -183,6 +183,11 @@ public class SolrDataProvider extends DataProvider implements Aggregatable, Init
         return getSolrData();
     }
 
+    @Override
+    public void test() throws Exception {
+        getSolrData();
+    }
+
     public String[][] getSolrData() throws Exception {
         String solrServers = dataSource.get("solrServers");
         if (StringUtils.isBlank(solrServers))

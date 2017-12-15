@@ -7,7 +7,29 @@ cBoard.service('chartService', function ($q, dataService, chartPieService, chart
                                          chartMapService, chartScatterService, chartGaugeService, chartWordCloudService,
                                          chartTreeMapService, chartAreaMapService, chartHeatMapCalendarService, chartHeatMapTableService,
                                          chartLiquidFillService, chartContrastService, chartChinaMapService, chartChinaMapBmapService,
-                                         chartRelationService ) {
+                                         chartRelationService) {
+
+        var services = new Map();
+        services.set('line', chartLineService);
+        services.set('pie', chartPieService);
+        services.set('kpi', chartKpiService);
+        services.set('table', chartTableService);
+        services.set('funnel', chartFunnelService);
+        services.set('sankey', chartSankeyService);
+        services.set('radar', chartRadarService);
+        services.set('map', chartMapService);
+        services.set('scatter', chartScatterService);
+        services.set('gauge', chartGaugeService);
+        services.set('wordCloud', chartWordCloudService);
+        services.set('treeMap', chartTreeMapService);
+        services.set('areaMap', chartAreaMapService);
+        services.set('heatMapCalendar', chartHeatMapCalendarService);
+        services.set('heatMapTable', chartHeatMapTableService);
+        services.set('liquidFill', chartLiquidFillService);
+        services.set('contrast', chartContrastService);
+        services.set('chinaMap', chartChinaMapService);
+        services.set('chinaMapBmap', chartChinaMapBmapService);
+        services.set('relation', chartRelationService);
 
         this.renderChart = function (containerDom, widgetConfig, options) {
             var deferred = $q.defer();
@@ -145,70 +167,7 @@ cBoard.service('chartService', function ($q, dataService, chartPieService, chart
         };
 
         var getChartServices = function (chartConfig) {
-            var chart;
-            switch (chartConfig.chart_type) {
-                case 'line':
-                    chart = chartLineService;
-                    break;
-                case 'pie':
-                    chart = chartPieService;
-                    break;
-                case 'kpi':
-                    chart = chartKpiService;
-                    break;
-                case 'table':
-                    chart = chartTableService;
-                    break;
-                case 'funnel':
-                    chart = chartFunnelService;
-                    break;
-                case 'sankey':
-                    chart = chartSankeyService;
-                    break;
-                case 'radar':
-                    chart = chartRadarService;
-                    break;
-                case 'map':
-                    chart = chartMapService;
-                    break;
-                case 'scatter':
-                    chart = chartScatterService;
-                    break;
-                case 'gauge':
-                    chart = chartGaugeService;
-                    break;
-                case 'wordCloud':
-                    chart = chartWordCloudService;
-                    break;
-                case 'treeMap':
-                    chart = chartTreeMapService;
-                    break;
-                case 'areaMap':
-                    chart = chartAreaMapService;
-                    break;
-                case 'heatMapCalendar':
-                    chart = chartHeatMapCalendarService;
-                    break;
-                case 'heatMapTable':
-                    chart = chartHeatMapTableService;
-                    break;
-                case 'liquidFill':
-                    chart = chartLiquidFillService;
-                    break;
-                case 'contrast':
-                    chart = chartContrastService;
-                    break;
-                case 'chinaMap':
-                    chart = chartChinaMapService;
-                    break;
-                case 'chinaMapBmap':
-                    chart = chartChinaMapBmapService;
-                    break;
-                case 'relation':
-                    chart = chartRelationService;
-                    break;
-            }
-            return chart;
+            return services.get(chartConfig.chart_type);
         };
 
     }

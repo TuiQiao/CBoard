@@ -85,26 +85,39 @@ cBoard.controller('dashboardViewCtrl', function ($timeout, $rootScope, $scope, $
     });
 
     var buildRender = function (widget, reload) {
-        widget.render = function (content, optionFilter, scope) {
+        var widgetConfig = injectFilter(widget.widget).data;
+        widget.render = function (container, optionFilter, scope) {
             // 百度地图特殊处理
             var charType = injectFilter(widget.widget).data.config.chart_type;
             if(charType == 'chinaMapBmap'){
-                chartService.render(content, injectFilter(widget.widget).data, optionFilter, scope, reload);
-                widget.loading = false;
+                chartService.renderChart(container, widgetConfig, {
+                    optionFilter: optionFilter,
+                    scope: scope,
+                    reload: reload
+                }).then(
+                    function() {widget.loading = false;}
+                );
             } else {
-                chartService.render(content, injectFilter(widget.widget).data, optionFilter, scope, reload, null, widget.relations).then(function (d) {
+                chartService.renderChart(container, widgetConfig, {
+                    optionFilter: optionFilter,
+                    scope: scope,
+                    reload: reload,
+                    relations: widget.relations
+                }).then(function (d) {
                     widget.realTimeTicket = d;
                     widget.loading = false;
                 });
             }
             widget.realTimeOption = {optionFilter: optionFilter, scope: scope};
         };
-        widget.modalRender = function (content, optionFilter, scope) {
+        widget.modalRender = function (container, optionFilter, scope) {
             widget.modalLoading = true;
-            widget.modalRealTimeTicket = chartService.render(content, injectFilter(widget.widget).data, optionFilter, scope)
-                .then(function () {
-                    widget.modalLoading = false;
-                });
+            widget.modalRealTimeTicket = chartService.renderChart(container, widgetConfig, {
+                optionFilter: optionFilter,
+                scope: scope
+            }).then(function () {
+                widget.modalLoading = false;
+            });
             widget.modalRealTimeOption = {optionFilter: optionFilter, scope: scope};
         };
     };
@@ -457,11 +470,21 @@ cBoard.controller('dashboardViewCtrl', function ($timeout, $rootScope, $scope, $
         widget.render = function (content, optionFilter, scope) {
             //百度地图特殊处理
             var charType = widget.widget.data.config.chart_type;
+            var widgetConfig = widget.widget.data;
             if(charType == 'chinaMapBmap'){
-                chartService.render(content, widget.widget.data, optionFilter, scope, true);
+                chartService.renderChart(content, widgetConfig, {
+                    optionFilter: optionFilter,
+                    scope: scope,
+                    reload: true
+                });
                 widget.loading = false;
             } else {
-                chartService.render(content, widget.widget.data, optionFilter, scope, true, null, widget.relations).then(function (d) {
+                chartService.renderChart(content, widgetConfig, {
+                    optionFilter: optionFilter,
+                    scope: scope,
+                    reload: true,
+                    relations: widget.relations
+                }).then(function (d) {
                     widget.realTimeTicket = d;
                     widget.loading = false;
                 });

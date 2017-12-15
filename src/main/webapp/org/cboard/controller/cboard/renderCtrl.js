@@ -10,11 +10,21 @@ cBoard.controller('renderCtrl', function ($timeout, $rootScope, $scope, $state, 
             var chartType = w.widget.data.config.chart_type;
             try {
                 if (chartType == 'chinaMapBmap') {
-                    chartService.render(content, w.widget.data, optionFilter, scope, reload, w.persist);
+                    chartService.renderChart(content, w.widget.data, {
+                        optionFilter: optionFilter,
+                        scope: scope,
+                        reload: reload,
+                        persist: w.persist
+                    });
                     w.loading = false;
                     $scope.l--;
                 } else {
-                    chartService.render(content, w.widget.data, optionFilter, scope, reload, w.persist).then(function (d) {
+                    chartService.renderChart(content, w.widget.data, {
+                        optionFilter: optionFilter,
+                        scope: scope,
+                        reload: reload,
+                        persist: w.persist
+                    }).then(function (d) {
                         w.realTimeTicket = d;
                         w.loading = false;
                         $scope.l--;

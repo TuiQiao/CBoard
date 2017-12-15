@@ -151,7 +151,13 @@ cBoard.service('dataService', function ($http, $q, updateService) {
         });
     };
 
-    this.getDataSeries = function (datasource, query, datasetId, chartConfig, callback, reload) {
+    this.getDataSeries = function (args) {
+        var defer = $q.defer();
+        var datasource = args.datasource,
+            query = args.query,
+            datasetId = args.datasetId,
+            chartConfig = args.chartConfig,
+            reload = args.reload;
         chartConfig = angular.copy(chartConfig);
         updateService.updateConfig(chartConfig);
         linkDataset(datasetId, chartConfig).then(function () {
@@ -177,13 +183,14 @@ cBoard.service('dataService', function ($http, $q, updateService) {
                 if (!_.isUndefined(datasetId)) {
                     getDrillConfig(datasetId, chartConfig).then(function (c) {
                         result.drill = {config: c};
-                        callback(result);
+                        defer.resolve(result);
                     });
                 } else {
-                    callback(result);
+                    defer.resolve(result);
                 }
             });
         });
+        return defer.promise;
     };
 
     this.getDrillPath = function (datasetId, id) {

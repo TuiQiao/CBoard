@@ -9,18 +9,29 @@ cBoard.service('chartService', function ($q, dataService, chartPieService, chart
                                          chartLiquidFillService, chartContrastService, chartChinaMapService, chartChinaMapBmapService,
                                          chartRelationService ) {
 
-        this.render = function (containerDom, widget, optionFilter, scope, reload, persist, relations) {
+        this.renderChart = function (containerDom, widgetConfig, options) {
             var deferred = $q.defer();
-            var chart = getChartServices(widget.config);
-            dataService.getDataSeries(widget.datasource, widget.query, widget.datasetId, widget.config, function (data) {
+            var optionFilter = options ? options.optionFilter : undefined,
+                scope = options ? options.scope : undefined,
+                reload = options ? options.reload : undefined,
+                persist = options ? options.persist : undefined,
+                relations = options ? options.relations : undefined;
+            var chartServiceInstance = getChartServices(widgetConfig.config);
+            dataService.getDataSeries({
+                datasource: widgetConfig.datasource,
+                query: widgetConfig.query,
+                datasetId: widgetConfig.datasetId,
+                chartConfig: widgetConfig.config,
+                reload: reload
+            }).then(function (data) {
                 try {
-                    var option = chart.parseOption(data);
+                    var option = chartServiceInstance.parseOption(data);
                     if (optionFilter) {
                         optionFilter(option);
                     }
                     if (data.drill) {
                         data.drill.drillDown = function (id, value, render) {
-                            dataService.getDrillPath(widget.datasetId, id).then(function (path) {
+                            dataService.getDrillPath(widgetConfig.datasetId, id).then(function (path) {
                                 var i = 0;
                                 _.each(path, function (e, _i) {
                                     if (e.id == id) {
@@ -28,32 +39,37 @@ cBoard.service('chartService', function ($q, dataService, chartPieService, chart
                                     }
                                 });
                                 var node = path[++i];
-                                _.find(widget.config.keys, function (e, _i) {
+                                _.find(widgetConfig.config.keys, function (e, _i) {
                                     if (e.id == id) {
                                         e.type = '=';
                                         e.values = [value];
-                                        if (!_.find(widget.config.keys, function (e) {
+                                        if (!_.find(widgetConfig.config.keys, function (e) {
                                                 return e.id == node.id;
                                             })) {
-                                            widget.config.keys.splice(_i + 1, 0, node);
+                                            widgetConfig.config.keys.splice(_i + 1, 0, node);
                                         }
                                         return true;
                                     }
                                 });
-                                _.find(widget.config.groups, function (e, _i) {
+                                _.find(widgetConfig.config.groups, function (e, _i) {
                                     if (e.id == id) {
                                         e.type = '=';
                                         e.values = [value];
-                                        if (!_.find(widget.config.groups, function (e) {
+                                        if (!_.find(widgetConfig.config.groups, function (e) {
                                                 return e.id == node.id;
                                             })) {
-                                            widget.config.groups.splice(_i + 1, 0, node);
+                                            widgetConfig.config.groups.splice(_i + 1, 0, node);
                                         }
                                         return true;
                                     }
                                 });
-                                dataService.getDataSeries(widget.datasource, widget.query, widget.datasetId, widget.config, function (data) {
-                                    var option = chart.parseOption(data);
+                                dataService.getDataSeries({
+                                    datasource: widgetConfig.datasource,
+                                    query: widgetConfig.query,
+                                    datasetId: widgetConfig.datasetId,
+                                    chartConfig: widgetConfig.config
+                                }).then(function (data) {
+                                    var option = chartServiceInstance.parseOption(data);
                                     if (optionFilter) {
                                         optionFilter(option);
                                     }
@@ -62,22 +78,27 @@ cBoard.service('chartService', function ($q, dataService, chartPieService, chart
                             });
                         };
                         data.drill.drillUp = function (id, render) {
-                            _.find(widget.config.keys, function (e, _i) {
+                            _.find(widgetConfig.config.keys, function (e, _i) {
                                 if (e.id == id) {
-                                    widget.config.keys[_i - 1].values = [];
-                                    widget.config.keys.splice(_i, 1);
+                                    widgetConfig.config.keys[_i - 1].values = [];
+                                    widgetConfig.config.keys.splice(_i, 1);
                                     return true;
                                 }
                             });
-                            _.find(widget.config.groups, function (e, _i) {
+                            _.find(widgetConfig.config.groups, function (e, _i) {
                                 if (e.id == id) {
-                                    widget.config.groups[_i - 1].values = [];
-                                    widget.config.groups.splice(_i, 1);
+                                    widgetConfig.config.groups[_i - 1].values = [];
+                                    widgetConfig.config.groups.splice(_i, 1);
                                     return true;
                                 }
                             });
-                            dataService.getDataSeries(widget.datasource, widget.query, widget.datasetId, widget.config, function (data) {
-                                var option = chart.parseOption(data);
+                            dataService.getDataSeries({
+                                datasource: widgetConfig.datasource,
+                                query: widgetConfig.query,
+                                datasetId: widgetConfig.datasetId,
+                                chartConfig: widgetConfig.config
+                            }).then(function (data) {
+                                var option = chartServiceInstance.parseOption(data);
                                 if (optionFilter) {
                                     optionFilter(option);
                                 }
@@ -86,13 +107,13 @@ cBoard.service('chartService', function ($q, dataService, chartPieService, chart
                         };
                     }
                 } finally {
-                    if (widget.config.chart_type == 'chinaMapBmap') {
-                        chart.render(containerDom, option, scope, persist, data.drill);
+                    if (widgetConfig.config.chart_type == 'chinaMapBmap') {
+                        chartServiceInstance.render(containerDom, option, scope, persist, data.drill);
                     } else {
-                        deferred.resolve(chart.render(containerDom, option, scope, persist, data.drill, relations, widget.config));
+                        deferred.resolve(chartServiceInstance.render(containerDom, option, scope, persist, data.drill, relations, widgetConfig.config));
                     }
                 }
-            }, reload);
+            });
             return deferred.promise;
         };
 
@@ -105,8 +126,13 @@ cBoard.service('chartService', function ($q, dataService, chartPieService, chart
             if (isParamEvent && widgetWraper) {
                 widgetWraper.loading = true;
             }
-
-            var callback = function (data) {
+            dataService.getDataSeries({
+                datasource: widget.datasource,
+                query: widget.query,
+                datasetId: widget.datasetId,
+                chartConfig: widget.config,
+                reload: true
+            }).then(function (data) {
                 var option = chart.parseOption(data);
                 if (optionFilter) {
                     optionFilter(option);
@@ -115,8 +141,7 @@ cBoard.service('chartService', function ($q, dataService, chartPieService, chart
                 if (widgetWraper) {
                     widgetWraper.loading = false;
                 }
-            };
-            dataService.getDataSeries(widget.datasource, widget.query, widget.datasetId, widget.config, callback, true);
+            });
         };
 
         var getChartServices = function (chartConfig) {

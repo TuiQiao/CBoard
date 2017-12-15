@@ -822,86 +822,53 @@ cBoard.controller('widgetCtrl', function ($scope, $state, $stateParams, $http, $
             var charType = $scope.curWidget.config.chart_type;
             //百度地图特殊处理
             if (charType == 'chinaMapBmap') {
-                chartService.render($('#preview'), {
+                chartService.renderChart($('#preview'), {
                     config: $scope.curWidget.config,
                     datasource: $scope.datasource ? $scope.datasource.id : null,
                     query: $scope.curWidget.query,
                     datasetId: $scope.customDs ? undefined : $scope.curWidget.datasetId
-                });
-                $scope.loadingPre = false;
-            } else {
-                chartService.render($('#preview'), {
-                    config: $scope.curWidget.config,
-                    datasource: $scope.datasource ? $scope.datasource.id : null,
-                    query: $scope.curWidget.query,
-                    datasetId: $scope.customDs ? undefined : $scope.curWidget.datasetId
-                }, function (option) {
-                    switch ($scope.curWidget.config.chart_type) {
-                        case 'line':
-                            $scope.previewDivWidth = 12;
-                            option.toolbox = {
-                                feature: {
-                                    dataView: {
-                                        show: true,
-                                        readOnly: true
-                                    }
-                                }
-                            };
-                            break;
-                        case 'pie':
-                            $scope.previewDivWidth = 12;
-                            option.toolbox = {
-                                feature: {
-                                    dataView: {
-                                        show: true,
-                                        readOnly: true
-                                    }
-                                }
-                            };
-                            break;
-                        case 'kpi':
-                            $scope.previewDivWidth = 6;
-                            break;
-                        case 'table':
-                            $scope.previewDivWidth = 12;
-                            break;
-                        case 'funnel':
-                            $scope.previewDivWidth = 12;
-                            option.toolbox = {
-                                feature: {
-                                    dataView: {
-                                        show: true,
-                                        readOnly: true
-                                    }
-                                }
-                            };
-                            break;
-                        case 'sankey':
-                            $scope.previewDivWidth = 12;
-                            option.toolbox = {
-                                feature: {
-                                    dataView: {
-                                        show: true,
-                                        readOnly: true
-                                    }
-                                }
-                            };
-                            break;
-                        case 'map':
-                            $scope.previewDivWidth = 12;
-                            break;
-                        case 'areaMap':
-                            $scope.previewDivWidth = 12;
-                            break;
-                        case 'chinaMap':
-                            $scope.previewDivWidth = 12;
-                            break;
-                        case 'relation':
-                            $scope.previewDivWidth = 12;
-                            break;
-                    }
+                }).then(function () {
                     $scope.loadingPre = false;
-                }, null, !$scope.loadFromCache);
+                });
+            } else {
+                chartService.renderChart($('#preview'), {
+                    config: $scope.curWidget.config,
+                    datasource: $scope.datasource ? $scope.datasource.id : null,
+                    query: $scope.curWidget.query,
+                    datasetId: $scope.customDs ? undefined : $scope.curWidget.datasetId
+                }, {
+                    reload: !$scope.loadFromCache,
+                    optionFilter: function (option) {
+                        switch ($scope.curWidget.config.chart_type) {
+                            case 'kpi':
+                                $scope.previewDivWidth = 6;
+                                break;
+                            case 'line':
+                            case 'pie':
+                            case 'funnel':
+                            case 'sankey':
+                                $scope.previewDivWidth = 12;
+                                option.toolbox = {
+                                    feature: {
+                                        dataView: {
+                                            show: true,
+                                            readOnly: true
+                                        }
+                                    }
+                                };
+                                break;
+                            case 'table':
+                            case 'map':
+                            case 'areaMap':
+                            case 'chinaMap':
+                            case 'relation':
+                                $scope.previewDivWidth = 12;
+                                break;
+                        }
+                    }
+                }).then(function () {
+                    $scope.loadingPre = false;
+                });
             }
         };
 

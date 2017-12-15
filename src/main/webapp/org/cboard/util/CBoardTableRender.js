@@ -35,7 +35,7 @@ CBoardTableRender.prototype.do = function (tall, persist) {
         drill: this.drill,
         render: render
     };
-    new CBCrossTable(args).table(args);
+    new CBCrossTable(args).table();
     $(this.container).css({
         height: tall + "px"
     });

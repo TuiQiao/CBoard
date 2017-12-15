@@ -131,7 +131,7 @@ cBoard.service('chartService', function ($q, dataService, chartPieService, chart
                 query: widget.query,
                 datasetId: widget.datasetId,
                 chartConfig: widget.config,
-                reload: true
+                reload: isParamEvent ? false : true
             }).then(function (data) {
                 var option = chart.parseOption(data);
                 if (optionFilter) {

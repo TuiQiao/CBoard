@@ -44,6 +44,9 @@ public class FolderData implements InitializingBean {
     @Value("${meta.version}")
     private String currentVersion;
 
+    @Value("${admin_user_id}")
+    private String userId;
+
     private int generateFolder(String categoryName) {
         int parentId = 10000;
         JSONObject f = new JSONObject();
@@ -52,7 +55,7 @@ public class FolderData implements InitializingBean {
         if (categoryName.indexOf("/") == -1) {
             f.put("name", categoryName);
             f.put("parentId", 10000);
-            status = folderService.save("", f.toJSONString());
+            status = folderService.save(userId, f.toJSONString());
             if (status.getStatus().equals("1")) {
                 parentId = status.getId().intValue();
             } else {
@@ -64,7 +67,7 @@ public class FolderData implements InitializingBean {
             for (String s : arr) {
                 f.put("name", s);
                 f.put("parentId", parentId);
-                status = folderService.save("", f.toJSONString());
+                status = folderService.save(userId, f.toJSONString());
                 if (status.getStatus().equals("1")) {
                     parentId = status.getId().intValue();
                 } else {

@@ -147,6 +147,10 @@ public class BoardService {
     }
 
     public List<DashboardBoard> getBoardListByFolderIds(Integer[] folderIds){
+        if (folderIds == null || folderIds.length == 0) {
+            return null;
+        }
+
         Map<String, Object> params = new HashedMap();
         params.put("folderIds", folderIds);
         return boardDao.getBoardListByFolderIds(params);

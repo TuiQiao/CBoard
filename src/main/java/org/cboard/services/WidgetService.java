@@ -113,6 +113,10 @@ public class WidgetService {
     }
 
     public List<DashboardWidget> getWidgetListByFolderIds(Integer[] folderIds){
+        if (folderIds == null || folderIds.length == 0) {
+            return null;
+        }
+
         Map<String, Object> params = new HashedMap();
         params.put("folderIds", folderIds);
         return widgetDao.getWidgetListByFolderIds(params);

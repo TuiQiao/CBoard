@@ -181,8 +181,9 @@ public class DashboardController extends BaseController {
 
         Set<DashboardWidget> merge = new LinkedHashSet<>(list);
 
-        merge.addAll(widgetService.getWidgetListByFolderIds(para));
-
+        if (para != null && para.length > 0) {
+            merge.addAll(widgetService.getWidgetListByFolderIds(para));
+        }
         list = new ArrayList<>(merge);
 
         return Lists.transform(list, ViewDashboardWidget.TO);
@@ -209,8 +210,9 @@ public class DashboardController extends BaseController {
 
         Set<DashboardBoard> merge = new LinkedHashSet<>(list);
 
-        merge.addAll(boardService.getBoardListByFolderIds(para));
-
+        if (para != null && para.length > 0) {
+            merge.addAll(boardService.getBoardListByFolderIds(para));
+        }
         list = new ArrayList<>(merge);
 
         return Lists.transform(list, ViewDashboardBoard.TO);
@@ -289,8 +291,9 @@ public class DashboardController extends BaseController {
 
         Set<DashboardDataset> merge = new LinkedHashSet<>(list);
 
-        merge.addAll(datasetService.getDatasetListByFolderIds(para));
-
+        if (para != null && para.length > 0) {
+            merge.addAll(datasetService.getDatasetListByFolderIds(para));
+        }
         list = new ArrayList<>(merge);
 
         //get folder path

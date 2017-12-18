@@ -78,6 +78,9 @@ public class DatasetService {
     }
 
     public List<DashboardDataset> getDatasetListByFolderIds(Integer[] folderIds){
+        if (folderIds == null || folderIds.length == 0) {
+            return null;
+        }
         Map<String, Object> params = new HashedMap();
         params.put("folderIds", folderIds);
         return datasetDao.getDatasetListByFolderIds(params);

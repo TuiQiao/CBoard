@@ -6,6 +6,7 @@ import org.cboard.pojo.DashboardRoleRes;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -35,7 +36,7 @@ public class RoleService {
     }
 
     public Set<Integer> getFolderIds(String userId){
-        Set<Integer> resIds = null;
+        Set<Integer> resIds = new HashSet<>();
         //get Folder's auth
         List<DashboardRoleRes> roleres = roleDao.getUserRoleResList(userId, "folder");
         if (roleres != null && roleres.size() > 0) {

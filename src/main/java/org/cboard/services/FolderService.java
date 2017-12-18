@@ -134,11 +134,11 @@ public class FolderService {
     }
 
     public Set<DashboardFolder> getFolderDescendant(Set<Integer> folderIds){
-        if (folderIds == null || folderIds.size() == 0){
-            return null;
-        }
-
         Set<DashboardFolder> ret = new HashSet<>();
+
+        if (folderIds == null || folderIds.size() == 0){
+            return ret;
+        }
 
         List<DashboardFolder> folders = folderDao.getAllFolderList();
 

@@ -5,7 +5,7 @@ import java.sql.Timestamp;
 /**
  * Created by jx_luo on 2017/11/10.
  */
-public class MaidenVersion {
+public class MetaVersion {
 
     private Long id;
     private String name;

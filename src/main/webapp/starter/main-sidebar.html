@@ -21,17 +21,17 @@
                 <span class="pull-right-container"><i class="fa fa-angle-left pull-right"></i></span>
             </a>
             <ul class="treeview-menu">
-                <li ui-sref-active="active" ng-repeat="c in categoryList | hasBoards : boardList">
+                <li ui-sref-active="active" ng-repeat="f in folderList | filter:{isPrivate:0, hasBaord: 1}">
                     <a>
                         <i class="fa fa-folder"></i>
-                            {{c.name}}
+                            {{f.name}}
                         <span class="pull-right-container">
                             <i class="fa fa-angle-left pull-right"></i>
                         </span>
                     </a>
                     <ul class="treeview-menu">
-                        <li ui-sref-active="active" ng-repeat="b in boardList | filter:{categoryId:c.id}:true">
-                            <a ui-sref="dashboard.category.view({id:b.id,category:c.name})"><i class="fa fa-dashboard"></i>{{b.name}}</a>
+                        <li ui-sref-active="active" ng-repeat="b in boardList | filter:{folderId:f.id}:true">
+                            <a ui-sref="mine.view({id:b.id})"><i class="fa fa-dashboard"></i>{{b.name}}</a>
                         </li>
                     </ul>
                 </li>
@@ -44,7 +44,7 @@
                 <span class="pull-right-container"><i class="fa fa-angle-left pull-right"></i></span>
             </a>
             <ul class="treeview-menu">
-                <li ui-sref-active="active" ng-repeat="b in boardList | filter:{userId:user.userId}:true">
+                <li ui-sref-active="active" ng-repeat="b in boardList | filter:{folderIsPrivate:1}:true">
                     <a ui-sref="mine.view({id:b.id})"><i class="fa fa-dashboard"></i>{{b.name}}</a>
                 </li>
             </ul>

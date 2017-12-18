@@ -6,6 +6,7 @@ cBoard.controller('shareResCtrl', function ($scope, $http, ModalUtils, $filter) 
     var translate = $filter('translate');
     $scope.curUser;
     $scope.userKeyword = '';
+    $scope.folderIds = [];
 
     var getRoleList = function () {
         $http.get("admin/getRoleListAll.do").success(function (response) {
@@ -15,104 +16,88 @@ cBoard.controller('shareResCtrl', function ($scope, $http, ModalUtils, $filter) 
     getRoleList();
 
     $scope.resList = [{
-        id: 'Dashboard',
-        text: translate('ADMIN.BOARD'),
+        id: '10000',
+        text: translate('CONFIG.SHARE_RES.YOUR_RES'),
         parent: '#',
         icon: 'fa fa-dashboard fa-lg',
         state: {
             disabled: true
         }
-    }, {
-        id: 'Dataset',
-        text: translate('ADMIN.DATASET'),
-        parent: '#',
-        icon: 'fa fa-cubes fa-lg',
-        state: {
-            disabled: true
-        }
-    }, {
-        id: 'Widget',
-        text: translate('ADMIN.WIDGET'),
-        parent: '#',
-        icon: 'fa fa-bar-chart-o fa-lg',
-        state: {
-            disabled: true
-        }
     }];
 
+    var getFolderList = function () {
+        return $http.post('dashboard/getFolderFamilyTree.do', {folderIds: angular.toJson($scope.folderIds)}).success(function (response) {
+            $scope.folderList = response;
+
+
+            for (var i = 0; i < $scope.folderList.length; i++) {
+                if ($scope.folderList[i].parentId != -1 && $scope.folderList[i].isPrivate != 1) {
+                    // var folderName = $scope.folderList[i].name;
+                    $scope.resList.push({
+                        "id": $scope.folderList[i].id,
+                        "parent": $scope.folderList[i].parentId,
+                        "text":  $scope.folderList[i].name,
+                        resId: $scope.folderList[i].id,
+                        type: "folder"
+                    });
+                }
+            }
+        });
+    };
+
     var getBoardList = function () {
-        return $http.get("admin/getBoardListUser.do").success(function (response) {
+        return $http.get("dashboard/getBoardList.do").success(function (response) {
             _.each(buildNodeByCategory(_.filter(response, function (e) {
-                return e.categoryId;
+                return e.folderId;
             }), 'Dashboard', 'board', 'fa fa-puzzle-piece'), function (e) {
                 $scope.resList.push(e);
-            })
+            });
+
+            $scope.folderIds = _.union($scope.folderIds, response.map(function (item) {
+                return item.folderId;
+            }));
         });
     };
 
     var getDatasetList = function () {
-        return $http.get("admin/getDatasetListUser.do").success(function (response) {
+        return $http.get("dashboard/getDatasetList.do").success(function (response) {
             _.each(buildNodeByCategory(response, 'Dataset', 'dataset', 'fa fa-table'), function (e) {
                 $scope.resList.push(e);
             });
+
+            $scope.folderIds = _.union($scope.folderIds, response.map(function (item) {
+                return item.folderId;
+            }));
         });
     };
 
     var getWidgetList = function () {
-        return $http.get("admin/getWidgetListUser.do").success(function (response) {
+        return $http.get("dashboard/getWidgetList.do").success(function (response) {
             _.each(buildNodeByCategory(response, 'Widget', 'widget', 'fa fa-line-chart'), function (e) {
                 $scope.resList.push(e);
             });
+
+            $scope.folderIds = _.union($scope.folderIds, response.map(function (item) {
+                return item.folderId;
+            }));
         });
     };
 
     var buildNodeByCategory = function (listIn, rParent, type, icon) {
-        var newParentId = 1;
         var listOut = [];
+
         for (var i = 0; i < listIn.length; i++) {
-            var arr = [];
-            if (listIn[i].categoryName) {
-                arr = listIn[i].categoryName.split('/');
-                arr.push(listIn[i].name);
-            } else {
-                arr.push(listIn[i].name);
-            }
-            var parent = rParent;
-            for (var j = 0; j < arr.length; j++) {
-                var flag = false;
-                var a = arr[j];
-                for (var m = 0; m < listOut.length; m++) {
-                    if (listOut[m].text == a && listOut[m].parent == parent && listOut[m].id.substring(0, 6) == 'parent') {
-                        flag = true;
-                        break;
-                    }
-                }
-                if (!flag) {
-                    if (j == arr.length - 1) {
-                        listOut.push({
-                            "id": type + '_' + listIn[i].id.toString(),
-                            "parent": parent,
-                            "text": a,
-                            resId: listIn[i].id,
-                            type: type,
-                            icon: icon,
-                            name: a
-                        });
-                    } else {
-                        listOut.push({
-                            "id": 'parent' + '_' + type + '_' + newParentId,
-                            "parent": parent,
-                            "text": a
-                            /*icon: 'fa fa-fw fa-folder-o',*/
-                            //,state: {disabled: true}
-                        });
-                    }
-                    parent = 'parent' + '_' + type + '_' + newParentId;
-                    newParentId++;
-                } else {
-                    parent = listOut[m].id;
-                }
-            }
+            if (listIn[i].folderIsPrivate != undefined && listIn[i].folderIsPrivate == 1)
+                continue;
+            listOut.push({
+                "id": type + listIn[i].id.toString(),
+                "parent": listIn[i].folderId,
+                "text": listIn[i].name.toString(),
+                resId: listIn[i].id,
+                type: type,
+                icon: icon,
+                name: listIn[i].name
+            });
         }
         return listOut;
     };
@@ -122,6 +107,8 @@ cBoard.controller('shareResCtrl', function ($scope, $http, ModalUtils, $filter) 
             return getDatasetList();
         }).then(function () {
             return getWidgetList();
+        }).then(function () {
+            return getFolderList();
         }).then(function () {
             $scope.treeConfig = {
                 core: {
@@ -139,7 +126,7 @@ cBoard.controller('shareResCtrl', function ($scope, $http, ModalUtils, $filter) 
                 plugins: ['types', 'checkbox', 'unique']
             };
             _.delay(function () {
-                $scope.treeInstance.jstree(true);
+                $scope.treeInstance.jstree(true).open_all();
             }, 500);
         });
     }();
@@ -158,7 +145,7 @@ cBoard.controller('shareResCtrl', function ($scope, $http, ModalUtils, $filter) 
             return e.roleId;
         });
         var resIds = _.map(_.filter($scope.treeInstance.jstree(true).get_selected(true), function (e) {
-            return !_.isUndefined(e.original.resId);
+            return e.original.resId;
         }), function (e) {
             return {
                 resId: e.original.resId,

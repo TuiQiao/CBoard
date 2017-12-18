@@ -3,12 +3,12 @@ package org.cboard.services.meta;
 import com.alibaba.fastjson.JSONObject;
 import org.cboard.dao.DatasetDao;
 import org.cboard.dao.FolderDao;
-import org.cboard.dao.MaidenVersionDao;
+import org.cboard.dao.MetaVersionDao;
 import org.cboard.dao.WidgetDao;
 import org.cboard.pojo.DashboardDataset;
 import org.cboard.pojo.DashboardFolder;
 import org.cboard.pojo.DashboardWidget;
-import org.cboard.pojo.MaidenVersion;
+import org.cboard.pojo.MetaVersion;
 import org.cboard.services.FolderService;
 import org.cboard.services.ServiceStatus;
 import org.springframework.beans.factory.InitializingBean;
@@ -19,7 +19,6 @@ import org.springframework.stereotype.Service;
 
 import java.io.*;
 import java.util.List;
-import java.util.Properties;
 
 /**
  * Created by jx_luo on 2017/11/6.
@@ -34,7 +33,7 @@ public class FolderData implements InitializingBean {
     private FolderService folderService;
 
     @Autowired
-    private MaidenVersionDao versionDao;
+    private MetaVersionDao versionDao;
 
     @Autowired
     private DatasetDao datasetDao;
@@ -79,7 +78,7 @@ public class FolderData implements InitializingBean {
 
     @Override
     public void afterPropertiesSet() throws Exception {
-        MaidenVersion version = versionDao.getMaidenVersion(currentVersion);
+        MetaVersion version = versionDao.getMetaVersion(currentVersion);
 
         if (version != null && version.getstatus() == 0) {
 

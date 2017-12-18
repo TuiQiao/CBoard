@@ -103,7 +103,7 @@ var jsTreeConfig1 = {
     },
     state: {"key": "cboard"},
     version: 1,
-    plugins: ['types', 'unique', 'state', 'sort', 'dnd', 'contextmenu', 'search']
+    plugins: ['types', 'unique', 'state', 'dnd', 'contextmenu', 'search']
 };
 
 

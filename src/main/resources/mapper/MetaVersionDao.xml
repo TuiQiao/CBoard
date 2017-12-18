@@ -1,20 +1,20 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
-<mapper namespace="org.cboard.dao.MaidenVersionDao">
+<mapper namespace="org.cboard.dao.MetaVersionDao">
 
-    <select id="getMaidenVersion" resultType="org.cboard.pojo.MaidenVersion">
+    <select id="getMetaVersion" resultType="org.cboard.pojo.MetaVersion">
         SELECT
         id          AS id,
         name        AS name,
         status      AS status,
         create_time AS createTime,
         update_time AS updateTime
-        FROM maiden_version
+        FROM Meta_Version
         WHERE name = #{0}
     </select>
 
-    <update id="update" parameterType="org.cboard.pojo.MaidenVersion">
-        UPDATE maiden_version
+    <update id="update" parameterType="org.cboard.pojo.MetaVersion">
+        UPDATE Meta_Version
         SET name = #{name},status = #{status},update_time = #{updateTime}
         WHERE id = #{id}
     </update>
@@ -24,7 +24,7 @@
     </select>
 
     <delete id="delete">
-        DELETE FROM maiden_version WHERE id = #{0}
+        DELETE FROM Meta_Version WHERE id = #{0}
     </delete>
 
 </mapper>

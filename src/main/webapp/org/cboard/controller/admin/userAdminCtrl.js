@@ -525,8 +525,7 @@ cBoard.controller('userAdminCtrl', function ($scope, $http, ModalUtils, $filter)
         var resIds = [];
         for (var key in $scope.tree) {
             _.each(_.filter($scope.tree[key].treeInstance.jstree(true).get_checked(true), function (e) {
-                // if(e.original.type == 'folder' && e.text == 'Dashboard' || e.original.type != 'folder')
-                return e.original.resId; //.isUndefined(e.original.resId);
+                return e.original.resId;
             }), function (e) {
                 resIds.push({
                     resId: e.original.resId,
@@ -549,7 +548,6 @@ cBoard.controller('userAdminCtrl', function ($scope, $http, ModalUtils, $filter)
                 $scope.alerts = [{msg: serviceStatus.msg, type: 'danger'}];
             }
         });
-
     };
 
     $scope.deleteRole = function () {

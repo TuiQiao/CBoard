@@ -21,15 +21,36 @@ cBoard.controller('cBoardCtrl', function ($rootScope, $scope, $location, $http, 
         });
     };
 
-    var getCategoryList = function () {
-        $http.get("dashboard/getCategoryList.do").success(function (response) {
-            $scope.categoryList = response;
+    var getFolderList = function () {
+        $http.post('dashboard/getFolderFamilyTree.do', {folderIds: $scope.folderIds}).success(function (response) {
+            var data = response;
+
+            $scope.folderList = [];
+            for (var i=0; i<data.length; i++){
+                var folderName = data[i].name.toString();
+                if(data[i].parentId == 10000) {
+                    $scope.folderList.push({
+                        "id": data[i].id,
+                        "name": folderName == ".private" ? translate("CONFIG.DASHBOARD.MY_DASHBOARD") : folderName,
+                        "isPrivate": data[i].isPrivate,
+                        "hasBaord": $scope.folderIds.indexOf(data[i].id)>0 ? 1 : 0
+                    });
+                }
+            }
         });
     };
 
     var getBoardList = function () {
         $http.get("dashboard/getBoardList.do").success(function (response) {
             $scope.boardList = response;
+
+            var tmp = $scope.boardList.map(function (item) {
+                return item.folderId;
+            });
+            // tmp.push($scope.privateFolder.id);
+            $scope.folderIds = angular.toJson(tmp);
+
+            getFolderList();
         });
     };
 
@@ -48,7 +69,6 @@ cBoard.controller('cBoardCtrl', function ($rootScope, $scope, $location, $http, 
     };
 
     getMenuList();
-    getCategoryList();
     getBoardList();
 
     $scope.changePwd = function () {

@@ -1,19 +1,19 @@
 package org.cboard.dao;
 
-import org.cboard.pojo.MaidenVersion;
+import org.cboard.pojo.MetaVersion;
 import org.springframework.stereotype.Repository;
 
 /**
  * Created by jx_luo on 2017/11/10.
  */
 @Repository
-public interface MaidenVersionDao {
+public interface MetaVersionDao {
 
-    int update(MaidenVersion version);
+    int update(MetaVersion version);
 
     int delete(int id);
 
-    MaidenVersion getMaidenVersion(String name);
+    MetaVersion getMetaVersion(String name);
 
     Long countExistVersionName(String name);
 }

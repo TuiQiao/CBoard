@@ -12,6 +12,7 @@ import org.cboard.dao.WidgetDao;
 import org.cboard.dto.ViewDashboardBoard;
 import org.cboard.pojo.DashboardBoard;
 import org.cboard.pojo.DashboardDataset;
+import org.cboard.pojo.DashboardWidget;
 import org.cboard.services.AuthenticationService;
 import org.cboard.services.FolderService;
 import org.cboard.services.ServiceStatus;
@@ -50,7 +51,13 @@ public class BoardRoleService {
     public Object getBoardData(ProceedingJoinPoint proceedingJoinPoint) throws Throwable {
         Long id = (Long) proceedingJoinPoint.getArgs()[0];
         String userid = authenticationService.getCurrentUser().getUserId();
-        if (boardDao.checkBoardRole(userid, id, RolePermission.PATTERN_READ) > 0) {
+        DashboardBoard board = boardDao.getBoard(id);
+        int folderId = 0;
+        if (board != null) {
+            folderId = board.getFolderId();
+        }
+        if (boardDao.checkBoardRole(userid, id, RolePermission.PATTERN_READ) > 0
+                || folderService.checkFolderAuth(userid, folderId)) {
             ViewDashboardBoard value = (ViewDashboardBoard) proceedingJoinPoint.proceed();
             JSONArray rows = (JSONArray) value.getLayout().get("rows");
             for (Object row : rows) {
@@ -64,11 +71,21 @@ public class BoardRoleService {
                     Long datasetId = vw.getJSONObject("data").getLong("datasetId");
                     Long datasourceId = vw.getJSONObject("data").getLong("datasource");
                     List<Res> roleInfo = new ArrayList<>();
-                    if (widgetDao.checkWidgetRole(userid, widgetId, RolePermission.PATTERN_READ) <= 0) {
+                    DashboardWidget dwidget = widgetDao.getWidget(widgetId);
+                    if (dwidget != null) {
+                        folderId = dwidget.getFolderId();
+                    }
+                    if (widgetDao.checkWidgetRole(userid, widgetId, RolePermission.PATTERN_READ) <= 0
+                            && !folderService.checkFolderAuth(userid, folderId)) {
                         ((JSONObject) widget).put("hasRole", false);
                         roleInfo.add(new Res("ADMIN.WIDGET", vw.getString("categoryName") + "/" + vw.getString("name")));
                     }
-                    if (datasetId != null && datasetDao.checkDatasetRole(userid, datasetId, RolePermission.PATTERN_READ) <= 0) {
+                    DashboardDataset dataset = datasetDao.getDataset(datasetId);
+                    if (dataset != null) {
+                        folderId = dataset.getFolderId();
+                    }
+                    if (datasetId != null && datasetDao.checkDatasetRole(userid, datasetId, RolePermission.PATTERN_READ) <= 0
+                            && !folderService.checkFolderAuth(userid, folderId)) {
                         ((JSONObject) widget).put("hasRole", false);
                         DashboardDataset ds = datasetDao.getDataset(datasetId);
                         roleInfo.add(new Res("ADMIN.DATASET", ds.getCategoryName() + "/" + ds.getName()));

@@ -297,11 +297,17 @@ cBoard.controller('boardCtrl',
 
     function saveBoardCallBack(serviceStatus) {
         if (serviceStatus.status == '1') {
-            getBoardList();
             if (!$scope.curBoard.id) {
                 $scope.curBoard.id = serviceStatus.id;
             }
+
+            if($scope.isPreview){
+                $state.go('mine.view', {id: $scope.curBoard.id});
+                $scope.isPreview = false;
+                return;
+            }
             ModalUtils.alert(serviceStatus.msg, "modal-success", "sm");
+            getBoardList();
             boardChange();
         } else {
             ModalUtils.alert(serviceStatus.msg, "modal-warning", "sm");
@@ -310,21 +316,9 @@ cBoard.controller('boardCtrl',
 
     $scope.checkBeforPreview = function (Id) {
         $scope.isPreview = true;
-        // if (!validate()) {
-        //     return;
-        // }
+
         ModalUtils.confirm(translate("COMMON.CONFIRM_SAVE_BEFORE_PREVIEW"), "modal-warning", "lg", function () {
-            if(_.isUndefined(Id)){
-                $scope.saveWin($scope.type);
-            }else{
-                $scope.saveBoard(false, $scope.type)
-                    .then(function () {
-                        if (!Id) {
-                            Id = $scope.curBoard.id;
-                        }
-                        $state.go('mine.view', {id: Id});
-                    });
-            }
+            $scope.saveWin($scope.type);
         });
     };
 

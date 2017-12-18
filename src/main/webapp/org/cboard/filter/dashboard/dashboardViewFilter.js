@@ -8,7 +8,7 @@ cBoard.filter('hasBoards', function () {
             return b.categoryId;
         });
         var result = _.filter(category, function (c) {
-            return _.contains(cids, c.id);
+            return _.includes(cids, c.id);
         });
         return result;
     };

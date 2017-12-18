@@ -130,14 +130,14 @@ cBoard.service('chartAreaMapService', function ($state, $window) {
         var suffix;
         switch (zoomLevel) {
             case 1:
-                if (_.contains(zxs, trimedName )) {
+                if (_.includes(zxs, trimedName )) {
                     suffix = '市';
                 } else {
                     suffix = '省';
                 }
                 break;
             case 2:
-                if (_.contains(zxs, trimedName )) {
+                if (_.includes(zxs, trimedName )) {
                     suffix = '区';
                 } else {
                     suffix = '市';

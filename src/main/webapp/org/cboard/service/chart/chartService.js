@@ -33,11 +33,11 @@ cBoard.service('chartService', function ($q, dataService, chartPieService, chart
 
         this.renderChart = function (containerDom, widgetConfig, options) {
             var deferred = $q.defer();
-            var optionFilter = options ? options.optionFilter : undefined,
-                scope = options ? options.scope : undefined,
-                reload = options ? options.reload : undefined,
-                persist = options ? options.persist : undefined,
-                relations = options ? options.relations : undefined;
+            var optionFilter = _.get(options, 'optionFilter'),
+                scope = _.get(options, 'scope'),
+                reload = _.get(options, 'reload'),
+                persist = _.get(options, 'persist'),
+                relations = _.get(options, 'relations');
             var chartServiceInstance = getChartServices(widgetConfig.config);
             dataService.getDataSeries({
                 datasource: widgetConfig.datasource,

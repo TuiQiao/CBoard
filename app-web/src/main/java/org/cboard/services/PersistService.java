@@ -3,7 +3,6 @@ package org.cboard.services;
 import com.alibaba.fastjson.JSONObject;
 import org.cboard.dao.BoardDao;
 import org.cboard.exception.CBoardException;
-import org.cboard.pojo.DashboardBoard;
 import org.cboard.security.service.LocalSecurityFilter;
 import org.cboard.services.persist.PersistContext;
 import org.slf4j.Logger;

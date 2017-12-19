@@ -6,6 +6,7 @@
     <version>0.0.1-SNAPSHOT</version>
     <modules>
         <module>app-web</module>
+        <module>app-pojo</module>
     </modules>
     <packaging>pom</packaging>
     <name>cboard</name>

@@ -11,7 +11,13 @@
     <name>app-web Maven Webapp</name>
     <url>http://maven.apache.org</url>
 
-    <dependencies></dependencies>
+    <dependencies>
+        <dependency>
+            <groupId>org.cboard</groupId>
+            <artifactId>app-pojo</artifactId>
+            <version>0.0.1-SNAPSHOT</version>
+        </dependency>
+    </dependencies>
 
     <build>
         <finalName>${project.artifactId}</finalName>

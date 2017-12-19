@@ -1,7 +1,6 @@
 package org.cboard.dto;
 
 import com.google.common.base.Function;
-import org.cboard.pojo.DashboardDataset;
 import org.cboard.pojo.DashboardFolder;
 
 import javax.annotation.Nullable;

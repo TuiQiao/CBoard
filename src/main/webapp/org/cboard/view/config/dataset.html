@@ -56,15 +56,17 @@
                             <div class="row">
                                 <div class="col-md-12">
                                     <div class="form-group">
-                                        <div class="col-sm-offset-2 col-sm-2">
-                                            <button type="button" class="btn btn-block btn-success"
-                                                    ng-click="loadData()">{{'CONFIG.DATASET.LOAD_DATA'|translate}}
-                                            </button>
-                                        </div>
-                                        <div class="col-xs-12 col-sm-5 col-md-3 col-lg-2">
-                                            <label>
-                                                <input type="checkbox" ng-model="loadFromCache"> {{'CONFIG.WIDGET.FROM_CACHE'|translate}}
-                                            </label>
+                                        <div class="col-sm-offset-2 col-sm-2 col-md-3">
+                                            <div class="btn-group">
+                                                <button type="button" class="btn btn-success" ng-click="loadData()">{{'CONFIG.DATASET.LOAD_DATA'|translate}}</button>
+                                                <button type="button" class="btn btn-success dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
+                                                    <span class="caret"></span>
+                                                    <span class="sr-only">Toggle Dropdown</span>
+                                                </button>
+                                                <ul class="dropdown-menu" role="menu">
+                                                    <li ng-click="loadData(true)"><a>{{'CONFIG.WIDGET.FROM_CACHE'|translate}}</a></li>
+                                                </ul>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>

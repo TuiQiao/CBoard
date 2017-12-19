@@ -20,11 +20,13 @@ CBoardTableRender.prototype.resize = function (container) {
 CBoardTableRender.prototype.do = function (tall, persist) {
     this.tall = tall;
     tall = _.isUndefined(tall) ? 500 : tall;
-    var divHeight = tall - 110;
+    var divHeight = tall - 90;
     var _this = this;
     var render = function (o, drillConfig) {
         _this.options = o;
-        _this.drill.config = drillConfig;
+        if (_this.drill) {
+            _this.drill.config = drillConfig;
+        }
         _this.do(_this.tall);
     };
     var args = {
@@ -35,7 +37,7 @@ CBoardTableRender.prototype.do = function (tall, persist) {
         drill: this.drill,
         render: render
     };
-    crossTable.table(args);
+    new CBCrossTable(args).table();
     $(this.container).css({
         height: tall + "px"
     });

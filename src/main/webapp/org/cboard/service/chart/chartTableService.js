@@ -10,7 +10,7 @@ cBoard.service('chartTableService', function () {
             return;
         }
         var height;
-        scope ? height = scope.myheight - 20 : null;
+        scope ? height = scope.myheight : null;
         return new CBoardTableRender(containerDom, option, drill).do(height, persist);
     };
 

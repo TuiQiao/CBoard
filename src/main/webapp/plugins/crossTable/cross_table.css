@@ -1,0 +1,207 @@
+.cross_table_view table {
+    border-bottom: 1px solid #d5d5d5;
+    border-right: 1px solid #d5d5d5;
+    margin-bottom: 0;
+    /*table-layout: fixed;*/
+    width: auto;
+    border-collapse: separate;
+    border-spacing: 0;
+}
+
+.cross_table_view td,
+.cross_table_view th {
+    /*border-left: 1px solid #d5d5d5;*/
+    /*border-top: 1px solid #d5d5d5;*/
+    /*text-align: right;*/
+    white-space: nowrap;
+    font-weight: normal;
+    font-size: 10px;
+    padding: 3px 5px;
+}
+
+.cross_table_view th {
+    font-size: 10px;
+    /*font-weight: normal;*/
+    /*padding: 3px 9px 3px 4px;*/
+}
+
+.cross_table_view .table {
+    font-weight: normal;
+    font-size: 10px;
+    width: 100%;
+    max-width: 100%;
+    margin-bottom: 20px;
+}
+
+.cross_table_view table th.row {
+    border-top: 1px solid #d5d5d5;
+    white-space: nowrap;
+    text-align: center;
+}
+
+.cross_table_view table td.data, .cross_table_view table th.header_key {
+    border-left: 1px solid #d5d5d5;
+    border-top: 1px solid #d5d5d5;
+    text-align: center;
+    white-space: nowrap;
+}
+
+.cross_table_view .header_key {
+    font-weight: bold;
+}
+
+.cross_table_view table th.header_empty {
+    border-left: none;
+    border-top: none;
+    background: none;
+}
+
+.cross_table_view table th {
+    background: rgba(238, 238, 238, 0.83);
+    border-left: 1px solid #d5d5d5;
+}
+
+.cross_table_view th.col {
+    border-top: 1px solid #d5d5d5;
+}
+
+.cross_table_view th.all_null {
+    background: none;
+    border: 0;
+}
+
+.cross_table_view th.row_null {
+    border-left: 1px solid #d5d5d5;
+}
+
+.cross_table_view th.col_null {
+    border-left: 0px;
+    border-top: 1px solid #d5d5d5;
+}
+
+.cross_table_view .table_drill_cell {
+    color: royalblue;
+    cursor: url(../../imgs/right_click.png), auto;
+}
+
+.table_drill_cell:hover {
+    background-color: #999;
+    color: white !important;
+}
+
+.cross_table_view .toolbar {
+    width: 99%;
+    height: 30px;
+    margin: 0 0 10px 0;
+    box-shadow: 1px 1px 5px #ccc;
+    background-color: #F9F9F9;
+}
+
+.cross_table_view .info {
+    display: inline-block;
+    float: left;
+    margin: 4px 0 0 5px;
+}
+
+.cross_table_view .exportBnt,
+.cross_table_view .drillUp,
+.cross_table_view .drillDown {
+    margin: 7px 5px 10px 5px;
+    float: right;
+    width: 15px;
+    height: 15px;
+    cursor: pointer;
+}
+
+.cross_table_view .drillUp {
+    background: url("../../imgs/drillup.png");
+    background-size: cover;
+}
+
+.cross_table_view .drillDown {
+    background: url("../../imgs/drilldown.svg");
+    background-size: cover;
+}
+
+.cross_table_view .exportBnt {
+    background: url("../../imgs/excel.svg");
+    background-size: cover;
+}
+
+div.operateBox {
+    position: relative;
+}
+
+.cross_table_view .optionNum {
+    float: left;
+    height: 26px;
+    width: 200px;
+    margin: 7px 20px 0 0;
+}
+
+.cross_table_view .optionNum select {
+    margin: 0 6px 0 6px;
+    width: 60px;
+    height: 26px;
+}
+
+.cross_table_view .page {
+    margin: 10px auto;
+    width: 60%;
+    overflow: auto;
+    padding: 0 5px 5px 0;
+    float: right;
+}
+
+.cross_table_view .page > ul {
+    margin: 10px auto;
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    overflow: auto;
+    float: right;
+}
+
+.cross_table_view .page li {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    float: left;
+    cursor: pointer;
+}
+
+.cross_table_view a.pageLink,
+.cross_table_view a.nextLink,
+.cross_table_view a.previewLink {
+    float: left;
+    color: #666;
+    font-size: 14px;
+    line-height: 24px;
+    font-weight: normal;
+    text-align: center;
+    border: 1px solid #BBB;
+    width: 30px;
+    margin: 0 5px 0 0;
+    border-radius: 3px;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+}
+
+.cross_table_view a.pageLink:hover,
+.cross_table_view a.nextLink:hover,
+.cross_table_view a.previewLink:hover {
+    background-color: #585858;
+    color: white !important;
+}
+
+.cross_table_view a.current {
+    background-color: #ccc;
+}
+
+.cross_table_view a.nextLink,
+.cross_table_view a.previewLink {
+    width: 80px;
+}
+
+.cross_table_view a.hide {
+    display: none;
+}

@@ -41,8 +41,7 @@ public class FolderData implements InitializingBean {
     @Autowired
     private WidgetDao widgetDao;
 
-    @Value("${meta.version}")
-    private String currentVersion;
+    private String currentVersion = "Folder";
 
     @Value("${admin_user_id}")
     private String userId;

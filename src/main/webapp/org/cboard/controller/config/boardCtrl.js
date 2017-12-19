@@ -213,6 +213,7 @@ cBoard.controller('boardCtrl',
         $('div.newBoard').addClass('hideOperate');
     };
     $scope.editBoard = function (board) {
+        $scope.showBox = true;
         var b = angular.copy(board);
         b.folderId = $scope.selectedFold.id;
         updateService.updateBoard(b);

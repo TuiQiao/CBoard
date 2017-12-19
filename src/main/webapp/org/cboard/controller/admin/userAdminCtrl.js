@@ -216,7 +216,7 @@ cBoard.controller('userAdminCtrl', function ($scope, $http, ModalUtils, $filter)
             }
         }
 
-        if (_.isUndefined($node.original.resId)) {
+        if ($node.original.type == "folder") {
             if ($node.parent != '#') {
                 return {
                     edit: {

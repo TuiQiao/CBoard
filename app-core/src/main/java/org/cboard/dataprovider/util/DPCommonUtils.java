@@ -1,6 +1,5 @@
 package org.cboard.dataprovider.util;
 
-import org.cboard.dataprovider.DataProvider;
 import org.cboard.dataprovider.config.AggConfig;
 import org.cboard.dataprovider.config.DimensionConfig;
 import org.cboard.dataprovider.result.AggregateResult;

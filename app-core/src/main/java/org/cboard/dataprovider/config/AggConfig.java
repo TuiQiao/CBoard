@@ -1,10 +1,6 @@
 package org.cboard.dataprovider.config;
 
-import org.cboard.dto.ViewAggConfig;
-
-import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  * Created by zyong on 2017/1/9.

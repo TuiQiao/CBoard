@@ -1,7 +1,5 @@
 package org.cboard.dto;
 
-import org.cboard.dataprovider.DataProvider;
-
 import java.io.Serializable;
 
 /**

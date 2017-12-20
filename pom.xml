@@ -7,6 +7,7 @@
     <modules>
         <module>app-web</module>
         <module>app-pojo</module>
+        <module>app-core</module>
     </modules>
     <packaging>pom</packaging>
     <name>cboard</name>

@@ -1,7 +1,5 @@
 package org.cboard.dataprovider.config;
 
-import static org.junit.Assert.*;
-
 /**
  * Created by zyong on 2017/4/24.
  */

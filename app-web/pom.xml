@@ -14,7 +14,7 @@
     <dependencies>
         <dependency>
             <groupId>org.cboard</groupId>
-            <artifactId>app-pojo</artifactId>
+            <artifactId>app-core</artifactId>
             <version>0.0.1-SNAPSHOT</version>
         </dependency>
     </dependencies>

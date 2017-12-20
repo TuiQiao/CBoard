@@ -15,7 +15,7 @@
     <!--
     <filter>
         <filter-name>LogFilter</filter-name>
-        <filter-class>org.cboard.security.service.LogFilter</filter-class>
+        <filter-clLogFilterlter</filter-class>
     </filter>
     <filter-mapping>
         <filter-name>LogFilter</filter-name>

@@ -6,8 +6,6 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 
-import java.util.ArrayList;
-
 /**
  * Created by yfyuan on 2016/12/14.
  */

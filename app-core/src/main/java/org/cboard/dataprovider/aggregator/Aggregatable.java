@@ -1,14 +1,7 @@
 package org.cboard.dataprovider.aggregator;
 
-import org.cboard.dataprovider.DataProvider;
 import org.cboard.dataprovider.config.AggConfig;
-import org.cboard.dataprovider.config.CompositeConfig;
-import org.cboard.dataprovider.config.ConfigComponent;
-import org.cboard.dataprovider.config.DimensionConfig;
 import org.cboard.dataprovider.result.AggregateResult;
-
-import java.util.ArrayList;
-import java.util.stream.Collectors;
 
 /**
  * Created by yfyuan on 2017/1/13.

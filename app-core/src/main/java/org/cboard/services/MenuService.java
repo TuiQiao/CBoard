@@ -3,12 +3,6 @@ package org.cboard.services;
 import org.cboard.dto.DashboardMenu;
 import org.springframework.stereotype.Repository;
 
-import javax.servlet.http.HttpSession;
-import javax.sql.RowSet;
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.ResultSet;
-import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 

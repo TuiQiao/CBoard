@@ -12,6 +12,8 @@ CREATE TABLE dashboard_board (
   category_id NUMBER DEFAULT NULL,
   board_name varchar2(100) NOT NULL,
   layout_json CLOB,
+  create_time TIMESTAMP DEFAULT sysdate,
+  update_time TIMESTAMP DEFAULT sysdate,
   CONSTRAINT dashboard_board_pk PRIMARY KEY (board_id)
 );
 
@@ -166,8 +168,6 @@ CREATE TABLE dashboard_board_param (
   user_id varchar2(50) NOT NULL,
   board_id number NOT NULL,
   config CLOB,
-  create_time TIMESTAMP DEFAULT sysdate,
-  update_time TIMESTAMP DEFAULT sysdate,
   CONSTRAINT dashboard_board_param_pk PRIMARY KEY (board_param_id)
 );
 

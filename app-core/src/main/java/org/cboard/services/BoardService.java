@@ -62,7 +62,6 @@ public class BoardService {
                 Long widgetId = ww.getLong("widgetId");
                 DashboardWidget widget = widgetDao.getWidget(widgetId);
                 JSONObject dataJson = JSONObject.parseObject(widget.getData());
-                //DataProviderResult data = dataProviderService.getData(dataJson.getLong("datasource"), Maps.transformValues(dataJson.getJSONObject("query"), Functions.toStringFunction()));
                 JSONObject widgetJson = (JSONObject) JSONObject.toJSON(new ViewDashboardWidget(widget));
                 //widgetJson.put("queryData", data.getData());
                 ww.put("widget", widgetJson);

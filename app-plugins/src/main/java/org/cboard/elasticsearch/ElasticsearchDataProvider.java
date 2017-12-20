@@ -1,6 +1,5 @@
 package org.cboard.elasticsearch;
 
-import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.alibaba.fastjson.JSONPath;
@@ -34,7 +33,6 @@ import org.cboard.dataprovider.annotation.QueryParameter;
 import org.cboard.dataprovider.config.*;
 import org.cboard.dataprovider.result.AggregateResult;
 import org.cboard.dataprovider.result.ColumnIndex;
-import org.cboard.elasticsearch.query.QueryBuilder;
 import org.cboard.util.json.JSONBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -203,7 +201,7 @@ public class ElasticsearchDataProvider extends DataProvider implements Aggregata
         values.stream()
                 .map(e -> termQuery(fieldName, e))
                 .forEach(boolArr::add);
-        return QueryBuilder.boolFilter(boolType, boolArr);
+        return boolFilter(boolType, boolArr);
     }
 
     protected JSONObject post(String url, JSONObject request) throws Exception {
@@ -223,7 +221,7 @@ public class ElasticsearchDataProvider extends DataProvider implements Aggregata
 
         String response = EntityUtils.toString(httpResponse.getEntity(), chartset);
         if (httpResponse.getStatusLine().getStatusCode() == 200) {
-            return JSONObject.parseObject(response);
+            return parseObject(response);
         } else {
             throw new Exception(response);
         }
@@ -233,7 +231,7 @@ public class ElasticsearchDataProvider extends DataProvider implements Aggregata
         HttpClientBuilder httpClientBuilder = HttpClientBuilder.create();
         HttpGet httpget = new HttpGet(url);
         HttpResponse response = httpClientBuilder.build().execute(httpget, getHttpContext());
-        return JSONObject.parseObject(EntityUtils.toString(response.getEntity(), dataSource.get(CHARSET)));
+        return parseObject(EntityUtils.toString(response.getEntity(), dataSource.get(CHARSET)));
     }
 
     private HttpClientContext getHttpContext() {
@@ -293,7 +291,7 @@ public class ElasticsearchDataProvider extends DataProvider implements Aggregata
             }
             // Schema Override
             if (StringUtils.isNotEmpty(d.getCustom())) {
-                aggregation = json(d.getColumnName(), JSONObject.parseObject(d.getCustom()).get("esBucket"));
+                aggregation = json(d.getColumnName(), parseObject(d.getCustom()).get("esBucket"));
             }
         } catch (Exception e) {
             LOG.error("", e);
@@ -515,7 +513,7 @@ public class ElasticsearchDataProvider extends DataProvider implements Aggregata
                 aggregation.getJSONObject(aggregationName).put(type, new JSONObject());
                 aggregation.getJSONObject(aggregationName).getJSONObject(type).put("field", config.getColumn());
             } else {
-                JSONObject extend = JSONObject.parseObject(config.getColumn());
+                JSONObject extend = parseObject(config.getColumn());
                 String column = extend.getString("column");
                 JSONObject filter = extend.getJSONObject("filter");
                 JSONObject script = extend.getJSONObject("script");
@@ -555,7 +553,7 @@ public class ElasticsearchDataProvider extends DataProvider implements Aggregata
     }
 
     private String getKey() {
-        return Hashing.md5().newHasher().putString(JSONObject.toJSON(dataSource).toString() + JSONObject.toJSON(query).toString(), Charsets.UTF_8).hash().toString();
+        return Hashing.md5().newHasher().putString(toJSON(dataSource).toString() + toJSON(query).toString(), Charsets.UTF_8).hash().toString();
     }
 
     private void getField(Map<String, String> types, Map.Entry<String, Object> field, String parent) {
@@ -600,7 +598,7 @@ public class ElasticsearchDataProvider extends DataProvider implements Aggregata
     public String viewAggDataQuery(AggConfig ac) throws Exception {
         String format = "curl -XPOST '%s?pretty' -d '\n%s'";
         JSONObject request = getQueryAggDataRequest(ac);
-        String dsl = JSON.toJSONString(request, true);
+        String dsl = toJSONString(request, true);
         return String.format(format, getSearchUrl(request), dsl);
     }
 
@@ -608,7 +606,7 @@ public class ElasticsearchDataProvider extends DataProvider implements Aggregata
     @Override
     public void afterPropertiesSet() throws Exception {
         if (StringUtils.isNotBlank(query.get(OVERRIDE))) {
-            overrideAggregations = JSONObject.parseObject(query.get(OVERRIDE));
+            overrideAggregations = parseObject(query.get(OVERRIDE));
         }
     }
 

@@ -7,10 +7,10 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>app-controller</artifactId>
+    <artifactId>app-dataprovider</artifactId>
     <packaging>jar</packaging>
 
-    <name>app-controller</name>
+    <name>app-dataprovider</name>
     <url>http://maven.apache.org</url>
 
     <properties>
@@ -21,11 +21,6 @@
         <dependency>
             <groupId>org.cboard</groupId>
             <artifactId>app-core</artifactId>
-            <version>0.0.1-SNAPSHOT</version>
-        </dependency>
-        <dependency>
-            <groupId>org.cboard</groupId>
-            <artifactId>app-dataprovider</artifactId>
             <version>0.0.1-SNAPSHOT</version>
         </dependency>
     </dependencies>

@@ -1,4 +1,4 @@
-package org.cboard.services.role;
+package org.cboard.services;
 
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
@@ -8,6 +8,7 @@ import org.cboard.dao.DatasourceDao;
 import org.cboard.pojo.DashboardDataset;
 import org.cboard.services.AuthenticationService;
 import org.cboard.services.FolderService;
+import org.cboard.services.role.RolePermission;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.annotation.Order;

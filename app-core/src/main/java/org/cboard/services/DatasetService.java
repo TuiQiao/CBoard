@@ -23,6 +23,14 @@ public class DatasetService {
     @Autowired
     private DatasetDao datasetDao;
 
+    public DashboardDataset getDataset(long id) {
+        return datasetDao.getDataset(id);
+    }
+
+    public List<DashboardDataset> getDatasetList(String userId) {
+        return datasetDao.getDatasetList(userId);
+    }
+
     public ServiceStatus save(String userId, String json) {
         JSONObject jsonObject = JSONObject.parseObject(json);
         DashboardDataset dataset = new DashboardDataset();

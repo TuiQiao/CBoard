@@ -427,7 +427,7 @@ public class ElasticsearchDataProvider extends DataProvider implements Aggregata
         return new AggregateResult(columnList, _result);
     }
 
-    private JSONObject getQueryAggDataRequest(AggConfig config) throws Exception {
+    protected JSONObject getQueryAggDataRequest(AggConfig config) throws Exception {
         Stream<DimensionConfig> c = config.getColumns().stream();
         Stream<DimensionConfig> r = config.getRows().stream();
         Stream<DimensionConfig> aggregationStream = Stream.concat(c, r);

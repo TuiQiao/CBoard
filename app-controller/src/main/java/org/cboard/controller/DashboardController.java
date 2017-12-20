@@ -270,7 +270,7 @@ public class DashboardController extends BaseController {
     @RequestMapping(value = "/getDatasetList")
     public List<ViewDashboardDataset> getDatasetList() {
         //get list
-        List<DashboardDataset> list = datasetDao.getDatasetList(user.getUserId());
+        List<DashboardDataset> list = datasetService.getDatasetList(user.getUserId());
 
         //get Folder's auth
         List<DashboardRoleRes> roleres = roleDao.getUserRoleResList(user.getUserId(), "folder");
@@ -300,6 +300,12 @@ public class DashboardController extends BaseController {
     public List<ViewDashboardDataset> getDatasetListByFolderIds(@RequestParam(name = "folderIds") Integer[] folderIds) {
         List<DashboardDataset> list = datasetService.getDatasetListByFolderIds(folderIds);
         return Lists.transform(list, ViewDashboardDataset.TO);
+    }
+
+    @RequestMapping(value = "/getDataset")
+    public ViewDashboardDataset getDataset(@RequestParam(name = "id") long id) {
+        DashboardDataset list = datasetService.getDataset(id);
+        return (ViewDashboardDataset) ViewDashboardDataset.TO.apply(list);
     }
 
     @RequestMapping(value = "/updateDataset")

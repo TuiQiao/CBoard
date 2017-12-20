@@ -39,11 +39,10 @@
                 </configuration>
             </plugin>
 
-            <!--<plugin>
+            <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-war-plugin</artifactId>
                 <configuration>
-                    <warName>${project.artifactId}</warName>
                     <webResources>
                         <resource>
                             <directory>lib/</directory>
@@ -54,7 +53,7 @@
                         </resource>
                     </webResources>
                 </configuration>
-            </plugin>-->
+            </plugin>
         </plugins>
     </build>
     <profiles>

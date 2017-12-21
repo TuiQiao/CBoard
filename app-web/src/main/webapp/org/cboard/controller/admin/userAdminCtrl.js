@@ -566,7 +566,7 @@ cBoard.controller('userAdminCtrl', function ($scope, $http, ModalUtils, $filter)
                 }
             });
         });
-    }
+    };
 
     $scope.deleteUser = function () {
         ModalUtils.confirm(translate("COMMON.CONFIRM_DELETE"), "modal-info", "lg", function () {

@@ -6,6 +6,25 @@ cBoard.service('ModalUtils', function ($uibModal, $filter) {
 
     var translate = $filter('translate');
 
+    this.html = function (content, style, size, callback) {
+        $uibModal.open({
+            templateUrl: 'org/cboard/view/util/modal/html.html',
+            windowTemplateUrl: 'org/cboard/view/util/modal/window.html',
+            backdrop: false,
+            windowClass: style,
+            size: size,
+            controller: function ($scope, $uibModalInstance) {
+                $scope.content = content;
+                $scope.ok = function () {
+                    $uibModalInstance.close();
+                    if (callback) {
+                        callback();
+                    }
+                };
+            }
+        });
+    };
+
     this.alert = function (content, style, size, callback) {
         $uibModal.open({
             templateUrl: 'org/cboard/view/util/modal/alert.html',

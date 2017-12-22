@@ -15,6 +15,7 @@ import org.slf4j.LoggerFactory;
 
 import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Field;
+import java.lang.reflect.Method;
 import java.net.URLDecoder;
 import java.util.*;
 
@@ -46,7 +47,7 @@ public class DataProviderViewManager {
 
     private static Map<String, String> rendered = new HashMap<>();
 
-    public static List<Map<String, Object>> getQueryParams(String type, String page) {
+    public static List<Map<String, Object>> getQueryParams(String type, String page, Map<String, String> dataSource) {
         Class clz = DataProviderManager.getDataProviderClass(type);
         Set<Field> fieldSet = ReflectionUtils.getAllFields(clz, ReflectionUtils.withAnnotation(QueryParameter.class));
         List<Field> fieldList = fieldOrdering.sortedCopy(fieldSet);
@@ -64,6 +65,23 @@ public class DataProviderViewManager {
                 param.put("placeholder", queryParameter.placeholder());
                 param.put("value", queryParameter.value());
                 param.put("options", queryParameter.options());
+                String optionsMethod = queryParameter.optionsMethod();
+                try {
+                    if (StringUtils.isNotBlank(optionsMethod) && dataSource != null) {
+                        for (Class supClz = clz; supClz != Object.class; supClz = supClz.getSuperclass()) {
+                            if ("org.cboard.dataprovider.DataProvider".equals(supClz.getName())) {
+                                Field f = supClz.getDeclaredField("dataSource");
+                                f.setAccessible(true);
+                                f.set(o, dataSource);
+                            }
+                        }
+                        Method method = clz.getDeclaredMethod(optionsMethod);
+                        method.setAccessible(true);
+                        param.put("options", method.invoke(o));
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
                 param.put("checked", queryParameter.checked());
                 param.put("required", queryParameter.required());
                 /*
@@ -88,8 +106,8 @@ public class DataProviderViewManager {
         return params;
     }
 
-    public static String getQueryView(String type, String page) {
-        List<Map<String, Object>> params = getQueryParams(type, page);
+    public static String getQueryView(String type, String page, Map<String, String> dataSource) {
+        List<Map<String, Object>> params = getQueryParams(type, page, dataSource);
         if (params != null && params.size() > 0) {
             VelocityContext context = new VelocityContext();
             context.put("params", params);

@@ -69,7 +69,7 @@ public class DataProviderViewManager {
                 try {
                     if (StringUtils.isNotBlank(optionsMethod) && dataSource != null) {
                         for (Class supClz = clz; supClz != Object.class; supClz = supClz.getSuperclass()) {
-                            if ("org.cboard.dataprovider.DataProvider".equals(supClz.getName())) {
+                            if (supClz == DataProvider.class) {
                                 Field f = supClz.getDeclaredField("dataSource");
                                 f.setAccessible(true);
                                 f.set(o, dataSource);

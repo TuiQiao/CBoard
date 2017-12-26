@@ -1585,14 +1585,26 @@ cBoard.controller('widgetCtrl', function ($scope, $state, $stateParams, $http, $
         }();
 
         $scope.doConfigParams = function () {
-            $http.get('dashboard/getConfigParams.do?type=' + $scope.datasource.type + '&datasourceId=' + $scope.datasource.id + '&page=widget.html').then(function (response) {
+            $http.get('dashboard/getConfigParams.do', {
+                params: {
+                    type: $scope.datasource.type,
+                    datasourceId: $scope.datasource.id,
+                    page: 'widget.html'
+                }
+            }).then(function (response) {
                 $scope.params = response.data;
             });
         };
 
         $scope.changeDs = function () {
             $scope.curWidget.query = {};
-            $http.get('dashboard/getConfigParams.do?type=' + $scope.datasource.type + '&datasourceId=' + $scope.datasource.id + '&page=widget.html').then(function (response) {
+            $http.get('dashboard/getConfigParams.do', {
+                params: {
+                    type: $scope.datasource.type,
+                    datasourceId: $scope.datasource.id,
+                    page: 'widget.html'
+                }
+            }).then(function (response) {
                 $scope.params = response.data;
                 for (var i in $scope.params) {
                     var name = $scope.params[i].name;

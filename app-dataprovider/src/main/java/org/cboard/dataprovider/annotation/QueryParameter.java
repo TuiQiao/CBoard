@@ -24,6 +24,9 @@ public @interface QueryParameter {
 
     String[] options() default "N/A";
 
+    // 获取options数组的方法名称
+    String optionsMethod() default "";
+
     boolean checked() default false;
 
     boolean required() default false;

@@ -150,6 +150,8 @@
       "KPI": "KPI",
       "PIE": "Pie",
       "LINE_BAR": "Line/Bar",
+      "LINE_AREA":"Line Area",
+      "STACKED_LINE":"Stacked line",
       "SCATTER": "Scatter/Bubble",
       "MAP": "China Map",
       "LINE": "Line",

@@ -155,6 +155,8 @@
       "LINE": "折线",
       "BAR": "柱状",
       "STACKED_BAR": "堆叠柱状",
+      "STACKED_LINE":"折线层叠图",
+      "LINE_AREA":"折线面积图",
       "AQUA": "蓝色",
       "RED": "红色",
       "YELLOW": "黄色",

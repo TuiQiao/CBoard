@@ -133,7 +133,7 @@ cBoard.controller('widgetCtrl', function ($scope, $state, $stateParams, $http, $
         ];
 
         $scope.chart_types_status = {
-            "line": true, "pie": true, "kpi": true, "table": true,
+            "area":true,"line": true, "pie": true, "kpi": true, "table": true,
             "funnel": true, "sankey": true, "radar": true, "map": true,
             "scatter": true, "gauge": true, "wordCloud": true, "treeMap": true,
             "heatMapCalendar": true, "heatMapTable": true, "liquidFill": true,
@@ -144,7 +144,9 @@ cBoard.controller('widgetCtrl', function ($scope, $state, $stateParams, $http, $
             {name: translate('CONFIG.WIDGET.LINE'), value: 'line'},
             {name: translate('CONFIG.WIDGET.BAR'), value: 'bar'},
             {name: translate('CONFIG.WIDGET.STACKED_BAR'), value: 'stackbar'},
-            {name: translate('CONFIG.WIDGET.PERCENT_BAR'), value: 'percentbar'}
+            {name: translate('CONFIG.WIDGET.PERCENT_BAR'), value: 'percentbar'},
+            {name: translate('CONFIG.WIDGET.LINE_AREA'),value:'lineArea'},
+            {name: translate('CONFIG.WIDGET.STACKED_LINE'),value:'stackline'}
         ];
 
         $scope.china_map_types = [

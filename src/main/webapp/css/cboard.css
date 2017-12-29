@@ -147,6 +147,8 @@
 .cFunnel{  background-image: url(../imgs/funnel-active.png);  }
 .cFunnel.disabled{  background-image: url(../imgs/funnel.png);  }
 
+.cArea{ background-image: url(../imgs/area-active.png);}
+.cArea.disabled{  background-image: url(../imgs/area.png);  }
 .cKpi{  background-image: url(../imgs/kpi-active.png);  }
 .cKpi.disabled{  background-image: url(../imgs/kpi.png);  }
 .cSankey{  background-image: url(../imgs/sankey-active.png);  }

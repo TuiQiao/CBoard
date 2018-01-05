@@ -133,7 +133,7 @@ cBoard.controller('widgetCtrl', function ($scope, $state, $stateParams, $http, $
         ];
 
         $scope.chart_types_status = {
-            "area":true,"line": true, "pie": true, "kpi": true, "table": true,
+            "line": true, "pie": true, "kpi": true, "table": true,
             "funnel": true, "sankey": true, "radar": true, "map": true,
             "scatter": true, "gauge": true, "wordCloud": true, "treeMap": true,
             "heatMapCalendar": true, "heatMapTable": true, "liquidFill": true,

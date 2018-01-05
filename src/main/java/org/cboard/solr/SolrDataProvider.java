@@ -20,6 +20,7 @@ import org.cboard.dataprovider.annotation.QueryParameter;
 import org.cboard.dataprovider.config.*;
 import org.cboard.dataprovider.result.AggregateResult;
 import org.cboard.dataprovider.result.ColumnIndex;
+import org.cboard.dataprovider.util.DPCommonUtils;
 import org.cboard.exception.CBoardException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -328,16 +329,7 @@ public class SolrDataProvider extends DataProvider implements Aggregatable, Init
         SimpleOrderedMap obj = (SimpleOrderedMap) ((SimpleOrderedMap) response.getResponse().get("facet_counts")).get("facet_pivot");
         List statList = (List) obj.get(dimColsStr);
         List<String[]> list = dealStatList(statList, config);
-        int dimSize = dimensionList.size();
-        dimensionList.addAll(config.getValues().stream().map(ColumnIndex::fromValueConfig).collect(Collectors.toList()));
-        IntStream.range(0, dimensionList.size()).forEach(j -> dimensionList.get(j).setIndex(j));
-        list.forEach(row -> {
-            IntStream.range(0, dimSize).forEach(a -> {
-                if (row[a] == null) row[a] = NULL_STRING;
-            });
-        });
-        String[][] result = list.toArray(new String[][]{});
-        return new AggregateResult(dimensionList, result);
+        return DPCommonUtils.transform2AggResult(config, list);
     }
 
     private List<String[]> dealStatList(List statList, AggConfig config) {

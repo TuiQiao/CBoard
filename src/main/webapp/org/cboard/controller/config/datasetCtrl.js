@@ -623,14 +623,14 @@ cBoard.controller('datasetCtrl', function ($scope, $http, $state, $stateParams, 
     }();
 
     $scope.doConfigParams = function () {
-        $http.get('dashboard/getConfigParams.do?type=' + $scope.datasource.type + '&page=dataset.html').then(function (response) {
+        $http.get('dashboard/getConfigParams.do?type=' + $scope.datasource.type + '&datasourceId=' + $scope.datasource.id + '&page=dataset.html').then(function (response) {
             $scope.params = response.data;
         });
     };
 
     $scope.changeDs = function () {
         $scope.curWidget.query = {};
-        $http.get('dashboard/getConfigParams.do?type=' + $scope.datasource.type + '&page=dataset.html').then(function (response) {
+        $http.get('dashboard/getConfigParams.do?type=' + $scope.datasource.type + '&datasourceId=' + $scope.datasource.id + '&page=dataset.html').then(function (response) {
             $scope.params = response.data;
             for (i in $scope.params) {
                 var name = $scope.params[i].name;

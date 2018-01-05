@@ -152,6 +152,7 @@
       "LINE_BAR": "Line/Bar",
       "AREA_LINE":"Area Line",
       "STACKED_LINE":"Stacked Line",
+      "PERCENT_LINE":"Percent Line",
       "SCATTER": "Scatter/Bubble",
       "MAP": "China Map",
       "LINE": "Line",

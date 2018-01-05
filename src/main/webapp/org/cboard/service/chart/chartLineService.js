@@ -94,6 +94,13 @@ cBoard.service('chartLineService', function ($state, $window) {
                         }
                     }
                 }
+            }else if (s.type == 'percentline') {
+                s.data = _.map(aggregate_data[i], function (e, i) {
+                    return [i, (e / sum_data[i] * 100).toFixed(2), e];
+                });
+                s.stack = s.valueAxisIndex.toString();
+                s.type = "line";
+                s.areaStyle = {normal: {}};
             }
             if (chartConfig.valueAxis == 'horizontal') {
                 s.xAxisIndex = s.valueAxisIndex;
@@ -110,7 +117,7 @@ cBoard.service('chartLineService', function ($state, $window) {
                     return numbro(value).format("0a.[0000]");
                 }
             };
-            if (axis.series_type == "percentbar") {
+            if (axis.series_type == "percentbar" || axis.series_type == "percentline") {
                 axis.min = 0;
                 axis.max = 100;
             } else {
@@ -138,7 +145,7 @@ cBoard.service('chartLineService', function ($state, $window) {
                 rotate: labelRotate
             }
         };
-        if(line_type == 'arealine' || line_type == 'stackline'){
+        if(line_type == 'arealine' || line_type == 'stackline' || line_type == 'percentline'){
             categoryAxis.boundaryGap = false;
         }
 

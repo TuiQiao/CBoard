@@ -146,7 +146,8 @@ cBoard.controller('widgetCtrl', function ($scope, $state, $stateParams, $http, $
             {name: translate('CONFIG.WIDGET.STACKED_BAR'), value: 'stackbar'},
             {name: translate('CONFIG.WIDGET.PERCENT_BAR'), value: 'percentbar'},
             {name: translate('CONFIG.WIDGET.AREA_LINE'),value:'arealine'},
-            {name: translate('CONFIG.WIDGET.STACKED_LINE'),value:'stackline'}
+            {name: translate('CONFIG.WIDGET.STACKED_LINE'),value:'stackline'},
+            {name: translate('CONFIG.WIDGET.PERCENT_LINE'),value:'percentline'}
         ];
 
         $scope.china_map_types = [

@@ -54,7 +54,7 @@ cBoard.service('chartLineService', function ($state, $window) {
                 });
                 s.type = 'bar';
                 s.stack = s.valueAxisIndex.toString();
-            } else if (s.type == "lineArea") {
+            } else if (s.type == "arealine") {
                 s.type = "line";
                 s.smooth = true;
                 s.symbol = 'none';
@@ -80,20 +80,6 @@ cBoard.service('chartLineService', function ($state, $window) {
                 s.stack = '总量';
                 s.areaStyle = {normal: {}};
                 if(i == aggregate_data.length - 1){
-                   /* //为堆叠区域图添加总数
-                    newValuesConfig.count = {
-                        name:'count',
-                        type:'line',
-                        statck:'总量',
-                        lineStyle:{
-                            normal:{
-                                color:'rgba(128, 128, 128, 0.1)'
-                            }
-                        },
-                        data: [10,20,30,40,50,60,70,80,90]
-                    };
-                    series_data.push(newValuesConfig.count);*/
-                    //显示总数
                     s.label = {
                         normal: {
                             show: true,

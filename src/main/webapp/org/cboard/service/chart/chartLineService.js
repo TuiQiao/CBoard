@@ -138,7 +138,7 @@ cBoard.service('chartLineService', function ($state, $window) {
                 rotate: labelRotate
             }
         };
-        if(line_type == 'lineArea' || line_type == 'stackline'){
+        if(line_type == 'arealine' || line_type == 'stackline'){
             categoryAxis.boundaryGap = false;
         }
 

@@ -48,7 +48,9 @@ public class KylinDataProvider extends DataProvider implements Aggregatable, Ini
             order = 2)
     private String USERNAME = "username";
 
-    @DatasourceParameter(label = "Password", type = DatasourceParameter.Type.Password, order = 3)
+    @DatasourceParameter(label = "Password",
+            type = DatasourceParameter.Type.Password,
+            order = 3)
     private String PASSWORD = "password";
 
     @QueryParameter(label = "Kylin Project *",
@@ -56,7 +58,9 @@ public class KylinDataProvider extends DataProvider implements Aggregatable, Ini
             required = true)
     private String PROJECT = "project";
 
-    @QueryParameter(label = "Data Model *", type = QueryParameter.Type.Input, required = true)
+    @QueryParameter(label = "Data Model *",
+            type = QueryParameter.Type.Input,
+            required = true)
     private String DATA_MODEL = "datamodel";
 
     private static final CacheManager<KylinModel> modelCache = new HeapCacheManager<>();

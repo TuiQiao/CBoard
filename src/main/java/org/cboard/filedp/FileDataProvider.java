@@ -31,28 +31,55 @@ public class FileDataProvider extends DataProvider {
     @Value("${dataprovider.resultLimit:300000}")
     private int resultLimit;
 
-    @DatasourceParameter(label = "{{'DATAPROVIDER.TEXTFILE.BASE_PATH'|translate}}", type = DatasourceParameter.Type.Input, order = 1)
+    @DatasourceParameter(label = "{{'DATAPROVIDER.TEXTFILE.BASE_PATH'|translate}}",
+            type = DatasourceParameter.Type.Input,
+            order = 1)
     private String DS_PARAM_BASE_PATH = "basePath";
 
-    @QueryParameter(label = "{{'DATAPROVIDER.TEXTFILE.FILE_NAME'|translate}}", type = QueryParameter.Type.Input, order = 1)
+    @QueryParameter(label = "{{'DATAPROVIDER.TEXTFILE.FILE_NAME'|translate}}",
+            type = QueryParameter.Type.Input,
+            order = 1)
     private String QUERY_PARAM_FILE_NAME = "fileName";
 
-    @QueryParameter(label = "{{'DATAPROVIDER.TEXTFILE.ENCODING'|translate}}", value = "UTF-8", placeholder = "default value is UTF-8", type = QueryParameter.Type.Input, order = 2)
+    @QueryParameter(label = "{{'DATAPROVIDER.TEXTFILE.ENCODING'|translate}}",
+            value = "UTF-8",
+            placeholder = "default value is UTF-8",
+            type = QueryParameter.Type.Input,
+            order = 2)
     private String QUERY_PARAM_ENCODING = "encoding";
 
-    @QueryParameter(label = "{{'DATAPROVIDER.TEXTFILE.DATA_TYPE'|translate}}", value = "DSV", options = {"DSV", "CSV", "JSON"}, type = QueryParameter.Type.Select, order = 3)
+    @QueryParameter(label = "{{'DATAPROVIDER.TEXTFILE.DATA_TYPE'|translate}}",
+            value = "DSV",
+            options = {"DSV", "CSV", "JSON"},
+            type = QueryParameter.Type.Select,
+            order = 3)
     private String QUERY_PARAM_DATA_TYPE = "dataType";
 
-    @QueryParameter(label = "{{'DATAPROVIDER.TEXTFILE.FIELD_NAMES'|translate}}", placeholder = "<fieldName>[,<fieldName>]...(The file has fields header without input)", type = QueryParameter.Type.Input, order = 4)
+    @QueryParameter(label = "{{'DATAPROVIDER.TEXTFILE.FIELD_NAMES'|translate}}",
+            placeholder = "<fieldName>[,<fieldName>]...(The file has fields header without input)",
+            type = QueryParameter.Type.Input,
+            order = 4)
     private String QUERY_PARAM_FIELD_NAMES = "fieldNames";
 
-    @QueryParameter(label = "{{'DATAPROVIDER.TEXTFILE.SEPRATOR'|translate}}", value = "\\t", placeholder = "default value is \\t (The DataType is JSON without input)", type = QueryParameter.Type.Input, order = 5)
+    @QueryParameter(label = "{{'DATAPROVIDER.TEXTFILE.SEPRATOR'|translate}}",
+            value = "\\t",
+            placeholder = "default value is \\t (The DataType is JSON without input)",
+            type = QueryParameter.Type.Input,
+            order = 5)
     private String QUERY_PARAM_SEPRATOR = "seprator";
 
-    @QueryParameter(label = "{{'DATAPROVIDER.TEXTFILE.QUOTE_CHAR'|translate}}", value = "\\\"", placeholder = "default value is guillemets (The DataType is CSV must input)", type = QueryParameter.Type.Input, order = 6)
+    @QueryParameter(label = "{{'DATAPROVIDER.TEXTFILE.QUOTE_CHAR'|translate}}",
+            value = "\\\"",
+            placeholder = "default value is guillemets (The DataType is CSV must input)",
+            type = QueryParameter.Type.Input,
+            order = 6)
     private String QUERY_PARAM_QUOTECHAR = "quoteChar";
 
-    @QueryParameter(label = "{{'DATAPROVIDER.TEXTFILE.ESCAPE_CHAR'|translate}}", value = "\\\\", placeholder = "default value is \\\\ (The DataType is CSV must input)", type = QueryParameter.Type.Input, order = 7)
+    @QueryParameter(label = "{{'DATAPROVIDER.TEXTFILE.ESCAPE_CHAR'|translate}}",
+            value = "\\\\",
+            placeholder = "default value is \\\\ (The DataType is CSV must input)",
+            type = QueryParameter.Type.Input,
+            order = 7)
     private String QUERY_PARAM_ESCAPECHAR = "escapeChar";
 
     @Override

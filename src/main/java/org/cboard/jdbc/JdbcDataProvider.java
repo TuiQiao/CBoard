@@ -38,7 +38,7 @@ public class JdbcDataProvider extends DataProvider implements Aggregatable, Init
 
     private static final Logger LOG = LoggerFactory.getLogger(JdbcDataProvider.class);
 
-    @Value("${dataprovider.resultLimit:200000}")
+    @Value("${dataprovider.resultLimit:300000}")
     private int resultLimit;
 
     @DatasourceParameter(label = "{{'DATAPROVIDER.JDBC.DRIVER'|translate}} *",
@@ -64,10 +64,16 @@ public class JdbcDataProvider extends DataProvider implements Aggregatable, Init
             order = 4)
     private String PASSWORD = "password";
 
-    @DatasourceParameter(label = "{{'DATAPROVIDER.POOLEDCONNECTION'|translate}}", checked = true, type = DatasourceParameter.Type.Checkbox, order = 5)
+    @DatasourceParameter(label = "{{'DATAPROVIDER.POOLEDCONNECTION'|translate}}",
+            checked = true,
+            type = DatasourceParameter.Type.Checkbox,
+            order = 99)
     private String POOLED = "pooled";
 
-    @DatasourceParameter(label = "{{'DATAPROVIDER.AGGREGATABLE_PROVIDER'|translate}}", type = DatasourceParameter.Type.Checkbox, order = 100)
+    @DatasourceParameter(label = "{{'DATAPROVIDER.AGGREGATABLE_PROVIDER'|translate}}",
+            checked = true,
+            type = DatasourceParameter.Type.Checkbox,
+            order = 100)
     private String aggregateProvider = "aggregateProvider";
 
     @QueryParameter(label = "{{'DATAPROVIDER.JDBC.SQLTEXT'|translate}}",

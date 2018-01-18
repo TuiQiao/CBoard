@@ -23,16 +23,23 @@ import java.util.UUID;
 @ProviderName(name = "saiku")
 public class SaikuDataProvider extends DataProvider {
 
-    @DatasourceParameter(label = "Saiku Server (http://domain:port)", type = DatasourceParameter.Type.Input, order = 1)
+    @DatasourceParameter(label = "Saiku Server (http://domain:port)",
+            type = DatasourceParameter.Type.Input,
+            order = 1)
     private String SERVERIP = "serverIp";
 
-    @DatasourceParameter(label = "User Name (for Saiku Server)", type = DatasourceParameter.Type.Input, order = 2)
+    @DatasourceParameter(label = "User Name (for Saiku Server)",
+            type = DatasourceParameter.Type.Input,
+            order = 2)
     private String USERNAME = "username";
 
-    @DatasourceParameter(label = "Password", type = DatasourceParameter.Type.Password, order = 3)
+    @DatasourceParameter(label = "Password",
+            type = DatasourceParameter.Type.Password,
+            order = 3)
     private String PASSWORD = "password";
 
-    @QueryParameter(label = "Repo Path of Report", type = QueryParameter.Type.Input)
+    @QueryParameter(label = "Repo Path of Report",
+            type = QueryParameter.Type.Input)
     private String FILE = "file";
 
     @Override

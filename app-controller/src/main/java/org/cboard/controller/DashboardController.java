@@ -113,13 +113,25 @@ public class DashboardController extends BaseController {
     }
 
     @RequestMapping(value = "/getConfigParams")
-    public List<Map<String, Object>> getConfigParams(@RequestParam(name = "type") String type, @RequestParam(name = "page") String page) {
-        return DataProviderViewManager.getQueryParams(type, page);
+    public List<Map<String, Object>> getConfigParams(@RequestParam(name = "type") String type,
+                                                     @RequestParam(name = "page") String page,
+                                                     @RequestParam(name = "datasourceId", required = false) Long datasourceId) {
+        Map<String, String> dataSource = null;
+        if (datasourceId != null) {
+            dataSource = dataProviderService.getDataSource(datasourceId);
+        }
+        return DataProviderViewManager.getQueryParams(type, page, dataSource);
     }
 
     @RequestMapping(value = "/getConfigView")
-    public String getConfigView(@RequestParam(name = "type") String type, @RequestParam(name = "page") String page) {
-        return DataProviderViewManager.getQueryView(type, page);
+    public String getConfigView(@RequestParam(name = "type") String type,
+                                @RequestParam(name = "page") String page,
+                                @RequestParam(name = "datasourceId", required = false) Long datasourceId) {
+        Map<String, String> dataSource = null;
+        if (datasourceId != null) {
+            dataSource = dataProviderService.getDataSource(datasourceId);
+        }
+        return DataProviderViewManager.getQueryView(type, page, dataSource);
     }
 
     @RequestMapping(value = "/getDatasourceParams")
@@ -334,7 +346,12 @@ public class DashboardController extends BaseController {
     }
 
     @RequestMapping(value = "/getDimensionValues")
-    public String[] getDimensionValues(@RequestParam(name = "datasourceId", required = false) Long datasourceId, @RequestParam(name = "query", required = false) String query, @RequestParam(name = "datasetId", required = false) Long datasetId, @RequestParam(name = "colmunName", required = true) String colmunName, @RequestParam(name = "cfg", required = false) String cfg, @RequestParam(name = "reload", required = false, defaultValue = "false") Boolean reload) {
+    public String[] getDimensionValues(@RequestParam(name = "datasourceId", required = false) Long datasourceId,
+                                       @RequestParam(name = "query", required = false) String query,
+                                       @RequestParam(name = "datasetId", required = false) Long datasetId,
+                                       @RequestParam(name = "colmunName", required = true) String colmunName,
+                                       @RequestParam(name = "cfg", required = false) String cfg,
+                                       @RequestParam(name = "reload", required = false, defaultValue = "false") Boolean reload) {
         Map<String, String> strParams = null;
         if (query != null) {
             JSONObject queryO = JSONObject.parseObject(query);
@@ -350,7 +367,8 @@ public class DashboardController extends BaseController {
     @RequestMapping(value = "/getColumns")
     public DataProviderResult getColumns(@RequestParam(name = "datasourceId", required = false) Long datasourceId,
                                          @RequestParam(name = "query", required = false) String query,
-                                         @RequestParam(name = "datasetId", required = false) Long datasetId, @RequestParam(name = "reload", required = false, defaultValue = "false") Boolean reload) {
+                                         @RequestParam(name = "datasetId", required = false) Long datasetId,
+                                         @RequestParam(name = "reload", required = false, defaultValue = "false") Boolean reload) {
         Map<String, String> strParams = null;
         if (query != null) {
             JSONObject queryO = JSONObject.parseObject(query);
@@ -385,7 +403,10 @@ public class DashboardController extends BaseController {
     }
 
     @RequestMapping(value = "/viewAggDataQuery")
-    public String[] viewAggDataQuery(@RequestParam(name = "datasourceId", required = false) Long datasourceId, @RequestParam(name = "query", required = false) String query, @RequestParam(name = "datasetId", required = false) Long datasetId, @RequestParam(name = "cfg") String cfg) {
+    public String[] viewAggDataQuery(@RequestParam(name = "datasourceId", required = false) Long datasourceId,
+                                     @RequestParam(name = "query", required = false) String query,
+                                     @RequestParam(name = "datasetId", required = false) Long datasetId,
+                                     @RequestParam(name = "cfg") String cfg) {
         Map<String, String> strParams = null;
         if (query != null) {
             JSONObject queryO = JSONObject.parseObject(query);
@@ -462,7 +483,8 @@ public class DashboardController extends BaseController {
 
     @RequestMapping(value = "/saveBoardParam")
     @Transactional
-    public String saveBoardParam(@RequestParam(name = "boardId") Long boardId, @RequestParam(name = "config") String config) {
+    public String saveBoardParam(@RequestParam(name = "boardId") Long boardId,
+                                 @RequestParam(name = "config") String config) {
         if (boardId == null) {
             return "";
         }

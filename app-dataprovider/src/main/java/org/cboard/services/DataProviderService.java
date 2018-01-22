@@ -53,6 +53,12 @@ public class DataProviderService {
         return dataProvider;
     }
 
+    public Map<String, String> getDataSource(Long datasourceId){
+        DashboardDatasource datasource = datasourceDao.getDatasource(datasourceId);
+        JSONObject datasourceConfig = JSONObject.parseObject(datasource.getConfig());
+        return Maps.transformValues(datasourceConfig, Functions.toStringFunction());
+    }
+
     public AggregateResult queryAggData(Long datasourceId, Map<String, String> query, Long datasetId, AggConfig config, boolean reload) {
         try {
             Dataset dataset = getDataset(datasetId);

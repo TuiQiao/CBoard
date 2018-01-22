@@ -556,10 +556,10 @@ public class ElasticsearchDataProvider extends DataProvider implements Aggregata
         return Hashing.md5().newHasher().putString(toJSON(dataSource).toString() + toJSON(query).toString(), Charsets.UTF_8).hash().toString();
     }
 
-    private void getField(Map<String, String> types, Map.Entry<String, Object> field, String parent) {
+    private void getField(Map<String, String> types, Entry<String, Object> field, String parent) {
         JSONObject property = (JSONObject) field.getValue();
         if (property.keySet().contains("properties")) {
-            for (Map.Entry e : property.getJSONObject("properties").entrySet()) {
+            for (Entry e : property.getJSONObject("properties").entrySet()) {
                 String key = field.getKey();
                 if (parent != null) {
                     key = parent + "." + field.getKey();

@@ -157,12 +157,12 @@ cBoard.controller('dashboardViewCtrl', function ($timeout, $rootScope, $scope, $
     };
 
     var initDsReloadStatus = function(reload) {
-        var dsReloadStatus = new Map();
+        var dsReloadStatus = {};
         _.each($scope.board.layout.rows, function(row) {
             _.each(row.widgets, function (widget) {
                 var dataSetId = widget.widget.data.datasetId;
                 if (dataSetId != undefined) {
-                    dsReloadStatus.set(dataSetId, reload);
+                    dsReloadStatus[dataSetId] = reload;
                 }
             });
         });

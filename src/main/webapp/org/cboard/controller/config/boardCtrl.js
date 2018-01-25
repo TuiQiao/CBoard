@@ -457,7 +457,7 @@ cBoard.controller('boardCtrl',
 
     $scope.treeEventsObj = function () {
         var baseEventObj = jstree_baseTreeEventsObj({
-            ngScope: $scope, ngHttp: $http, ngTimeout: $timeout,
+            ngScope: $scope, ngHttp: $http, ngTimeout: $timeout, ModalUtils: ModalUtils,
             treeID: treeID, listName: "boardList"
             //, updateUrl: updateUrl
         });

@@ -1581,7 +1581,7 @@ cBoard.controller('widgetCtrl', function ($scope, $state, $stateParams, $http, $
 
         $scope.treeEventsObj = function () {
             var baseEventObj = jstree_baseTreeEventsObj({
-                ngScope: $scope, ngHttp: $http, ngTimeout: $timeout,
+                ngScope: $scope, ngHttp: $http, ngTimeout: $timeout, ModalUtils: ModalUtils,
                 treeID: treeID, listName: "widgetList", updateUrl: updateUrl
             });
             return baseEventObj;

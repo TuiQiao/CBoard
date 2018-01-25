@@ -185,7 +185,7 @@ function jstree_baseTreeEventsObj(option) {
                         if (serviceStatus.status == '1') {
                             //console.log('success!');
                         } else {
-                            ModalUtils.alert(serviceStatus.msg, "modal-warning", "lg");
+                            option.ModalUtils.alert(serviceStatus.msg, "modal-warning", "lg");
                         }
                     });
                 };

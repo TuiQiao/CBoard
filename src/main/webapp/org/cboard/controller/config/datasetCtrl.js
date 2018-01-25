@@ -616,7 +616,7 @@ cBoard.controller('datasetCtrl', function ($scope, $http, $state, $stateParams, 
 
     $scope.treeEventsObj = function () {
         var baseEventObj = jstree_baseTreeEventsObj({
-            ngScope: $scope, ngHttp: $http, ngTimeout: $timeout,
+            ngScope: $scope, ngHttp: $http, ngTimeout: $timeout, ModalUtils: ModalUtils,
             treeID: treeID, listName: "datasetList", updateUrl: updateUrl
         });
         return baseEventObj;

@@ -12,9 +12,9 @@ cBoard.controller('widgetCtrl', function ($scope, $state, $stateParams, $http, $
         $scope.chart_types = [
             {
                 name: translate('CONFIG.WIDGET.TABLE'), value: 'table', class: 'cTable',
-                row: translate('CONFIG.WIDGET.TIPS_DIM_NUM_1_MORE'),
+                row: translate('CONFIG.WIDGET.TIPS_DIM_NUM_0_MORE'),
                 column: translate('CONFIG.WIDGET.TIPS_DIM_NUM_0_MORE'),
-                measure: translate('CONFIG.WIDGET.TIPS_DIM_NUM_1_MORE')
+                measure: translate('CONFIG.WIDGET.TIPS_DIM_NUM_0_MORE')
             },
             {
                 name: translate('CONFIG.WIDGET.LINE_BAR'), value: 'line', class: 'cLine',

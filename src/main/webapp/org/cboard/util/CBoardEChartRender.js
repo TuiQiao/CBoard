@@ -78,7 +78,7 @@ CBoardEChartRender.prototype.chart = function (group, persist) {
 CBoardEChartRender.prototype.changeSize = function (instance) {
     var o = instance.getOption();
     var seriesType = o.series[0] ? o.series[0].realType : null;
-    if (seriesType == 'pie' || seriesType == 'doughnut' || seriesType == 'coxcomb') {
+    if (o.series[0] ? o.series[0].type : null) {
         var l = o.series.length;
         var b = instance.getWidth() / (l + 1 + l * 8)
         for (var i = 0; i < l; i++) {

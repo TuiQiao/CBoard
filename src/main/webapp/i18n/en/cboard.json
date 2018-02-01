@@ -152,6 +152,7 @@
       "DOUGHNUT": "Doughnut",
       "COXCOMB": "Coxcomb",
       "LINE_BAR": "Line/Bar",
+      "POLAR_BAR": "Polar Bar",
       "AREA_LINE":"Area Line",
       "STACKED_LINE":"Stacked Line",
       "PERCENT_LINE":"Percent Line",

@@ -159,6 +159,7 @@
       "STACKED_BAR": "堆叠柱状",
       "STACKED_LINE":"堆叠折线",
       "AREA_LINE":"面积折线",
+      "POLAR_BAR": "极地堆叠柱状",
       "PERCENT_LINE":"百分比折线",
       "AQUA": "蓝色",
       "RED": "红色",

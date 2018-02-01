@@ -46,6 +46,10 @@ cBoard.service('chartLineService', function ($state, $window) {
             if (s.type == 'stackbar') {
                 s.type = 'bar';
                 s.stack = s.valueAxisIndex.toString();
+            } else if(s.type == 'polarbar'){
+                s.type = 'bar';
+                s.stack = s.valueAxisIndex.toString();
+                s.coordinateSystem = 'polar';
             } else if (s.type == 'percentbar') {
                 s.data = _.map(aggregate_data[i], function (e, i) {
                     return [i, (e / sum_data[i] * 100).toFixed(2), e];
@@ -143,10 +147,17 @@ cBoard.service('chartLineService', function ($state, $window) {
                     }
                 }
             },
-            xAxis: chartConfig.valueAxis == 'horizontal' ? valueAxis : categoryAxis,
-            yAxis: chartConfig.valueAxis == 'horizontal' ? categoryAxis : valueAxis,
             series: series_data
         };
+
+        if(line_type == 'polarbar'){
+            echartOption.angleAxis = chartConfig.valueAxis == 'horizontal' ? valueAxis : categoryAxis;
+            echartOption.radiusAxis = chartConfig.valueAxis == 'horizontal' ? categoryAxis : valueAxis;
+            echartOption.polar = {};
+        }else {
+            echartOption.xAxis = chartConfig.valueAxis == 'horizontal' ? valueAxis : categoryAxis;
+            echartOption.yAxis = chartConfig.valueAxis == 'horizontal' ? categoryAxis : valueAxis;
+        }
 
         if (chartConfig.valueAxis === 'horizontal') {
             echartOption.grid.left = 'left';

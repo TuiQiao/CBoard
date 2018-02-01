@@ -77,15 +77,28 @@ CBoardEChartRender.prototype.chart = function (group, persist) {
 
 CBoardEChartRender.prototype.changeSize = function (instance) {
     var o = instance.getOption();
-    var seriesType = o.series[0] ? o.series[0].type : null;
-    if (seriesType == 'pie') {
+    var seriesType = o.series[0] ? o.series[0].realType : null;
+    if (o.series[0] ? o.series[0].type : null) {
         var l = o.series.length;
         var b = instance.getWidth() / (l + 1 + l * 8)
         for (var i = 0; i < l; i++) {
             if ((b * 8) < (instance.getHeight() * 0.75)) {
-                o.series[i].radius = [0, b * 4];
+                if(seriesType == 'doughnut'){
+                    o.series[i].radius = [b * 3, b * 4];
+                } else if(seriesType == 'coxcomb'){
+                    o.series[i].radius = [b * 0.8, b * 4];
+                } else {
+                    o.series[i].radius = [0, b * 4];
+                }
+
             } else {
-                o.series[i].radius = [0, '75%'];
+                if(seriesType == 'doughnut'){
+                    o.series[i].radius = ['50%', '75%'];
+                }else if(seriesType == 'coxcomb'){
+                    o.series[i].radius = ['15%', '75%']
+                }else{
+                    o.series[i].radius = ['0', '75%'];
+                }
             }
         }
         instance.setOption(o);

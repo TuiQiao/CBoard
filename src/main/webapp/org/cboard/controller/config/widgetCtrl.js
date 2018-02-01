@@ -147,7 +147,8 @@ cBoard.controller('widgetCtrl', function ($scope, $state, $stateParams, $http, $
             {name: translate('CONFIG.WIDGET.PERCENT_LINE'),value:'percentline'},
             {name: translate('CONFIG.WIDGET.BAR'), value: 'bar'},
             {name: translate('CONFIG.WIDGET.STACKED_BAR'), value: 'stackbar'},
-            {name: translate('CONFIG.WIDGET.PERCENT_BAR'), value: 'percentbar'}
+            {name: translate('CONFIG.WIDGET.PERCENT_BAR'), value: 'percentbar'},
+            {name: translate('CONFIG.WIDGET.POLAR_BAR'), value:'polarbar'}
         ];
 
         $scope.china_map_types = [
@@ -164,6 +165,12 @@ cBoard.controller('widgetCtrl', function ($scope, $state, $stateParams, $http, $
             {name: 'min', value: 'min'},
             {name: 'distinct', value: 'distinct'}
         ];
+
+        $scope.value_pie_types = [
+            {name: translate('CONFIG.WIDGET.PIE'), value: 'pie'},
+            {name: translate('CONFIG.WIDGET.DOUGHNUT'), value: 'doughnut'},
+            {name: translate('CONFIG.WIDGET.COXCOMB'), value: 'coxcomb'}
+        ]
 
         $scope.kpi_styles = [
             {name: translate('CONFIG.WIDGET.AQUA'), value: 'bg-aqua'},

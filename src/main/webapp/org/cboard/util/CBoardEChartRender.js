@@ -142,6 +142,7 @@ CBoardEChartRender.prototype.addClick = function (chartConfig, relations, $state
 
         switch (chartConfig.chart_type) {
             case 'line':
+            case 'contrast':
             case 'scatter':
             case 'pie':
                 _.each(sourceField, function (field) {

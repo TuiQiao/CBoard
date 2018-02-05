@@ -181,8 +181,8 @@ cBoard.controller('dashboardViewCtrl', function ($timeout, $rootScope, $scope, $
                 var needReload = reload;
                 // avoid repeat load offline dataset data
                 if (dataSetId != undefined && reload) {
-                    var needReload = dsReloadStatus.get(dataSetId) ? true : false;
-                    dsReloadStatus.set(dataSetId, false);
+                    var needReload = dsReloadStatus[dataSetId] ? true : false;
+                    dsReloadStatus[dataSetId] =  false;
                 }
                 buildRender(widget, needReload);
                 widget.loading = true;

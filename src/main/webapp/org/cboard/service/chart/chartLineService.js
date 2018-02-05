@@ -51,9 +51,15 @@ cBoard.service('chartLineService', function ($state, $window) {
                 s.stack = s.valueAxisIndex.toString();
                 s.coordinateSystem = 'polar';
             } else if (s.type == 'percentbar') {
-                s.data = _.map(aggregate_data[i], function (e, i) {
-                    return [i, (e / sum_data[i] * 100).toFixed(2), e];
-                });
+                if (chartConfig.valueAxis == 'horizontal'){
+                    s.data = _.map(aggregate_data[i], function (e, i) {
+                        return (e / sum_data[i] * 100).toFixed(2);
+                    })
+                } else {
+                    s.data = _.map(aggregate_data[i], function (e, i) {
+                        return [i, (e / sum_data[i] * 100).toFixed(2), e];
+                    });
+                }
                 s.type = 'bar';
                 s.stack = s.valueAxisIndex.toString();
             } else if (s.type == "arealine") {
@@ -64,9 +70,15 @@ cBoard.service('chartLineService', function ($state, $window) {
                 s.stack = s.valueAxisIndex.toString();
                 s.areaStyle = {normal: {}};
             } else if (s.type == 'percentline') {
-                s.data = _.map(aggregate_data[i], function (e, i) {
-                    return [i, (e / sum_data[i] * 100).toFixed(2), e];
-                });
+                if (chartConfig.valueAxis == 'horizontal'){
+                    s.data = _.map(aggregate_data[i], function (e, i) {
+                        return (e / sum_data[i] * 100).toFixed(2);
+                    })
+                } else {
+                    s.data = _.map(aggregate_data[i], function (e, i) {
+                        return [i, (e / sum_data[i] * 100).toFixed(2), e];
+                    });
+                }
                 s.type = "line";
                 s.stack = s.valueAxisIndex.toString();
                 s.areaStyle = {normal: {}};

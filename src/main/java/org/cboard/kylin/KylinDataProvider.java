@@ -146,7 +146,7 @@ public class KylinDataProvider extends DataProvider implements Aggregatable, Ini
                             return true;
                         }
                     });
-            whereStr =  sqlHelper.assembleFilterSql(filterHelpers);
+            whereStr = sqlHelper.assembleFilterSql(filterHelpers);
         }
         fsql = "SELECT %s FROM %s %s %s GROUP BY %s ORDER BY %s";
         exec = String.format(fsql, columnAliasName, tableName, kylinModel.getTableAlias(tableName), whereStr, columnAliasName, columnAliasName);
@@ -180,7 +180,7 @@ public class KylinDataProvider extends DataProvider implements Aggregatable, Ini
                     restTemplate.getInterceptors().add(new BasicAuthorizationInterceptor(username, password));
                     ResponseEntity<String> a = restTemplate.getForEntity("http://" + serverIp + "/kylin/api/model/{modelName}", String.class, modelName);
                     JSONObject jsonObject = JSONObject.parseObject(a.getBody());
-                    model = new KylinModel(jsonObject, serverIp, username, password);
+                    model = new KylinModel(query, jsonObject, serverIp, username, password);
                     modelCache.put(key, model, 1 * 60 * 60 * 1000);
                 }
             }

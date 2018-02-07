@@ -77,11 +77,11 @@ CBoardEChartRender.prototype.chart = function (group, persist) {
 
 CBoardEChartRender.prototype.changeSize = function (instance) {
     var o = instance.getOption();
-    var seriesType = o.series[0] ? o.series[0].realType : null;
     if (o.series[0] ? o.series[0].type : null) {
         var l = o.series.length;
         var b = instance.getWidth() / (l + 1 + l * 8)
         for (var i = 0; i < l; i++) {
+            var seriesType = o.series[i] ? o.series[i].realType : null;
             if ((b * 8) < (instance.getHeight() * 0.75)) {
                 if(seriesType == 'doughnut'){
                     o.series[i].radius = [b * 3, b * 4];
@@ -142,6 +142,7 @@ CBoardEChartRender.prototype.addClick = function (chartConfig, relations, $state
 
         switch (chartConfig.chart_type) {
             case 'line':
+            case 'contrast':
             case 'scatter':
             case 'pie':
                 _.each(sourceField, function (field) {
@@ -288,7 +289,7 @@ CBoardEChartRender.prototype.addClick = function (chartConfig, relations, $state
         //触发关联图表刷新
         _.each(_.filter(links,function(e){return e.type=="widget"}), function(relation){
             var button = document.getElementsByName("reload_"+relation.targetId);
-            if(button){
+            if(button && button.length > 0){
                 button[button.length-1].click();
             }
         });

@@ -153,9 +153,16 @@ cBoard.service('chartScatterService', function (dataService) {
 
                 }],
             series: _.map(series, function (v) {
+                var length = -1;
                 return {
                     name: v.name,
-                    data: v.data,
+                    data: _.map(v.data, function (u) {
+                        length ++;
+                        return {
+                            name: string_keys[length],
+                            value: u
+                        }
+                    }),
                     type: 'scatter'
                 };
             })

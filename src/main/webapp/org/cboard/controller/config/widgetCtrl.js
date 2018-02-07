@@ -651,6 +651,19 @@ cBoard.controller('widgetCtrl', function ($scope, $state, $stateParams, $http, $
                         v.type = 'value';
                     });
                     break;
+                case 'pie':
+                    $scope.curWidget.config.values.push({name: '', cols: []});
+                    _.each(oldConfig.values, function (v) {
+                        _.each(v.cols, function (c) {
+                            $scope.curWidget.config.values[0].cols.push(c);
+                        });
+                    });
+                    $scope.curWidget.config.valueAxis = 'vertical';
+                    _.each($scope.curWidget.config.values, function (v) {
+                        v.series_type = 'pie';
+                        v.type = 'value';
+                    });
+                    break;
                 case 'kpi':
                     $scope.curWidget.config.values.push({name: '', cols: []});
                     _.each(oldConfig.values, function (v) {
@@ -927,6 +940,15 @@ cBoard.controller('widgetCtrl', function ($scope, $state, $stateParams, $http, $
                 cols: []
             });
         };
+
+        $scope.add_pie_value = function () {
+            $scope.curWidget.config.values.push({
+                name: '',
+                series_type: 'pie',
+                type: 'value',
+                cols: []
+            });
+        }
 
         $scope.add_china_map_value = function () {
             $scope.curWidget.config.values.push({

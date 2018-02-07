@@ -3,15 +3,14 @@
     <label class="col-sm-2 control-label">
         {{'CONFIG.WIDGET.VALUE_AXIS'|translate}}
         <i class="fa fa-plus-square" title="{{'CONFIG.WIDGET.ADD_NEW_AXIS'|translate}}"
-           ng-click="add_value()" style="cursor: pointer;" ng-show="curWidget.config.values.length < 2"/>
+           ng-click="add_pie_value()" style="cursor: pointer;" ng-show="curWidget.config.values.length < 2"/>
     </label>
     <div class="col-sm-10" style="'height: {{ curWidget.config.values.length * 45}}px'">
         <table class="table table-bordered">
             <tr ng-repeat="v in curWidget.config.values">
                 <td style="padding: 1px 3px">
                     <select class="form-control" ng-model="v.series_type" style="width: 150px; padding: 0px;"
-                            ng-options="type.value as type.name for type in value_pie_types"
-                            ng-init="v.series_type = value_pie_types[0].value"></select>
+                            ng-options="type.value as type.name for type in value_pie_types"></select>
                 </td>
                 <td dnd-list="v.cols" dnd-inserted="dndTransfer.toCol(v.cols,index,item,type)"
                     dnd-allowed-types="['measure','select','col','exp']"

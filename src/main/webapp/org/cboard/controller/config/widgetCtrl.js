@@ -658,7 +658,6 @@ cBoard.controller('widgetCtrl', function ($scope, $state, $stateParams, $http, $
                             $scope.curWidget.config.values[0].cols.push(c);
                         });
                     });
-                    $scope.curWidget.config.valueAxis = 'vertical';
                     _.each($scope.curWidget.config.values, function (v) {
                         v.series_type = 'pie';
                         v.type = 'value';

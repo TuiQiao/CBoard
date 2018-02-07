@@ -289,7 +289,7 @@ CBoardEChartRender.prototype.addClick = function (chartConfig, relations, $state
         //触发关联图表刷新
         _.each(_.filter(links,function(e){return e.type=="widget"}), function(relation){
             var button = document.getElementsByName("reload_"+relation.targetId);
-            if(button.length){
+            if(button && button.length > 0){
                 button[button.length-1].click();
             }
         });

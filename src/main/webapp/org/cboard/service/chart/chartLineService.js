@@ -46,12 +46,12 @@ cBoard.service('chartLineService', function ($state, $window) {
             if (s.type == 'stackbar') {
                 s.type = 'bar';
                 s.stack = s.valueAxisIndex.toString();
-            } else if(s.type == 'polarbar'){
+            } else if (s.type == 'polarbar') {
                 s.type = 'bar';
                 s.stack = s.valueAxisIndex.toString();
                 s.coordinateSystem = 'polar';
             } else if (s.type == 'percentbar') {
-                if (chartConfig.valueAxis == 'horizontal'){
+                if (chartConfig.valueAxis == 'horizontal') {
                     s.data = _.map(aggregate_data[i], function (e, i) {
                         return (e / sum_data[i] * 100).toFixed(2);
                     })
@@ -70,7 +70,7 @@ cBoard.service('chartLineService', function ($state, $window) {
                 s.stack = s.valueAxisIndex.toString();
                 s.areaStyle = {normal: {}};
             } else if (s.type == 'percentline') {
-                if (chartConfig.valueAxis == 'horizontal'){
+                if (chartConfig.valueAxis == 'horizontal') {
                     s.data = _.map(aggregate_data[i], function (e, i) {
                         return (e / sum_data[i] * 100).toFixed(2);
                     })
@@ -162,11 +162,11 @@ cBoard.service('chartLineService', function ($state, $window) {
             series: series_data
         };
 
-        if(line_type == 'polarbar'){
+        if (line_type == 'polarbar') {
             echartOption.angleAxis = chartConfig.valueAxis == 'horizontal' ? valueAxis : categoryAxis;
             echartOption.radiusAxis = chartConfig.valueAxis == 'horizontal' ? categoryAxis : valueAxis;
             echartOption.polar = {};
-        }else {
+        } else {
             echartOption.xAxis = chartConfig.valueAxis == 'horizontal' ? valueAxis : categoryAxis;
             echartOption.yAxis = chartConfig.valueAxis == 'horizontal' ? categoryAxis : valueAxis;
         }

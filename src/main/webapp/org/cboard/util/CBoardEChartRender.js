@@ -83,20 +83,20 @@ CBoardEChartRender.prototype.changeSize = function (instance) {
         for (var i = 0; i < l; i++) {
             var seriesType = o.series[i] ? o.series[i].realType : null;
             if ((b * 8) < (instance.getHeight() * 0.75)) {
-                if(seriesType == 'doughnut'){
+                if (seriesType == 'doughnut') {
                     o.series[i].radius = [b * 3, b * 4];
-                } else if(seriesType == 'coxcomb'){
+                } else if (seriesType == 'coxcomb') {
                     o.series[i].radius = [b * 0.8, b * 4];
                 } else {
                     o.series[i].radius = [0, b * 4];
                 }
 
             } else {
-                if(seriesType == 'doughnut'){
+                if (seriesType == 'doughnut') {
                     o.series[i].radius = ['50%', '75%'];
-                }else if(seriesType == 'coxcomb'){
+                } else if (seriesType == 'coxcomb') {
                     o.series[i].radius = ['15%', '75%']
-                }else{
+                } else {
                     o.series[i].radius = ['0', '75%'];
                 }
             }
@@ -184,7 +184,7 @@ CBoardEChartRender.prototype.addClick = function (chartConfig, relations, $state
                 break;
 
             case 'sankey':
-                if(param.dataType=='edge') {
+                if (param.dataType == 'edge') {
                     _.each(sourceField, function (field) {
                         if ($.inArray(field, _.map(keys, function (key) {
                                 return key.name;

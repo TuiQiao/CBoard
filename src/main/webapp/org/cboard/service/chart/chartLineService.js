@@ -34,7 +34,6 @@ cBoard.service('chartLineService', function ($state, $window) {
             sum_data[j] = sum;
         }
 
-        //主要用于判断是否要将折线起始点和x轴紧贴
         var line_type;
         for (var i = 0; i < aggregate_data.length; i++) {
             var joined_values = casted_values[i].join('-');
@@ -46,12 +45,12 @@ cBoard.service('chartLineService', function ($state, $window) {
             if (s.type == 'stackbar') {
                 s.type = 'bar';
                 s.stack = s.valueAxisIndex.toString();
-            } else if(s.type == 'polarbar'){
+            } else if (s.type == 'polarbar') {
                 s.type = 'bar';
                 s.stack = s.valueAxisIndex.toString();
                 s.coordinateSystem = 'polar';
             } else if (s.type == 'percentbar') {
-                if (chartConfig.valueAxis == 'horizontal'){
+                if (chartConfig.valueAxis == 'horizontal') {
                     s.data = _.map(aggregate_data[i], function (e, i) {
                         return (e / sum_data[i] * 100).toFixed(2);
                     })
@@ -70,7 +69,7 @@ cBoard.service('chartLineService', function ($state, $window) {
                 s.stack = s.valueAxisIndex.toString();
                 s.areaStyle = {normal: {}};
             } else if (s.type == 'percentline') {
-                if (chartConfig.valueAxis == 'horizontal'){
+                if (chartConfig.valueAxis == 'horizontal') {
                     s.data = _.map(aggregate_data[i], function (e, i) {
                         return (e / sum_data[i] * 100).toFixed(2);
                     })
@@ -124,12 +123,16 @@ cBoard.service('chartLineService', function ($state, $window) {
             axisLabel: {
                 interval: labelInterval,
                 rotate: labelRotate
-            }
+            },
+            boundaryGap: false
         };
-        if(line_type == 'line' || line_type == 'arealine'
-            || line_type == 'stackline' || line_type == 'percentline'){
-            categoryAxis.boundaryGap = false;
-        }
+
+        _.each(valueAxis, function (axis) {
+            var _stype = axis.series_type;
+            if (_stype.indexOf('bar') !== -1) {
+                categoryAxis.boundaryGap = true;
+            }
+        });
 
         var echartOption = {
             grid: angular.copy(echartsBasicOption.grid),
@@ -162,11 +165,11 @@ cBoard.service('chartLineService', function ($state, $window) {
             series: series_data
         };
 
-        if(line_type == 'polarbar'){
+        if (line_type == 'polarbar') {
             echartOption.angleAxis = chartConfig.valueAxis == 'horizontal' ? valueAxis : categoryAxis;
             echartOption.radiusAxis = chartConfig.valueAxis == 'horizontal' ? categoryAxis : valueAxis;
             echartOption.polar = {};
-        }else {
+        } else {
             echartOption.xAxis = chartConfig.valueAxis == 'horizontal' ? valueAxis : categoryAxis;
             echartOption.yAxis = chartConfig.valueAxis == 'horizontal' ? categoryAxis : valueAxis;
         }

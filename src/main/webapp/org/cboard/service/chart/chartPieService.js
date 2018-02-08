@@ -32,7 +32,7 @@ cBoard.service('chartPieService', function ($state, $window) {
             var s = {
                 name: string_value[i],
                 type: 'pie',
-                realType:realType,
+                realType: realType,
                 center: [5 * b + i * 9 * b + '%', '50%'],
                 data: [],
                 //roseType: 'angle'
@@ -52,7 +52,7 @@ cBoard.service('chartPieService', function ($state, $window) {
                     labelLine: {show: true}
                 }
             };
-            if(realType == 'coxcomb'){
+            if (realType == 'coxcomb') {
                 s.roseType = 'angle';
             }
             titles.push({

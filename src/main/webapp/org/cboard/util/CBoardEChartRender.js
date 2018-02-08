@@ -184,7 +184,7 @@ CBoardEChartRender.prototype.addClick = function (chartConfig, relations, $state
                 break;
 
             case 'sankey':
-                if(param.dataType=='edge') {
+                if (param.dataType == 'edge') {
                     _.each(sourceField, function (field) {
                         if ($.inArray(field, _.map(keys, function (key) {
                                 return key.name;

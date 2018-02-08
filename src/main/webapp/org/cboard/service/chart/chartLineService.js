@@ -34,7 +34,6 @@ cBoard.service('chartLineService', function ($state, $window) {
             sum_data[j] = sum;
         }
 
-        //主要用于判断是否要将折线起始点和x轴紧贴
         var line_type;
         for (var i = 0; i < aggregate_data.length; i++) {
             var joined_values = casted_values[i].join('-');
@@ -124,12 +123,16 @@ cBoard.service('chartLineService', function ($state, $window) {
             axisLabel: {
                 interval: labelInterval,
                 rotate: labelRotate
-            }
+            },
+            boundaryGap: false
         };
-        if(line_type == 'line' || line_type == 'arealine'
-            || line_type == 'stackline' || line_type == 'percentline'){
-            categoryAxis.boundaryGap = false;
-        }
+
+        _.each(valueAxis, function (axis) {
+            var _stype = axis.series_type;
+            if (_stype.indexOf('bar') !== -1) {
+                categoryAxis.boundaryGap = true;
+            }
+        });
 
         var echartOption = {
             grid: angular.copy(echartsBasicOption.grid),

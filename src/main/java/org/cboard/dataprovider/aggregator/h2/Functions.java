@@ -5,12 +5,12 @@ package org.cboard.dataprovider.aggregator.h2;
  */
 public class Functions {
 
-    public static float parserString2Float(String str) {
+    public static double parserString2Double(String str) {
         if (null == str) {
             return 0f;
         }
         try {
-            return Float.parseFloat(str);
+            return Double.parseDouble(str);
         } catch (Exception e) {
             return 0f;
         }

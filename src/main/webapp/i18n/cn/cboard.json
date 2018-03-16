@@ -226,7 +226,8 @@
       "SCATTER_MAP":"散点地图",
       "CHINA_MAP":"中国地图（本地）",
       "CHINA_MAP_BMAP":"中国地图（百度）",
-      "RELATION": "关系图"
+      "RELATION": "关系图",
+      "WORLD_MAP": "世界地图"
     },
     "DASHBOARD": {
       "DASHBOARD": "看板",

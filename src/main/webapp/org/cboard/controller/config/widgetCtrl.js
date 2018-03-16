@@ -129,6 +129,12 @@ cBoard.controller('widgetCtrl', function ($scope, $state, $stateParams, $http, $
                 row: translate('CONFIG.WIDGET.TIPS_DIM_NUM_1_2'),
                 column: translate('CONFIG.WIDGET.TIPS_DIM_NUM_1_2'),
                 measure: translate('CONFIG.WIDGET.TIPS_DIM_NUM_1')
+            },
+            {
+                name: translate('CONFIG.WIDGET.WORLD_MAP'), value: 'worldMap', class: 'cWorldMap',
+                row: translate('CONFIG.WIDGET.TIPS_DIM_NUM_1_MORE'),
+                column: translate('CONFIG.WIDGET.TIPS_DIM_NUM_0_MORE'),
+                measure: translate('CONFIG.WIDGET.TIPS_DIM_NUM_1')
             }
         ];
 
@@ -137,7 +143,8 @@ cBoard.controller('widgetCtrl', function ($scope, $state, $stateParams, $http, $
             "funnel": true, "sankey": true, "radar": true, "map": true,
             "scatter": true, "gauge": true, "wordCloud": true, "treeMap": true,
             "heatMapCalendar": true, "heatMapTable": true, "liquidFill": true,
-            "areaMap": true, "contrast": true,"chinaMap":true,"chinaMapBmap":true,"relation":true
+            "areaMap": true, "contrast": true,"chinaMap":true,"chinaMapBmap":true,
+            "relation":true, "worldMap": true
         };
 
         $scope.value_series_types = [
@@ -245,7 +252,8 @@ cBoard.controller('widgetCtrl', function ($scope, $state, $stateParams, $http, $
             contrast: {keys: 1, groups: 0, filters: -1, values: 2},
             chinaMap:{keys: 2, groups: -1, filters: -1, values: 2},
             chinaMapBmap:{keys: 2, groups: -1, filters: -1, values: 2},
-            relation: {keys: 2, groups: 2, filters: -1, values: 1}
+            relation: {keys: 2, groups: 2, filters: -1, values: 1},
+            worldMap: {keys: 2, groups: -1, filters: -1, values: 1}
         };
 
         $scope.switchLiteMode = function (mode) {

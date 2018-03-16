@@ -226,7 +226,8 @@
       "SCATTER_MAP":"Scatter Map",
       "CHINA_MAP":"China Map (Local)",
       "CHINA_MAP_BMAP":"China Map (Bmap)",
-      "RELATION": "Relation"
+      "RELATION": "Relation",
+      "WORLD_MAP": "World Map"
     },
     "DASHBOARD": {
       "CATEGORY": "Category",

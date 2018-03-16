@@ -16,7 +16,7 @@ cBoard.service('chartWorldMapService', function($state, $window) {
     var tunningOpt = chartConfig.option;
 
     var code = 'world';
-    var url = 'plugins/FineMap/mapdata/world.json'
+    var url = 'plugins/FineMap/mapdata/' + code + '-' + settings.preferredLanguage + '.json'
     var zoomLevel = 1;
     var mapOption = null;
     var groups = _.map(casted_values, function(val) {

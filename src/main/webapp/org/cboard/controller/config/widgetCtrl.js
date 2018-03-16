@@ -782,19 +782,6 @@ cBoard.controller('widgetCtrl', function ($scope, $state, $stateParams, $http, $
                         v.type = 'value';
                     });
                     break;
-                case 'worldMap':
-                    $scope.curWidget.config.values.push({name: '', cols: []});
-                    _.each(oldConfig.values, function (v) {
-                        _.each(v.cols, function (c) {
-                            $scope.curWidget.config.values[0].cols.push(c);
-                        });
-                    });
-                    $scope.curWidget.config.valueAxis = 'vertical';
-                    _.each($scope.curWidget.config.values, function (v) {
-                        v.series_type = 'scatter';
-                        v.type = 'value';
-                    });
-                    break;
                 default:
                     $scope.curWidget.config.values.push({name: '', cols: []});
                     _.each(oldConfig.values, function (v) {

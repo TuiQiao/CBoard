@@ -57,14 +57,19 @@ cBoard.service('chartLiquidFillService', function () {
                 outline: {
                     show: false
                 }
-            }]
+            }],
+            label:{
+                textStyle: {
+                    fontSize: 35,
+                    fontFamily: 'Lobster Two',
+                    color:"#000"
+                }
+            }
         };
 
         if(datas[0] == 1){
-            option.label = {
-                normal:{
-                    formatter:"I'm full."
-                }
+            option.label.normal = {
+                formatter:"I'm full."
             }
         }
         return option;

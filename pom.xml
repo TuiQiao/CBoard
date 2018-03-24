@@ -4,7 +4,6 @@
     <groupId>org.cboard</groupId>
     <artifactId>cboard</artifactId>
     <version>0.0.1-SNAPSHOT</version>
-    <packaging>war</packaging>
     <name>cboard</name>
     <description/>
     <properties>
@@ -355,6 +354,13 @@
             <groupId>com.jayway.jsonpath</groupId>
             <artifactId>json-path</artifactId>
             <version>2.4.0</version>
+        </dependency>
+
+        <!-- https://mvnrepository.com/artifact/org.eclipse.jetty.aggregate/jetty-all -->
+        <dependency>
+            <groupId>org.eclipse.jetty.aggregate</groupId>
+            <artifactId>jetty-all</artifactId>
+            <version>8.1.8.v20121106</version>
         </dependency>
 
     </dependencies>

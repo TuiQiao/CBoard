@@ -4,6 +4,7 @@
     <groupId>org.cboard</groupId>
     <artifactId>cboard</artifactId>
     <version>0.0.1-SNAPSHOT</version>
+    <packaging>war</packaging>
     <name>cboard</name>
     <description/>
     <properties>

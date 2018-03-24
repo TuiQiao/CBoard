@@ -357,6 +357,13 @@
             <version>2.4.0</version>
         </dependency>
 
+        <!-- https://mvnrepository.com/artifact/org.eclipse.jetty.aggregate/jetty-all -->
+        <dependency>
+            <groupId>org.eclipse.jetty.aggregate</groupId>
+            <artifactId>jetty-all</artifactId>
+            <version>8.1.8.v20121106</version>
+        </dependency>
+
     </dependencies>
 
     <build>

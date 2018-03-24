@@ -4,10 +4,6 @@
     <groupId>org.cboard</groupId>
     <artifactId>cboard</artifactId>
     <version>0.0.1-SNAPSHOT</version>
-    <modules>
-        <module>csd</module>
-    </modules>
-    <packaging>pom</packaging>
     <name>cboard</name>
     <description/>
     <properties>

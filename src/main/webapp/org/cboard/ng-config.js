@@ -91,7 +91,13 @@ angular.module('cBoard').config(['$stateProvider', function ($stateProvider) {
             url: '/user',
             templateUrl: 'org/cboard/view/admin/user.html',
             controller: 'userAdminCtrl'
-        });
+        })
+        .state('config.datav', {
+            url:'/datav/{boardId}',
+            params: {boardId: null},
+            templateUrl: 'org/cboard/view/config/board/datav/view.html',
+            controller: 'datavCtrl'
+        })
 
 }]);
 

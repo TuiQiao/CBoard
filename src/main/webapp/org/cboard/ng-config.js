@@ -26,6 +26,11 @@ angular.module('cBoard').config(['$stateProvider', function ($stateProvider) {
             templateUrl: 'org/cboard/view/dashboard/view.html',
             controller: 'dashboardViewCtrl'
         })
+        .state('datav.view', {
+            url: '/{id}',
+            params: {id: null},
+            templateUrl: 'org/cboard/view/dashboard/layout/datav.html'
+        })
         .state('dashboard.category', {
             url: '/{category}',
             params: {category: null},
@@ -93,7 +98,7 @@ angular.module('cBoard').config(['$stateProvider', function ($stateProvider) {
             controller: 'userAdminCtrl'
         })
         .state('config.datav', {
-            url:'/datav/{boardId}',
+            url: '/datav/{boardId}',
             params: {boardId: null},
             templateUrl: 'org/cboard/view/config/board/datav/view.html',
             controller: 'datavCtrl'
@@ -101,7 +106,7 @@ angular.module('cBoard').config(['$stateProvider', function ($stateProvider) {
 
 }]);
 
-angular.module('cBoard').factory('sessionHelper', ["$rootScope","$q", function ($rootScope,$q) {
+angular.module('cBoard').factory('sessionHelper', ["$rootScope", "$q", function ($rootScope, $q) {
     var sessionHelper = {
         responseError: function (response) {
             if (response.data.status == 2) {

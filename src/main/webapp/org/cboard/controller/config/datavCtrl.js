@@ -16,6 +16,7 @@ cBoard.controller('datavCtrl', function ($rootScope, $scope, $stateParams, $http
     var vm = new Vue({
         el: '#app',
         data: {
+            viewType: false,
             widgetList: "",
             //视图ID
             viewId: '',
@@ -176,9 +177,6 @@ cBoard.controller('datavCtrl', function ($rootScope, $scope, $stateParams, $http
                 }
                 vm._data.dataVChartData = dataVChartData;
                 dataVChartDataJSON[domId] = dataVChartData;
-
-
-                var array = vm._data.dataVComponents;
                 var dataVComponent = {
                     domId: domId,
                     componentName: dom.componentName,
@@ -186,10 +184,18 @@ cBoard.controller('datavCtrl', function ($rootScope, $scope, $stateParams, $http
                     chartData: dataVChartData,
                     widgetId: dom.widgetId
                 };
-                array.push(dataVComponent);
-                vm._data.dataVComponents = array;
-                //初始化组件可拖拽、伸缩
-                initDrag(domId);
+
+                if (!vm._data.viewType) {
+                    var array = vm._data.dataVComponents;
+                    array.push(dataVComponent);
+                    vm._data.dataVComponents = array;
+                    //初始化组件可拖拽、伸缩
+                    initDrag(domId);
+                }else{
+                    var array = vm._data.viewDataCharts;
+                    array.push(dataVComponent);
+                    vm._data.viewDataCharts = array;
+                }
             },
             //点击数据视图
             dataVBlockClick: function (e) {
@@ -248,6 +254,11 @@ cBoard.controller('datavCtrl', function ($rootScope, $scope, $stateParams, $http
             //加载监控视图配置
             loadDataVConf: function () {
                 var boardId = $stateParams.boardId;
+                if (boardId === undefined) {
+                    var href = window.location.href;
+                    boardId = href.substr(href.lastIndexOf("/") + 1);
+                    vm._data.viewType = true;
+                }
                 if (boardId) {
                     $http.get("dashboard/getBoardData.do", {params: {id: boardId}}).then(function (res) {
                         if (!res.data.layout.dataVConf) {
@@ -362,7 +373,7 @@ cBoard.controller('datavCtrl', function ($rootScope, $scope, $stateParams, $http
                     closeMessage("提示", "更新成功", function () {
                         $state.go("config.board")
                     })
-                }else{
+                } else {
                     if (res.data.message) {
                         closeMessage('错误', res.data.message);
                     } else {
@@ -376,14 +387,15 @@ cBoard.controller('datavCtrl', function ($rootScope, $scope, $stateParams, $http
                     closeMessage("提示", "保存成功", function () {
                         $state.go("config.board")
                     })
-                }else{
+                } else {
                     if (res.data.message) {
                         closeMessage('错误', res.data.message);
                     } else {
                         closeMessage('错误', '保存失败');
                     }
                 }
-            });;
+            });
+            ;
         }
     }
 

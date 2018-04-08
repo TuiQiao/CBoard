@@ -457,7 +457,6 @@ cBoard.controller('boardCtrl',
         };
 
         $scope.editNode = function () {
-            debugger
             if (!checkTreeNode("edit")) return;
             $scope.editBoard(getSelectedBoard());
             var selectedNode = jstree_GetSelectedNodes(treeID)[0];

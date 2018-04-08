@@ -26,11 +26,6 @@ angular.module('cBoard').config(['$stateProvider', function ($stateProvider) {
             templateUrl: 'org/cboard/view/dashboard/view.html',
             controller: 'dashboardViewCtrl'
         })
-        .state('datav.view', {
-            url: '/{id}',
-            params: {id: null},
-            templateUrl: 'org/cboard/view/dashboard/layout/datav.html'
-        })
         .state('dashboard.category', {
             url: '/{category}',
             params: {category: null},
@@ -103,7 +98,6 @@ angular.module('cBoard').config(['$stateProvider', function ($stateProvider) {
             templateUrl: 'org/cboard/view/config/board/datav/view.html',
             controller: 'datavCtrl'
         })
-
 }]);
 
 angular.module('cBoard').factory('sessionHelper', ["$rootScope", "$q", function ($rootScope, $q) {

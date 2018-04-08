@@ -484,13 +484,5 @@
                 </el-tabs>
             </div>
         </div>
-        <div id="viewDataVModal" style="position: absolute;z-index:10;background-color: rgba(0, 0, 0, 0.6);">
-            <div class="datav-view-close" style="display: none;"><i class="fa fa-times" aria-hidden="true" @click="closeViewDataVWin('viewDataVModal')"></i></div>
-            <div id="vdatav-drag" class="datav-canvas" v-bind:style=" {width:viewDragWidth,height:viewDragHeight,background:(dataVConf.background?'url(' + basePath + '/cboard/org/cboard/view/config/board/datav/img/' + dataVConf.background + ') repeat':'')} ">
-                <div class="datav-block" v-for="dataChart in viewDataCharts" :id="dataChart.domId" :type="dataChart.chartType" v-bind:style=" {width:dataChart.chartWidth + 'px', height:dataChart.chartHeight + 'px', transform:'translate(' + dataChart.positionX + 'px,' + dataChart.positionY + 'px)'} ">
-                    <component v-bind:is="dataChart.componentName" v-bind:chartData="dataChart"></component>
-                </div>
-            </div>
-        </div>
     </div>
 </div>

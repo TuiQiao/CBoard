@@ -78,7 +78,6 @@ cBoard.controller('datavCtrl', function ($rootScope, $scope, $stateParams, $http
                 dragWidth = Number(dragWidth.substr(0, dragWidth.length - 2));
                 var dragHeight = $('#datav-drag').parent().css('height');
                 dragHeight = Number(dragHeight.substr(0, dragHeight.length - 2));
-
                 //屏幕配置大小
                 var screenWidth = vm._data.dataVConf.screenWidth;
                 var screenHeight = vm._data.dataVConf.screenHeight;
@@ -96,29 +95,11 @@ cBoard.controller('datavCtrl', function ($rootScope, $scope, $stateParams, $http
             },
             //用于预览视图
             viewDataV: function () {
-                //清空已有的配置
-                vm._data.viewDataCharts = [];
-                $('#viewDataVModal').css('width', document.body.clientWidth + 'px');
-                $('#viewDataVModal').css('height', document.body.clientHeight + 'px');
-                $('#viewDataVModal .datav-view-close').show();
-                //无视图组件
-                if (!dataVChartDataJSON) {
-                    return;
-                }
-                //绘制预览画布大小
-                vm._data.viewDragWidth = vm._data.dataVConf.screenWidth + 'px';
-                vm._data.viewDragHeight = vm._data.dataVConf.screenHeight + 'px';
-                //弹出预览框
-                var hexDataVInfo = buildHexDataVInfo();
-
-                for (var i = 0; i < hexDataVInfo.dataVConfChartDataList.length; i++) {
-                    var each = hexDataVInfo.dataVConfChartDataList[i];
-                    each.componentName = hexDataV.component[each.chartType]
-                    if (each.domId) {
-                        each.domId = each.domId + '_bak';
-                    }
-                }
-                vm._data.viewDataCharts = hexDataVInfo.dataVConfChartDataList;
+                vm.saveDataVConf()
+                var href = window.location.href;
+                var boardId = href.substr(href.lastIndexOf("/") + 1);
+                var winInfo = "toolbar=no,menubar=no,status=yes,scrollbars=no,resizable=no,titlebar=no,location=no,width=" + (window.screen.availWidth - 10) + ",height=" + (window.screen.availHeight - 30) + ",top=0,left=0,fullscreen=no";
+                window.open('render.html#?id=' + boardId, '', winInfo)
             },
             //设置数据视图可移动
             allowDrop: function (event) {
@@ -256,7 +237,7 @@ cBoard.controller('datavCtrl', function ($rootScope, $scope, $stateParams, $http
                 var boardId = $stateParams.boardId;
                 if (boardId === undefined) {
                     var href = window.location.href;
-                    boardId = href.substr(href.lastIndexOf("/") + 1);
+                    boardId = href.substr(href.lastIndexOf("?id=") + 4);
                     vm._data.viewType = true;
                 }
                 if (boardId) {
@@ -266,6 +247,8 @@ cBoard.controller('datavCtrl', function ($rootScope, $scope, $stateParams, $http
                         }
                         vm._data.dataVConf = res.data.layout.dataVConf;
                         vm.screenSizeChange();
+                        vm._data.viewDragWidth = res.data.layout.dataVConf.screenWidth + "px";
+                        vm._data.viewDragHeight = res.data.layout.dataVConf.screenHeight + "px";
                         var layout = res.data.layout;
                         for (var i = 0; i < layout.rows.length; i++) {
                             if (layout.rows[i].type == 'widget') {

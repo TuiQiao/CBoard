@@ -172,7 +172,7 @@ cBoard.controller('datavCtrl', function ($rootScope, $scope, $stateParams, $http
                     vm._data.dataVComponents = array;
                     //初始化组件可拖拽、伸缩
                     initDrag(domId);
-                }else{
+                } else {
                     var array = vm._data.viewDataCharts;
                     array.push(dataVComponent);
                     vm._data.viewDataCharts = array;
@@ -199,18 +199,15 @@ cBoard.controller('datavCtrl', function ($rootScope, $scope, $stateParams, $http
             },
             //下载上传
             dropUpload: function (event) {
+                event.preventDefault();
                 var fileList = event.dataTransfer.files; //获取文件对象
                 var xhr = new XMLHttpRequest();
-                var url = vm._data.basePath + '/hex/dataV/uploadImage'
+                var url = 'dashboard/uploadImage.do';
                 xhr.open('post', url, true);
                 xhr.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
-                //设置回调函数
-                xhr.onreadystatechange = function () {
+                xhr.onreadystatechange = function(){
                     if (xhr.readyState == 4 && xhr.status == 200) {
-                        var response = eval('(' + xhr.responseText + ')');
-                        if (response.status == true) {
-                            vm._data.dataVConf.background = response.data;
-                        }
+                        vm._data.dataVConf.background = xhr.responseText;
                     }
                 };
                 var formData = new FormData();

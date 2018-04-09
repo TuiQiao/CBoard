@@ -427,7 +427,7 @@ Vue.component('hex-datav-label', {
     },
     template: '<div class="datav-label">' +
     '<table cellspacing="0" cellpadding="0">' +
-    '<tr><td class="datav-label-label" v-bind:style=" {color:chartdata.titleColor,background:chartdata.bgColor,fontSize:chartdata.titleFontSize + \'px\',fontWeight:chartdata.titleFontWeight} ">{{chartdata.chartTitle}}</td></tr>' +
+    '<tr><td class="datav-label-label" v-bind:style=" {color:chartdata.dataVConfChartCSS.titleColor,background:chartdata.dataVConfChartCSS.bgColor,fontSize:chartdata.dataVConfChartCSS.titleFontSize + \'px\',fontWeight:chartdata.dataVConfChartCSS.titleFontWeight} ">{{chartdata.dataVConfChartCSS.chartTitle}}</td></tr>' +
     '</table>' +
     '</div>'
 });

@@ -120,7 +120,7 @@ cBoard.controller('datavCtrl', function ($rootScope, $scope, $stateParams, $http
                 dataVChartData.name = dom.name;
                 if (dom.type == 'label') {
                     //标题组件默认值
-                    dataVChartData.chartTitle = hexDataV.defaultTitle;
+                    dataVChartData.dataVConfChartCSS.chartTitle = hexDataV.defaultTitle;
                 } else if (dom.type == 'kpi') {
                     //指标卡默认值
                     dataVChartData.jsonData = hexDataV.defaultKpiData();
@@ -135,6 +135,12 @@ cBoard.controller('datavCtrl', function ($rootScope, $scope, $stateParams, $http
                 } else if (dom.type == 'clock') {
                     //时钟组件默认格式化
                     dataVChartData.dataVConfChartCSS = hexDataV.defaultClockStyle();
+                }
+                if(!jQuery.isEmptyObject(hexDataV.componentDom.dataVConfChartCSS)){
+                    dataVChartData.dataVConfChartCSS = hexDataV.componentDom.dataVConfChartCSS;
+                }
+                if(!jQuery.isEmptyObject(hexDataV.componentDom.chartStyle)){
+                    dataVChartData.chartStyle = hexDataV.componentDom.chartStyle;
                 }
                 var xprop = xMultiple(vm._data.dataVConf.screenWidth);
                 var yprop = yMultiple(vm._data.dataVConf.screenHeight);
@@ -214,21 +220,6 @@ cBoard.controller('datavCtrl', function ($rootScope, $scope, $stateParams, $http
                 formData.append('file', fileList[0]);
                 xhr.send(formData);
             },
-            //关闭监控预览
-            closeViewDataVWin: function (e) {
-                var domId = e;
-                //没有找出原本重置模态框的方式，所以使用清空数据代替
-                //$('#' + domId + ' .datav-block').remove();
-                vm._data.viewDataCharts = []
-
-                $('#' + domId + ' .datav-view-close').hide();
-                $('#' + domId).css('width', '');
-                $('#' + domId).css('height', '');
-
-                //绘制预览画布大小
-                vm._data.viewDragWidth = '0px';
-                vm._data.viewDragHeight = '0px';
-            },
             //加载监控视图配置
             loadDataVConf: function () {
                 var boardId = $stateParams.boardId;
@@ -274,7 +265,8 @@ cBoard.controller('datavCtrl', function ($rootScope, $scope, $stateParams, $http
                                         chartHeight: others[j].chartHeight,
                                         positionX: others[j].positionX,
                                         positionY: others[j].positionY,
-                                        chartStyle: others[j].chartStyle
+                                        chartStyle: others[j].chartStyle,
+                                        dataVConfChartCSS: others[j].dataVConfChartCSS
                                     };
                                     hexDataV.componentDom = componentDom;
                                     vm.drop();
@@ -341,7 +333,7 @@ cBoard.controller('datavCtrl', function ($rootScope, $scope, $stateParams, $http
                     positionX: hexDataVInfo.dataVConfChartDataList[i].positionX,
                     positionY: hexDataVInfo.dataVConfChartDataList[i].positionY,
                     chartStyle: hexDataVInfo.dataVConfChartDataList[i].chartStyle,
-                    dataVConfChartCSS: hexDataVInfo.dataVConfChartDataList[i].dataVConfChartCSS
+                    dataVConfChartCSS: hexDataVInfo.dataVConfChartDataList[i].dataVConfChartCSS,
                 })
             }
 
@@ -375,7 +367,6 @@ cBoard.controller('datavCtrl', function ($rootScope, $scope, $stateParams, $http
                     }
                 }
             });
-            ;
         }
     }
 

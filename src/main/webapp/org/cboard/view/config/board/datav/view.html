@@ -6,8 +6,8 @@
                 <el-menu default-active="1-1" class="el-menu-vertical-demo" :collapse="true">
                     <el-submenu index="1">
                         <template slot="title">
-                            <i class="el-icon-location"></i>
-                            <span slot="title">导航一</span>
+                            <i class="el-icon-picture"></i>
+                            <span slot="title">图表</span>
                         </template>
                         <el-submenu :index="'1-'+index" v-for="(value,key,index) in widgetList" :key="index">
                             <span slot="title">{{key}}</span>
@@ -38,7 +38,7 @@
                     </el-submenu>
                     <el-submenu index="4">
                         <template slot="title">
-                            <i class="el-icon-menu"></i>
+                            <i class="el-icon-setting"></i>
                             <span slot="title">操作</span>
                         </template>
                         <el-menu-item index="4-1" @click="saveDataVConf">保存</el-menu-item>
@@ -209,16 +209,16 @@
                             <el-collapse-item title="标题组件" name="15" v-show="dataVChartData.chartType=='label'">
                                 <el-form label-width="84px" label-position="left" class="scrolling content">
                                     <el-form-item label="标题名">
-                                        <el-input v-model="dataVChartData.chartTitle"></el-input>
+                                        <el-input v-model="dataVChartData.dataVConfChartCSS.chartTitle"></el-input>
                                     </el-form-item>
                                     <el-form-item label="字号">
-                                        <el-input placeholder="数值" v-model="dataVChartData.titleFontSize"></el-input>
+                                        <el-input placeholder="数值" v-model="dataVChartData.dataVConfChartCSS.titleFontSize"></el-input>
                                     </el-form-item>
                                     <el-form-item label="字体颜色">
-                                        <input v-model="dataVChartData.titleColor" type="color"/>
+                                        <input v-model="dataVChartData.dataVConfChartCSS.titleColor" type="color"/>
                                     </el-form-item>
                                     <el-form-item label="字体粗细">
-                                        <el-select v-model="dataVChartData.titleFontWeight" placeholder="请选择">
+                                        <el-select v-model="dataVChartData.dataVConfChartCSS.titleFontWeight" placeholder="请选择">
                                             <el-option v-for="data in fontWeight"
                                                        :key="data.key" :label="data.key" :value="data.value">
                                             </el-option>

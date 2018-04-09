@@ -34,7 +34,7 @@
                         <el-menu-item index="3-1" type="kpi" componentName="hex-datav-kpi" @click="drag($event)">指标</el-menu-item>
                         <el-menu-item index="3-2" type="clock" componentName="hex-datav-clock" @click="drag($event)">时钟</el-menu-item>
                         <el-menu-item index="3-3" type="border" componentName="hex-datav-border" @click="drag($event)">静态边框</el-menu-item>
-                        <!--<el-menu-item index="3-4" type="clock" componentName="hex-datav-clock" @click="drag($event)">动态边框</el-menu-item>-->
+                        <el-menu-item index="3-4" type="ornament" componentName="hex-datav-ornament" @click="drag($event)">动态边框</el-menu-item>
                     </el-submenu>
                     <el-submenu index="4">
                         <template slot="title">
@@ -232,6 +232,18 @@
                                     <el-form-item label="框样式">
                                         <el-select v-model="dataVChartData.chartStyle" placeholder="请选择">
                                             <el-option v-for="data in borderStyle"
+                                                       :key="data.key" :label="data.key" :value="data.value">
+                                            </el-option>
+                                        </el-select>
+                                    </el-form-item>
+                                </el-form>
+                            </el-collapse-item>
+                            <!--装饰组件设置-->
+                            <el-collapse-item title="装饰组件" name="19" v-show="dataVChartData.chartType=='ornament'">
+                                <el-form label-width="84px" label-position="left" class="scrolling content">
+                                    <el-form-item label="装饰元素">
+                                        <el-select v-model="dataVChartData.chartStyle" placeholder="请选择">
+                                            <el-option v-for="data in ornamentStyle"
                                                        :key="data.key" :label="data.key" :value="data.value">
                                             </el-option>
                                         </el-select>

@@ -124,7 +124,7 @@
     margin:auto!important;
     width: 470px;
     height: 70px;
-    background-image: url("../img/title-footer.gif");
+    background-image: url("../org/cboard/view/config/board/datav/img/title-footer.gif");
     background-size: 100%;
     background-repeat: no-repeat;
     background-position: center center;
@@ -265,6 +265,15 @@
     border-image-outset: initial;
     border-image-repeat: initial;
     background: none;
+}
+
+.datav-ornament{
+    width: 100%;
+    height: 100%;
+    background-size: 100%;
+    background-repeat: no-repeat;
+    background-position: center center;
+    opacity: 1;
 }
 
 div.func-btn:hover div.datav-col{

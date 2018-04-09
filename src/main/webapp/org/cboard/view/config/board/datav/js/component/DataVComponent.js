@@ -128,79 +128,12 @@ hexDataV.getPieData = function (array, gField, yField) {
     return yData;
 };
 
-/**
- * 初始化饼图
- *
- * @param domId
- * @param color
- * @param legend
- * @param name
- * @param data
- */
-hexDataV.initPie = function (chartConf, legend, name, data) {
-    var pieChart = document.getElementById(chartConf.chartId);
-    var option = {
-        title: {
-            text: chartConf.chartTitle,
-            x: 'center',
-            textStyle: {
-                color: "#FFF",
-                fontSize: 12,
-            }
-        },
-        //color:color,
-        tooltip: {
-            trigger: 'item',
-            formatter: "{a} <br/>{b} : {c} ({d}%)"
-        },
-        legend: {
-            orient: 'vertical',
-            x: 'left',
-            data: legend,
-            textStyle: {
-                color: '#FFFFFF'
-            }
-        },
-        series: [
-            {
-                name: name,
-                type: 'pie',
-                radius: '55%',
-                center: ['60%', '60%'],
-                data: data,
-                labelLine: {
-                    normal: {
-                        show: false
-                    }
-                },
-                label: {
-                    normal: {
-                        show: true,
-                        formatter: '{b}'
-                    },
-                },
-                itemStyle: {
-                    emphasis: {
-                        shadowBlur: 10,
-                        shadowOffsetX: 0,
-                        shadowColor: '#FFFFFF'
-                    }
-                }
-            }
-        ]
-    };
-
-    var chart = echarts.init(pieChart);
-    chart.setOption(option);
-    $('#' + chartConf.chartId).resize(function (e) {
-        chart.resize();
-    });
-};
 
 /*hexDataV数据可视化组件信息*/
 hexDataV.component = {
     'label': 'hex-datav-label', 'kpi': 'hex-datav-kpi', 'clock': 'hex-datav-clock',
-    'table': 'hex-datav-table', 'border': 'hex-datav-border','chart':'hex-datav-chart'
+    'table': 'hex-datav-table', 'border': 'hex-datav-border', 'chart': 'hex-datav-chart',
+    'ornament': "hex-datav-ornament"
 };
 
 /*hexDataV数据可视化组件icon*/
@@ -211,34 +144,6 @@ hexDataV.componentICON = {
     'table': {icon: 'fa fa-table', title: '表格'}, 'border': {icon: 'fa fa-square-o', title: '边框'},
     'list': {icon: 'fa fa-server', title: '轮播列表'}
 };
-
-/*坐标样式*/
-/*hexDataV.zoomStyle = function (dataVChartConf, chartStyle) {
-    var zoomStyle = {};
-    var xField = dataVChartConf.xField ? dataVChartConf.xField : 'x';
-    var yField = dataVChartConf.yField ? dataVChartConf.yField : 'y';
-    if (!chartStyle) {
-        chartStyle = '{}';
-    }
-    chartStyle = eval('(' + chartStyle + ')');
-    zoomStyle.x = chartStyle[xField];
-    zoomStyle.y = chartStyle[yField];
-    return zoomStyle;
-};*/
-
-//图表分组颜色
-/*hexDataV.legendStyle = function (legend, chartStyle) {
-    var colors = new Array();
-    if (!legend || legend.length == 0 || !chartStyle) {
-        return colors;
-    }
-
-    chartStyle = eval('(' + chartStyle + ')');
-    for (var i = 0; i < legend.length; i++) {
-        colors.push(chartStyle[legend[i]]);
-    }
-    return colors;
-};*/
 
 
 //默认指标卡数据
@@ -301,6 +206,22 @@ hexDataV.getBorderStyle = function (basePath) {
         borderStyle.push({key: key, value: value})
     }
     return borderStyle;
+};
+
+/**
+ * 装饰元素
+ *
+ * @param basePath
+ * @returns {any[]}
+ */
+hexDataV.getOrnamentStyle = function (basePath) {
+    var ornamentStyle = new Array();
+    for (var i = 1; i <= 10; i++) {
+        var gif = 'gif' + i;
+        var value = (basePath ? basePath : '') + '/cboard/org/cboard/view/config/board/datav/img/ornament/' + gif + '.gif';
+        ornamentStyle.push({key: gif, value: value});
+    }
+    return ornamentStyle;
 };
 
 
@@ -491,32 +412,6 @@ Vue.component('hex-datav-icon', {
     '</el-tooltip></div>'
 });
 
-/*
-/!*DataV组件图片*!/
-Vue.component('hex-datav-icon-img', {
-    props:{
-        basePath:String,
-        type:String,
-        componentName:String
-    },
-    template:'<img class="datav-temp" :type="type" :componentName="componentName" :src=" \'/cboard/org/cboard/view/config/board/datav/img/temp/\' + type + \'.png\'" draggable="true" @dragstart="drag($event)"/>',
-    methods:{
-        drag:function(event){
-            var current = event.currentTarget;
-            var type = current.getAttribute('type');
-            var componentName = current.getAttribute('componentName');
-            //若组件类型以及组件名称为空
-            if(!type || !componentName){
-                return;
-            }
-            var componentDom = {type:type, componentName:componentName};
-            hexDataV.componentDom = componentDom;
-        }
-    }
-});
-*/
-
-
 /*边框组件*/
 Vue.component('hex-datav-border', {
     props: {
@@ -528,15 +423,16 @@ Vue.component('hex-datav-border', {
     }
 });
 
+/*动态边框*/
+Vue.component('hex-datav-ornament', {
+    props: {
+        chartdata: Object
+    },
+    template: '<div class="datav-ornament" v-bind:style=" {backgroundImage:\'url(\' + chartdata.chartStyle + \')\'} "></div>'
+});
+
+
 /*分割线*/
 Vue.component('hex-datav-splitline', {
     template: '<div style="width: 100%;height: 1px;border-bottom: 1px #c0c0c0 solid;margin-bottom: 5px;"></div>'
 });
-
-/*
-*
-*   <div class="datav-bar" v-bind:style=" {background:chartdata.bgColor} ">
-*       <div :id="chartdata.domId + '_01'" style="width: 100%;height: 100%;">
-*       </div>
-*   </div>
-* */

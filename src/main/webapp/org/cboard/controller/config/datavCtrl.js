@@ -38,6 +38,8 @@ cBoard.controller('datavCtrl', function ($rootScope, $scope, $stateParams, $http
             dataVComponents: [],
             //边框组件样式
             borderStyle: hexDataV.getBorderStyle(),
+            //装饰组件样式
+            ornamentStyle:hexDataV.getOrnamentStyle(),
             //字体粗细
             fontWeight: hexDataV.getFontWeight(),
             //文本对齐方式
@@ -128,6 +130,9 @@ cBoard.controller('datavCtrl', function ($rootScope, $scope, $stateParams, $http
                 } else if (dom.type == 'border') {
                     //边框默认样式
                     dataVChartData.chartStyle = vm._data.borderStyle[0].value;
+                } else if (dom.type == 'ornament'){
+                    //装饰默认样式
+                    dataVChartData.chartStyle = vm._data.ornamentStyle[0].value;
                 } else if (dom.type == 'table') {
                     //表格组件默认值
                     dataVChartData.jsonData = hexDataV.defaultTableData();

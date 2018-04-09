@@ -144,14 +144,8 @@
                             </el-collapse-item>
                             <!--图表组件设置-->
                             <el-collapse-item title="图表组件" name="3"
-                                              v-show="dataVChartData.chartType=='bar' || dataVChartData.chartType=='line' || dataVChartData.chartType=='pie' ">
+                                              v-show="dataVChartData.chartType=='chart' ">
                                 <el-form label-width="84px" label-position="left" class="scrolling content">
-                                    <!--<el-form-item label="图表标题">
-                                        <el-input v-model="dataVChartData.chartTitle"></el-input>
-                                    </el-form-item>
-                                    <el-form-item label="标题颜色">
-                                        <input v-model="dataVChartData.titleColor" type="color"/>
-                                    </el-form-item>-->
                                     <el-form-item label="背景颜色">
                                         <input v-model="dataVChartData.bgColor" type="color"/>
                                     </el-form-item>

@@ -114,7 +114,7 @@ cBoard.controller('datavCtrl', function ($rootScope, $scope, $stateParams, $http
                     return;
                 }
                 //新增组件
-                var domId = dom.type + '_' + new Date().getTime();
+                var domId = dom.widgetId + '_' + new Date().getTime();
                 var dataVChartData = initDataVChartData();
                 dataVChartData.chartType = dom.type;
                 dataVChartData.widgetId = dom.widgetId;
@@ -348,6 +348,7 @@ cBoard.controller('datavCtrl', function ($rootScope, $scope, $stateParams, $http
             $http.post("dashboard/updateBoard.do", {json: angular.toJson(json)}).then(function (res) {
                 if (res.status == "200") {
                     closeMessage("提示", "更新成功", function () {
+                        dataVChartDataJSON = {};
                         $state.go("config.board")
                     })
                 } else {
@@ -362,6 +363,7 @@ cBoard.controller('datavCtrl', function ($rootScope, $scope, $stateParams, $http
             $http.post("dashboard/saveNewBoard.do", {json: angular.toJson(json)}).then(function (res) {
                 if (res.status == "200") {
                     closeMessage("提示", "保存成功", function () {
+                        dataVChartDataJSON = {};1
                         $state.go("config.board")
                     })
                 } else {
@@ -729,14 +731,19 @@ cBoard.controller('datavCtrl', function ($rootScope, $scope, $stateParams, $http
                         var chart = getChartServices(chartConfig);
                         var option = chart.parseOption(result);
                         //图表展示
-                        var render = new CBoardEChartRender($('#' + domId + "_01"), option);
-                        return render.chart(null);
-                        //callback(result);
+                        if(chartConfig.chart_type == 'table'){
+                            var render = new CBoardTableRender($('#' + domId + "_01"), option);
+                            return render.do();
+                        }else{
+                            var render = new CBoardEChartRender($('#' + domId + "_01"), option);
+                            return render.chart(null);
+                        }
                     });
                 } else {
                     //callback(result);
                     //数据封装
-                    var option = chartLineService.parseOption(result);
+                    var chart = getChartServices(chartConfig);
+                    var option = chart.parseOption(result);
                     //图表展示
                     var render = new CBoardEChartRender($('#' + domId + "_01"), option);
                     return render.chart(null);

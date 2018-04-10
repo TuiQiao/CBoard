@@ -2,7 +2,7 @@
     <div class="gf-fit-box" style="padding: 0px;">
         <div class="datav-row datav-col">
             <div id="datav-drag" class="datav-canvas"
-                 v-bind:style=" {width:viewDragWidth,height:viewDragHeight,background:(dataVConf.background?'url(org/cboard/view/config/board/datav/img/' + dataVConf.background + ') repeat':'')} ">
+                 v-bind:style=" {width:viewDragWidth,height:viewDragHeight,background:(dataVConf.background?'url(imgs/datav/' + dataVConf.background + ') repeat':'')} ">
                 <div class="datav-block" v-for="dataChart in viewDataCharts" :id="dataChart.domId"
                      :type="dataChart.chartType"
                      v-bind:style=" {width:dataChart.chartData.chartWidth + 'px', height:dataChart.chartData.chartHeight + 'px', transform:'translate(' + dataChart.chartData.positionX + 'px,' + dataChart.chartData.positionY + 'px)'} ">

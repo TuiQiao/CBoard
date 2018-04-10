@@ -39,7 +39,7 @@ cBoard.controller('datavCtrl', function ($rootScope, $scope, $stateParams, $http
             //边框组件样式
             borderStyle: hexDataV.getBorderStyle(),
             //装饰组件样式
-            ornamentStyle:hexDataV.getOrnamentStyle(),
+            ornamentStyle: hexDataV.getOrnamentStyle(),
             //字体粗细
             fontWeight: hexDataV.getFontWeight(),
             //文本对齐方式
@@ -55,7 +55,8 @@ cBoard.controller('datavCtrl', function ($rootScope, $scope, $stateParams, $http
             //未知用处的属性
             dataVChartData: dataVChartData,
             curBoard: {layout: {rows: []}},
-            categoryList: []
+            categoryList: [],
+            boardId: ''
         },
         methods: {
             //测试使用按钮来获取图表
@@ -91,17 +92,22 @@ cBoard.controller('datavCtrl', function ($rootScope, $scope, $stateParams, $http
                 dragDataVDrag(dragWidth + 'px', dragHeight + 'px');
             },
             //用于保存视图数据
-            saveDataVConf: function () {
+            saveDataVConf: function (callback) {
                 var hexDataVInfo = buildHexDataVInfo();
-                saveDataVConf(hexDataVInfo);
+                saveDataVConf(hexDataVInfo, callback);
             },
             //用于预览视图
             viewDataV: function () {
-                vm.saveDataVConf()
-                var href = window.location.href;
-                var boardId = href.substr(href.lastIndexOf("/") + 1);
-                var winInfo = "toolbar=no,menubar=no,status=yes,scrollbars=no,resizable=no,titlebar=no,location=no,width=" + (window.screen.availWidth - 10) + ",height=" + (window.screen.availHeight - 30) + ",top=0,left=0,fullscreen=no";
-                window.open('render.html#?id=' + boardId, '', winInfo)
+                var callback = function () {
+                    var boardId = vm._data.boardId
+                    if (!boardId) {
+                        var href = window.location.href;
+                        boardId = href.substr(href.lastIndexOf("/") + 1);
+                    }
+                    var winInfo = "toolbar=no,menubar=no,status=yes,scrollbars=no,resizable=no,titlebar=no,location=no,width=" + (window.screen.availWidth - 10) + ",height=" + (window.screen.availHeight - 30) + ",top=0,left=0,fullscreen=no";
+                    window.open('render.html#?id=' + boardId, '', winInfo)
+                }
+                vm.saveDataVConf(callback);
             },
             //设置数据视图可移动
             allowDrop: function (event) {
@@ -130,7 +136,7 @@ cBoard.controller('datavCtrl', function ($rootScope, $scope, $stateParams, $http
                 } else if (dom.type == 'border') {
                     //边框默认样式
                     dataVChartData.chartStyle = vm._data.borderStyle[0].value;
-                } else if (dom.type == 'ornament'){
+                } else if (dom.type == 'ornament') {
                     //装饰默认样式
                     dataVChartData.chartStyle = vm._data.ornamentStyle[0].value;
                 } else if (dom.type == 'table') {
@@ -141,10 +147,10 @@ cBoard.controller('datavCtrl', function ($rootScope, $scope, $stateParams, $http
                     //时钟组件默认格式化
                     dataVChartData.dataVConfChartCSS = hexDataV.defaultClockStyle();
                 }
-                if(!jQuery.isEmptyObject(hexDataV.componentDom.dataVConfChartCSS)){
+                if (!jQuery.isEmptyObject(hexDataV.componentDom.dataVConfChartCSS)) {
                     dataVChartData.dataVConfChartCSS = hexDataV.componentDom.dataVConfChartCSS;
                 }
-                if(!jQuery.isEmptyObject(hexDataV.componentDom.chartStyle)){
+                if (!jQuery.isEmptyObject(hexDataV.componentDom.chartStyle)) {
                     dataVChartData.chartStyle = hexDataV.componentDom.chartStyle;
                 }
                 var xprop = xMultiple(vm._data.dataVConf.screenWidth);
@@ -216,7 +222,7 @@ cBoard.controller('datavCtrl', function ($rootScope, $scope, $stateParams, $http
                 var url = 'dashboard/uploadImage.do';
                 xhr.open('post', url, true);
                 xhr.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
-                xhr.onreadystatechange = function(){
+                xhr.onreadystatechange = function () {
                     if (xhr.readyState == 4 && xhr.status == 200) {
                         vm._data.dataVConf.background = xhr.responseText;
                     }
@@ -296,7 +302,7 @@ cBoard.controller('datavCtrl', function ($rootScope, $scope, $stateParams, $http
     getCategoryList();
 
     //保存视图监控配置
-    function saveDataVConf(hexDataVInfo) {
+    function saveDataVConf(hexDataVInfo, callback) {
 
         if (!hexDataVInfo.dataVConf.viewName) {
             vm.$alert("监控主题名字不能为空", "警告");
@@ -351,6 +357,7 @@ cBoard.controller('datavCtrl', function ($rootScope, $scope, $stateParams, $http
                         dataVChartDataJSON = {};
                         $state.go("config.board")
                     })
+                    callback();
                 } else {
                     if (res.data.message) {
                         closeMessage('错误', res.data.message);
@@ -363,9 +370,11 @@ cBoard.controller('datavCtrl', function ($rootScope, $scope, $stateParams, $http
             $http.post("dashboard/saveNewBoard.do", {json: angular.toJson(json)}).then(function (res) {
                 if (res.status == "200") {
                     closeMessage("提示", "保存成功", function () {
-                        dataVChartDataJSON = {};1
+                        dataVChartDataJSON = {};
                         $state.go("config.board")
                     })
+                    vm._data.boardId = res.data.id;
+                    callback()
                 } else {
                     if (res.data.message) {
                         closeMessage('错误', res.data.message);
@@ -731,10 +740,10 @@ cBoard.controller('datavCtrl', function ($rootScope, $scope, $stateParams, $http
                         var chart = getChartServices(chartConfig);
                         var option = chart.parseOption(result);
                         //图表展示
-                        if(chartConfig.chart_type == 'table'){
+                        if (chartConfig.chart_type == 'table') {
                             var render = new CBoardTableRender($('#' + domId + "_01"), option);
                             return render.do();
-                        }else{
+                        } else {
                             var render = new CBoardEChartRender($('#' + domId + "_01"), option);
                             return render.chart(null);
                         }

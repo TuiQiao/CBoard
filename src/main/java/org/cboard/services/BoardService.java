@@ -57,6 +57,9 @@ public class BoardService {
                 continue;
             }
             JSONArray widgets = o.getJSONArray("widgets");
+            if(widgets == null){
+                break;
+            }
             for (Object w : widgets) {
                 JSONObject ww = (JSONObject) w;
                 Long widgetId = ww.getLong("widgetId");

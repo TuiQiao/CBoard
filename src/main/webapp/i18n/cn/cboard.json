@@ -276,6 +276,7 @@
       "TITLE": "标题",
       "NEW_GRID_LAYOUT": "新建网格布局",
       "NEW_TIMELINE_LAYOUT": "新建时间轴布局",
+      "NEW_DATAV_LAYOUT":"新建监控大屏布局",
       "VALUE_FORMMAT_ALERT": "只有日期类型需要格式化",
       "AUTOMATIC_REFRESH_SWITCH": "自动刷新切换",
       "REMOVE_EMPTY_LINES": "清除空行",

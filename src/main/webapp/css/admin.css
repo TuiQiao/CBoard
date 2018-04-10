@@ -1,0 +1,340 @@
+/*
+ * Create by xiaomingmiao on 2018/1/16
+ */
+.datav-row{
+    display: flex;
+    flex-direction: row;
+    flex-grow: 100;
+}
+
+.datav-col{
+    display: flex;
+    flex-direction: column;
+    flex-grow: 100;
+}
+
+.datav-header{
+    height: 48px;
+    background-color: #2185d0;
+}
+
+.datav-header-title{
+    color: #fff;
+    font-size: 20px;
+    margin-top: auto!important;
+    margin-bottom: auto!important;
+    margin-left: 6px;
+}
+
+.datav-header-title span{
+    color: #ddd;
+}
+
+.datav-header-func{
+    width: 80px;
+    flex-grow: 0!important;
+    padding-top: 5px;
+    padding-bottom: 5px;
+    padding-right: 10px;
+}
+
+.datav-header-func .icon{
+    text-align: center;
+    color: #fff;
+    font-size: 20px;
+}
+
+.datav-header-func .label{
+    text-align: center;
+    color: #fff;
+    font-size: 12px!important;
+}
+
+.datav-canvas{
+    background:url(../org/cboard/view/config/board/datav/img/canvas.png) repeat;
+    margin: auto;
+}
+
+.datav-drag{
+    background:url(../org/cboard/view/config/board/datav/img/drag.png) repeat;
+}
+
+.datav-component{
+    flex-grow: 0!important;
+    background-color: #fff;
+    border-right: 1px solid #c0c0c0;
+}
+
+.datav-component-conf{
+    flex-grow: 0!important;
+    background-color: #fff;
+    border-left: 1px solid #c0c0c0;
+    width: 275px;
+}
+
+.datav-component-conf .title{
+    font-size: 16px;
+    background-color: #eee;
+    color: #333;
+    text-align: center;
+    padding-top: 6px;
+    padding-bottom: 6px;
+}
+
+#datavComponentConf .el-tabs__header{
+    margin-bottom: 0px;
+}
+
+#datavComponentConf form{
+    padding-right: 5px;
+}
+
+.color-selector{
+    margin-top: 8px;
+}
+
+.interface-field-row{
+    margin-bottom: 6px;
+    text-align: center;
+}
+
+.datav-block{
+    position: absolute;
+    width: 207px;
+    height: 105px;
+}
+
+.datav-block:hover{
+    border: 1px solid #2185d0;
+    background-color: rgba(33, 133, 208, 0.4)!important;
+}
+
+.datav-block-select{
+    border: 1px solid #2185d0;
+}
+
+.datav-component-conf-tips{
+    color: #999;
+    line-height: 1;
+    text-align: center;
+    padding-top: 2px;
+}
+
+.datav-title{
+    margin:auto!important;
+    width: 470px;
+    height: 70px;
+    background-image: url("../org/cboard/view/config/board/datav/img/title-footer.gif");
+    background-size: 100%;
+    background-repeat: no-repeat;
+    background-position: center center;
+    text-align: center;
+    color: #fff;
+    font-size: 20px;
+    padding-top: 10px;
+}
+
+.el-form-item{
+    margin-bottom: 8px!important;
+}
+
+
+.datav-temp{
+    width: 225px;
+    height: 105px;
+}
+
+/*.datav-col .el-submenu .el-menu,
+.datav-col .el-submenu .el-menu-item{
+    height: 105px;
+}*/
+
+.datav-col .el-submenu .el-menu-item{
+    /*padding-left: 0px!important;*/
+    padding-right: 0px!important;
+}
+
+
+.datav-view-close{
+    color: #fff;
+    height: 26px;
+    position: absolute;
+    text-align: right;
+    padding-right: 5px;
+    padding-top: 5px;
+    z-index: 999;
+    width: 100%;
+    top: 0;
+}
+
+.datav-view-close i:hover{
+    color: #ccc;
+    cursor: pointer;
+}
+
+/*柱状图组件样式*/
+.datav-bar{
+    height: 100%;
+}
+
+/*折线图组件样式*/
+.datav-line{
+    height: 100%;
+}
+
+/*饼图组件样式*/
+.datav-pie{
+    height: 100%;
+}
+
+/*标题组件样式*/
+.datav-label{
+    height: 100%;
+    /*border: 1px #17286F solid;*/
+}
+
+.datav-label-label{
+    text-align: center;
+    font-size: 16px;
+    color: #fff;
+}
+
+/*表格组件样式*/
+.datav-table{
+    height: 100%;
+}
+
+.datav-table table{
+    border: 1px #57D2FE solid;
+}
+
+.datav-table-body label{
+    margin-left: 5px;
+    margin-right: 5px;
+}
+
+
+/*时钟组件样式*/
+.datav-clock{
+    height: 100%;
+    text-align: center;
+}
+
+.datav-clock,
+.datav-clock i{
+    font-size: 16px;
+    color: #fff;
+    padding-left: 5px;
+}
+
+/*指标卡组件样式*/
+.datav-kpi{
+    border: 1px #2185d0 solid;
+    height: 100%;
+    background-color: #0b375a;
+}
+
+.datav-kpi table,
+.datav-label table,
+.datav-table table{
+    width: 100%;
+    height: 100%;
+}
+
+.datav-kpi-label{
+    text-align: left;
+    font-size: 14px;
+    color: #03A2C9;
+    padding-left: 5px;
+}
+
+.datav-kpi-number{
+    text-align: right;
+    font-size: 12px;
+    color: #5CFFAC;
+    padding-right: 5px;
+}
+
+/*边框组件样式*/
+.datav-border{
+    height: 100%;
+    border-style: solid;
+    border-width: 14px;
+    border-image-slice: 14 fill;
+    border-image-width: initial;
+    border-image-outset: initial;
+    border-image-repeat: initial;
+    background: none;
+}
+
+.datav-ornament{
+    width: 100%;
+    height: 100%;
+    background-size: 100%;
+    background-repeat: no-repeat;
+    background-position: center center;
+    opacity: 1;
+}
+
+div.func-btn:hover div.datav-col{
+    color: #ccc;
+    cursor: pointer;
+}
+
+
+/*组件icon背景*/
+/*li.el-submenu ul.el-menu{
+    background-color: #0b375a!important;
+    border: #0b375a!important;
+}*/
+
+/*组件icon背景*/
+/*li.el-submenu ul.el-menu:hover,
+li.el-submenu ul.el-menu::selection{
+    background-color: #0b1f3b!important;
+    border: #0b1f3b!important;
+}*/
+
+
+.datav-color-selector{
+    flex-grow: 0!important;
+    width: 30px!important;
+    padding-right: 5px;
+}
+
+.datav-component-conf label{
+    font-size: 12px!important;
+}
+
+/*图表数据源配置表单*/
+#chartDataForm label{
+    padding-left: 5px;
+}
+
+/*表格组件列配置*/
+#tableCol div.el-collapse-item__content{
+    height: 275px;
+    overflow-y: auto;
+}
+
+.datav-upload{
+    width: 100%;
+    height: 80px;
+    border: 3px dashed silver;
+    line-height: 80px;
+    text-align: center;
+    font-size: 14px;
+    color: #d3d3d3;
+}
+
+body{
+    margin: 0;
+    padding: 0;
+}
+.gf-fit-box{
+    display: flex;
+    display:  -ms-flexbox;
+    flex-direction: column;
+    -ms-flex-direction: column;
+    height:100%;
+}

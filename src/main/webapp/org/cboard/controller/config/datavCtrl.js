@@ -114,7 +114,7 @@ cBoard.controller('datavCtrl', function ($rootScope, $scope, $stateParams, $http
                     return;
                 }
                 //新增组件
-                var domId = dom.widgetId + '_' + new Date().getTime();
+                var domId = dom.type + '_' + dom.widgetId;
                 var dataVChartData = initDataVChartData();
                 dataVChartData.chartType = dom.type;
                 dataVChartData.widgetId = dom.widgetId;

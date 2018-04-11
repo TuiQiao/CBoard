@@ -365,7 +365,7 @@ Vue.component('hex-datav-table', {
     methods:{
         init:function(){
             //图表渲染数据
-            var jsonData = this.chartdata.jsonData;
+            var jsonData = this.chartdata.jsonData.value;
             if(jsonData){
                 var tableData = eval('(' + jsonData + ')');
                 var head = tableData[0];
@@ -383,11 +383,6 @@ Vue.component('hex-datav-table', {
             return handleBgColor(color);
         },
         chartdataChange:function(){
-            var data = this.chartdata;
-            if(data.dataSource!='01'){
-                return;
-            }
-
             this.init();
         }
     },
@@ -395,7 +390,7 @@ Vue.component('hex-datav-table', {
         //渲染表格
         this.init();
     },
-    watch:{'chartdata.jsonData':'init', 'chartdata.xField':'chartdataChange', 'chartdata.yField':'chartdataChange'}
+    watch:{'chartdata.jsonData.value':'init', 'chartdata.xField':'chartdataChange', 'chartdata.yField':'chartdataChange'}
 });
 
 function handleBgColor(bgColor){

@@ -125,7 +125,7 @@ cBoard.controller('datavCtrl', function ($rootScope, $scope, $stateParams, $http
                 if (dom.type == 'label') {
                     //标题组件默认值
                     dataVChartData.dataVConfChartCSS.chartTitle = hexDataV.defaultTitle;
-                } else if(dom.type=='rlabel'){
+                } else if (dom.type == 'rlabel') {
                     //滚动文本默认值
                     dataVChartData.jsonData = hexDataV.defaultRLabelData();
                 } else if (dom.type == 'kpi') {
@@ -143,7 +143,7 @@ cBoard.controller('datavCtrl', function ($rootScope, $scope, $stateParams, $http
                     dataVChartData.dataVConfChartCSS = hexDataV.defaultClockStyle();
                 } else if (dom.type == 'table') {
                     //表格组件默认值
-                    dataVChartData.jsonData = hexDataV.defaultTableData();
+                    dataVChartData.jsonData.value = hexDataV.defaultTableData();
                     dataVChartData.dataVConfChartCSS = hexDataV.defaultTableStyle();
                 }
                 if (!jQuery.isEmptyObject(hexDataV.componentDom.dataVConfChartCSS)) {
@@ -752,13 +752,17 @@ cBoard.controller('datavCtrl', function ($rootScope, $scope, $stateParams, $http
                         if (chartConfig.chart_type == 'table') {
                             var render = new CBoardTableRender($('#' + domId + "_01"), option);
                             return render.do();
+                        } else if (chartConfig.chart_type == 'kpi') {
+                            var render = new CBoardKpiRender($('#' + domId + "_01"), option);
+                            var html = render.html();
+                            $('#' + domId + "_01").html(html);
+                            return render.realTimeTicket();
                         } else {
                             var render = new CBoardEChartRender($('#' + domId + "_01"), option);
                             return render.chart(null);
                         }
                     });
                 } else {
-                    //callback(result);
                     //数据封装
                     var chart = getChartServices(chartConfig);
                     var option = chart.parseOption(result);
@@ -1232,5 +1236,13 @@ cBoard.controller('datavCtrl', function ($rootScope, $scope, $stateParams, $http
                 })
             }
         });
+    };
+
+    var compileExp = function (exp) {
+        var parseredExp = parserExp(exp);
+        return function (groupData, key) {
+            var _names = parseredExp.names;
+            return eval(parseredExp.evalExp);
+        };
     };
 })

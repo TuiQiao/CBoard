@@ -31,7 +31,7 @@
                         <el-menu-item index="2-2" type="rlabel" componentName="hex-datav-rlabel" @click="drag($event)">
                             滚动文本
                         </el-menu-item>
-                        <el-menu-item index="2-2" type="table" componentName="hex-datav-table" @click="drag($event)">
+                        <el-menu-item index="2-3" type="table" componentName="hex-datav-table" @click="drag($event)">
                             静态表格
                         </el-menu-item>
                     </el-submenu>
@@ -165,9 +165,6 @@
                                 <el-form label-width="84px" label-position="left" class="scrolling content">
                                     <el-form-item label="背景颜色">
                                         <input v-model="dataVChartData.bgColor" type="color"/>
-                                    </el-form-item>
-                                    <el-form-item label="图表编号">
-                                        <el-input v-model="dataVChartData.widgetId"></el-input>
                                     </el-form-item>
                                 </el-form>
                             </el-collapse-item>
@@ -546,9 +543,9 @@
                                 </el-form>
                             </el-collapse-item>
                             <!--表格组件-->
-                            <el-collapse-item title="表格数据" name="14-3" v-show="dataVChartData.chartType=='table'">
+                           <el-collapse-item title="表格数据" name="14-4" v-show="dataVChartData.chartType=='table'">
                                 <el-form label-width="84px" label-position="left" class="scrolling content">
-                                    <el-input v-model="dataVChartData.jsonData" type="textarea" :rows="10"
+                                    <el-input v-model="dataVChartData.jsonData.value" type="textarea" :rows="10"
                                               style="margin-top: 6px;"></el-input>
                                 </el-form>
                             </el-collapse-item>

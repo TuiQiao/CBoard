@@ -115,8 +115,13 @@ cBoard.controller('datavCtrl', function ($rootScope, $scope, $stateParams, $http
                 if (!dom) {
                     return;
                 }
+                var domId;
                 //新增组件
-                var domId = dom.type + '_' + dom.widgetId + '_' + new Date().getTime();
+                if(dom.domId){
+                    domId = dom.domId;
+                }else{
+                    domId = dom.type + '_' + new Date().getTime();
+                }
                 var dataVChartData = initDataVChartData();
                 dataVChartData.chartType = dom.type;
                 dataVChartData.widgetId = dom.widgetId;
@@ -264,7 +269,8 @@ cBoard.controller('datavCtrl', function ($rootScope, $scope, $stateParams, $http
                                         chartHeight: widgets[j].chartHeight,
                                         bgColor: widgets[j].bgColor,
                                         positionX: widgets[j].positionX,
-                                        positionY: widgets[j].positionY
+                                        positionY: widgets[j].positionY,
+                                        domId: others[j].domId
                                     };
                                     hexDataV.componentDom = componentDom;
                                     vm.drop();
@@ -281,7 +287,8 @@ cBoard.controller('datavCtrl', function ($rootScope, $scope, $stateParams, $http
                                         positionY: others[j].positionY,
                                         chartStyle: others[j].chartStyle,
                                         dataVConfChartCSS: others[j].dataVConfChartCSS,
-                                        jsonData: others[j].jsonData
+                                        jsonData: others[j].jsonData,
+                                        domId: others[j].domId
                                     };
                                     hexDataV.componentDom = componentDom;
                                     vm.drop();
@@ -338,7 +345,8 @@ cBoard.controller('datavCtrl', function ($rootScope, $scope, $stateParams, $http
                     chartWidth: hexDataVInfo.dataVConfChartDataList[i].chartWidth,
                     bgColor: hexDataVInfo.dataVConfChartDataList[i].bgColor,
                     positionX: hexDataVInfo.dataVConfChartDataList[i].positionX,
-                    positionY: hexDataVInfo.dataVConfChartDataList[i].positionY
+                    positionY: hexDataVInfo.dataVConfChartDataList[i].positionY,
+                    domId: hexDataVInfo.dataVConfChartDataList[i].domId
                 })
             } else {
                 json.layout.rows[1].others.push({
@@ -349,7 +357,8 @@ cBoard.controller('datavCtrl', function ($rootScope, $scope, $stateParams, $http
                     positionY: hexDataVInfo.dataVConfChartDataList[i].positionY,
                     chartStyle: hexDataVInfo.dataVConfChartDataList[i].chartStyle,
                     dataVConfChartCSS: hexDataVInfo.dataVConfChartDataList[i].dataVConfChartCSS,
-                    jsonData: hexDataVInfo.dataVConfChartDataList[i].jsonData
+                    jsonData: hexDataVInfo.dataVConfChartDataList[i].jsonData,
+                    domId: hexDataVInfo.dataVConfChartDataList[i].domId
                 })
             }
 

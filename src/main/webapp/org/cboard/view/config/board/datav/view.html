@@ -11,9 +11,13 @@
                         </template>
                         <el-submenu :index="'1-'+index" v-for="(value,key,index) in widgetList" :key="index">
                             <span slot="title">{{key}}</span>
-                            <el-menu-item :index="'1-'+index+widget.id" v-for="widget in value" :key="widget.id" :name="widget.name" type="chart" componentName="hex-datav-chart" @click="drag($event)">
-                                {{widget.name}}
-                            </el-menu-item>
+                            <div style="max-height: 400px;overflow: auto">
+                                <el-menu-item :index="'1-'+index+widget.id" v-for="widget in value" :key="widget.id"
+                                              :name="widget.name" type="chart" componentName="hex-datav-chart"
+                                              @click="drag($event)">
+                                    {{widget.name}}
+                                </el-menu-item>
+                            </div>
                         </el-submenu>
                     </el-submenu>
                     <el-submenu index="2">
@@ -21,9 +25,13 @@
                             <i class="el-icon-menu"></i>
                             <span slot="title">文字</span>
                         </template>
-                        <el-menu-item index="2-1" type="label" componentName="hex-datav-label" @click="drag($event)">标题</el-menu-item>
+                        <el-menu-item index="2-1" type="label" componentName="hex-datav-label" @click="drag($event)">
+                            标题
+                        </el-menu-item>
                         <!--<el-menu-item index="2-2" type="kpi" componentName="hex-datav-kpi" @click="drag($event)">滚动文本</el-menu-item>-->
-                        <el-menu-item index="2-3" type="table" componentName="hex-datav-table" @click="drag($event)">静态表格</el-menu-item>
+                        <el-menu-item index="2-3" type="table" componentName="hex-datav-table" @click="drag($event)">
+                            静态表格
+                        </el-menu-item>
                         <!--<el-menu-item index="2-4" type="kpi" componentName="hex-datav-kpi" @click="drag($event)">动态表格</el-menu-item>-->
                     </el-submenu>
                     <el-submenu index="3">
@@ -31,10 +39,17 @@
                             <i class="el-icon-document"></i>
                             <span slot="title">其他</span>
                         </template>
-                        <el-menu-item index="3-1" type="kpi" componentName="hex-datav-kpi" @click="drag($event)">指标</el-menu-item>
-                        <el-menu-item index="3-2" type="clock" componentName="hex-datav-clock" @click="drag($event)">时钟</el-menu-item>
-                        <el-menu-item index="3-3" type="border" componentName="hex-datav-border" @click="drag($event)">静态边框</el-menu-item>
-                        <el-menu-item index="3-4" type="ornament" componentName="hex-datav-ornament" @click="drag($event)">动态边框</el-menu-item>
+                        <el-menu-item index="3-1" type="kpi" componentName="hex-datav-kpi" @click="drag($event)">指标
+                        </el-menu-item>
+                        <el-menu-item index="3-2" type="clock" componentName="hex-datav-clock" @click="drag($event)">
+                            时钟
+                        </el-menu-item>
+                        <el-menu-item index="3-3" type="border" componentName="hex-datav-border" @click="drag($event)">
+                            静态边框
+                        </el-menu-item>
+                        <el-menu-item index="3-4" type="ornament" componentName="hex-datav-ornament"
+                                      @click="drag($event)">动态边框
+                        </el-menu-item>
                     </el-submenu>
                     <el-submenu index="4">
                         <template slot="title">
@@ -49,7 +64,7 @@
             <!-- 画布-->
             <div class="datav-col">
                 <div id="datav-drag" class="datav-canvas"
-                     v-bind:style=" {width:dragWidth,height:dragHeight,background:(dataVConf.background?'url(' + basePath + '/cboard/org/cboard/view/config/board/datav/img/' + dataVConf.background + ') repeat':'')} "
+                     v-bind:style=" {width:dragWidth,height:dragHeight,background:(dataVConf.background?'url(' + basePath + 'imgs/datav/' + dataVConf.background + ') repeat':'')} "
                      @drop='drop($event)' @dragover='allowDrop($event)'>
                     <div class="datav-block" v-for="dataVComponent in dataVComponents" :id="dataVComponent.domId"
                          :type="dataVComponent.componentType" @click="dataVBlockClick(dataVComponent.domId)"
@@ -62,7 +77,8 @@
                         <div class="datav-view-close" style="display: none;"><i class="fa fa-times" aria-hidden="true"
                                                                                 @click="closeDataVWin(dataVComponent.domId)"></i>
                         </div>
-                        <component v-bind:is="dataVComponent.componentName" v-bind:chartData="dataVComponent.chartData"></component>
+                        <component v-bind:is="dataVComponent.componentName"
+                                   v-bind:chartData="dataVComponent.chartData"></component>
                     </div>
                 </div>
             </div>
@@ -106,7 +122,7 @@
                                     </el-form-item>
                                     <el-form-item label="背景图">
                                         <img style="width: 100%;height: 80px;"
-                                             :src="dataVConf.background?basePath + '/cboard/org/cboard/view/config/board/datav/img/' + dataVConf.background:basePath + '/cboard/org/cboard/view/config/board/datav/img/canvas.png'"/>
+                                             :src="dataVConf.background?basePath + 'imgs/datav/' + dataVConf.background:basePath + 'imgs/datav/canvas.png'"/>
                                     </el-form-item>
                                 </el-form>
                             </el-collapse-item>
@@ -206,13 +222,15 @@
                                         <el-input v-model="dataVChartData.dataVConfChartCSS.chartTitle"></el-input>
                                     </el-form-item>
                                     <el-form-item label="字号">
-                                        <el-input placeholder="数值" v-model="dataVChartData.dataVConfChartCSS.titleFontSize"></el-input>
+                                        <el-input placeholder="数值"
+                                                  v-model="dataVChartData.dataVConfChartCSS.titleFontSize"></el-input>
                                     </el-form-item>
                                     <el-form-item label="字体颜色">
                                         <input v-model="dataVChartData.dataVConfChartCSS.titleColor" type="color"/>
                                     </el-form-item>
                                     <el-form-item label="字体粗细">
-                                        <el-select v-model="dataVChartData.dataVConfChartCSS.titleFontWeight" placeholder="请选择">
+                                        <el-select v-model="dataVChartData.dataVConfChartCSS.titleFontWeight"
+                                                   placeholder="请选择">
                                             <el-option v-for="data in fontWeight"
                                                        :key="data.key" :label="data.key" :value="data.value">
                                             </el-option>

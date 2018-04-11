@@ -51,12 +51,12 @@
 }
 
 .datav-canvas{
-    background:url(../org/cboard/view/config/board/datav/img/canvas.png) repeat;
+    background:url(../imgs/datav/canvas.png) repeat;
     margin: auto;
 }
 
 .datav-drag{
-    background:url(../org/cboard/view/config/board/datav/img/drag.png) repeat;
+    background:url(../imgs/datav/drag.png) repeat;
 }
 
 .datav-component{
@@ -124,7 +124,7 @@
     margin:auto!important;
     width: 470px;
     height: 70px;
-    background-image: url("../org/cboard/view/config/board/datav/img/title-footer.gif");
+    background-image: url("../imgs/datav/title-footer.gif");
     background-size: 100%;
     background-repeat: no-repeat;
     background-position: center center;

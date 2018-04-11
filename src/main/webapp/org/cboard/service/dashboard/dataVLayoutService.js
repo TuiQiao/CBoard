@@ -201,7 +201,7 @@ hexDataV.getBorderStyle = function (basePath) {
     var borderStyle = new Array();
     for (var i = 1; i <= 11; i++) {
         var key = '框' + i;
-        var value = (basePath ? basePath : '') + '/cboard/org/cboard/view/config/board/datav/img/border/' + (i < 10 ? '0' + i : i) + '.png';
+        var value = (basePath ? basePath : '') + 'imgs/datav/border/' + (i < 10 ? '0' + i : i) + '.png';
         value = 'url(' + value + ')';
         borderStyle.push({key: key, value: value})
     }
@@ -218,7 +218,7 @@ hexDataV.getOrnamentStyle = function (basePath) {
     var ornamentStyle = new Array();
     for (var i = 1; i <= 10; i++) {
         var gif = 'gif' + i;
-        var value = (basePath ? basePath : '') + '/cboard/org/cboard/view/config/board/datav/img/ornament/' + gif + '.gif';
+        var value = (basePath ? basePath : '') + 'imgs/datav/ornament/' + gif + '.gif';
         ornamentStyle.push({key: gif, value: value});
     }
     return ornamentStyle;

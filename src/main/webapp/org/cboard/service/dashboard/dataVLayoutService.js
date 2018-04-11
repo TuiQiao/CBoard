@@ -27,7 +27,7 @@ var hexDataV = {
     defaultDateFormat: 'yyyy-MM-dd hh:mm:ss',
     defaultFontSize: 12,
     defaultFontWeight: 'normal',
-    jsonData:''
+    jsonData: '',
 };
 
 /**
@@ -89,7 +89,8 @@ hexDataV.yData = function (array, gField, yField) {
 /*hexDataV数据可视化组件信息*/
 hexDataV.component = {
     'label': 'hex-datav-label', 'kpi': 'hex-datav-kpi', 'clock': 'hex-datav-clock',
-    'border': 'hex-datav-border', 'chart': 'hex-datav-chart', 'ornament': "hex-datav-ornament"
+    'border': 'hex-datav-border', 'chart': 'hex-datav-chart', 'ornament': "hex-datav-ornament",
+    'rlabel':'hex-datav-rlabel'
 };
 
 /*hexDataV数据可视化组件icon*/
@@ -102,8 +103,12 @@ hexDataV.componentICON = {
 
 //默认指标卡数据
 hexDataV.defaultKpiData = function () {
-    return {'label':'年度新增规模', 'value':'5000亿'};
+    return {'label': '年度新增规模', 'value': '5000亿'};
 };
+
+hexDataV.defaultRLabelData = function(){
+    return {value:"HexDataV可视化产品，创造属于您的日常运营监控大屏！"};
+}
 
 //默认指标卡样式
 hexDataV.defaultKpiStyle = function () {
@@ -265,10 +270,9 @@ Vue.component('hex-datav-kpi', {
         }
     },
     mounted: function () {
-        //渲染饼图
         this.init();
     },
-    watch: {'chartdata.jsonData': 'init', 'chartdata.xField': 'init', 'chartdata.yField': 'init'}
+    watch: {'chartdata.jsonData': 'init'}
 });
 
 /*DataV组件图标*/
@@ -304,4 +308,27 @@ Vue.component('hex-datav-ornament', {
 /*分割线*/
 Vue.component('hex-datav-splitline', {
     template: '<div style="width: 100%;height: 1px;border-bottom: 1px #c0c0c0 solid;margin-bottom: 5px;"></div>'
+});
+
+/*滚动文本(跑马灯)*/
+Vue.component('hex-datav-rlabel', {
+    props: {
+        chartdata: Object
+    },
+    template: '<div class="datav-rlabel" v-bind:style=" {color:chartdata.dataVConfChartCSS.titleColor,fontSize:chartdata.dataVConfChartCSS.titleFontSize + \'px\',fontWeight:chartdata.dataVConfChartCSS.titleFontWeight} ">' +
+    '<marquee scrollAmount=2>{{value}}</marquee>' +
+    '</div>',
+    data: function () {
+        return this.chartdata.jsonData;
+    },
+    methods: {
+        init: function () {
+            var jsonData = this.chartdata.jsonData;
+            this.value = jsonData.value;
+        }
+    },
+    mounted: function () {
+        this.init();
+    },
+    watch: {'chartdata.jsonData': 'init'}
 });

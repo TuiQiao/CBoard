@@ -125,6 +125,9 @@ cBoard.controller('datavCtrl', function ($rootScope, $scope, $stateParams, $http
                 if (dom.type == 'label') {
                     //标题组件默认值
                     dataVChartData.dataVConfChartCSS.chartTitle = hexDataV.defaultTitle;
+                } else if(dom.type=='rlabel'){
+                    //滚动文本默认值
+                    dataVChartData.jsonData = hexDataV.defaultRLabelData();
                 } else if (dom.type == 'kpi') {
                     //指标卡默认值
                     dataVChartData.jsonData = hexDataV.defaultKpiData();

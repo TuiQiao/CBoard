@@ -28,7 +28,7 @@
                         <el-menu-item index="2-1" type="label" componentName="hex-datav-label" @click="drag($event)">
                             标题
                         </el-menu-item>
-                        <!--<el-menu-item index="2-2" type="kpi" componentName="hex-datav-kpi" @click="drag($event)">滚动文本</el-menu-item>-->
+                        <el-menu-item index="2-2" type="rlabel" componentName="hex-datav-rlabel" @click="drag($event)">滚动文本</el-menu-item>
                     </el-submenu>
                     <el-submenu index="3">
                         <template slot="title">
@@ -304,6 +304,27 @@
                                     <el-form-item label="格式化">
                                         <el-input placeholder="yyyy-MM-dd hh:mm:ss"
                                                   v-model="dataVChartData.dataVConfChartCSS.textFormat"></el-input>
+                                    </el-form-item>
+                                </el-form>
+                            </el-collapse-item>
+                            <!--滚动文本组件-->
+                            <el-collapse-item title="滚动文本" name="20" v-show="dataVChartData.chartType=='rlabel'">
+                                <el-form label-width="84px" label-position="left" class="scrolling content">
+                                    <el-form-item label="滚动文本">
+                                        <el-input v-model="dataVChartData.jsonData.value"></el-input>
+                                    </el-form-item>
+                                    <el-form-item label="字号">
+                                        <el-input placeholder="数值" v-model="dataVChartData.dataVConfChartCSS.titleFontSize"></el-input>
+                                    </el-form-item>
+                                    <el-form-item label="字体颜色">
+                                        <input v-model="dataVChartData.dataVConfChartCSS.titleColor" type="color"/>
+                                    </el-form-item>
+                                    <el-form-item label="字体粗细">
+                                        <el-select v-model="dataVChartData.dataVConfChartCSS.titleFontWeight" placeholder="请选择">
+                                            <el-option v-for="data in fontWeight"
+                                                       :key="data.key" :label="data.key" :value="data.value">
+                                            </el-option>
+                                        </el-select>
                                     </el-form-item>
                                 </el-form>
                             </el-collapse-item>

@@ -29,10 +29,6 @@
                             标题
                         </el-menu-item>
                         <!--<el-menu-item index="2-2" type="kpi" componentName="hex-datav-kpi" @click="drag($event)">滚动文本</el-menu-item>-->
-                        <el-menu-item index="2-3" type="table" componentName="hex-datav-table" @click="drag($event)">
-                            静态表格
-                        </el-menu-item>
-                        <!--<el-menu-item index="2-4" type="kpi" componentName="hex-datav-kpi" @click="drag($event)">动态表格</el-menu-item>-->
                     </el-submenu>
                     <el-submenu index="3">
                         <template slot="title">
@@ -215,6 +211,16 @@
                                     </el-form-item>
                                 </el-form>
                             </el-collapse-item>
+                            <el-collapse-item title="指标卡参数" name="14-3" v-show="dataVChartData.chartType=='kpi'">
+                                <el-form label-width="84px" label-position="left" class="scrolling content">
+                                    <el-form-item label="Label值">
+                                        <el-input v-model="dataVChartData.jsonData.label"></el-input>
+                                    </el-form-item>
+                                    <el-form-item label="Value值">
+                                        <el-input v-model="dataVChartData.jsonData.value"></el-input>
+                                    </el-form-item>
+                                </el-form>
+                            </el-collapse-item>
                             <!--标题组件设置-->
                             <el-collapse-item title="标题组件" name="15" v-show="dataVChartData.chartType=='label'">
                                 <el-form label-width="84px" label-position="left" class="scrolling content">
@@ -301,210 +307,8 @@
                                     </el-form-item>
                                 </el-form>
                             </el-collapse-item>
-                            <!--表格组件设置-->
-                            <el-collapse-item title="表头" name="18-1" v-show="dataVChartData.chartType=='table'">
-                                <el-form label-width="84px" label-position="left" class="scrolling content">
-                                    <el-form-item label="字号">
-                                        <el-input placeholder="数值"
-                                                  v-model="dataVChartData.dataVConfChartCSS.headFontSize"></el-input>
-                                    </el-form-item>
-                                    <el-form-item label="字体颜色">
-                                        <input v-model="dataVChartData.dataVConfChartCSS.headColor" type="color"/>
-                                    </el-form-item>
-                                    <el-form-item label="字体粗细">
-                                        <el-select v-model="dataVChartData.dataVConfChartCSS.headFontWeight"
-                                                   placeholder="请选择">
-                                            <el-option v-for="data in fontWeight"
-                                                       :key="data.key" :label="data.key" :value="data.value">
-                                            </el-option>
-                                        </el-select>
-                                    </el-form-item>
-                                    <el-form-item label="背景颜色">
-                                        <input v-model="dataVChartData.dataVConfChartCSS.headBgColor" type="color"/>
-                                    </el-form-item>
-                                </el-form>
-                            </el-collapse-item>
-                            <el-collapse-item id="tableCol" title="列" name="18-2"
-                                              v-show="dataVChartData.chartType=='table'">
-                                <el-form label-width="84px" label-position="left" class="scrolling content">
-                                    <el-form-item label="线条粗细">
-                                        <el-input placeholder="数值"
-                                                  v-model="dataVChartData.dataVConfChartCSS.colBorderWidth"></el-input>
-                                    </el-form-item>
-                                    <el-form-item label="线条颜色">
-                                        <input v-model="dataVChartData.dataVConfChartCSS.colBorderColor" type="color"/>
-                                    </el-form-item>
-                                    <hex-datav-splitline></hex-datav-splitline>
-                                    <el-form-item label="第一列"></el-form-item>
-                                    <el-form-item label="字号">
-                                        <el-input placeholder="数值"
-                                                  v-model="dataVChartData.dataVConfChartCSS.labelFontSize"></el-input>
-                                    </el-form-item>
-                                    <el-form-item label="字体颜色">
-                                        <input v-model="dataVChartData.dataVConfChartCSS.labelColor" type="color"/>
-                                    </el-form-item>
-                                    <el-form-item label="字体粗细">
-                                        <el-select v-model="dataVChartData.dataVConfChartCSS.labelFontWeight"
-                                                   placeholder="请选择">
-                                            <el-option v-for="data in fontWeight"
-                                                       :key="data.key" :label="data.key" :value="data.value">
-                                            </el-option>
-                                        </el-select>
-                                    </el-form-item>
-                                    <el-form-item label="对齐方式">
-                                        <el-select v-model="dataVChartData.dataVConfChartCSS.labelAlign"
-                                                   placeholder="请选择">
-                                            <el-option v-for="data in textAlign"
-                                                       :key="data.text" :label="data.text" :value="data.value">
-                                            </el-option>
-                                        </el-select>
-                                    </el-form-item>
-                                    <hex-datav-splitline></hex-datav-splitline>
-                                    <el-form-item label="第二列"></el-form-item>
-                                    <el-form-item label="字号">
-                                        <el-input placeholder="数值"
-                                                  v-model="dataVChartData.dataVConfChartCSS.textFontSize"></el-input>
-                                    </el-form-item>
-                                    <el-form-item label="字体颜色">
-                                        <input v-model="dataVChartData.dataVConfChartCSS.textColor" type="color"/>
-                                    </el-form-item>
-                                    <el-form-item label="字体粗细">
-                                        <el-select v-model="dataVChartData.dataVConfChartCSS.textFontWeight"
-                                                   placeholder="请选择">
-                                            <el-option v-for="data in fontWeight"
-                                                       :key="data.key" :label="data.key" :value="data.value">
-                                            </el-option>
-                                        </el-select>
-                                    </el-form-item>
-                                    <el-form-item label="对齐方式">
-                                        <el-select v-model="dataVChartData.dataVConfChartCSS.textAlign"
-                                                   placeholder="请选择">
-                                            <el-option v-for="data in textAlign"
-                                                       :key="data.text" :label="data.text" :value="data.value">
-                                            </el-option>
-                                        </el-select>
-                                    </el-form-item>
-                                </el-form>
-                            </el-collapse-item>
-                            <el-collapse-item title="行" name="18-3" v-show="dataVChartData.chartType=='table'">
-                                <el-form label-width="84px" label-position="left" class="scrolling content">
-                                    <el-form-item label="线条粗细">
-                                        <el-input placeholder="数值"
-                                                  v-model="dataVChartData.dataVConfChartCSS.rowBorderWidth"></el-input>
-                                    </el-form-item>
-                                    <el-form-item label="线条颜色">
-                                        <input v-model="dataVChartData.dataVConfChartCSS.rowBorderColor" type="color"/>
-                                    </el-form-item>
-                                    <hex-datav-splitline></hex-datav-splitline>
-                                    <el-form-item label="奇行背景色">
-                                        <input v-model="dataVChartData.dataVConfChartCSS.oddRowBgColor" type="color"/>
-                                    </el-form-item>
-                                    <el-form-item label="偶行背景色">
-                                        <input v-model="dataVChartData.dataVConfChartCSS.evenRowBgColor" type="color"/>
-                                    </el-form-item>
-                                </el-form>
-                            </el-collapse-item>
                         </el-collapse>
                     </el-tab-pane>
-                    <!--<el-tab-pane label="数据" name="two">
-                        <div class="datav-row datav-col"
-                             v-show="dataVChartData.chartType=='clock' || dataVChartData.chartType=='label' || dataVChartData.chartType=='border'">
-                            <div style="width: 100%;text-align: center;margin-top: 20px;color: #999;">
-                                <i class="fa fa-info-circle" aria-hidden="true"></i>&nbsp;该组件不需要配置数据
-                            </div>
-                        </div>
-                        <div class="datav-row datav-col"
-                             v-show="dataVChartData.chartType!=null && dataVChartData.chartType!='clock' && dataVChartData.chartType!='label' && dataVChartData.chartType!='border'">
-                            <div class="title"
-                                 v-show="dataVChartData.chartType=='bar' || dataVChartData.chartType=='line' || dataVChartData.chartType=='pie' || dataVChartData.chartType=='kpi' || dataVChartData.chartType=='table'">
-                                接口字段
-                            </div>
-                            <div class="ui section divider" style="margin-top: 0px;margin-bottom: 6px;"></div>
-                            <el-form label-width="84px" label-position="left" class="scrolling content"
-                                     v-show="dataVChartData.chartType=='bar' || dataVChartData.chartType=='line' || dataVChartData.chartType=='pie' || dataVChartData.chartType=='kpi' || dataVChartData.chartType=='table'">
-                                <div class="datav-row"
-                                     v-show="dataVChartData.chartType=='bar' || dataVChartData.chartType=='line' || dataVChartData.chartType=='pie'">
-                                    <div class="datav-col">
-                                        <div class="datav-row datav-col interface-field-row">字段</div>
-                                        <div class="datav-row datav-col interface-field-row">x</div>
-                                        <div class="datav-row datav-col interface-field-row">y</div>
-                                        <div class="datav-row datav-col interface-field-row">g</div>
-                                    </div>
-                                    <div class="datav-col">
-                                        <div class="datav-row datav-col interface-field-row">映射</div>
-                                        <div class="datav-row datav-col interface-field-row">
-                                            <el-input v-model="dataVChartData.xField" style="width: 100%;"></el-input>
-                                        </div>
-                                        <div class="datav-row datav-col interface-field-row">
-                                            <el-input v-model="dataVChartData.yField" style="width: 100%;"></el-input>
-                                        </div>
-                                        <div class="datav-row datav-col interface-field-row">
-                                            <el-input v-model="dataVChartData.gField" style="width: 100%;"></el-input>
-                                        </div>
-                                    </div>
-                                    <div class="datav-col">
-                                        <div class="datav-row datav-col interface-field-row">说明</div>
-                                        <div class="datav-row datav-col interface-field-row">类型</div>
-                                        <div class="datav-row datav-col interface-field-row">数值</div>
-                                        <div class="datav-row datav-col interface-field-row">分组</div>
-                                    </div>
-                                </div>
-                                <div class="datav-row"
-                                     v-show="dataVChartData.chartType=='kpi' || dataVChartData.chartType=='table'">
-                                    <div class="datav-col">
-                                        <div class="datav-row datav-col interface-field-row">字段</div>
-                                        <div class="datav-row datav-col interface-field-row">label</div>
-                                        <div class="datav-row datav-col interface-field-row">value</div>
-                                    </div>
-                                    <div class="datav-col">
-                                        <div class="datav-row datav-col interface-field-row">映射</div>
-                                        <div class="datav-row datav-col interface-field-row">
-                                            <el-input v-model="dataVChartData.xField" style="width: 100%;"></el-input>
-                                        </div>
-                                        <div class="datav-row datav-col interface-field-row">
-                                            <el-input v-model="dataVChartData.yField" style="width: 100%;"></el-input>
-                                        </div>
-                                    </div>
-                                    <div class="datav-col">
-                                        <div class="datav-row datav-col interface-field-row">说明</div>
-                                        <div class="datav-row datav-col interface-field-row">类型</div>
-                                        <div class="datav-row datav-col interface-field-row">数值</div>
-                                    </div>
-                                </div>
-                                <div class="ui section divider" style="margin-top: 0px;margin-bottom: 6px;"></div>
-                            </el-form>
-
-                            <el-form id="chartDataForm" label-width="84px" label-position="left"
-                                     class="scrolling content">
-                                <el-form-item label="图表数据">
-                                    <el-select v-model="dataVChartData.dataSource" placeholder="请选择">
-                                        <el-option v-for="type in dataSource"
-                                                   :key="type.value" :label="type.text" :value="type.value">
-                                        </el-option>
-                                    </el-select>
-                                </el-form-item>
-                                <el-form-item v-show="dataVChartData.dataSource=='01'" label="JSON">
-                                    <el-input id="jsonData" v-model="dataVChartData.jsonData" type="textarea"
-                                              :rows="10"></el-input>
-                                </el-form-item>
-                                <el-form-item v-show="dataVChartData.dataSource=='02'" label="URL">
-                                    <el-input v-model="dataVChartData.url"></el-input>
-                                </el-form-item>
-                                <el-form-item v-show="dataVChartData.dataSource=='03'" label="数据源">
-                                    <el-select v-model="dataVChartData.dsId" placeholder="请选择">
-                                        <el-option v-for="dataSource in dataSourceList"
-                                                   :key="dataSource.dsId" :label="dataSource.sourceName"
-                                                   :value="dataSource.dsId">
-                                        </el-option>
-                                    </el-select>
-                                </el-form-item>
-                                <el-form-item v-show="dataVChartData.dataSource=='03'" label="SQL">
-                                    <el-input id="exeSql" v-model="dataVChartData.exeSql" type="textarea"
-                                              :rows="6"></el-input>
-                                </el-form-item>
-                            </el-form>
-                        </div>
-                    </el-tab-pane>-->
                 </el-tabs>
             </div>
         </div>

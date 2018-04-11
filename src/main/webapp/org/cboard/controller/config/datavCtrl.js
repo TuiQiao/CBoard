@@ -12,7 +12,7 @@ cBoard.controller('datavCtrl', function ($rootScope, $scope, $stateParams, $http
     var dataVConf = initDataVConf();
     var dataVChartDataJSON = {};
     //数据视图图表配置
-    var dataVChartData = {dataVConfChartCSS: {}};
+    var dataVChartData = {dataVConfChartCSS: {}, jsonData: {label: "", value: ""}};
     var vm = new Vue({
         el: '#app',
         data: {
@@ -44,9 +44,6 @@ cBoard.controller('datavCtrl', function ($rootScope, $scope, $stateParams, $http
             fontWeight: hexDataV.getFontWeight(),
             //文本对齐方式
             textAlign: hexDataV.textAlign(),
-            //数据源
-            dataSource: hexDataV.dataSource(),
-            dataSourceList: [],
             //主要用于给element-ui.js的标签页取名用
             tabActiveName: 'one',
             //预览画布大小
@@ -54,9 +51,8 @@ cBoard.controller('datavCtrl', function ($rootScope, $scope, $stateParams, $http
             viewDragHeight: '',
             //未知用处的属性
             dataVChartData: dataVChartData,
-            curBoard: {layout: {rows: []}},
             categoryList: [],
-            boardId: ''
+            boardId: '',
         },
         methods: {
             //测试使用按钮来获取图表
@@ -139,10 +135,6 @@ cBoard.controller('datavCtrl', function ($rootScope, $scope, $stateParams, $http
                 } else if (dom.type == 'ornament') {
                     //装饰默认样式
                     dataVChartData.chartStyle = vm._data.ornamentStyle[0].value;
-                } else if (dom.type == 'table') {
-                    //表格组件默认值
-                    dataVChartData.jsonData = hexDataV.defaultTableData();
-                    dataVChartData.dataVConfChartCSS = hexDataV.defaultTableStyle();
                 } else if (dom.type == 'clock') {
                     //时钟组件默认格式化
                     dataVChartData.dataVConfChartCSS = hexDataV.defaultClockStyle();
@@ -157,6 +149,10 @@ cBoard.controller('datavCtrl', function ($rootScope, $scope, $stateParams, $http
                 var yprop = yMultiple(vm._data.dataVConf.screenHeight);
                 dataVChartData.xprop = xprop;
                 dataVChartData.yprop = yprop;
+
+                if (dom.jsonData) {
+                    dataVChartData.jsonData = dom.jsonData;
+                }
 
                 if (dom.chartHeight) {
                     dataVChartData.chartWidth = dom.chartWidth;
@@ -277,7 +273,8 @@ cBoard.controller('datavCtrl', function ($rootScope, $scope, $stateParams, $http
                                         positionX: others[j].positionX,
                                         positionY: others[j].positionY,
                                         chartStyle: others[j].chartStyle,
-                                        dataVConfChartCSS: others[j].dataVConfChartCSS
+                                        dataVConfChartCSS: others[j].dataVConfChartCSS,
+                                        jsonData: others[j].jsonData
                                     };
                                     hexDataV.componentDom = componentDom;
                                     vm.drop();
@@ -345,6 +342,7 @@ cBoard.controller('datavCtrl', function ($rootScope, $scope, $stateParams, $http
                     positionY: hexDataVInfo.dataVConfChartDataList[i].positionY,
                     chartStyle: hexDataVInfo.dataVConfChartDataList[i].chartStyle,
                     dataVConfChartCSS: hexDataVInfo.dataVConfChartDataList[i].dataVConfChartCSS,
+                    jsonData: hexDataVInfo.dataVConfChartDataList[i].jsonData
                 })
             }
 
@@ -357,7 +355,9 @@ cBoard.controller('datavCtrl', function ($rootScope, $scope, $stateParams, $http
                         dataVChartDataJSON = {};
                         $state.go("config.board")
                     })
-                    callback();
+                    if (callback.index != '4-1') {
+                        callback();
+                    }
                 } else {
                     if (res.data.message) {
                         closeMessage('错误', res.data.message);
@@ -374,7 +374,9 @@ cBoard.controller('datavCtrl', function ($rootScope, $scope, $stateParams, $http
                         $state.go("config.board")
                     })
                     vm._data.boardId = res.data.id;
-                    callback()
+                    if (callback.index != '4-1') {
+                        callback();
+                    }
                 } else {
                     if (res.data.message) {
                         closeMessage('错误', res.data.message);
@@ -548,7 +550,7 @@ cBoard.controller('datavCtrl', function ($rootScope, $scope, $stateParams, $http
             chartStyle: '', bgColor: '',
             //图表数据配置
             xField: '', yField: '', gField: '',
-            dataSource: '01', url: '', jsonData: '',
+            dataSource: '01', url: '', jsonData: {},
             //图表样式
             dataVConfChartCSS: {}
         };

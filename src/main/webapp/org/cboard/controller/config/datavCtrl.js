@@ -82,7 +82,7 @@ cBoard.controller('datavCtrl', function ($rootScope, $scope, $stateParams, $http
                 var screenHeight = vm._data.dataVConf.screenHeight;
                 //屏幕比例
                 var prop = (screenHeight / screenWidth).toFixed(4);
-                dragWidth = (dragWidth * 0.9).toFixed();
+                dragWidth = dragWidth.toFixed();
                 dragHeight = (dragWidth * prop).toFixed();
                 //绘制画布大小
                 dragDataVDrag(dragWidth + 'px', dragHeight + 'px');
@@ -116,7 +116,7 @@ cBoard.controller('datavCtrl', function ($rootScope, $scope, $stateParams, $http
                     return;
                 }
                 //新增组件
-                var domId = dom.type + '_' + dom.widgetId;
+                var domId = dom.type + '_' + dom.widgetId + '_' + new Date().getTime();
                 var dataVChartData = initDataVChartData();
                 dataVChartData.chartType = dom.type;
                 dataVChartData.widgetId = dom.widgetId;
@@ -141,6 +141,10 @@ cBoard.controller('datavCtrl', function ($rootScope, $scope, $stateParams, $http
                 } else if (dom.type == 'clock') {
                     //时钟组件默认格式化
                     dataVChartData.dataVConfChartCSS = hexDataV.defaultClockStyle();
+                } else if (dom.type == 'table') {
+                    //表格组件默认值
+                    dataVChartData.jsonData = hexDataV.defaultTableData();
+                    dataVChartData.dataVConfChartCSS = hexDataV.defaultTableStyle();
                 }
                 if (!jQuery.isEmptyObject(hexDataV.componentDom.dataVConfChartCSS)) {
                     dataVChartData.dataVConfChartCSS = hexDataV.componentDom.dataVConfChartCSS;

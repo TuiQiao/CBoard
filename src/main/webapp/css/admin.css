@@ -300,6 +300,12 @@ li.el-submenu ul.el-menu::selection{
     border: #0b1f3b!important;
 }*/
 
+.datav-no-data{
+    width: 100%;
+    text-align: center;
+    margin-top: 20px;
+    color: #999;
+}
 
 .datav-color-selector{
     flex-grow: 0!important;

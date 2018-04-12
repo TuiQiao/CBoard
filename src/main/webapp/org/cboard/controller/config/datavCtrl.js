@@ -12,7 +12,7 @@ cBoard.controller('datavCtrl', function ($rootScope, $scope, $stateParams, $http
     var dataVConf = initDataVConf();
     var dataVChartDataJSON = {};
     //数据视图图表配置
-    var dataVChartData = {dataVConfChartCSS: {}};
+    var dataVChartData = {dataVConfChartCSS: {}, jsonData: {label: "", value: ""}};
     var vm = new Vue({
         el: '#app',
         data: {
@@ -44,9 +44,6 @@ cBoard.controller('datavCtrl', function ($rootScope, $scope, $stateParams, $http
             fontWeight: hexDataV.getFontWeight(),
             //文本对齐方式
             textAlign: hexDataV.textAlign(),
-            //数据源
-            dataSource: hexDataV.dataSource(),
-            dataSourceList: [],
             //主要用于给element-ui.js的标签页取名用
             tabActiveName: 'one',
             //预览画布大小
@@ -54,9 +51,8 @@ cBoard.controller('datavCtrl', function ($rootScope, $scope, $stateParams, $http
             viewDragHeight: '',
             //未知用处的属性
             dataVChartData: dataVChartData,
-            curBoard: {layout: {rows: []}},
             categoryList: [],
-            boardId: ''
+            boardId: '',
         },
         methods: {
             //测试使用按钮来获取图表
@@ -86,7 +82,7 @@ cBoard.controller('datavCtrl', function ($rootScope, $scope, $stateParams, $http
                 var screenHeight = vm._data.dataVConf.screenHeight;
                 //屏幕比例
                 var prop = (screenHeight / screenWidth).toFixed(4);
-                dragWidth = (dragWidth * 0.9).toFixed();
+                dragWidth = dragWidth.toFixed();
                 dragHeight = (dragWidth * prop).toFixed();
                 //绘制画布大小
                 dragDataVDrag(dragWidth + 'px', dragHeight + 'px');
@@ -119,8 +115,13 @@ cBoard.controller('datavCtrl', function ($rootScope, $scope, $stateParams, $http
                 if (!dom) {
                     return;
                 }
+                var domId;
                 //新增组件
-                var domId = dom.type + '_' + dom.widgetId;
+                if(dom.domId){
+                    domId = dom.domId;
+                }else{
+                    domId = dom.type + '_' + new Date().getTime();
+                }
                 var dataVChartData = initDataVChartData();
                 dataVChartData.chartType = dom.type;
                 dataVChartData.widgetId = dom.widgetId;
@@ -129,6 +130,9 @@ cBoard.controller('datavCtrl', function ($rootScope, $scope, $stateParams, $http
                 if (dom.type == 'label') {
                     //标题组件默认值
                     dataVChartData.dataVConfChartCSS.chartTitle = hexDataV.defaultTitle;
+                } else if (dom.type == 'rlabel') {
+                    //滚动文本默认值
+                    dataVChartData.jsonData = hexDataV.defaultRLabelData();
                 } else if (dom.type == 'kpi') {
                     //指标卡默认值
                     dataVChartData.jsonData = hexDataV.defaultKpiData();
@@ -139,13 +143,13 @@ cBoard.controller('datavCtrl', function ($rootScope, $scope, $stateParams, $http
                 } else if (dom.type == 'ornament') {
                     //装饰默认样式
                     dataVChartData.chartStyle = vm._data.ornamentStyle[0].value;
-                } else if (dom.type == 'table') {
-                    //表格组件默认值
-                    dataVChartData.jsonData = hexDataV.defaultTableData();
-                    dataVChartData.dataVConfChartCSS = hexDataV.defaultTableStyle();
                 } else if (dom.type == 'clock') {
                     //时钟组件默认格式化
                     dataVChartData.dataVConfChartCSS = hexDataV.defaultClockStyle();
+                } else if (dom.type == 'table') {
+                    //表格组件默认值
+                    dataVChartData.jsonData.value = hexDataV.defaultTableData();
+                    dataVChartData.dataVConfChartCSS = hexDataV.defaultTableStyle();
                 }
                 if (!jQuery.isEmptyObject(hexDataV.componentDom.dataVConfChartCSS)) {
                     dataVChartData.dataVConfChartCSS = hexDataV.componentDom.dataVConfChartCSS;
@@ -157,6 +161,10 @@ cBoard.controller('datavCtrl', function ($rootScope, $scope, $stateParams, $http
                 var yprop = yMultiple(vm._data.dataVConf.screenHeight);
                 dataVChartData.xprop = xprop;
                 dataVChartData.yprop = yprop;
+
+                if (dom.jsonData) {
+                    dataVChartData.jsonData = dom.jsonData;
+                }
 
                 if (dom.chartHeight) {
                     dataVChartData.chartWidth = dom.chartWidth;
@@ -245,7 +253,7 @@ cBoard.controller('datavCtrl', function ($rootScope, $scope, $stateParams, $http
                             return;
                         }
                         vm._data.dataVConf = res.data.layout.dataVConf;
-                        vm.screenSizeChange();
+                        //vm.screenSizeChange();
                         vm._data.viewDragWidth = res.data.layout.dataVConf.screenWidth + "px";
                         vm._data.viewDragHeight = res.data.layout.dataVConf.screenHeight + "px";
                         var layout = res.data.layout;
@@ -261,7 +269,8 @@ cBoard.controller('datavCtrl', function ($rootScope, $scope, $stateParams, $http
                                         chartHeight: widgets[j].chartHeight,
                                         bgColor: widgets[j].bgColor,
                                         positionX: widgets[j].positionX,
-                                        positionY: widgets[j].positionY
+                                        positionY: widgets[j].positionY,
+                                        domId: others[j].domId
                                     };
                                     hexDataV.componentDom = componentDom;
                                     vm.drop();
@@ -277,7 +286,9 @@ cBoard.controller('datavCtrl', function ($rootScope, $scope, $stateParams, $http
                                         positionX: others[j].positionX,
                                         positionY: others[j].positionY,
                                         chartStyle: others[j].chartStyle,
-                                        dataVConfChartCSS: others[j].dataVConfChartCSS
+                                        dataVConfChartCSS: others[j].dataVConfChartCSS,
+                                        jsonData: others[j].jsonData,
+                                        domId: others[j].domId
                                     };
                                     hexDataV.componentDom = componentDom;
                                     vm.drop();
@@ -289,8 +300,12 @@ cBoard.controller('datavCtrl', function ($rootScope, $scope, $stateParams, $http
             }
         }
     })
-    //初始化视图大小
-    vm.screenSizeChange();
+
+    //找不到如何使导航栏动画结束后再执行页面大小计算的方法，不得已做一个延时装置
+    setTimeout(function () {
+        //初始化视图大小
+        vm.screenSizeChange();
+    },500)
 
     //加载监控视图配置
     vm.loadDataVConf();
@@ -334,7 +349,8 @@ cBoard.controller('datavCtrl', function ($rootScope, $scope, $stateParams, $http
                     chartWidth: hexDataVInfo.dataVConfChartDataList[i].chartWidth,
                     bgColor: hexDataVInfo.dataVConfChartDataList[i].bgColor,
                     positionX: hexDataVInfo.dataVConfChartDataList[i].positionX,
-                    positionY: hexDataVInfo.dataVConfChartDataList[i].positionY
+                    positionY: hexDataVInfo.dataVConfChartDataList[i].positionY,
+                    domId: hexDataVInfo.dataVConfChartDataList[i].domId
                 })
             } else {
                 json.layout.rows[1].others.push({
@@ -345,6 +361,8 @@ cBoard.controller('datavCtrl', function ($rootScope, $scope, $stateParams, $http
                     positionY: hexDataVInfo.dataVConfChartDataList[i].positionY,
                     chartStyle: hexDataVInfo.dataVConfChartDataList[i].chartStyle,
                     dataVConfChartCSS: hexDataVInfo.dataVConfChartDataList[i].dataVConfChartCSS,
+                    jsonData: hexDataVInfo.dataVConfChartDataList[i].jsonData,
+                    domId: hexDataVInfo.dataVConfChartDataList[i].domId
                 })
             }
 
@@ -357,7 +375,9 @@ cBoard.controller('datavCtrl', function ($rootScope, $scope, $stateParams, $http
                         dataVChartDataJSON = {};
                         $state.go("config.board")
                     })
-                    callback();
+                    if (callback.index != '4-1') {
+                        callback();
+                    }
                 } else {
                     if (res.data.message) {
                         closeMessage('错误', res.data.message);
@@ -374,7 +394,9 @@ cBoard.controller('datavCtrl', function ($rootScope, $scope, $stateParams, $http
                         $state.go("config.board")
                     })
                     vm._data.boardId = res.data.id;
-                    callback()
+                    if (callback.index != '4-1') {
+                        callback();
+                    }
                 } else {
                     if (res.data.message) {
                         closeMessage('错误', res.data.message);
@@ -386,7 +408,7 @@ cBoard.controller('datavCtrl', function ($rootScope, $scope, $stateParams, $http
         }
     }
 
-//提示信息
+    //提示信息
     function closeMessage(title, message, callFunc) {
         vm.$alert(message, title, {
             confirmButtonText: '关闭',
@@ -398,7 +420,7 @@ cBoard.controller('datavCtrl', function ($rootScope, $scope, $stateParams, $http
         });
     }
 
-//构建监控视图配置数据
+    //构建监控视图配置数据
     function buildHexDataVInfo() {
         var hexDataVInfo = {};
         var dataVChartData = vm._data.dataVChartData;
@@ -419,7 +441,7 @@ cBoard.controller('datavCtrl', function ($rootScope, $scope, $stateParams, $http
         return hexDataVInfo;
     }
 
-//绑定数据可视化图层基本信息
+    //绑定数据可视化图层基本信息
     function bindDataVChartData(domId) {
         if (!document.getElementById(domId)) {
             dataVChartDataJSON[domId] = '';
@@ -450,7 +472,7 @@ cBoard.controller('datavCtrl', function ($rootScope, $scope, $stateParams, $http
         dataVChartDataJSON[domId] = dataVChartData;
     }
 
-//初始化拖拽
+    //初始化拖拽
     function initDrag(domId) {
         interact('#' + domId)
             .draggable({
@@ -500,7 +522,7 @@ cBoard.controller('datavCtrl', function ($rootScope, $scope, $stateParams, $http
         }
     }
 
-//设置图形拖拽
+    //设置图形拖拽
     function domPosition(domId) {
         var domOffset = $('#' + domId).offset();
         var dragOffset = $('#datav-drag').offset();
@@ -510,21 +532,21 @@ cBoard.controller('datavCtrl', function ($rootScope, $scope, $stateParams, $http
         document.getElementById(domId).setAttribute('y', y);
     }
 
-//宽倍数
+    //宽倍数
     function xMultiple(screenWidth) {
         var dragWidth = vm._data.dragWidth;
         dragWidth = dragWidth.substr(0, dragWidth.length - 2);
         return (Number(dragWidth) / screenWidth).toFixed(4);
     }
 
-//高倍数
+    //高倍数
     function yMultiple(screenHeight) {
         var dragHeight = vm._data.dragHeight;
         dragHeight = dragHeight.substr(0, dragHeight.length - 2);
         return (Number(dragHeight) / screenHeight).toFixed(4);
     }
 
-//初始化数据视图配置
+    //初始化数据视图配置
     function initDataVConf() {
         return {
             screenWidth: screen.width,
@@ -548,13 +570,13 @@ cBoard.controller('datavCtrl', function ($rootScope, $scope, $stateParams, $http
             chartStyle: '', bgColor: '',
             //图表数据配置
             xField: '', yField: '', gField: '',
-            dataSource: '01', url: '', jsonData: '',
+            dataSource: '01', url: '', jsonData: {},
             //图表样式
             dataVConfChartCSS: {}
         };
     }
 
-//初始化数据视图图表样式配置
+    //初始化数据视图图表样式配置
     function initDataVChartCSS() {
         return {
             labelFontSize: '',
@@ -584,7 +606,7 @@ cBoard.controller('datavCtrl', function ($rootScope, $scope, $stateParams, $http
         };
     }
 
-//绘制画布大小
+    //绘制画布大小
     function dragDataVDrag(width, height) {
         vm._data.dragWidth = width;
         vm._data.dragHeight = height;
@@ -743,13 +765,17 @@ cBoard.controller('datavCtrl', function ($rootScope, $scope, $stateParams, $http
                         if (chartConfig.chart_type == 'table') {
                             var render = new CBoardTableRender($('#' + domId + "_01"), option);
                             return render.do();
+                        } else if (chartConfig.chart_type == 'kpi') {
+                            var render = new CBoardKpiRender($('#' + domId + "_01"), option);
+                            var html = render.html();
+                            $('#' + domId + "_01").html(html);
+                            return render.realTimeTicket();
                         } else {
                             var render = new CBoardEChartRender($('#' + domId + "_01"), option);
                             return render.chart(null);
                         }
                     });
                 } else {
-                    //callback(result);
                     //数据封装
                     var chart = getChartServices(chartConfig);
                     var option = chart.parseOption(result);
@@ -1223,5 +1249,13 @@ cBoard.controller('datavCtrl', function ($rootScope, $scope, $stateParams, $http
                 })
             }
         });
+    };
+
+    var compileExp = function (exp) {
+        var parseredExp = parserExp(exp);
+        return function (groupData, key) {
+            var _names = parseredExp.names;
+            return eval(parseredExp.evalExp);
+        };
     };
 })

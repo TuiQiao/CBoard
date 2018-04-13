@@ -117,9 +117,9 @@ cBoard.controller('datavCtrl', function ($rootScope, $scope, $stateParams, $http
                 }
                 var domId;
                 //新增组件
-                if(dom.domId){
+                if (dom.domId) {
                     domId = dom.domId;
-                }else{
+                } else {
                     domId = dom.type + '_' + new Date().getTime();
                 }
                 var dataVChartData = initDataVChartData();
@@ -270,7 +270,7 @@ cBoard.controller('datavCtrl', function ($rootScope, $scope, $stateParams, $http
                                         bgColor: widgets[j].bgColor,
                                         positionX: widgets[j].positionX,
                                         positionY: widgets[j].positionY,
-                                        domId: others[j].domId
+                                        domId: widgets[j].domId
                                     };
                                     hexDataV.componentDom = componentDom;
                                     vm.drop();
@@ -305,10 +305,11 @@ cBoard.controller('datavCtrl', function ($rootScope, $scope, $stateParams, $http
     setTimeout(function () {
         //初始化视图大小
         vm.screenSizeChange();
-    },500)
+        //加载监控视图配置
+        vm.loadDataVConf();
+    }, 500)
 
-    //加载监控视图配置
-    vm.loadDataVConf();
+
 
     //加载图表列表
     getWidgetList();

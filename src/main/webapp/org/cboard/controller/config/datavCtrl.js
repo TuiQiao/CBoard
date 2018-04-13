@@ -309,8 +309,6 @@ cBoard.controller('datavCtrl', function ($rootScope, $scope, $stateParams, $http
         vm.loadDataVConf();
     }, 500)
 
-
-
     //加载图表列表
     getWidgetList();
 
@@ -375,6 +373,8 @@ cBoard.controller('datavCtrl', function ($rootScope, $scope, $stateParams, $http
                     closeMessage("提示", "更新成功", function () {
                         dataVChartDataJSON = {};
                         $state.go("config.board")
+                        getBoardList();
+                        boardChange();
                     })
                     if (callback.index != '4-1') {
                         callback();
@@ -393,6 +393,8 @@ cBoard.controller('datavCtrl', function ($rootScope, $scope, $stateParams, $http
                     closeMessage("提示", "保存成功", function () {
                         dataVChartDataJSON = {};
                         $state.go("config.board")
+                        getBoardList();
+                        boardChange();
                     })
                     vm._data.boardId = res.data.id;
                     if (callback.index != '4-1') {
@@ -1258,5 +1260,15 @@ cBoard.controller('datavCtrl', function ($rootScope, $scope, $stateParams, $http
             var _names = parseredExp.names;
             return eval(parseredExp.evalExp);
         };
+    };
+
+    var getBoardList = function () {
+        return $http.get("dashboard/getBoardList.do").success(function (response) {
+            $scope.boardList = response;
+        });
+    };
+    var boardChange = function () {
+        $scope.verify = {boardName: true};
+        $scope.$emit("boardChange");
     };
 })

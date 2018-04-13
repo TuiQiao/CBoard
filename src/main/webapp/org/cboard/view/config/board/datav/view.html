@@ -23,8 +23,11 @@
                     <el-submenu index="2">
                         <template slot="title">
                             <i class="el-icon-menu"></i>
-                            <span slot="title">文字</span>
+                            <span slot="title">其它</span>
                         </template>
+                        <el-menu-item index="2-0" type="clock" componentName="hex-datav-clock" @click="drag($event)">
+                            时钟
+                        </el-menu-item>
                         <el-menu-item index="2-1" type="label" componentName="hex-datav-label" @click="drag($event)">
                             标题
                         </el-menu-item>
@@ -34,21 +37,12 @@
                         <el-menu-item index="2-3" type="table" componentName="hex-datav-table" @click="drag($event)">
                             静态表格
                         </el-menu-item>
-                    </el-submenu>
-                    <el-submenu index="3">
-                        <template slot="title">
-                            <i class="el-icon-document"></i>
-                            <span slot="title">其他</span>
-                        </template>
-                        <el-menu-item index="3-1" type="kpi" componentName="hex-datav-kpi" @click="drag($event)">指标
+                        <el-menu-item index="2-4" type="kpi" componentName="hex-datav-kpi" @click="drag($event)">静态指标
                         </el-menu-item>
-                        <el-menu-item index="3-2" type="clock" componentName="hex-datav-clock" @click="drag($event)">
-                            时钟
-                        </el-menu-item>
-                        <el-menu-item index="3-3" type="border" componentName="hex-datav-border" @click="drag($event)">
+                        <el-menu-item index="2-5" type="border" componentName="hex-datav-border" @click="drag($event)">
                             静态边框
                         </el-menu-item>
-                        <el-menu-item index="3-4" type="ornament" componentName="hex-datav-ornament"
+                        <el-menu-item index="2-6" type="ornament" componentName="hex-datav-ornament"
                                       @click="drag($event)">动态边框
                         </el-menu-item>
                     </el-submenu>
@@ -84,7 +78,7 @@
                 </div>
             </div>
             <!-- 数据修改-->
-            <div class="datav-col datav-component-conf">
+            <div class="datav-col datav-component-conf" style="position: relative">
                 <el-tabs id="datavComponentConf" v-model="tabActiveName">
                     <el-tab-pane label="样式" name="one">
                         <div class="title">页面设置</div>
@@ -543,7 +537,7 @@
                                 </el-form>
                             </el-collapse-item>
                             <!--表格组件-->
-                           <el-collapse-item title="表格数据" name="14-4" v-show="dataVChartData.chartType=='table'">
+                            <el-collapse-item title="表格数据" name="14-4" v-show="dataVChartData.chartType=='table'">
                                 <el-form label-width="84px" label-position="left" class="scrolling content">
                                     <el-input v-model="dataVChartData.jsonData.value" type="textarea" :rows="10"
                                               style="margin-top: 6px;"></el-input>

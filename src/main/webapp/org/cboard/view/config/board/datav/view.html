@@ -15,6 +15,7 @@
                                 <el-menu-item :index="'1-'+index+widget.id" v-for="widget in value" :key="widget.id"
                                               :name="widget.name" type="chart" componentName="hex-datav-chart"
                                               @click="drag($event)">
+                                    <i :style="widget.iconUrl"></i>
                                     {{widget.name}}
                                 </el-menu-item>
                             </div>

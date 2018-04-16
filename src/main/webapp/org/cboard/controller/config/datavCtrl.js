@@ -309,8 +309,6 @@ cBoard.controller('datavCtrl', function ($rootScope, $scope, $stateParams, $http
         vm.loadDataVConf();
     }, 500)
 
-
-
     //加载图表列表
     getWidgetList();
 
@@ -375,6 +373,8 @@ cBoard.controller('datavCtrl', function ($rootScope, $scope, $stateParams, $http
                     closeMessage("提示", "更新成功", function () {
                         dataVChartDataJSON = {};
                         $state.go("config.board")
+                        getBoardList();
+                        boardChange();
                     })
                     if (callback.index != '4-1') {
                         callback();
@@ -393,6 +393,8 @@ cBoard.controller('datavCtrl', function ($rootScope, $scope, $stateParams, $http
                     closeMessage("提示", "保存成功", function () {
                         dataVChartDataJSON = {};
                         $state.go("config.board")
+                        getBoardList();
+                        boardChange();
                     })
                     vm._data.boardId = res.data.id;
                     if (callback.index != '4-1') {
@@ -725,7 +727,21 @@ cBoard.controller('datavCtrl', function ($rootScope, $scope, $stateParams, $http
                     //获取数据
                     var chartConfig = res.data.config;
                     var datasetId = res.data.datasetId;
-                    getDatavSeries(datasetId, chartConfig, domId);
+                    getDatasetList().then(function (dsres) {
+                        var dataset = _.find(dsres, function (e) {
+                            return e.id == datasetId;
+                        });
+                        if (dataset.data.interval || dataset.data.interval > 0){
+                            getDatavSeries(datasetId, chartConfig, domId);
+                            setInterval(function () {
+                                getDatavSeries(datasetId, chartConfig, domId);
+                            },dataset.data.interval * 1000)
+                        }else{
+                            getDatavSeries(datasetId, chartConfig, domId);
+                        }
+
+                    })
+
                 })
             }
         },
@@ -1258,5 +1274,15 @@ cBoard.controller('datavCtrl', function ($rootScope, $scope, $stateParams, $http
             var _names = parseredExp.names;
             return eval(parseredExp.evalExp);
         };
+    };
+
+    var getBoardList = function () {
+        return $http.get("dashboard/getBoardList.do").success(function (response) {
+            $scope.boardList = response;
+        });
+    };
+    var boardChange = function () {
+        $scope.verify = {boardName: true};
+        $scope.$emit("boardChange");
     };
 })

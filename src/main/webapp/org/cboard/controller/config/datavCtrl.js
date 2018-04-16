@@ -703,7 +703,8 @@ cBoard.controller('datavCtrl', function ($rootScope, $scope, $stateParams, $http
             for (var i = 0; i < response.length; i++) {
                 map[response[i].categoryName].push({
                     name: response[i].name,
-                    id: response[i].id
+                    id: response[i].id,
+                    iconUrl:"content:url(imgs/" + response[i].data.config.chart_type + "-active.png)"
                 })
             }
             vm._data.widgetList = map;

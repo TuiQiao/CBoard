@@ -727,7 +727,21 @@ cBoard.controller('datavCtrl', function ($rootScope, $scope, $stateParams, $http
                     //获取数据
                     var chartConfig = res.data.config;
                     var datasetId = res.data.datasetId;
-                    getDatavSeries(datasetId, chartConfig, domId);
+                    getDatasetList().then(function (dsres) {
+                        var dataset = _.find(dsres, function (e) {
+                            return e.id == datasetId;
+                        });
+                        if (dataset.data.interval || dataset.data.interval > 0){
+                            getDatavSeries(datasetId, chartConfig, domId);
+                            setInterval(function () {
+                                getDatavSeries(datasetId, chartConfig, domId);
+                            },dataset.data.interval * 1000)
+                        }else{
+                            getDatavSeries(datasetId, chartConfig, domId);
+                        }
+
+                    })
+
                 })
             }
         },

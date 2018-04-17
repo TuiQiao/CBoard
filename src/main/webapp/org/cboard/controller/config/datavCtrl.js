@@ -2,12 +2,7 @@
  * Created by sileiH on 2016/8/2.
  */
 'use strict';
-cBoard.controller('datavCtrl', function ($rootScope, $scope, $stateParams, $http, dataService, updateService, $q, chartPieService,
-                                         chartLineService, chartFunnelService, chartSankeyService, chartTableService, chartKpiService,
-                                         chartRadarService, chartMapService, chartScatterService, chartGaugeService, chartWordCloudService,
-                                         chartTreeMapService, chartAreaMapService, chartHeatMapCalendarService, chartHeatMapTableService,
-                                         chartLiquidFillService, chartContrastService, chartChinaMapService, chartChinaMapBmapService,
-                                         chartRelationService, $state) {
+cBoard.controller('datavCtrl', function ($rootScope, $scope, $stateParams, $http, dataService, updateService, $q, $state, chartService) {
     $("body").addClass("sidebar-collapse")
     var dataVConf = initDataVConf();
     var dataVChartDataJSON = {};
@@ -704,12 +699,23 @@ cBoard.controller('datavCtrl', function ($rootScope, $scope, $stateParams, $http
                 map[response[i].categoryName].push({
                     name: response[i].name,
                     id: response[i].id,
-                    iconUrl:"content:url(imgs/" + response[i].data.config.chart_type + "-active.png)"
+                    iconUrl: "content:url(imgs/" + response[i].data.config.chart_type + "-active.png)"
                 })
             }
             vm._data.widgetList = map;
         })
     }
+
+    var getBoardList = function () {
+        return $http.get("dashboard/getBoardList.do").success(function (response) {
+            $scope.boardList = response;
+        });
+    };
+
+    var boardChange = function () {
+        $scope.verify = {boardName: true};
+        $scope.$emit("boardChange");
+    };
 
     Vue.component('hex-datav-chart', {
         props: {
@@ -719,30 +725,13 @@ cBoard.controller('datavCtrl', function ($rootScope, $scope, $stateParams, $http
         methods: {
             init: function () {
                 var domId = this.chartdata.domId;
-                var widget = this.chartdata.widgetId;
+                var widgetId = this.chartdata.widgetId;
                 $http.get("dashboard/dashboardWidget.do", {
                     params: {
-                        "id": widget
+                        "id": widgetId
                     }
                 }).success(function (res) {
-                    //获取数据
-                    var chartConfig = res.data.config;
-                    var datasetId = res.data.datasetId;
-                    getDatasetList().then(function (dsres) {
-                        var dataset = _.find(dsres, function (e) {
-                            return e.id == datasetId;
-                        });
-                        if (dataset.data.interval || dataset.data.interval > 0){
-                            getDatavSeries(datasetId, chartConfig, domId);
-                            setInterval(function () {
-                                getDatavSeries(datasetId, chartConfig, domId);
-                            },dataset.data.interval * 1000)
-                        }else{
-                            getDatavSeries(datasetId, chartConfig, domId);
-                        }
-
-                    })
-
+                    loadWiget($("#" + domId + "_01"), res.data, null, null, false);
                 })
             }
         },
@@ -752,507 +741,9 @@ cBoard.controller('datavCtrl', function ($rootScope, $scope, $stateParams, $http
         }
     })
 
-    function getDatavSeries(datasetId, chartConfig, domId) {
-        var chartConfig = angular.copy(chartConfig);
-        updateService.updateConfig(chartConfig);
-        dataService.linkDataset(datasetId, chartConfig).then(function () {
-            var dataSeries = getDataSeries(chartConfig);
-            var cfg = {rows: [], columns: [], filters: []};
-            cfg.rows = getDimensionConfig(chartConfig.keys);
-            cfg.columns = getDimensionConfig(chartConfig.groups);
-            cfg.filters = getDimensionConfig(chartConfig.filters);
-            cfg.filters = cfg.filters.concat(getDimensionConfig(chartConfig.boardFilters));
-            cfg.filters = cfg.filters.concat(getDimensionConfig(chartConfig.boardWidgetFilters));
-            cfg.values = _.map(dataSeries, function (s) {
-                return {column: s.name, aggType: s.aggregate};
-            });
-            $http.post("dashboard/getAggregateData.do", {
-                datasetId: datasetId,
-                cfg: JSON.stringify(cfg),
-                reload: false
-            }).success(function (data) {
-                var result = castRawData2Series(data, chartConfig);
-                result.chartConfig = chartConfig;
-                if (!_.isUndefined(datasetId)) {
-                    getDrillConfig(datasetId, chartConfig).then(function (c) {
-                        result.drill = {config: c};
-                        //数据封装
-                        var chart = getChartServices(chartConfig);
-                        var option = chart.parseOption(result);
-                        //图表展示
-                        if (chartConfig.chart_type == 'table') {
-                            var render = new CBoardTableRender($('#' + domId + "_01"), option);
-                            return render.do();
-                        } else if (chartConfig.chart_type == 'kpi') {
-                            var render = new CBoardKpiRender($('#' + domId + "_01"), option);
-                            var html = render.html();
-                            $('#' + domId + "_01").html(html);
-                            return render.realTimeTicket();
-                        } else {
-                            var render = new CBoardEChartRender($('#' + domId + "_01"), option);
-                            return render.chart(null);
-                        }
-                    });
-                } else {
-                    //数据封装
-                    var chart = getChartServices(chartConfig);
-                    var option = chart.parseOption(result);
-                    //图表展示
-                    var render = new CBoardEChartRender($('#' + domId + "_01"), option);
-                    return render.chart(null);
-                }
-            });
-        })
+    var loadWiget = function (containerDom, widget, optionFilter, scope, reload, persist, relations) {
+        chartService.render(containerDom, widget, optionFilter, scope, reload, persist, relations);
     }
-
-    var castRawData2Series = function (aggData, chartConfig) {
-        var castedKeys = new Array();
-        var castedGroups = new Array();
-        var joinedKeys = {};
-        var joinedGroups = {};
-        var newData = {};
-
-        var getIndex = function (columnList, col) {
-            var result = new Array();
-            if (col) {
-                for (var j = 0; j < col.length; j++) {
-                    var idx = _.find(columnList, function (e) {
-                        return e.name == col[j];
-                    });
-                    result.push(idx.index);
-                }
-            }
-            return result;
-        };
-
-        var keysIdx = getIndex(aggData.columnList, _.map(chartConfig.keys, function (e) {
-            return e.col;
-        }));
-        var keysSort = _.map(chartConfig.keys, function (e) {
-            return e.sort;
-        });
-        var groupsIdx = getIndex(aggData.columnList, _.map(chartConfig.groups, function (e) {
-            return e.col;
-        }));
-        var groupsSort = _.map(chartConfig.groups, function (e) {
-            return e.sort;
-        });
-
-        var valueSeries = _.filter(aggData.columnList, function (e) {
-            return e.aggType;
-        });
-        for (var i = 0; i < aggData.data.length; i++) {
-            //组合keys
-            var newKey = getRowElements(aggData.data[i], keysIdx);
-            var jk = newKey.join('-');
-            if (_.isUndefined(joinedKeys[jk])) {
-                castedKeys.push(newKey);
-                joinedKeys[jk] = true;
-            }
-            //组合groups
-            var group = getRowElements(aggData.data[i], groupsIdx);
-            var newGroup = group.join('-');
-            if (_.isUndefined(joinedGroups[newGroup])) {
-                castedGroups.push(group);
-                joinedGroups[newGroup] = true;
-            }
-            // pick the raw values into coordinate cell and then use aggregate function to do calculate
-            _.each(valueSeries, function (dSeries) {
-                if (_.isUndefined(newData[newGroup])) {
-                    newData[newGroup] = {};
-                }
-                if (_.isUndefined(newData[newGroup][dSeries.name])) {
-                    newData[newGroup][dSeries.name] = {};
-                }
-                if (_.isUndefined(newData[newGroup][dSeries.name][dSeries.aggType])) {
-                    newData[newGroup][dSeries.name][dSeries.aggType] = {};
-                }
-                // if (_.isUndefined(newData[newGroup][dSeries.name][dSeries.aggType][jk])) {
-                //     newData[newGroup][dSeries.name][dSeries.aggType][jk] = [];
-                // }
-                newData[newGroup][dSeries.name][dSeries.aggType][jk] = parseFloat(aggData.data[i][dSeries.index]);
-            });
-        }
-        //sort dimension
-        var getSort = function (sort) {
-            return function (a, b) {
-                var r = 0;
-                var j = 0;
-                for (; j < a.length; j++) {
-                    if (!sort[j]) {
-                        continue;
-                    }
-                    if (a[j] == b[j]) {
-                        r = 0;
-                        continue;
-                    }
-                    var params = dataService.toNumber(a[j], b[j]);
-                    r = (params[0] > params[1]) ? 1 : -1;
-                    if (sort[j] == 'desc') r = r * -1;
-                    break;
-                }
-                return r;
-            }
-        };
-        castedKeys.sort(getSort(keysSort));
-        castedGroups.sort(getSort(groupsSort));
-        //
-        var castedAliasSeriesName = new Array();
-        var aliasSeriesConfig = {};
-        var aliasData = new Array();
-
-        var valueSort = undefined;
-        var valueSortArr = [];
-
-        _.each(castedGroups, function (group) {
-            _.each(chartConfig.values, function (value) {
-                _.each(value.cols, function (series) {
-                    if (_.isUndefined(valueSort) && series.sort) {
-                        valueSort = series.sort;
-                        castSeriesData(series, group.join('-'), castedKeys, newData, function (castedData, keyIdx) {
-                            valueSortArr[keyIdx] = {v: castedData, i: keyIdx};
-                        });
-                    }
-                });
-            });
-        });
-
-        if (!_.isUndefined(valueSort)) {
-            valueSortArr.sort(function (a, b) {
-                if (a.v == b.v) return 0;
-                var p = dataService.toNumber(a.v, b.v)
-                if ((p[0] < p[1]) ^ valueSort == 'asc') {
-                    return 1;
-                }
-                else {
-                    return -1;
-                }
-            });
-            var tk = angular.copy(castedKeys);
-            _.each(valueSortArr, function (e, i) {
-                castedKeys[i] = tk[e.i];
-            });
-        }
-
-        _.each(castedGroups, function (group) {
-            _.each(chartConfig.values, function (value, vIdx) {
-                _.each(value.cols, function (series) {
-                    var seriesName = series.alias ? series.alias : series.col;
-                    var newSeriesName = seriesName;
-                    if (group && group.length > 0) {
-                        var a = [].concat(group);
-                        a.push(seriesName);
-                        newSeriesName = a.join('-');
-                        castedAliasSeriesName.push(a);
-                    } else {
-                        castedAliasSeriesName.push([seriesName]);
-                    }
-                    //castedAliasSeriesName.push(newSeriesName);
-                    aliasSeriesConfig[newSeriesName] = {
-                        type: value.series_type,
-                        valueAxisIndex: vIdx,
-                        formatter: series.formatter
-                    };
-                    castSeriesData(series, group.join('-'), castedKeys, newData, function (castedData, keyIdx) {
-                        if (!aliasData[castedAliasSeriesName.length - 1]) {
-                            aliasData[castedAliasSeriesName.length - 1] = new Array();
-                        }
-                        // Only format decimal
-                        aliasData[castedAliasSeriesName.length - 1][keyIdx] = castedData;
-                    });
-                });
-            });
-        });
-        for (var i = 0; i < castedKeys.length; i++) {
-            var s = 0;
-            var f = true;
-            _.each(castedGroups, function (group) {
-                _.each(chartConfig.values, function (value) {
-                    _.each(value.cols, function (series) {
-                        if (!f) {
-                            return;
-                        }
-                        if (series.f_top && series.f_top <= i) {
-                            f = false;
-                        }
-                        if (!filter(series, aliasData[s][i])) {
-                            f = false;
-                        }
-                        if (f) {
-                            aliasData[s][i] = dataFormat(aliasData[s][i]);
-                        }
-                        s++;
-                    });
-                });
-            });
-            if (!f) {
-                castedKeys.splice(i, 1);
-                _.each(aliasData, function (_series) {
-                    _series.splice(i, 1);
-                });
-                i--;
-            }
-        }
-        return {
-            keys: castedKeys,
-            series: castedAliasSeriesName,
-            data: aliasData,
-            seriesConfig: aliasSeriesConfig
-        };
-    };
-
-    var getDrillConfig = function (datasetId, chartConfig) {
-        var deferred = $q.defer();
-        getDatasetList().then(function (dsList) {
-                var drillConfig = {};
-                var dataset = _.find(dsList, function (e) {
-                    return e.id == datasetId;
-                });
-                if (!dataset.data.schema || dataset.data.schema.dimension.length == 0) {
-                    deferred.resolve(drillConfig);
-                    return deferred.promise;
-                }
-                var _f = function (array) {
-                    _.each(array, function (c, i_array) {
-                        var level;
-                        var i_level;
-                        _.find(dataset.data.schema.dimension, function (_e) {
-                            if (_e.type == 'level') {
-                                return _.find(_e.columns, function (_c, _i) {
-                                    if (_c.id == c.id) {
-                                        level = _e;
-                                        i_level = _i;
-                                        return true;
-                                    }
-                                });
-                            }
-                        });
-                        if (!level) {
-                            return;
-                        }
-                        var prevIsInLevel = false;
-                        if (i_array > 0 && i_level > 0) {
-                            prevIsInLevel = array[i_array - 1].id == level.columns[i_level - 1].id;
-                        }
-                        var prevDrilled = i_array > 0 && array[i_array - 1].values.length == 1 && array[i_array - 1].type == '=';
-                        var nextIsInLevel = false;
-                        if (i_array < array.length - 1 && i_level < level.columns.length - 1) {
-                            nextIsInLevel = array[i_array + 1].id == level.columns[i_level + 1].id;
-                        }
-                        var isLastLevel = i_level == level.columns.length - 1;
-                        var drillDownExistIdx = 0;
-                        var drillDownExist = _.find(array, function (e, i) {
-                            if (i_level < level.columns.length - 1 && level.columns[i_level + 1].id == e.id) {
-                                drillDownExistIdx = i;
-                                return true;
-                            }
-                        });
-                        //if next level exist in array,the level must be the next of current
-                        var drillDown = drillDownExist ? drillDownExistIdx == i_array + 1 : true;
-                        var up = i_level > 0 && i_array > 0 && prevIsInLevel && (i_array == array.length - 1 || !nextIsInLevel) && prevDrilled;
-                        var down = (nextIsInLevel || !isLastLevel) && drillDown && (!prevIsInLevel || (array[i_array - 1].type == '=' && array[i_array - 1].values.length == 1));
-                        drillConfig[c.id] = {
-                            up: up,
-                            down: down
-                        };
-                    });
-                };
-                _f(chartConfig.keys);
-                _f(chartConfig.groups);
-                deferred.resolve(drillConfig);
-            }
-        );
-        return deferred.promise;
-    };
-
-    var getRowElements = function (row, elmIdxs) {
-        var arr = new Array();
-        for (var j = 0; j < elmIdxs.length; j++) {
-            var elm = row[elmIdxs[j]];
-            arr.push(elm);
-        }
-        return arr;
-    };
-
-    var castSeriesData = function (series, group, castedKeys, newData, iterator) {
-        switch (series.type) {
-            case 'exp':
-                var runExp = compileExp(series.exp);
-                for (var i = 0; i < castedKeys.length; i++) {
-                    iterator(runExp(newData[group], castedKeys[i].join('-')), i);
-                }
-                break;
-            default:
-                for (var i = 0; i < castedKeys.length; i++) {
-                    iterator(newData[group][series.col][series.aggregate_type][castedKeys[i].join('-')], i)
-                }
-                break;
-        }
-    };
-
-    var filter = function (cfg, iv) {
-        switch (cfg.f_type) {
-            case '=':
-            case 'eq':
-                for (var i = 0; i < cfg.f_values.length; i++) {
-                    if (iv == cfg.f_values[i]) {
-                        return true;
-                    }
-                }
-                return cfg.f_values.length == 0;
-            case '≠':
-            case 'ne':
-                for (var i = 0; i < cfg.f_values.length; i++) {
-                    if (iv == cfg.f_values[i]) {
-                        return false;
-                    }
-                }
-                return true;
-            case '>':
-                var v = cfg.f_values[0];
-                var params = toNumber(iv, v);
-                if (!_.isUndefined(v) && params[0] <= params[1]) {
-                    return false;
-                }
-                return true;
-            case '<':
-                var v = cfg.f_values[0];
-                var params = toNumber(iv, v);
-                if (!_.isUndefined(v) && params[0] >= params[1]) {
-                    return false;
-                }
-                return true;
-            case '≥':
-                var v = cfg.f_values[0];
-                var params = toNumber(iv, v);
-                if (!_.isUndefined(v) && params[0] < params[1]) {
-                    return false;
-                }
-                return true;
-            case '≤':
-                var v = cfg.f_values[0];
-                var params = toNumber(iv, v);
-                if (!_.isUndefined(v) && params[0] > params[1]) {
-                    return false;
-                }
-                return true;
-            case '(a,b]':
-                var a = cfg.f_values[0];
-                var b = cfg.f_values[1];
-                var params = toNumber(iv, a, b);
-                if (!_.isUndefined(a) && !_.isUndefined(b) && (params[0] <= params[1] || params[0] > params[2])) {
-                    return false;
-                }
-                return true;
-            case '[a,b)':
-                var a = cfg.f_values[0];
-                var b = cfg.f_values[1];
-                var params = toNumber(iv, a, b);
-                if (!_.isUndefined(a) && !_.isUndefined(b) && (params[0] < params[1] || params[0] >= params[2])) {
-                    return false;
-                }
-                return true;
-            case '(a,b)':
-                var a = cfg.f_values[0];
-                var b = cfg.f_values[1];
-                var params = toNumber(iv, a, b);
-                if (!_.isUndefined(a) && !_.isUndefined(b) && (params[0] <= params[1] || params[0] >= params[2])) {
-                    return false;
-                }
-                return true;
-            case '[a,b]':
-                var a = cfg.f_values[0];
-                var b = cfg.f_values[1];
-                var params = toNumber(iv, a, b);
-                if (!_.isUndefined(a) && !_.isUndefined(b) && (params[0] < params[1] || params[0] > params[2])) {
-                    return false;
-                }
-                return true;
-            default:
-                return true;
-        }
-    };
-
-    var getDatasetList = function () {
-        var deferred = $q.defer();
-        if (datasetList) {
-            deferred.resolve(angular.copy(datasetList));
-        } else {
-            $http.get("dashboard/getDatasetList.do").success(function (data) {
-                deferred.resolve(data);
-            });
-        }
-        return deferred.promise;
-    };
-
-    var datasetList;
-
-    var getChartServices = function (chartConfig) {
-        var chart;
-        switch (chartConfig.chart_type) {
-            case 'line':
-                chart = chartLineService;
-                break;
-            case 'pie':
-                chart = chartPieService;
-                break;
-            case 'kpi':
-                chart = chartKpiService;
-                break;
-            case 'table':
-                chart = chartTableService;
-                break;
-            case 'funnel':
-                chart = chartFunnelService;
-                break;
-            case 'sankey':
-                chart = chartSankeyService;
-                break;
-            case 'radar':
-                chart = chartRadarService;
-                break;
-            case 'map':
-                chart = chartMapService;
-                break;
-            case 'scatter':
-                chart = chartScatterService;
-                break;
-            case 'gauge':
-                chart = chartGaugeService;
-                break;
-            case 'wordCloud':
-                chart = chartWordCloudService;
-                break;
-            case 'treeMap':
-                chart = chartTreeMapService;
-                break;
-            case 'areaMap':
-                chart = chartAreaMapService;
-                break;
-            case 'heatMapCalendar':
-                chart = chartHeatMapCalendarService;
-                break;
-            case 'heatMapTable':
-                chart = chartHeatMapTableService;
-                break;
-            case 'liquidFill':
-                chart = chartLiquidFillService;
-                break;
-            case 'contrast':
-                chart = chartContrastService;
-                break;
-            case 'chinaMap':
-                chart = chartChinaMapService;
-                break;
-            case 'chinaMapBmap':
-                chart = chartChinaMapBmapService;
-                break;
-            case 'relation':
-                chart = chartRelationService;
-                break;
-        }
-        return chart;
-    };
 
     function getCategoryList() {
         $http.get("dashboard/getCategoryList.do").success(function (response) {
@@ -1269,21 +760,4 @@ cBoard.controller('datavCtrl', function ($rootScope, $scope, $stateParams, $http
         });
     };
 
-    var compileExp = function (exp) {
-        var parseredExp = parserExp(exp);
-        return function (groupData, key) {
-            var _names = parseredExp.names;
-            return eval(parseredExp.evalExp);
-        };
-    };
-
-    var getBoardList = function () {
-        return $http.get("dashboard/getBoardList.do").success(function (response) {
-            $scope.boardList = response;
-        });
-    };
-    var boardChange = function () {
-        $scope.verify = {boardName: true};
-        $scope.$emit("boardChange");
-    };
 })

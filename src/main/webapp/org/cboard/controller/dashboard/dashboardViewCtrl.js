@@ -88,7 +88,7 @@ cBoard.controller('dashboardViewCtrl', function ($timeout, $rootScope, $scope, $
         widget.render = function (content, optionFilter, scope) {
             // 百度地图特殊处理
             var charType = injectFilter(widget.widget).data.config.chart_type;
-            if(charType == 'chinaMapBmap'){
+            if (charType == 'chinaMapBmap') {
                 chartService.render(content, injectFilter(widget.widget).data, optionFilter, scope, reload);
                 widget.loading = false;
             } else {
@@ -156,9 +156,9 @@ cBoard.controller('dashboardViewCtrl', function ($timeout, $rootScope, $scope, $
         paramToFilter();
     };
 
-    var initDsReloadStatus = function(reload) {
+    var initDsReloadStatus = function (reload) {
         var dsReloadStatus = {};
-        _.each($scope.board.layout.rows, function(row) {
+        _.each($scope.board.layout.rows, function (row) {
             _.each(row.widgets, function (widget) {
                 var dataSetId = widget.widget.data.datasetId;
                 if (dataSetId != undefined) {
@@ -182,7 +182,7 @@ cBoard.controller('dashboardViewCtrl', function ($timeout, $rootScope, $scope, $
                 // avoid repeat load offline dataset data
                 if (dataSetId != undefined && reload) {
                     var needReload = dsReloadStatus[dataSetId] ? true : false;
-                    dsReloadStatus[dataSetId] =  false;
+                    dsReloadStatus[dataSetId] = false;
                 }
                 buildRender(widget, needReload);
                 widget.loading = true;
@@ -278,18 +278,18 @@ cBoard.controller('dashboardViewCtrl', function ($timeout, $rootScope, $scope, $
 
     var injectFilter = function (widget) {
         var boardFilters = [];
-        if(!_.isUndefined($scope.widgetFilters[widget.id])){
-            _.each($scope.widgetFilters[widget.id], function(e){
+        if (!_.isUndefined($scope.widgetFilters[widget.id])) {
+            _.each($scope.widgetFilters[widget.id], function (e) {
                 boardFilters.push(e);
             });
         }
-        if(!_.isUndefined($scope.datasetFilters[widget.data.datasetId])){
-            _.each($scope.datasetFilters[widget.data.datasetId], function(e){
+        if (!_.isUndefined($scope.datasetFilters[widget.data.datasetId])) {
+            _.each($scope.datasetFilters[widget.data.datasetId], function (e) {
                 boardFilters.push(e);
             });
         }
-        if(!_.isUndefined($scope.relationFilters[widget.id])){
-            _.each($scope.relationFilters[widget.id], function(e){
+        if (!_.isUndefined($scope.relationFilters[widget.id])) {
+            _.each($scope.relationFilters[widget.id], function (e) {
                 boardFilters.push(e);
             });
         }
@@ -304,14 +304,14 @@ cBoard.controller('dashboardViewCtrl', function ($timeout, $rootScope, $scope, $
 
         //将点击的参数赋值到看板上的参数中
         //"{"targetId":3,"params":[{"targetField":"logo","value":"iphone"},{"targetField":"logo1","value":"上海市"}]}" targetField==param.name
-        if(location.href.split("?")[1]) {
+        if (location.href.split("?")[1]) {
             var urlParam = JSON.parse(decodeURI(location.href.split("?")[1]));
             _.each($scope.board.layout.rows, function (row) {
                 _.each(row.params, function (param) {
                     var p = _.find(urlParam.params, function (e) {
                         return e.targetField == param.name;
                     });
-                    if(p){
+                    if (p) {
                         param.values.push(p.value);
                     }
                 });
@@ -346,13 +346,13 @@ cBoard.controller('dashboardViewCtrl', function ($timeout, $rootScope, $scope, $
         });
         updateParamTitle();
         //将点击的参数赋值到relationFilters中
-        if(_.isUndefined($("#relations").val())){
+        if (_.isUndefined($("#relations").val())) {
             return;
         }
         var relations = JSON.parse($("#relations").val());
-        for(var i=0;i<relations.length;i++){
-            if(relations[i].targetId && relations[i].params && relations[i].params.length>0){
-                for(var j=0;j<relations[i].params.length;j++) {
+        for (var i = 0; i < relations.length; i++) {
+            if (relations[i].targetId && relations[i].params && relations[i].params.length > 0) {
+                for (var j = 0; j < relations[i].params.length; j++) {
                     var p = {
                         col: relations[i].params[j].targetField,
                         type: "=",
@@ -457,7 +457,7 @@ cBoard.controller('dashboardViewCtrl', function ($timeout, $rootScope, $scope, $
         widget.render = function (content, optionFilter, scope) {
             //百度地图特殊处理
             var charType = widget.widget.data.config.chart_type;
-            if(charType == 'chinaMapBmap'){
+            if (charType == 'chinaMapBmap') {
                 chartService.render(content, widget.widget.data, optionFilter, scope, true);
                 widget.loading = false;
             } else {
@@ -502,12 +502,12 @@ cBoard.controller('dashboardViewCtrl', function ($timeout, $rootScope, $scope, $
         });
     };
 
-    $scope.editBoard = function() {
+    $scope.editBoard = function () {
         $state.go('config.board', {boardId: $stateParams.id});
     };
 
     $scope.deleteBoardParam = function (index) {
-        $scope.boardParams.splice(index,1);
+        $scope.boardParams.splice(index, 1);
         $http.post("dashboard/saveBoardParam.do", {
             boardId: $stateParams.id,
             config: angular.toJson($scope.boardParams)
@@ -528,6 +528,11 @@ cBoard.controller('dashboardViewCtrl', function ($timeout, $rootScope, $scope, $
         }
         $scope.applyParamFilter();
     };
+
+    $scope.toDatavView = function (param) {
+        var winInfo = "toolbar=no,menubar=no,status=yes,scrollbars=no,resizable=no,titlebar=no,location=no,width=" + (window.screen.availWidth - 10) + ",height=" + (window.screen.availHeight - 30) + ",top=0,left=0,fullscreen=no";
+        window.open('render.html#?id=' + $stateParams.id, '', winInfo)
+    }
 
     var updateParamTitle = function () {
         _.each($scope.board.layout.rows, function (row) {

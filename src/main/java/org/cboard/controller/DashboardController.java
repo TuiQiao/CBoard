@@ -6,7 +6,7 @@ import com.google.common.base.Functions;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.hash.Hashing;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.io.IOUtils;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.cboard.dao.*;
 import org.cboard.dataprovider.DataProviderManager;
@@ -18,27 +18,23 @@ import org.cboard.pojo.*;
 import org.cboard.services.*;
 import org.cboard.services.job.JobService;
 import org.cboard.services.persist.excel.XlsProcessService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.UUID;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+import java.text.SimpleDateFormat;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -433,5 +429,40 @@ public class DashboardController extends BaseController {
         response.setStatus(500);
         LOG.error("Gloal exception Handler", ex);
         return new ServiceStatus(ServiceStatus.Status.Fail, ex.getMessage());
+    }
+
+    @RequestMapping(value = "/uploadImage")
+    public String uploadImage(@RequestParam("file") MultipartFile file, HttpServletRequest request) {
+        String imgPath = imgPath(request);
+        String fileName = file.getOriginalFilename();
+        String tempFile = tempDir(imgPath) + fileName;
+        FileOutputStream fos = null;
+        try {
+            fos = new FileOutputStream(tempFile);
+            fos.write(file.getBytes());
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            IOUtils.closeQuietly(fos);
+        }
+        return tempFile.split(imgPath)[1];
+    }
+
+    private String imgPath(HttpServletRequest request) {
+        String templateDir = request.getSession().getServletContext().getRealPath("/");
+        templateDir = templateDir.replace("\\","/");
+        templateDir = templateDir + "imgs/datav";
+        return templateDir;
+    }
+
+    private String tempDir(String templateDir) {
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMddHHmmss");
+        String timestamp = sdf.format(new Date());
+        templateDir = templateDir + "/upload/" + timestamp + "/";
+        File file = new File(templateDir);
+        if (!file.exists()) {
+            file.mkdirs();
+        }
+        return templateDir;
     }
 }

@@ -15,6 +15,7 @@
                             <!--<span class="newFreeLayout" ng-click="newFreeLayout()">New free layout</span>-->
                             <span class="newGridLayout" ng-click="newGridLayout()">{{'CONFIG.DASHBOARD.NEW_GRID_LAYOUT'|translate}}</span>
                             <span class="newGridLayout" ng-click="newTimelineLayout()">{{'CONFIG.DASHBOARD.NEW_TIMELINE_LAYOUT'|translate}}</span>
+                            <span class="newGridLayout" ng-click="newDatavLayout()">{{'CONFIG.DASHBOARD.NEW_DATAV_LAYOUT'|translate}}</span>
                         </div>
                     </div>
                 </div>
@@ -74,6 +75,9 @@
                             <ng-switch on="curBoard.layout.type">
                                 <div ng-switch-when="timeline">
                                     <div ng-include="'org/cboard/view/config/board/timeline/timeline.html'"></div>
+                                </div>
+                                <div ng-switch-when="datav">
+                                    <div ng-include="'org/cboard/view/config/board/datav/view.html'"></div>
                                 </div>
                                 <div ng-switch-default>
                                     <div ng-include="'org/cboard/view/config/board/grid/grid.html'"></div>

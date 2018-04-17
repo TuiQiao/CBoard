@@ -2,8 +2,14 @@
  * Created by sileiH on 2016/8/2.
  */
 'use strict';
-cBoard.controller('datavCtrl', function ($rootScope, $scope, $stateParams, $http, dataService, updateService, $q, $state, chartService) {
+cBoard.controller('datavCtrl', function ($rootScope, $scope, $stateParams, $http, $state, chartService, $q) {
+    //初始化样式
     $("body").addClass("sidebar-collapse")
+    var window_height = $(window).height();
+    var header = $(".main-header").height();
+    var footer = $(".main-footer").height();
+    $("#app").css('height', window_height - header - footer + "px");
+
     var dataVConf = initDataVConf();
     var dataVChartDataJSON = {};
     //数据视图图表配置
@@ -574,119 +580,10 @@ cBoard.controller('datavCtrl', function ($rootScope, $scope, $stateParams, $http
         };
     }
 
-    //初始化数据视图图表样式配置
-    function initDataVChartCSS() {
-        return {
-            labelFontSize: '',
-            labelFontWeight: '',
-            labelColor: '#FFFFFF',
-            labelBgColor: '',
-            labelPadding: '',
-            labelFormat: '',
-            labelAlign: '',
-            textFontSize: '',
-            textFontWeight: '',
-            textColor: '#FFFFFF',
-            textBgColor: '',
-            textPadding: '',
-            textFormat: '',
-            textAlign: '',
-            rowBorderWidth: '',
-            rowBorderColor: '',
-            oddRowBgColor: '',
-            evenRowBgColor: '',
-            colBorderWidth: '',
-            colBorderColor: '',
-            headFontSize: '',
-            headColor: '#FFFFFF',
-            headFontWeight: '',
-            headBgColor: ''
-        };
-    }
-
     //绘制画布大小
     function dragDataVDrag(width, height) {
         vm._data.dragWidth = width;
         vm._data.dragHeight = height;
-    }
-
-    var getDimensionConfig = function (array) {
-        var result = [];
-        if (array) {
-            _.each(array, function (e) {
-                if (_.isUndefined(e.group)) {
-                    result.push({columnName: e.col, filterType: e.type, values: e.values, id: e.id});
-                } else {
-                    _.each(e.filters, function (f) {
-                        result.push({columnName: f.col, filterType: f.type, values: f.values});
-                    });
-                }
-            });
-        }
-        return result;
-    };
-
-    var getDataSeries = function (chartConfig) {
-        var result = [];
-        _.each(chartConfig.values, function (v) {
-            _.each(v.cols, function (c) {
-                var series = configToDataSeries(c);
-                _.each(series, function (s) {
-                    if (!_.find(result, function (e) {
-                            return JSON.stringify(e) == JSON.stringify(s);
-                        })) {
-                        result.push(s);
-                    }
-                });
-            });
-        });
-        return result;
-    };
-
-    var configToDataSeries = function (config) {
-        switch (config.type) {
-            case 'exp':
-                return getExpSeries(config.exp);
-                break;
-            default:
-                return [{
-                    name: config.col,
-                    aggregate: config.aggregate_type
-                }];
-                break;
-        }
-    };
-
-    var getExpSeries = function (exp) {
-        return parserExp(exp).aggs;
-    };
-
-    function parserExp(rawExp) {
-        var evalExp = rawExp;
-        var _temp = [];
-        var aggs = [];
-        evalExp = evalExp.trim().replace(/[\n|\r|\r\n]/g, '');
-
-        _.each(evalExp.match(/".*?"/g), function (qutaText) {
-            evalExp = evalExp.replace(qutaText, '_#' + _temp.length);
-            _temp.push(qutaText);
-        });
-
-        var names = []; // expression text in aggreagtion function, could be a columnName or script
-        _.each(evalExp.match(/(sum|avg|count|max|min|distinct)\("?.*?"?\)/g), function (aggUnit) {
-            var aggregate = aggUnit.substring(0, aggUnit.indexOf('('));
-            var name = aggUnit.substring(aggUnit.indexOf('(') + 1, aggUnit.indexOf(')'));
-            if (name.match("_#")) {
-                name = _temp[name.replace("_#", "")].replace(/\"/g, "");
-            }
-            evalExp = evalExp.replace(aggUnit, "groupData[_names[" + names.length + "]]['" + aggregate + "'][key]");
-            names.push(name);
-            aggs.push({
-                name: name,
-                aggregate: aggregate
-            });
-        });
-        return {evalExp: evalExp, aggs: aggs, names: names};
     }
 
     function getWidgetList() {
@@ -731,7 +628,19 @@ cBoard.controller('datavCtrl', function ($rootScope, $scope, $stateParams, $http
                         "id": widgetId
                     }
                 }).success(function (res) {
-                    loadWiget($("#" + domId + "_01"), res.data, null, null, false);
+                    getDatasetList().then(function (dsres) {
+                        var dataset = _.find(dsres, function (e) {
+                            return e.id == res.data.datasetId;
+                        });
+                        if (dataset.data.interval || dataset.data.interval > 0){
+                            loadWiget($("#" + domId + "_01"), res.data, null, null, false);
+                            setInterval(function () {
+                                loadWiget($("#" + domId + "_01"), res.data, null, null, false);
+                            },dataset.data.interval * 1000)
+                        }else{
+                            loadWiget($("#" + domId + "_01"), res.data, null, null, false);
+                        }
+                    })
                 })
             }
         },
@@ -760,4 +669,11 @@ cBoard.controller('datavCtrl', function ($rootScope, $scope, $stateParams, $http
         });
     };
 
+    var getDatasetList = function () {
+        var deferred = $q.defer();
+        $http.get("dashboard/getDatasetList.do").success(function (data) {
+            deferred.resolve(data);
+        });
+        return deferred.promise;
+    };
 })

@@ -2,7 +2,7 @@
  * Created by sileiH on 2016/8/2.
  */
 'use strict';
-cBoard.controller('datavCtrl', function ($rootScope, $scope, $stateParams, $http, $state, chartService, $q) {
+cBoard.controller('datavCtrl', function ($rootScope, $scope, $stateParams, $http, $state, chartService, $q, $interval) {
     //初始化样式
     $("body").addClass("sidebar-collapse")
     var window_height = $(window).height();
@@ -50,7 +50,7 @@ cBoard.controller('datavCtrl', function ($rootScope, $scope, $stateParams, $http
             //预览画布大小
             viewDragWidth: '',
             viewDragHeight: '',
-            //未知用处的属性
+            //图表数据
             dataVChartData: dataVChartData,
             categoryList: [],
             boardId: '',
@@ -79,8 +79,8 @@ cBoard.controller('datavCtrl', function ($rootScope, $scope, $stateParams, $http
                 var dragHeight = $('#datav-drag').parent().css('height');
                 dragHeight = Number(dragHeight.substr(0, dragHeight.length - 2));
                 //屏幕配置大小
-                var screenWidth = vm._data.dataVConf.screenWidth;
-                var screenHeight = vm._data.dataVConf.screenHeight;
+                var screenWidth = screen.width * vm._data.dataVConf.screenWidth / 100;
+                var screenHeight = screen.height * vm._data.dataVConf.screenHeight / 100;
                 //屏幕比例
                 var prop = (screenHeight / screenWidth).toFixed(4);
                 dragWidth = dragWidth.toFixed();
@@ -200,6 +200,10 @@ cBoard.controller('datavCtrl', function ($rootScope, $scope, $stateParams, $http
                     initDrag(domId);
                 } else {
                     var array = vm._data.viewDataCharts;
+                    dataVComponent.chartData.positionY *= screen.height / 100;
+                    dataVComponent.chartData.positionX *= screen.width / 100;
+                    dataVComponent.chartData.chartHeight *= screen.height / 100;
+                    dataVComponent.chartData.chartWidth *= screen.width / 100;
                     array.push(dataVComponent);
                     vm._data.viewDataCharts = array;
                 }
@@ -254,9 +258,9 @@ cBoard.controller('datavCtrl', function ($rootScope, $scope, $stateParams, $http
                             return;
                         }
                         vm._data.dataVConf = res.data.layout.dataVConf;
-                        //vm.screenSizeChange();
-                        vm._data.viewDragWidth = res.data.layout.dataVConf.screenWidth + "px";
-                        vm._data.viewDragHeight = res.data.layout.dataVConf.screenHeight + "px";
+                        vm.screenSizeChange();
+                        vm._data.viewDragWidth = res.data.layout.dataVConf.screenWidth * screen.width / 100 + "px";
+                        vm._data.viewDragHeight = res.data.layout.dataVConf.screenHeight * screen.height / 100 + "px";
                         var layout = res.data.layout;
                         for (var i = 0; i < layout.rows.length; i++) {
                             if (layout.rows[i].type == 'widget') {
@@ -553,8 +557,8 @@ cBoard.controller('datavCtrl', function ($rootScope, $scope, $stateParams, $http
     //初始化数据视图配置
     function initDataVConf() {
         return {
-            screenWidth: screen.width,
-            screenHeight: screen.height,
+            screenWidth: 100,
+            screenHeight: 100,
             viewName: '',
             fontColor: '#FFFFFF',
             background: 'canvas.png',
@@ -632,13 +636,14 @@ cBoard.controller('datavCtrl', function ($rootScope, $scope, $stateParams, $http
                         var dataset = _.find(dsres, function (e) {
                             return e.id == res.data.datasetId;
                         });
-                        if (dataset.data.interval || dataset.data.interval > 0){
-                            loadWiget($("#" + domId + "_01"), res.data, null, null, false);
-                            setInterval(function () {
-                                loadWiget($("#" + domId + "_01"), res.data, null, null, false);
-                            },dataset.data.interval * 1000)
-                        }else{
-                            loadWiget($("#" + domId + "_01"), res.data, null, null, false);
+                        loadWidget($("#" + domId + "_01"), res.data, null, null, false);
+                        if(vm._data.viewType){
+                            if (dataset.data.interval || dataset.data.interval > 0){
+                                //real time load task
+                                setInterval(function () {
+                                    loadWidget($("#" + domId + "_01"), res.data, null, null, false);
+                                },dataset.data.interval * 1000);
+                            }
                         }
                     })
                 })
@@ -650,7 +655,7 @@ cBoard.controller('datavCtrl', function ($rootScope, $scope, $stateParams, $http
         }
     })
 
-    var loadWiget = function (containerDom, widget, optionFilter, scope, reload, persist, relations) {
+    var loadWidget = function (containerDom, widget, optionFilter, scope, reload, persist, relations) {
         chartService.render(containerDom, widget, optionFilter, scope, reload, persist, relations);
     }
 
@@ -676,4 +681,5 @@ cBoard.controller('datavCtrl', function ($rootScope, $scope, $stateParams, $http
         });
         return deferred.promise;
     };
+
 })

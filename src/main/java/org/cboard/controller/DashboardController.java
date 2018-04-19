@@ -451,7 +451,7 @@ public class DashboardController extends BaseController {
     private String imgPath(HttpServletRequest request) {
         String templateDir = request.getSession().getServletContext().getRealPath("/");
         templateDir = templateDir.replace("\\","/");
-        templateDir = templateDir + "imgs/datav";
+        templateDir = templateDir + "imgs/interact";
         return templateDir;
     }
 

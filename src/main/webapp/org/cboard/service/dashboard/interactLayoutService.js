@@ -19,8 +19,8 @@ Date.prototype.format = function (format) {
     return format;
 };
 
-/*hexDataV数据可视化全局变量*/
-var hexDataV = {
+/*hexInteract数据可视化全局变量*/
+var hexInteract = {
     defaultTitle: '我是标题数据',
     defaultTitleColor: '#FFFFFF',
     defaultBgColor: 'none',
@@ -37,7 +37,7 @@ var hexDataV = {
  * @param xField
  * @returns {any[]}
  */
-hexDataV.xData = function (array, xField) {
+hexInteract.xData = function (array, xField) {
     if (!xField) {
         xField = 'x';
     }
@@ -61,7 +61,7 @@ hexDataV.xData = function (array, xField) {
  * @param yField
  * @returns {any[]}
  */
-hexDataV.yData = function (array, gField, yField) {
+hexInteract.yData = function (array, gField, yField) {
     if (!yField) {
         yField = 'y';
     }
@@ -86,15 +86,15 @@ hexDataV.yData = function (array, gField, yField) {
     return data;
 };
 
-/*hexDataV数据可视化组件信息*/
-hexDataV.component = {
-    'label': 'hex-datav-label', 'kpi': 'hex-datav-kpi', 'clock': 'hex-datav-clock',
-    'border': 'hex-datav-border', 'chart': 'hex-datav-chart', 'ornament': "hex-datav-ornament",
-    'rlabel':'hex-datav-rlabel', 'table': 'hex-datav-table'
+/*hexInteract数据可视化组件信息*/
+hexInteract.component = {
+    'label': 'hex-interact-label', 'kpi': 'hex-interact-kpi', 'clock': 'hex-interact-clock',
+    'border': 'hex-interact-border', 'chart': 'hex-interact-chart', 'ornament': "hex-interact-ornament",
+    'rlabel':'hex-interact-rlabel', 'table': 'hex-interact-table'
 };
 
-/*hexDataV数据可视化组件icon*/
-hexDataV.componentICON = {
+/*hexInteract数据可视化组件icon*/
+hexInteract.componentICON = {
     'bar': {icon: 'fa fa-bar-chart', title: '柱状图'}, 'line': {icon: 'fa fa-line-chart', title: '折线图'},
     'pie': {icon: 'fa fa-pie-chart', title: '饼图'}, 'label': {icon: 'fa fa-language', title: '标题'},
     'kpi': {icon: 'fa fa-credit-card', title: '标题'}, 'clock': {icon: 'fa fa-clock-o', title: '时钟'},
@@ -102,16 +102,16 @@ hexDataV.componentICON = {
 };
 
 //默认指标卡数据
-hexDataV.defaultKpiData = function () {
+hexInteract.defaultKpiData = function () {
     return {'label': '年度新增规模', 'value': '5000亿'};
 };
 
-hexDataV.defaultRLabelData = function(){
-    return {value:"HexDataV可视化产品，创造属于您的日常运营监控大屏！"};
+hexInteract.defaultRLabelData = function(){
+    return {value:"HexInteract可视化产品，创造属于您的日常运营监控大屏！"};
 }
 
 //默认指标卡样式
-hexDataV.defaultKpiStyle = function () {
+hexInteract.defaultKpiStyle = function () {
     return {
         labelFontSize: 14, labelFontWeight: 'normal', labelColor: '#03A2C9', labelBgColor: '#0b375a',
         textFontSize: 12, textFontWeight: 'normal', textColor: '#5CFFAC', textBgColor: '#0b375a'
@@ -119,19 +119,19 @@ hexDataV.defaultKpiStyle = function () {
 };
 
 //默认时钟样式
-hexDataV.defaultClockStyle = function () {
+hexInteract.defaultClockStyle = function () {
     return {
         labelFontSize: '12', labelColor: '#FFFFFF', labelPadding: '5',
-        textFontSize: '12', textFontWeight: 'normal', textColor: '#FFFFFF', textFormat: hexDataV.defaultDateFormat
+        textFontSize: '12', textFontWeight: 'normal', textColor: '#FFFFFF', textFormat: hexInteract.defaultDateFormat
     };
 };
 
-hexDataV.defaultTableData = function(){
+hexInteract.defaultTableData = function(){
     return "[{label:'支持两种数据格式', value:'这是第一种'}, {'key0':'这是第二种', 'key1':'value1', 'key2':'value2', 'key3':'value3'}]";
 };
 
 //默认表格样式
-hexDataV.defaultTableStyle = function () {
+hexInteract.defaultTableStyle = function () {
     return {
         labelFontSize: 12,
         labelFontWeight: 'normal',
@@ -155,11 +155,11 @@ hexDataV.defaultTableStyle = function () {
 };
 
 //获取边框组件样式
-hexDataV.getBorderStyle = function (basePath) {
+hexInteract.getBorderStyle = function (basePath) {
     var borderStyle = new Array();
     for (var i = 1; i <= 11; i++) {
         var key = '框' + i;
-        var value = (basePath ? basePath : '') + 'imgs/datav/border/' + (i < 10 ? '0' + i : i) + '.png';
+        var value = (basePath ? basePath : '') + 'imgs/interact/border/' + (i < 10 ? '0' + i : i) + '.png';
         value = 'url(' + value + ')';
         borderStyle.push({key: key, value: value})
     }
@@ -172,27 +172,27 @@ hexDataV.getBorderStyle = function (basePath) {
  * @param basePath
  * @returns {any[]}
  */
-hexDataV.getOrnamentStyle = function (basePath) {
+hexInteract.getOrnamentStyle = function (basePath) {
     var ornamentStyle = new Array();
     for (var i = 1; i <= 10; i++) {
         var gif = 'gif' + i;
-        var value = (basePath ? basePath : '') + 'imgs/datav/ornament/' + gif + '.gif';
+        var value = (basePath ? basePath : '') + 'imgs/interact/ornament/' + gif + '.gif';
         ornamentStyle.push({key: gif, value: value});
     }
     return ornamentStyle;
 };
 
 /**
- * hexDataV数据可视化的图表文本对齐方式
+ * hexInteract数据可视化的图表文本对齐方式
  *
  * @returns {*[]}
  */
-hexDataV.textAlign = function () {
+hexInteract.textAlign = function () {
     return [{text: '居左', value: 'left'}, {text: '居中', value: 'center'}, {text: '居右', value: 'right'}];
 };
 
 //设置字体的粗细
-hexDataV.getFontWeight = function () {
+hexInteract.getFontWeight = function () {
     var fontWeight = new Array();
     fontWeight.push({key: 'normal', value: 'normal'});
     fontWeight.push({key: 'bold', value: 'bold'});
@@ -206,16 +206,16 @@ hexDataV.getFontWeight = function () {
 };
 
 //创建组件
-Vue.component('hex-datav-clock', {
+Vue.component('hex-interact-clock', {
     props: {
         chartdata: Object
     },
-    template: '<div class="datav-clock">' +
+    template: '<div class="interact-clock">' +
     '               <table cellpadding="0" cellspacing="0" style="width: 100%;height: 100%;">' +
     '                   <tr>' +
     '                       <td>' +
-    '                           <i class="fa fa-clock-o" aria-hidden="true" v-bind:style=" {color:chartdata.dataVConfChartCSS.labelColor,fontSize:chartdata.dataVConfChartCSS.labelFontSize + \'px\',paddingRight:chartdata.dataVConfChartCSS.labelPadding + \'px\'} "></i>' +
-    '                           <label v-bind:style=" {color:chartdata.dataVConfChartCSS.textColor,fontSize:chartdata.dataVConfChartCSS.textFontSize + \'px\',fontWeight:chartdata.dataVConfChartCSS.textFontWeight} ">{{currentDate}}</label>' +
+    '                           <i class="fa fa-clock-o" aria-hidden="true" v-bind:style=" {color:chartdata.interactConfChartCSS.labelColor,fontSize:chartdata.interactConfChartCSS.labelFontSize + \'px\',paddingRight:chartdata.interactConfChartCSS.labelPadding + \'px\'} "></i>' +
+    '                           <label v-bind:style=" {color:chartdata.interactConfChartCSS.textColor,fontSize:chartdata.interactConfChartCSS.textFontSize + \'px\',fontWeight:chartdata.interactConfChartCSS.textFontWeight} ">{{currentDate}}</label>' +
     '                       </td>' +
     '                   </tr>' +
     '               </table>' +
@@ -226,40 +226,40 @@ Vue.component('hex-datav-clock', {
     methods: {
         init: function () {
             //日期格式化样式
-            this.currentDate = new Date().format(this.chartdata.dataVConfChartCSS.textFormat);
+            this.currentDate = new Date().format(this.chartdata.interactConfChartCSS.textFormat);
             var _this = this;
             setInterval(function () {
-                _this.currentDate = new Date().format(_this.chartdata.dataVConfChartCSS.textFormat);
+                _this.currentDate = new Date().format(_this.chartdata.interactConfChartCSS.textFormat);
             }, 1000);
         }
     },
     mounted: function () {
         this.init();
     },
-    watch: {'chartdata.dataVConfChartCSS.textFormat': 'init'}
+    watch: {'chartdata.interactConfChartCSS.textFormat': 'init'}
 })
 
 /*文本标题*/
-Vue.component('hex-datav-label', {
+Vue.component('hex-interact-label', {
     props: {
         chartdata: Object
     },
-    template: '<div class="datav-label">' +
+    template: '<div class="interact-label">' +
     '<table cellspacing="0" cellpadding="0">' +
-    '<tr><td class="datav-label-label" v-bind:style=" {color:chartdata.dataVConfChartCSS.titleColor,background:chartdata.dataVConfChartCSS.bgColor,fontSize:chartdata.dataVConfChartCSS.titleFontSize + \'px\',fontWeight:chartdata.dataVConfChartCSS.titleFontWeight} ">{{chartdata.dataVConfChartCSS.chartTitle}}</td></tr>' +
+    '<tr><td class="interact-label-label" v-bind:style=" {color:chartdata.interactConfChartCSS.titleColor,background:chartdata.interactConfChartCSS.bgColor,fontSize:chartdata.interactConfChartCSS.titleFontSize + \'px\',fontWeight:chartdata.interactConfChartCSS.titleFontWeight} ">{{chartdata.interactConfChartCSS.chartTitle}}</td></tr>' +
     '</table>' +
     '</div>'
 });
 
 /*指标卡*/
-Vue.component('hex-datav-kpi', {
+Vue.component('hex-interact-kpi', {
     props: {
         chartdata: Object
     },
-    template: '<div class="datav-kpi">' +
+    template: '<div class="interact-kpi">' +
     '<table cellspacing="0" cellpadding="0">' +
-    '<tr><td class="datav-kpi-label" v-bind:style=" {color:chartdata.dataVConfChartCSS.labelColor,background:chartdata.dataVConfChartCSS.labelBgColor,fontSize:chartdata.dataVConfChartCSS.labelFontSize + \'px\',fontWeight:chartdata.dataVConfChartCSS.labelFontWeight} ">{{label}}</td></tr>' +
-    '<tr><td class="datav-kpi-number" v-bind:style=" {color:chartdata.dataVConfChartCSS.textColor,background:chartdata.dataVConfChartCSS.textBgColor,fontSize:chartdata.dataVConfChartCSS.textFontSize + \'px\',fontWeight:chartdata.dataVConfChartCSS.textFontWeight} ">{{value}}</td></tr>' +
+    '<tr><td class="interact-kpi-label" v-bind:style=" {color:chartdata.interactConfChartCSS.labelColor,background:chartdata.interactConfChartCSS.labelBgColor,fontSize:chartdata.interactConfChartCSS.labelFontSize + \'px\',fontWeight:chartdata.interactConfChartCSS.labelFontWeight} ">{{label}}</td></tr>' +
+    '<tr><td class="interact-kpi-number" v-bind:style=" {color:chartdata.interactConfChartCSS.textColor,background:chartdata.interactConfChartCSS.textBgColor,fontSize:chartdata.interactConfChartCSS.textFontSize + \'px\',fontWeight:chartdata.interactConfChartCSS.textFontWeight} ">{{value}}</td></tr>' +
     '</table>' +
     '</div>',
     data: function () {
@@ -279,8 +279,8 @@ Vue.component('hex-datav-kpi', {
     watch: {'chartdata.jsonData': 'init'}
 });
 
-/*DataV组件图标*/
-Vue.component('hex-datav-icon', {
+/*Interact组件图标*/
+Vue.component('hex-interact-icon', {
     props: {
         iconCls: String,
         titleName: String
@@ -291,35 +291,35 @@ Vue.component('hex-datav-icon', {
 });
 
 /*边框组件*/
-Vue.component('hex-datav-border', {
+Vue.component('hex-interact-border', {
     props: {
         chartdata: Object
     },
-    template: '<div class="datav-border" v-bind:style=" {borderImageSource:chartdata.chartStyle,boxSizing:\'border-box\'}"></div>',
+    template: '<div class="interact-border" v-bind:style=" {borderImageSource:chartdata.chartStyle,boxSizing:\'border-box\'}"></div>',
     data: function () {
         return this.chartdata;
     }
 });
 
 /*动态边框*/
-Vue.component('hex-datav-ornament', {
+Vue.component('hex-interact-ornament', {
     props: {
         chartdata: Object
     },
-    template: '<div class="datav-ornament" v-bind:style=" {backgroundImage:\'url(\' + chartdata.chartStyle + \')\'} "></div>'
+    template: '<div class="interact-ornament" v-bind:style=" {backgroundImage:\'url(\' + chartdata.chartStyle + \')\'} "></div>'
 });
 
 /*分割线*/
-Vue.component('hex-datav-splitline', {
+Vue.component('hex-interact-splitline', {
     template: '<div style="width: 100%;height: 1px;border-bottom: 1px #c0c0c0 solid;margin-bottom: 5px;"></div>'
 });
 
 /*滚动文本(跑马灯)*/
-Vue.component('hex-datav-rlabel', {
+Vue.component('hex-interact-rlabel', {
     props: {
         chartdata: Object
     },
-    template: '<div class="datav-rlabel" v-bind:style=" {color:chartdata.dataVConfChartCSS.titleColor,fontSize:chartdata.dataVConfChartCSS.titleFontSize + \'px\',fontWeight:chartdata.dataVConfChartCSS.titleFontWeight} ">' +
+    template: '<div class="interact-rlabel" v-bind:style=" {color:chartdata.interactConfChartCSS.titleColor,fontSize:chartdata.interactConfChartCSS.titleFontSize + \'px\',fontWeight:chartdata.interactConfChartCSS.titleFontWeight} ">' +
     '<marquee scrollAmount=2>{{value}}</marquee>' +
     '</div>',
     data: function () {
@@ -338,23 +338,23 @@ Vue.component('hex-datav-rlabel', {
 });
 
 /*表格组件*/
-Vue.component('hex-datav-table', {
+Vue.component('hex-interact-table', {
     props:{
         chartdata:Object
     },
-    template:'<div class="datav-table" v-bind:style=" {borderColor:chartdata.dataVConfChartCSS.borderColor,borderWidth:chartdata.dataVConfChartCSS.borderWidth + \'px\'} ">' +
+    template:'<div class="interact-table" v-bind:style=" {borderColor:chartdata.interactConfChartCSS.borderColor,borderWidth:chartdata.interactConfChartCSS.borderWidth + \'px\'} ">' +
     '<table cellspacing="0" cellpadding="0">' +
     '<tr>' +
-    '<td v-bind:style=" {textAlign:chartdata.dataVConfChartCSS.headAlign,color:chartdata.dataVConfChartCSS.headColor,fontSize:chartdata.dataVConfChartCSS.headFontSize + \'px\',fontWeight:chartdata.dataVConfChartCSS.headFontWeight,background:handleBgColor(chartdata.dataVConfChartCSS.headBgColor),borderRightStyle:\'solid\',borderRightColor:chartdata.dataVConfChartCSS.colBorderColor,borderRightWidth:chartdata.dataVConfChartCSS.colBorderWidth + \'px\',width:chartdata.dataVConfChartCSS.widthPercentage?chartdata.dataVConfChartCSS.widthPercentage + \'%\':\'\'} ">{{data.head.label}}</td>' +
-    '<td v-bind:style=" {textAlign:chartdata.dataVConfChartCSS.headAlign,color:chartdata.dataVConfChartCSS.headColor,fontSize:chartdata.dataVConfChartCSS.headFontSize + \'px\',fontWeight:chartdata.dataVConfChartCSS.headFontWeight,background:handleBgColor(chartdata.dataVConfChartCSS.headBgColor)} ">{{data.head.value}}</td>' +
+    '<td v-bind:style=" {textAlign:chartdata.interactConfChartCSS.headAlign,color:chartdata.interactConfChartCSS.headColor,fontSize:chartdata.interactConfChartCSS.headFontSize + \'px\',fontWeight:chartdata.interactConfChartCSS.headFontWeight,background:handleBgColor(chartdata.interactConfChartCSS.headBgColor),borderRightStyle:\'solid\',borderRightColor:chartdata.interactConfChartCSS.colBorderColor,borderRightWidth:chartdata.interactConfChartCSS.colBorderWidth + \'px\',width:chartdata.interactConfChartCSS.widthPercentage?chartdata.interactConfChartCSS.widthPercentage + \'%\':\'\'} ">{{data.head.label}}</td>' +
+    '<td v-bind:style=" {textAlign:chartdata.interactConfChartCSS.headAlign,color:chartdata.interactConfChartCSS.headColor,fontSize:chartdata.interactConfChartCSS.headFontSize + \'px\',fontWeight:chartdata.interactConfChartCSS.headFontWeight,background:handleBgColor(chartdata.interactConfChartCSS.headBgColor)} ">{{data.head.value}}</td>' +
     '</tr>' +
     '<tr v-for="(key, index) in _.keys(data.body)" ' +
-    'v-bind:style=" {background:handleBgColor((index+1)%2==0?chartdata.dataVConfChartCSS.evenRowBgColor:chartdata.dataVConfChartCSS.oddRowBgColor),borderBottomStyle:\'solid\',borderBottomColor:chartdata.dataVConfChartCSS.rowBorderColor,borderBottomWidth:(index+1<_.keys(data.body).length?(chartdata.dataVConfChartCSS.rowBorderWidth  + \'px\'):\'0px\')} ">' +
-    '<td class="datav-table-body" v-bind:style=" {textAlign:chartdata.dataVConfChartCSS.labelAlign,borderRightStyle:\'solid\',borderRightColor:chartdata.dataVConfChartCSS.colBorderColor,borderRightWidth:chartdata.dataVConfChartCSS.colBorderWidth + \'px\'} ">' +
-    '<label v-bind:style=" {color:chartdata.dataVConfChartCSS.labelColor,fontSize:chartdata.dataVConfChartCSS.labelFontSize + \'px\',fontWeight:chartdata.dataVConfChartCSS.labelFontWeight} ">{{key}}</label>' +
+    'v-bind:style=" {background:handleBgColor((index+1)%2==0?chartdata.interactConfChartCSS.evenRowBgColor:chartdata.interactConfChartCSS.oddRowBgColor),borderBottomStyle:\'solid\',borderBottomColor:chartdata.interactConfChartCSS.rowBorderColor,borderBottomWidth:(index+1<_.keys(data.body).length?(chartdata.interactConfChartCSS.rowBorderWidth  + \'px\'):\'0px\')} ">' +
+    '<td class="interact-table-body" v-bind:style=" {textAlign:chartdata.interactConfChartCSS.labelAlign,borderRightStyle:\'solid\',borderRightColor:chartdata.interactConfChartCSS.colBorderColor,borderRightWidth:chartdata.interactConfChartCSS.colBorderWidth + \'px\'} ">' +
+    '<label v-bind:style=" {color:chartdata.interactConfChartCSS.labelColor,fontSize:chartdata.interactConfChartCSS.labelFontSize + \'px\',fontWeight:chartdata.interactConfChartCSS.labelFontWeight} ">{{key}}</label>' +
     '</td>' +
-    '<td class="datav-table-body" v-bind:style=" {textAlign:chartdata.dataVConfChartCSS.textAlign} ">' +
-    '<label v-bind:style=" {color:chartdata.dataVConfChartCSS.textColor,fontSize:chartdata.dataVConfChartCSS.textFontSize + \'px\',fontWeight:chartdata.dataVConfChartCSS.textFontWeight} ">{{data.body[key]}}</label>' +
+    '<td class="interact-table-body" v-bind:style=" {textAlign:chartdata.interactConfChartCSS.textAlign} ">' +
+    '<label v-bind:style=" {color:chartdata.interactConfChartCSS.textColor,fontSize:chartdata.interactConfChartCSS.textFontSize + \'px\',fontWeight:chartdata.interactConfChartCSS.textFontWeight} ">{{data.body[key]}}</label>' +
     '</td>' +
     '</tr>' +
     '</table>' +

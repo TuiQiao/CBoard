@@ -277,7 +277,7 @@
       "TITLE": "Title",
       "NEW_GRID_LAYOUT": "New grid layout",
       "NEW_TIMELINE_LAYOUT": "New timeline layout",
-      "NEW_DATAV_LAYOUT":"New datav layout",
+      "NEW_INTERACT_LAYOUT":"New interact layout",
       "VALUE_FORMMAT_ALERT": "Only date type need format",
       "AUTOMATIC_REFRESH_SWITCH": "Automatic refresh switch",
       "REMOVE_EMPTY_LINES": "Remove empty lines",

@@ -151,6 +151,13 @@ cBoard.controller('cockpitLayoutCtrl', function ($rootScope, $scope, $stateParam
                     //表格组件默认值
                     cockpitChartData.jsonData.value = hexCockpit.defaultTableData();
                     cockpitChartData.cockpitConfChartCSS = hexCockpit.defaultTableStyle();
+                } else if(dom.type == 'chart') {
+                    if(dom.border){
+                        cockpitChartData.border = dom.border;
+                    }else{
+                        cockpitChartData.border = vm._data.borderStyle[0].value;
+                    }
+
                 }
                 if (!jQuery.isEmptyObject(hexCockpit.componentDom.cockpitConfChartCSS)) {
                     cockpitChartData.cockpitConfChartCSS = hexCockpit.componentDom.cockpitConfChartCSS;
@@ -275,7 +282,8 @@ cBoard.controller('cockpitLayoutCtrl', function ($rootScope, $scope, $stateParam
                                         bgColor: widgets[j].bgColor,
                                         positionX: widgets[j].positionX,
                                         positionY: widgets[j].positionY,
-                                        domId: widgets[j].domId
+                                        domId: widgets[j].domId,
+                                        border: widgets[j].border
                                     };
                                     hexCockpit.componentDom = componentDom;
                                     vm.drop();
@@ -354,7 +362,8 @@ cBoard.controller('cockpitLayoutCtrl', function ($rootScope, $scope, $stateParam
                     bgColor: hexCockpitInfo.cockpitConfChartDataList[i].bgColor,
                     positionX: hexCockpitInfo.cockpitConfChartDataList[i].positionX,
                     positionY: hexCockpitInfo.cockpitConfChartDataList[i].positionY,
-                    domId: hexCockpitInfo.cockpitConfChartDataList[i].domId
+                    domId: hexCockpitInfo.cockpitConfChartDataList[i].domId,
+                    border: hexCockpitInfo.cockpitConfChartDataList[i].border
                 })
             } else {
                 json.layout.rows[1].others.push({
@@ -622,7 +631,7 @@ cBoard.controller('cockpitLayoutCtrl', function ($rootScope, $scope, $stateParam
         props: {
             chartdata: Object
         },
-        template: '<div class="cockpit-line" v-bind:style=" {background:chartdata.bgColor} "><div :id="chartdata.domId + \'_01\'" style="width: 100%;height: 100%;"></div></div>',
+        template: '<div class="cockpit-border" v-bind:style=" {borderImageSource:chartdata.border,boxSizing:\'border-box\'}"><div class="cockpit-line" v-bind:style=" {background:chartdata.bgColor} "><div :id="chartdata.domId + \'_01\'" style="width: 100%;height: 100%;"></div></div></div>',
         methods: {
             init: function () {
                 var domId = this.chartdata.domId;

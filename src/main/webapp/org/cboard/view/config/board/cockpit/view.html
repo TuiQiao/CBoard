@@ -167,6 +167,13 @@
                                     <el-form-item label="背景颜色">
                                         <input v-model="cockpitChartData.bgColor" type="color"/>
                                     </el-form-item>
+                                    <el-form-item label="框样式">
+                                        <el-select v-model="cockpitChartData.border" placeholder="请选择">
+                                            <el-option v-for="data in borderStyle"
+                                                       :key="data.key" :label="data.key" :value="data.value">
+                                            </el-option>
+                                        </el-select>
+                                    </el-form-item>
                                 </el-form>
                             </el-collapse-item>
                             <!--指标卡组件设置-->

@@ -151,7 +151,7 @@ cBoard.controller('boardCtrl',
 
         $scope.newInteractLayout = function () {
             $state.go("config.interact")
-        }
+        };
 
         $scope.newTimelineLayout = function () {
             $rootScope.freeLayout = false;
@@ -460,9 +460,9 @@ cBoard.controller('boardCtrl',
             if (!checkTreeNode("edit")) return;
             $scope.editBoard(getSelectedBoard());
             var selectedNode = jstree_GetSelectedNodes(treeID)[0];
-            if($scope.curBoard.layout.type == 'interact'){
+            if ($scope.curBoard.layout.type == 'interact') {
                 $state.go('config.interact', {boardId: selectedNode.id});
-            }else{
+            } else {
                 $state.go('config.board', {boardId: selectedNode.id}, {notify: false});
             }
         };

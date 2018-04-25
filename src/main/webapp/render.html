@@ -105,8 +105,8 @@
 </head>
 <body ng-app="cBoard" ng-controller="renderCtrl">
 <div ng-switch="board.layout.type">
-    <div ng-switch-when="datav">
-        <div ng-include="'org/cboard/view/dashboard/layout/datav.html'"></div>
+    <div ng-switch-when="interact">
+        <div ng-include="'org/cboard/view/dashboard/layout/interact.html'"></div>
     </div>
     <div ng-switch-default>
         <section class="content-header">
@@ -119,7 +119,7 @@
         <div id="inner-container" class="content" style="margin-top: 15px;">
             <div class="row" ng-repeat="row in board.layout.rows track by $index" ng-style="{height:row.height+'px'}">
                 <ng-switch on="row.type">
-                    <div ng-switch-when="datav">
+                    <div ng-switch-when="interact">
                     </div>
                     <div ng-switch-default>
                         <div ng-repeat="widget in row.widgets track by $index">
@@ -191,8 +191,8 @@
 <script src="org/cboard/ng-config.js"></script>
 <script src="org/cboard/controller/cboard/renderCtrl.js"></script>
 <script src="org/cboard/controller/config/folderTreeCtrl.js"></script>
-<script src="org/cboard/controller/config/datavCtrl.js"></script>
-<script src="org/cboard/service/dashboard/datavLayoutService.js"></script>
+<script src="org/cboard/controller/config/interactLayoutCtrl.js"></script>
+<script src="org/cboard/service/dashboard/interactLayoutService.js"></script>
 <script src="org/cboard/service/dashboard/dashboardService.js"></script>
 <script src="org/cboard/service/data/dataService.js"></script>
 <script src="org/cboard/service/util/ModalUtils.js"></script>

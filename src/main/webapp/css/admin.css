@@ -1,24 +1,24 @@
 /*
  * Create by xiaomingmiao on 2018/1/16
  */
-.datav-row{
+.interact-row{
     display: flex;
     flex-direction: row;
     flex-grow: 100;
 }
 
-.datav-col{
+.interact-col{
     display: flex;
     flex-direction: column;
     flex-grow: 100;
 }
 
-.datav-header{
+.interact-header{
     height: 48px;
     background-color: #2185d0;
 }
 
-.datav-header-title{
+.interact-header-title{
     color: #fff;
     font-size: 20px;
     margin-top: auto!important;
@@ -26,11 +26,11 @@
     margin-left: 6px;
 }
 
-.datav-header-title span{
+.interact-header-title span{
     color: #ddd;
 }
 
-.datav-header-func{
+.interact-header-func{
     width: 80px;
     flex-grow: 0!important;
     padding-top: 5px;
@@ -38,41 +38,41 @@
     padding-right: 10px;
 }
 
-.datav-header-func .icon{
+.interact-header-func .icon{
     text-align: center;
     color: #fff;
     font-size: 20px;
 }
 
-.datav-header-func .label{
+.interact-header-func .label{
     text-align: center;
     color: #fff;
     font-size: 12px!important;
 }
 
-.datav-canvas{
-    background:url(../imgs/datav/canvas.png) repeat;
+.interact-canvas{
+    background:url(../imgs/interact/canvas.png) repeat;
     margin: auto;
 }
 
-.datav-drag{
-    background:url(../imgs/datav/drag.png) repeat;
+.interact-drag{
+    background:url(../imgs/interact/drag.png) repeat;
 }
 
-.datav-component{
+.interact-component{
     flex-grow: 0!important;
     background-color: #fff;
     border-right: 1px solid #c0c0c0;
 }
 
-.datav-component-conf{
+.interact-component-conf{
     flex-grow: 0!important;
     background-color: #fff;
     border-left: 1px solid #c0c0c0;
     width: 275px;
 }
 
-.datav-component-conf .title{
+.interact-component-conf .title{
     font-size: 16px;
     background-color: #eee;
     color: #333;
@@ -81,11 +81,11 @@
     padding-bottom: 6px;
 }
 
-#datavComponentConf .el-tabs__header{
+#interactComponentConf .el-tabs__header{
     margin-bottom: 0px;
 }
 
-#datavComponentConf form{
+#interactComponentConf form{
     padding-right: 5px;
 }
 
@@ -98,33 +98,33 @@
     text-align: center;
 }
 
-.datav-block{
+.interact-block{
     position: absolute;
     width: 207px;
     height: 105px;
 }
 
-.datav-block:hover{
+.interact-block:hover{
     border: 1px solid #2185d0;
     background-color: rgba(33, 133, 208, 0.4)!important;
 }
 
-.datav-block-select{
+.interact-block-select{
     border: 1px solid #2185d0;
 }
 
-.datav-component-conf-tips{
+.interact-component-conf-tips{
     color: #999;
     line-height: 1;
     text-align: center;
     padding-top: 2px;
 }
 
-.datav-title{
+.interact-title{
     margin:auto!important;
     width: 470px;
     height: 70px;
-    background-image: url("../imgs/datav/title-footer.gif");
+    background-image: url("../imgs/interact/title-footer.gif");
     background-size: 100%;
     background-repeat: no-repeat;
     background-position: center center;
@@ -139,23 +139,23 @@
 }
 
 
-.datav-temp{
+.interact-temp{
     width: 225px;
     height: 105px;
 }
 
-/*.datav-col .el-submenu .el-menu,
-.datav-col .el-submenu .el-menu-item{
+/*.interact-col .el-submenu .el-menu,
+.interact-col .el-submenu .el-menu-item{
     height: 105px;
 }*/
 
-.datav-col .el-submenu .el-menu-item{
+.interact-col .el-submenu .el-menu-item{
     /*padding-left: 0px!important;*/
     padding-right: 0px!important;
 }
 
 
-.datav-view-close{
+.interact-view-close{
     color: #fff;
     height: 26px;
     position: absolute;
@@ -167,93 +167,93 @@
     top: 0;
 }
 
-.datav-view-close i:hover{
+.interact-view-close i:hover{
     color: #ccc;
     cursor: pointer;
 }
 
 /*柱状图组件样式*/
-.datav-bar{
+.interact-bar{
     height: 100%;
 }
 
 /*折线图组件样式*/
-.datav-line{
+.interact-line{
     height: 100%;
 }
 
 /*滚动文本样式*/
-.datav-rlabel{
+.interact-rlabel{
     height: 100%;
 }
 
 /*饼图组件样式*/
-.datav-pie{
+.interact-pie{
     height: 100%;
 }
 
 /*标题组件样式*/
-.datav-label{
+.interact-label{
     height: 100%;
     /*border: 1px #17286F solid;*/
 }
 
-.datav-label-label{
+.interact-label-label{
     text-align: center;
     font-size: 16px;
     color: #fff;
 }
 
 /*表格组件样式*/
-.datav-table{
+.interact-table{
     height: 100%;
 }
 
-.datav-table table{
+.interact-table table{
     border: 1px #57D2FE solid;
 }
 
-.datav-table-body label{
+.interact-table-body label{
     margin-left: 5px;
     margin-right: 5px;
 }
 
 
 /*时钟组件样式*/
-.datav-clock{
+.interact-clock{
     height: 100%;
     text-align: center;
 }
 
-.datav-clock,
-.datav-clock i{
+.interact-clock,
+.interact-clock i{
     font-size: 16px;
     color: #fff;
     padding-left: 5px;
 }
 
 /*指标卡组件样式*/
-.datav-kpi{
+.interact-kpi{
     border: 1px #2185d0 solid;
     height: 100%;
     background-color: #0b375a;
 }
 
-.datav-kpi table,
-.datav-label table,
-.datav-table table{
+.interact-kpi table,
+.interact-label table,
+.interact-table table{
     width: 100%;
     height: 100%;
 }
 
-.datav-kpi-label{
+.interact-kpi-label{
     text-align: left;
     font-size: 14px;
     color: #03A2C9;
     padding-left: 5px;
 }
 
-.datav-kpi-number{
+.interact-kpi-number{
     text-align: right;
     font-size: 12px;
     color: #5CFFAC;
@@ -261,7 +261,7 @@
 }
 
 /*边框组件样式*/
-.datav-border{
+.interact-border{
     height: 100%;
     border-style: solid;
     border-width: 14px;
@@ -272,7 +272,7 @@
     background: none;
 }
 
-.datav-ornament{
+.interact-ornament{
     width: 100%;
     height: 100%;
     background-size: 100%;
@@ -281,7 +281,7 @@
     opacity: 1;
 }
 
-div.func-btn:hover div.datav-col{
+div.func-btn:hover div.interact-col{
     color: #ccc;
     cursor: pointer;
 }
@@ -300,20 +300,20 @@ li.el-submenu ul.el-menu::selection{
     border: #0b1f3b!important;
 }*/
 
-.datav-no-data{
+.interact-no-data{
     width: 100%;
     text-align: center;
     margin-top: 20px;
     color: #999;
 }
 
-.datav-color-selector{
+.interact-color-selector{
     flex-grow: 0!important;
     width: 30px!important;
     padding-right: 5px;
 }
 
-.datav-component-conf label{
+.interact-component-conf label{
     font-size: 12px!important;
 }
 
@@ -328,7 +328,7 @@ li.el-submenu ul.el-menu::selection{
     overflow-y: auto;
 }
 
-.datav-upload{
+.interact-upload{
     width: 100%;
     height: 80px;
     border: 3px dashed silver;

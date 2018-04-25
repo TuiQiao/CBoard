@@ -92,11 +92,11 @@ angular.module('cBoard').config(['$stateProvider', function ($stateProvider) {
             templateUrl: 'org/cboard/view/admin/user.html',
             controller: 'userAdminCtrl'
         })
-        .state('config.datav', {
-            url: '/datav/{boardId}',
+        .state('config.interact', {
+            url: '/interact/{boardId}',
             params: {boardId: null},
-            templateUrl: 'org/cboard/view/config/board/datav/view.html',
-            controller: 'datavCtrl'
+            templateUrl: 'org/cboard/view/config/board/interact/view.html',
+            controller: 'interactLayoutCtrl'
         })
 }]);
 

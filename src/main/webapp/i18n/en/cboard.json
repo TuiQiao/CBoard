@@ -85,7 +85,7 @@
     "CONFIRM_PASSWORD": "Confirm Password"
   },
   "FOOTER": {
-    "COPYRIGHT": "Ctrip Payment Department",
+    "COPYRIGHT": "CBoard OpenSource Team",
     "VERSION": "Version"
   },
   "DASHBOARD": {
@@ -226,7 +226,8 @@
       "SCATTER_MAP":"Scatter Map",
       "CHINA_MAP":"China Map (Local)",
       "CHINA_MAP_BMAP":"China Map (Bmap)",
-      "RELATION": "Relation"
+      "RELATION": "Relation",
+      "WORLD_MAP": "World Map"
     },
     "DASHBOARD": {
       "CATEGORY": "Category",
@@ -235,7 +236,6 @@
       "NAME": "Name",
       "ADD_ROW": "Add Row",
       "ADD_COLUMN": "Add Column",
-      "EDIT_DATAV":"edit datav",
       "ROW": "Row",
       "HEIGHT": "Row Height(px)",
       "WIDTH": "Width",

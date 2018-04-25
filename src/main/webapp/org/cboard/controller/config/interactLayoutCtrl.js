@@ -4,7 +4,7 @@
 'use strict';
 cBoard.controller('interactLayoutCtrl', function ($rootScope, $scope, $stateParams, $http, $state, chartService, $q) {
     //初始化样式
-    $("body").addClass("sidebar-collapse")
+    $("body").addClass("sidebar-collapse");
     var window_height = $(window).height();
     var header = $(".main-header").height();
     var footer = $(".main-footer").height();
@@ -96,14 +96,14 @@ cBoard.controller('interactLayoutCtrl', function ($rootScope, $scope, $statePara
             //用于预览视图
             viewInteract: function () {
                 var callback = function () {
-                    var boardId = vm._data.boardId
+                    var boardId = vm._data.boardId;
                     if (!boardId) {
                         var href = window.location.href;
                         boardId = href.substr(href.lastIndexOf("/") + 1);
                     }
                     var winInfo = "toolbar=no,menubar=no,status=yes,scrollbars=no,resizable=no,titlebar=no,location=no,width=" + (window.screen.availWidth - 10) + ",height=" + (window.screen.availHeight - 30) + ",top=0,left=0,fullscreen=no";
                     window.open('render.html#?id=' + boardId, '', winInfo)
-                }
+                };
                 vm.saveInteractConf(callback);
             },
             //设置数据视图可移动
@@ -304,7 +304,7 @@ cBoard.controller('interactLayoutCtrl', function ($rootScope, $scope, $statePara
                 }
             }
         }
-    })
+    });
 
     //找不到如何使导航栏动画结束后再执行页面大小计算的方法，不得已做一个延时装置
     setTimeout(function () {
@@ -312,7 +312,7 @@ cBoard.controller('interactLayoutCtrl', function ($rootScope, $scope, $statePara
         vm.screenSizeChange();
         //加载监控视图配置
         vm.loadInteractConf();
-    }, 500)
+    }, 500);
 
     //加载图表列表
     getWidgetList();
@@ -339,11 +339,11 @@ cBoard.controller('interactLayoutCtrl', function ($rootScope, $scope, $statePara
         json.layout.rows.push({
             type: "widget",
             widgets: []
-        })
+        });
         json.layout.rows.push({
             type: "other",
             others: []
-        })
+        });
         for (var i = 0; i < hexInteractInfo.interactConfChartDataList.length; i++) {
             if (hexInteractInfo.interactConfChartDataList[i].chartType == 'chart') {
                 json.layout.rows[0].widgets.push({
@@ -377,10 +377,10 @@ cBoard.controller('interactLayoutCtrl', function ($rootScope, $scope, $statePara
                 if (res.status == "200") {
                     closeMessage("提示", "更新成功", function () {
                         interactChartDataJSON = {};
-                        $state.go("config.board")
+                        $state.go("config.board");
                         getBoardList();
                         boardChange();
-                    })
+                    });
                     if (callback.index != '4-1') {
                         callback();
                     }
@@ -397,10 +397,10 @@ cBoard.controller('interactLayoutCtrl', function ($rootScope, $scope, $statePara
                 if (res.status == "200") {
                     closeMessage("提示", "保存成功", function () {
                         interactChartDataJSON = {};
-                        $state.go("config.board")
+                        $state.go("config.board");
                         getBoardList();
                         boardChange();
-                    })
+                    });
                     vm._data.boardId = res.data.id;
                     if (callback.index != '4-1') {
                         callback();
@@ -637,12 +637,12 @@ cBoard.controller('interactLayoutCtrl', function ($rootScope, $scope, $statePara
                             return e.id == res.data.datasetId;
                         });
                         loadWidget($("#" + domId + "_01"), res.data, null, null, false);
-                        if(vm._data.viewType){
-                            if (dataset.data.interval || dataset.data.interval > 0){
+                        if (vm._data.viewType) {
+                            if (dataset.data.interval || dataset.data.interval > 0) {
                                 //real time load task
                                 setInterval(function () {
                                     loadWidget($("#" + domId + "_01"), res.data, null, null, false);
-                                },dataset.data.interval * 1000);
+                                }, dataset.data.interval * 1000);
                             }
                         }
                     })
@@ -653,18 +653,18 @@ cBoard.controller('interactLayoutCtrl', function ($rootScope, $scope, $statePara
             //渲染柱状图表
             this.init();
         }
-    })
+    });
 
     var loadWidget = function (containerDom, widget, optionFilter, scope, reload, persist, relations) {
         chartService.render(containerDom, widget, optionFilter, scope, reload, persist, relations);
-    }
+    };
 
     function getCategoryList() {
         $http.get("dashboard/getCategoryList.do").success(function (response) {
             vm._data.categoryList.push({
                 name: "Private DashBoard",
                 id: ""
-            })
+            });
             for (var i = 0; i < response.length; i++) {
                 vm._data.categoryList.push({
                     name: response[i].name,
@@ -682,4 +682,4 @@ cBoard.controller('interactLayoutCtrl', function ($rootScope, $scope, $statePara
         return deferred.promise;
     };
 
-})
+});

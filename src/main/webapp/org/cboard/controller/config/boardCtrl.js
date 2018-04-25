@@ -149,8 +149,8 @@ cBoard.controller('boardCtrl',
             $('div.newBoard').addClass('hideOperate');
         };
 
-        $scope.newInteractLayout = function () {
-            $state.go("config.interact")
+        $scope.newCockpitLayout = function () {
+            $state.go("config.cockpit")
         };
 
         $scope.newTimelineLayout = function () {
@@ -460,8 +460,8 @@ cBoard.controller('boardCtrl',
             if (!checkTreeNode("edit")) return;
             $scope.editBoard(getSelectedBoard());
             var selectedNode = jstree_GetSelectedNodes(treeID)[0];
-            if ($scope.curBoard.layout.type == 'interact') {
-                $state.go('config.interact', {boardId: selectedNode.id});
+            if ($scope.curBoard.layout.type == 'cockpit') {
+                $state.go('config.cockpit', {boardId: selectedNode.id});
             } else {
                 $state.go('config.board', {boardId: selectedNode.id}, {notify: false});
             }

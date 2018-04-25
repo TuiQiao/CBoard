@@ -92,11 +92,11 @@ angular.module('cBoard').config(['$stateProvider', function ($stateProvider) {
             templateUrl: 'org/cboard/view/admin/user.html',
             controller: 'userAdminCtrl'
         })
-        .state('config.interact', {
-            url: '/interact/{boardId}',
+        .state('config.cockpit', {
+            url: '/cockpit/{boardId}',
             params: {boardId: null},
-            templateUrl: 'org/cboard/view/config/board/interact/view.html',
-            controller: 'interactLayoutCtrl'
+            templateUrl: 'org/cboard/view/config/board/cockpit/view.html',
+            controller: 'cockpitLayoutCtrl'
         })
 }]);
 

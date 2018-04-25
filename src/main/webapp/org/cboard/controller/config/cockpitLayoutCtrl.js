@@ -2,7 +2,7 @@
  * Created by sileiH on 2016/8/2.
  */
 'use strict';
-cBoard.controller('interactLayoutCtrl', function ($rootScope, $scope, $stateParams, $http, $state, chartService, $q) {
+cBoard.controller('cockpitLayoutCtrl', function ($rootScope, $scope, $stateParams, $http, $state, chartService, $q) {
     //初始化样式
     $("body").addClass("sidebar-collapse");
     var window_height = $(window).height();
@@ -10,10 +10,10 @@ cBoard.controller('interactLayoutCtrl', function ($rootScope, $scope, $statePara
     var footer = $(".main-footer").height();
     $("#app").css('height', window_height - header - footer + "px");
 
-    var interactConf = initInteractConf();
-    var interactChartDataJSON = {};
+    var cockpitConf = initCockpitConf();
+    var cockpitChartDataJSON = {};
     //数据视图图表配置
-    var interactChartData = {interactConfChartCSS: {}, jsonData: {label: "", value: ""}};
+    var cockpitChartData = {cockpitConfChartCSS: {}, jsonData: {label: "", value: ""}};
     var vm = new Vue({
         el: '#app',
         data: {
@@ -24,34 +24,34 @@ cBoard.controller('interactLayoutCtrl', function ($rootScope, $scope, $statePara
             //基础路径
             basePath: '',
             //组件
-            components: hexInteract.component,
-            componentsIcon: hexInteract.componentICON,
+            components: hexCockpit.component,
+            componentsIcon: hexCockpit.componentICON,
             activeIndex: '1',
             pageCssItem: '1',
             //画布大小
             dragWidth: '',
             dragHeight: '',
             //数据视图配置
-            interactConf: interactConf,
+            cockpitConf: cockpitConf,
             //可视化数据预览
             viewDataCharts: [],
             //画板可视化组件
-            interactComponents: [],
+            cockpitComponents: [],
             //边框组件样式
-            borderStyle: hexInteract.getBorderStyle(),
+            borderStyle: hexCockpit.getBorderStyle(),
             //装饰组件样式
-            ornamentStyle: hexInteract.getOrnamentStyle(),
+            ornamentStyle: hexCockpit.getOrnamentStyle(),
             //字体粗细
-            fontWeight: hexInteract.getFontWeight(),
+            fontWeight: hexCockpit.getFontWeight(),
             //文本对齐方式
-            textAlign: hexInteract.textAlign(),
+            textAlign: hexCockpit.textAlign(),
             //主要用于给element-ui.js的标签页取名用
             tabActiveName: 'one',
             //预览画布大小
             viewDragWidth: '',
             viewDragHeight: '',
             //图表数据
-            interactChartData: interactChartData,
+            cockpitChartData: cockpitChartData,
             categoryList: [],
             boardId: '',
         },
@@ -68,33 +68,33 @@ cBoard.controller('interactLayoutCtrl', function ($rootScope, $scope, $statePara
                     return;
                 }
                 var componentDom = {type: type, componentName: componentName, widgetId: widgetId, name: name};
-                hexInteract.componentDom = componentDom;
+                hexCockpit.componentDom = componentDom;
                 this.drop();
             },
             //监控大屏尺寸大小设置
             screenSizeChange: function () {
                 //画布父层大小
-                var dragWidth = $('#interact-drag').parent().css('width');
+                var dragWidth = $('#cockpit-drag').parent().css('width');
                 dragWidth = Number(dragWidth.substr(0, dragWidth.length - 2));
-                var dragHeight = $('#interact-drag').parent().css('height');
+                var dragHeight = $('#cockpit-drag').parent().css('height');
                 dragHeight = Number(dragHeight.substr(0, dragHeight.length - 2));
                 //屏幕配置大小
-                var screenWidth = screen.width * vm._data.interactConf.screenWidth / 100;
-                var screenHeight = screen.height * vm._data.interactConf.screenHeight / 100;
+                var screenWidth = screen.width * vm._data.cockpitConf.screenWidth / 100;
+                var screenHeight = screen.height * vm._data.cockpitConf.screenHeight / 100;
                 //屏幕比例
                 var prop = (screenHeight / screenWidth).toFixed(4);
                 dragWidth = dragWidth.toFixed();
                 dragHeight = (dragWidth * prop).toFixed();
                 //绘制画布大小
-                dragInteractDrag(dragWidth + 'px', dragHeight + 'px');
+                dragCockpitDrag(dragWidth + 'px', dragHeight + 'px');
             },
             //用于保存视图数据
-            saveInteractConf: function (callback) {
-                var hexInteractInfo = buildHexInteractInfo();
-                saveInteractConf(hexInteractInfo, callback);
+            saveCockpitConf: function (callback) {
+                var hexCockpitInfo = buildHexCockpitInfo();
+                saveCockpitConf(hexCockpitInfo, callback);
             },
             //用于预览视图
-            viewInteract: function () {
+            viewCockpit: function () {
                 var callback = function () {
                     var boardId = vm._data.boardId;
                     if (!boardId) {
@@ -104,7 +104,7 @@ cBoard.controller('interactLayoutCtrl', function ($rootScope, $scope, $statePara
                     var winInfo = "toolbar=no,menubar=no,status=yes,scrollbars=no,resizable=no,titlebar=no,location=no,width=" + (window.screen.availWidth - 10) + ",height=" + (window.screen.availHeight - 30) + ",top=0,left=0,fullscreen=no";
                     window.open('render.html#?id=' + boardId, '', winInfo)
                 };
-                vm.saveInteractConf(callback);
+                vm.saveCockpitConf(callback);
             },
             //设置数据视图可移动
             allowDrop: function (event) {
@@ -112,7 +112,7 @@ cBoard.controller('interactLayoutCtrl', function ($rootScope, $scope, $statePara
             },
             //移动数据视图
             drop: function (event) {
-                var dom = hexInteract.componentDom;
+                var dom = hexCockpit.componentDom;
                 if (!dom) {
                     return;
                 }
@@ -123,109 +123,109 @@ cBoard.controller('interactLayoutCtrl', function ($rootScope, $scope, $statePara
                 } else {
                     domId = dom.type + '_' + new Date().getTime();
                 }
-                var interactChartData = initInteractChartData();
-                interactChartData.chartType = dom.type;
-                interactChartData.widgetId = dom.widgetId;
-                interactChartData.domId = domId;
-                interactChartData.name = dom.name;
+                var cockpitChartData = initCockpitChartData();
+                cockpitChartData.chartType = dom.type;
+                cockpitChartData.widgetId = dom.widgetId;
+                cockpitChartData.domId = domId;
+                cockpitChartData.name = dom.name;
                 if (dom.type == 'label') {
                     //标题组件默认值
-                    interactChartData.interactConfChartCSS.chartTitle = hexInteract.defaultTitle;
+                    cockpitChartData.cockpitConfChartCSS.chartTitle = hexCockpit.defaultTitle;
                 } else if (dom.type == 'rlabel') {
                     //滚动文本默认值
-                    interactChartData.jsonData = hexInteract.defaultRLabelData();
+                    cockpitChartData.jsonData = hexCockpit.defaultRLabelData();
                 } else if (dom.type == 'kpi') {
                     //指标卡默认值
-                    interactChartData.jsonData = hexInteract.defaultKpiData();
-                    interactChartData.interactConfChartCSS = hexInteract.defaultKpiStyle();
+                    cockpitChartData.jsonData = hexCockpit.defaultKpiData();
+                    cockpitChartData.cockpitConfChartCSS = hexCockpit.defaultKpiStyle();
                 } else if (dom.type == 'border') {
                     //边框默认样式
-                    interactChartData.chartStyle = vm._data.borderStyle[0].value;
+                    cockpitChartData.chartStyle = vm._data.borderStyle[0].value;
                 } else if (dom.type == 'ornament') {
                     //装饰默认样式
-                    interactChartData.chartStyle = vm._data.ornamentStyle[0].value;
+                    cockpitChartData.chartStyle = vm._data.ornamentStyle[0].value;
                 } else if (dom.type == 'clock') {
                     //时钟组件默认格式化
-                    interactChartData.interactConfChartCSS = hexInteract.defaultClockStyle();
+                    cockpitChartData.cockpitConfChartCSS = hexCockpit.defaultClockStyle();
                 } else if (dom.type == 'table') {
                     //表格组件默认值
-                    interactChartData.jsonData.value = hexInteract.defaultTableData();
-                    interactChartData.interactConfChartCSS = hexInteract.defaultTableStyle();
+                    cockpitChartData.jsonData.value = hexCockpit.defaultTableData();
+                    cockpitChartData.cockpitConfChartCSS = hexCockpit.defaultTableStyle();
                 }
-                if (!jQuery.isEmptyObject(hexInteract.componentDom.interactConfChartCSS)) {
-                    interactChartData.interactConfChartCSS = hexInteract.componentDom.interactConfChartCSS;
+                if (!jQuery.isEmptyObject(hexCockpit.componentDom.cockpitConfChartCSS)) {
+                    cockpitChartData.cockpitConfChartCSS = hexCockpit.componentDom.cockpitConfChartCSS;
                 }
-                if (!jQuery.isEmptyObject(hexInteract.componentDom.chartStyle)) {
-                    interactChartData.chartStyle = hexInteract.componentDom.chartStyle;
+                if (!jQuery.isEmptyObject(hexCockpit.componentDom.chartStyle)) {
+                    cockpitChartData.chartStyle = hexCockpit.componentDom.chartStyle;
                 }
-                var xprop = xMultiple(vm._data.interactConf.screenWidth);
-                var yprop = yMultiple(vm._data.interactConf.screenHeight);
-                interactChartData.xprop = xprop;
-                interactChartData.yprop = yprop;
+                var xprop = xMultiple(vm._data.cockpitConf.screenWidth);
+                var yprop = yMultiple(vm._data.cockpitConf.screenHeight);
+                cockpitChartData.xprop = xprop;
+                cockpitChartData.yprop = yprop;
 
                 if (dom.jsonData) {
-                    interactChartData.jsonData = dom.jsonData;
+                    cockpitChartData.jsonData = dom.jsonData;
                 }
 
                 if (dom.chartHeight) {
-                    interactChartData.chartWidth = dom.chartWidth;
-                    interactChartData.chartHeight = dom.chartHeight;
-                    interactChartData.positionX = dom.positionX;
-                    interactChartData.positionY = dom.positionY;
+                    cockpitChartData.chartWidth = dom.chartWidth;
+                    cockpitChartData.chartHeight = dom.chartHeight;
+                    cockpitChartData.positionX = dom.positionX;
+                    cockpitChartData.positionY = dom.positionY;
                 } else {
-                    interactChartData.chartWidth = (207 / xprop).toFixed();
-                    interactChartData.chartHeight = (105 / yprop).toFixed();
+                    cockpitChartData.chartWidth = (207 / xprop).toFixed();
+                    cockpitChartData.chartHeight = (105 / yprop).toFixed();
                 }
 
                 if (dom.bgColor) {
-                    interactChartData.bgColor = dom.bgColor;
+                    cockpitChartData.bgColor = dom.bgColor;
                 } else {
-                    interactChartData.bgColor = hexInteract.defaultBgColor;
+                    cockpitChartData.bgColor = hexCockpit.defaultBgColor;
                 }
-                vm._data.interactChartData = interactChartData;
-                interactChartDataJSON[domId] = interactChartData;
-                var interactComponent = {
+                vm._data.cockpitChartData = cockpitChartData;
+                cockpitChartDataJSON[domId] = cockpitChartData;
+                var cockpitComponent = {
                     domId: domId,
                     componentName: dom.componentName,
                     componentType: dom.type,
-                    chartData: interactChartData,
+                    chartData: cockpitChartData,
                     widgetId: dom.widgetId
                 };
 
                 if (!vm._data.viewType) {
-                    var array = vm._data.interactComponents;
-                    array.push(interactComponent);
-                    vm._data.interactComponents = array;
+                    var array = vm._data.cockpitComponents;
+                    array.push(cockpitComponent);
+                    vm._data.cockpitComponents = array;
                     //初始化组件可拖拽、伸缩
                     initDrag(domId);
                 } else {
                     var array = vm._data.viewDataCharts;
-                    interactComponent.chartData.positionY *= screen.height / 100;
-                    interactComponent.chartData.positionX *= screen.width / 100;
-                    interactComponent.chartData.chartHeight *= screen.height / 100;
-                    interactComponent.chartData.chartWidth *= screen.width / 100;
-                    array.push(interactComponent);
+                    cockpitComponent.chartData.positionY *= screen.height / 100;
+                    cockpitComponent.chartData.positionX *= screen.width / 100;
+                    cockpitComponent.chartData.chartHeight *= screen.height / 100;
+                    cockpitComponent.chartData.chartWidth *= screen.width / 100;
+                    array.push(cockpitComponent);
                     vm._data.viewDataCharts = array;
                 }
             },
             //点击数据视图
-            interactBlockClick: function (e) {
+            cockpitBlockClick: function (e) {
                 //若定位在全局样式,切换到图表样式;
                 vm._data.pageCssItem = '2';
                 var domId = e;
                 var select = '#' + domId;
-                $(select).addClass('interact-block-select');
-                $(select + ' div.interact-view-close').show();
-                $(select).siblings('.interact-block').removeClass('interact-block-select');
-                $(select).siblings('.interact-block').children('.interact-view-close').hide();
+                $(select).addClass('cockpit-block-select');
+                $(select + ' div.cockpit-view-close').show();
+                $(select).siblings('.cockpit-block').removeClass('cockpit-block-select');
+                $(select).siblings('.cockpit-block').children('.cockpit-view-close').hide();
                 //绑定数据可视化图层基本信息
-                bindInteractChartData(domId);
+                bindCockpitChartData(domId);
             },
             //关闭数据视图
-            closeInteractWin: function (e) {
+            closeCockpitWin: function (e) {
                 var domId = e;
                 $('#' + domId).remove();
-                interactChartDataJSON[domId] = '';
+                cockpitChartDataJSON[domId] = '';
             },
             //下载上传
             dropUpload: function (event) {
@@ -237,7 +237,7 @@ cBoard.controller('interactLayoutCtrl', function ($rootScope, $scope, $statePara
                 xhr.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
                 xhr.onreadystatechange = function () {
                     if (xhr.readyState == 4 && xhr.status == 200) {
-                        vm._data.interactConf.background = xhr.responseText;
+                        vm._data.cockpitConf.background = xhr.responseText;
                     }
                 };
                 var formData = new FormData();
@@ -245,7 +245,7 @@ cBoard.controller('interactLayoutCtrl', function ($rootScope, $scope, $statePara
                 xhr.send(formData);
             },
             //加载监控视图配置
-            loadInteractConf: function () {
+            loadCockpitConf: function () {
                 var boardId = $stateParams.boardId;
                 if (boardId === undefined) {
                     var href = window.location.href;
@@ -254,13 +254,13 @@ cBoard.controller('interactLayoutCtrl', function ($rootScope, $scope, $statePara
                 }
                 if (boardId) {
                     $http.get("dashboard/getBoardData.do", {params: {id: boardId}}).then(function (res) {
-                        if (!res.data.layout.interactConf) {
+                        if (!res.data.layout.cockpitConf) {
                             return;
                         }
-                        vm._data.interactConf = res.data.layout.interactConf;
+                        vm._data.cockpitConf = res.data.layout.cockpitConf;
                         vm.screenSizeChange();
-                        vm._data.viewDragWidth = res.data.layout.interactConf.screenWidth * screen.width / 100 + "px";
-                        vm._data.viewDragHeight = res.data.layout.interactConf.screenHeight * screen.height / 100 + "px";
+                        vm._data.viewDragWidth = res.data.layout.cockpitConf.screenWidth * screen.width / 100 + "px";
+                        vm._data.viewDragHeight = res.data.layout.cockpitConf.screenHeight * screen.height / 100 + "px";
                         var layout = res.data.layout;
                         for (var i = 0; i < layout.rows.length; i++) {
                             if (layout.rows[i].type == 'widget') {
@@ -268,7 +268,7 @@ cBoard.controller('interactLayoutCtrl', function ($rootScope, $scope, $statePara
                                 for (var j = 0; j < widgets.length; j++) {
                                     var componentDom = {
                                         type: "chart",
-                                        componentName: "hex-interact-chart",
+                                        componentName: "hex-cockpit-chart",
                                         widgetId: widgets[j].widgetId,
                                         chartWidth: widgets[j].chartWidth,
                                         chartHeight: widgets[j].chartHeight,
@@ -277,7 +277,7 @@ cBoard.controller('interactLayoutCtrl', function ($rootScope, $scope, $statePara
                                         positionY: widgets[j].positionY,
                                         domId: widgets[j].domId
                                     };
-                                    hexInteract.componentDom = componentDom;
+                                    hexCockpit.componentDom = componentDom;
                                     vm.drop();
                                 }
                             } else {
@@ -285,17 +285,17 @@ cBoard.controller('interactLayoutCtrl', function ($rootScope, $scope, $statePara
                                 for (var j = 0; j < others.length; j++) {
                                     var componentDom = {
                                         type: others[j].type,
-                                        componentName: "hex-interact-" + others[j].type,
+                                        componentName: "hex-cockpit-" + others[j].type,
                                         chartWidth: others[j].chartWidth,
                                         chartHeight: others[j].chartHeight,
                                         positionX: others[j].positionX,
                                         positionY: others[j].positionY,
                                         chartStyle: others[j].chartStyle,
-                                        interactConfChartCSS: others[j].interactConfChartCSS,
+                                        cockpitConfChartCSS: others[j].cockpitConfChartCSS,
                                         jsonData: others[j].jsonData,
                                         domId: others[j].domId
                                     };
-                                    hexInteract.componentDom = componentDom;
+                                    hexCockpit.componentDom = componentDom;
                                     vm.drop();
                                 }
                             }
@@ -311,7 +311,7 @@ cBoard.controller('interactLayoutCtrl', function ($rootScope, $scope, $statePara
         //初始化视图大小
         vm.screenSizeChange();
         //加载监控视图配置
-        vm.loadInteractConf();
+        vm.loadCockpitConf();
     }, 500);
 
     //加载图表列表
@@ -321,21 +321,21 @@ cBoard.controller('interactLayoutCtrl', function ($rootScope, $scope, $statePara
     getCategoryList();
 
     //保存视图监控配置
-    function saveInteractConf(hexInteractInfo, callback) {
+    function saveCockpitConf(hexCockpitInfo, callback) {
 
-        if (!hexInteractInfo.interactConf.viewName) {
+        if (!hexCockpitInfo.cockpitConf.viewName) {
             vm.$alert("监控主题名字不能为空", "警告");
             return;
         }
 
         //数据封装
         var json = {
-            name: hexInteractInfo.interactConf.viewName,
-            layout: {rows: [], type: "interact"},
-            categoryId: hexInteractInfo.interactConf.categoryId,
+            name: hexCockpitInfo.cockpitConf.viewName,
+            layout: {rows: [], type: "cockpit"},
+            categoryId: hexCockpitInfo.cockpitConf.categoryId,
             id: $stateParams.boardId ? $stateParams.boardId : ""
         };
-        json.layout.interactConf = hexInteractInfo.interactConf;
+        json.layout.cockpitConf = hexCockpitInfo.cockpitConf;
         json.layout.rows.push({
             type: "widget",
             widgets: []
@@ -344,29 +344,29 @@ cBoard.controller('interactLayoutCtrl', function ($rootScope, $scope, $statePara
             type: "other",
             others: []
         });
-        for (var i = 0; i < hexInteractInfo.interactConfChartDataList.length; i++) {
-            if (hexInteractInfo.interactConfChartDataList[i].chartType == 'chart') {
+        for (var i = 0; i < hexCockpitInfo.cockpitConfChartDataList.length; i++) {
+            if (hexCockpitInfo.cockpitConfChartDataList[i].chartType == 'chart') {
                 json.layout.rows[0].widgets.push({
-                    widgetId: hexInteractInfo.interactConfChartDataList[i].widgetId,
-                    name: hexInteractInfo.interactConfChartDataList[i].name,
-                    chartHeight: hexInteractInfo.interactConfChartDataList[i].chartHeight,
-                    chartWidth: hexInteractInfo.interactConfChartDataList[i].chartWidth,
-                    bgColor: hexInteractInfo.interactConfChartDataList[i].bgColor,
-                    positionX: hexInteractInfo.interactConfChartDataList[i].positionX,
-                    positionY: hexInteractInfo.interactConfChartDataList[i].positionY,
-                    domId: hexInteractInfo.interactConfChartDataList[i].domId
+                    widgetId: hexCockpitInfo.cockpitConfChartDataList[i].widgetId,
+                    name: hexCockpitInfo.cockpitConfChartDataList[i].name,
+                    chartHeight: hexCockpitInfo.cockpitConfChartDataList[i].chartHeight,
+                    chartWidth: hexCockpitInfo.cockpitConfChartDataList[i].chartWidth,
+                    bgColor: hexCockpitInfo.cockpitConfChartDataList[i].bgColor,
+                    positionX: hexCockpitInfo.cockpitConfChartDataList[i].positionX,
+                    positionY: hexCockpitInfo.cockpitConfChartDataList[i].positionY,
+                    domId: hexCockpitInfo.cockpitConfChartDataList[i].domId
                 })
             } else {
                 json.layout.rows[1].others.push({
-                    type: hexInteractInfo.interactConfChartDataList[i].chartType,
-                    chartWidth: hexInteractInfo.interactConfChartDataList[i].chartWidth,
-                    chartHeight: hexInteractInfo.interactConfChartDataList[i].chartHeight,
-                    positionX: hexInteractInfo.interactConfChartDataList[i].positionX,
-                    positionY: hexInteractInfo.interactConfChartDataList[i].positionY,
-                    chartStyle: hexInteractInfo.interactConfChartDataList[i].chartStyle,
-                    interactConfChartCSS: hexInteractInfo.interactConfChartDataList[i].interactConfChartCSS,
-                    jsonData: hexInteractInfo.interactConfChartDataList[i].jsonData,
-                    domId: hexInteractInfo.interactConfChartDataList[i].domId
+                    type: hexCockpitInfo.cockpitConfChartDataList[i].chartType,
+                    chartWidth: hexCockpitInfo.cockpitConfChartDataList[i].chartWidth,
+                    chartHeight: hexCockpitInfo.cockpitConfChartDataList[i].chartHeight,
+                    positionX: hexCockpitInfo.cockpitConfChartDataList[i].positionX,
+                    positionY: hexCockpitInfo.cockpitConfChartDataList[i].positionY,
+                    chartStyle: hexCockpitInfo.cockpitConfChartDataList[i].chartStyle,
+                    cockpitConfChartCSS: hexCockpitInfo.cockpitConfChartDataList[i].cockpitConfChartCSS,
+                    jsonData: hexCockpitInfo.cockpitConfChartDataList[i].jsonData,
+                    domId: hexCockpitInfo.cockpitConfChartDataList[i].domId
                 })
             }
 
@@ -376,7 +376,7 @@ cBoard.controller('interactLayoutCtrl', function ($rootScope, $scope, $statePara
             $http.post("dashboard/updateBoard.do", {json: angular.toJson(json)}).then(function (res) {
                 if (res.status == "200") {
                     closeMessage("提示", "更新成功", function () {
-                        interactChartDataJSON = {};
+                        cockpitChartDataJSON = {};
                         $state.go("config.board");
                         getBoardList();
                         boardChange();
@@ -396,7 +396,7 @@ cBoard.controller('interactLayoutCtrl', function ($rootScope, $scope, $statePara
             $http.post("dashboard/saveNewBoard.do", {json: angular.toJson(json)}).then(function (res) {
                 if (res.status == "200") {
                     closeMessage("提示", "保存成功", function () {
-                        interactChartDataJSON = {};
+                        cockpitChartDataJSON = {};
                         $state.go("config.board");
                         getBoardList();
                         boardChange();
@@ -429,55 +429,55 @@ cBoard.controller('interactLayoutCtrl', function ($rootScope, $scope, $statePara
     }
 
     //构建监控视图配置数据
-    function buildHexInteractInfo() {
-        var hexInteractInfo = {};
-        var interactChartData = vm._data.interactChartData;
-        if (document.getElementById(interactChartData.domId)) {
-            interactChartDataJSON[interactChartData.domId] = interactChartData;
+    function buildHexCockpitInfo() {
+        var hexCockpitInfo = {};
+        var cockpitChartData = vm._data.cockpitChartData;
+        if (document.getElementById(cockpitChartData.domId)) {
+            cockpitChartDataJSON[cockpitChartData.domId] = cockpitChartData;
         }
-        hexInteractInfo.interactConf = vm._data.interactConf;
-        var keys = _.keys(interactChartDataJSON);
-        var interactConfChartDataList = new Array();
+        hexCockpitInfo.cockpitConf = vm._data.cockpitConf;
+        var keys = _.keys(cockpitChartDataJSON);
+        var cockpitConfChartDataList = new Array();
         for (var i = 0; i < keys.length; i++) {
-            var interactConfChartData = interactChartDataJSON[keys[i]];
-            if (!interactConfChartData) {
+            var cockpitConfChartData = cockpitChartDataJSON[keys[i]];
+            if (!cockpitConfChartData) {
                 continue;
             }
-            interactConfChartDataList.push(interactChartDataJSON[keys[i]]);
+            cockpitConfChartDataList.push(cockpitChartDataJSON[keys[i]]);
         }
-        hexInteractInfo.interactConfChartDataList = angular.copy(interactConfChartDataList);
-        return hexInteractInfo;
+        hexCockpitInfo.cockpitConfChartDataList = angular.copy(cockpitConfChartDataList);
+        return hexCockpitInfo;
     }
 
     //绑定数据可视化图层基本信息
-    function bindInteractChartData(domId) {
+    function bindCockpitChartData(domId) {
         if (!document.getElementById(domId)) {
-            interactChartDataJSON[domId] = '';
+            cockpitChartDataJSON[domId] = '';
             return;
         }
         //数据视图图表配置
-        var interactChartData = interactChartDataJSON[domId];
+        var cockpitChartData = cockpitChartDataJSON[domId];
         //画板上的图表等比缩放后的宽度、高度
         var chartWidth = $('#' + domId).css('width');
         var chartHeight = $('#' + domId).css('height');
         chartWidth = chartWidth.substr(0, chartWidth.length - 2);
         chartHeight = chartHeight.substr(0, chartHeight.length - 2);
         //画布大小缩放比例
-        var xprop = xMultiple(vm._data.interactConf.screenWidth);
-        var yprop = yMultiple(vm._data.interactConf.screenHeight);
+        var xprop = xMultiple(vm._data.cockpitConf.screenWidth);
+        var yprop = yMultiple(vm._data.cockpitConf.screenHeight);
         chartWidth = (chartWidth / xprop).toFixed();
         chartHeight = (chartHeight / yprop).toFixed();
-        interactChartData.chartWidth = chartWidth;
-        interactChartData.chartHeight = chartHeight;
+        cockpitChartData.chartWidth = chartWidth;
+        cockpitChartData.chartHeight = chartHeight;
         var positionX = $('#' + domId).attr('x') ? $('#' + domId).attr('x') : 0;
         var positionY = $('#' + domId).attr('y') ? $('#' + domId).attr('y') : 0;
         positionX = (positionX / xprop).toFixed();
         positionY = (positionY / yprop).toFixed();
-        interactChartData.positionX = positionX;
-        interactChartData.positionY = positionY;
-        vm._data.interactChartData = interactChartData;
+        cockpitChartData.positionX = positionX;
+        cockpitChartData.positionY = positionY;
+        vm._data.cockpitChartData = cockpitChartData;
         //数据视图图表配置放到全局变量
-        interactChartDataJSON[domId] = interactChartData;
+        cockpitChartDataJSON[domId] = cockpitChartData;
     }
 
     //初始化拖拽
@@ -533,7 +533,7 @@ cBoard.controller('interactLayoutCtrl', function ($rootScope, $scope, $statePara
     //设置图形拖拽
     function domPosition(domId) {
         var domOffset = $('#' + domId).offset();
-        var dragOffset = $('#interact-drag').offset();
+        var dragOffset = $('#cockpit-drag').offset();
         var x = domOffset.left - dragOffset.left;
         var y = domOffset.top - dragOffset.top;
         document.getElementById(domId).setAttribute('x', x);
@@ -555,7 +555,7 @@ cBoard.controller('interactLayoutCtrl', function ($rootScope, $scope, $statePara
     }
 
     //初始化数据视图配置
-    function initInteractConf() {
+    function initCockpitConf() {
         return {
             screenWidth: 100,
             screenHeight: 100,
@@ -571,7 +571,7 @@ cBoard.controller('interactLayoutCtrl', function ($rootScope, $scope, $statePara
      *
      * @returns {}
      */
-    function initInteractChartData() {
+    function initCockpitChartData() {
         return {
             //图表基础信息
             chartType: '', domId: '', chartWidth: '', chartHeight: '', positionX: 0, positionY: 0,
@@ -580,12 +580,12 @@ cBoard.controller('interactLayoutCtrl', function ($rootScope, $scope, $statePara
             xField: '', yField: '', gField: '',
             dataSource: '01', url: '', jsonData: {},
             //图表样式
-            interactConfChartCSS: {}
+            cockpitConfChartCSS: {}
         };
     }
 
     //绘制画布大小
-    function dragInteractDrag(width, height) {
+    function dragCockpitDrag(width, height) {
         vm._data.dragWidth = width;
         vm._data.dragHeight = height;
     }
@@ -618,11 +618,11 @@ cBoard.controller('interactLayoutCtrl', function ($rootScope, $scope, $statePara
         $scope.$emit("boardChange");
     };
 
-    Vue.component('hex-interact-chart', {
+    Vue.component('hex-cockpit-chart', {
         props: {
             chartdata: Object
         },
-        template: '<div class="interact-line" v-bind:style=" {background:chartdata.bgColor} "><div :id="chartdata.domId + \'_01\'" style="width: 100%;height: 100%;"></div></div>',
+        template: '<div class="cockpit-line" v-bind:style=" {background:chartdata.bgColor} "><div :id="chartdata.domId + \'_01\'" style="width: 100%;height: 100%;"></div></div>',
         methods: {
             init: function () {
                 var domId = this.chartdata.domId;

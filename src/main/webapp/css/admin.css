@@ -1,24 +1,24 @@
 /*
  * Create by xiaomingmiao on 2018/1/16
  */
-.interact-row{
+.cockpit-row{
     display: flex;
     flex-direction: row;
     flex-grow: 100;
 }
 
-.interact-col{
+.cockpit-col{
     display: flex;
     flex-direction: column;
     flex-grow: 100;
 }
 
-.interact-header{
+.cockpit-header{
     height: 48px;
     background-color: #2185d0;
 }
 
-.interact-header-title{
+.cockpit-header-title{
     color: #fff;
     font-size: 20px;
     margin-top: auto!important;
@@ -26,11 +26,11 @@
     margin-left: 6px;
 }
 
-.interact-header-title span{
+.cockpit-header-title span{
     color: #ddd;
 }
 
-.interact-header-func{
+.cockpit-header-func{
     width: 80px;
     flex-grow: 0!important;
     padding-top: 5px;
@@ -38,41 +38,41 @@
     padding-right: 10px;
 }
 
-.interact-header-func .icon{
+.cockpit-header-func .icon{
     text-align: center;
     color: #fff;
     font-size: 20px;
 }
 
-.interact-header-func .label{
+.cockpit-header-func .label{
     text-align: center;
     color: #fff;
     font-size: 12px!important;
 }
 
-.interact-canvas{
-    background:url(../imgs/interact/canvas.png) repeat;
+.cockpit-canvas{
+    background:url(../imgs/cockpit/canvas.png) repeat;
     margin: auto;
 }
 
-.interact-drag{
-    background:url(../imgs/interact/drag.png) repeat;
+.cockpit-drag{
+    background:url(../imgs/cockpit/drag.png) repeat;
 }
 
-.interact-component{
+.cockpit-component{
     flex-grow: 0!important;
     background-color: #fff;
     border-right: 1px solid #c0c0c0;
 }
 
-.interact-component-conf{
+.cockpit-component-conf{
     flex-grow: 0!important;
     background-color: #fff;
     border-left: 1px solid #c0c0c0;
     width: 275px;
 }
 
-.interact-component-conf .title{
+.cockpit-component-conf .title{
     font-size: 16px;
     background-color: #eee;
     color: #333;
@@ -81,11 +81,11 @@
     padding-bottom: 6px;
 }
 
-#interactComponentConf .el-tabs__header{
+#cockpitComponentConf .el-tabs__header{
     margin-bottom: 0px;
 }
 
-#interactComponentConf form{
+#cockpitComponentConf form{
     padding-right: 5px;
 }
 
@@ -98,33 +98,33 @@
     text-align: center;
 }
 
-.interact-block{
+.cockpit-block{
     position: absolute;
     width: 207px;
     height: 105px;
 }
 
-.interact-block:hover{
+.cockpit-block:hover{
     border: 1px solid #2185d0;
     background-color: rgba(33, 133, 208, 0.4)!important;
 }
 
-.interact-block-select{
+.cockpit-block-select{
     border: 1px solid #2185d0;
 }
 
-.interact-component-conf-tips{
+.cockpit-component-conf-tips{
     color: #999;
     line-height: 1;
     text-align: center;
     padding-top: 2px;
 }
 
-.interact-title{
+.cockpit-title{
     margin:auto!important;
     width: 470px;
     height: 70px;
-    background-image: url("../imgs/interact/title-footer.gif");
+    background-image: url("../imgs/cockpit/title-footer.gif");
     background-size: 100%;
     background-repeat: no-repeat;
     background-position: center center;
@@ -139,23 +139,23 @@
 }
 
 
-.interact-temp{
+.cockpit-temp{
     width: 225px;
     height: 105px;
 }
 
-/*.interact-col .el-submenu .el-menu,
-.interact-col .el-submenu .el-menu-item{
+/*.cockpit-col .el-submenu .el-menu,
+.cockpit-col .el-submenu .el-menu-item{
     height: 105px;
 }*/
 
-.interact-col .el-submenu .el-menu-item{
+.cockpit-col .el-submenu .el-menu-item{
     /*padding-left: 0px!important;*/
     padding-right: 0px!important;
 }
 
 
-.interact-view-close{
+.cockpit-view-close{
     color: #fff;
     height: 26px;
     position: absolute;
@@ -167,93 +167,93 @@
     top: 0;
 }
 
-.interact-view-close i:hover{
+.cockpit-view-close i:hover{
     color: #ccc;
     cursor: pointer;
 }
 
 /*柱状图组件样式*/
-.interact-bar{
+.cockpit-bar{
     height: 100%;
 }
 
 /*折线图组件样式*/
-.interact-line{
+.cockpit-line{
     height: 100%;
 }
 
 /*滚动文本样式*/
-.interact-rlabel{
+.cockpit-rlabel{
     height: 100%;
 }
 
 /*饼图组件样式*/
-.interact-pie{
+.cockpit-pie{
     height: 100%;
 }
 
 /*标题组件样式*/
-.interact-label{
+.cockpit-label{
     height: 100%;
     /*border: 1px #17286F solid;*/
 }
 
-.interact-label-label{
+.cockpit-label-label{
     text-align: center;
     font-size: 16px;
     color: #fff;
 }
 
 /*表格组件样式*/
-.interact-table{
+.cockpit-table{
     height: 100%;
 }
 
-.interact-table table{
+.cockpit-table table{
     border: 1px #57D2FE solid;
 }
 
-.interact-table-body label{
+.cockpit-table-body label{
     margin-left: 5px;
     margin-right: 5px;
 }
 
 
 /*时钟组件样式*/
-.interact-clock{
+.cockpit-clock{
     height: 100%;
     text-align: center;
 }
 
-.interact-clock,
-.interact-clock i{
+.cockpit-clock,
+.cockpit-clock i{
     font-size: 16px;
     color: #fff;
     padding-left: 5px;
 }
 
 /*指标卡组件样式*/
-.interact-kpi{
+.cockpit-kpi{
     border: 1px #2185d0 solid;
     height: 100%;
     background-color: #0b375a;
 }
 
-.interact-kpi table,
-.interact-label table,
-.interact-table table{
+.cockpit-kpi table,
+.cockpit-label table,
+.cockpit-table table{
     width: 100%;
     height: 100%;
 }
 
-.interact-kpi-label{
+.cockpit-kpi-label{
     text-align: left;
     font-size: 14px;
     color: #03A2C9;
     padding-left: 5px;
 }
 
-.interact-kpi-number{
+.cockpit-kpi-number{
     text-align: right;
     font-size: 12px;
     color: #5CFFAC;
@@ -261,7 +261,7 @@
 }
 
 /*边框组件样式*/
-.interact-border{
+.cockpit-border{
     height: 100%;
     border-style: solid;
     border-width: 14px;
@@ -272,7 +272,7 @@
     background: none;
 }
 
-.interact-ornament{
+.cockpit-ornament{
     width: 100%;
     height: 100%;
     background-size: 100%;
@@ -281,7 +281,7 @@
     opacity: 1;
 }
 
-div.func-btn:hover div.interact-col{
+div.func-btn:hover div.cockpit-col{
     color: #ccc;
     cursor: pointer;
 }
@@ -300,20 +300,20 @@ li.el-submenu ul.el-menu::selection{
     border: #0b1f3b!important;
 }*/
 
-.interact-no-data{
+.cockpit-no-data{
     width: 100%;
     text-align: center;
     margin-top: 20px;
     color: #999;
 }
 
-.interact-color-selector{
+.cockpit-color-selector{
     flex-grow: 0!important;
     width: 30px!important;
     padding-right: 5px;
 }
 
-.interact-component-conf label{
+.cockpit-component-conf label{
     font-size: 12px!important;
 }
 
@@ -328,7 +328,7 @@ li.el-submenu ul.el-menu::selection{
     overflow-y: auto;
 }
 
-.interact-upload{
+.cockpit-upload{
     width: 100%;
     height: 80px;
     border: 3px dashed silver;

@@ -529,7 +529,7 @@ cBoard.controller('dashboardViewCtrl', function ($timeout, $rootScope, $scope, $
         $scope.applyParamFilter();
     };
 
-    $scope.toInteractView = function (param) {
+    $scope.toCockpitView = function (param) {
         var winInfo = "toolbar=no,menubar=no,status=yes,scrollbars=no,resizable=no,titlebar=no,location=no,width=" + (window.screen.availWidth - 10) + ",height=" + (window.screen.availHeight - 30) + ",top=0,left=0,fullscreen=no";
         window.open('render.html#?id=' + $stateParams.id, '', winInfo)
     };

@@ -19,8 +19,8 @@ Date.prototype.format = function (format) {
     return format;
 };
 
-/*hexInteract数据可视化全局变量*/
-var hexInteract = {
+/*hexCockpit数据可视化全局变量*/
+var hexCockpit = {
     defaultTitle: '我是标题数据',
     defaultTitleColor: '#FFFFFF',
     defaultBgColor: 'none',
@@ -37,7 +37,7 @@ var hexInteract = {
  * @param xField
  * @returns {any[]}
  */
-hexInteract.xData = function (array, xField) {
+hexCockpit.xData = function (array, xField) {
     if (!xField) {
         xField = 'x';
     }
@@ -61,7 +61,7 @@ hexInteract.xData = function (array, xField) {
  * @param yField
  * @returns {any[]}
  */
-hexInteract.yData = function (array, gField, yField) {
+hexCockpit.yData = function (array, gField, yField) {
     if (!yField) {
         yField = 'y';
     }
@@ -86,15 +86,15 @@ hexInteract.yData = function (array, gField, yField) {
     return data;
 };
 
-/*hexInteract数据可视化组件信息*/
-hexInteract.component = {
-    'label': 'hex-interact-label', 'kpi': 'hex-interact-kpi', 'clock': 'hex-interact-clock',
-    'border': 'hex-interact-border', 'chart': 'hex-interact-chart', 'ornament': "hex-interact-ornament",
-    'rlabel':'hex-interact-rlabel', 'table': 'hex-interact-table'
+/*hexCockpit数据可视化组件信息*/
+hexCockpit.component = {
+    'label': 'hex-cockpit-label', 'kpi': 'hex-cockpit-kpi', 'clock': 'hex-cockpit-clock',
+    'border': 'hex-cockpit-border', 'chart': 'hex-cockpit-chart', 'ornament': "hex-cockpit-ornament",
+    'rlabel':'hex-cockpit-rlabel', 'table': 'hex-cockpit-table'
 };
 
-/*hexInteract数据可视化组件icon*/
-hexInteract.componentICON = {
+/*hexCockpit数据可视化组件icon*/
+hexCockpit.componentICON = {
     'bar': {icon: 'fa fa-bar-chart', title: '柱状图'}, 'line': {icon: 'fa fa-line-chart', title: '折线图'},
     'pie': {icon: 'fa fa-pie-chart', title: '饼图'}, 'label': {icon: 'fa fa-language', title: '标题'},
     'kpi': {icon: 'fa fa-credit-card', title: '标题'}, 'clock': {icon: 'fa fa-clock-o', title: '时钟'},
@@ -102,16 +102,16 @@ hexInteract.componentICON = {
 };
 
 //默认指标卡数据
-hexInteract.defaultKpiData = function () {
+hexCockpit.defaultKpiData = function () {
     return {'label': '年度新增规模', 'value': '5000亿'};
 };
 
-hexInteract.defaultRLabelData = function(){
-    return {value:"HexInteract可视化产品，创造属于您的日常运营监控大屏！"};
+hexCockpit.defaultRLabelData = function(){
+    return {value:"HexCockpit可视化产品，创造属于您的日常运营监控大屏！"};
 }
 
 //默认指标卡样式
-hexInteract.defaultKpiStyle = function () {
+hexCockpit.defaultKpiStyle = function () {
     return {
         labelFontSize: 14, labelFontWeight: 'normal', labelColor: '#03A2C9', labelBgColor: '#0b375a',
         textFontSize: 12, textFontWeight: 'normal', textColor: '#5CFFAC', textBgColor: '#0b375a'
@@ -119,19 +119,19 @@ hexInteract.defaultKpiStyle = function () {
 };
 
 //默认时钟样式
-hexInteract.defaultClockStyle = function () {
+hexCockpit.defaultClockStyle = function () {
     return {
         labelFontSize: '12', labelColor: '#FFFFFF', labelPadding: '5',
-        textFontSize: '12', textFontWeight: 'normal', textColor: '#FFFFFF', textFormat: hexInteract.defaultDateFormat
+        textFontSize: '12', textFontWeight: 'normal', textColor: '#FFFFFF', textFormat: hexCockpit.defaultDateFormat
     };
 };
 
-hexInteract.defaultTableData = function(){
+hexCockpit.defaultTableData = function(){
     return "[{label:'支持两种数据格式', value:'这是第一种'}, {'key0':'这是第二种', 'key1':'value1', 'key2':'value2', 'key3':'value3'}]";
 };
 
 //默认表格样式
-hexInteract.defaultTableStyle = function () {
+hexCockpit.defaultTableStyle = function () {
     return {
         labelFontSize: 12,
         labelFontWeight: 'normal',
@@ -155,11 +155,11 @@ hexInteract.defaultTableStyle = function () {
 };
 
 //获取边框组件样式
-hexInteract.getBorderStyle = function (basePath) {
+hexCockpit.getBorderStyle = function (basePath) {
     var borderStyle = new Array();
     for (var i = 1; i <= 11; i++) {
         var key = '框' + i;
-        var value = (basePath ? basePath : '') + 'imgs/interact/border/' + (i < 10 ? '0' + i : i) + '.png';
+        var value = (basePath ? basePath : '') + 'imgs/cockpit/border/' + (i < 10 ? '0' + i : i) + '.png';
         value = 'url(' + value + ')';
         borderStyle.push({key: key, value: value})
     }
@@ -172,27 +172,27 @@ hexInteract.getBorderStyle = function (basePath) {
  * @param basePath
  * @returns {any[]}
  */
-hexInteract.getOrnamentStyle = function (basePath) {
+hexCockpit.getOrnamentStyle = function (basePath) {
     var ornamentStyle = new Array();
     for (var i = 1; i <= 10; i++) {
         var gif = 'gif' + i;
-        var value = (basePath ? basePath : '') + 'imgs/interact/ornament/' + gif + '.gif';
+        var value = (basePath ? basePath : '') + 'imgs/cockpit/ornament/' + gif + '.gif';
         ornamentStyle.push({key: gif, value: value});
     }
     return ornamentStyle;
 };
 
 /**
- * hexInteract数据可视化的图表文本对齐方式
+ * hexCockpit数据可视化的图表文本对齐方式
  *
  * @returns {*[]}
  */
-hexInteract.textAlign = function () {
+hexCockpit.textAlign = function () {
     return [{text: '居左', value: 'left'}, {text: '居中', value: 'center'}, {text: '居右', value: 'right'}];
 };
 
 //设置字体的粗细
-hexInteract.getFontWeight = function () {
+hexCockpit.getFontWeight = function () {
     var fontWeight = new Array();
     fontWeight.push({key: 'normal', value: 'normal'});
     fontWeight.push({key: 'bold', value: 'bold'});
@@ -206,16 +206,16 @@ hexInteract.getFontWeight = function () {
 };
 
 //创建组件
-Vue.component('hex-interact-clock', {
+Vue.component('hex-cockpit-clock', {
     props: {
         chartdata: Object
     },
-    template: '<div class="interact-clock">' +
+    template: '<div class="cockpit-clock">' +
     '               <table cellpadding="0" cellspacing="0" style="width: 100%;height: 100%;">' +
     '                   <tr>' +
     '                       <td>' +
-    '                           <i class="fa fa-clock-o" aria-hidden="true" v-bind:style=" {color:chartdata.interactConfChartCSS.labelColor,fontSize:chartdata.interactConfChartCSS.labelFontSize + \'px\',paddingRight:chartdata.interactConfChartCSS.labelPadding + \'px\'} "></i>' +
-    '                           <label v-bind:style=" {color:chartdata.interactConfChartCSS.textColor,fontSize:chartdata.interactConfChartCSS.textFontSize + \'px\',fontWeight:chartdata.interactConfChartCSS.textFontWeight} ">{{currentDate}}</label>' +
+    '                           <i class="fa fa-clock-o" aria-hidden="true" v-bind:style=" {color:chartdata.cockpitConfChartCSS.labelColor,fontSize:chartdata.cockpitConfChartCSS.labelFontSize + \'px\',paddingRight:chartdata.cockpitConfChartCSS.labelPadding + \'px\'} "></i>' +
+    '                           <label v-bind:style=" {color:chartdata.cockpitConfChartCSS.textColor,fontSize:chartdata.cockpitConfChartCSS.textFontSize + \'px\',fontWeight:chartdata.cockpitConfChartCSS.textFontWeight} ">{{currentDate}}</label>' +
     '                       </td>' +
     '                   </tr>' +
     '               </table>' +
@@ -226,40 +226,40 @@ Vue.component('hex-interact-clock', {
     methods: {
         init: function () {
             //日期格式化样式
-            this.currentDate = new Date().format(this.chartdata.interactConfChartCSS.textFormat);
+            this.currentDate = new Date().format(this.chartdata.cockpitConfChartCSS.textFormat);
             var _this = this;
             setInterval(function () {
-                _this.currentDate = new Date().format(_this.chartdata.interactConfChartCSS.textFormat);
+                _this.currentDate = new Date().format(_this.chartdata.cockpitConfChartCSS.textFormat);
             }, 1000);
         }
     },
     mounted: function () {
         this.init();
     },
-    watch: {'chartdata.interactConfChartCSS.textFormat': 'init'}
+    watch: {'chartdata.cockpitConfChartCSS.textFormat': 'init'}
 })
 
 /*文本标题*/
-Vue.component('hex-interact-label', {
+Vue.component('hex-cockpit-label', {
     props: {
         chartdata: Object
     },
-    template: '<div class="interact-label">' +
+    template: '<div class="cockpit-label">' +
     '<table cellspacing="0" cellpadding="0">' +
-    '<tr><td class="interact-label-label" v-bind:style=" {color:chartdata.interactConfChartCSS.titleColor,background:chartdata.interactConfChartCSS.bgColor,fontSize:chartdata.interactConfChartCSS.titleFontSize + \'px\',fontWeight:chartdata.interactConfChartCSS.titleFontWeight} ">{{chartdata.interactConfChartCSS.chartTitle}}</td></tr>' +
+    '<tr><td class="cockpit-label-label" v-bind:style=" {color:chartdata.cockpitConfChartCSS.titleColor,background:chartdata.cockpitConfChartCSS.bgColor,fontSize:chartdata.cockpitConfChartCSS.titleFontSize + \'px\',fontWeight:chartdata.cockpitConfChartCSS.titleFontWeight} ">{{chartdata.cockpitConfChartCSS.chartTitle}}</td></tr>' +
     '</table>' +
     '</div>'
 });
 
 /*指标卡*/
-Vue.component('hex-interact-kpi', {
+Vue.component('hex-cockpit-kpi', {
     props: {
         chartdata: Object
     },
-    template: '<div class="interact-kpi">' +
+    template: '<div class="cockpit-kpi">' +
     '<table cellspacing="0" cellpadding="0">' +
-    '<tr><td class="interact-kpi-label" v-bind:style=" {color:chartdata.interactConfChartCSS.labelColor,background:chartdata.interactConfChartCSS.labelBgColor,fontSize:chartdata.interactConfChartCSS.labelFontSize + \'px\',fontWeight:chartdata.interactConfChartCSS.labelFontWeight} ">{{label}}</td></tr>' +
-    '<tr><td class="interact-kpi-number" v-bind:style=" {color:chartdata.interactConfChartCSS.textColor,background:chartdata.interactConfChartCSS.textBgColor,fontSize:chartdata.interactConfChartCSS.textFontSize + \'px\',fontWeight:chartdata.interactConfChartCSS.textFontWeight} ">{{value}}</td></tr>' +
+    '<tr><td class="cockpit-kpi-label" v-bind:style=" {color:chartdata.cockpitConfChartCSS.labelColor,background:chartdata.cockpitConfChartCSS.labelBgColor,fontSize:chartdata.cockpitConfChartCSS.labelFontSize + \'px\',fontWeight:chartdata.cockpitConfChartCSS.labelFontWeight} ">{{label}}</td></tr>' +
+    '<tr><td class="cockpit-kpi-number" v-bind:style=" {color:chartdata.cockpitConfChartCSS.textColor,background:chartdata.cockpitConfChartCSS.textBgColor,fontSize:chartdata.cockpitConfChartCSS.textFontSize + \'px\',fontWeight:chartdata.cockpitConfChartCSS.textFontWeight} ">{{value}}</td></tr>' +
     '</table>' +
     '</div>',
     data: function () {
@@ -279,8 +279,8 @@ Vue.component('hex-interact-kpi', {
     watch: {'chartdata.jsonData': 'init'}
 });
 
-/*Interact组件图标*/
-Vue.component('hex-interact-icon', {
+/*Cockpit组件图标*/
+Vue.component('hex-cockpit-icon', {
     props: {
         iconCls: String,
         titleName: String
@@ -291,35 +291,35 @@ Vue.component('hex-interact-icon', {
 });
 
 /*边框组件*/
-Vue.component('hex-interact-border', {
+Vue.component('hex-cockpit-border', {
     props: {
         chartdata: Object
     },
-    template: '<div class="interact-border" v-bind:style=" {borderImageSource:chartdata.chartStyle,boxSizing:\'border-box\'}"></div>',
+    template: '<div class="cockpit-border" v-bind:style=" {borderImageSource:chartdata.chartStyle,boxSizing:\'border-box\'}"></div>',
     data: function () {
         return this.chartdata;
     }
 });
 
 /*动态边框*/
-Vue.component('hex-interact-ornament', {
+Vue.component('hex-cockpit-ornament', {
     props: {
         chartdata: Object
     },
-    template: '<div class="interact-ornament" v-bind:style=" {backgroundImage:\'url(\' + chartdata.chartStyle + \')\'} "></div>'
+    template: '<div class="cockpit-ornament" v-bind:style=" {backgroundImage:\'url(\' + chartdata.chartStyle + \')\'} "></div>'
 });
 
 /*分割线*/
-Vue.component('hex-interact-splitline', {
+Vue.component('hex-cockpit-splitline', {
     template: '<div style="width: 100%;height: 1px;border-bottom: 1px #c0c0c0 solid;margin-bottom: 5px;"></div>'
 });
 
 /*滚动文本(跑马灯)*/
-Vue.component('hex-interact-rlabel', {
+Vue.component('hex-cockpit-rlabel', {
     props: {
         chartdata: Object
     },
-    template: '<div class="interact-rlabel" v-bind:style=" {color:chartdata.interactConfChartCSS.titleColor,fontSize:chartdata.interactConfChartCSS.titleFontSize + \'px\',fontWeight:chartdata.interactConfChartCSS.titleFontWeight} ">' +
+    template: '<div class="cockpit-rlabel" v-bind:style=" {color:chartdata.cockpitConfChartCSS.titleColor,fontSize:chartdata.cockpitConfChartCSS.titleFontSize + \'px\',fontWeight:chartdata.cockpitConfChartCSS.titleFontWeight} ">' +
     '<marquee scrollAmount=2>{{value}}</marquee>' +
     '</div>',
     data: function () {
@@ -338,23 +338,23 @@ Vue.component('hex-interact-rlabel', {
 });
 
 /*表格组件*/
-Vue.component('hex-interact-table', {
+Vue.component('hex-cockpit-table', {
     props:{
         chartdata:Object
     },
-    template:'<div class="interact-table" v-bind:style=" {borderColor:chartdata.interactConfChartCSS.borderColor,borderWidth:chartdata.interactConfChartCSS.borderWidth + \'px\'} ">' +
+    template:'<div class="cockpit-table" v-bind:style=" {borderColor:chartdata.cockpitConfChartCSS.borderColor,borderWidth:chartdata.cockpitConfChartCSS.borderWidth + \'px\'} ">' +
     '<table cellspacing="0" cellpadding="0">' +
     '<tr>' +
-    '<td v-bind:style=" {textAlign:chartdata.interactConfChartCSS.headAlign,color:chartdata.interactConfChartCSS.headColor,fontSize:chartdata.interactConfChartCSS.headFontSize + \'px\',fontWeight:chartdata.interactConfChartCSS.headFontWeight,background:handleBgColor(chartdata.interactConfChartCSS.headBgColor),borderRightStyle:\'solid\',borderRightColor:chartdata.interactConfChartCSS.colBorderColor,borderRightWidth:chartdata.interactConfChartCSS.colBorderWidth + \'px\',width:chartdata.interactConfChartCSS.widthPercentage?chartdata.interactConfChartCSS.widthPercentage + \'%\':\'\'} ">{{data.head.label}}</td>' +
-    '<td v-bind:style=" {textAlign:chartdata.interactConfChartCSS.headAlign,color:chartdata.interactConfChartCSS.headColor,fontSize:chartdata.interactConfChartCSS.headFontSize + \'px\',fontWeight:chartdata.interactConfChartCSS.headFontWeight,background:handleBgColor(chartdata.interactConfChartCSS.headBgColor)} ">{{data.head.value}}</td>' +
+    '<td v-bind:style=" {textAlign:chartdata.cockpitConfChartCSS.headAlign,color:chartdata.cockpitConfChartCSS.headColor,fontSize:chartdata.cockpitConfChartCSS.headFontSize + \'px\',fontWeight:chartdata.cockpitConfChartCSS.headFontWeight,background:handleBgColor(chartdata.cockpitConfChartCSS.headBgColor),borderRightStyle:\'solid\',borderRightColor:chartdata.cockpitConfChartCSS.colBorderColor,borderRightWidth:chartdata.cockpitConfChartCSS.colBorderWidth + \'px\',width:chartdata.cockpitConfChartCSS.widthPercentage?chartdata.cockpitConfChartCSS.widthPercentage + \'%\':\'\'} ">{{data.head.label}}</td>' +
+    '<td v-bind:style=" {textAlign:chartdata.cockpitConfChartCSS.headAlign,color:chartdata.cockpitConfChartCSS.headColor,fontSize:chartdata.cockpitConfChartCSS.headFontSize + \'px\',fontWeight:chartdata.cockpitConfChartCSS.headFontWeight,background:handleBgColor(chartdata.cockpitConfChartCSS.headBgColor)} ">{{data.head.value}}</td>' +
     '</tr>' +
     '<tr v-for="(key, index) in _.keys(data.body)" ' +
-    'v-bind:style=" {background:handleBgColor((index+1)%2==0?chartdata.interactConfChartCSS.evenRowBgColor:chartdata.interactConfChartCSS.oddRowBgColor),borderBottomStyle:\'solid\',borderBottomColor:chartdata.interactConfChartCSS.rowBorderColor,borderBottomWidth:(index+1<_.keys(data.body).length?(chartdata.interactConfChartCSS.rowBorderWidth  + \'px\'):\'0px\')} ">' +
-    '<td class="interact-table-body" v-bind:style=" {textAlign:chartdata.interactConfChartCSS.labelAlign,borderRightStyle:\'solid\',borderRightColor:chartdata.interactConfChartCSS.colBorderColor,borderRightWidth:chartdata.interactConfChartCSS.colBorderWidth + \'px\'} ">' +
-    '<label v-bind:style=" {color:chartdata.interactConfChartCSS.labelColor,fontSize:chartdata.interactConfChartCSS.labelFontSize + \'px\',fontWeight:chartdata.interactConfChartCSS.labelFontWeight} ">{{key}}</label>' +
+    'v-bind:style=" {background:handleBgColor((index+1)%2==0?chartdata.cockpitConfChartCSS.evenRowBgColor:chartdata.cockpitConfChartCSS.oddRowBgColor),borderBottomStyle:\'solid\',borderBottomColor:chartdata.cockpitConfChartCSS.rowBorderColor,borderBottomWidth:(index+1<_.keys(data.body).length?(chartdata.cockpitConfChartCSS.rowBorderWidth  + \'px\'):\'0px\')} ">' +
+    '<td class="cockpit-table-body" v-bind:style=" {textAlign:chartdata.cockpitConfChartCSS.labelAlign,borderRightStyle:\'solid\',borderRightColor:chartdata.cockpitConfChartCSS.colBorderColor,borderRightWidth:chartdata.cockpitConfChartCSS.colBorderWidth + \'px\'} ">' +
+    '<label v-bind:style=" {color:chartdata.cockpitConfChartCSS.labelColor,fontSize:chartdata.cockpitConfChartCSS.labelFontSize + \'px\',fontWeight:chartdata.cockpitConfChartCSS.labelFontWeight} ">{{key}}</label>' +
     '</td>' +
-    '<td class="interact-table-body" v-bind:style=" {textAlign:chartdata.interactConfChartCSS.textAlign} ">' +
-    '<label v-bind:style=" {color:chartdata.interactConfChartCSS.textColor,fontSize:chartdata.interactConfChartCSS.textFontSize + \'px\',fontWeight:chartdata.interactConfChartCSS.textFontWeight} ">{{data.body[key]}}</label>' +
+    '<td class="cockpit-table-body" v-bind:style=" {textAlign:chartdata.cockpitConfChartCSS.textAlign} ">' +
+    '<label v-bind:style=" {color:chartdata.cockpitConfChartCSS.textColor,fontSize:chartdata.cockpitConfChartCSS.textFontSize + \'px\',fontWeight:chartdata.cockpitConfChartCSS.textFontWeight} ">{{data.body[key]}}</label>' +
     '</td>' +
     '</tr>' +
     '</table>' +

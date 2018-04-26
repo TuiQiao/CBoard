@@ -570,7 +570,7 @@ cBoard.controller('cockpitLayoutCtrl', function ($rootScope, $scope, $stateParam
             screenHeight: 100,
             viewName: '',
             fontColor: '#FFFFFF',
-            background: 'canvas.png',
+            background: '#000000',
             categoryId: ''
         };
     }
@@ -665,7 +665,7 @@ cBoard.controller('cockpitLayoutCtrl', function ($rootScope, $scope, $stateParam
     });
 
     var loadWidget = function (containerDom, widget, optionFilter, scope, reload, persist, relations) {
-        chartService.render(containerDom, widget, optionFilter, scope, reload, persist, relations);
+        chartService.render(containerDom, widget, optionFilter, scope, reload, persist, relations, true);
     };
 
     function getCategoryList() {

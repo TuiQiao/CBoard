@@ -169,6 +169,7 @@
                                     </el-form-item>
                                     <el-form-item label="框样式">
                                         <el-select v-model="cockpitChartData.border" placeholder="请选择">
+                                            <el-option key="无框" label="无框" value=""></el-option>
                                             <el-option v-for="data in borderStyle"
                                                        :key="data.key" :label="data.key" :value="data.value">
                                             </el-option>

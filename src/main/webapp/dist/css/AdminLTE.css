@@ -1560,10 +1560,30 @@ a:focus {
   display: block;
   margin-bottom: 20px;
   box-shadow: 0 1px 1px rgba(0, 0, 0, 0.1);
+  height: 100%;
 }
 .small-box > .inner {
   padding: 10px;
+  height: 80%;
+  min-height: 70px;
 }
+.inner  table {
+  height: 100%;
+  width: 100%
+}
+
+.inner .kpiValue {
+  height: 50%;
+  text-align: left;
+  font-size: 20px;
+}
+
+.inner .KpiName {
+  height: 50%;
+  text-align: right;
+  font-size: 20px;
+}
+
 .small-box > .small-box-footer {
   position: relative;
   text-align: center;

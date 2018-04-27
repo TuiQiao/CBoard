@@ -157,6 +157,7 @@ hexCockpit.defaultTableStyle = function () {
 //获取边框组件样式
 hexCockpit.getBorderStyle = function (basePath) {
     var borderStyle = new Array();
+    borderStyle.push({key:"无框",value:null})
     for (var i = 1; i <= 11; i++) {
         var key = '框' + i;
         var value = (basePath ? basePath : '') + 'imgs/cockpit/border/' + (i < 10 ? '0' + i : i) + '.png';

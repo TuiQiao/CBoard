@@ -631,7 +631,7 @@ cBoard.controller('cockpitLayoutCtrl', function ($rootScope, $scope, $stateParam
         props: {
             chartdata: Object
         },
-        template: '<div class="cockpit-border" v-bind:style=" {borderImageSource:chartdata.border,boxSizing:\'border-box\'}"><div class="cockpit-line" v-bind:style=" {background:chartdata.bgColor} "><div :id="chartdata.domId + \'_01\'" style="width: 100%;height: 100%;"></div></div></div>',
+        template: '<div class="cockpit-border" v-bind:style=" {borderImageSource:chartdata.border,boxSizing:\'border-box\',background:chartdata.bgColor,borderStyle:chartdata.border?\'solid\':\'none\'}"><div class="cockpit-line"><div :id="chartdata.domId + \'_01\'" style="width: 100%;height: 100%;"></div></div></div>',
         methods: {
             init: function () {
                 var domId = this.chartdata.domId;

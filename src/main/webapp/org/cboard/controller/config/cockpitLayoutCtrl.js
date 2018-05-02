@@ -1,4 +1,4 @@
-/**
+﻿/**
  * Created by sileiH on 2016/8/2.
  */
 'use strict';
@@ -152,7 +152,7 @@ cBoard.controller('cockpitLayoutCtrl', function ($rootScope, $scope, $stateParam
                     cockpitChartData.jsonData.value = hexCockpit.defaultTableData();
                     cockpitChartData.cockpitConfChartCSS = hexCockpit.defaultTableStyle();
                 } else if (dom.type == 'chart') {
-                    if (dom.border) {
+                    if (dom.border || dom.border === "") {
                         cockpitChartData.border = dom.border;
                     } else {
                         cockpitChartData.border = vm._data.borderStyle[0].value;

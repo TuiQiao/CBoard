@@ -56,6 +56,9 @@ public class MailService {
     @Value("${mail.smtp.ssl.checkserveridentity:false}")
     private Boolean mail_smtp_ssl_check;
 
+    @Value("${mail.smtp.startTLSEnabled:false}")
+    private Boolean mail_smtp_start_tls_enabled;
+
     private Function<Object, PersistContext> getPersistBoard(List<PersistContext> persistContextList) {
         return e -> persistContextList.stream()
                 .filter(board -> {
@@ -99,6 +102,9 @@ public class MailService {
                 .collect(Collectors.toList());
 
         HtmlEmail email = new HtmlEmail();
+
+        email.setStartTLSEnabled(mail_smtp_start_tls_enabled);
+
         StringBuilder sb = new StringBuilder("<html>");
         picList.stream().forEach(e -> {
             String b64 = e.getData().getString("img");

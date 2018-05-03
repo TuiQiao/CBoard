@@ -134,6 +134,7 @@ cBoard.controller('cockpitLayoutCtrl', function ($rootScope, $scope, $stateParam
                 } else if (dom.type == 'rlabel') {
                     //滚动文本默认值
                     cockpitChartData.jsonData = hexCockpit.defaultRLabelData();
+                    cockpitChartData.cockpitConfChartCSS.titleColor = hexCockpit.defaultTitleColor;
                 } else if (dom.type == 'kpi') {
                     //指标卡默认值
                     cockpitChartData.jsonData = hexCockpit.defaultKpiData();
@@ -151,10 +152,10 @@ cBoard.controller('cockpitLayoutCtrl', function ($rootScope, $scope, $stateParam
                     //表格组件默认值
                     cockpitChartData.jsonData.value = hexCockpit.defaultTableData();
                     cockpitChartData.cockpitConfChartCSS = hexCockpit.defaultTableStyle();
-                } else if(dom.type == 'chart') {
-                    if(dom.border){
+                } else if (dom.type == 'chart') {
+                    if (dom.border) {
                         cockpitChartData.border = dom.border;
-                    }else{
+                    } else {
                         cockpitChartData.border = vm._data.borderStyle[0].value;
                     }
 

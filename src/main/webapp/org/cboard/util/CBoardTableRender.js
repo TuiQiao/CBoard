@@ -19,8 +19,8 @@ CBoardTableRender.prototype.resize = function (container) {
 
 CBoardTableRender.prototype.do = function (tall, persist) {
     this.tall = tall;
-    tall = _.isUndefined(tall) ? 500 : tall;
-    var divHeight = tall - 110;
+    tall = _.isUndefined(tall) ? null : tall;
+    var divHeight = tall ? tall - 110 : null;
     var _this = this;
     var render = function (o, drillConfig) {
         _this.options = o;
@@ -37,7 +37,7 @@ CBoardTableRender.prototype.do = function (tall, persist) {
     };
     crossTable.table(args);
     $(this.container).css({
-        height: tall + "px"
+        height: tall ? "100%" : tall + "px"
     });
     this.resize(this.container);
     if (persist) {

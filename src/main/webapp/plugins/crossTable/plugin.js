@@ -89,7 +89,7 @@ var crossTable = {
         var operate = "<div class='toolbar toolbar" + random + "'><span class='info'><b>info: </b>" + rowNum + " x " + colNum + "</span>" +
             "<span class='exportBnt' title='" + cboardTranslate("CROSS_TABLE.EXPORT") + "'></span></div>";
         $(container).html(operate);
-        $(container).append("<div class='tableView table_" + random + "' style='width:99%;max-height:" + tall + "px;overflow:auto'>" + html + "</div>");
+        $(container).append("<div class='tableView table_" + random + "' style='width:99%;max-height:" + (tall ? tall + "px" : "70%") + ";overflow:auto'>" + html + "</div>");
         $(container).append(PaginationDom);
         var pageObj = {
             data: dataPage,

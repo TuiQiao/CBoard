@@ -73,10 +73,7 @@ cBoard.service('chartAreaMapService', function ($state, $window) {
         }
         var totals = [];
         for (var i = 0; i < casted_values.length; i++) {
-            var total = 0;
-            for(var j=0;j<aggregate_data[i].length;j++){
-                total += parseFloat(!isNaN(aggregate_data[i][j]) ? aggregate_data[i][j]:0);
-            }
+            var total = Math.max.apply(null,aggregate_data[i])
             totals.push(total);
         }
         totals.sort(function (a, b) {

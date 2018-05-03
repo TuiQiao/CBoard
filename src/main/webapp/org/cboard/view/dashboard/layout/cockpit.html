@@ -1,0 +1,14 @@
+<div id="app" ng-controller="cockpitLayoutCtrl">
+    <div class="gf-fit-box" style="padding: 0px;">
+        <div class="cockpit-row cockpit-col">
+            <div id="cockpit-drag" class="cockpit-canvas"
+                 v-bind:style=" {width:viewDragWidth,height:viewDragHeight,background:(cockpitConf.background.includes('.')?'url(' + basePath + 'imgs/cockpit/' + cockpitConf.background + ') repeat':cockpitConf.background)} ">
+                <div class="cockpit-block" v-for="dataChart in viewDataCharts" :id="dataChart.domId"
+                     :type="dataChart.chartType"
+                     v-bind:style=" {width:dataChart.chartData.chartWidth + 'px', height:dataChart.chartData.chartHeight + 'px', transform:'translate(' + dataChart.chartData.positionX + 'px,' + dataChart.chartData.positionY + 'px)'} ">
+                    <component v-bind:is="dataChart.componentName" v-bind:chartData="dataChart.chartData"></component>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

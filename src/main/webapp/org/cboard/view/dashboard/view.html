@@ -2,6 +2,9 @@
     <div ng-switch-when="timeline">
         <div ng-include="'org/cboard/view/dashboard/layout/timeline.html'"></div>
     </div>
+    <div ng-switch-when="cockpit">
+        <div ng-init="toCockpitView()"></div>
+    </div>
     <div ng-switch-default>
         <div ng-include="'org/cboard/view/dashboard/layout/grid.html'"></div>
     </div>

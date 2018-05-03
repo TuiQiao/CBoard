@@ -105,7 +105,7 @@ cBoard.service('chartRelationService', function () {
                                 show: true,
                                 position: 'right',
                                 textStyle: {
-                                    color: '#333'
+                                    //color: '#333'
                                 },
                                 formatter: function(params){
                                     var data = params.data;

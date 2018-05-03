@@ -17,7 +17,7 @@ cBoard.service('chartLineService', function ($state, $window) {
         var casted_values = data.series;
         var aggregate_data = data.data;
         var newValuesConfig = data.seriesConfig;
-        var series_data = new Array();
+        var series_data = [];
         var string_keys = _.map(casted_keys, function (key) {
             return key.join('-');
         });
@@ -34,22 +34,14 @@ cBoard.service('chartLineService', function ($state, $window) {
             sum_data[j] = sum;
         }
 
-        var line_type;
         for (var i = 0; i < aggregate_data.length; i++) {
             var joined_values = casted_values[i].join('-');
             var s = angular.copy(newValuesConfig[joined_values]);
             s.name = joined_values;
             s.data = aggregate_data[i];
             s.barMaxWidth = 40;
-            line_type = s.type;
-            if (s.type == 'stackbar') {
-                s.type = 'bar';
-                s.stack = s.valueAxisIndex.toString();
-            } else if (s.type == 'polarbar') {
-                s.type = 'bar';
-                s.stack = s.valueAxisIndex.toString();
-                s.coordinateSystem = 'polar';
-            } else if (s.type == 'percentbar') {
+
+            if (s.type.indexOf('percent') > -1) {
                 if (chartConfig.valueAxis == 'horizontal') {
                     s.data = _.map(aggregate_data[i], function (e, i) {
                         return (e / sum_data[i] * 100).toFixed(2);
@@ -59,6 +51,13 @@ cBoard.service('chartLineService', function ($state, $window) {
                         return [i, (e / sum_data[i] * 100).toFixed(2), e];
                     });
                 }
+            }
+            s.coordinateSystem = chartConfig.coordinateSystem;
+
+            if (s.type == 'stackbar') {
+                s.type = 'bar';
+                s.stack = s.valueAxisIndex.toString();
+            } else if (s.type == 'percentbar') {
                 s.type = 'bar';
                 s.stack = s.valueAxisIndex.toString();
             } else if (s.type == "arealine") {
@@ -69,15 +68,6 @@ cBoard.service('chartLineService', function ($state, $window) {
                 s.stack = s.valueAxisIndex.toString();
                 s.areaStyle = {normal: {}};
             } else if (s.type == 'percentline') {
-                if (chartConfig.valueAxis == 'horizontal') {
-                    s.data = _.map(aggregate_data[i], function (e, i) {
-                        return (e / sum_data[i] * 100).toFixed(2);
-                    })
-                } else {
-                    s.data = _.map(aggregate_data[i], function (e, i) {
-                        return [i, (e / sum_data[i] * 100).toFixed(2), e];
-                    });
-                }
                 s.type = "line";
                 s.stack = s.valueAxisIndex.toString();
                 s.areaStyle = {normal: {}};
@@ -115,7 +105,6 @@ cBoard.service('chartLineService', function ($state, $window) {
             tunningOpt.ctgLabelInterval ? labelInterval = tunningOpt.ctgLabelInterval : 'auto';
             tunningOpt.ctgLabelRotate ? labelRotate = tunningOpt.ctgLabelRotate : 0;
         }
-
 
         var categoryAxis = {
             type: 'category',
@@ -165,7 +154,7 @@ cBoard.service('chartLineService', function ($state, $window) {
             series: series_data
         };
 
-        if (line_type == 'polarbar') {
+        if (chartConfig.coordinateSystem == 'polar') {
             echartOption.angleAxis = chartConfig.valueAxis == 'horizontal' ? valueAxis : categoryAxis;
             echartOption.radiusAxis = chartConfig.valueAxis == 'horizontal' ? categoryAxis : valueAxis;
             echartOption.polar = {};

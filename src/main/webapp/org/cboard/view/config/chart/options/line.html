@@ -56,13 +56,24 @@
                     </div>
                 </div>
                 <div class="row">
-                    <div class="form-group">
+                    <div class="form-group col-md-6">
                         <label class="col-md-4 control-label">Value Orient</label>
                         <div class="col-md-8">
                             <select class="form-control" ng-model="curWidget.config.valueAxis"
                                     ng-init="curWidget.config.valueAxis ? null : curWidget.config.valueAxis='vertical'">
                                 <option value="horizontal">horizontal</option>
                                 <option value="vertical">vertical</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group col-md-6">
+                        <label class="col-md-4 control-label">Coordinate System</label>
+                        <div class="col-md-8">
+                            <select class="form-control" ng-model="curWidget.config.coordinateSystem"
+                                    ng-init="curWidget.config.coordinateSystem ? null : curWidget.config.coordinateSystem='cartesian2d'"
+                                    ng-change="curWidget.config.coordinateSystem == 'polar' ? curWidget.config.values = curWidget.config.values.slice(0, 1) : null">
+                                <option value="cartesian2d">Cartesian2d</option>
+                                <option value="polar">Polar</option>
                             </select>
                         </div>
                     </div>

@@ -50,8 +50,13 @@
 
     <!-- ECharts -->
     <script src="plugins/echart/theme-fin1.js"></script>
+    <script src="plugins/echart/dark.js"></script>
     <script src="plugins/echart/echarts-wordcloud.min.js"></script>
     <script src="plugins/echart/echarts-liquidfill.min.js"></script>
+
+    <!-- vue -->
+    <script src="plugins/vue/vue.js"></script>
+    <link rel="stylesheet" href="css/admin.css">
 
     <script src="lib/jquery.ba-resize.js"></script>
     <script src="plugins/ace/ace.js"></script>
@@ -100,66 +105,77 @@
     </style>
 </head>
 <body ng-app="cBoard" ng-controller="renderCtrl">
-<section class="content-header">
-    <h1>
-        {{board.name}}
-    </h1>
-</section>
-<div ng-if="persistFinish" class="persistFinish">
-</div>
-<div id="inner-container" class="content" style="margin-top: 15px;">
-    <div class="row" ng-repeat="row in board.layout.rows track by $index" ng-style="{height:row.height+'px'}">
-        <ng-switch on="row.type">
-            <div ng-switch-default>
-                <div ng-repeat="widget in row.widgets track by $index">
-                    <div ng-if="widget.show">
-                        <dashboard-widget ng-show="widget.loading == false"></dashboard-widget>
+<div ng-switch="board.layout.type">
+    <div ng-switch-when="cockpit">
+        <div ng-include="'org/cboard/view/dashboard/layout/cockpit.html'"></div>
+    </div>
+    <div ng-switch-default>
+        <section class="content-header">
+            <h1>
+                {{board.name}}
+            </h1>
+        </section>
+        <div ng-if="persistFinish" class="persistFinish">
+        </div>
+        <div id="inner-container" class="content" style="margin-top: 15px;">
+            <div class="row" ng-repeat="row in board.layout.rows track by $index" ng-style="{height:row.height+'px'}">
+                <ng-switch on="row.type">
+                    <div ng-switch-when="cockpit">
                     </div>
-                    <div ng-if="widget.hasRole != false && (widget.loading || !widget.show)"
-                         class="col-md-{{widget.width}}" style="height: 50px;">
-                        <div class="box box-solid">
-                            <div class="box-header">
-                                <i class="fa fa-bar-chart-o"></i>
-                                <h3 class="box-title">{{widget.name}}</h3>
-                                <div class="box-tools pull-right">
-                                    <button type="button" class="btn btn-box-tool" ng-if="widgetCfg"
-                                            ng-click="config(widget)"><i
-                                            class="fa fa-wrench"></i>
-                                    </button>
-                                    <button type="button" class="btn btn-box-tool" data-widget="collapse"><i
-                                            class="fa fa-minus"></i>
-                                    </button>
+                    <div ng-switch-default>
+                        <div ng-repeat="widget in row.widgets track by $index">
+                            <div ng-if="widget.show">
+                                <dashboard-widget ng-show="widget.loading == false"></dashboard-widget>
+                            </div>
+                            <div ng-if="widget.hasRole != false && (widget.loading || !widget.show)"
+                                 class="col-md-{{widget.width}}" style="height: 50px;">
+                                <div class="box box-solid">
+                                    <div class="box-header">
+                                        <i class="fa fa-bar-chart-o"></i>
+                                        <h3 class="box-title">{{widget.name}}</h3>
+                                        <div class="box-tools pull-right">
+                                            <button type="button" class="btn btn-box-tool" ng-if="widgetCfg"
+                                                    ng-click="config(widget)"><i
+                                                    class="fa fa-wrench"></i>
+                                            </button>
+                                            <button type="button" class="btn btn-box-tool" data-widget="collapse"><i
+                                                    class="fa fa-minus"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+                                    <div class="box-body" ng-style="{height:row.height?row.height:300+'px'}">
+                                        <i class="fa fa-spinner fa-spin"></i> {{"COMMON.LOADING" | translate}}
+                                    </div>
                                 </div>
                             </div>
-                            <div class="box-body" ng-style="{height:row.height?row.height:300+'px'}">
-                                <i class="fa fa-spinner fa-spin"></i> {{"COMMON.LOADING" | translate}}
+                            <div ng-if="widget.hasRole == false" class="col-md-{{widget.width}}">
+                                <div class="box box-solid">
+                                    <div class="box-header">
+                                        <i class="fa fa-bar-chart-o"></i>
+                                        <h3 class="box-title">{{widget.name}}</h3>
+                                        <div class="box-tools pull-right">
+                                            <button type="button" class="btn btn-box-tool" data-widget="collapse"><i
+                                                    class="fa fa-minus"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+                                    <div class="box-body" ng-style="{height:row.height?row.height:300+'px'}">
+                                        {{'ADMIN.CONTACT_ADMIN' | translate}}：<br>
+                                        <ul>
+                                            <li ng-repeat="ri in widget.roleInfo"> {{ri.type | translate}}：{{ri.name}}
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
-                    <div ng-if="widget.hasRole == false" class="col-md-{{widget.width}}">
-                        <div class="box box-solid">
-                            <div class="box-header">
-                                <i class="fa fa-bar-chart-o"></i>
-                                <h3 class="box-title">{{widget.name}}</h3>
-                                <div class="box-tools pull-right">
-                                    <button type="button" class="btn btn-box-tool" data-widget="collapse"><i
-                                            class="fa fa-minus"></i>
-                                    </button>
-                                </div>
-                            </div>
-                            <div class="box-body" ng-style="{height:row.height?row.height:300+'px'}">
-                                {{'ADMIN.CONTACT_ADMIN' | translate}}：<br>
-                                <ul>
-                                    <li ng-repeat="ri in widget.roleInfo"> {{ri.type | translate}}：{{ri.name}}</li>
-                                </ul>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+                </ng-switch>
             </div>
-        </ng-switch>
+        </div>
     </div>
 </div>
+
 
 <script src="org/cboard/util/CBoardEChartUtils.js"></script>
 <script src="org/cboard/util/CBoardEChartRender.js"></script>
@@ -176,6 +192,8 @@
 <script src="org/cboard/ng-config.js"></script>
 <script src="org/cboard/controller/cboard/renderCtrl.js"></script>
 <script src="org/cboard/controller/config/folderTreeCtrl.js"></script>
+<script src="org/cboard/controller/config/cockpitLayoutCtrl.js"></script>
+<script src="org/cboard/service/dashboard/cockpitLayoutService.js"></script>
 <script src="org/cboard/service/dashboard/dashboardService.js"></script>
 <script src="org/cboard/service/data/dataService.js"></script>
 <script src="org/cboard/service/util/ModalUtils.js"></script>
@@ -200,10 +218,10 @@
 <script src="org/cboard/service/chart/chartHeatMapTableService.js"></script>
 <script src="org/cboard/service/chart/chartLiquidFillService.js"></script>
 <script src="org/cboard/service/chart/chartChinaMapService.js"></script>
+<script src="org/cboard/service/chart/chartWorldMapService.js"></script>
 <script src="org/cboard/service/chart/chartChinaMapBmapService.js"></script>
 <script src="org/cboard/service/chart/chartRelationService.js"></script>
 <script src="org/cboard/directive/dashboard/dashboardWidget.js"></script>
-
 
 
 <script src="plugins/crossTable/plugin.js"></script>

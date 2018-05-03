@@ -91,11 +91,16 @@ angular.module('cBoard').config(['$stateProvider', function ($stateProvider) {
             url: '/user',
             templateUrl: 'org/cboard/view/admin/user.html',
             controller: 'userAdminCtrl'
-        });
-
+        })
+        .state('config.cockpit', {
+            url: '/cockpit/{boardId}',
+            params: {boardId: null},
+            templateUrl: 'org/cboard/view/config/board/cockpit/view.html',
+            controller: 'cockpitLayoutCtrl'
+        })
 }]);
 
-angular.module('cBoard').factory('sessionHelper', ["$rootScope","$q", function ($rootScope,$q) {
+angular.module('cBoard').factory('sessionHelper', ["$rootScope", "$q", function ($rootScope, $q) {
     var sessionHelper = {
         responseError: function (response) {
             if (response.data.status == 2) {

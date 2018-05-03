@@ -92,9 +92,7 @@ public class MailService {
             } catch (IOException e) {
                 LOG.error("", e);
             }
-
         }
-
 
         List<PersistContext> picList = config.getJSONArray("boards").stream()
                 .filter(e -> ((JSONObject) e).getString("type").contains("img"))
@@ -102,9 +100,6 @@ public class MailService {
                 .collect(Collectors.toList());
 
         HtmlEmail email = new HtmlEmail();
-
-        email.setStartTLSEnabled(mail_smtp_start_tls_enabled);
-
         StringBuilder sb = new StringBuilder("<html>");
         picList.stream().forEach(e -> {
             String b64 = e.getData().getString("img");
@@ -126,6 +121,7 @@ public class MailService {
         email.setHostName(mail_smtp_host);
         email.setSmtpPort(mail_smtp_port);
         email.setSSLCheckServerIdentity(mail_smtp_ssl_check);
+        email.setStartTLSEnabled(mail_smtp_start_tls_enabled);
         if (mail_smtp_username != null && mail_smtp_password != null) {
             email.setAuthentication(mail_smtp_username, mail_smtp_password);
         }

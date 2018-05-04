@@ -9,6 +9,7 @@
             <bean id="redisTemplate" class="org.springframework.data.redis.core.RedisTemplate">
                 <property name="connectionFactory">
                     <bean class="org.springframework.data.redis.connection.jedis.JedisConnectionFactory"
+                          p:database="${cache.redis.database}"
                           p:hostName="${cache.redis.hostName}"
                           p:port="${cache.redis.port}"
                           p:usePool="true"/>

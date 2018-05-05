@@ -106,7 +106,7 @@ Before the start, make sure you have setup environment:
 ## How to build project
 - 1 Download or git clone project
 ```
-git clone https://github.com/yzhang921/CBoard.git
+git clone https://github.com/TuiQiao/CBoard.git
 ```
 - 2 Install metadata of CBoard (take MySQL database as example)  
     - 2.1 Install demo metadata and sample foodmart db
@@ -176,12 +176,12 @@ Default login username and passwor: admin/root123
 ![](https://yzhang921.gitbooks.io/cboard-git-book/content/assets/demo_datasource.png)
 
 # Road Map
-All tasks are listed in [Issue Page](https://github.com/yzhang921/CBoard/issues) group by milestone.
-Also you can get our development status from [Project Page](https://github.com/yzhang921/CBoard/projects)
+All tasks are listed in [Issue Page](https://github.com/TuiQiao/CBoard/issues) group by milestone.
+Also you can get our development status from [Project Page](https://github.com/TuiQiao/CBoard/projects)
 
 
-## For more detailed Chinese document [CBoard 中文文档](https://www.gitbook.com/book/yzhang921/cboard-git-book/details)
-## For more detailed English document [CBoard Wiki](https://github.com/yzhang921/CBoard/wiki/English-Document)
+## For more detailed Chinese document [CBoard 中文文档](http://peter_zhang921.gitee.io/cboard_docsify/#/zh-cn/)
+## For more detailed English document [CBoard Manuel](https://tuiqiao.github.io/CBoardDoc/#/)
 
 
 ## Contact us
@@ -192,7 +192,7 @@ Waiting for your Contribution and pull request!
 
 # Let us kown you are using CBoard
 If your company is using CBoard or prepare to use it, please let us known.
-You can check in at this issue page [https://github.com/yzhang921/CBoard/issues/122](https://github.com/yzhang921/CBoard/issues/122)
+You can check in at this issue page [https://github.com/TuiQiao/CBoard/issues/122](https://github.com/TuiQiao/CBoard/issues/122)
 
 # Donate (请我们喝咖啡)
 ![image](https://cloud.githubusercontent.com/assets/6037522/26662085/3eb1f00e-46b4-11e7-900f-77d9b1499f6b.png)
@@ -204,18 +204,18 @@ You can check in at this issue page [https://github.com/yzhang921/CBoard/issues/
 
 # 中国用户QQ交流群（301028618）进群须知
   - 很久很久以前，为了方便CBoard使用者之间沟通，我们一直有一个QQ群，可是沟通效果非常不理想
-    - CBoard在数据分析领域的简单、实用、性能方面的特点毋庸置疑，引来了一大批入群者，**短短几个月时间入群人数突破300，登记在册大小企业用户近30余家**，如果贵司正在实用CBoard也请[告诉我们](https://github.com/yzhang921/CBoard/issues/122)
+    - CBoard在数据分析领域的简单、实用、性能方面的特点毋庸置疑，引来了一大批入群者，**短短几个月时间入群人数突破300，登记在册大小企业用户近30余家**，如果贵司正在实用CBoard也请[告诉我们](https://github.com/TuiQiao/CBoard/issues/122)
     - 可是99%QQ交流群用户都是僵尸用户，从不发言
     - 偶尔发言也只是单纯的为了找我们解决问题（**甚至大部分问题在使用文档里面有详细说明**），而且当其他人遇到类似问题的时候被帮助过的人却很少站出来互相帮助
     - 其结果就是我一遍遍的回答着用户同样的问题，无奈之下我们暂停了接纳新用户入群
-    - 请记住QQ交流群里面的内容是不能检索的，有价值的问题请尽量在[GitHub的Issue系统](https://github.com/yzhang921/CBoard/issues)里面开一个主题存档（GitHub里面关闭和非关闭状态的Issue都是可以检索的）
+    - 请记住QQ交流群里面的内容是不能检索的，有价值的问题请尽量在[GitHub的Issue系统](https://github.com/TuiQiao/CBoard/issues)里面开一个主题存档（GitHub里面关闭和非关闭状态的Issue都是可以检索的）
   - 重启交流群须知
     - 用户交流群是为方便CBoard使用者之间进行沟通，请注意**不是答疑群，请大家能够尽量互相帮助**
     - CBoard只是我们的一个业余项目，我们有自己的日常工作，没有时间一直盯着群里面每个人的发言和问题，开源是为了方便有相同需求的企业，避免大家重复造轮，为行业做一点微薄的贡献
     - 管理员会定义清理最近3个月不曾发言的僵尸用户
     - 有使用方面的问题请先仔细阅读阅档，尝试在文档中找答案
     - 在Issue系统里面搜索看看是否有类似问题
-    - 确定是程序上的bug请再GitHub issue系统里面[创建新的issue](https://github.com/yzhang921/CBoard/issues/new)， 参照如何真确提问创建Issue主题
+    - 确定是程序上的bug请再GitHub issue系统里面[创建新的issue](https://github.com/TuiQiao/CBoard/issues/new)， 参照如何真确提问创建Issue主题
         - What steps will reproduce the problem?（该问题的重现步骤是什么？）
         - What is the expected output? What do you see instead?（你期待的结果是什么？实际看到的又是什么？）
         - What version of the product are you using? On what operating system?（你正在使用产品的哪个版本？在什么操作系统上？）

@@ -161,4 +161,24 @@
             </div>
         </div>
     </div>
+    <div class="col-md-4">
+        <div class="form-group">
+            <label class="col-sm-4 control-label-compact">{{'CONFIG.DASHBOARD.FILTER_TYPE'|translate}}</label>
+            <div class="col-sm-8">
+                <div class="input-group">
+                    <input type="text" class="form-control" ng-model="param.cfg.filterType">
+                    <div class="input-group-btn">
+                        <button type="button" class="btn dropdown-toggle" data-toggle="dropdown">
+                            <span class="fa fa-caret-down"></span></button>
+                        <ul class="dropdown-menu">
+                            <li ng-click="param.cfg.filterType='[a,b]'"><a>{{'CONFIG.DASHBOARD.GTE_LTE'|translate}}</a></li>
+                            <li ng-click="param.cfg.filterType='(a,b]'"><a>{{'CONFIG.DASHBOARD.GT_LTE'|translate}}</a></li>
+                            <li ng-click="param.cfg.filterType='[a,b)'"><a>{{'CONFIG.DASHBOARD.GTE_LT'|translate}}</a></li>
+                            <li ng-click="param.cfg.filterType='(a,b)'"><a>{{'CONFIG.DASHBOARD.GT_LT'|translate}}</a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>

@@ -77,7 +77,7 @@ cBoard.controller('paramCtrl', function ($scope, $uibModal, $http) {
                     }
                 }
             };
-            $scope.param.type = '[a,b]';
+            $scope.param.type = evalValue(_.result(cfg, 'filterType', null));
             $scope.param.values = [formatter($scope.slider.minValue, cfg.value_fmt), formatter($scope.slider.maxValue, cfg.value_fmt)];
             $scope.param.refresh = function () {
                 if ($scope.slider.maxValue == $scope.slider.options.ceil) {

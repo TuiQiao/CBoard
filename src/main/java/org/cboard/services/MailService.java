@@ -56,7 +56,7 @@ public class MailService {
     @Value("${mail.smtp.ssl.checkserveridentity:false}")
     private Boolean mail_smtp_ssl_check;
 
-    @Value("${mail.smtp.startTLSEnabled:false}")
+    @Value("${mail.smtp.ssl.startTLSEnabled:false}")
     private Boolean mail_smtp_start_tls_enabled;
 
     private Function<Object, PersistContext> getPersistBoard(List<PersistContext> persistContextList) {

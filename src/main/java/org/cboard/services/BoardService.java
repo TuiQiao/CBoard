@@ -19,7 +19,6 @@ import org.springframework.stereotype.Repository;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.sql.Timestamp;
-import java.text.SimpleDateFormat;
 import java.util.*;
 
 
@@ -54,10 +53,15 @@ public class BoardService {
             JSONObject o = (JSONObject) row;
             if ("param".equals(o.getString("type"))) {
                 layout.put("containsParam", true);
+                JSONArray params = o.getJSONArray("params");
+                for (Object param : params) {
+                    JSONObject paramO = (JSONObject) param;
+                    processParamDefaultValue(paramO);
+                }
                 continue;
             }
             JSONArray widgets = o.getJSONArray("widgets");
-            if(widgets == null){
+            if (widgets == null) {
                 break;
             }
             for (Object w : widgets) {
@@ -143,6 +147,16 @@ public class BoardService {
             LOG.error("", e);
         }
         return null;
+    }
+
+
+    // 设置参数的默认值
+    private void processParamDefaultValue(JSONObject paramO) {
+        if (null != paramO) {
+            if ("slider".equals(paramO.getString("paramType"))) {
+                paramO.getJSONObject("cfg").put("filterType", "[a,b]");
+            }
+        }
     }
 
 }

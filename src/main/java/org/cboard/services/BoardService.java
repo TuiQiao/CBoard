@@ -2,6 +2,7 @@ package org.cboard.services;
 
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.cboard.dao.BoardDao;
 import org.cboard.dao.WidgetDao;
@@ -20,6 +21,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.sql.Timestamp;
 import java.util.*;
+import java.util.stream.Collectors;
 
 
 /**
@@ -42,22 +44,24 @@ public class BoardService {
     private XlsProcessService xlsProcessService;
 
     public List<DashboardBoard> getBoardList(String userId) {
-        return boardDao.getBoardList(userId);
+        List<DashboardBoard> boardList = boardDao.getBoardList(userId);
+        if (!CollectionUtils.isEmpty(boardList)) {
+            return boardList.stream()
+                    .peek(p -> p.setLayout(processParamDefaultValue(p.getLayout()))
+                    ).collect(Collectors.toList());
+        }
+        return Collections.EMPTY_LIST;
     }
 
     public ViewDashboardBoard getBoardData(Long id) {
         DashboardBoard board = boardDao.getBoard(id);
-        JSONObject layout = JSONObject.parseObject(board.getLayout());
+        String layoutString = processParamDefaultValue(board.getLayout());
+        JSONObject layout = JSONObject.parseObject(layoutString);
         JSONArray rows = layout.getJSONArray("rows");
         for (Object row : rows) {
             JSONObject o = (JSONObject) row;
             if ("param".equals(o.getString("type"))) {
                 layout.put("containsParam", true);
-                JSONArray params = o.getJSONArray("params");
-                for (Object param : params) {
-                    JSONObject paramO = (JSONObject) param;
-                    processParamDefaultValue(paramO);
-                }
                 continue;
             }
             JSONArray widgets = o.getJSONArray("widgets");
@@ -151,12 +155,22 @@ public class BoardService {
 
 
     // 设置参数的默认值
-    private void processParamDefaultValue(JSONObject paramO) {
-        if (null != paramO) {
-            if ("slider".equals(paramO.getString("paramType"))) {
-                paramO.getJSONObject("cfg").put("filterType", "[a,b]");
+    private String processParamDefaultValue(String layoutString) {
+        JSONObject layout = JSONObject.parseObject(layoutString);
+        JSONArray rows = layout.getJSONArray("rows");
+        for (Object row : rows) {
+            JSONObject o = (JSONObject) row;
+            if ("param".equals(o.getString("type"))) {
+                JSONArray params = o.getJSONArray("params");
+                for (Object param : params) {
+                    JSONObject paramO = (JSONObject) param;
+                    if ("slider".equals(paramO.getString("paramType"))) {
+                        paramO.getJSONObject("cfg").put("filterType", "[a,b]");
+                    }
+                }
             }
         }
+        return layout.toJSONString();
     }
 
 }

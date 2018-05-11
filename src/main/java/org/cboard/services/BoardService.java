@@ -3,6 +3,7 @@ package org.cboard.services;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang.StringUtils;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.cboard.dao.BoardDao;
 import org.cboard.dao.WidgetDao;
@@ -47,7 +48,7 @@ public class BoardService {
         List<DashboardBoard> boardList = boardDao.getBoardList(userId);
         if (!CollectionUtils.isEmpty(boardList)) {
             return boardList.stream()
-                    .peek(p -> p.setLayout(processParamDefaultValue(p.getLayout()))
+                    .peek(p -> p.setLayout(processParam(p.getLayout()))
                     ).collect(Collectors.toList());
         }
         return Collections.EMPTY_LIST;
@@ -55,7 +56,7 @@ public class BoardService {
 
     public ViewDashboardBoard getBoardData(Long id) {
         DashboardBoard board = boardDao.getBoard(id);
-        String layoutString = processParamDefaultValue(board.getLayout());
+        String layoutString = processParam(board.getLayout());
         JSONObject layout = JSONObject.parseObject(layoutString);
         JSONArray rows = layout.getJSONArray("rows");
         for (Object row : rows) {
@@ -155,7 +156,7 @@ public class BoardService {
 
 
     // 设置参数的默认值
-    private String processParamDefaultValue(String layoutString) {
+    private String processParam(String layoutString) {
         JSONObject layout = JSONObject.parseObject(layoutString);
         JSONArray rows = layout.getJSONArray("rows");
         for (Object row : rows) {
@@ -164,13 +165,20 @@ public class BoardService {
                 JSONArray params = o.getJSONArray("params");
                 for (Object param : params) {
                     JSONObject paramO = (JSONObject) param;
-                    if ("slider".equals(paramO.getString("paramType"))) {
-                        paramO.getJSONObject("cfg").put("filterType", "[a,b]");
-                    }
+                    processSliderDefaultValue(paramO);
                 }
             }
         }
         return layout.toJSONString();
+    }
+
+    private void processSliderDefaultValue(JSONObject paramO) {
+        if ("slider".equals(paramO.getString("paramType"))) {
+            JSONObject cfg = paramO.getJSONObject("cfg");
+            if (StringUtils.isBlank(cfg.getString("filterType"))) {
+                cfg.put("filterType", "[a,b]");
+            }
+        }
     }
 
 }

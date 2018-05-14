@@ -2,8 +2,6 @@ package org.cboard.services;
 
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
-import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.lang.StringUtils;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.cboard.dao.BoardDao;
 import org.cboard.dao.WidgetDao;
@@ -22,7 +20,6 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.sql.Timestamp;
 import java.util.*;
-import java.util.stream.Collectors;
 
 
 /**
@@ -45,19 +42,12 @@ public class BoardService {
     private XlsProcessService xlsProcessService;
 
     public List<DashboardBoard> getBoardList(String userId) {
-        List<DashboardBoard> boardList = boardDao.getBoardList(userId);
-        if (!CollectionUtils.isEmpty(boardList)) {
-            return boardList.stream()
-                    .peek(p -> p.setLayout(processParam(p.getLayout()))
-                    ).collect(Collectors.toList());
-        }
-        return Collections.EMPTY_LIST;
+        return boardDao.getBoardList(userId);
     }
 
     public ViewDashboardBoard getBoardData(Long id) {
         DashboardBoard board = boardDao.getBoard(id);
-        String layoutString = processParam(board.getLayout());
-        JSONObject layout = JSONObject.parseObject(layoutString);
+        JSONObject layout = JSONObject.parseObject(board.getLayout());
         JSONArray rows = layout.getJSONArray("rows");
         for (Object row : rows) {
             JSONObject o = (JSONObject) row;
@@ -66,7 +56,7 @@ public class BoardService {
                 continue;
             }
             JSONArray widgets = o.getJSONArray("widgets");
-            if (widgets == null) {
+            if(widgets == null){
                 break;
             }
             for (Object w : widgets) {
@@ -152,33 +142,6 @@ public class BoardService {
             LOG.error("", e);
         }
         return null;
-    }
-
-
-    // 设置参数的默认值
-    private String processParam(String layoutString) {
-        JSONObject layout = JSONObject.parseObject(layoutString);
-        JSONArray rows = layout.getJSONArray("rows");
-        for (Object row : rows) {
-            JSONObject o = (JSONObject) row;
-            if ("param".equals(o.getString("type"))) {
-                JSONArray params = o.getJSONArray("params");
-                for (Object param : params) {
-                    JSONObject paramO = (JSONObject) param;
-                    processSliderDefaultValue(paramO);
-                }
-            }
-        }
-        return layout.toJSONString();
-    }
-
-    private void processSliderDefaultValue(JSONObject paramO) {
-        if ("slider".equals(paramO.getString("paramType"))) {
-            JSONObject cfg = paramO.getJSONObject("cfg");
-            if (StringUtils.isBlank(cfg.getString("filterType"))) {
-                cfg.put("filterType", "[a,b]");
-            }
-        }
     }
 
 }

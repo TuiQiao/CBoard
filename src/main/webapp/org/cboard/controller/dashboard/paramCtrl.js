@@ -71,13 +71,13 @@ cBoard.controller('paramCtrl', function ($scope, $uibModal, $http) {
                         return formatter(value, cfg.formatter);
                     },
                     onChange: function (sliderId, modelValue, highValue, pointerType) {
-                        $scope.param.type = _.result(cfg, 'filterType', null);
+                        $scope.param.type = _.result(cfg, 'filterType', '[a,b]');
                         $scope.param.values = [formatter(modelValue, cfg.value_fmt), formatter(highValue, cfg.value_fmt)];
                         apply();
                     }
                 }
             };
-            $scope.param.type = _.result(cfg, 'filterType', null);
+            $scope.param.type = _.result(cfg, 'filterType', '[a,b]');
             $scope.param.values = [formatter($scope.slider.minValue, cfg.value_fmt), formatter($scope.slider.maxValue, cfg.value_fmt)];
             $scope.param.refresh = function () {
                 if ($scope.slider.maxValue == $scope.slider.options.ceil) {
@@ -89,7 +89,7 @@ cBoard.controller('paramCtrl', function ($scope, $uibModal, $http) {
                     $scope.slider.minValue = max - _range;
                     $scope.slider.options.floor = min;
                     $scope.slider.options.ceil = max;
-                    $scope.param.type = _.result(cfg, 'filterType', null);
+                    $scope.param.type = _.result(cfg, 'filterType', '[a,b]');
                     $scope.param.values = [formatter($scope.slider.minValue, cfg.value_fmt), formatter($scope.slider.maxValue, cfg.value_fmt)];
                 }
             }

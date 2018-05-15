@@ -2,7 +2,7 @@
  * Created by sileiH on 2016/8/2.
  */
 'use strict';
-cBoard.controller('cockpitLayoutCtrl', function ($rootScope, $scope, $stateParams, $http, $state, chartService, $q) {
+cBoard.controller('cockpitLayoutCtrl', function ($stateParams, $state, chartService, $q) {
     //初始化样式
     $("body").addClass("sidebar-collapse");
     var window_height = $(window).height();
@@ -261,7 +261,7 @@ cBoard.controller('cockpitLayoutCtrl', function ($rootScope, $scope, $stateParam
                     vm._data.viewType = true;
                 }
                 if (boardId) {
-                    $http.get("dashboard/getBoardData.do", {params: {id: boardId}}).then(function (res) {
+                    vm.$http.get("dashboard/getBoardData.do", {params: {id: boardId}}).then(function (res) {
                         if (!res.data.layout.cockpitConf) {
                             return;
                         }
@@ -383,7 +383,7 @@ cBoard.controller('cockpitLayoutCtrl', function ($rootScope, $scope, $stateParam
         }
         //数据封装结束
         if ($stateParams.boardId) {
-            $http.post("dashboard/updateBoard.do", {json: angular.toJson(json)}).then(function (res) {
+            vm.$http.post("dashboard/updateBoard.do", {json: JSON.stringify(json)}, {emulateJSON: true}).then(function (res) {
                 if (res.status == "200") {
                     closeMessage("提示", "更新成功", function () {
                         cockpitChartDataJSON = {};
@@ -403,7 +403,7 @@ cBoard.controller('cockpitLayoutCtrl', function ($rootScope, $scope, $stateParam
                 }
             });
         } else {
-            $http.post("dashboard/saveNewBoard.do", {json: angular.toJson(json)}).then(function (res) {
+            vm.$http.post("dashboard/saveNewBoard.do", {json: JSON.stringify(json)}, {emulateJSON: true}).then(function (res) {
                 if (res.status == "200") {
                     closeMessage("提示", "保存成功", function () {
                         cockpitChartDataJSON = {};
@@ -601,7 +601,8 @@ cBoard.controller('cockpitLayoutCtrl', function ($rootScope, $scope, $stateParam
     }
 
     function getWidgetList() {
-        $http.get("dashboard/getWidgetList.do").success(function (response) {
+        vm.$http.get("dashboard/getWidgetList.do").then(function (response) {
+            var response = response.data;
             var map = {};
             for (var i = 0; i < response.length; i++) {
                 map[response[i].categoryName] = [];
@@ -618,14 +619,15 @@ cBoard.controller('cockpitLayoutCtrl', function ($rootScope, $scope, $stateParam
     }
 
     var getBoardList = function () {
-        return $http.get("dashboard/getBoardList.do").success(function (response) {
-            $scope.boardList = response;
+        return vm.$http.get("dashboard/getBoardList.do").then(function (response) {
+            var response = response.data;
+            vm._data.boardList = response;
         });
     };
 
     var boardChange = function () {
-        $scope.verify = {boardName: true};
-        $scope.$emit("boardChange");
+        vm._data.verify = {boardName: true};
+        vm.$emit("boardChange");
     };
 
     Vue.component('hex-cockpit-chart', {
@@ -637,11 +639,12 @@ cBoard.controller('cockpitLayoutCtrl', function ($rootScope, $scope, $stateParam
             init: function () {
                 var domId = this.chartdata.domId;
                 var widgetId = this.chartdata.widgetId;
-                $http.get("dashboard/dashboardWidget.do", {
+                vm.$http.get("dashboard/dashboardWidget.do", {
                     params: {
                         "id": widgetId
                     }
-                }).success(function (res) {
+                }).then(function (res) {
+                    var res = res.data;
                     getDatasetList().then(function (dsres) {
                         var dataset = _.find(dsres, function (e) {
                             return e.id == res.data.datasetId;
@@ -670,7 +673,8 @@ cBoard.controller('cockpitLayoutCtrl', function ($rootScope, $scope, $stateParam
     };
 
     function getCategoryList() {
-        $http.get("dashboard/getCategoryList.do").success(function (response) {
+        vm.$http.get("dashboard/getCategoryList.do").then(function (response) {
+            var response = response.data;
             vm._data.categoryList.push({
                 name: "Private DashBoard",
                 id: ""
@@ -686,7 +690,8 @@ cBoard.controller('cockpitLayoutCtrl', function ($rootScope, $scope, $stateParam
 
     var getDatasetList = function () {
         var deferred = $q.defer();
-        $http.get("dashboard/getDatasetList.do").success(function (data) {
+        vm.$http.get("dashboard/getDatasetList.do").then(function (data) {
+            var data = data.data;
             deferred.resolve(data);
         });
         return deferred.promise;

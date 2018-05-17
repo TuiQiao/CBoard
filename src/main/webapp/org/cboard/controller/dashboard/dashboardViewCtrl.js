@@ -134,7 +134,7 @@ cBoard.controller('dashboardViewCtrl', function ($timeout, $rootScope, $scope, $
             var blob = new Blob([data], {type: "application/vnd.ms-excel"});
             var objectUrl = URL.createObjectURL(blob);
             var aForExcel = $("<a><span class='forExcel'>下载excel</span></a>").attr("href", objectUrl);
-            aForExcel.attr("download", $scope.board.name);
+            aForExcel.attr("download", $scope.board.name + ".xls");
             $("body").append(aForExcel);
             $(".forExcel").click();
             aForExcel.remove();

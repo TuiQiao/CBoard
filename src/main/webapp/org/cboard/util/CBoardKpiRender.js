@@ -27,7 +27,7 @@ CBoardKpiRender.prototype.html = function (persist) {
 CBoardKpiRender.prototype.realTimeTicket = function () {
     var self = this;
     return function (o) {
-        $(self.container).find('h3').html(o.kpiValue);
+        $(self.container).find('.kpiValue td').html(o.kpiValue);
     }
 };
 

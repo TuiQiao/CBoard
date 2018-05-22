@@ -46,7 +46,7 @@ CBoardKpiRender.prototype.template =
                    <i class='ion ion-stats-bars'></i> \
                </div> \
                <a class='small-box-footer'>\
-                   <span ng-click='reload(widget)' style='cursor: pointer'>{refresh} <i class='fa fa-refresh'></i></span>\
+                   <span name='reload_{{widget.widget.id}}' ng-click='reload(widget)' style='cursor: pointer'>{refresh} <i class='fa fa-refresh'></i></span>\
                    <span ng-click='config(widget)' ng-if='widgetCfg' style='cursor: pointer'>{edit} <i class='fa fa-wrench'></i></span>\
                </a>\
             </div>";

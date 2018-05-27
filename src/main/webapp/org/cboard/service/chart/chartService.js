@@ -10,11 +10,11 @@ cBoard.service('chartService', function($q, dataService, chartPieService, chartL
   chartRelationService, chartWorldMapService) {
 
   this.render = function(containerDom, widget, optionFilter, scope, reload, persist, relations, isCockpit) {
-    if(isCockpit){
-      CBoardEChartRender.prototype.theme = "dark";
-    }else{
-      CBoardEChartRender.prototype.theme = "theme-fin1"
-    }
+      if (isCockpit) {
+          CBoardEChartRender.prototype.theme = "dark";
+      } else {
+          CBoardEChartRender.prototype.theme = "theme-fin1"
+      }
     var deferred = $q.defer();
     var chart = getChartServices(widget.config);
     dataService.getDataSeries(widget.datasource, widget.query, widget.datasetId, widget.config, function(data) {

@@ -2,7 +2,7 @@
  * Created by sileiH on 2016/8/2.
  */
 'use strict';
-cBoard.controller('cockpitLayoutCtrl', function ($stateParams, $state, chartService, $q) {
+cBoard.controller('cockpitLayoutCtrl', function ($stateParams, $state, chartService, $q, $scope) {
     //初始化样式
     $("body").addClass("sidebar-collapse");
     var window_height = $(window).height();
@@ -626,8 +626,8 @@ cBoard.controller('cockpitLayoutCtrl', function ($stateParams, $state, chartServ
     };
 
     var boardChange = function () {
-        vm._data.verify = {boardName: true};
-        vm.$emit("boardChange");
+        $scope.verify = {boardName: true};
+        $scope.$emit("boardChange");
     };
 
     Vue.component('hex-cockpit-chart', {

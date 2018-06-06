@@ -25,7 +25,10 @@ var CBoardBMapRender = function (jqContainer, options, isDeepSpec) {
     this.container = jqContainer; // jquery object
     var bMap = jqContainer.get(0);
     $(bMap).css("width", "100%");
-    $(bMap).css("height", $(bMap).parent().context.clientHeight + "px");
+    //判断是否在大屏中显示
+    if(!bMap.id.endsWith("_01")){
+        $(bMap).css("height", $(bMap).parent().context.clientHeight + "px");
+    }
     this.ecc = echarts.init(jqContainer.get(0), this.theme);
     this.isDeppSpec = isDeepSpec;
 

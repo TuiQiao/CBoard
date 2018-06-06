@@ -100,6 +100,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
     <!-- vue-->
     <script src="plugins/vue/vue.js"></script>
     <script src="plugins/vue/vue-router.js"></script>
+    <script src="plugins/vue/vue-resource.min.js"></script>
 
     <!-- cockpit-->
     <link rel="stylesheet" href="css/admin.css">
@@ -316,7 +317,7 @@ desired effect
                 <!--<i class="fa fa-bar-chart-o"></i>-->
                 <h3 class="box-title">{{widget.name}}</h3>
                 <div class="box-tools pull-right" ng-show="x" ng-init="x=false">
-                    <button type="button" class="btn btn-box-tool" ng-click="reload(widget)"><i
+                    <button name="reload_{{widget.widget.id}}" type="button" class="btn btn-box-tool" ng-click="reload(widget)"><i
                             class="fa fa-refresh"></i>
                     </button>
                     <button type="button" class="btn btn-box-tool" ng-if="widgetCfg" ng-click="config(widget)"><i

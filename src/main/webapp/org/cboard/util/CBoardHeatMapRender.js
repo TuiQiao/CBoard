@@ -26,7 +26,10 @@ var CBoardHeatMapRender = function (jqContainer, options, isDeepSpec) {
     this.container = jqContainer; // jquery object
     var heatMap = jqContainer.get(0);
     $(heatMap).css("width", "100%");
-    $(heatMap).css("height", "500px");
+    //判断是否在大屏中显示
+    if(!heatMap.id.endsWith("_01")){
+        $(heatMap).css("height", "500px");
+    }
     this.ecc = echarts.init(jqContainer.get(0), this.theme);
     this.isDeppSpec = isDeepSpec;
 

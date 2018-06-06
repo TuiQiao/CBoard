@@ -424,7 +424,8 @@
     "PREVIOUS_PAGE": "上一页",
     "SHOW": "显示",
     "ENTRIES": "条",
-    "EXPORT": "导出"
+    "EXPORT": "导出Excel",
+    "EXPORT_CSV": "导出CSV"
   },
   "HELP_MESSAGE":{
     "CHINAMAP":{

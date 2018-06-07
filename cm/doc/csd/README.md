@@ -11,13 +11,6 @@ cd .\cm\csd
 jar -cvf .\..\..\target\CBOARD-0.4.2.jar *
 ```
 
-#### 扩展1、转换文件为UNIX格式
-![](/cm/doc/csd/转换文件为UNIX格式.png) 
-```bash
-yum -y install dos2unix
-dos2unix control.sh
-```
-
 ## 注意事项
 #### 1、scripts下的脚本执行不能是后台运行
 #### 2、cboard需要jdk1.8及以上

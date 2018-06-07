@@ -685,25 +685,40 @@
                             </execution>
                         </executions>
                     </plugin>
-                    <!-- class打成jar包到lib目录 -->
+                    <!-- 打jar包 -->
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-jar-plugin</artifactId>
                         <version>2.6</version>
                         <executions>
+                            <!-- class打成jar包 -->
                             <execution>
                                 <id>class-jar</id>
                                 <phase>package</phase>
                                 <goals>
                                     <goal>jar</goal>
                                 </goals>
+                                <configuration>
+                                    <jarName>${project.artifactId}-${project.version}</jarName>
+                                    <classesDirectory>${project.build.outputDirectory}</classesDirectory>
+                                    <outputDirectory>${project.build.directory}/lib</outputDirectory>
+                                </configuration>
+                            </execution>
+                            <!-- csd打成jar包 -->
+                            <execution>
+                                <id>csd-jar</id>
+                                <phase>package</phase>
+                                <goals>
+                                    <goal>jar</goal>
+                                </goals>
+                                <configuration>
+                                    <jarName>${parcel.name}</jarName>
+                                    <classesDirectory>${project.basedir}/cm/csd</classesDirectory>
+                                    <outputDirectory>${project.build.directory}/CM/csd</outputDirectory>
+                                </configuration>
                             </execution>
                         </executions>
-                        <configuration>
-                            <jarName>${project.artifactId}-${project.version}</jarName>
-                            <classesDirectory>${project.build.outputDirectory}</classesDirectory>
-                            <outputDirectory>${project.build.directory}/lib</outputDirectory>
-                        </configuration>
+
                     </plugin>
                     <!-- 拷贝依赖的jar包到lib目录 -->
                     <plugin>
@@ -730,23 +745,6 @@
                         <artifactId>maven-assembly-plugin</artifactId>
                         <inherited>false</inherited>
                         <executions>
-                            <!-- CBoard csd目录打包为.tar -->
-                            <execution>
-                                <id>csd-packaging</id>
-                                <phase>package</phase>
-                                <goals>
-                                    <goal>single</goal>
-                                </goals>
-                                <configuration>
-                                    <appendAssemblyId>false</appendAssemblyId>
-                                    <attach>false</attach>
-                                    <finalName>${parcel.name}</finalName>
-                                    <outputDirectory>${project.build.directory}/CM/csd</outputDirectory>
-                                    <descriptors>
-                                        <descriptor>${project.basedir}/assemblie/cboard-csd.xml</descriptor>
-                                    </descriptors>
-                                </configuration>
-                            </execution>
                             <!-- CBoard el6 parcel目录打包为.tar.gz -->
                             <execution>
                                 <id>parcel-el6-packaging</id>
@@ -787,20 +785,6 @@
                     <plugin>
                         <artifactId>maven-antrun-plugin</artifactId>
                         <executions>
-                            <!-- .tar重命名为.jar -->
-                            <execution>
-                                <id>csd-package-rename</id>
-                                <phase>package</phase>
-                                <goals>
-                                    <goal>run</goal>
-                                </goals>
-                                <configuration>
-                                    <tasks>
-                                        <move file="${project.build.directory}/CM/csd/${parcel.name}.tar"
-                                              tofile="${project.build.directory}/CM/csd/${parcel.name}.jar"/>
-                                    </tasks>
-                                </configuration>
-                            </execution>
                             <!-- el6.tar.gz重命名为.parcel -->
                             <execution>
                                 <id>parcel-el6-package-rename</id>

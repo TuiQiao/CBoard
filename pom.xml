@@ -3,12 +3,14 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>org.cboard</groupId>
     <artifactId>cboard</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
+    <version>0.4.2</version>
     <packaging>war</packaging>
     <name>cboard</name>
     <description/>
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <schema.validator.jar>${project.basedir}/cm/doc/schema-validator-5.14.4.jar</schema.validator.jar>
+        <parcel.name>CBOARD-${project.version}</parcel.name>
         <spring.version>4.3.7.RELEASE</spring.version>
         <spring-security.version>4.1.0.RELEASE</spring-security.version>
         <mybatis.version>3.1.1</mybatis.version>
@@ -369,49 +371,63 @@
 
     <build>
         <finalName>${project.artifactId}</finalName>
-        <plugins>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-compiler-plugin</artifactId>
-                <version>3.3</version>
-                <configuration>
-                    <source>${jdk.version}</source>
-                    <target>${jdk.version}</target>
-                    <encoding>UTF-8</encoding>
-                    <showDeprecation>true</showDeprecation>
-                    <showWarnings>true</showWarnings>
-                </configuration>
-            </plugin>
-
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-war-plugin</artifactId>
-                <version>2.3</version>
-                <configuration>
-                    <warName>${project.artifactId}</warName>
-                    <webResources>
-                        <resource>
-                            <directory>lib/</directory>
-                            <targetPath>WEB-INF/lib</targetPath>
-                            <includes>
-                                <include>**/*.jar</include>
-                            </includes>
-                        </resource>
-                    </webResources>
-                </configuration>
-            </plugin>
-        </plugins>
+        <pluginManagement>
+            <plugins>
+                <plugin>
+                    <groupId>org.eclipse.m2e</groupId>
+                    <artifactId>lifecycle-mapping</artifactId>
+                    <version>1.0.0</version>
+                    <configuration>
+                        <lifecycleMappingMetadata>
+                            <pluginExecutions>
+                                <pluginExecution>
+                                    <pluginExecutionFilter>
+                                        <groupId>org.apache.maven.plugins</groupId>
+                                        <artifactId>maven-dependency-plugin</artifactId>
+                                        <versionRange>[2.0,)</versionRange>
+                                        <goals>
+                                            <goal>copy-dependencies</goal>
+                                        </goals>
+                                    </pluginExecutionFilter>
+                                    <action>
+                                        <ignore/>
+                                    </action>
+                                </pluginExecution>
+                            </pluginExecutions>
+                        </lifecycleMappingMetadata>
+                    </configuration>
+                </plugin>
+            </plugins>
+        </pluginManagement>
     </build>
+
     <profiles>
+
+        <!-- CBoard WEB dir and war -->
         <profile>
-            <id>env</id>
+            <id>web</id>
             <activation>
+                <activeByDefault>true</activeByDefault>
                 <property>
-                    <name>env</name>
+                    <name>web</name>
                 </property>
             </activation>
             <build>
                 <plugins>
+                    <!-- 编译java -->
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-compiler-plugin</artifactId>
+                        <version>3.3</version>
+                        <configuration>
+                            <source>${jdk.version}</source>
+                            <target>${jdk.version}</target>
+                            <encoding>UTF-8</encoding>
+                            <showDeprecation>true</showDeprecation>
+                            <showWarnings>true</showWarnings>
+                        </configuration>
+                    </plugin>
+                    <!-- 拷贝resources到classes目录 -->
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-resources-plugin</artifactId>
@@ -427,7 +443,7 @@
                                     <outputDirectory>${project.build.outputDirectory}</outputDirectory>
                                     <resources>
                                         <resource>
-                                            <directory>src/main/resources/${env}</directory>
+                                            <directory>src/main/resources</directory>
                                             <filtering>false</filtering>
                                         </resource>
                                     </resources>
@@ -438,5 +454,387 @@
                 </plugins>
             </build>
         </profile>
+
+        <!-- Cloudera Manager CBoard parcel and CSD jar -->
+        <profile>
+            <id>cm</id>
+            <activation>
+                <activeByDefault>false</activeByDefault>
+            </activation>
+            <dependencies>
+                <dependency>
+                    <groupId>org.eclipse.jetty.aggregate</groupId>
+                    <artifactId>jetty-all</artifactId>
+                    <version>8.1.8.v20121106</version>
+                </dependency>
+            </dependencies>
+            <build>
+                <!-- 拷贝resources -->
+                <resources>
+                    <resource>
+                        <directory>src/main/resources</directory>
+                        <targetPath>${project.build.directory}/resources</targetPath>
+                        <excludes>
+                            <exclude>*.properties</exclude>
+                        </excludes>
+                    </resource>
+                    <resource>
+                        <directory>sql</directory>
+                        <targetPath>${project.build.directory}/resources/sql</targetPath>
+                    </resource>
+                    <resource>
+                        <directory>src/main/resources</directory>
+                        <targetPath>${project.build.directory}/conf</targetPath>
+                        <includes>
+                            <include>*.properties</include>
+                        </includes>
+                    </resource>
+                    <resource>
+                        <directory>src/cm/resources</directory>
+                        <targetPath>${project.build.directory}/resources</targetPath>
+                        <excludes>
+                            <exclude>*.properties</exclude>
+                        </excludes>
+                    </resource>
+                    <resource>
+                        <directory>src/cm/resources</directory>
+                        <targetPath>${project.build.directory}/conf</targetPath>
+                        <includes>
+                            <include>*.properties</include>
+                        </includes>
+                    </resource>
+                </resources>
+                <plugins>
+                    <!-- 添加sources目录 -->
+                    <plugin>
+                        <groupId>org.codehaus.mojo</groupId>
+                        <artifactId>build-helper-maven-plugin</artifactId>
+                        <version>1.6</version>
+                        <executions>
+                            <execution>
+                                <id>add-source</id>
+                                <phase>generate-sources</phase>
+                                <goals>
+                                    <goal>add-source</goal>
+                                </goals>
+                                <configuration>
+                                    <sources><!-- 可以在这里添加多个source节点，来添加任意多个源文件夹 -->
+                                        <source>src/main/java</source>
+                                        <source>src/cm/java</source>
+                                    </sources>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <!-- 编译java -->
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-compiler-plugin</artifactId>
+                        <version>3.3</version>
+                        <configuration>
+                            <source>${jdk.version}</source>
+                            <target>${jdk.version}</target>
+                            <encoding>UTF-8</encoding>
+                            <showDeprecation>true</showDeprecation>
+                            <showWarnings>true</showWarnings>
+                        </configuration>
+                    </plugin>
+                    <!--执行自定义命令-->
+                    <plugin>
+                        <groupId>org.codehaus.mojo</groupId>
+                        <artifactId>exec-maven-plugin</artifactId>
+                        <version>1.2.1</version>
+                        <executions>
+                            <!-- 校验service.sdl文件 -->
+                            <execution>
+                                <id>validate-service-sdl</id>
+                                <phase>validate</phase>
+                                <goals>
+                                    <goal>exec</goal>
+                                </goals>
+                                <configuration>
+                                    <executable>java</executable>
+                                    <arguments>
+                                        <argument>-jar</argument>
+                                        <argument>${schema.validator.jar}</argument>
+                                        <argument>-s</argument>
+                                        <argument>${project.basedir}/cm/csd/descriptor/service.sdl</argument>
+                                    </arguments>
+                                </configuration>
+                            </execution>
+                            <!-- 校验el6的parcel.json文件 -->
+                            <execution>
+                                <id>validate-el6-parcel-json</id>
+                                <phase>validate</phase>
+                                <goals>
+                                    <goal>exec</goal>
+                                </goals>
+                                <configuration>
+                                    <executable>java</executable>
+                                    <arguments>
+                                        <argument>-jar</argument>
+                                        <argument>${schema.validator.jar}</argument>
+                                        <argument>-p</argument>
+                                        <argument>${project.basedir}/cm/parcels/el6/meta/parcel.json</argument>
+                                    </arguments>
+                                </configuration>
+                            </execution>
+                            <!-- 校验el7的parcel.json文件 -->
+                            <execution>
+                                <id>validate-el7-parcel-json</id>
+                                <phase>validate</phase>
+                                <goals>
+                                    <goal>exec</goal>
+                                </goals>
+                                <configuration>
+                                    <executable>java</executable>
+                                    <arguments>
+                                        <argument>-jar</argument>
+                                        <argument>${schema.validator.jar}</argument>
+                                        <argument>-p</argument>
+                                        <argument>${project.basedir}/cm/parcels/el7/meta/parcel.json</argument>
+                                    </arguments>
+                                </configuration>
+                            </execution>
+                            <!-- 校验el6的alternatives.json文件 -->
+                            <execution>
+                                <id>validate-el6-alternatives-json</id>
+                                <phase>validate</phase>
+                                <goals>
+                                    <goal>exec</goal>
+                                </goals>
+                                <configuration>
+                                    <executable>java</executable>
+                                    <arguments>
+                                        <argument>-jar</argument>
+                                        <argument>${schema.validator.jar}</argument>
+                                        <argument>-a</argument>
+                                        <argument>${project.basedir}/cm/parcels/el6/meta/alternatives.json</argument>
+                                    </arguments>
+                                </configuration>
+                            </execution>
+                            <!-- 校验el7的alternatives.json文件 -->
+                            <execution>
+                                <id>validate-el7-alternatives-json</id>
+                                <phase>validate</phase>
+                                <goals>
+                                    <goal>exec</goal>
+                                </goals>
+                                <configuration>
+                                    <executable>java</executable>
+                                    <arguments>
+                                        <argument>-jar</argument>
+                                        <argument>${schema.validator.jar}</argument>
+                                        <argument>-a</argument>
+                                        <argument>${project.basedir}/cm/parcels/el7/meta/alternatives.json</argument>
+                                    </arguments>
+                                </configuration>
+                            </execution>
+                            <!-- 校验el6的parcel包 -->
+                            <execution>
+                                <id>validate-el6-parcel</id>
+                                <phase>verify</phase>
+                                <goals>
+                                    <goal>exec</goal>
+                                </goals>
+                                <configuration>
+                                    <executable>java</executable>
+                                    <arguments>
+                                        <argument>-jar</argument>
+                                        <argument>${schema.validator.jar}</argument>
+                                        <argument>-f</argument>
+                                        <argument>
+                                            ${project.build.directory}/CM/parcels/${parcel.name}-el6.parcel
+                                        </argument>
+                                    </arguments>
+                                </configuration>
+                            </execution>
+                            <!-- 校验el7的parcel包 -->
+                            <execution>
+                                <id>validate-el7-parcel</id>
+                                <phase>verify</phase>
+                                <goals>
+                                    <goal>exec</goal>
+                                </goals>
+                                <configuration>
+                                    <executable>java</executable>
+                                    <arguments>
+                                        <argument>-jar</argument>
+                                        <argument>${schema.validator.jar}</argument>
+                                        <argument>-f</argument>
+                                        <argument>
+                                            ${project.build.directory}/CM/parcels/${parcel.name}-el7.parcel
+                                        </argument>
+                                    </arguments>
+                                </configuration>
+                            </execution>
+                            <!-- 生成manifest.json文件 -->
+                            <execution>
+                                <id>python-manifest-json</id>
+                                <phase>verify</phase>
+                                <goals>
+                                    <goal>exec</goal>
+                                </goals>
+                                <configuration>
+                                    <executable>python</executable>
+                                    <arguments>
+                                        <argument>${project.basedir}/cm/doc/make_manifest.py</argument>
+                                        <argument>${project.build.directory}/CM/parcels/</argument>
+                                    </arguments>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <!-- class打成jar包到lib目录 -->
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-jar-plugin</artifactId>
+                        <version>2.6</version>
+                        <executions>
+                            <execution>
+                                <id>class-jar</id>
+                                <phase>package</phase>
+                                <goals>
+                                    <goal>jar</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                        <configuration>
+                            <jarName>${project.artifactId}-${project.version}</jarName>
+                            <classesDirectory>${project.build.outputDirectory}</classesDirectory>
+                            <outputDirectory>${project.build.directory}/lib</outputDirectory>
+                        </configuration>
+                    </plugin>
+                    <!-- 拷贝依赖的jar包到lib目录 -->
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-dependency-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <id>copy-dependencies</id>
+                                <phase>package</phase>
+                                <goals>
+                                    <goal>copy-dependencies</goal>
+                                </goals>
+                                <configuration>
+                                    <type>jar</type>
+                                    <includeTypes>jar</includeTypes>
+                                    <outputDirectory>${project.build.directory}/lib</outputDirectory>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <!-- 装配并打包 -->
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-assembly-plugin</artifactId>
+                        <inherited>false</inherited>
+                        <executions>
+                            <!-- CBoard csd目录打包为.tar -->
+                            <execution>
+                                <id>csd-packaging</id>
+                                <phase>package</phase>
+                                <goals>
+                                    <goal>single</goal>
+                                </goals>
+                                <configuration>
+                                    <appendAssemblyId>false</appendAssemblyId>
+                                    <attach>false</attach>
+                                    <finalName>${parcel.name}</finalName>
+                                    <outputDirectory>${project.build.directory}/CM/csd</outputDirectory>
+                                    <descriptors>
+                                        <descriptor>${project.basedir}/assemblie/cboard-csd.xml</descriptor>
+                                    </descriptors>
+                                </configuration>
+                            </execution>
+                            <!-- CBoard el6 parcel目录打包为.tar.gz -->
+                            <execution>
+                                <id>parcel-el6-packaging</id>
+                                <phase>package</phase>
+                                <goals>
+                                    <goal>single</goal>
+                                </goals>
+                                <configuration>
+                                    <appendAssemblyId>false</appendAssemblyId>
+                                    <attach>false</attach>
+                                    <finalName>${parcel.name}-el6</finalName>
+                                    <outputDirectory>${project.build.directory}/CM/parcels</outputDirectory>
+                                    <descriptors>
+                                        <descriptor>${project.basedir}/assemblie/cboard-parcels-el6.xml</descriptor>
+                                    </descriptors>
+                                </configuration>
+                            </execution>
+                            <!-- CBoard el7 parcel目录打包为.tar.gz -->
+                            <execution>
+                                <id>parcel-el7-packaging</id>
+                                <phase>package</phase>
+                                <goals>
+                                    <goal>single</goal>
+                                </goals>
+                                <configuration>
+                                    <appendAssemblyId>false</appendAssemblyId>
+                                    <attach>false</attach>
+                                    <finalName>${parcel.name}-el7</finalName>
+                                    <outputDirectory>${project.build.directory}/CM/parcels</outputDirectory>
+                                    <descriptors>
+                                        <descriptor>${project.basedir}/assemblie/cboard-parcels-el7.xml</descriptor>
+                                    </descriptors>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <!-- 文件重命名 -->
+                    <plugin>
+                        <artifactId>maven-antrun-plugin</artifactId>
+                        <executions>
+                            <!-- .tar重命名为.jar -->
+                            <execution>
+                                <id>csd-package-rename</id>
+                                <phase>package</phase>
+                                <goals>
+                                    <goal>run</goal>
+                                </goals>
+                                <configuration>
+                                    <tasks>
+                                        <move file="${project.build.directory}/CM/csd/${parcel.name}.tar"
+                                              tofile="${project.build.directory}/CM/csd/${parcel.name}.jar"/>
+                                    </tasks>
+                                </configuration>
+                            </execution>
+                            <!-- el6.tar.gz重命名为.parcel -->
+                            <execution>
+                                <id>parcel-el6-package-rename</id>
+                                <phase>package</phase>
+                                <goals>
+                                    <goal>run</goal>
+                                </goals>
+                                <configuration>
+                                    <tasks>
+                                        <move file="${project.build.directory}/CM/parcels/${parcel.name}-el6.tar.gz"
+                                              tofile="${project.build.directory}/CM/parcels/${parcel.name}-el6.parcel"/>
+                                    </tasks>
+                                </configuration>
+                            </execution>
+                            <!-- el7.tar.gz重命名为.parcel -->
+                            <execution>
+                                <id>parcel-el7-package-rename</id>
+                                <phase>package</phase>
+                                <goals>
+                                    <goal>run</goal>
+                                </goals>
+                                <configuration>
+                                    <tasks>
+                                        <move file="${project.build.directory}/CM/parcels/${parcel.name}-el7.tar.gz"
+                                              tofile="${project.build.directory}/CM/parcels/${parcel.name}-el7.parcel"/>
+                                    </tasks>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+
     </profiles>
+
 </project>

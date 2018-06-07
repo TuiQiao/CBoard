@@ -1,0 +1,338 @@
+{
+  "name": "CBOARD",
+  "label": "CBoard",
+  "description": "最容易使用且自助开放式的BI商业智能分析平台。<span class=\"error\">在添加这个服务之前, 请确保 CBoard parcel 被激活或者 CBoard package 已安装.</span>",
+  "version": "0.4.2",
+  "inExpressWizard": true,
+  "parcel": {
+    "repoUrl": "http://archive.goupwith.com/cboard/parcels/latest/",
+    "requiredTags": [
+      "cboard"
+    ]
+  },
+  // 用户和组
+  "runAs": {
+    "user": "cboard",
+    "group": "cboard"
+  },
+  // 兼容性
+  "compatibility": {
+    "generation": 1,
+    "cdhVersion": {
+      "min": "5",
+      "max": "5"
+    }
+  },
+  "icon": "images/icon.png",
+  // 外部链接
+  "rolesWithExternalLinks": [
+    "CBOARD_WEBSERVER"
+  ],
+  // 初始化
+  "serviceInit": {
+    // 服务开始前执行
+    "preStartSteps": [
+      {
+        "commandName": "InitMetadata"
+      }
+    ]
+  },
+  // 操作
+  "commands": [
+    {
+      "name": "InitMetadata",
+      "label": "初始化CBoard的元数据库表",
+      "description": "初始化CBoard的元数据库表",
+      "roleName": "CBOARD_WEBSERVER",
+      "roleCommand": "init_metadata",
+      // 单节点运行
+      "runMode": "single"
+    }
+  ],
+  // 配置
+  "parameters": [
+    {
+      "name": "data_provider_result_limit",
+      "label": "结果集限制",
+      "description": "数据集返回的最大值",
+      "configName": "dataprovider.resultLimit",
+      "required": "true",
+      "type": "long",
+      "default": 300000,
+      "min": 1
+    }
+  ],
+  // 角色信息
+  "roles": [
+    {
+      "name": "CBOARD_WEBSERVER",
+      "label": "CBoard Web Server",
+      "pluralLabel": "CBoard Web Servers",
+      "jvmBased": "true",
+      // 角色实例个数
+      "topology": {
+        "minInstances": "1",
+        "maxInstances": "1"
+      },
+      // CBOARD_WEBSERVER角色的【外部链接】信息
+      "externalLink": {
+        "name": "cboard_server_web_ui",
+        "label": "CBoard Web Server UI",
+        "url": "http://${host}:${server_web_port}/cboard"
+      },
+      // CBOARD_WEBSERVER角色的【启动】信息
+      "startRunner": {
+        "program": "scripts/control.sh",
+        // 传入的值
+        "args": [
+          "start"
+        ],
+        // 环境变量
+        "environmentVariables": {
+          "SERVER_WEB_PORT": "${server_web_port}",
+          "SERVER_MAX_HEAP_SIZE": "${server_max_heap_size}"
+        }
+      },
+      // CBOARD_WEBSERVER角色的【操作】
+      "commands": [
+        {
+          "name": "init_metadata",
+          "label": "初始化CBoard的元数据库表",
+          "description": "初始化CBoard的元数据库表",
+          // 期望的退出码
+          "expectedExitCodes": [
+            0
+          ],
+          // 所需的角色状态
+          //"requiredRoleState": "stopped",
+          "commandRunner": {
+            "program": "scripts/control.sh",
+            "args": [
+              "init_metadata"
+            ]
+          }
+        }
+      ],
+      // CBOARD_WEBSERVER角色的【日志】信息
+      "logging": {
+        "configFilename": "log4j.properties",
+        "dir": "/var/log/cboard",
+        "filename": "cboard-webserver-${host}.log",
+        "modifiable": true,
+        "loggingType": "log4j"
+      },
+      // CBOARD_WEBSERVER角色的【配置】信息
+      "parameters": [
+        {
+          "name": "server_web_port",
+          "label": "CBoard Web服务的端口",
+          "description": "这个参数是CBoard Web服务的端口值",
+          "required": "true",
+          "type": "port",
+          "default": 9080
+        },
+        {
+          "name": "server_max_heap_size",
+          "label": "CBoard Web服务的Java堆栈大小",
+          "description": "Java进程堆内存的最大大小，-Xmx以字节传递给Java",
+          "required": "true",
+          "type": "memory",
+          "unit": "bytes",
+          "min": 268435456,
+          "default": 2147483648
+        },
+        {
+          "name": "jdbc_initialize_database",
+          "label": "是否初始化元数据库表",
+          "configName": "jdbc.initialize.database",
+          "description": "初次添加CBoard Web Server角色时是否初始化元数据库表",
+          "required": "true",
+          "type": "boolean",
+          "default": true,
+          "configurableInWizard": true
+        },
+        {
+          "name": "jdbc_database_type",
+          "label": "数据库类型",
+          "configName": "jdbc.database.type",
+          "description": "数据库类型，目前支持MySQL、Oracle、SqlServer",
+          "required": "true",
+          "type": "string_enum",
+          "validValues": [
+            "mysql",
+            "oracle",
+            "sqlserver"
+          ],
+          "default": "mysql",
+          "configurableInWizard": true
+        },
+        {
+          "name": "jdbc_url",
+          "label": "数据库的JDBC URL",
+          "configName": "jdbc_url",
+          "description": "数据库的JDBC URL",
+          "required": "true",
+          "type": "string",
+          // 是否在向导时设置
+          "configurableInWizard": true
+        },
+        {
+          "name": "jdbc_username",
+          "label": "数据库的JDBC用户名",
+          "configName": "jdbc_username",
+          "description": "数据库的JDBC用户名",
+          "required": "true",
+          "type": "string",
+          "configurableInWizard": true
+        },
+        {
+          "name": "jdbc_password",
+          "label": "数据库的JDBC密码",
+          "configName": "jdbc_password",
+          "description": "数据库的JDBC密码",
+          "required": "true",
+          "type": "password",
+          "configurableInWizard": true
+        },
+        {
+          "name": "validation_query",
+          "label": "数据库的验证语句",
+          "configName": "validationQuery",
+          "description": "数据库的验证语句",
+          "required": "true",
+          "type": "string",
+          "default": "SELECT 1",
+          "configurableInWizard": true
+        },
+        {
+          "name": "phantomjs_path",
+          "label": "phantomjs执行脚本的路径",
+          "description": "phantomjs执行脚本的路径",
+          "required": "true",
+          "type": "path",
+          "pathType": "localDataDir",
+          "default": "/opt/cloudera/parcels/CBOARD/lib/cboard/phantomjs-2.1.1/bin/phantomjs"
+        },
+        {
+          "name": "aggregator_h2_url",
+          "label": "聚合器的H2 URL",
+          "configName": "aggregator.h2.url",
+          "description": "聚合器的H2 URL。在文件系统中存储数据：jdbc:h2:~/H2Data/cboard;AUTO_SERVER=TRUE;LOG=0;UNDO_LOG=0，在内存中存储数据：jdbc:h2:nioMemFS:cboard;LOG=0;UNDO_LOG=0",
+          "required": "true",
+          "type": "string",
+          "default": "jdbc:h2:~/H2Data/cboard;AUTO_SERVER=TRUE;LOG=0;UNDO_LOG=0"
+        },
+        {
+          "name": "aggregator_h2_database_name",
+          "label": "聚合器的H2数据库名称",
+          "configName": "aggregator.h2.database.name",
+          "description": "聚合器的H2 URL",
+          "required": "true",
+          "type": "string",
+          "default": "cboard"
+        },
+        {
+          "name": "aggregator_h2_cleanjob_quarz",
+          "label": "聚合器的H2清数quarz表达式",
+          "configName": "aggregator.h2.cleanjob.quarz",
+          "description": "聚合器的H2清数quarz表达式",
+          "required": "true",
+          "type": "string",
+          "default": "0 1 0 * * ?"
+        },
+        {
+          "name": "mail_smtp_host",
+          "label": "E-Mail的SMTP地址",
+          "configName": "mail.smtp.host",
+          "description": "E-Mail的SMTP地址",
+          "required": "true",
+          "type": "string",
+          "default": "smtp.goupwith.com"
+        },
+        {
+          "name": "mail_smtp_port",
+          "label": "E-Mail的SMTP服务端口",
+          "configName": "mail.smtp.port",
+          "description": "E-Mail的SMTP服务端口",
+          "required": "true",
+          "type": "port",
+          "default": 25
+        },
+        {
+          "name": "mail_smtp_from",
+          "label": "发件人",
+          "configName": "mail.smtp.from",
+          "description": "发件人",
+          "required": "true",
+          "type": "string",
+          "default": "junjie.miao@goupwith.com"
+        },
+        {
+          "name": "mail_smtp_username",
+          "label": "用户名",
+          "configName": "mail.smtp.username",
+          "description": "用户名",
+          "type": "string"
+        },
+        {
+          "name": "mail_smtp_password",
+          "label": "密码",
+          "configName": "mail.smtp.password",
+          "description": "密码",
+          "type": "password"
+        },
+        {
+          "name": "mail_smtp_ssl_check_server_identity",
+          "label": "是否检查服务器的身份",
+          "configName": "mail.smtp.ssl.checkserveridentity",
+          "description": "是否检查服务器的身份",
+          "required": "true",
+          "type": "boolean",
+          "default": false
+        }
+      ],
+      // CBOARD_WEBSERVER角色的【高级】信息
+      "configWriter": {
+        "generators": [
+          {
+            "filename": "cboard-conf/config.properties",
+            "configFormat": "properties",
+            // 不包括的参数
+            "excludedParams": [
+              "server_web_port",
+              "server_max_heap_size",
+              "jdbc_initialize_database",
+              "jdbc_database_type"
+            ],
+            "additionalConfigs": [
+              {
+                "key": "admin_user_id",
+                "value": "1"
+              },
+              {
+                "key": "org.quartz.threadPool.threadCount",
+                "value": "10"
+              },
+              {
+                "key": "log.negativeFilter",
+                "value": "List.do"
+              },
+              {
+                "key": "log.positveFilter",
+                "value": ""
+              }
+            ]
+          },
+          {
+            "filename": "cboard-conf/initmetadata.properties",
+            "configFormat": "properties",
+            "includedParams": [
+              "jdbc_initialize_database",
+              "jdbc_database_type"
+            ]
+          }
+        ]
+      }
+    }
+  ]
+}

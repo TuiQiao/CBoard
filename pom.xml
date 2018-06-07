@@ -9,7 +9,7 @@
     <description/>
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <schema.validator.jar>${project.basedir}/cm/doc/schema-validator-5.14.4.jar</schema.validator.jar>
+        <schema.validator.jar>${project.basedir}/cm/doc/schema-validator-5.12.1.jar</schema.validator.jar>
         <parcel.name>CBOARD-${project.version}</parcel.name>
         <spring.version>4.3.7.RELEASE</spring.version>
         <spring-security.version>4.1.0.RELEASE</spring-security.version>

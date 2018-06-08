@@ -1,57 +1,57 @@
 <assembly xmlns="http://maven.apache.org/plugins/maven-assembly-plugin/assembly/1.1.3"
           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
           xsi:schemaLocation="http://maven.apache.org/plugins/maven-assembly-plugin/assembly/1.1.3 http://maven.apache.org/xsd/assembly-1.1.3.xsd">
-    <id>cboard-parcels-el7</id>
+    <id>parcels-el6</id>
     <formats>
         <format>tar.gz</format> <!--打包的文件格式,也可以有：tar war zip -->
     </formats>
     <includeBaseDirectory>false</includeBaseDirectory> <!--tar.gz压缩包下是否生成和项目名相同的根目录-->
     <fileSets>
         <fileSet>
-            <directory>${project.basedir}/cm/parcels/el7/bin</directory>
+            <directory>${project.basedir}/cm/parcels/el6/bin</directory>
             <outputDirectory>/${parcel.name}/bin</outputDirectory>
             <fileMode>0755</fileMode>
         </fileSet>
         <fileSet>
-            <directory>${project.basedir}/cm/parcels/el7/meta</directory>
+            <directory>${project.basedir}/cm/parcels/el6/meta</directory>
             <outputDirectory>/${parcel.name}/meta</outputDirectory>
             <fileMode>0755</fileMode>
         </fileSet>
         <fileSet>
-            <directory>${project.basedir}/cm/parcels/el7/lib/cboard/bin</directory>
-            <outputDirectory>/${parcel.name}/lib/cboard/bin</outputDirectory>
+            <directory>${project.basedir}/cm/parcels/el6/lib/${project.artifactId}/bin</directory>
+            <outputDirectory>/${parcel.name}/lib/${project.artifactId}/bin</outputDirectory>
             <fileMode>0755</fileMode>
         </fileSet>
         <!--
         <fileSet>
             <directory>${project.basedir}/phantomjs-2.1.1</directory>
-            <outputDirectory>/${parcel.name}/lib/cboard/phantomjs-2.1.1</outputDirectory>
+            <outputDirectory>/${parcel.name}/lib/${project.artifactId}/phantomjs-2.1.1</outputDirectory>
             <fileMode>0755</fileMode>
         </fileSet>
         -->
         <fileSet>
             <directory>${project.build.directory}/lib</directory>
-            <outputDirectory>/${parcel.name}/lib/cboard/lib</outputDirectory>
+            <outputDirectory>/${parcel.name}/lib/${project.artifactId}/lib</outputDirectory>
             <fileMode>0755</fileMode>
         </fileSet>
         <fileSet>
             <directory>${project.basedir}/lib</directory>
-            <outputDirectory>/${parcel.name}/lib/cboard/lib</outputDirectory>
+            <outputDirectory>/${parcel.name}/lib/${project.artifactId}/lib</outputDirectory>
             <fileMode>0755</fileMode>
         </fileSet>
         <fileSet>
             <directory>${project.build.directory}/resources</directory>
-            <outputDirectory>/${parcel.name}/lib/cboard/resources</outputDirectory>
+            <outputDirectory>/${parcel.name}/lib/${project.artifactId}/resources</outputDirectory>
             <fileMode>0755</fileMode>
         </fileSet>
         <fileSet>
             <directory>${project.build.directory}/conf</directory>
-            <outputDirectory>/${parcel.name}/lib/cboard/conf</outputDirectory>
+            <outputDirectory>/${parcel.name}/lib/${project.artifactId}/conf</outputDirectory>
             <fileMode>0755</fileMode>
         </fileSet>
         <fileSet>
             <directory>${project.basedir}/src/main/webapp</directory>
-            <outputDirectory>/${parcel.name}/lib/cboard/webapp</outputDirectory>
+            <outputDirectory>/${parcel.name}/lib/${project.artifactId}/webapp</outputDirectory>
             <fileMode>0755</fileMode>
         </fileSet>
     </fileSets>

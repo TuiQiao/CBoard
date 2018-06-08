@@ -758,7 +758,7 @@
                                     <finalName>${parcel.name}-el6</finalName>
                                     <outputDirectory>${project.build.directory}/CM/parcels</outputDirectory>
                                     <descriptors>
-                                        <descriptor>${project.basedir}/assemblie/cboard-parcels-el6.xml</descriptor>
+                                        <descriptor>${project.basedir}/assemblie/parcels-el6.xml</descriptor>
                                     </descriptors>
                                 </configuration>
                             </execution>
@@ -775,7 +775,7 @@
                                     <finalName>${parcel.name}-el7</finalName>
                                     <outputDirectory>${project.build.directory}/CM/parcels</outputDirectory>
                                     <descriptors>
-                                        <descriptor>${project.basedir}/assemblie/cboard-parcels-el7.xml</descriptor>
+                                        <descriptor>${project.basedir}/assemblie/parcels-el7.xml</descriptor>
                                     </descriptors>
                                 </configuration>
                             </execution>

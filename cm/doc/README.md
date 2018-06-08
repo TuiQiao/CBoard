@@ -8,7 +8,7 @@
 ### JAVA升级至JDK8
 可以[全局配置]：主机 > 配置 > 高级 > Java 主目录 > /usr/java/jdk1.8.0_161 
 <br/>
-也可以[单独配置]：HBoard > 配置 > 服务范围 > 高级 > HBoard 服务环境高级配置代码段（安全阀） > JAVA_HOME=/usr/java/jdk1.8.0_161
+也可以[单独配置]：CBoard > 配置 > 服务范围 > 高级 > CBoard 服务环境高级配置代码段（安全阀） > JAVA_HOME=/usr/java/jdk1.8.0_161
 
 ### 必须在Linux环境下才能生成parcel的manifest.json文件
 mvn clean verify -Pcm

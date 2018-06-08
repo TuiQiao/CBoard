@@ -17,3 +17,6 @@ if [ -e $LIB_DIR/../../CDH/lib/bigtop-utils/bigtop-detect-javahome ] ; then
 fi
 
 exec $LIB_DIR/cboard/bin/cboard.sh "$@"
+
+
+adsadasd

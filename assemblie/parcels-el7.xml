@@ -18,7 +18,7 @@
             <fileMode>0755</fileMode>
         </fileSet>
         <fileSet>
-            <directory>${project.basedir}/cm/parcels/el7/lib/${project.artifactId}/bin</directory>
+            <directory>${project.basedir}/cm/parcels/el7/lib/bin</directory>
             <outputDirectory>/${parcel.name}/lib/${project.artifactId}/bin</outputDirectory>
             <fileMode>0755</fileMode>
         </fileSet>

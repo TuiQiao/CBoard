@@ -6,7 +6,7 @@ set -x
 date; date 1>&2
 
 # Preference order:
-# 1. CBOARD_HOME (set by cboard_env.sh in the CBoard parcel).
+# 1. CBOARD_HOME (set by default_env.sh in the CBoard parcel).
 # 2. CDH_CBOARD_HOME (set by cdh_env.sh in the CDH parcel).
 # 3. Hardcoded default value (where the Cloudera packages install CBoard).
 DEFAULT_CBOARD_HOME=/usr/lib/cboard

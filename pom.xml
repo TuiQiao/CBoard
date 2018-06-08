@@ -9,7 +9,8 @@
     <description/>
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <schema.validator.jar>${project.basedir}/cm/doc/schema-validator-5.12.1.jar</schema.validator.jar>
+        <schema.validator.jar>${project.basedir}/cm/schema-validator-5.12.1.jar</schema.validator.jar>
+        <make.manifest.py>${project.basedir}/cm/make_manifest.py</make.manifest.py>
         <parcel.name>CBOARD-${project.version}</parcel.name>
         <spring.version>4.3.7.RELEASE</spring.version>
         <spring-security.version>4.1.0.RELEASE</spring-security.version>
@@ -678,7 +679,7 @@
                                 <configuration>
                                     <executable>python</executable>
                                     <arguments>
-                                        <argument>${project.basedir}/cm/doc/make_manifest.py</argument>
+                                        <argument>${make.manifest.py}</argument>
                                         <argument>${project.build.directory}/CM/parcels/</argument>
                                     </arguments>
                                 </configuration>

@@ -16,4 +16,4 @@ if [ -e $LIB_DIR/../../CDH/lib/bigtop-utils/bigtop-detect-javahome ] ; then
   . $LIB_DIR/../../CDH/lib/bigtop-utils/bigtop-detect-javahome
 fi
 
-exec $LIB_DIR/cboard/bin/cboard.sh "$@"
+exec $LIB_DIR/cboard/bin/control.sh "$@"

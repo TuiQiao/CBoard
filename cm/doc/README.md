@@ -17,7 +17,7 @@ mvn clean verify -Pcm
 ### 所有shell文件必须转成unix格式
 dos2unix cm/parcels/bin/cboard
 dos2unix cm/parcels/lib/cboard/bin/cboard.sh
-dos2unix cm/parcels/meta/cboard_env.sh
+dos2unix cm/parcels/meta/default_env.sh
 dos2unix cm/csd/scripts/control.sh
 
 ### 使用新的parcel之前需要清空本地缓存

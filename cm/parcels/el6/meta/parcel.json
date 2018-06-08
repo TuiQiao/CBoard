@@ -21,7 +21,7 @@
   "replaces": "CBOARD",
   "schema_version": 1,
   "scripts": {
-    "defines": "cboard_env.sh"
+    "defines": "default_env.sh"
   },
   "setActiveSymlink": true,
   "users": {

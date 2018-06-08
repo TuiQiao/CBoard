@@ -12,6 +12,7 @@
 
 ### 必须在Linux环境下才能生成parcel的manifest.json文件
 mvn clean verify -Pcm
+#### 注：在windows上检查parcel和生成manifest.json有问题
 
 ### 所有shell文件必须转成unix格式
 dos2unix cm/parcels/bin/cboard

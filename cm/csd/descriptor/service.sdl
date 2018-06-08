@@ -5,7 +5,8 @@
   "version": "0.4.2",
   "inExpressWizard": true,
   "parcel": {
-    "repoUrl": "http://archive.goupwith.com/cboard/parcels/latest/",
+    //"repoUrl": "http://archive.goupwith.com/cboard/parcels/latest/",
+    "repoUrl":"http://202.101.3.118:9089/cboard/parcels/latest/",
     "requiredTags": [
       "cboard"
     ]

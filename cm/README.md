@@ -54,8 +54,8 @@ mvn clean verify -Pcm
 #### 注：在windows上检查parcel和生成manifest.json有问题
 
 ### 所有shell文件必须转成unix格式
-dos2unix cm/parcels/bin/cboard
-dos2unix cm/parcels/lib/cboard/bin/cboard.sh
+dos2unix cm/parcels/bin/control
+dos2unix cm/parcels/lib/cboard/bin/control.sh
 dos2unix cm/parcels/meta/default_env.sh
 dos2unix cm/csd/scripts/control.sh
 

@@ -3,7 +3,7 @@
     "destination": "/usr/bin/cboard",
     "isDirectory": false,
     "priority": 10,
-    "source": "bin/cboard"
+    "source": "bin/control"
   },
   "cboard-conf": {
     "destination": "/etc/cboard/conf",

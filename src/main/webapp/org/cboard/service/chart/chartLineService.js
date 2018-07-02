@@ -23,32 +23,51 @@ cBoard.service('chartLineService', function ($state, $window) {
         });
         var tunningOpt = chartConfig.option;
 
-        var sum_data = [];
+        var zipDataWithCfg = _.chain(aggregate_data)
+            .map(function (data, i) {
+                var joined_values = casted_values[i].join('-');
+                var s = newValuesConfig[joined_values];
+                s.key =joined_values;
+                s.data = data;
+                return s;
+            }).value()
+
+        var sum_data =_.chain(zipDataWithCfg)
+            .groupBy(function (item) {
+                return item.valueAxisIndex;
+            })
+            .map(function (axisSeries) {
+                var sumArr = [];
+                for (var i = 0; i < axisSeries[0].data.length; i++) {
+                    var sumItem = 0;
+                    for (var j = 0; j < axisSeries.length; j++) {
+                        var cell = axisSeries[j].data[i];
+                        sumItem += cell? Number(cell) : 0;
+                    }
+                    sumArr.push(sumItem)
+                }
+                return sumArr;
+            })
+            .value();
+
         for (var j = 0; aggregate_data[0] && j < aggregate_data[0].length; j++) {
-            var sum = 0;
             for (var i = 0; i < aggregate_data.length; i++) {
-                sum += aggregate_data[i][j] ? Number(aggregate_data[i][j]) : 0;
-                // change undefined to 0
                 aggregate_data[i][j] = aggregate_data[i][j] ? Number(aggregate_data[i][j]) : 0;
             }
-            sum_data[j] = sum;
         }
 
-        for (var i = 0; i < aggregate_data.length; i++) {
-            var joined_values = casted_values[i].join('-');
-            var s = angular.copy(newValuesConfig[joined_values]);
-            s.name = joined_values;
-            s.data = aggregate_data[i];
-            s.barMaxWidth = 40;
-
+        for (var i = 0; i < zipDataWithCfg.length; i++) {
+            var s = zipDataWithCfg[i];
+            s.name = s.key;
+            var sumData = sum_data[s.valueAxisIndex];
             if (s.type.indexOf('percent') > -1) {
-                if (chartConfig.valueAxis == 'horizontal') {
-                    s.data = _.map(aggregate_data[i], function (e, i) {
-                        return (e / sum_data[i] * 100).toFixed(2);
+                if (chartConfig.valueAxis === 'horizontal') {
+                    s.data = _.map(s.data, function (e, i) {
+                        return (e / sumData[i] * 100).toFixed(2);
                     })
                 } else {
-                    s.data = _.map(aggregate_data[i], function (e, i) {
-                        return [i, (e / sum_data[i] * 100).toFixed(2), e];
+                    s.data = _.map(s.data, function (e, i) {
+                        return [i, (e / sumData[i] * 100).toFixed(2), e];
                     });
                 }
             }

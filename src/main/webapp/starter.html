@@ -315,7 +315,7 @@ desired effect
                 <!--<i class="fa fa-bar-chart-o"></i>-->
                 <h3 class="box-title">{{widget.name}}</h3>
                 <div class="box-tools pull-right" ng-show="x" ng-init="x=false">
-                    <button type="button" class="btn btn-box-tool" ng-click="reload(widget)"><i
+                    <button name="reload_{{widget.widget.id}}" type="button" class="btn btn-box-tool" ng-click="reload(widget)"><i
                             class="fa fa-refresh"></i>
                     </button>
                     <button type="button" class="btn btn-box-tool" ng-if="widgetCfg" ng-click="config(widget)"><i

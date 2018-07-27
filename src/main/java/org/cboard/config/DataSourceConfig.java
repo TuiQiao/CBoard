@@ -32,7 +32,7 @@ import java.sql.SQLException;
  * @desc
  **/
 @Configuration
-@PropertySource(value = {"classpath:config.properties", "classpath:caso.properties", "classpath:log4j.properties"}, encoding = "UTF-8")
+@PropertySource(value = {"classpath:config.properties", "classpath:caso.properties"}, encoding = "UTF-8")
 @MapperScan("org.cboard.dao")
 @EnableTransactionManagement
 public class DataSourceConfig {
@@ -104,7 +104,7 @@ public class DataSourceConfig {
         return basicDataSource;
     }
 
-    @Bean
+    @Bean(name = "druidDataSource")
     public DruidDataSource druidDataSource() {
         DruidDataSource ds = new DruidDataSource();
         LOGGER.info("dataSourceConfig init go");

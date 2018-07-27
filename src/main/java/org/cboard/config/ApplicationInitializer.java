@@ -44,7 +44,7 @@ public class ApplicationInitializer implements WebApplicationInitializer {
 
     private void registerListener(ServletContext container) {
         container.addListener(RequestContextListener.class);
-        container.addListener(SessionListener.class);
+//        container.addListener(SessionListener.class);
         initializeSpringConfig(container);
     }
 

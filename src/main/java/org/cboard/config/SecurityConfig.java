@@ -9,7 +9,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Import;
 import org.springframework.core.annotation.Order;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.authentication.encoding.Md5PasswordEncoder;
@@ -26,7 +25,6 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
  **/
 @Configuration
 @EnableWebSecurity
-@Import(DataSourceConfig.class)
 @Order(2)
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
@@ -81,26 +79,26 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
-//        http.authorizeRequests().antMatchers("/**").access("!anonymous");
         http.authorizeRequests()
                 .antMatchers("/login.do").permitAll()
-                .anyRequest().authenticated()
-                .and()
-                    .formLogin()
-                    .loginPage("/login.do")
-//                    .loginProcessingUrl("/login.do")
-//                    .successForwardUrl("")
-                    .failureUrl("/login?error")
-//                    .failureForwardUrl("")
-                    .usernameParameter("username")
-                    .passwordParameter("password")
-                    .defaultSuccessUrl("/starter.html")
-//                    .permitAll()
+                .anyRequest().authenticated();
+        http.formLogin()
+                .loginPage("/login.do")
+                .successForwardUrl("/starter.html")
+                .defaultSuccessUrl("/starter.html")
+                .failureUrl("/login.do?error")
+                .usernameParameter("username")
+                .passwordParameter("password")
+                .permitAll()
                 .and()
                 .logout()
+                .invalidateHttpSession(true)
                 .logoutUrl("/j_spring_cas_security_logout")
-                .logoutSuccessUrl("/login")
-                .permitAll();
+                .logoutSuccessUrl("/login.do?logout").permitAll()
+                .and()
+                .httpBasic()
+                .and()
+                .csrf().disable();
     }
 
 }

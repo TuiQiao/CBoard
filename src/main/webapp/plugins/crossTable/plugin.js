@@ -387,7 +387,7 @@ var crossTable = {
         $(".toolbar" + random + " .exportCsvBnt").on('click', function () {
             var escMatcher = '\n|\r|,|"';
             var row;
-            var output = '';
+            var output = '\ufeff';
             var rows = data.length;
             var columns = data[0].length;
             for (var i = 0; i < rows; i++) {

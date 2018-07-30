@@ -15,13 +15,17 @@ var crossTable = {
             colContent = "<tr>";
         for (var i = 0; i < chartConfig.groups.length; i++) {
             var groupId = chartConfig.groups[i].id;
+            var rowHeaderSortg = true;
             var colspan = 1;
             var colList = [];
+            _.each(chartConfig.groups, function(g, index) {
+                index <= i && g.sort === undefined ? rowHeaderSortg = false : null;
+            });
             for (var t = 0; t < chartConfig.keys.length; t++) {
                 colContent += "<th class=" + data[i][t].property + "><div></div></th>";
             }
             for (var y = chartConfig.keys.length; y < data[i].length; y++) {
-                if ((data[i][y + 1]) && (data[i][y].data == data[i][y + 1].data)) {
+                if (data[i][y + 1] && (data[i][y].data == data[i][y + 1].data) && rowHeaderSortg) {
                     if (i > 0) {
                         var noEqual = false;
                         for (var s = i - 1; s > -1; s--) {
@@ -30,7 +34,7 @@ var crossTable = {
                                 break;
                             }
                         }
-                        if (noEqual) {
+                        if (noEqual ) {
                             colList.push({
                                 data: data[i][y].data,
                                 colSpan: colspan,
@@ -87,7 +91,7 @@ var crossTable = {
         var p_class = "p_" + random;
         var PaginationDom = "<div class='" + p_class + "'><div class='optionNum'><span>" + cboardTranslate("CROSS_TABLE.SHOW") + "</span>" + optionDom + "<span>" + cboardTranslate("CROSS_TABLE.ENTRIES") + "</span></div><div class='page'><ul></ul></div></div>";
         var operate = "<div class='toolbar toolbar" + random + "'><span class='info'><b>info: </b>" + rowNum + " x " + colNum + "</span>" +
-            "<span class='exportBnt' title='" + cboardTranslate("CROSS_TABLE.EXPORT") + "'></span>" + 
+            "<span class='exportBnt' title='" + cboardTranslate("CROSS_TABLE.EXPORT") + "'></span>" +
             "<span class='exportCsvBnt' title='" + cboardTranslate("CROSS_TABLE.EXPORT_CSV") + "'></span></div>";
         $(container).html(operate);
         $(container).append("<div class='tableView table_" + random + "' style='width:99%;max-height:" + (tall ? tall + "px" : "70%") + ";overflow:auto'>" + html + "</div>");
@@ -150,6 +154,25 @@ var crossTable = {
         }
         return pageData;
     },
+    dataWrap: function (data){
+        if(data == null || data == "" || !isNaN(Number(data))){
+            return data;
+        }
+        var result = data, len = data.length, s = 40;
+        if(data && len > s){
+            result = "";
+            var curlen = 0, patten = /.*[\u4e00-\u9fa5]+.*$/;
+            for(var i = 0; i < len; i++){
+                patten.test(data[i]) ? curlen += 2 : curlen++;
+                if(curlen >= s){
+                    curlen = 0;
+                    result += "<br />";
+                }
+                result += data[i];
+            }
+        }
+        return result;
+    },
     render: function (data, chartConfig, drill) {
         var html = '';
         if (data === undefined) {
@@ -192,7 +215,7 @@ var crossTable = {
             for (var m = 0; m < chartConfig.keys.length; m++) {
                 var currentCell = data[n][m];
                 var rowParentCell = data[n][m - 1];
-                var cur_data = currentCell.data ? currentCell.data : "";
+                var cur_data = this.dataWrap(currentCell.data ? currentCell.data : "");
                 var keyId = chartConfig.keys[m].id;
                 var align = chartConfig.keys[m].align;
                 if (drill && drill.config[keyId] && (drill.config[keyId].down || drill.config[keyId].up)) {
@@ -205,14 +228,18 @@ var crossTable = {
                     }
                     cur_data = "<div class='table_drill_cell' " + d + ">" + cur_data + "</div>";
                 }
-                if (m > 0) {
+                var sortg = true;
+                _.each(chartConfig.keys, function(key, index) {
+                    index <= m && key.sort === undefined ? sortg = false : null;
+                });
+                if (m > 0 && sortg) {
                     if (currentCell.rowSpan == 'row_null' && rowParentCell.rowSpan == 'row_null' && !isFirstLine) {
                         rowContent += "<th class=row_null><div></div></th>";
                     } else {
                         rowContent += "<th style='text-align:"+align+"' class=row><div>" + cur_data + "</div></th>";
                     }
                 } else {
-                    if (currentCell.rowSpan == 'row_null' && !isFirstLine) {
+                    if (currentCell.rowSpan == 'row_null' && !isFirstLine && sortg) {
                         rowContent += "<th class=row_null><div></div></th>";
                     } else {
                         rowContent += "<th style='text-align:"+align+"' class=row><div>" + cur_data + "</div></th>";
@@ -221,7 +248,9 @@ var crossTable = {
             }
             for (var y = chartConfig.keys.length; y < data[n].length; y++) {
                 var align = chartConfig.values[0].cols[(y-chartConfig.keys.length)%chartConfig.values[0].cols.length].align;
-                rowContent += "<td style='text-align:"+align+"'class=" + data[n][m].property + "><div>" + data[n][y].data + "</div></td>";
+                var temData = data[n][y].data/* === "" ? "" : data[n][y].data + " ABCD EFG HIJKLMNO PQ RST"*/;
+                var celData = this.dataWrap(temData);
+                rowContent += "<td style='text-align:"+align+"'class=" + data[n][m].property + "><div>" + celData + "</div></td>";
             }
             html = html + rowContent + "</tr>";
         }
@@ -410,7 +439,7 @@ var crossTable = {
             aForCsv.attr("download", "table.csv");
             $("body").append(aForCsv);
             $(".forCsv").click();
-            aForCsv.remove(); 
+            aForCsv.remove();
         })
     }
 };

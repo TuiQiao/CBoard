@@ -29,7 +29,7 @@
     "LAST60MIN_TIMESTAMP": "Last 60 Hours(Timestamp)",
     "LOGIN_NAME": "Current Login Name",
     "USER_NAME": "Current User Name",
-    "USER_ROLES": "Current User Name",
+    "USER_ROLES": "Roles of Current User",
     "FILTER_GROUP": "Filter Group",
     "SAVE_AS": "Save As",
     "PARAM": "Parameter",

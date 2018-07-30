@@ -87,7 +87,8 @@ var crossTable = {
         var p_class = "p_" + random;
         var PaginationDom = "<div class='" + p_class + "'><div class='optionNum'><span>" + cboardTranslate("CROSS_TABLE.SHOW") + "</span>" + optionDom + "<span>" + cboardTranslate("CROSS_TABLE.ENTRIES") + "</span></div><div class='page'><ul></ul></div></div>";
         var operate = "<div class='toolbar toolbar" + random + "'><span class='info'><b>info: </b>" + rowNum + " x " + colNum + "</span>" +
-            "<span class='exportBnt' title='" + cboardTranslate("CROSS_TABLE.EXPORT") + "'></span></div>";
+            "<span class='exportBnt' title='" + cboardTranslate("CROSS_TABLE.EXPORT") + "'></span>" + 
+            "<span class='exportCsvBnt' title='" + cboardTranslate("CROSS_TABLE.EXPORT_CSV") + "'></span></div>";
         $(container).html(operate);
         $(container).append("<div class='tableView table_" + random + "' style='width:99%;max-height:" + (tall ? tall + "px" : "70%") + ";overflow:auto'>" + html + "</div>");
         $(container).append(PaginationDom);
@@ -383,5 +384,33 @@ var crossTable = {
             xhr.send(formData);
         });
 
+        $(".toolbar" + random + " .exportCsvBnt").on('click', function () {
+            var escMatcher = '\n|\r|,|"';
+            var row;
+            var output = '\ufeff';
+            var rows = data.length;
+            var columns = data[0].length;
+            for (var i = 0; i < rows; i++) {
+                var rowArray = [];
+                for (var j = 0; j < columns; j++) {
+                    var cell = data[i][j].data;
+                    var strValue = (cell === undefined || cell === null) ? '' : cell.toString();
+                    strValue.replace(new RegExp('"', 'g'), '""');
+                    if (strValue.search(escMatcher) > -1) {
+                        strValue = '"' + strValue + '"';
+                    }
+                    rowArray.push(strValue);
+                }
+                output += rowArray.join(',') + '\n';
+            }
+
+            var blob = new Blob([output], {type: "application/csv"});
+            var objectUrl = URL.createObjectURL(blob);
+            var aForCsv = $("<a><span class='forCsv'>下载csv</span></a>").attr("href", objectUrl);
+            aForCsv.attr("download", "table.csv");
+            $("body").append(aForCsv);
+            $(".forCsv").click();
+            aForCsv.remove(); 
+        })
     }
 };

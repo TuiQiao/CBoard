@@ -348,7 +348,7 @@ span.ellipse {
     float: left;
     margin: 4px 0 0 5px;
 }
-.exportBnt, .drillUp, .drillDown{
+.exportBnt, .exportCsvBnt, .drillUp, .drillDown{
     margin:7px 5px 10px 5px;
     float: right;
     width: 15px;
@@ -365,6 +365,10 @@ span.ellipse {
 }
 .exportBnt{
     background: url("../imgs/excel.svg");
+    background-size: cover;
+}
+.exportCsvBnt{
+    background: url("../imgs/csv.svg");
     background-size: cover;
 }
 div.operateBox {

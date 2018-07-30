@@ -424,7 +424,8 @@
     "PREVIOUS_PAGE": "Previous",
     "SHOW": "Show",
     "ENTRIES": "entries",
-    "EXPORT": "Export"
+    "EXPORT": "Export Excel",
+    "EXPORT_CSV": "Export CSV"
   },
   "HELP_MESSAGE":{
     "CHINAMAP":{

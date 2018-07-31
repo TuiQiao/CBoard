@@ -25,6 +25,8 @@ public class ApplicationInitializer implements WebApplicationInitializer {
 
     @Override
     public void onStartup(ServletContext servletContext) throws ServletException {
+        initializeSpringAndSpringMVCConfig(servletContext);
+
         registerFilter(servletContext);
         registerListener(servletContext);
         registerServlet(servletContext);
@@ -32,7 +34,6 @@ public class ApplicationInitializer implements WebApplicationInitializer {
 
     private void registerServlet(ServletContext container) {
         initializeStatViewServlet(container);
-        initializeSpringMVCConfig(container);
     }
 
     private void registerFilter(ServletContext container) {
@@ -44,23 +45,18 @@ public class ApplicationInitializer implements WebApplicationInitializer {
 
     private void registerListener(ServletContext container) {
         container.addListener(RequestContextListener.class);
-//        container.addListener(SessionListener.class);
-        initializeSpringConfig(container);
+        container.addListener(SessionListener.class);
     }
 
-    private void initializeSpringConfig(ServletContext container) {
+    private void initializeSpringAndSpringMVCConfig(ServletContext container) {
         AnnotationConfigWebApplicationContext rootContext = new AnnotationConfigWebApplicationContext();
         rootContext.register(RootConfig.class);
+        rootContext.register(WebMvcConfig.class);
         container.addListener(new ContextLoaderListener(rootContext));
-    }
+        ServletRegistration.Dynamic springMvc = container.addServlet("SpringMvc", new DispatcherServlet(rootContext));
+        springMvc.setLoadOnStartup(1);
+        springMvc.addMapping("*.do");
 
-    private void initializeSpringMVCConfig(ServletContext container) {
-        AnnotationConfigWebApplicationContext dispatcherContext = new AnnotationConfigWebApplicationContext();
-        dispatcherContext.register(WebMvcConfig.class);
-        ServletRegistration.Dynamic dispatcher = container.addServlet("SpringMvc", new DispatcherServlet(dispatcherContext));
-        dispatcher.setLoadOnStartup(1);
-//        dispatcher.setAsyncSupported(true);
-        dispatcher.addMapping("*.do");
     }
 
     private void initializeStatViewServlet(ServletContext container) {

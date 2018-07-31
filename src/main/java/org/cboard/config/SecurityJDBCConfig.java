@@ -23,12 +23,11 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
  * @create 2018-07-25
  * @desc
  **/
-@Configuration
 @EnableWebSecurity
 @Order(2)
-public class SecurityConfig extends WebSecurityConfigurerAdapter {
+public class SecurityJDBCConfig extends WebSecurityConfigurerAdapter {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(SecurityConfig.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(SecurityJDBCConfig.class);
 
     @Autowired
     private DruidDataSource druidDataSource;
@@ -82,6 +81,12 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         http.authorizeRequests()
                 .antMatchers("/login.do").permitAll()
                 .anyRequest().authenticated();
+        http.sessionManagement()
+                .sessionFixation()
+                .changeSessionId()
+                .maximumSessions(1)
+                .maxSessionsPreventsLogin(true)
+                .expiredUrl("/login.do?expired");
         http.formLogin()
                 .loginPage("/login.do")
                 .successForwardUrl("/starter.html")
@@ -89,16 +94,15 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .failureUrl("/login.do?error")
                 .usernameParameter("username")
                 .passwordParameter("password")
-                .permitAll()
-                .and()
-                .logout()
-                .invalidateHttpSession(true)
+                .permitAll();
+        http.logout()
                 .logoutUrl("/j_spring_cas_security_logout")
-                .logoutSuccessUrl("/login.do?logout").permitAll()
-                .and()
-                .httpBasic()
-                .and()
-                .csrf().disable();
+                .logoutSuccessUrl("/login.do?logout")
+                .invalidateHttpSession(true)
+                .deleteCookies("JSESSIONID").permitAll();
+        http.httpBasic();
+        http.rememberMe().rememberMeParameter("remember_me");
+        http.csrf().disable();
     }
 
 }

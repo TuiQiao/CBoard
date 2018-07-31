@@ -9,7 +9,8 @@ import org.springframework.context.annotation.Import;
  * @desc
  **/
 @Configuration
-@Import({DataSourceConfig.class, SecurityConfig.class})
+@Import({DataSourceConfig.class, CacheConfig.class, SecurityJDBCConfig.class})
+//@Import({DataSourceConfig.class, CacheConfig.class, SecurityCASConfig.class})
 public class RootConfig {
 
 }

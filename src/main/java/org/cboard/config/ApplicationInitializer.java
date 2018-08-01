@@ -3,6 +3,7 @@ package org.cboard.config;
 import com.alibaba.druid.support.http.StatViewServlet;
 import org.cboard.security.service.LocalSecurityFilter;
 import org.jasig.cas.client.session.SingleSignOutFilter;
+import org.springframework.security.web.session.HttpSessionEventPublisher;
 import org.springframework.web.WebApplicationInitializer;
 import org.springframework.web.context.ContextLoaderListener;
 import org.springframework.web.context.request.RequestContextListener;
@@ -25,8 +26,6 @@ public class ApplicationInitializer implements WebApplicationInitializer {
 
     @Override
     public void onStartup(ServletContext servletContext) throws ServletException {
-        initializeSpringAndSpringMVCConfig(servletContext);
-
         registerFilter(servletContext);
         registerListener(servletContext);
         registerServlet(servletContext);
@@ -34,11 +33,12 @@ public class ApplicationInitializer implements WebApplicationInitializer {
 
     private void registerServlet(ServletContext container) {
         initializeStatViewServlet(container);
+        initializeSpringMVCConfig(container);
     }
 
     private void registerFilter(ServletContext container) {
         initializeDelegatingFilterProxy(container);
-        initializeSingleSignOutFilter(container);
+//        initializeSingleSignOutFilter(container);
         initializeLocalSecurityFilter(container);
         initializeCharacterEncodingFilter(container);
     }
@@ -46,23 +46,29 @@ public class ApplicationInitializer implements WebApplicationInitializer {
     private void registerListener(ServletContext container) {
         container.addListener(RequestContextListener.class);
         container.addListener(SessionListener.class);
+        container.addListener(HttpSessionEventPublisher.class);
+        initializeSpringConfig(container);
     }
 
-    private void initializeSpringAndSpringMVCConfig(ServletContext container) {
+    private void initializeSpringConfig(ServletContext container) {
         AnnotationConfigWebApplicationContext rootContext = new AnnotationConfigWebApplicationContext();
         rootContext.register(RootConfig.class);
-        rootContext.register(WebMvcConfig.class);
         container.addListener(new ContextLoaderListener(rootContext));
-        ServletRegistration.Dynamic springMvc = container.addServlet("SpringMvc", new DispatcherServlet(rootContext));
-        springMvc.setLoadOnStartup(1);
-        springMvc.addMapping("*.do");
+    }
 
+    private void initializeSpringMVCConfig(ServletContext container) {
+        AnnotationConfigWebApplicationContext dispatcherContext = new AnnotationConfigWebApplicationContext();
+        dispatcherContext.register(WebMvcConfig.class);
+        ServletRegistration.Dynamic dispatcher = container.addServlet("SpringMvc", new DispatcherServlet(dispatcherContext));
+        dispatcher.setLoadOnStartup(1);
+        dispatcher.addMapping("*.do");
     }
 
     private void initializeStatViewServlet(ServletContext container) {
         StatViewServlet statViewServlet = new StatViewServlet();
-//        ServletConfig servletConfig = new ServletConfig();
         ServletRegistration.Dynamic dynamic = container.addServlet("DruidStatView", statViewServlet);
+        dynamic.setInitParameter("loginUsername", "admin");
+        dynamic.setInitParameter("loginPassword", "root123");
         dynamic.setLoadOnStartup(2);
         dynamic.addMapping("/druid/*");
     }

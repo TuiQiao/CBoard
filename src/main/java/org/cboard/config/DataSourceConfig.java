@@ -3,7 +3,6 @@ package org.cboard.config;
 import com.alibaba.druid.pool.DruidDataSource;
 import com.alibaba.druid.support.spring.stat.DruidStatInterceptor;
 import org.apache.commons.dbcp2.BasicDataSource;
-import org.h2.Driver;
 import org.mybatis.spring.SqlSessionFactoryBean;
 import org.mybatis.spring.annotation.MapperScan;
 import org.slf4j.Logger;
@@ -13,9 +12,7 @@ import org.springframework.aop.support.DefaultPointcutAdvisor;
 import org.springframework.aop.support.JdkRegexpMethodPointcut;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
-import org.springframework.context.annotation.PropertySource;
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 import org.springframework.jdbc.datasource.DataSourceTransactionManager;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
@@ -42,13 +39,12 @@ public class DataSourceConfig {
     @Bean(name = "h2DataSource")
     public BasicDataSource basicDataSource() {
         BasicDataSource basicDataSource = new BasicDataSource();
-        Driver driver = new org.h2.Driver();
-        basicDataSource.setDriver(driver);
+        basicDataSource.setDriverClassName("org.h2.Driver");
         basicDataSource.setUrl(propertiesConfig.getH2Url());
         basicDataSource.setUsername(propertiesConfig.getH2UserName());
         basicDataSource.setPassword("");
         basicDataSource.setMaxTotal(20);
-        LOGGER.info("basicDataSource init ok");
+        LOGGER.info("h2DataSource init ok");
         return basicDataSource;
     }
 
@@ -82,9 +78,9 @@ public class DataSourceConfig {
     }
 
     @Bean(name = "sqlSessionFactory")
-    public SqlSessionFactoryBean sqlSessionFactoryBean() {
+    public SqlSessionFactoryBean sqlSessionFactoryBean(DruidDataSource druidDataSource) {
         SqlSessionFactoryBean sqlSessionFactoryBean = new SqlSessionFactoryBean();
-        sqlSessionFactoryBean.setDataSource(druidDataSource());
+        sqlSessionFactoryBean.setDataSource(druidDataSource);
         try {
             sqlSessionFactoryBean.setMapperLocations(new PathMatchingResourcePatternResolver().getResources("classpath:mapper/*.xml"));
             Properties properties = new Properties();
@@ -98,9 +94,9 @@ public class DataSourceConfig {
     }
 
     @Bean(name = "transactionManager")
-    public DataSourceTransactionManager dataSourceTransactionManager() {
+    public DataSourceTransactionManager dataSourceTransactionManager(DruidDataSource druidDataSource) {
         DataSourceTransactionManager dataSourceTransactionManager = new DataSourceTransactionManager();
-        dataSourceTransactionManager.setDataSource(druidDataSource());
+        dataSourceTransactionManager.setDataSource(druidDataSource);
         return dataSourceTransactionManager;
     }
 
@@ -117,7 +113,7 @@ public class DataSourceConfig {
     }
 
     @Bean
-    public Advisor druidStatAdvisor() {
-        return new DefaultPointcutAdvisor(jdkRegexpMethodPointcut(), druidStatInterceptor());
+    public Advisor druidStatAdvisor(JdkRegexpMethodPointcut jdkRegexpMethodPointcut, DruidStatInterceptor druidStatInterceptor) {
+        return new DefaultPointcutAdvisor(jdkRegexpMethodPointcut, druidStatInterceptor);
     }
 }

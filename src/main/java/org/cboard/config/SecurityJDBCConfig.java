@@ -1,6 +1,8 @@
 package org.cboard.config;
 
 import com.alibaba.druid.pool.DruidDataSource;
+import org.cboard.security.handler.LoginHandler;
+import org.cboard.security.handler.LogoutHandler;
 import org.cboard.security.service.DbUserDetailService;
 import org.cboard.security.service.DefaultAuthenticationService;
 import org.cboard.security.service.ShareAuthenticationProviderDecorator;
@@ -8,7 +10,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Import;
 import org.springframework.core.annotation.Order;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.authentication.encoding.Md5PasswordEncoder;
@@ -25,6 +27,7 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
  **/
 @EnableWebSecurity
 @Order(2)
+@Import(DataSourceConfig.class)
 public class SecurityJDBCConfig extends WebSecurityConfigurerAdapter {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(SecurityJDBCConfig.class);
@@ -73,33 +76,33 @@ public class SecurityJDBCConfig extends WebSecurityConfigurerAdapter {
 
     @Override
     public void configure(WebSecurity web) throws Exception {
-        web.ignoring().antMatchers("/lib/**", "/dist/**", "/bootstrap/**", "/plugins/**", "/js/**", "/login/**", "/css/**");
+        web.ignoring().antMatchers("/lib/**", "/dist/**", "/bootstrap/**", "/plugins/**", "/css/**");
     }
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http.authorizeRequests()
-                .antMatchers("/login.do").permitAll()
                 .anyRequest().authenticated();
         http.sessionManagement()
-                .sessionFixation()
-                .changeSessionId()
+                .sessionFixation().migrateSession()
                 .maximumSessions(1)
                 .maxSessionsPreventsLogin(true)
-                .expiredUrl("/login.do?expired");
+                .expiredUrl("/login.do?expired-session")
+                .and()
+                .invalidSessionUrl("/login.do?invalid-session");
         http.formLogin()
                 .loginPage("/login.do")
-                .successForwardUrl("/starter.html")
-                .defaultSuccessUrl("/starter.html")
                 .failureUrl("/login.do?error")
                 .usernameParameter("username")
                 .passwordParameter("password")
+                .successHandler(new LoginHandler())
                 .permitAll();
         http.logout()
-                .logoutUrl("/j_spring_cas_security_logout")
-                .logoutSuccessUrl("/login.do?logout")
+                .deleteCookies("JSESSIONID")
                 .invalidateHttpSession(true)
-                .deleteCookies("JSESSIONID").permitAll();
+                .logoutUrl("/j_spring_cas_security_logout")
+                .logoutSuccessHandler(new LogoutHandler())
+                .permitAll();
         http.httpBasic();
         http.rememberMe().rememberMeParameter("remember_me");
         http.csrf().disable();

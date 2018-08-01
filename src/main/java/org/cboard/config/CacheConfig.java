@@ -24,14 +24,14 @@ public class CacheConfig {
     @Autowired
     private PropertiesConfig propertiesConfig;
 
-    //    @Bean(name = "rawDataCache")
+    @Bean(name = "rawDataCache")
     public EhCacheManager ehCacheManager() {
         EhCacheManager ehCacheManager = new EhCacheManager();
         ehCacheManager.setCacheAlias("jvmAggregator");
         return ehCacheManager;
     }
 
-    @Bean(name = "rawDataCache")
+//    @Bean(name = "rawDataCache")
     public RedisCacheManager redisCacheManager() {
         LOGGER.info("redisCacheManager init go");
         RedisCacheManager redisCacheManager = new RedisCacheManager();

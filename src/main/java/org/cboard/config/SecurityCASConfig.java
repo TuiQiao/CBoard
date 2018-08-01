@@ -106,7 +106,7 @@ public class SecurityCASConfig extends WebSecurityConfigurerAdapter {
 
     @Override
     public void configure(WebSecurity web) throws Exception {
-        web.ignoring().antMatchers("/lib/**", "/dist/**", "/bootstrap/**", "/plugins/**", "/js/**");
+        web.ignoring().antMatchers("/lib/**", "/dist/**", "/bootstrap/**", "/plugins/**", "/css/**");
     }
 
     @Override
@@ -122,7 +122,6 @@ public class SecurityCASConfig extends WebSecurityConfigurerAdapter {
         http.authorizeRequests().anyRequest().authenticated();
         http.exceptionHandling().authenticationEntryPoint(casAuthenticationEntryPoint())
                 .and()
-                .addFilter(casAuthenticationFilter())
                 .addFilterBefore(logoutFilter(), LogoutFilter.class)
                 .addFilterAfter(casAuthenticationFilter(), CsrfFilter.class);
     }

@@ -13,8 +13,15 @@
     </select>
 
     <select id="getRoleList" resultType="org.cboard.pojo.DashboardRole">
-        SELECT role_id roleId,role_name roleName,user_id userId FROM dashboard_role where #{userId} = '1' or user_id = #{userId}
-        order by role_name
+        SELECT role_id roleId,role_name roleName,user_id userId FROM dashboard_role where #{userId} = '1' or user_id = #{userId} order by role_name
+    </select>
+
+    <select id="getCurrentRoleList" resultType="org.cboard.pojo.DashboardRole">
+        SELECT r.role_id roleId,r.role_name roleName,ur.user_id userId
+          FROM dashboard_role r
+          LEFT JOIN dashboard_user_role ur on ur.role_id=r.role_id
+         WHERE ur.user_id = #{0}
+         ORDER BY r.role_name
     </select>
 
     <select id="getRoleListAll" resultType="org.cboard.pojo.DashboardRole">

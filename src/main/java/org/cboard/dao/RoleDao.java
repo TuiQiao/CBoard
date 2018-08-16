@@ -16,6 +16,8 @@ public interface RoleDao {
 
     List<DashboardRole> getRoleList(String userId);
 
+    List<DashboardRole> getCurrentRoleList(String userId);
+
     List<DashboardRole> getRoleListAll();
 
     int update(DashboardRole role);

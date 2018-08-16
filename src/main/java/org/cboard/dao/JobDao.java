@@ -1,5 +1,6 @@
 package org.cboard.dao;
 
+import org.apache.ibatis.annotations.Param;
 import org.cboard.pojo.DashboardJob;
 import org.springframework.stereotype.Repository;
 
@@ -21,12 +22,12 @@ public interface JobDao {
 
     int delete(Long jobId);
 
-    int updateLastExecTime(Long jobId, Date date);
+    int updateLastExecTime(@Param("jobId") Long jobId, @Param("date") Date date);
 
-    int updateStatus(Long jobId, Long status, String log);
+    int updateStatus(@Param("jobId") Long jobId, @Param("status") Long status, @Param("log") String log);
 
     DashboardJob getJob(Long jobId);
 
-    long checkJobRole(String userId, Long jobId, String permissionPattern);
+    long checkJobRole(@Param("userId") String userId, @Param("jobId") Long jobId, @Param("permissionPattern") String permissionPattern);
 
 }

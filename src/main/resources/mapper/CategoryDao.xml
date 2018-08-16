@@ -30,6 +30,6 @@
     </select>
 
     <delete id="delete">
-        delete from dashboard_category where category_id = #{0}
+        delete from dashboard_category where category_id = #{id}
     </delete>
 </mapper>

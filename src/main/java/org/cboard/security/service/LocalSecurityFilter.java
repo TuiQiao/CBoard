@@ -8,10 +8,12 @@ import org.cboard.dto.User;
 import org.cboard.security.ShareAuthenticationToken;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.core.annotation.Order;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 
 import javax.servlet.*;
+import javax.servlet.annotation.WebFilter;
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -20,6 +22,8 @@ import java.util.concurrent.TimeUnit;
 /**
  * Created by yfyuan on 2017/2/22.
  */
+@Order(1)
+@WebFilter
 public class LocalSecurityFilter implements Filter {
 
     private Logger LOG = LoggerFactory.getLogger(this.getClass());
@@ -56,7 +60,8 @@ public class LocalSecurityFilter implements Filter {
             context = hsr.getLocalPort() + hsr.getContextPath();
             schema = hsr.getScheme();
         }
-        if ("/render.html".equals(hsr.getServletPath())) {
+        String servletPath = hsr.getServletPath();
+        if ("/render".equals(servletPath)) {
             String sid = hsr.getParameter("sid");
             try {
                 String uid = sidCache.get(sid);

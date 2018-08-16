@@ -30,7 +30,7 @@ public class DataProviderViewManager {
 
     static {
         Properties props = new Properties();
-        String fileDir = DataProviderViewManager.class.getResource("/template/config").getPath();
+        String fileDir = DataProviderViewManager.class.getResource("/templates/config").getPath();
         try {
             fileDir = URLDecoder.decode(fileDir, "UTF-8");
         } catch (UnsupportedEncodingException e) {

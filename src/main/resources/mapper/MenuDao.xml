@@ -6,14 +6,14 @@
         SELECT DISTINCT rr.res_id AS roleResId 
           FROM dashboard_user_role ur 
           LEFT JOIN dashboard_role_res rr ON ur.role_id = rr.role_id 
-         WHERE ur.user_id = #{0} AND rr.res_type = 'menu'
+         WHERE ur.user_id = #{userId} AND rr.res_type = 'menu'
     </select>
 
     <select id="getMenuIdByRoleAdmin" resultType="java.lang.Long">
         SELECT DISTINCT rr.res_id AS roleResId
         FROM dashboard_role r
         LEFT JOIN dashboard_role_res rr ON r.role_id = rr.role_id
-        WHERE r.user_id = #{0} AND rr.res_type = 'menu'
+        WHERE r.user_id = #{userId} AND rr.res_type = 'menu'
     </select>
 
 </mapper>

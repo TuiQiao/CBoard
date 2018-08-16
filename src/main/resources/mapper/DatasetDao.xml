@@ -34,11 +34,11 @@
               update_time   AS updateTime
          FROM dashboard_dataset s
          LEFT JOIN dashboard_user u ON u.user_id = s.user_id
-               WHERE #{0} = '${admin_user_id}' OR s.user_id = #{0} OR dataset_id IN (
+               WHERE #{userId} = '1' OR s.user_id = #{userId} OR dataset_id IN (
              SELECT res_id
                FROM dashboard_user_role ur
                LEFT JOIN dashboard_role_res rr ON ur.role_id = rr.role_id
-              WHERE ur.user_id = #{0} AND rr.res_type = 'dataset'
+              WHERE ur.user_id = #{userId} AND rr.res_type = 'dataset'
           )
         ORDER BY dataset_name
     </select>
@@ -56,13 +56,13 @@
               update_time   AS updateTime
         FROM dashboard_dataset s
         LEFT JOIN dashboard_user u ON u.user_id = s.user_id
-        WHERE #{0} = '${admin_user_id}' OR s.user_id = #{0}
-           OR s.user_id = #{0}
+        WHERE #{userId} = '1' OR s.user_id = #{userId}
+           OR s.user_id = #{userId}
            OR dataset_id IN (
               SELECT res_id
                 FROM dashboard_role r
                 LEFT JOIN dashboard_role_res rr ON r.role_id = rr.role_id
-               WHERE r.user_id = #{0} AND rr.res_type = 'dataset'
+               WHERE r.user_id = #{userId} AND rr.res_type = 'dataset'
            )
         ORDER BY dataset_name
     </select>
@@ -97,10 +97,10 @@
     </select>
 
     <delete id="delete">
-        delete from dashboard_dataset where dataset_id = #{0}
+        delete from dashboard_dataset where dataset_id = #{id}
     </delete>
 
     <select id="checkDatasetRole" resultType="java.lang.Long">
-        SELECT count(1) FROM dashboard_dataset WHERE dataset_id = #{1} and (#{0} = '${admin_user_id}' OR user_id = #{0} OR dataset_id IN (SELECT res_id FROM dashboard_user_role ur LEFT JOIN dashboard_role_res rr ON ur.role_id = rr.role_id WHERE ur.user_id = #{0} AND rr.res_type = 'dataset' AND rr.permission LIKE #{2}))
+        SELECT count(1) FROM dashboard_dataset WHERE dataset_id = #{widgetId} and (#{userId} = '1' OR user_id = #{userId} OR dataset_id IN (SELECT res_id FROM dashboard_user_role ur LEFT JOIN dashboard_role_res rr ON ur.role_id = rr.role_id WHERE ur.user_id = #{userId} AND rr.res_type = 'dataset' AND rr.permission LIKE #{permissionPattern}))
     </select>
 </mapper>

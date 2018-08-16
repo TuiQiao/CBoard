@@ -4,8 +4,6 @@ import org.cboard.dataprovider.DataProvider;
 import org.cboard.dataprovider.annotation.DatasourceParameter;
 import org.cboard.dataprovider.annotation.QueryParameter;
 
-import java.util.Map;
-
 /**
  * Created by zyong on 2016/9/27.
  */

@@ -1,5 +1,6 @@
 package org.cboard.dao;
 
+import org.apache.ibatis.annotations.Param;
 import org.cboard.pojo.DashboardUser;
 import org.cboard.pojo.DashboardUserRole;
 import org.springframework.stereotype.Repository;
@@ -28,9 +29,9 @@ public interface UserDao {
 
     DashboardUser getUserByLoginName(String loginName);
 
-    int saveNewUser(String userId, String user_name, String loginName);
+    int saveNewUser(@Param("userId") String userId,@Param("user_name")  String user_name,@Param("loginName")  String loginName);
 
-    int updateUserPassword(String userId, String passowrd, String newPassword);
+    int updateUserPassword(@Param("userId") String userId,@Param("passowrd")  String passowrd,@Param("newPassword")  String newPassword);
 
     int deleteUserRoleByRoleId(String roleId);
 

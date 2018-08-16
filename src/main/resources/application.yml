@@ -1,0 +1,71 @@
+spring:
+  profiles:
+    active: dev
+  jackson:
+    date-format: yyyy-MM-dd HH:mm:ss
+server:
+  port: 8888
+  servlet:
+    context-path: /cboard
+---
+spring:
+  profiles: dev
+  datasource:
+    druidDataSource:
+#      url: jdbc:mysql://127.0.0.1:3306/cboard?useUnicode=true&characterEncoding=utf-8&useSSL=false&autoReconnect=true&failOverReadOnly=false&zeroDateTimeBehavior=convertToNull
+      url: jdbc:mysql://127.0.0.1:3306/cboard?useSSL=false
+      username: root
+      password: root
+      name: CBoard Meta Data
+      validationQuery: SELECT 1
+    h2:
+      url: jdbc:h2:~/H2Data/cboard;AUTO_SERVER=TRUE;LOG=0;UNDO_LOG=0
+      user:
+        name: sa
+      database:
+        name: cboard
+      cleanjob:
+        quarz: 0 1 0 * * ?
+  redis:
+    host: 127.0.0.1
+    port: 6377
+  servlet:
+    multipart:
+      max-file-size: 10485760 #10M
+      max-request-size: 10485760
+
+cas:
+  client:
+    url: http://localhost:8026
+    check: ${cas.client.url}/login/cas
+  server:
+    url: http://your-casserver-ip/caso
+    login: ${cas.server.url}/login
+    logout: ${cas.server.url}/logout?service=${cas.client.url}
+log:
+  negativeFilter: List\\.do
+  positveFilter:
+dataprovider:
+  resultLimit: 1000000
+mail:
+  smtp:
+    host: 127.0.0.1
+    port: 8825
+    from: test@test.com
+#    username:
+#    password:
+#    ssl:
+#      checkserveridentity: false
+#      startTLSEnabled: false
+admin_user_id: 1
+phantomjs_path: D:/Program Files/phantomjs-2.1.1/bin/phantomjs.exe
+
+---
+
+spring:
+  profiles: staging
+
+---
+
+spring:
+  profiles: prod

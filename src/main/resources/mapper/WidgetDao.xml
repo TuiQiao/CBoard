@@ -34,7 +34,7 @@
               update_time  AS updateTime
          FROM dashboard_widget w
          LEFT JOIN dashboard_user u ON u.user_id = w.user_id
-        WHERE (#{0} = '${admin_user_id}' OR w.user_id = #{0} OR widget_id IN (SELECT res_id FROM dashboard_user_role ur LEFT JOIN dashboard_role_res rr ON ur.role_id = rr.role_id WHERE ur.user_id = #{0} AND rr.res_type = 'widget'))
+        WHERE (#{userId} = '1' OR w.user_id = #{userId} OR widget_id IN (SELECT res_id FROM dashboard_user_role ur LEFT JOIN dashboard_role_res rr ON ur.role_id = rr.role_id WHERE ur.user_id = #{userId} AND rr.res_type = 'widget'))
         ORDER BY widget_name
     </select>
 
@@ -52,12 +52,12 @@
           FROM dashboard_widget w
           LEFT JOIN dashboard_user u ON u.user_id = w.user_id
          WHERE (
-            #{0} = '${admin_user_id}'
-            OR w.user_id = #{0}
+            #{userId} = '1'
+            OR w.user_id = #{userId}
             OR widget_id IN (
               SELECT res_id FROM dashboard_role r
                 LEFT JOIN dashboard_role_res rr ON r.role_id = rr.role_id
-               WHERE r.user_id = #{0} AND rr.res_type = 'widget'
+               WHERE r.user_id = #{userId} AND rr.res_type = 'widget'
             )
          )
         ORDER BY widget_name
@@ -66,7 +66,7 @@
     <select id="getWidget" resultType="org.cboard.pojo.DashboardWidget">
        SELECT widget_id id,user_id userId,widget_name name,data_json data,category_name categoryName,create_time createTime,update_time updateTime
          FROM dashboard_widget
-        WHERE widget_id = #{0}
+        WHERE widget_id = #{userId}
     </select>
 
     <insert id="save" parameterType="org.cboard.pojo.DashboardWidget">
@@ -95,12 +95,12 @@
     </select>
 
     <delete id="delete">
-        DELETE FROM dashboard_widget WHERE widget_id = #{0}
+        DELETE FROM dashboard_widget WHERE widget_id = #{id}
     </delete>
 
     <select id="checkWidgetRole" resultType="java.lang.Long">
-        SELECT count(1) FROM dashboard_widget WHERE widget_id = #{1}
-        and (#{0} = '${admin_user_id}' OR user_id = #{0} OR widget_id IN (SELECT res_id FROM dashboard_user_role ur LEFT JOIN dashboard_role_res rr ON ur.role_id = rr.role_id WHERE ur.user_id = #{0} AND rr.res_type = 'widget' AND rr.permission LIKE #{2}))
+        SELECT count(1) FROM dashboard_widget WHERE widget_id = #{widgetId}
+        and (#{userId} = '1' OR user_id = #{userId} OR widget_id IN (SELECT res_id FROM dashboard_user_role ur LEFT JOIN dashboard_role_res rr ON ur.role_id = rr.role_id WHERE ur.user_id = #{userId} AND rr.res_type = 'widget' AND rr.permission LIKE #{permissionPattern}))
     </select>
 
 </mapper>

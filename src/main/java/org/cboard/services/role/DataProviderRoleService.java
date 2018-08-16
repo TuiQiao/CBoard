@@ -5,7 +5,6 @@ import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
 import org.cboard.dao.DatasetDao;
 import org.cboard.dao.DatasourceDao;
-import org.cboard.dao.RoleDao;
 import org.cboard.services.AuthenticationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;

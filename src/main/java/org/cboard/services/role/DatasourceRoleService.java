@@ -5,7 +5,6 @@ import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
 import org.cboard.dao.DatasourceDao;
-import org.cboard.dao.WidgetDao;
 import org.cboard.services.AuthenticationService;
 import org.cboard.services.ServiceStatus;
 import org.springframework.beans.factory.annotation.Autowired;

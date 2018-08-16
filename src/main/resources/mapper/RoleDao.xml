@@ -9,11 +9,11 @@
     </update>
 
     <select id="getRole" resultType="org.cboard.pojo.DashboardRole">
-        SELECT role_id roleId,role_name roleName,user_id userId FROM dashboard_role where role_id = #{0}
+        SELECT role_id roleId,role_name roleName,user_id userId FROM dashboard_role where role_id = #{roleId}
     </select>
 
     <select id="getRoleList" resultType="org.cboard.pojo.DashboardRole">
-        SELECT role_id roleId,role_name roleName,user_id userId FROM dashboard_role where #{0} = '${admin_user_id}' or user_id = #{0}
+        SELECT role_id roleId,role_name roleName,user_id userId FROM dashboard_role where #{userId} = '1' or user_id = #{userId}
         order by role_name
     </select>
 
@@ -39,19 +39,19 @@
     </insert>
 
     <delete id="deleteRoleRes">
-        delete from dashboard_role_res where role_id = #{0}
+        delete from dashboard_role_res where role_id = #{roleId}
     </delete>
 
     <delete id="deleteRoleResByResId">
-        delete from dashboard_role_res where res_id = #{0} and res_type = #{1}
+        delete from dashboard_role_res where res_id = #{resId} and res_type = #{resType}
     </delete>
 
     <delete id="deleteRole">
-        delete from dashboard_role where role_id = #{0}
+        delete from dashboard_role where role_id = #{roleId}
     </delete>
 
     <select id="getUserRoleResList" resultType="org.cboard.pojo.DashboardRoleRes">
-        select rr.role_res_id roleResId,rr.role_id roleId,rr.res_id resId,rr.res_type resType,rr.permission permission FROM dashboard_user_role ur LEFT JOIN dashboard_role_res rr ON ur.role_id = rr.role_id WHERE ur.user_id = #{0} AND rr.res_type = #{1}
+        select rr.role_res_id roleResId,rr.role_id roleId,rr.res_id resId,rr.res_type resType,rr.permission permission FROM dashboard_user_role ur LEFT JOIN dashboard_role_res rr ON ur.role_id = rr.role_id WHERE ur.user_id = #{userId} AND rr.res_type = #{resType}
     </select>
 
 </mapper>

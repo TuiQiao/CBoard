@@ -1,5 +1,6 @@
 package org.cboard.dao;
 
+import org.apache.ibatis.annotations.Param;
 import org.cboard.pojo.DashboardWidget;
 import org.springframework.stereotype.Repository;
 
@@ -26,9 +27,9 @@ public interface WidgetDao {
 
     int update(DashboardWidget dashboardWidget);
 
-    int delete(Long id, String userId);
+    int delete(@Param("id") Long id, @Param("userId") String userId);
 
     DashboardWidget getWidget(Long id);
 
-    long checkWidgetRole(String userId, Long widgetId, String permissionPattern);
+    long checkWidgetRole(@Param("userId") String userId, @Param("widgetId") Long widgetId, @Param("permissionPattern") String permissionPattern);
 }

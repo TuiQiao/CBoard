@@ -1,5 +1,6 @@
 package org.cboard.dao;
 
+import org.apache.ibatis.annotations.Param;
 import org.cboard.pojo.DashboardBoard;
 import org.cboard.pojo.DashboardBoardParam;
 import org.springframework.stereotype.Repository;
@@ -23,15 +24,15 @@ public interface BoardDao {
 
     int update(DashboardBoard board);
 
-    int delete(Long id, String userId);
+    int delete(@Param("id") Long id, @Param("userId") String userId);
 
     DashboardBoard getBoard(Long id);
 
-    long checkBoardRole(String userId, Long boardId, String permissionPattern);
+    long checkBoardRole(@Param("userId") String userId, @Param("boardId") Long boardId, @Param("permissionPattern") String permissionPattern);
 
-    DashboardBoardParam getBoardParam(Long boardId, String userId);
+    DashboardBoardParam getBoardParam(@Param("boardId") Long boardId, @Param("userId") String userId);
 
     int saveBoardParam(DashboardBoardParam boardParam);
 
-    int deleteBoardParam(Long boardId, String userId);
+    int deleteBoardParam(@Param("boardId") Long boardId, @Param("userId") String userId);
 }

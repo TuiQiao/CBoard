@@ -1,8 +1,8 @@
 package org.cboard.dto;
 
 import com.alibaba.fastjson.JSONObject;
-import org.cboard.pojo.DashboardDatasource;
 import com.google.common.base.Function;
+import org.cboard.pojo.DashboardDatasource;
 import org.cboard.services.role.RolePermission;
 
 import javax.annotation.Nullable;

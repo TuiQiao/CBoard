@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration debug="false">
+
+    <contextName>student-log</contextName>
+
+    <property name="LOG_HOME_INFO" value="/service/log/info/info.cboard.%d{yyyy-MM-dd}.%i.log"/>
+    <property name="LOG_HOME_WARN" value="/service/log/warn/warn.cboard.%d{yyyy-MM-dd}.%i.log"/>
+    <property name="LOG_HOME_ERROR" value="/service/log/error/error.cboard.%d{yyyy-MM-dd}.%i.log"/>
+
+    <!-- console -->
+    <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+            <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} %-40([%boldMagenta(%thread)]) %highlight(%-5level)--- %boldCyan(%logger{50}) - %msg%n
+            </pattern>
+        </encoder>
+    </appender>
+
+    <!-- info log -->
+    <appender name="FILE-INFO" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <filter class="ch.qos.logback.classic.filter.LevelFilter">
+            <level>INFO</level>
+            <onMatch>ACCEPT</onMatch>
+            <onMismatch>DENY</onMismatch>
+        </filter>
+        <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+            <FileNamePattern>${LOG_HOME_INFO}</FileNamePattern>
+            <MaxHistory>30</MaxHistory>
+            <MaxFileSize>100MB</MaxFileSize>
+            <TotalSizeCap>3GB</TotalSizeCap>
+        </rollingPolicy>
+        <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+            <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level--- %logger{50} - %msg%n</pattern>
+        </encoder>
+    </appender>
+
+    <!-- warn log -->
+    <appender name="FILE-WARN" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <filter class="ch.qos.logback.classic.filter.LevelFilter">
+            <level>WARN</level>
+            <onMatch>ACCEPT</onMatch>
+            <onMismatch>DENY</onMismatch>
+        </filter>
+        <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+            <FileNamePattern>${LOG_HOME_WARN}</FileNamePattern>
+            <MaxHistory>30</MaxHistory>
+            <MaxFileSize>100MB</MaxFileSize>
+            <TotalSizeCap>3GB</TotalSizeCap>
+        </rollingPolicy>
+        <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+            <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level--- %logger{50} - %msg%n</pattern>
+        </encoder>
+    </appender>
+
+    <!-- error log -->
+    <appender name="FILE-ERROR" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <filter class="ch.qos.logback.classic.filter.LevelFilter">
+            <level>ERROR</level>
+            <onMatch>ACCEPT</onMatch>
+            <onMismatch>DENY</onMismatch>
+        </filter>
+        <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+            <FileNamePattern>${LOG_HOME_ERROR}</FileNamePattern>
+            <MaxHistory>30</MaxHistory>
+            <MaxFileSize>100MB</MaxFileSize>
+            <TotalSizeCap>3GB</TotalSizeCap>
+        </rollingPolicy>
+        <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+            <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level--- %logger{50} - %msg%n</pattern>
+        </encoder>
+    </appender>
+
+    <!--myibatis log configure-->
+    <logger name="com.apache.ibatis" level="TRACE"/>
+    <logger name="java.sql.Connection" level="DEBUG"/>
+    <logger name="java.sql.Statement" level="DEBUG"/>
+    <logger name="java.sql.PreparedStatement" level="DEBUG"/>
+
+    <!-- 日志输出级别 :Debug,Info,Warn,Error,Fatal -->
+    <root level="INFO">
+        <appender-ref ref="STDOUT"/>
+        <appender-ref ref="FILE-INFO"/>
+        <appender-ref ref="FILE-WARN"/>
+        <appender-ref ref="FILE-ERROR"/>
+    </root>
+
+</configuration>

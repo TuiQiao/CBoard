@@ -1,6 +1,5 @@
 package org.cboard.dataprovider.util;
 
-import org.cboard.dataprovider.DataProvider;
 import org.cboard.dataprovider.config.AggConfig;
 import org.cboard.dataprovider.config.DimensionConfig;
 import org.cboard.dataprovider.result.AggregateResult;
@@ -10,6 +9,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
+
 import static org.cboard.dataprovider.DataProvider.NULL_STRING;
 
 /**

@@ -4,7 +4,7 @@
 
     <select id="getDatasourceConfig" resultType="java.lang.String">
         <![CDATA[
-        SELECT config FROM dashboard_datasource WHERE datasource_id = #{0}
+        SELECT config FROM dashboard_datasource WHERE datasource_id = #{userId}
         ]]>
     </select>
 
@@ -21,11 +21,11 @@
               update_time   AS updateTime
          FROM dashboard_datasource s
          LEFT JOIN dashboard_user u ON u.user_id = s.user_id
-        WHERE #{0} = '${admin_user_id}' OR s.user_id = #{0} OR datasource_id IN (
+        WHERE #{userId} = '1' OR s.user_id = #{userId} OR datasource_id IN (
              SELECT res_id
                FROM dashboard_user_role ur
                LEFT JOIN dashboard_role_res rr ON ur.role_id = rr.role_id
-              WHERE ur.user_id = #{0} AND rr.res_type = 'datasource'
+              WHERE ur.user_id = #{userId} AND rr.res_type = 'datasource'
           )
         ORDER BY source_name
     </select>
@@ -43,19 +43,19 @@
                update_time   AS updateTime
          FROM dashboard_datasource s
          LEFT JOIN dashboard_user u ON u.user_id = s.user_id
-        WHERE #{0} = '${admin_user_id}'
-          OR s.user_id = #{0}
+        WHERE #{userId} = '1'
+          OR s.user_id = #{userId}
           OR datasource_id IN (
               SELECT res_id
                 FROM dashboard_role r
                 LEFT JOIN dashboard_role_res rr ON r.role_id = rr.role_id
-               WHERE r.user_id = #{0} AND rr.res_type = 'datasource'
+               WHERE r.user_id = #{userId} AND rr.res_type = 'datasource'
         )
         ORDER BY source_name
     </select>
 
     <select id="getDatasource" resultType="org.cboard.pojo.DashboardDatasource">
-        SELECT datasource_id id,user_id userId,source_name name,source_type type ,config,create_time createTime,update_time updateTime FROM dashboard_datasource WHERE datasource_id = #{0}
+        SELECT datasource_id id,user_id userId,source_name name,source_type type ,config,create_time createTime,update_time updateTime FROM dashboard_datasource WHERE datasource_id = #{datasourceId}
     </select>
 
     <insert id="save" parameterType="org.cboard.pojo.DashboardDatasource">
@@ -81,10 +81,10 @@
     </select>
 
     <delete id="delete">
-        DELETE FROM dashboard_datasource WHERE datasource_id = #{0}
+        DELETE FROM dashboard_datasource WHERE datasource_id = #{id}
     </delete>
 
     <select id="checkDatasourceRole" resultType="java.lang.Long">
-        SELECT count(1) FROM dashboard_datasource WHERE datasource_id = #{1} and (#{0} = '${admin_user_id}' OR user_id = #{0} OR datasource_id IN (SELECT res_id FROM dashboard_user_role ur LEFT JOIN dashboard_role_res rr ON ur.role_id = rr.role_id WHERE ur.user_id = #{0} AND rr.res_type = 'datasource' AND rr.permission LIKE #{2}))
+        SELECT count(1) FROM dashboard_datasource WHERE datasource_id = #{datasourceId} and (#{userId} = '1' OR user_id = #{userId} OR datasource_id IN (SELECT res_id FROM dashboard_user_role ur LEFT JOIN dashboard_role_res rr ON ur.role_id = rr.role_id WHERE ur.user_id = #{userId} AND rr.res_type = 'datasource' AND rr.permission LIKE #{permissionPattern}))
     </select>
 </mapper>

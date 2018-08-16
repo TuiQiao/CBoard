@@ -1,5 +1,6 @@
 package org.cboard.dao;
 
+import org.apache.ibatis.annotations.Param;
 import org.cboard.pojo.DashboardRole;
 import org.cboard.pojo.DashboardRoleRes;
 import org.springframework.stereotype.Repository;
@@ -25,13 +26,13 @@ public interface RoleDao {
 
     int deleteRoleRes(String roleId);
 
-    int deleteRoleResByResId(Long resId,String resType);
+    int deleteRoleResByResId(@Param("resId") Long resId, @Param("resType") String resType);
 
-    List<Long> getRoleResByResIds(String userId, String resType);
+    List<Long> getRoleResByResIds(@Param("userId") String userId, @Param("resType") String resType);
 
     DashboardRole getRole(String roleId);
 
     int deleteRole(String roleId);
 
-    List<DashboardRoleRes> getUserRoleResList(String userId, String resType);
+    List<DashboardRoleRes> getUserRoleResList(@Param("userId") String userId, @Param("resType") String resType);
 }

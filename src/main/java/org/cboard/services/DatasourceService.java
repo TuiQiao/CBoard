@@ -1,7 +1,6 @@
 package org.cboard.services;
 
 import com.alibaba.fastjson.JSONObject;
-import com.google.common.collect.Lists;
 import org.cboard.dao.DatasourceDao;
 import org.cboard.dataprovider.DataProviderManager;
 import org.cboard.dataprovider.annotation.DatasourceParameter;
@@ -18,7 +17,6 @@ import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 

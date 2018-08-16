@@ -1,13 +1,12 @@
 package org.cboard.cache;
 
 import org.ehcache.Cache;
-import org.ehcache.config.Configuration;
+import org.ehcache.config.builders.CacheConfigurationBuilder;
 import org.ehcache.config.builders.CacheManagerBuilder;
-import org.ehcache.xml.XmlConfiguration;
+import org.ehcache.config.builders.ResourcePoolsBuilder;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.InitializingBean;
 
-import java.net.URL;
 import java.util.Date;
 
 /**
@@ -22,10 +21,8 @@ public class EhCacheManager<T> implements CacheManager<T>, InitializingBean, Dis
     private String cacheAlias;
 
     static {
-        final URL myUrl = EhCacheManager.class.getResource("/ehcache.xml");
-        Configuration xmlConfig = new XmlConfiguration(myUrl);
-        myCacheManager = CacheManagerBuilder.newCacheManager(xmlConfig);
-        myCacheManager.init();
+        myCacheManager = CacheManagerBuilder.newCacheManagerBuilder().withCache("jvmAggregator",
+                CacheConfigurationBuilder.newCacheConfigurationBuilder(String.class, CacheObject.class, ResourcePoolsBuilder.heap(100)).build()).build(true);
     }
 
     @Override

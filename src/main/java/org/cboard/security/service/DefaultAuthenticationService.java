@@ -6,8 +6,6 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 
-import java.util.ArrayList;
-
 /**
  * Created by yfyuan on 2016/12/14.
  */
@@ -24,9 +22,6 @@ public class DefaultAuthenticationService implements AuthenticationService {
             return null;
         }
         User user = (User) authentication.getPrincipal();
-        if (user == null) {
-            return null;
-        }
         return user;
     }
 

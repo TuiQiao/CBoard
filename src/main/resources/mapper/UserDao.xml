@@ -11,7 +11,7 @@
                 <otherwise>
                     #{userStatus}
                  </otherwise>
-            </choose>        
+            </choose>
         )
     </update>
 
@@ -75,24 +75,24 @@
     </select>
 
     <select id="getUserByLoginName" resultType="org.cboard.pojo.DashboardUser">
-        SELECT user_id userId,login_name loginName,user_name userName,user_status userStatus FROM dashboard_user where login_name = #{0}
+        SELECT user_id userId,login_name loginName,user_name userName,user_status userStatus FROM dashboard_user where login_name = #{loginName}
     </select>
 
     <insert id="saveNewUser" >
         INSERT INTO dashboard_user(user_id, login_name, user_name)
         SELECT a.*
-        FROM (SELECT #{0} AS uid, #{2} AS login_name, #{1} AS user_name) a
-        LEFT JOIN (SELECT user_id AS uid FROM dashboard_user WHERE user_id=#{0}) b ON a.uid = b.uid
+        FROM (SELECT #{userId} AS uid, #{loginName} AS login_name, #{user_name} AS user_name) a
+        LEFT JOIN (SELECT user_id AS uid FROM dashboard_user WHERE user_id=#{userId}) b ON a.uid = b.uid
         WHERE b.uid IS NULL
     </insert>
 
     <update id="updateUserPassword">
         <![CDATA[
-        update dashboard_user set user_password = #{2} where user_id = #{0} and user_password = #{1}
+        update dashboard_user set user_password = #{newPassword} where user_id = #{userId} and user_password = #{passowrd}
         ]]>
     </update>
 
     <delete id="deleteUserRoleByRoleId">
-        delete from dashboard_user_role where role_id = #{0}
+        delete from dashboard_user_role where role_id = #{roleId}
     </delete>
 </mapper>

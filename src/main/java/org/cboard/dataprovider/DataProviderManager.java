@@ -2,10 +2,8 @@ package org.cboard.dataprovider;
 
 import org.cboard.dataprovider.aggregator.InnerAggregator;
 import org.cboard.dataprovider.aggregator.h2.H2Aggregator;
-import org.cboard.dataprovider.aggregator.jvm.JvmAggregator;
 import org.cboard.dataprovider.annotation.DatasourceParameter;
 import org.cboard.dataprovider.annotation.ProviderName;
-import org.cboard.dataprovider.annotation.QueryParameter;
 import org.reflections.ReflectionUtils;
 import org.reflections.Reflections;
 import org.slf4j.Logger;

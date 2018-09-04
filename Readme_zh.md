@@ -4,7 +4,7 @@ CBoard由[上海楚果信息技术有限公司](http://www.chuguotech.com/)主�
 - **开发者**能够简单扩展连接所有你的Java程序能够触及的数据
 
 <div style="text-align:center">
-  <img class="img-responsive" src="./assets/zh-cn-widget-one-shot.png"  />
+  <img class="img-responsive" src="./imgs/zh-cn-widget-one-shot.png"  />
 </div>
 
 ## CBoard社区版用户

@@ -17,6 +17,10 @@ public class SqlSyntaxHelper {
         return config.getColumnName();
     }
 
+    public String getColumnNameInFilter(DimensionConfig config) {
+        return this.getProjectStr(config);
+    }
+
     public String getDimMemberStr(DimensionConfig config, int index) {
         switch (columnTypes.get(config.getColumnName().toUpperCase())) {
             case Types.VARCHAR:

@@ -16,6 +16,19 @@ public class H2SyntaxHelper extends SqlSyntaxHelper {
     }
 
     @Override
+    public String getColumnNameInFilter(DimensionConfig config) {
+        /**
+         * LPAD is a temporary workaround for number compare
+         */
+        return "LPAD(" + this.getProjectStr(config) + ", 20, '0')";
+    }
+
+    @Override
+    public String getDimMemberStr(DimensionConfig config, int index) {
+        return "LPAD(" + super.getDimMemberStr(config, index) + ", 20, '0')";
+    }
+
+    @Override
     public String getAggStr(ValueConfig vConfig) {
         String aggExp = SqlHelper.surround(vConfig.getColumn(), "`");
         switch (vConfig.getAggType()) {

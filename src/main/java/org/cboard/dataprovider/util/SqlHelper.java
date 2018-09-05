@@ -107,7 +107,7 @@ public class SqlHelper {
             return null;
         }
 
-        String fieldName = sqlSyntaxHelper.getProjectStr(config);
+        String fieldName = sqlSyntaxHelper.getColumnNameInFilter(config);
         String v0 = sqlSyntaxHelper.getDimMemberStr(config, 0);
         String v1 = null;
         if (config.getValues().size() == 2) {

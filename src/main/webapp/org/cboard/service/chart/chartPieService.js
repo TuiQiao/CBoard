@@ -73,7 +73,7 @@ cBoard.service('chartPieService', function ($state, $window) {
             title: titles,
             legend: {
                 orient: 'vertical',
-                left: 'left',
+                x: 'left',
                 data: string_keys
             },
             tooltip: {

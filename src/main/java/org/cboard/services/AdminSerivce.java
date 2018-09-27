@@ -113,13 +113,12 @@ public class AdminSerivce {
             userDao.deleteUserRole(params);
             if (roleId != null && roleId.length > 0) {
                 List<DashboardUserRole> list = new ArrayList<>();
-                for (String rid : roleId) {
-                    DashboardUserRole userRole = new DashboardUserRole();
-                    userRole.setUserId(uid);
-                    userRole.setRoleId(rid);
-                    list.add(userRole);
-                }
-                userDao.saveUserRole(list);
+                for (String rid : roleId) {                    
+                    Map paramSave = new HashMap<String,String>();
+                    paramSave.put("userId", uid);
+                    paramSave.put("roleId", rid);
+                    userDao.saveUserRole(paramSave);
+                }                
             }
         }
         return "1";

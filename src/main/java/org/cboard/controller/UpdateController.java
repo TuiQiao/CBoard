@@ -34,7 +34,7 @@ public class UpdateController extends BaseController {
 
     @RequestMapping(value = "/dataset")
     public String dataset() {
-        String userId = user.getUserId();
+        String userId = tlUser.get().getUserId();
         if (!adminUserId.equals(userId)) {
             return "";
         }
@@ -74,7 +74,7 @@ public class UpdateController extends BaseController {
 
     @RequestMapping(value = "/widget")
     public String widget() {
-        String userId = user.getUserId();
+        String userId = tlUser.get().getUserId();
         if (!adminUserId.equals(userId)) {
             return "";
         }

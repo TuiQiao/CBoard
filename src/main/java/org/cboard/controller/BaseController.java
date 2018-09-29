@@ -23,7 +23,7 @@ public class BaseController {
     @Autowired
     protected AuthenticationService authenticationService;
 
-    protected User user;
+    protected ThreadLocal<User> tlUser = new ThreadLocal<>();
 
     @Value("${log.negativeFilter}")
     protected String negativeFilter;
@@ -32,9 +32,10 @@ public class BaseController {
     protected String positveFilter;
 
     @ModelAttribute
-    public void initalAuthUser(HttpServletRequest request) {
+    public void initialAuthUser(HttpServletRequest request) {
         String url = request.getRequestURL().toString();
-        user = authenticationService.getCurrentUser();
+        User user = authenticationService.getCurrentUser();
+        tlUser.set(user);
         String log = new CBoardActionLog(user, url).toString();
 
         boolean isNegtiveMatch = false, isPositveMatch = true;

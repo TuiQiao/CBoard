@@ -99,7 +99,7 @@ public class AdminController extends BaseController {
 
     @RequestMapping(value = "/getRoleList")
     public List<DashboardRole> getRoleList() {
-        List<DashboardRole> list = roleDao.getRoleList(user.getUserId());
+        List<DashboardRole> list = roleDao.getRoleList(tlUser.get().getUserId());
         return list;
     }
 
@@ -114,7 +114,7 @@ public class AdminController extends BaseController {
         return adminSerivce.updateUserRole(
                 JSONArray.parseArray(userIdArr).toArray(new String[]{}),
                 JSONArray.parseArray(roleIdArr).toArray(new String[]{}),
-                user.getUserId()
+                tlUser.get().getUserId()
         );
     }
 
@@ -123,7 +123,7 @@ public class AdminController extends BaseController {
         return adminSerivce.deleteUserRoles(
                 JSONArray.parseArray(userIdArr).toArray(new String[]{}),
                 JSONArray.parseArray(roleIdArr).toArray(new String[]{}),
-                user.getUserId()
+                tlUser.get().getUserId()
         );
     }
 
@@ -151,15 +151,15 @@ public class AdminController extends BaseController {
 
     @RequestMapping(value = "/isAdmin")
     public boolean isAdmin() {
-        return adminUserId.equals(user.getUserId());
+        return adminUserId.equals(tlUser.get().getUserId());
     }
 
     @RequestMapping(value = "/isConfig")
     public boolean isConfig(@RequestParam(name = "type") String type) {
-        if (user.getUserId().equals(adminUserId)) {
+        if (tlUser.get().getUserId().equals(adminUserId)) {
             return true;
         } else if (type.equals("widget")) {
-            List<Long> menuIdList = menuDao.getMenuIdByUserRole(user.getUserId());
+            List<Long> menuIdList = menuDao.getMenuIdByUserRole(tlUser.get().getUserId());
             if (menuIdList.contains(1L) && menuIdList.contains(4L)) {
                 return true;
             }
@@ -169,56 +169,56 @@ public class AdminController extends BaseController {
 
     @RequestMapping(value = "/getDatasetList")
     public List<ViewDashboardDataset> getDatasetList() {
-        List<DashboardDataset> list = datasetDao.getDatasetListAdmin(user.getUserId());
+        List<DashboardDataset> list = datasetDao.getDatasetListAdmin(tlUser.get().getUserId());
         return Lists.transform(list, ViewDashboardDataset.TO);
     }
 
     @RequestMapping(value = "/getDatasetListUser")
     public List<ViewDashboardDataset> getDatasetListUser() {
-        List<DashboardDataset> list = adminSerivce.getDatasetList(user.getUserId());
+        List<DashboardDataset> list = adminSerivce.getDatasetList(tlUser.get().getUserId());
         return Lists.transform(list, ViewDashboardDataset.TO);
     }
 
     @RequestMapping(value = "/getJobList")
     public List<ViewDashboardJob> getJobList() {
-        return jobDao.getJobListAdmin(user.getUserId()).stream().map(ViewDashboardJob::new).collect(Collectors.toList());
+        return jobDao.getJobListAdmin(tlUser.get().getUserId()).stream().map(ViewDashboardJob::new).collect(Collectors.toList());
     }
 
     @RequestMapping(value = "/getBoardList")
     public List<ViewDashboardBoard> getBoardList() {
-        List<DashboardBoard> list = boardDao.getBoardListAdmin(user.getUserId());
+        List<DashboardBoard> list = boardDao.getBoardListAdmin(tlUser.get().getUserId());
         return Lists.transform(list, ViewDashboardBoard.TO);
     }
 
     @RequestMapping(value = "/getBoardListUser")
     public List<ViewDashboardBoard> getBoardListUser() {
-        List<DashboardBoard> list = adminSerivce.getBoardList(user.getUserId());
+        List<DashboardBoard> list = adminSerivce.getBoardList(tlUser.get().getUserId());
         return Lists.transform(list, ViewDashboardBoard.TO);
     }
 
     @RequestMapping(value = "/getWidgetList")
     public List<ViewDashboardWidget> getWidgetList() {
-        List<DashboardWidget> list = widgetDao.getWidgetListAdmin(user.getUserId());
+        List<DashboardWidget> list = widgetDao.getWidgetListAdmin(tlUser.get().getUserId());
         return Lists.transform(list, ViewDashboardWidget.TO);
     }
 
     @RequestMapping(value = "/getWidgetListUser")
     public List<ViewDashboardWidget> getWidgetListUser() {
-        List<DashboardWidget> list = adminSerivce.getWidgetList(user.getUserId());
+        List<DashboardWidget> list = adminSerivce.getWidgetList(tlUser.get().getUserId());
         return Lists.transform(list, ViewDashboardWidget.TO);
     }
 
     @RequestMapping(value = "/getDatasourceList")
     public List<ViewDashboardDatasource> getDatasourceList() {
-        return datasourceService.getViewDatasourceList(() -> datasourceDao.getDatasourceListAdmin(user.getUserId()));
+        return datasourceService.getViewDatasourceList(() -> datasourceDao.getDatasourceListAdmin(tlUser.get().getUserId()));
     }
 
     @RequestMapping(value = "/getMenuList")
     public List<DashboardMenu> getMenuList() {
-        if (adminUserId.equals(user.getUserId())) {
+        if (adminUserId.equals(tlUser.get().getUserId())) {
             return menuService.getMenuList();
         } else {
-            List<Long> menuId = menuDao.getMenuIdByRoleAdmin(user.getUserId());
+            List<Long> menuId = menuDao.getMenuIdByRoleAdmin(tlUser.get().getUserId());
             return menuService.getMenuList().stream().filter(e -> menuId.stream().anyMatch(id -> id.equals(e.getMenuId()))).collect(Collectors.toList());
         }
     }

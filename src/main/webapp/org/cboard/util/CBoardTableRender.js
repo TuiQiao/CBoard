@@ -24,7 +24,9 @@ CBoardTableRender.prototype.do = function (tall, persist) {
     var _this = this;
     var render = function (o, drillConfig) {
         _this.options = o;
-        _this.drill.config = drillConfig;
+        if(_this.drill){
+            _this.drill.config = drillConfig;
+        }
         _this.do(_this.tall);
     };
     var args = {

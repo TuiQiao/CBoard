@@ -14,6 +14,8 @@
         <security:intercept-url pattern="/js/**" access="permitAll"/>
         <security:intercept-url pattern="/login**" access="permitAll"/>
         <security:intercept-url pattern="/css/**" access="permitAll"/>
+        <security:intercept-url pattern="/fonts/**" access="permitAll"/>
+        <security:intercept-url pattern="/imgs/**" access="permitAll"/>
         <security:intercept-url pattern="/**" access="!anonymous"/>
         <security:form-login login-page="/login.do" username-parameter="username" password-parameter="password"
                              default-target-url="/starter.html" always-use-default-target="true"/>

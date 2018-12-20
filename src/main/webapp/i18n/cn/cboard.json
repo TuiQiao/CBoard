@@ -9,6 +9,7 @@
     "EDIT": "编辑",
     "EDIT_DEFAULT_VALUE": "设置默认值",
     "CONFIRM_DELETE": "真的想好了要删除吗?",
+    "CONFIRM_RESET": "真的想好了要设置默认值吗?",
     "CONFIRM_SAVE_BEFORE_PREVIEW": "预览之前需要保存，确定保存？",
     "NOT_ALLOWED_TO_DELETE_BECAUSE_BE_DEPENDENT": "不允许删除，因为被依赖！",
     "TIP": "提示",

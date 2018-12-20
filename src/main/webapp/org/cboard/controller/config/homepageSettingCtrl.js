@@ -66,14 +66,16 @@ cBoard.controller('homepageSettingCtrl',
         
         $scope.resetHomepage = function () {
         	if(!$('#resetHomepage').hasClass('disabled')) {
-        		$http.post("homepage/resetHomepage.do", {}).success(function (serviceStatus) {
-                    if (serviceStatus.status == '1') {
-                    	$(".jstree-anchor").css("font-weight", "");
-                        ModalUtils.alert(translate("COMMON.SUCCESS"), "modal-success", "sm");
-                    } else {
-                    	ModalUtils.alert(translate("COMMON.FAIL"), "modal-danger", "sm");
-                    }
-                });
+        		ModalUtils.confirm(translate("COMMON.CONFIRM_RESET"), "modal-warning", "lg", function () {
+        			$http.post("homepage/resetHomepage.do", {}).success(function (serviceStatus) {
+                        if (serviceStatus.status == '1') {
+                        	$(".jstree-anchor").css("font-weight", "");
+                            ModalUtils.alert(translate("COMMON.SUCCESS"), "modal-success", "sm");
+                        } else {
+                        	ModalUtils.alert(translate("COMMON.FAIL"), "modal-danger", "sm");
+                        }
+                    });
+        		});
         	}
         };
 

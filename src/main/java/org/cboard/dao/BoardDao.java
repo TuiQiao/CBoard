@@ -4,7 +4,6 @@ import org.cboard.pojo.DashboardBoard;
 import org.cboard.pojo.DashboardBoardParam;
 import org.springframework.stereotype.Repository;
 
-import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -35,10 +34,4 @@ public interface BoardDao {
     int saveBoardParam(DashboardBoardParam boardParam);
 
     int deleteBoardParam(Long boardId, String userId);
-    
-    int saveHomepage(Long boardId, Date updateTime);
-    
-    int resetHomepage(Date updateTime);
-    
-    Long selectHomepage();
 }

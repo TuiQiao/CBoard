@@ -136,21 +136,5 @@
     <delete id="deleteBoardParam">
         DELETE FROM dashboard_board_param WHERE board_id = #{0} and user_id = #{1}
     </delete>
-    
-        <update id="saveHomepage">
-        UPDATE dashboard_board 
-        SET homepage_flg=1 , update_time = #{1}
-        WHERE board_id = #{0}
-    </update>
-    
-    <update id="resetHomepage">
-        UPDATE dashboard_board 
-        SET homepage_flg=null , update_time = #{0}
-        WHERE homepage_flg = 1
-    </update>
-    
-    <select id="selectHomepage" resultType="java.lang.Long">
-        SELECT board_id FROM dashboard_board WHERE homepage_flg = 1
-    </select>
 
 </mapper>

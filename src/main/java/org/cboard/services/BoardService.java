@@ -127,34 +127,6 @@ public class BoardService {
             return new ServiceStatus(ServiceStatus.Status.Fail, e.getMessage());
         }
     }
-    
-    public ServiceStatus resetHomepage() {
-        try {
-            Date updateTime = new Date();
-            boardDao.resetHomepage(updateTime);
-            return new ServiceStatus(ServiceStatus.Status.Success, "success");
-        } catch (Exception e) {
-            LOG.error("", e);
-            return new ServiceStatus(ServiceStatus.Status.Fail, e.getMessage());
-        }
-    }
-    
-    public Long selectHomepage() {
-        Long boardId = boardDao.selectHomepage();
-        return boardId;
-    }
-    
-    public ServiceStatus saveHomepage(Long boardId) {
-        try {
-            Date updateTime = new Date();
-            boardDao.resetHomepage(updateTime);
-            boardDao.saveHomepage(boardId, updateTime);
-            return new ServiceStatus(ServiceStatus.Status.Success, "success");
-        } catch (Exception e) {
-            LOG.error("", e);
-            return new ServiceStatus(ServiceStatus.Status.Fail, e.getMessage());
-        }
-    }
 
     public byte[] exportBoard(Long id, String userId) {
         PersistContext persistContext = persistService.persist(id, userId);

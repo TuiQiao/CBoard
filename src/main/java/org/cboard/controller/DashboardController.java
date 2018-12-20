@@ -465,4 +465,38 @@ public class DashboardController extends BaseController {
         }
         return templateDir;
     }
+    
+    @RequestMapping(value = "/saveHomepage")
+    public ServiceStatus saveHomepage(@RequestParam(name = "boardId", required = true) Long boardId) {
+        return boardService.saveHomepage(boardId);
+    }
+    
+    @RequestMapping(value = "/resetHomepage")
+    public ServiceStatus resetHomepage() {
+        return boardService.resetHomepage();
+    }
+    
+    @RequestMapping(value = "/selectHomepage")
+    public Long selectHomepage() {
+        return boardService.selectHomepage();
+    }
+    
+    @RequestMapping(value = "/homepage", method = RequestMethod.GET)
+    public Map<String, ?> loginPage() {           
+        Long boardId = boardService.selectHomepage();
+        Map<String, Object> result = new HashMap<String, Object>();
+        if(boardId == null) {            
+            result.put("url", "");
+            result.put("templateUrl", "org/cboard/view/cboard/homepage.html");
+            result.put("controller", "homepageCtrl");
+        } else {
+            Map<String, Object> params = new HashMap<String, Object>();
+            params.put("id", boardId);
+            result.put("url", "");
+            result.put("params", params);
+            result.put("templateUrl", "org/cboard/view/dashboard/view.html");
+            result.put("controller", "dashboardViewCtrl");
+        }
+        return result;
+    }
 }

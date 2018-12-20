@@ -5,11 +5,7 @@
 
 angular.module('cBoard').config(['$stateProvider', function ($stateProvider) {
     $stateProvider
-        .state('home', {
-            url: '',
-            templateUrl: 'org/cboard/view/cboard/homepage.html',
-            controller: 'homepageCtrl'
-        })
+        .state('home', CB_HOMEPAGE_SETTING )
         .state('dashboard', {
             url: '/dashboard',
             abstract: true,
@@ -65,6 +61,12 @@ angular.module('cBoard').config(['$stateProvider', function ($stateProvider) {
             url: '/category',
             templateUrl: 'org/cboard/view/config/category.html',
             controller: 'categoryCtrl'
+        })
+        .state('config.homepage', {
+            url: '/homepage/{boardId}',
+            params: {boardId: null},
+            templateUrl: 'org/cboard/view/config/homepage.html',
+            controller: 'homepageSettingCtrl'
         })
         .state('config.dataset', {
             url: '/dataset/{id}',

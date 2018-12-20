@@ -14,6 +14,7 @@ CREATE TABLE dashboard_board (
   layout_json CLOB,
   create_time TIMESTAMP DEFAULT sysdate,
   update_time TIMESTAMP DEFAULT sysdate,
+  homepage_flg NUMBER NULL,
   CONSTRAINT dashboard_board_pk PRIMARY KEY (board_id)
 );
 

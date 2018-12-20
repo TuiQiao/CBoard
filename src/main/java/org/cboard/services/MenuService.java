@@ -31,6 +31,7 @@ public class MenuService {
         menuList.add(new DashboardMenu(8, 7, "SIDEBAR.USER_ADMIN", "admin.user"));
         menuList.add(new DashboardMenu(9, 1, "SIDEBAR.JOB", "config.job"));
         menuList.add(new DashboardMenu(10, 1, "SIDEBAR.SHARE_RESOURCE", "config.role"));
+        menuList.add(new DashboardMenu(11, 1, "SIDEBAR.HOMEPAGE", "config.homepage"));
 
     }
 

@@ -48,7 +48,8 @@
     "CREATE_TIME": "create time",
     "UPDATE_TIM": "last update time",
     "FOLD_TREE": "Fold all nodes",
-    "UNFOLD_TREE": "Unflod all nodes"
+    "UNFOLD_TREE": "Unflod all nodes",
+    "MUST_SELECT_ONE_BOARD": "Please choose one board first"
   },
   "HOMEPAGE": {
     "TITLE": "HOMEPAGE",
@@ -74,7 +75,8 @@
     "USER_ADMIN": "User Admin",
     "RES_ADMIN": "Resource Admin",
     "JOB": "Job",
-    "SHARE_RESOURCE": "Share Resource"
+    "SHARE_RESOURCE": "Share Resource",
+    "HOMEPAGE": "Homepage"
   },
   "HEADER": {
     "SIGN_OUT": "SignOut",

@@ -7,6 +7,7 @@ CREATE TABLE dashboard_board (
   user_id varchar(50) NOT NULL,
   category_id bigint(20) DEFAULT NULL,
   board_name varchar(100) NOT NULL,
+  homepage_flg int(1) NULL,
   layout_json text,
   PRIMARY KEY (board_id)
 );

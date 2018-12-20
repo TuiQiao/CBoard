@@ -1,0 +1,1 @@
+ALTER  TABLE  dashboard_board ADD homepage_flg NUMBER;

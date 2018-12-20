@@ -48,7 +48,8 @@
     "CREATE_TIME": "创建时间",
     "UPDATE_TIM": "最后修改时间",
     "FOLD_TREE": "展开所有树节点",
-    "UNFOLD_TREE": "收起所有树节点"
+    "UNFOLD_TREE": "收起所有树节点",
+    "MUST_SELECT_ONE_BOARD": "请选择一个看板"
   },
   "HOMEPAGE": {
     "TITLE": "首页",
@@ -74,7 +75,8 @@
     "USER_ADMIN": "用户管理",
     "RES_ADMIN": "资源管理",
     "JOB": "定时任务",
-    "SHARE_RESOURCE": "资源分享"
+    "SHARE_RESOURCE": "资源分享",
+    "HOMEPAGE": "主页设置"
   },
   "HEADER": {
     "SIGN_OUT": "注销",

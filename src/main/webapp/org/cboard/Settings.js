@@ -7,6 +7,7 @@ var settings = {
 };
 
 var CB_I18N;
+var CB_HOMEPAGE_SETTING;
 
 $.ajax({
     url: "i18n/" + settings.preferredLanguage + "/cboard.json",
@@ -14,6 +15,17 @@ $.ajax({
     dataType: "json",
     success: function(data) {
         return CB_I18N = data;
+    },
+    async: false
+});
+
+$.ajax({
+    url: "dashboard/homepage.do",
+    type: "GET",
+    dataType: "json",
+    success: function(data) {
+    	CB_HOMEPAGE_SETTING = data;
+    	return CB_HOMEPAGE_SETTING;
     },
     async: false
 });

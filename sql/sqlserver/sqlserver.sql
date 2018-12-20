@@ -6,7 +6,6 @@ CREATE TABLE dashboard_board (
   user_id varchar(50) NOT NULL,
   category_id bigint DEFAULT NULL,
   board_name varchar(100) NOT NULL,
-  homepage_flg int DEFAULT NULL,
   layout_json text,
   PRIMARY KEY CLUSTERED (board_id)
 );
@@ -101,6 +100,12 @@ CREATE TABLE dashboard_board_param (
   board_id bigint NOT NULL,
   config text,
   PRIMARY KEY CLUSTERED (board_param_id)
+);
+
+CREATE TABLE dashboard_homepage (
+  board_id bigint identity(1,1),
+  user_id varchar(50) NOT NULL
+  PRIMARY KEY CLUSTERED (board_id, user_id)
 );
 
 ALTER  TABLE  dbo.dashboard_dataset ADD create_time DATETIME2 DEFAULT GETDATE();

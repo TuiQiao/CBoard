@@ -7,7 +7,6 @@ CREATE TABLE dashboard_board (
   user_id varchar(50) NOT NULL,
   category_id bigint(20) DEFAULT NULL,
   board_name varchar(100) NOT NULL,
-  homepage_flg int(1) NULL,
   layout_json text,
   PRIMARY KEY (board_id)
 );
@@ -102,6 +101,12 @@ CREATE TABLE dashboard_board_param (
   board_id bigint(20) NOT NULL,
   config text,
   PRIMARY KEY (board_param_id)
+);
+
+CREATE TABLE dashboard_homepage (
+  board_id bigint(20) NOT NULL,
+  user_id varchar(50) NOT NULL
+  PRIMARY KEY (board_id, user_id)
 );
 
 -- 升级0.4需要执行的

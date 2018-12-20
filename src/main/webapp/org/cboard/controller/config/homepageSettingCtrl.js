@@ -36,7 +36,7 @@ cBoard.controller('homepageSettingCtrl',
                 	$('#saveHomepage').removeClass('disabled');
                 	$('#resetHomepage').removeClass('disabled');                	
                 	$scope.treeInstance.jstree(true).open_all();                	
-                	$http.get("dashboard/selectHomepage.do").success(function (response) {
+                	$http.get("homepage/selectHomepage.do").success(function (response) {
                 		if(response != null) {
                 			$("#"+response+"_anchor").css("font-weight","bold");
                 		}                		
@@ -66,7 +66,7 @@ cBoard.controller('homepageSettingCtrl',
         
         $scope.resetHomepage = function () {
         	if(!$('#resetHomepage').hasClass('disabled')) {
-        		$http.post("dashboard/resetHomepage.do", {}).success(function (serviceStatus) {
+        		$http.post("homepage/resetHomepage.do", {}).success(function (serviceStatus) {
                     if (serviceStatus.status == '1') {
                     	$(".jstree-anchor").css("font-weight", "");
                         ModalUtils.alert(translate("COMMON.SUCCESS"), "modal-success", "sm");
@@ -83,7 +83,7 @@ cBoard.controller('homepageSettingCtrl',
             	if(board == null) {
             		ModalUtils.alert(translate("COMMON.MUST_SELECT_ONE_BOARD"), "modal-warning", "sm");
             	} else {            		
-            		$http.post("dashboard/saveHomepage.do", {
+            		$http.post("homepage/saveHomepage.do", {
                         boardId: board.id,
                     }).success(function (serviceStatus) {
                         if (serviceStatus.status == '1') {

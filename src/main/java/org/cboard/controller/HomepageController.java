@@ -47,7 +47,7 @@ public class HomepageController extends BaseController {
         return homepageService.selectHomepage(userId);
     }
     
-    @RequestMapping(value = "/homepage", method = RequestMethod.GET)
+    @RequestMapping(value = "/mine", method = RequestMethod.GET)
     public Map<String, ?> loginPage() {           
         String userId = tlUser.get().getUserId();
         // 优先查找当前用户设置的首页

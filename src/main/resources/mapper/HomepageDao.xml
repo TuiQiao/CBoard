@@ -3,7 +3,7 @@
 <mapper namespace="org.cboard.dao.HomepageDao">
     
     <insert id="saveHomepage">
-        INSERT INTO dashboard_homepage (board_id, user_id,...) VALUES (#{0}, #{1})
+        INSERT INTO dashboard_homepage (board_id, user_id) VALUES (#{0}, #{1})
     </insert>
     
     <delete id="resetHomepage">
@@ -11,7 +11,7 @@
     </delete>
     
     <select id="selectHomepage" resultType="java.lang.Long">
-        SELECT board_id FROM dashboard_homepage h inner join dashboard_board b ON h.BOARD_ID = b.BOARD_ID WHERE h.user_id=#{0}
+        SELECT h.board_id FROM dashboard_homepage h inner join dashboard_board b ON h.BOARD_ID = b.BOARD_ID WHERE h.user_id=#{0}
     </select>
 
 </mapper>

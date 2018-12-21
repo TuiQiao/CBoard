@@ -300,8 +300,8 @@
       "BOARD_TARGET":"关联看板",
       "BOARD_TARGET_PARAMS":"关联看板参数",
       "RELATION":"关联",
-      "EXTENAL":"扩展看板",
-      "EXTENAL_CAPTION":"扩展看板名称"
+      "EXTENAL":"跳转看板",
+      "EXTENAL_CAPTION":"跳转看板名称"
     },
     "CATEGORY": {
       "NAME": "看板分类名称",

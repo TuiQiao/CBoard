@@ -41,6 +41,8 @@
     "REMOVE": "关闭",
     "ADD_RELATIONS": "添加关联",
     "DEL_RELATIONS": "删除关联",
+    "ADD_EXTENAL": "添加跳转看板",
+    "DEL_EXTENAL": "删除跳转看板",
     "DATE": "日期",
     "VALUE": "值",
     "INFORMATION": "信息",
@@ -50,7 +52,9 @@
     "UPDATE_TIM": "最后修改时间",
     "FOLD_TREE": "展开所有树节点",
     "UNFOLD_TREE": "收起所有树节点",
-    "MUST_SELECT_ONE_BOARD": "请选择一个看板"
+    "MUST_SELECT_ONE_BOARD": "请选择一个看板",
+    "SKIP_TO": "跳转至",
+    "SKIP": "跳转"
   },
   "HOMEPAGE": {
     "TITLE": "首页",
@@ -295,7 +299,9 @@
       "WIDGET_TARGET_FIELDS":"关联图表维度",
       "BOARD_TARGET":"关联看板",
       "BOARD_TARGET_PARAMS":"关联看板参数",
-      "RELATION":"关联"
+      "RELATION":"关联",
+      "EXTENAL":"扩展看板",
+      "EXTENAL_CAPTION":"扩展看板名称"
     },
     "CATEGORY": {
       "NAME": "看板分类名称",

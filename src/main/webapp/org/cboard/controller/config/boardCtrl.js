@@ -244,6 +244,16 @@ cBoard.controller('boardCtrl',
                 delete widget.relations;
             }
         };
+        
+        $scope.addExtenal = function (widget) {
+        	widget.extenal = {};
+        };
+
+        $scope.delExtenal = function (widget) {
+            if (widget.extenal) {
+                delete widget.extenal;
+            }
+        };
 
         var validate = function () {
             $scope.alerts = [];
@@ -310,6 +320,13 @@ cBoard.controller('boardCtrl',
             _.each($scope.curBoard.layout.rows, function (row) {
                 _.each(row.widgets, function (widget) {
                     delete widget.sourceId;
+                    if (!_.isUndefined(widget.extenal)) {
+                    	if (!_.isUndefined(widget.extenal.name)) {
+                    		if(_.isEqual(widget.extenal.name.replace(/\s+/g,""), '')) {
+                    			delete widget.extenal.name;
+                        	}    
+                    	}                    	                	
+                    }
                     if (!_.isUndefined(widget.relations)) {
                         delete widget.relations.sourceFields;
                         _.each(widget.relations.relations, function (relation) {

@@ -42,6 +42,16 @@
                          style="cursor:move">
                         {{widget.name}}
                         <div class="box-tools pull-right">
+                            <button ng-if="!widget.extenal" type="button" class="btn btn-box-tool"
+                                    title="{{'COMMON.ADD_EXTENAL'|translate}}"
+                                    ng-click="addExtenal(widget)">
+                                <i class="fa fa-eye"></i>
+                            </button>
+                            <button ng-if="widget.extenal" type="button" class="btn btn-box-tool"
+                                    title="{{'COMMON.DEL_EXTENAL'|translate}}"
+                                    ng-click="delExtenal(widget)">
+                                <i class="fa fa-eye-slash"></i>
+                            </button>
                             <button ng-if="!widget.relations" type="button" class="btn btn-box-tool"
                                     title="{{'COMMON.ADD_RELATIONS'|translate}}"
                                     ng-click="addRelations(widget)">
@@ -87,6 +97,25 @@
                                     {{w.name + "(" + w.dataset + ")"}}
                                 </ui-select-choices>
                             </ui-select>
+                        </div>
+                        <div ng-if="widget.extenal"  class="form-group">
+	                        <div class="form-group">
+	                            <label>{{'CONFIG.DASHBOARD.EXTENAL_CAPTION'|translate}}</label>
+	                            <input type="text" ng-model="widget.extenal.name"
+	                                   ng-model-options="{updateOn: 'blur'}"
+	                                   class="form-control"/>
+	                        </div>
+                            <div class="form-group">
+                                <label>{{'CONFIG.DASHBOARD.EXTENAL'|translate}}</label>
+                                <ui-select ng-model="widget.extenal.targetId" ng-init="changeTargetParam(widget, extenal.targetId, $index)" on-select="widget.extenal.name = $item.name">
+                                    <ui-select-match>
+                                        {{$select.selected.name}}
+                                    </ui-select-match>
+                                    <ui-select-choices group-by="widgetGroup" repeat="w.id as w in boardList | filter:$select.search">
+                                        {{w.name}}
+                                    </ui-select-choices>
+                                </ui-select>
+                            </div>
                         </div>
                         <div ng-if="widget.relations" class="form-group">
                             <div class="form-group">

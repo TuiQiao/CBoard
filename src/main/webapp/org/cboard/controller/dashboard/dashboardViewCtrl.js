@@ -448,6 +448,10 @@ cBoard.controller('dashboardViewCtrl', function ($timeout, $rootScope, $scope, $
     $scope.config = function (widget) {
         $state.go('config.widget', {id: widget.widget.id});
     };
+    
+    $scope.skip = function (widget) {
+         $state.go('dashboard.category.view', {id: widget.extenal.targetId});
+    };
 
     $scope.reload = function (widget) {
         paramToFilter();

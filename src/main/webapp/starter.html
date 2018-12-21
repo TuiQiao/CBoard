@@ -7,7 +7,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
 <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <title>CBoard | Starter</title>
+    <title>{{'SHOUJINS.COMMON.SYSTEM_TITLE'|translate}}</title>
     <!-- Tell the browser to be responsive to screen width -->
     <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
     <!-- Bootstrap 3.3.6 -->
@@ -65,6 +65,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
     <script src="bootstrap/js/bootstrap.min.js"></script>
     <!-- AdminLTE App -->
     <script src="dist/js/app.js"></script>
+    <script src="dist/js/custom.js"></script>
     <!--ngJsTree -->
     <script src="plugins/ngJsTree/jstree.js"></script>
     <script src="plugins/ngJsTree/ngJsTree.js"></script>
@@ -229,8 +230,15 @@ desired effect
 <!-- AngularJS-->
 <script src="org/cboard/ng-app.js"></script>
 <script src="org/cboard/ng-config.js"></script>
+<!-- Zhanghao added block start -->
+<script src="org/cboard/controller/browser/customersCtrl.js"></script>
+<!-- Zhanghao added block end -->
+<!-- zhb start -->
+<script src="org/cboard/controller/browser/renderchartCtrl.js"></script>
+<script src="org/cboard/controller/browser/configurationlabelCtrl.js"></script>
+<!-- zhb end -->
 <script src="org/cboard/controller/cboard/cBoardCtrl.js"></script>
-<script src="org/cboard/controller/cboard/homepageCtrl.js"></script>
+<script src="org/cboard/controller/cboard/homepageCtrl.js"></script> 
 <script src="org/cboard/controller/dashboard/dashboardViewCtrl.js"></script>
 <script src="org/cboard/controller/config/widgetCtrl.js"></script>
 <script src="org/cboard/controller/config/datasourceCtrl.js"></script>
@@ -296,6 +304,8 @@ desired effect
                     <button type="button" class="btn btn-box-tool" ng-if="widgetCfg" ng-click="config(widget)"><i
                             class="fa fa-wrench"></i>
                     </button>
+                    <button type="button" class="btn btn-box-tool" ng-if="widget.extenal" ng-click="skip(widget)" title="{{'COMMON.SKIP_TO'|translate}}{{widget.extenal.name}}"><i class="fa fa-share"></i>
+                    </button>
                     <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i>
                     </button>
                     <button type="button" class="btn btn-box-tool" ng-click="modalChart(widget)"><i
@@ -324,6 +334,8 @@ desired effect
                     <button type="button" class="btn btn-box-tool" ng-if="widgetCfg" ng-click="config(widget)"><i
                             class="fa fa-wrench"></i>
                     </button>
+                    <button type="button" class="btn btn-box-tool" ng-if="widget.extenal" ng-click="skip(widget)" title="{{'COMMON.SKIP_TO'|translate}}{{widget.extenal.name}}"><i class="fa fa-share"></i>
+                    </button>
                     <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i>
                     </button>
                     <button type="button" class="btn btn-box-tool" ng-click="modalTable(widget)"><i
@@ -336,5 +348,6 @@ desired effect
         </div>
     </div>
 </script>
+
 </body>
 </html>

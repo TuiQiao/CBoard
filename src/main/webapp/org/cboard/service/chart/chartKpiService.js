@@ -33,6 +33,7 @@ cBoard.service('chartKpiService', function (dataService, $compile, $filter) {
         option.style = config.values[0].style;
         option.edit = translate("COMMON.EDIT");
         option.refresh = translate("COMMON.REFRESH");
+        option.skip = translate("COMMON.SKIP");
         return option;
     };
 });

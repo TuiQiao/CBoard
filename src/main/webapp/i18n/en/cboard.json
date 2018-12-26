@@ -41,6 +41,8 @@
     "REMOVE": "Remove",
     "ADD_RELATIONS": "Add Relations",
     "DEL_RELATIONS": "Del Relations",
+    "ADD_EXTENAL": "Add Extenal Board",
+    "DEL_EXTENAL": "Del Extenal Board",
     "DATE": "Date",
     "VALUE": "Value",
     "INFORMATION": "Information",
@@ -50,7 +52,9 @@
     "UPDATE_TIM": "last update time",
     "FOLD_TREE": "Fold all nodes",
     "UNFOLD_TREE": "Unflod all nodes",
-    "MUST_SELECT_ONE_BOARD": "Please choose one board first"
+    "MUST_SELECT_ONE_BOARD": "Please choose one board first",
+    "SKIP_TO": "Skip to",
+    "SKIP": "Skip"
   },
   "HOMEPAGE": {
     "TITLE": "HOMEPAGE",
@@ -295,7 +299,9 @@
       "WIDGET_TARGET_FIELDS":"Correlation Widget Fields",
       "BOARD_TARGET":"Correlation Board",
       "BOARD_TARGET_PARAMS":"Correlation Board Params",
-      "RELATION":"Relation"
+      "RELATION":"Relation",
+      "EXTENAL":"Extenal Board",
+      "EXTENAL_CAPTION":"Extenal Board Name"
     },
     "CATEGORY": {
       "NAME": "Category Name",

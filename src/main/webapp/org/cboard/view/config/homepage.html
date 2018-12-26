@@ -1,0 +1,33 @@
+<!-- Content Wrapper. Contains page content -->
+<div id="inner-container" class="content">
+    <div class="row" ng-show="!freeLayout">
+        <div class="col-md-3">
+            <div class="box box-solid">
+                <div class="box-header with-border">
+                    <i class="fa fa-star"></i><h3 class="box-title">{{'SIDEBAR.HOMEPAGE'|translate}}</h3>
+                    <div class="box-tools pull-right operateBox">
+                    </div>
+                </div>
+                <div class="panel-body">
+                    <div id="boardTreeID" js-tree="treeConfig" should-apply="applyModelChanges()" ng-model="treeData" tree="treeInstance"
+                         tree-events-obj="treeEventsObj"></div>
+                </div>
+                <div class="form-group">
+                        <div class="col-sm-10" style="padding-right: 0px; padding-top: 5px">
+                            <button id="resetHomepage" type="submit" ng-click="resetHomepage()" class="btn btn-default pull-right">
+                                {{'COMMON.EDIT_DEFAULT_VALUE'|translate}}
+                            </button>
+                        </div>
+                        <div class="col-sm-2" style="padding-right: 0px; padding-top: 5px">
+                            <button id="saveHomepage" type="submit" ng-click="saveHomepage()" class="btn btn-success pull-right">
+                                {{'COMMON.SAVE'|translate}}
+                            </button>
+                        </div>
+                    </div>
+            </div>
+        </div>
+        <div class="col-md-9">
+        </div>
+    </div>
+    <div class="row" ng-show="freeLayout" ng-include="'org/cboard/view/config/free_layout.html'"></div>
+</div>

@@ -1,0 +1,69 @@
+<div class="modal-header">
+    <button type="button" class="close" data-dismiss="modal" aria-label="Close" ng-click="close()">
+        <span aria-hidden="true">×</span></button>
+    <h4 class="modal-title">{{'CONFIG.WIDGET.EXPRESSION'|translate}}</h4>
+</div>
+<div class="modal-body">
+    <div class="row">
+        <div class="col-md-12 form-horizontal">
+            <div class="form-group">
+                <label class="col-sm-2 control-label">{{'CONFIG.WIDGET.COLUMN'|translate}}</label>
+                <div class="col-sm-10">
+                    <div class="form-control"
+                         style="min-height: 35px;height: auto;padding: 0px">
+                <span ng-repeat="o in columnObjs"
+                      class="btn btn-default btn-sm" style="margin: 3px 3px;"
+                      ng-click="addToken(o.column)">{{o.alias?o.column+'('+o.alias+')':o.column}}</span>
+                    </div>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-2 control-label">{{'CONFIG.WIDGET.AGGREGATE'|translate}}</label>
+                <div class="col-sm-10">
+                    <div class="form-control"
+                         style="min-height: 35px;height: auto;padding: 0px">
+                <span ng-repeat="o in aggregate"
+                      class="btn btn-default btn-sm" style="margin: 3px 3px;"
+                      ng-click="addToken(o.value+'()',true)">{{o.value}}</span>
+                    </div>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-2 control-label">{{'CONFIG.COMMON.CUSTOM_EXPRESSION'|translate}}</label>
+                <div class="col-sm-10">
+                    <div class="form-control"
+                         style="min-height: 35px;height: auto;padding: 0px">
+                <span ng-repeat="o in expressions"
+                      class="btn btn-default btn-sm" style="margin: 3px 3px;"
+                      ng-click="addToken('${' + o.alias + '}', false)">{{'${' + o.alias + '}'}}</span>
+                    </div>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-2 control-label">{{'CONFIG.WIDGET.EXPRESSION_TEXT'|translate}}</label>
+                <div class="col-sm-10">
+                    <div id="expression_area" ui-ace="expAceOpt" ng-model="data.expression" class="form-control" title="{{'TIPS.CAL_EXPR'|translate}}"></div>
+                    <!--<textarea ng-model="data.expression" id="expression_area" class="form-control" placeholder="{{'TIPS.CAL_EXPR'|translate}}"></textarea>-->
+                </div>
+            </div>
+            <div class="form-group" ng-repeat="alert in alerts">
+                <div class="col-sm-offset-2 col-sm-10">
+                    <div uib-alert ng-class="'alert-' + (alert.type || 'warning')"
+                         close="alerts.splice($index, 1)">{{alert.msg}}
+                    </div>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-2 control-label">{{'CONFIG.WIDGET.ALIAS'|translate}}</label>
+                <div class="col-sm-10">
+                    <input class="form-control" ng-model="data.alias">
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal-footer">
+    <button type="button" class="btn btn-default pull-left" data-dismiss="modal" ng-click="close()">{{'COMMON.CANCEL'|translate}}</button>
+    <!--<button type="button" class="btn btn-primary" ng-click="verify()">{{'CONFIG.WIDGET.CHECK'|translate}}</button>-->
+    <button type="button" class="btn btn-primary" ng-click="ok()">{{'COMMON.OK'|translate}}</button>
+</div>

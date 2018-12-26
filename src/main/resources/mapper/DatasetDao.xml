@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="org.cboard.dao.DatasetDao">
+
+    <select id="getCategoryList" resultType="java.lang.String">
+        SELECT DISTINCT(category_name) category FROM dashboard_dataset order by category
+    </select>
+
+    <select id="getAllDatasetList" resultType="org.cboard.pojo.DashboardDataset">
+        SELECT
+        dataset_id    AS id,
+        s.user_id     AS userId,
+        dataset_name  AS name,
+        data_json     AS data,
+        category_name AS categoryName,
+        u.user_name   AS userName,
+        u.login_name  AS loginName,
+        create_time   AS createTime,
+        update_time   AS updateTime
+        FROM dashboard_dataset s
+        LEFT JOIN dashboard_user u ON u.user_id = s.user_id
+    </select>
+
+    <select id="getDatasetList" resultType="org.cboard.pojo.DashboardDataset">
+      SELECT
+              dataset_id    AS id,
+              s.user_id     AS userId,
+              dataset_name  AS name,
+              data_json     AS data,
+              category_name AS categoryName,
+              u.user_name   AS userName,
+              u.login_name  AS loginName,
+              create_time   AS createTime,
+              update_time   AS updateTime
+         FROM dashboard_dataset s
+         LEFT JOIN dashboard_user u ON u.user_id = s.user_id
+               WHERE #{0} = '${admin_user_id}' OR s.user_id = #{0} OR dataset_id IN (
+             SELECT res_id
+               FROM dashboard_user_role ur
+               LEFT JOIN dashboard_role_res rr ON ur.role_id = rr.role_id
+              WHERE ur.user_id = #{0} AND rr.res_type = 'dataset'
+          )
+        ORDER BY dataset_name
+    </select>
+
+    <select id="getDatasetListAdmin" resultType="org.cboard.pojo.DashboardDataset">
+        SELECT
+              dataset_id    AS id,
+              s.user_id     AS userId,
+              dataset_name  AS name,
+              data_json     AS data,
+              category_name AS categoryName,
+              u.user_name   AS userName,
+              u.login_name  AS loginName,
+              create_time   AS createTime,
+              update_time   AS updateTime
+        FROM dashboard_dataset s
+        LEFT JOIN dashboard_user u ON u.user_id = s.user_id
+        WHERE #{0} = '${admin_user_id}' OR s.user_id = #{0}
+           OR s.user_id = #{0}
+           OR dataset_id IN (
+              SELECT res_id
+                FROM dashboard_role r
+                LEFT JOIN dashboard_role_res rr ON r.role_id = rr.role_id
+               WHERE r.user_id = #{0} AND rr.res_type = 'dataset'
+           )
+        ORDER BY dataset_name
+    </select>
+
+    <select id="getDataset" resultType="org.cboard.pojo.DashboardDataset">
+       SELECT dataset_id id,user_id userId,dataset_name name,data_json data,category_name categoryName,create_time createTime,update_time updateTime FROM dashboard_dataset WHERE dataset_id = #{0}
+    </select>
+
+    <insert id="save" parameterType="org.cboard.pojo.DashboardDataset">
+        <![CDATA[
+        INSERT INTO dashboard_dataset(user_id,dataset_name,data_json,category_name) VALUES (#{userId},#{name},#{data},#{categoryName})
+        ]]>
+    </insert>
+
+    <update id="update" parameterType="org.cboard.pojo.DashboardDataset">
+        <![CDATA[
+        UPDATE dashboard_dataset SET dataset_name = #{name},data_json = #{data},category_name = #{categoryName}, update_time = #{updateTime} where dataset_id = #{id}
+        ]]>
+    </update>
+
+    <select id="countExistDatasetName" resultType="java.lang.Long">
+        SELECT count(1)
+          FROM dashboard_dataset
+         WHERE 1=1
+        <if test="dataset_id != null" >
+          <![CDATA[
+            AND dataset_id <> #{dataset_id}
+          ]]>
+        </if>
+            AND dataset_name = #{dataset_name}
+            AND category_name = #{category_name}
+    </select>
+
+    <delete id="delete">
+        delete from dashboard_dataset where dataset_id = #{0}
+    </delete>
+
+    <select id="checkDatasetRole" resultType="java.lang.Long">
+        SELECT count(1) FROM dashboard_dataset WHERE dataset_id = #{1} and (#{0} = '${admin_user_id}' OR user_id = #{0} OR dataset_id IN (SELECT res_id FROM dashboard_user_role ur LEFT JOIN dashboard_role_res rr ON ur.role_id = rr.role_id WHERE ur.user_id = #{0} AND rr.res_type = 'dataset' AND rr.permission LIKE #{2}))
+    </select>
+</mapper>

@@ -1,0 +1,58 @@
+<div class="box box-danger"
+     style="border-left: 1px solid #d2d6de; border-right: 1px solid #d2d6de">
+    <div class="box-header" dnd-draggable="row" dnd-type="'r'"
+         nd-effect-allowed="move"
+         dnd-moved="curBoard.layout.rows.splice($index, 1)" style="cursor:move">
+        {{'CONFIG.DASHBOARD.PARAM_ROW'|translate}}
+
+        <div class="box-tools pull-right">
+            <div class="input-group input-group-sm" style="width: 300px;">
+                <input type="text" name="table_search" ng-model="row.height"
+                       class="form-control pull-right" placeholder="{{'CONFIG.DASHBOARD.HEIGHT'|translate}}">
+                <div class="input-group-btn">
+                    <button type="button" class="btn btn-xs btn-success"
+                            ng-click="editParam(row)">
+                        {{'CONFIG.DASHBOARD.ADD_PARAM'|translate}}
+                    </button>
+                    <button type="button" class="btn btn-box-tool" data-widget="collapse" title="{{'COMMON.COLLAPSE'|translate}}"><i
+                            class="fa fa-minus"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="box-body">
+        <div class="col-sm-12">
+            <div dnd-list="row.params"
+                 dnd-allowed-types="['p']"
+                 class="form-control"
+                 style="min-height: 35px;height: auto;padding: 0px">
+                <div class="dndPlaceholder sort-highlight"
+                     style="height: 24px; width: 93px;margin: 3px 3px;display: inline-block;vertical-align: middle;">
+                </div>
+                <div ng-repeat="param in row.params" dnd-draggable="param"
+                     dnd-effect-allowed="move"
+                     dnd-moved="row.params.splice($index, 1)"
+                     dnd-type="'p'"
+                     class="btn-group" style="cursor: move;margin: 3px 3px;">
+                    <button type="button" class="btn btn-default btn-sm" style="cursor: move;">
+                        {{param.name}}
+                    </button>
+                    <button type="button" class="btn btn-default btn-sm dropdown-toggle"
+                            ng-click="editParam(row,$index)" title="{{'COMMON.EDIT'|translate}}">
+                        <span class="fa fa-edit"></span>
+                    </button>
+                    <button type="button" class="btn btn-default btn-sm dropdown-toggle" ng-controller="paramCtrl" ng-init="init()"
+                            ng-click="editParam()" title="{{'COMMON.EDIT_PARAM'|translate}}">
+                        <span class="fa fa-pencil-square"></span>
+                    </button>
+                    <button type="button"
+                            class="btn btn-default btn-sm dropdown-toggle"
+                            ng-click="row.params.splice($index, 1)" title="{{'COMMON.DELETE'|translate}}">
+                        <span class="fa fa-trash-o"></span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

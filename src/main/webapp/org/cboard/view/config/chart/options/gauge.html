@@ -1,0 +1,74 @@
+<div class="col-xs-3 col-md-2">
+    <!-- Nav tabs -->
+    <ul class="nav nav-tabs tabs-left"><!-- 'tabs-right' for right tabs -->
+        <li class="active"><a href="#ext" data-toggle="tab">Ext</a></li>
+    </ul>
+</div>
+<div class="col-xs-9 col-md-10">
+    <!-- Tab panes -->
+    <div class="tab-content">
+        <div class="tab-pane active" id="ext">
+            <form class="form-horizontal">
+                <div class="form-group">
+                    <label class="col-sm-2 control-label">{{'CONFIG.WIDGET.LABEL'|translate}}</label>
+                    <div class="col-sm-10">
+                        <input type="text" ng-model="curWidget.config.values[0].name" class="form-control" />
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="col-sm-2 control-label">{{'CONFIG.WIDGET.FORMATTER'|translate}}</label>
+                    <div class="col-sm-10">
+                        <input type="text" ng-model="curWidget.config.values[0].format" class="form-control" />
+                        <span class="help-block">{{'CONFIG.WIDGET.EXAMPLE'|translate}}：'0,0.00' '0.00' '0%' '0.00%' ，<a href="http://numbrojs.com/format.html"
+                                                                                                                        target="_blank">{{'CONFIG.WIDGET.MORE'|translate}}</a> </span>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="col-sm-2 control-label">{{'CONFIG.WIDGET.MIN_VALUE'|translate}}</label>
+                    <div class="col-sm-10">
+                        <input type="number" ng-model="curWidget.config.values[0].minValue" ng-value="0.0" placeholder="default value is 0" class="form-control" />
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="col-sm-2 control-label">{{'CONFIG.WIDGET.MAX_VALUE'|translate}}</label>
+                    <div class="col-sm-10">
+                        <input type="number" ng-model="curWidget.config.values[0].maxValue" ng-value="100.0" placeholder="default value is 100" class="form-control" />
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="col-sm-2 control-label">{{'CONFIG.WIDGET.LINE_STYLE'|translate}}</label>
+                    <div class="col-sm-10">
+                        <table class="table table-striped">
+                            <tr>
+                                <th style="width: 25px"></th>
+                                <th style="width: 120px">{{'CONFIG.WIDGET.STYLE_PROPORTION'|translate}}</th>
+                                <th style="width: 100px">{{'CONFIG.WIDGET.STYLE_COLOR'|translate}}</th>
+                            </tr>
+                            <tr ng-repeat="s in curWidget.config.styles">
+                                <td>
+                                    <span class="text-red" style="display: block;margin-top: 7px;">
+                                        <i class="fa fa-trash-o" style="cursor: pointer;vertical-align: middle;"
+                                           ng-click="deleteValue(v.cols);curWidget.config.styles.splice($index, 1)"></i>
+                                    </span>
+                                </td>
+                                <td>
+                                    <input type="text" ng-model="s.proportion" class="form-control input" style="width: 90%; padding: 6px 6px;"/>
+                                </td>
+                                <td>
+                                    <input type="text" id="color_{{$index}}" ng-init="initColorPicker($index)" ng-model="s.color" class="form-control" style="width: 90%; padding: 6px 6px;"/>
+                                </td>
+                            </tr>
+                            <tr>
+                                <th colspan="4" style="text-align: center;">
+                                    <button type="button" class="btn btn-info btn-sm" ng-click="add_style()">
+                                        {{'CONFIG.WIDGET.ADD_NEW_STYLE'|translate}}
+                                    </button>
+                                </th>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

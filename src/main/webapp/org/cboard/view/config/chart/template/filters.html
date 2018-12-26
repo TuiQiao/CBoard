@@ -1,0 +1,39 @@
+<label class="col-sm-2 control-label">{{'CONFIG.WIDGET.FILTER'|translate}}
+    <i class="fa fa-question-circle" title="{{helpMessage.filter}}" ng-show="{{helpMessage.filter != undefined}}"></i>
+</label>
+<div class="col-sm-10">
+    <div dnd-list="curWidget.config.filters"
+         dnd-inserted="dndTransfer.toKeysGroups(curWidget.config.filters,index,item,type);onDragCancle();"
+         dnd-allowed-types="['dimension','select','group','key','filter','filterGroup']"
+         class="form-control" style="min-height: 35px;height: auto;padding: 0px"
+         ng-class="{highlight: targetHighlight.filter}">
+        <div class="dndPlaceholder sort-highlight"
+             style="height: 24px; width: 93px;margin: 3px 3px;display: inline-block;vertical-align: middle;">
+        </div>
+        <div ng-repeat="o in curWidget.config.filters" dnd-draggable="o" dnd-effect-allowed="move"
+             dnd-moved="curWidget.config.filters.splice($index, 1)" dnd-type="o.group?'filterGroup':'filter'"
+             dnd-dragstart="onDragstart(o.group?'filterGroup':'dimension')" dnd-dragend="onDragCancle()"
+             class="btn-group" style="cursor: move;margin: 3px 3px;">
+            <div ng-if="o.group" class="btn-group">
+                <button type="button" class="btn btn-warning btn-sm" style="cursor: move;"
+                        ng-click="curWidget.config.filters.splice($index, 1);">
+                    {{o.group}}
+                </button>
+                <button type="button" class="btn btn-warning btn-sm dropdown-toggle" ng-if="!isDsFilter(o)"
+                        ng-click="editFilterGroup(o)">
+                    <span class="fa fa-edit"></span>
+                </button>
+            </div>
+            <div ng-if="!o.group" class="btn-group">
+                <button type="button" class="btn btn-default btn-sm" style="cursor: move;"
+                        ng-click="curWidget.config.selects.push(o.col);curWidget.config.filters.splice($index, 1);">
+                    {{o.alias?o.alias:o.col}}
+                </button>
+                <button type="button" class="btn btn-default btn-sm dropdown-toggle"
+                        ng-click="editFilter(curWidget.config.filters,$index)">
+                    <span class="fa fa-filter"></span>
+                </button>
+            </div>
+        </div>
+    </div>
+</div>

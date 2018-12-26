@@ -1,0 +1,53 @@
+<!-- Content Wrapper. Contains page content -->
+<div id="inner-container" class="content">
+    <div class="row">
+        <div class="col-xs-12">
+            <div class="box">
+                <div class="box-header">
+                    <h3 class="box-title">{{'CONFIG.JOB.JOB'|translate}}</h3>
+                    <div class="box-tools">
+                        <i class="fa fa-plus toolbar-icon" ng-click="editJob()" title="{{'COMMON.NEW'|translate}}" style="margin-top: 4px;"></i>
+                        <div class="input-group input-group-sm" style="width: 150px; margin-left: 5px; float: right;">
+                            <input type="text" name="table_search" class="form-control pull-right" placeholder="Search">
+                            <div class="input-group-btn">
+                                <button type="submit" class="btn btn-default"><i class="fa fa-search"></i></button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- /.box-header -->
+                <div class="box-body table-responsive no-padding">
+                    <table class="table table-hover">
+                        <tbody>
+                        <tr>
+                            <th>ID</th>
+                            <th>{{'CONFIG.JOB.NAME'|translate}}</th>
+                            <th>{{'CONFIG.JOB.TYPE'|translate}}</th>
+                            <th>{{'CONFIG.JOB.ACTIVE_RANGE'|translate}}</th>
+                            <th>{{'CONFIG.JOB.LAST_EXEC_TIME'|translate}}</th>
+                            <th>{{'CONFIG.JOB.STATUS'|translate}}</th>
+                            <th>{{'CONFIG.JOB.USERNAME'|translate}}</th>
+                            <th></th>
+                        </tr>
+                        <tr ng-repeat="job in jobList">
+                            <td>{{job.id}}</td>
+                            <td>{{job.name}}</td>
+                            <td>{{getName(job.jobType)}}</td>
+                            <td>{{getDateRange(job.daterange)}}</td>
+                            <td>{{getTime(job.lastExecTime)}}</td>
+                            <td>{{getStatus(job.jobStatus)|translate}}</td>
+                            <td>{{job.userName}}</td>
+                            <td>
+                                <i class="fa fa-play toolbar-icon" ng-click="runJob(job)" title="{{'CONFIG.JOB.EXEC_NOW'|translate}}"></i>&nbsp;&nbsp;
+                                <i class="fa fa-edit toolbar-icon" ng-click="editJob(job)" title="{{'COMMON.EDIT'|translate}}"></i>&nbsp;&nbsp;
+                                <i class="fa fa-trash-o toolbar-icon"  ng-click="deleteJob(job)" title="{{'COMMON.DELETE'|translate}}"></i>&nbsp;&nbsp;
+                                <i class="fa fa-bug toolbar-icon"  ng-click="showLog(job)" title="{{'COMMON.LOG'|translate}}"></i>
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

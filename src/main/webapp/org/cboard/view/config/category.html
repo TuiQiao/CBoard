@@ -1,0 +1,68 @@
+<!-- Content Wrapper. Contains page content -->
+<div id="inner-container" class="content">
+    <div class="row">
+        <div class="col-md-3">
+            <div class="box box-solid">
+                <div class="box-header with-border">
+                    <i class="glyphicon glyphicon-folder-open"></i> <h3 class="box-title"> {{'CONFIG.CATEGORY.CATEGORY'|translate}}</h3>
+                    <div class="box-tools pull-right">
+                        <i class="fa fa-plus toolbar-icon" ng-click="newBordCategory()" title="{{'COMMON.NEW'|translate}}"></i>&nbsp;&nbsp;
+                    </div>
+                </div>
+                <div class="box-body no-padding">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <ul class="nav nav-pills nav-stacked">
+                                <li ng-repeat="o in categoryList">
+                                    <a>
+                                        {{o.name}}
+                                        <span class="pull-right text-red">
+                                            <i class="fa fa-edit" style="cursor: pointer" ng-click="editBordCategory(o)" title="{{'COMMON.EDIT'|translate}}"></i>&nbsp;
+                                            <i class="fa fa-trash-o" style="cursor: pointer" ng-click="deleteBordCategory(o)" title="{{'COMMON.DELETE'|translate}}"></i>
+                                        </span>
+                                    </a>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                    <!-- /.box-body -->
+                    <div class="box-footer">
+                    </div>
+                    <!-- /.box-footer-->
+                </div>
+            </div>
+        </div>
+        <div class="col-md-9"> 
+
+            <div class="box box-info" ng-show="optFlag == 'new' || optFlag == 'edit'">
+                <div class="box-header with-border">
+                    <h3 class="box-title">{{curCategory.name}}</h3>
+                </div>
+                <form class="form-horizontal">
+                    <div class="box-body">
+                        <div class="form-group" ng-class="{'has-error': !(verify.categoryName || curCategory.name.length)}">
+                            <label class="col-sm-2 control-label">{{'CONFIG.CATEGORY.NAME'|translate}}</label>
+                            <div class="col-sm-10">
+                                <input id="CategoryName" ng-model="curCategory.name" class="form-control input-sm"/>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group" ng-repeat="alert in alerts">
+                        <div class="col-sm-offset-2 col-sm-10">
+                            <div uib-alert ng-class="'alert-' + (alert.type || 'warning')"
+                                 close="alerts.splice($index, 1)">{{alert.msg}}
+                            </div>
+                        </div>
+                    </div>
+                    <div class="box-footer">
+                        <button type="submit" class="btn btn-danger pull-right">{{'COMMON.CANCEL'|translate}}</button>
+                        <button type="submit" ng-click="save()" class="btn btn-success pull-right" style="margin-right: 5px">{{'COMMON.SAVE'|translate}}</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+</div>
+
+</div>

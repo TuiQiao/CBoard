@@ -1,0 +1,240 @@
+<!-- Content Wrapper. Contains page content -->
+<!-- Content Wrapper. Contains page content -->
+<div id="inner-container" class="content">
+    <div class="row">
+        <div ng-class="{'col-md-2': liteMode, 'col-md-3': !liteMode}">
+            <div class="box box-solid" ng-class="{true:'collapsed-box'}[schema?true:false]">
+                <div class="box-header with-border">
+                    <i class="fa fa-bar-chart-o"></i> <h3 class="box-title"> {{'CONFIG.WIDGET.WIDGET'|translate}}</h3>
+                    <div class="box-tools pull-right">
+                        <i class="fa fa-info toolbar-icon" ng-click="showInfo()" title="{{'COMMON.INFORMATION'|translate}}"></i>&nbsp;
+                        <i class="fa fa-plus toolbar-icon" ng-click="newWgt()" title="{{'COMMON.NEW'|translate}}"></i>&nbsp;
+                        <i ng-show="!liteMode" class="fa fa-copy toolbar-icon" ng-click="copyNode()" title="{{'COMMON.COPY'|translate}}"></i>
+                        <i ng-show="!liteMode" class="fa fa-edit toolbar-icon" ng-click="editNode()" title="{{'COMMON.EDIT'|translate}}"></i>
+                        <i ng-show="!liteMode" class="fa fa-trash-o toolbar-icon" ng-click="deleteNode()" title="{{'COMMON.DELETE'|translate}}"></i>
+                        <i class="fa fa-reorder toolbar-icon" data-widget="collapse"></i>
+                    </div>
+                </div>
+                <div class="box-body">
+                    <input type="text" class="form-control" placeholder="Search" ng-model="keywords" ng-change="searchNode()" title="dsr:kylin ds:Bill wg:test">
+                    <div class="panel-body" style="padding: 10px 0px; overflow-x: auto; font-size: small; max-height: 45vh">
+                        <div id="widgetTreeID" js-tree="treeConfig" should-apply="applyModelChanges()" ng-model="treeData" tree="treeInstance"
+                             tree-events-obj="treeEventsObj"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="box box-solid" ng-if="schema">
+                <div class="box-header with-border">
+                    <i class="fa fa-cube"></i> <h3 class="box-title"> {{'CONFIG.DATASET.DATASET'|translate}}</h3>
+                    <div class="box-tools pull-right">
+                        <i class="fa fa-refresh toolbar-icon" ng-click="refreshSchema()"></i>
+                        <i class="fa fa-reorder toolbar-icon" data-widget="collapse"></i>
+                    </div>
+                </div>
+                <div class="box-body" ng-include="'org/cboard/view/config/chart/template/schema.html'" style="padding: 10px 0px; overflow-x: auto; font-size: small;"></div>
+            </div>
+        </div>
+        <div style="padding-left: 0px;" ng-class="{'col-md-10': liteMode, 'col-md-9': !liteMode}">
+            <div class="box" ng-show="optFlag == 'new' || optFlag == 'edit'">
+                <div class="box-header with-border">
+                    <div class="user-block">
+                        <span class="username" style="margin-left: 0px;">{{widgetName}}</span>
+                        <span class="description" style="margin-left: 0px;">{{getCurDatasetName()}}</span>
+                    </div>
+                    <div class="box-tools pull-right" ng-switch="optFlag">
+                        <span ng-switch-when="edit" class="label label-info">{{'COMMON.EDIT'|translate}}</span>
+                        <span ng-switch-when="new" class="label label-danger">{{'COMMON.NEW'|translate}}</span>
+                    </div>
+                </div>
+                <div class="box-body" style="height: 66vh;">
+                    <div class="row">
+                        <div class="col-md-12 form-horizontal">
+                            <div ng-show="!liteMode || alerts.length != 0">
+                                <div class="row" ng-show="!customDs">
+                                    <div class="col-md-12">
+                                        <div class="form-group">
+                                            <label class="col-sm-2 control-label">{{'CONFIG.WIDGET.DATASET'|translate}}</label>
+                                            <div class="col-sm-10">
+                                                <ui-select ng-model="curWidget.datasetId" on-select="loadData()">
+                                                    <ui-select-match>
+                                                        {{$select.selected.name}}
+                                                    </ui-select-match>
+                                                    <ui-select-choices group-by="datasetGroup"
+                                                                       repeat="w.id as w in datasetList | filter:{name : $select.search}">
+                                                        {{w.name}}
+                                                    </ui-select-choices>
+                                                </ui-select>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row" ng-show="customDs">
+                                    <div class="col-md-12">
+                                        <div class="form-group">
+                                            <label class="col-md-2 control-label">{{'CONFIG.WIDGET.DATA_SOURCE'|translate}}</label>
+                                            <div class="col-md-10">
+                                                <select class="form-control" ng-model="datasource"
+                                                        ng-change="changeDs()"
+                                                        ng-options="d as d.name+' ('+d.type+')' for d in datasourceList"></select>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row" ng-show="customDs">
+                                    <div class="col-md-12" ng-show="datasource.name"
+                                         ng-include="datasource.type?('dashboard/getConfigView.do?type=' + datasource.type + '&datasourceId=' + datasource.id + '&page=widget.html'):''"></div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <div class="form-group">
+                                            <div class="col-sm-offset-2 col-xs-12 col-sm-5 col-md-4 col-lg-2">
+                                                <a class="btn btn-block btn-success" ng-click="customDs=!customDs">
+                                                    <i class="fa fa-fw {{customDs?'fa-table':'fa-edit'}}"></i>{{(customDs?'CONFIG.WIDGET.EXIST_QUERY':'CONFIG.WIDGET.NEW_QUERY')|translate}}
+                                                </a>
+                                            </div>
+                                            <div class="col-xs-12 col-sm-5 col-md-3 col-lg-2">
+                                                <button type="button" class="btn btn-block btn-success" ng-click="loadData()">
+                                                    {{'CONFIG.WIDGET.LOAD_DATA'|translate}}
+                                                </button>
+                                            </div>
+                                            <div class="col-xs-12 col-sm-5 col-md-3 col-lg-2">
+                                                <label>
+                                                    <input type="checkbox" ng-model="loadFromCache"> {{'CONFIG.WIDGET.FROM_CACHE'|translate}}
+                                                </label>
+                                            </div>
+                                        </div>
+                                        <div class="form-group" ng-repeat="alert in alerts">
+                                            <div class="col-sm-offset-2 col-sm-10">
+                                                <div uib-alert ng-class="'alert-' + (alert.type || 'warning')">{{alert.msg}}
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <hr/>
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <div class="form-group" ng-class="{'has-error': !(verify.widgetName || widgetName.length)}">
+                                        <label class="col-sm-2 control-label">{{'CONFIG.WIDGET.WIDGET_NAME'|translate}}</label>
+                                        <div class="col-sm-10">
+                                                <input id="widgetName" ng-model="widgetName" class="form-control col-sm-10" placeholder="{{'CONFIG.WIDGET.CATEGORY'|translate}}/{{'CONFIG.WIDGET.WIDGET_NAME'|translate}}"/>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row" ng-show="schema">
+                                <div class="col-md-12">
+                                    <div class="form-group" style="margin-bottom: 0px">
+                                        <label class="col-sm-2 control-label">{{'CONFIG.WIDGET.WIDGET_TYPE'|translate}}</label>
+                                        <div class="col-sm-10 chart-type">
+                                            <ul class="list-inline" ng-model="curWidget.config.chart_type">
+                                                <li ng-repeat="chart in chart_types" class="ng-scope nav-item"
+                                                    popover-trigger="'mouseenter'"
+                                                    popover-title="{{chart.name}}"
+                                                    popover-placement="bottom"
+                                                    popover-animation="false"
+                                                    uib-popover-template="'widgetTipTemplate'"
+                                                    ng-click="changeChart(chart.value)">
+                                                    <a class="ng-scope"
+                                                       ng-class="[chart_types_status[chart.value]] && chart.value == curWidget.config.chart_type ? 'active':''">
+                                                        <i class="chart-type-icon {{chart.class}} "
+                                                           ng-class="{true:'',false:'disabled' }[chart_types_status[chart.value]]"></i>
+                                                    </a>
+                                                </li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-12" ng-include="getChartView()"></div>
+                            </div>
+
+                            <div class="row" style="margin: 10px 0px;">
+                                <div class="col-md-12" style="padding: 0px">
+                                    <!-- Custom Tabs -->
+                                    <div class="nav-tabs-custom">
+                                        <ul class="nav nav-tabs">
+                                            <li class="active">
+                                                <a id="preview_widget_tab" ng-click="tab='preview_widget2'" data-toggle="tab" aria-expanded="true">Preview</a>
+                                            </li>
+                                            <li class="">
+                                                <a id="viewQuery_widget_tab" ng-click="tab='viewQuery_widget'" data-toggle="tab" aria-expanded="false">Query</a>
+                                            </li>
+                                            <li class="">
+                                                <a id="options_tab" ng-click="tab='options'" data-toggle="tab" aria-expanded="false">Option</a>
+                                            </li>
+                                            <li class="pull-right">
+                                                <button type="submit" ng-click="preview()"
+                                                        class="btn btn-success btn-sm">
+                                                    {{'CONFIG.WIDGET.PREVIEW'|translate}}
+                                                </button>
+                                                <button type="submit" ng-click="previewQuery()"
+                                                        class="btn btn-success btn-sm">
+                                                    {{'CONFIG.WIDGET.PREVIEW_QUERY'|translate}}
+                                                </button>
+                                                <button type="submit" ng-click="saveWgt()"
+                                                        class="btn btn-success btn-sm">
+                                                    {{'CONFIG.WIDGET.SAVE'|translate}}
+                                                </button>
+                                                <button type="submit" ng-click="doCancel()"
+                                                        class="btn btn-danger btn-sm">
+                                                    {{'CONFIG.WIDGET.CANCEL'|translate}}
+                                                </button>
+                                                <button type="submit" ng-click="switchLiteMode()"
+                                                        class="btn btn-info btn-sm">
+                                                    {{liteMode ? 'S' : 'L'}}
+                                                </button>
+                                            </li>
+                                        </ul>
+                                        <div class="tab-content" style="min-height: 43vh;">
+                                            <div class="tab-pane active" id="preview_widget2" ng-class="{'preview_widget2': 'active'}[tab]"
+                                                 style="min-height: 300px;height: 100%;overflow: hidden;">
+                                                <div ng-show="!loadingPre" id="preview_widget" style="min-height: 300px;"/>
+                                                <div class="overlay fa box box-solid" ng-show="loadingPre" style="min-height: 300px;">
+                                                    <div class="box-header">
+                                                        <!--<h3 class="box-title"></h3>-->
+                                                        <div class="box-tools pull-right">
+                                                            <button type="button" class="btn btn-box-tool" data-widget="remove">
+                                                                <i class="fa fa-times" style="font-size: large"></i></button>
+                                                        </div>
+                                                    </div>
+                                                    <i class="fa fa-spinner fa-spin"></i>
+                                                </div>
+                                            </div>
+                                            <div class="tab-pane" id="viewQuery_widget" ng-class="{'viewQuery_widget': 'active'}[tab]"
+                                                 style="min-height: 300px;height: 100%;overflow: hidden; user-select: text;"/>
+                                            <!-- /.tab-pane -->
+                                            <div class="tab-pane" id="options" ng-class="{'options': 'active'}[tab]"
+                                                 style="min-height: 300px;height: 100%;overflow: hidden;" ng-include="getOptionsView()"/>
+                                            <!-- /.tab-pane -->
+                                        </div>
+                                        <!-- /.tab-content -->
+                                    </div>
+                                    <!-- nav-tabs-custom -->
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="box-footer">
+                </div>
+                <div class="overlay fa box box-solid" ng-show="loading">
+                    <div class="box-header with-border">
+                        <!--<h3 class="box-title"></h3>-->
+                        <div class="box-tools pull-right">
+                            <button type="button" class="btn btn-box-tool" data-widget="remove">
+                                <i class="fa fa-times" style="font-size: large"></i></button>
+                        </div>
+                    </div>
+                    <i class="fa fa-spinner fa-spin"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</div>
+<script type="text/ng-template" id="widgetTipTemplate">
+    <span><b>{{chart.row}}</b> &nbsp; {{'CONFIG.WIDGET.TIPS_ROW_DIM'|translate}} </span><br/>
+    <span><b>{{chart.column}}</b> &nbsp; {{'CONFIG.WIDGET.TIPS_COLUMN_DIM'|translate}} </span><br/>
+    <span><b>{{chart.measure}}</b> &nbsp; {{'CONFIG.WIDGET.TIPS_MEASURE'|translate}} </span><br/>
+</script>

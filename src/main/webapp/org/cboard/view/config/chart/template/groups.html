@@ -1,0 +1,31 @@
+<label class="col-sm-2 control-label">{{'CONFIG.WIDGET.GROUP'|translate}}
+    <i class="fa fa-question-circle" title="{{helpMessage.column}}" ng-show="{{helpMessage.column != undefined}}"></i>
+</label>
+<div class="col-sm-10">
+    <div dnd-list="curWidget.config.groups"
+         dnd-inserted="dndTransfer.toKeysGroups(curWidget.config.groups,index,item,type)"
+         dnd-allowed-types="['dimension','select','group','key','filter']"
+         class="form-control" style="min-height: 35px;height: auto;padding: 0px"
+         ng-class="{highlight: targetHighlight.column}">
+        <div class="dndPlaceholder sort-highlight"
+             style="height: 24px; width: 93px;margin: 3px 3px;display: inline-block;vertical-align: middle;">
+        </div>
+        <div ng-repeat="o in curWidget.config.groups" dnd-draggable="o" dnd-effect-allowed="move"
+             dnd-moved="curWidget.config.groups.splice($index, 1)" dnd-type="'group'"
+             dnd-dragstart="onDragstart('dimension')" dnd-dragend="onDragCancle()"
+             class="btn-group" style="cursor: move;margin: 3px 3px;">
+            <button type="button" class="btn btn-default btn-sm" style="cursor: move;"
+                    ng-click="curWidget.config.groups.splice($index, 1);">
+                {{o.level?'['+o.level+'].':''}}{{o.alias?o.alias:o.col}}
+            </button>
+            <button type="button" class="btn btn-default btn-sm dropdown-toggle"
+                    ng-click="editSort(o)">
+                <span class="fa" ng-class="{undefined:'fa-sort','asc':'fa-sort-asc','desc':'fa-sort-desc'}[o.sort]"></span>
+            </button>
+            <button type="button" class="btn btn-default btn-sm dropdown-toggle"
+                    ng-click="editFilter(curWidget.config.groups,$index)">
+                <span class="fa fa-filter"></span>
+            </button>
+        </div>
+    </div>
+</div>

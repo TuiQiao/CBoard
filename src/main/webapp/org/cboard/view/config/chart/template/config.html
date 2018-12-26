@@ -1,0 +1,6 @@
+<div class="form-group" ng-if="configRule[curWidget.config.chart_type].groups!=0"
+     ng-include="'org/cboard/view/config/chart/template/groups.html'"></div>
+<div class="form-group" ng-if="configRule[curWidget.config.chart_type].keys!=0"
+     ng-include="'org/cboard/view/config/chart/template/keys.html'"></div>
+<div class="form-group" ng-if="configRule[curWidget.config.chart_type].filters!=0"
+     ng-include="'org/cboard/view/config/chart/template/filters.html'"></div>

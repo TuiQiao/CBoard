@@ -1,0 +1,757 @@
+.modal-dialog h1,
+.modal-dialog h2,
+.modal-dialog h3,
+.modal-dialog h4,
+.modal-dialogh5,
+.modal-dialog h6,
+.modal-dialog p {
+    color: black;
+}
+
+.box-header .box-title {
+    display: inline-block;
+    margin: 0;
+    line-height: 1;
+}
+
+.box-body {
+    /*padding: 5px;*/
+}
+
+.box-header {
+    padding: 11px 10px;
+}
+
+.panel-body {
+    padding: 9px 4px;
+}
+
+.toolbar-icon {
+    cursor: pointer;
+    font-size: large;
+    padding-top: 6px;
+}
+
+.control-label-compact {
+    padding: 7px 2px;
+    font-size: small;
+    text-align: right;
+}
+
+.tableView table {
+    border-bottom: 1px solid #d5d5d5;
+    border-right: 1px solid #d5d5d5;
+    margin-bottom: 0;
+    /*table-layout: fixed;*/
+    width: auto;
+    border-collapse: separate;
+    border-spacing: 0;
+}
+
+.tableView td,
+.tableView th {
+    /*border-left: 1px solid #d5d5d5;*/
+    /*border-top: 1px solid #d5d5d5;*/
+    /*text-align: right;*/
+    white-space: nowrap;
+    font-weight: normal;
+    font-size: 10px;
+    padding: 3px 0px;
+    background: white;
+}
+
+.tableView th {
+    font-size: 10px;
+    /*font-weight: normal;*/
+    /*padding: 3px 9px 3px 4px;*/
+}
+
+.tableView .table {
+    font-weight: normal;
+    font-size: 10px;
+    width: 100%;
+    max-width: 100%;
+    margin-bottom: 20px;
+}
+
+
+.tableView table th.row {
+    border-top: 1px solid #d5d5d5;
+    white-space: nowrap;
+    text-align: center;
+}
+.tableView table td.data, .tableView table th.header_key {
+    border-left: 1px solid #d5d5d5;
+    border-top: 1px solid #d5d5d5;
+    text-align: center;
+    white-space: nowrap;
+}
+
+.tableView .header_key {
+    font-weight: bold;
+}
+
+.tableView table th.header_empty {
+    border-left: none;
+    border-top: none;
+    background: none;
+}
+.tableView table th {
+    background: #f9f9f9;
+    border-left: 1px solid #d5d5d5;
+}
+.tableView th.col {
+    border-top: 1px solid #d5d5d5;
+}
+.tableView th.all_null{
+    background: none;
+    border: 0;
+}
+.tableView th.row_null{
+    border-left: 1px solid #d5d5d5;
+}
+.tableView th.col_null{
+    border-left: 0px;
+    border-top: 1px solid #d5d5d5;
+}
+.tableView .table_drill_cell {
+    color: royalblue;
+    cursor: url(../imgs/right_click.png), auto;
+}
+.table_drill_cell:hover {
+    background-color: #999;
+    color: white !important;
+}
+.ui-select-choices-group{
+    z-index: 1000;
+}
+
+/* Style for widget type switch */
+.chart-type-icon {
+    display: inline-block;
+    width: 40px;
+    height: 40px;
+    background-repeat: no-repeat;
+    background-position: 0 0;
+
+}
+.cLine{  background-image: url(../imgs/line-active.png);  }
+.cLine.disabled{background-image: url(../imgs/line.png); }
+.cContrast{  background-image: url(../imgs/contrast-active.png);  }
+.cContrast.disabled{background-image: url(../imgs/contrast.png); }
+/*.cBar{  background-image: url(../imgs/bar-active.png);  }*/
+/*.cBar.disabled{background-image: url(../imgs/bar.png);  }*/
+.cScatter{  background-image: url(../imgs/scatter-active.png);  }
+.cScatter.disabled{  background-image: url(../imgs/scatter.png);  }
+.cPie{  background-image: url(../imgs/pie-active.png);  }
+.cPie.disabled{  background-image: url(../imgs/pie.png);  }
+.cFunnel{  background-image: url(../imgs/funnel-active.png);  }
+.cFunnel.disabled{  background-image: url(../imgs/funnel.png);  }
+
+.cKpi{  background-image: url(../imgs/kpi-active.png);  }
+.cKpi.disabled{  background-image: url(../imgs/kpi.png);  }
+.cSankey{  background-image: url(../imgs/sankey-active.png);  }
+.cSankey.disabled{  background-image: url(../imgs/sankey.png);  }
+.cRadar{  background-image: url(../imgs/radar-active.png);  }
+.cRadar.disabled{  background-image: url(../imgs/radar.png);  }
+.cTable{  background-image: url(../imgs/table-active.png);  }
+.cTable.disabled{  background-image: url(../imgs/table.png);  }
+.cMap{  background-image: url(../imgs/map-active.png);  }
+.cMap.disabled{  background-image: url(../imgs/map.png);  }
+.cGauge{ background-image: url(../imgs/gauge-active.png); }
+.cGauge.disabled{ background-image: url(../imgs/gauge.png); }
+.cWordCloud{ background-image: url(../imgs/wordCloud-active.png); }
+.cWordCloud.disabled{ background-image: url(../imgs/wordCloud.png); }
+.cTreeMap{ background-image: url(../imgs/treeMap-active.png); }
+.cTreeMap.disabled{ background-image: url(../imgs/treeMap.png); }
+.cAreaMap{ background-image: url(../imgs/areaMap-active.png);}
+.cAreaMap.disabled{ background-image: url(../imgs/areaMap.png);}
+.cHeatMapCalendar{ background-image: url(../imgs/heatMapCalendar-active.png); }
+.cHeatMapCalendar.disabled{ background-image: url(../imgs/heatMapCalendar.png); }
+.cHeatMapTable{ background-image: url(../imgs/heatMapTable-active.png); }
+.cHeatMapTable.disabled{ background-image: url(../imgs/heatMapTable.png); }
+.cLiquidFill{ background-image: url(../imgs/liquidFill-active.png); }
+.cLiquidFill.disabled{ background-image: url(../imgs/liquidFill.png); }
+.cChinaMap{ background-image: url(../imgs/chinaMap-active.png); }
+.cChinaMap.disabled{ background-image: url(../imgs/chinaMap.png); }
+.cChinaMapBmap{ background-image: url(../imgs/chinaMapBmap-active.png); }
+.cChinaMapBmap.disabled{ background-image: url(../imgs/chinaMapBmap.png); }
+.cRelation{ background-image: url(../imgs/relation-active.png); }
+.cRelation.disabled{ background-image: url(../imgs/relation.png); }
+.cWorldMap{ background-image: url(../imgs/worldMap-active.png);}
+.cWorldMap.disabled{ background-image: url(../imgs/worldMap.png);}
+
+.chart-type a.active{
+    background-color: #FFF;
+    box-shadow: 0 0 0 2px rgba(81,130,227,.06),inset 0 0 0 2px rgba(81,129,228,.6);
+}
+.chart-type a {
+    display: block;
+    width: 40px;
+    height: 40px;
+    margin: 0 4px 4px 0;
+    cursor: pointer;
+}
+.chart-type a.active:hover {
+    background-color: rgba(179, 180, 182, 0.64);
+}
+.chart-tip{
+    position: absolute;
+    top: 45px;
+    /*left: 0;*/
+    padding: 12px 16px;
+    line-height: 14px;
+    white-space: nowrap;
+    z-index: 1001;
+    display: none;
+
+    background-color: #FFF;
+    box-shadow: 0 0 6px 0 rgba(0,0,0,.1),0 10px 12px 0 rgba(170,182,206,.36);
+}
+.chart-tip .arrow{
+    border-style: dotted dotted solid;
+    border-width: 10px;
+    border-color: transparent transparent rgba(226, 231, 238, 0.55);
+    top: -20px;
+    position: absolute;
+}
+.tooltip-title{
+    width: 100%;
+    line-height: 1.6;
+    font-size: 12px;
+    letter-spacing: 0;
+    font-weight: 700;
+}
+.chart-tip span {
+    display: block;
+}
+
+#preview_widget {
+    text-align: center;
+}
+.d3-tip {
+    line-height: 1;
+    font-weight: normal;
+    padding: 12px;
+    background: rgba(0, 0, 0, 0.8);
+    color: #fff;
+    border-radius: 3px;
+    z-index: 10000;
+}
+
+/* Creates a small triangle extender for the tooltip */
+.d3-tip:after {
+    box-sizing: border-box;
+    display: inline;
+    font-size: 10px;
+    width: 100%;
+    line-height: 1;
+    color: rgba(0, 0, 0, 0.8);
+    content: "\25BC";
+    position: absolute;
+    text-align: center;
+}
+
+.d3-tip.n:after {
+    margin: -1px 0 0 0;
+    top: 100%;
+    left: 0;
+}
+.page {
+    margin: 10px auto;
+    width: 60%;
+    overflow: auto;
+    padding: 0 5px 5px 0;
+    float: right;
+}
+.page>ul {
+    margin: 10px auto;
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    overflow: auto;
+    float: right;
+}
+.page li {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    float: left;
+    cursor: pointer;
+}
+a.pageLink, a.nextLink, a.previewLink {
+    float: left;
+    color: #666;
+    font-size: 14px;
+    line-height: 24px;
+    font-weight: normal;
+    text-align: center;
+    border: 1px solid #BBB;
+    width: 30px;
+    margin: 0 5px 0 0;
+    border-radius: 3px;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.2);
+}
+a.pageLink:hover, a.nextLink:hover, a.previewLink:hover {
+    background-color: #585858;
+    color: white !important;
+}
+a.current {
+    background-color: #ccc;
+}
+a.nextLink, a.previewLink{
+    width: 80px;
+}
+a.hide{
+    display: none;
+}
+
+span.ellipse {
+    background: none;
+    border: none;
+    border-radius: 0;
+    box-shadow: none;
+    font-weight: bold;
+    cursor: default;
+    float: left;
+    color: #666;
+    font-size: 14px;
+    line-height: 24px;
+    text-align: center;
+    min-width: 14px;
+    padding: 0 7px;
+    margin: 0 5px 0 0;
+}
+.optionNum {
+    float: left;
+    height: 26px;
+    width: 200px;
+    margin: 7px 20px 0 0;
+}
+.optionNum select {
+    margin: 0 6px 0 6px;
+    width: 60px;
+    height: 26px;
+}
+.header_key {
+    font-weight: bold;
+}
+.toolbar {
+    width: 99%;
+    height: 30px;
+    margin: 0 0 10px 0;
+    box-shadow: 1px 1px 5px #ccc;
+    background-color: #F9F9F9;
+}
+.info {
+    display: inline-block;
+    float: left;
+    margin: 4px 0 0 5px;
+}
+.exportBnt, .exportCsvBnt, .drillUp, .drillDown{
+    margin:7px 5px 10px 5px;
+    float: right;
+    width: 15px;
+    height: 15px;
+    cursor: pointer;
+}
+.drillUp{
+    background: url("../imgs/drillup.png");
+    background-size: cover;
+}
+.drillDown{
+    background: url("../imgs/drilldown.svg");
+    background-size: cover;
+}
+.exportBnt{
+    background: url("../imgs/excel.svg");
+    background-size: cover;
+}
+.exportCsvBnt{
+    background: url("../imgs/csv.svg");
+    background-size: cover;
+}
+div.operateBox {
+    position: relative;
+}
+div.newBoard {
+    position: absolute;
+    top: 20px;
+    right: -160px;
+    background: #fff;
+    box-shadow: 1px 1px 5px #ccc;
+    z-index: 100;
+}
+div.newBoard span {
+    display: block;
+    width: 160px;
+    height: 40px;
+    line-height: 40px;
+    text-align: center;
+    cursor: pointer;
+    font-weight: normal;
+}
+.hideOperate {
+    display: none;
+}
+div.newBoard span:hover{
+    font-weight: bold;
+}
+span.returnIcon {
+    display: inline-block;
+    float: right;
+    cursor: pointer;
+}
+.layoutPanel{
+    position: relative;
+    /*background: url("../../imgs/layout.svg") 50% 50% no-repeat;*/
+}
+.drag-preview {
+    border: 2px dashed grey;
+    position: absolute;
+    -webkit-transition: all .3s linear;
+    transition: all .3s linear;
+}
+.chart_item {
+    position: absolute;
+    overflow: hidden;
+    -webkit-transition: all .3s linear;
+    transition: all .3s linear;
+}
+.chart_widget {
+    width: 100%;
+    height: 100%;
+    margin-top: 30px;
+    border: 1px solid #ccc;
+    transition: all .3s linear;
+    -webkit-transition: all .3s linear;
+}
+.chart_item:hover .menu-bar{
+    display: block;
+    top: 0;
+    transition: all .3s linear;
+    -webkit-transition: all .3s linear;
+}
+.box-header.toolbar {
+    height: 30px;
+    width: 100%;
+    background: #fff;
+}
+.toolbar .opt {
+    top: 5px;
+    right: 30px;
+    float: right;
+    position: relative;
+}
+
+.toolbar .opt .u-icn {
+    cursor: pointer;
+    font-size: 16px;
+    color: #999;
+}
+.menu-bar {
+    width: 100%;
+    height: 30px;
+    background-color: #4c4c4c;
+    position: absolute;
+    top: 30px;
+    left: 0;
+    display: none;
+    transition: all .3s linear;
+    z-index: 100;
+    cursor: move;
+}
+
+.u-icn, .u-icn-active {
+    display: inline-block;
+    font-size: 1em;
+    line-height: 1;
+    font-family: bigviz;
+    vertical-align: middle;
+}
+
+.toolbar .line {
+    /*display: inline-block;*/
+    /*margin: 0 10px;*/
+    /*width: 1px;*/
+    /*height: 20px;*/
+    /*background: #ddd;*/
+    /*vertical-align: middle;*/
+}
+
+.toolbar .autoSave {
+    display: inline-block;
+    margin-left: 6px;
+}
+
+treecontrol {
+    /* prevent user selection */
+    -moz-user-select: -moz-none;
+    -khtml-user-select: none;
+    -webkit-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+
+    /* default */
+    font-family: Verdana, Helvetica, Arial, sans-serif;
+    font-size:13px;
+    color: #555;
+    text-decoration: none;
+}
+
+treecontrol ul {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    border: none;
+    overflow: hidden;
+}
+
+treecontrol li {
+    position: relative;
+    padding: 0 0 0 20px;
+    line-height: 20px;
+}
+
+treecontrol li.tree-expanded i.tree-leaf-head, treecontrol li.tree-collapsed i.tree-leaf-head {display:none;}
+treecontrol li.tree-expanded i.tree-branch-head, treecontrol li.tree-collapsed i.tree-branch-head {display:inline;}
+treecontrol li.tree-leaf i.tree-branch-head {display:none;}
+treecontrol li.tree-leaf i.tree-leaf-head {display:inline;}
+
+treecontrol li i.tree-branch-head {
+    cursor: pointer;
+}
+
+treecontrol li .tree-label {
+    cursor: pointer;
+    display: inline-block;
+    width: 200px;
+    height: 35px;
+    z-index: 10;
+    line-height: 35px;
+}
+treecontrol li .tree-label span{
+    cursor: pointer;
+    display: inline-block;
+    width: 100%;
+    height: 35px;
+    z-index: 10;
+    line-height: 35px;
+}
+treecontrol li .tree-unselectable {
+    cursor: not-allowed;
+}
+
+treecontrol.tree-classic li.tree-expanded i.tree-branch-head {
+    padding: 1px 10px;
+    background: url("../imgs/folder.png") no-repeat;
+}
+
+treecontrol.tree-classic li.tree-collapsed i.tree-branch-head {
+    padding: 1px 10px;
+    background: url("../imgs/folder-closed.png") no-repeat;
+}
+
+treecontrol.tree-classic li.tree-leaf i.tree-leaf-head {
+    padding: 1px 10px;
+    background: url("../imgs/file.png") no-repeat;
+}
+
+treecontrol.tree-classic li .tree-selected {
+    font-weight: bold;
+}
+
+treecontrol.tree-classic li .tree-unselectable {
+    color: #ddd;
+}
+
+treecontrol.tree-light li.tree-expanded i.tree-branch-head {
+    padding: 1px 10px;
+    background: url("../imgs/node-opened-2.png") no-repeat;
+}
+
+treecontrol.tree-light li.tree-collapsed i.tree-branch-head {
+    padding: 1px 10px;
+    background: url("../imgs/node-closed-2.png") no-repeat;
+}
+
+treecontrol.tree-light li.tree-leaf i.tree-leaf-head {
+    padding: 1px 10px;
+    width: 16px; height: 16px;
+    background: none no-repeat;
+}
+
+treecontrol.tree-light li .tree-selected {
+    font-weight: bold;
+}
+
+treecontrol.tree-light li .tree-unselectable {
+    color: #ddd;
+}
+
+treecontrol.tree-dark li.tree-expanded i.tree-branch-head {
+    padding: 1px 10px;
+    background: url("../imgs/node-opened-light.png") no-repeat;
+}
+
+treecontrol.tree-dark li.tree-collapsed i.tree-branch-head {
+    padding: 1px 10px;
+    background: url("../imgs/node-closed-light.png") no-repeat;
+}
+
+treecontrol.tree-dark li.tree-leaf i.tree-leaf-head {
+    padding: 1px 10px;
+    width: 16px; height: 16px;
+    background: none no-repeat;
+}
+
+treecontrol.tree-dark li .tree-selected {
+    font-weight: bold;
+}
+
+treecontrol.tree-dark li .tree-unselectable {
+    color: #777;
+}
+
+treecontrol.tree-dark {
+    color: #ddd;
+}
+[treecontrol] {
+    /* prevent user selection */
+    -moz-user-select: -moz-none;
+    -khtml-user-select: none;
+    -webkit-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+
+    /* default */
+    font-family: Verdana, Helvetica, Arial, sans-serif;
+    font-size:13px;
+    color: #555;
+    text-decoration: none;
+}
+
+[treecontrol] ul {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    border: none;
+    overflow: hidden;
+}
+
+[treecontrol] li {
+    position: relative;
+    padding: 0 0 0 20px;
+    line-height: 20px;
+}
+
+[treecontrol] li.tree-expanded i.tree-leaf-head, [treecontrol] li.tree-collapsed i.tree-leaf-head {display:none;}
+[treecontrol] li.tree-expanded i.tree-branch-head, [treecontrol] li.tree-collapsed i.tree-branch-head {display:inline;}
+[treecontrol] li.tree-leaf i.tree-branch-head {display:none;}
+[treecontrol] li.tree-leaf i.tree-leaf-head {display:inline;}
+
+[treecontrol] li i {
+    cursor: pointer;
+}
+
+[treecontrol] li .tree-label {
+    cursor: pointer;
+    display: inline;
+}
+
+
+[treecontrol].tree-classic li.tree-expanded i.tree-branch-head {
+    padding: 1px 10px;
+    background: url("../imgs/folder.png") no-repeat;
+}
+
+[treecontrol].tree-classic li.tree-collapsed i.tree-branch-head {
+    padding: 1px 10px;
+    background: url("../imgs/folder-closed.png") no-repeat;
+}
+
+[treecontrol].tree-classic li.tree-leaf i.tree-leaf-head {
+    padding: 1px 10px;
+    background: url("../imgs/file.png") no-repeat;
+}
+
+[treecontrol].tree-classic li .tree-selected {
+    background-color: #aaddff;
+    font-weight: bold;
+}
+
+
+[treecontrol].tree-light li.tree-expanded i.tree-branch-head {
+    padding: 1px 10px;
+    background: url("../imgs/node-opened-2.png") no-repeat;
+}
+
+[treecontrol].tree-light li.tree-collapsed i.tree-branch-head {
+    padding: 1px 10px;
+    background: url("../imgs/node-closed-2.png") no-repeat;
+}
+
+[treecontrol].tree-light li.tree-leaf i.tree-leaf-head {
+    padding: 1px 10px;
+    width: 16px; height: 16px;
+    background: none no-repeat;
+}
+
+[treecontrol].tree-light li .tree-selected {
+    font-weight: bold;
+}
+
+
+[treecontrol].tree-dark li.tree-expanded i.tree-branch-head {
+    padding: 1px 10px;
+    background: url("../imgs/node-opened-light.png") no-repeat;
+}
+
+[treecontrol].tree-dark li.tree-collapsed i.tree-branch-head {
+    padding: 1px 10px;
+    background: url("../imgs/node-closed-light.png") no-repeat;
+}
+
+[treecontrol].tree-dark li.tree-leaf i.tree-leaf-head {
+    padding: 1px 10px;
+    width: 16px; height: 16px;
+    background: none no-repeat;
+}
+
+[treecontrol].tree-dark li .tree-selected {
+    font-weight: bold;
+}
+
+[treecontrol].tree-dark {
+    color: #ddd;
+}
+
+.top-buffer-lg {
+    margin-top: 40px;
+}
+
+.top-buffer {
+    margin-top: 5px;
+}
+.nav-tabs-custom > .nav-tabs > li > a:hover {
+    /*background: transparent;
+    margin: 0;*/
+    cursor: pointer;
+}
+
+.bs-example {
+    margin-right: 0;
+    margin-left: 0;
+    background-color: #fff;
+    border-color: #ddd;
+    border-width: 1px;
+    border-radius: 4px 4px 0 0;
+    -webkit-box-shadow: none;
+    box-shadow: none;
+}
+
+.highlight {
+    -webkit-transition: border linear 7.2s,-webkit-box-shadow linear -2.5s;
+    border-color: rgba(47, 165, 255, 0.75);
+    -webkit-box-shadow: 0 0 4px rgba(54, 131, 255, 0.86);
+}

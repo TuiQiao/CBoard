@@ -1,0 +1,185 @@
+<div class="row form-horizontal" style="margin-bottom: 10px">
+    <div class="col-md-4">
+        <div class="form-group">
+            <label class="col-sm-4 control-label-compact">{{'CONFIG.DASHBOARD.PARAM_TYPE'|translate}}</label>
+            <div class="col-sm-8">
+                <select class="form-control" ng-model="param.paramType"
+                        ng-options="d.value as d.name for d in param_types"></select>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="form-group">
+            <label class="col-sm-4 control-label-compact">{{'CONFIG.DASHBOARD.WIDTH'|translate}}</label>
+            <div class="col-sm-8">
+                <input type="text" ng-model="param.cfg.width" class="form-control" placeholder="1-12">
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="form-group">
+            <label class="col-sm-4 control-label-compact">{{'CONFIG.DASHBOARD.VIEW_FORMMAT'|translate}}</label>
+            <div class="col-sm-8">
+                <div class="input-group">
+                    <input type="text" ng-model="param.cfg.formatter" class="form-control">
+                    <div class="input-group-btn">
+                        <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
+                            <span class="fa fa-caret-down"></span></button>
+                        <ul class="dropdown-menu">
+                            <li ng-click="param.cfg.formatter='YYYY-MM-DD HH:mm:ss'"><a>YYYY-MM-DD HH:mm:ss</a></li>
+                            <li ng-click="param.cfg.formatter='YYYY-MM-DD'"><a>YYYY-MM-DD</a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="row form-horizontal" style="margin-bottom: 10px">
+    <div class="col-md-4">
+        <div class="form-group">
+            <label class="col-sm-4 control-label-compact">{{'CONFIG.DASHBOARD.MIN'|translate}}</label>
+            <div class="col-sm-8">
+                <div class="input-group">
+                    <input type="text" class="form-control" ng-model="param.cfg.min">
+                    <div class="input-group-btn">
+                        <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
+                            <span class="fa fa-caret-down"></span></button>
+                        <ul class="dropdown-menu">
+                            <li ng-click="param.cfg.min='now(-1,\'h\')'"><a>{{'CONFIG.DASHBOARD.ONE_HOUR_AGO'|translate}}</a>
+                            </li>
+                            <li ng-click="param.cfg.min='now(-1,\'d\')'"><a>{{'CONFIG.DASHBOARD.ONE_DAY_AGO'|translate}}</a>
+                            </li>
+                            <li ng-click="param.cfg.min='now(-1,\'M\')'"><a>{{'CONFIG.DASHBOARD.ONE_MONTH_AGO'|translate}}</a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="form-group">
+            <label class="col-sm-4 control-label-compact">{{'CONFIG.DASHBOARD.MAX'|translate}}</label>
+            <div class="col-sm-8">
+                <div class="input-group">
+                    <input type="text" class="form-control" ng-model="param.cfg.max">
+                    <div class="input-group-btn">
+                        <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
+                            <span class="fa fa-caret-down"></span></button>
+                        <ul class="dropdown-menu">
+                            <li ng-click="param.cfg.max='now()'"><a>{{'CONFIG.DASHBOARD.NOW'|translate}}</a>
+                            </li>
+                            <li ng-click="param.cfg.max='now(-1,\'h\')'"><a>{{'CONFIG.DASHBOARD.ONE_HOUR_AGO'|translate}}</a>
+                            </li>
+                            <li ng-click="param.cfg.max='now(-1,\'d\')'"><a>{{'CONFIG.DASHBOARD.ONE_DAY_AGO'|translate}}</a>
+                            </li>
+                            <li ng-click="param.cfg.max='now(-1,\'M\')'"><a>{{'CONFIG.DASHBOARD.ONE_MONTH_AGO'|translate}}</a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="form-group">
+            <label class="col-sm-4 control-label-compact">{{'CONFIG.DASHBOARD.VALUE_FORMMAT'|translate}}</label>
+            <div class="col-sm-8">
+                <div class="input-group">
+                    <input type="text" ng-model="param.cfg.value_fmt" class="form-control">
+                    <div class="input-group-btn">
+                        <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
+                            <span class="fa fa-question"></span></button>
+                        <ul class="dropdown-menu">
+                            <li ng-click="param.cfg.value_fmt='YYYY-MM-DD'"><a>{{'CONFIG.DASHBOARD.VALUE_FORMMAT_ALERT'|translate}} 'YYYY-MM-DD'</a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="row form-horizontal" style="margin-bottom: 10px">
+    <div class="col-md-4">
+        <div class="form-group">
+            <label class="col-sm-4 control-label-compact">{{'CONFIG.DASHBOARD.STEP'|translate}}</label>
+            <div class="col-sm-8">
+                <div class="input-group">
+                    <input type="text" class="form-control" ng-model="param.cfg.step">
+                    <div class="input-group-btn">
+                        <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
+                            <span class="fa fa-clock-o"></span></button>
+                        <ul class="dropdown-menu">
+                            <li ng-click="param.cfg.step='interval(1,\'s\')'"><a>{{'CONFIG.DASHBOARD.ONE_SECOND'|translate}}</a></li>
+                            <li ng-click="param.cfg.step='interval(1,\'m\')'"><a>{{'CONFIG.DASHBOARD.ONE_MINUT'|translate}}</a></li>
+                            <li ng-click="param.cfg.step='interval(1,\'h\')'"><a>{{'CONFIG.DASHBOARD.ONE_HOUR'|translate}}</a></li>
+                            <li ng-click="param.cfg.step='interval(1,\'d\')'"><a>{{'CONFIG.DASHBOARD.ONE_DAY'|translate}}</a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="form-group">
+            <label class="col-sm-4 control-label-compact">{{'CONFIG.DASHBOARD.MAX_RANGE'|translate}}</label>
+            <div class="col-sm-8">
+                <div class="input-group">
+                    <input type="text" class="form-control" ng-model="param.cfg.maxRange">
+                    <div class="input-group-btn">
+                        <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
+                            <span class="fa fa-clock-o"></span></button>
+                        <ul class="dropdown-menu">
+                            <li ng-click="param.cfg.maxRange='interval(1,\'s\')'"><a>{{'CONFIG.DASHBOARD.ONE_SECOND'|translate}}</a></li>
+                            <li ng-click="param.cfg.maxRange='interval(1,\'m\')'"><a>{{'CONFIG.DASHBOARD.ONE_MINUT'|translate}}</a></li>
+                            <li ng-click="param.cfg.maxRange='interval(1,\'h\')'"><a>{{'CONFIG.DASHBOARD.ONE_HOUR'|translate}}</a></li>
+                            <li ng-click="param.cfg.maxRange='interval(1,\'d\')'"><a>{{'CONFIG.DASHBOARD.ONE_DAY'|translate}}</a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="form-group">
+            <label class="col-sm-4 control-label-compact">{{'CONFIG.DASHBOARD.DEFAUT_RANGE'|translate}}</label>
+            <div class="col-sm-8">
+                <div class="input-group">
+                    <input type="text" class="form-control" ng-model="param.cfg.range">
+                    <div class="input-group-btn">
+                        <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
+                            <span class="fa fa-clock-o"></span></button>
+                        <ul class="dropdown-menu">
+                            <li ng-click="param.cfg.range='interval(1,\'s\')'"><a>{{'CONFIG.DASHBOARD.ONE_SECOND'|translate}}</a></li>
+                            <li ng-click="param.cfg.range='interval(1,\'m\')'"><a>{{'CONFIG.DASHBOARD.ONE_MINUT'|translate}}</a></li>
+                            <li ng-click="param.cfg.range='interval(1,\'h\')'"><a>{{'CONFIG.DASHBOARD.ONE_HOUR'|translate}}</a></li>
+                            <li ng-click="param.cfg.range='interval(1,\'d\')'"><a>{{'CONFIG.DASHBOARD.ONE_DAY'|translate}}</a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-4">
+        <div class="form-group">
+            <label class="col-sm-4 control-label-compact">{{'CONFIG.DASHBOARD.FILTER_TYPE'|translate}}</label>
+            <div class="col-sm-8">
+                <div class="input-group">
+                    <input type="text" class="form-control" ng-model="param.cfg.filterType">
+                    <div class="input-group-btn">
+                        <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
+                            <span class="fa fa-caret-down"></span></button>
+                        <ul class="dropdown-menu">
+                            <li ng-click="param.cfg.filterType='[a,b]'"><a>{{'CONFIG.DASHBOARD.GTE_LTE'|translate}}</a></li>
+                            <li ng-click="param.cfg.filterType='(a,b]'"><a>{{'CONFIG.DASHBOARD.GT_LTE'|translate}}</a></li>
+                            <li ng-click="param.cfg.filterType='[a,b)'"><a>{{'CONFIG.DASHBOARD.GTE_LT'|translate}}</a></li>
+                            <li ng-click="param.cfg.filterType='(a,b)'"><a>{{'CONFIG.DASHBOARD.GT_LT'|translate}}</a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

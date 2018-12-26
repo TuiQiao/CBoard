@@ -1,0 +1,40 @@
+<div ng-controller="freeLayoutCtrl">
+    <div class="col-md-3">
+        <div class="box box-solid">
+            <div class="box-header with-border">
+                <i class="fa fa-dashboard"></i>
+                <h3 class="box-title">{{'CONFIG.DASHBOARD.WIDGET'|translate}}</h3>
+                <span class="fa fa-reply returnIcon" title="" ng-click="switchLayout()"></span>
+            </div>
+            <div class="panel-body">
+                <treecontrol class="tree-classic" tree-model="dataTree" options="opt">
+                    {{node.name}}
+                </treecontrol>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-9">
+        <div class="box-header toolbar">
+            <span class="opt" style="right:24px;" id="auto-id-1487767627504">
+            <a class="u-icn u-icn-save" href="javascript:;" id="submit" title="{{'COMMON.SAVE'|translate}}"></a>
+            <span class="line"></span>
+            <a class="u-icn u-icn-play" href="javascript:;" id="refresh" title="{{'COMMON.REFRESH'|translate}}"></a>
+            <div title="{{'CONFIG.DASHBOARD.AUTOMATIC_REFRESH_SWITCH'|translate}}" class="autoSave" id="auto-save">
+            <span class="switch u-switch u-switch-report z-on">
+            <b class="off"></b>
+            <b class="on"></b>
+            </span>
+            </div>
+            <span class="line"></span>
+            <a class="u-icn u-icn-2 u-icn-rcache" href="javascript:;" id="flushTime" title="{{'DATA_REFRESH_TIME'|translate}} 2017-02-22 18:15:01" data-t="2017-02-22 18:15:01"></a>
+            <a class="u-icn u-icn-erase" href="javascript:;" id="removeBlankLine" title="{{'CONFIG.DASHBOARD.REMOVE_EMPTY_LINES'|translate}}"></a>
+            <span class="line"></span>
+            <a class="u-icn u-icn-close" href="javascript:;" id="cancel" title="{{'COMMON.CANCEL'|translate}}"></a>
+            </span>
+        </div>
+        <div class="box layoutPanel"></div>
+        <div class="drag-preview hideOperate">
+            <div id="db_preview_panel" class=""></div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="org.cboard.dao.JobDao">
+    <insert id="save" parameterType="org.cboard.pojo.DashboardJob">
+        <![CDATA[
+        INSERT INTO dashboard_job(job_name,cron_exp,start_date,end_date,job_type,job_config,user_id) VALUES (#{name},#{cronExp},#{startDate},#{endDate},#{jobType},#{config},#{userId})
+        ]]>
+    </insert>
+
+    <update id="update" parameterType="org.cboard.pojo.DashboardJob">
+        <![CDATA[
+        UPDATE dashboard_job
+           SET job_name = #{name},
+               cron_exp = #{cronExp},
+               start_date = #{startDate},
+               end_date = #{endDate},
+               job_type = #{jobType},
+               job_config = #{config}
+         WHERE job_id = #{id}
+        ]]>
+    </update>
+
+    <select id="getJob" resultType="org.cboard.pojo.DashboardJob">
+        SELECT
+        j.job_id         AS id,
+        j.user_id        AS userId,
+        j.job_name       AS name,
+        j.start_date     AS startDate,
+        j.end_date       AS endDate,
+        j.job_type       AS jobType,
+        j.job_config     AS config,
+        j.cron_exp       AS cronExp,
+        j.last_exec_time AS lastExecTime,
+        j.exec_log AS execLog,
+        (select u.user_name from dashboard_user u where u.user_id = j.user_id) as userName,
+        j.job_status AS jobStatus
+        FROM dashboard_job j
+        WHERE j.job_id = #{0}
+    </select>
+
+    <select id="getJobList" resultType="org.cboard.pojo.DashboardJob">
+       SELECT
+               j.job_id         AS id,
+               j.user_id        AS userId,
+               j.job_name       AS name,
+               j.start_date     AS startDate,
+               j.end_date       AS endDate,
+               j.job_type       AS jobType,
+               j.job_config     AS config,
+               j.cron_exp       AS cronExp,
+               j.last_exec_time AS lastExecTime,
+               j.exec_log AS execLog,
+               (select u.user_name from dashboard_user u where u.user_id = j.user_id) as userName,
+               j.job_status AS jobStatus
+          FROM dashboard_job j
+         WHERE #{0} = '${admin_user_id}' OR j.user_id = #{0}
+               OR j.job_id IN (
+                  SELECT res_id
+                    FROM dashboard_user_role ur
+                    LEFT JOIN dashboard_role_res rr ON ur.role_id = rr.role_id
+                   WHERE ur.user_id = #{0} AND rr.res_type = 'job'
+               )
+        ORDER BY j.job_id DESC
+    </select>
+
+    <select id="getJobListAdmin" resultType="org.cboard.pojo.DashboardJob">
+        SELECT
+               j.job_id         AS id,
+               j.user_id        AS userId,
+               j.job_name       AS name,
+               j.start_date     AS startDate,
+               j.end_date       AS endDate,
+               j.job_type       AS jobType,
+               j.job_config     AS config,
+               j.cron_exp       AS cronExp,
+               j.last_exec_time AS lastExecTime,
+               j.exec_log AS execLog,
+               (select u.user_name from dashboard_user u where u.user_id = j.user_id) as userName,
+               j.job_status AS jobStatus
+         FROM dashboard_job j
+        WHERE #{0} = '${admin_user_id}'
+           OR user_id = #{0}
+           OR j.job_id IN (
+               SELECT res_id
+                 FROM dashboard_role r
+                 JOIN dashboard_role_res rr ON r.role_id = rr.role_id
+                 WHERE r.user_id = #{0} AND rr.res_type = 'job'
+           )
+        ORDER BY j.job_id DESC
+    </select>
+
+    <delete id="delete">
+        DELETE FROM dashboard_job WHERE job_id = #{0}
+    </delete>
+
+    <update id="updateLastExecTime">
+        <![CDATA[
+        UPDATE dashboard_job SET last_exec_time = #{1} WHERE job_id = #{0}
+        ]]>
+    </update>
+    <update id="updateStatus">
+        <![CDATA[
+        UPDATE dashboard_job SET job_status = #{1},exec_log = #{2} WHERE job_id = #{0}
+        ]]>
+    </update>
+
+    <select id="checkJobRole" resultType="java.lang.Long">
+        SELECT count(1) FROM dashboard_job WHERE job_id = #{1}
+        and (#{0} = '${admin_user_id}' OR user_id = #{0} OR job_id IN (SELECT res_id FROM dashboard_user_role ur LEFT JOIN dashboard_role_res rr ON ur.role_id = rr.role_id WHERE ur.user_id = #{0} AND rr.res_type = 'job' AND rr.permission LIKE #{2}))
+    </select>
+</mapper>

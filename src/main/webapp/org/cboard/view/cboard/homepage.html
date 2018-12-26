@@ -1,0 +1,33 @@
+<section class="content-header" ng-show="isShowMenu('config.widget')">
+    <h1>
+        {{'HOMEPAGE.TITLE'|translate}}
+        <small>{{'HOMEPAGE.QUICK_START'|translate}}</small>
+    </h1>
+    <ol class="breadcrumb">
+        <li><a href=""><i class="fa fa-dashboard"></i> {{'HOMEPAGE.LINK_CAPTION'|translate}}</a></li>
+    </ol>
+</section>
+<div id="inner-container" class="content" ng-show="isShowMenu('config.widget')">
+    <div class="row">
+        <div class="col-md-4">
+            <div class="box box-solid">
+                <div class="box-header with-border">
+                    <i class="fa fa-cubes"></i> <h3 class="box-title ng-binding">{{'HOMEPAGE.CUBES'|translate}} <small> {{'HOMEPAGE.CUBES_TIP'|translate}}</small></h3>
+                    <div class="box-tools pull-right">
+                        <i class="fa fa-plus-square-o toolbar-icon" ng-click="jstree_open_all()" title="Unflod all nodes"></i>
+                        <i class="fa fa-minus-square-o toolbar-icon" ng-click="jstree_close_all()" title="Fold all nodes"></i>
+                    </div>
+                </div>
+                <div class="panel-body" style="overflow-y: auto;">
+                    <div class="tab-content" style="height: 74vh;">
+                        <div id="dataSetTreeID" js-tree="treeConfig" should-apply="applyModelChanges()" ng-model="treeData"
+                             tree="treeInstance"
+                             tree-events-obj="treeEventsObj"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+

@@ -1,0 +1,185 @@
+<div class="box box-success"
+     style="border-left: 1px solid #d2d6de; border-right: 1px solid #d2d6de">
+    <div class="box-header" dnd-draggable="row" dnd-type="'r'"
+         nd-effect-allowed="move"
+         dnd-moved="curBoard.layout.rows.splice($index, 1)" style="cursor:move">
+        {{'CONFIG.DASHBOARD.ROW'|translate}}
+
+        <div class="box-tools pull-right">
+            <div class="input-group input-group-sm" style="width: 300px;">
+                <input type="text" name="table_search" ng-model="row.height"
+                       class="form-control pull-right" placeholder="{{'CONFIG.DASHBOARD.HEIGHT'|translate}}">
+                <div class="input-group-btn">
+                    <button type="button" class="btn btn-xs btn-success"
+                            ng-click="addWidget(row)">
+                        {{'CONFIG.DASHBOARD.ADD_COLUMN'|translate}}
+                    </button>
+                    <button type="button" class="btn btn-box-tool" data-widget="collapse" title="{{'COMMON.COLLAPSE'|translate}}"><i
+                            class="fa fa-minus"></i>
+                    </button>
+                    <button type="button" class="btn btn-box-tool" data-widget="remove" title="{{'COMMON.REMOVE'|translate}}"
+                            ng-click="curBoard.layout.rows.splice($index, 1)"><i
+                            class="fa fa-times"></i>
+                    </button>
+                </div>
+            </div>
+
+        </div>
+    </div>
+    <div class="box-body">
+        <div class="row" dnd-list="row.widgets" dnd-allowed-types="['w']"
+             style="min-height: 60px">
+            <div class="dndPlaceholder col-md-2">
+                <div class="box sort-highlight"
+                     style="height: 40px;display: inline-block;vertical-align: middle;"></div>
+            </div>
+            <div class="col-md-{{widget.width}}" ng-repeat="widget in row.widgets" ng-init="widgetIndex = $index">
+                <div class="box box-primary"
+                     style="border-left: 1px solid #d2d6de; border-right: 1px solid #d2d6de">
+                    <div class="box-header" dnd-draggable="widget" dnd-type="'w'"
+                         nd-effect-allowed="move"
+                         dnd-moved="row.widgets.splice($index, 1)"
+                         style="cursor:move">
+                        {{widget.name}}
+                        <div class="box-tools pull-right">
+                            <button ng-if="!widget.relations" type="button" class="btn btn-box-tool"
+                                    title="{{'COMMON.ADD_RELATIONS'|translate}}"
+                                    ng-click="addRelations(widget)">
+                                <i class="fa fa-link"></i>
+                            </button>
+                            <button ng-if="widget.relations" type="button" class="btn btn-box-tool"
+                                    title="{{'COMMON.DEL_RELATIONS'|translate}}"
+                                    ng-click="delRelations(widget)">
+                                <i class="fa fa-unlink"></i>
+                            </button>
+                            <button type="button" class="btn btn-box-tool"
+                                    data-widget="collapse" title="{{'COMMON.COLLAPSE'|translate}}"><i
+                                    class="fa fa-wrench"></i>
+                            </button>
+                            <button type="button" class="btn btn-box-tool"
+                                    data-widget="remove" title="{{'COMMON.REMOVE'|translate}}"
+                                    ng-click="row.widgets.splice($index, 1)"><i
+                                    class="fa fa-times"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="box-body">
+                        <div class="form-group">
+                            <label>{{'CONFIG.DASHBOARD.NAME'|translate}}</label>
+                            <input type="text" ng-model="widget.name"
+                                   ng-model-options="{updateOn: 'blur'}"
+                                   class="form-control"/>
+                        </div>
+                        <div class="form-group">
+                            <label>{{'CONFIG.DASHBOARD.WIDTH'|translate}}(1-12)</label>
+                            <input type="text" ng-model="widget.width"
+                                   ng-model-options="{updateOn: 'blur'}"
+                                   class="form-control"/>
+                        </div>
+                        <div class="form-group">
+                            <label>{{'CONFIG.DASHBOARD.WIDGET'|translate}}</label>
+                            <ui-select ng-model="widget.widgetId" ng-init="changeSourceCol(widget, widget.widgetId)" ng-change="changeSourceCol(widget, $select.selected.id)" on-select="widget.name = $item.name">
+                                <ui-select-match>
+                                    {{$select.selected.name}} ({{$select.selected.dataset}})
+                                </ui-select-match>
+                                <ui-select-choices group-by="widgetGroup"
+                                                   repeat="w.id as w in widgetList | filter:{name : $select.search}">
+                                    {{w.name + "(" + w.dataset + ")"}}
+                                </ui-select-choices>
+                            </ui-select>
+                        </div>
+                        <div ng-if="widget.relations" class="form-group">
+                            <div class="form-group">
+                                <label>{{'CONFIG.DASHBOARD.WIDGET_FIELDS'|translate}}</label>
+                                <ui-select multiple ng-disabled="disabled" ng-model="widget.relations.sourceField">
+                                    <ui-select-match placeholder="">
+                                        {{$item}}
+                                    </ui-select-match>
+                                    <ui-select-choices repeat="v in widget.relations.sourceFields | filter:$select.search">
+                                        {{v}}
+                                    </ui-select-choices>
+                                </ui-select>
+                            </div>
+                            <div class="nav-tabs-custom">
+                                <ul class="nav nav-tabs">
+                                    <li ng-class="{true:'active',false:'false'}[{{$index}}=={{widget.relations.index}}]" id="{{rowIndex}}_{{widgetIndex}}_{{$index}}_tab" ng-repeat="a in widget.relations.relations" ng-init="widget.relations.index=0;">
+                                        <a href="#{{rowIndex}}_{{widgetIndex}}_{{$index}}_content" data-toggle="tab" aria-expanded="false">
+                                            <i ng-show="a.type=='widget'" class="fa fa-line-chart"></i><i ng-show="a.type=='board'" class="fa fa-dashboard"></i>{{'CONFIG.DASHBOARD.RELATION'|translate}}{{$index+1}}
+                                            <button type="button" ng-click="widget.relations.relations.splice($index, 1);changeActive(rowIndex,widgetIndex,$index);widget.relations.index=0" class="btn btn-box-tool" title="{{'COMMON.REMOVE'|translate}}"
+                                            style="position:absolute;top:0px;right:0px;"><i class="fa fa-times"></i>
+                                            </button>
+                                        </a>
+                                    </li>
+                                    <div class="pull-right">
+                                        <button type="button" ng-click="addWidgetRelation(widget)" class="btn btn-box-tool" title="{{'CONFIG.DASHBOARD.WIDGET_TARGET'|translate}}">
+                                            <i class="fa fa-line-chart"></i>
+                                        </button>
+                                        <button type="button" ng-click="addBoardRelation(widget)" class="btn btn-box-tool" title="{{'CONFIG.DASHBOARD.BOARD_TARGET'|translate}}">
+                                            <i class="fa fa-dashboard"></i>
+                                        </button>
+                                    </div>
+                                </ul>
+                                <div class="tab-content">
+                                    <div ng-class="{true:'tab-pane active',false:'tab-pane'}[{{$index}}=={{widget.relations.index}}]" id="{{rowIndex}}_{{widgetIndex}}_{{$index}}_content" ng-repeat="relation in widget.relations.relations" style="min-height: 100px;height: 100%;" >
+                                        <ng-switch on="relation.type">
+                                            <div ng-switch-when="widget">
+                                                <div class="form-group">
+                                                    <label>{{'CONFIG.DASHBOARD.WIDGET_TARGET'|translate}}</label>
+                                                    <ui-select ng-model="relation.targetId" ng-init="changeTargetCol(widget, relation.targetId, $index)" ng-change="changeTargetCol(widget, $select.selected.id, $index, row)" on-select="relation.name = $item.name">
+                                                        <ui-select-match>
+                                                            {{$select.selected.name}} ({{$select.selected.dataset}})
+                                                        </ui-select-match>
+                                                        <ui-select-choices group-by="widgetGroup"
+                                                                           repeat="w.id as w in widgetList | filter:$select.search">
+                                                            {{w.name + "(" + w.dataset + ")"}}
+                                                        </ui-select-choices>
+                                                    </ui-select>
+                                                </div>
+                                                <div class="form-group">
+                                                    <label>{{'CONFIG.DASHBOARD.WIDGET_TARGET_FIELDS'|translate}}</label>
+                                                    <ui-select multiple ng-disabled="disabled" ng-model="relation.targetField">
+                                                        <ui-select-match>
+                                                            {{$item}}
+                                                        </ui-select-match>
+                                                        <ui-select-choices repeat="v in relation.targetFields | filter:$select.search">
+                                                            {{v}}
+                                                        </ui-select-choices>
+                                                    </ui-select>
+                                                </div>
+                                            </div>
+                                            <div ng-switch-when="board">
+                                                <div class="form-group">
+                                                    <label>{{'CONFIG.DASHBOARD.BOARD_TARGET'|translate}}</label>
+                                                    <ui-select ng-model="relation.targetId" ng-init="changeTargetParam(widget, relation.targetId, $index)" ng-change="changeTargetParam(widget, $select.selected.id, $index)" on-select="relation.name = $item.name">
+                                                        <ui-select-match>
+                                                            {{$select.selected.name}}
+                                                        </ui-select-match>
+                                                        <ui-select-choices group-by="widgetGroup"
+                                                                           repeat="w.id as w in boardList | filter:$select.search">
+                                                            {{w.name}}
+                                                        </ui-select-choices>
+                                                    </ui-select>
+                                                </div>
+                                                <div class="form-group">
+                                                    <label>{{'CONFIG.DASHBOARD.BOARD_TARGET_PARAMS'|translate}}</label>
+                                                    <ui-select multiple ng-disabled="disabled" ng-model="relation.targetField">
+                                                        <ui-select-match>
+                                                            {{$item}}
+                                                        </ui-select-match>
+                                                        <ui-select-choices repeat="v in relation.targetFields | filter:$select.search">
+                                                            {{v}}
+                                                        </ui-select-choices>
+                                                    </ui-select>
+                                                </div>
+                                            </div>
+                                        </ng-switch>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

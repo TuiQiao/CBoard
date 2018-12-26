@@ -1,0 +1,250 @@
+<!-- Content Wrapper. Contains page content -->
+<div id="inner-container" class="content">
+    <div class="row">
+        <div class="col-md-3">
+            <div class="box box-solid">
+                <div class="box-header with-border">
+                    <i class="fa fa-cubes"></i> <h3 class="box-title"> {{'CONFIG.DATASET.DATASET'|translate}}</h3>
+                    <div class="box-tools pull-right">
+                        <i class="fa fa-info toolbar-icon" ng-click="showInfo()" title="{{'COMMON.INFORMATION'|translate}}"></i>&nbsp;&nbsp;
+                        <i class="fa fa-plus toolbar-icon" ng-click="newDs()" title="{{'COMMON.NEW'|translate}}"></i>&nbsp;&nbsp;
+                        <i class="fa fa-copy toolbar-icon" ng-click="copyNode()" title="{{'COMMON.COPY'|translate}}"></i>&nbsp;&nbsp;
+                        <i class="fa fa-edit toolbar-icon" ng-click="editNode()" title="{{'COMMON.EDIT'|translate}}"></i>&nbsp;&nbsp;
+                        <i class="fa fa-trash-o toolbar-icon"  ng-click="deleteNode()" title="{{'COMMON.DELETE'|translate}}"></i>
+                    </div>
+                </div>
+                <div class="box-body">
+                    <input type="text" class="form-control" placeholder="Search" ng-model="keywords" ng-change="searchNode()" title="dsr:kylin ds:Bill">
+                </div>
+                <div class="panel-body">
+                    <div id="dataSetTreeID" js-tree="treeConfig" should-apply="applyModelChanges()" ng-model="treeData" tree="treeInstance"
+                         tree-events-obj="treeEventsObj"></div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-9">
+            <div class="box" ng-show="optFlag == 'new' || optFlag == 'edit'">
+                <div class="box-header with-border">
+                    <h3 class="box-title">{{curDataset.name}}</h3>
+                    <div class="box-tools pull-right" ng-switch="optFlag">
+                        <span ng-switch-when="edit" class="label label-info">{{'COMMON.EDIT'|translate}}</span>
+                        <span ng-switch-when="new" class="label label-danger">{{'COMMON.NEW'|translate}}</span>
+                    </div>
+                </div>
+                <div class="box-body">
+                    <div class="row">
+                        <div class="col-md-12 form-horizontal">
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <div class="form-group" ng-class="{'has-error': !(verify.dsName || curDataset.name.length)}">
+                                        <label class="col-sm-2 control-label">{{'CONFIG.DATASET.NAME'|translate}}</label>
+                                        <div class="col-sm-10">
+                                            <input id="DatasetName" ng-model="curDataset.name" class="form-control" placeholder="{{'CONFIG.DATASET.CATEGORY'|translate}}/{{'CONFIG.DATASET.NAME'|translate}}"/>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <div class="form-group">
+                                        <label class="col-sm-2 control-label">{{'CONFIG.DATASET.DATASOURCE'|translate}}</label>
+                                        <div class="col-sm-10">
+                                            <select class="form-control" ng-model="datasource"
+                                                    ng-change="changeDs()"
+                                                    ng-options="d as d.name+' ('+d.type+')' for d in datasourceList"></select>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group" ng-repeat="alert in alerts">
+                                <div class="col-sm-offset-2 col-sm-10">
+                                    <div uib-alert ng-class="'alert-' + (alert.type || 'warning')"
+                                         close="alerts.splice($index, 1)">{{alert.msg}}
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-12" ng-show="datasource.name"
+                                     ng-include="datasource.type?('dashboard/getConfigView.do?type=' + datasource.type + '&datasourceId=' + datasource.id + '&page=dataset.html'):''"></div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <div class="form-group">
+                                        <div class="col-sm-offset-2 col-sm-2 col-md-3">
+                                            <div class="btn-group">
+                                                <button type="button" class="btn btn-success" ng-click="loadData()">{{'CONFIG.DATASET.LOAD_DATA'|translate}}</button>
+                                                <button type="button" class="btn btn-success dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
+                                                    <span class="caret"></span>
+                                                    <span class="sr-only">Toggle Dropdown</span>
+                                                </button>
+                                                <ul class="dropdown-menu" role="menu">
+                                                    <li ng-click="loadData(true)"><a>{{'CONFIG.WIDGET.FROM_CACHE'|translate}}</a></li>
+                                                </ul>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <div class="form-group">
+                                        <label class="col-sm-2 control-label">
+                                            {{'CONFIG.DATASET.REAL_TIME_INTERVAL'|translate}}
+                                        </label>
+                                        <div class="col-sm-10">
+                                            <input ng-model="curDataset.data.interval" class="form-control" placeholder="{{'CONFIG.DATASET.REAL_TIME_TIP'|translate}}"/>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row" ng-show="curDataset.data.schema">
+                                <div class="col-md-6">
+                                    <div class="form-control" style="min-height: 200px;height: auto;padding: 0px; border: 2px dashed #d2d6de">
+                                        <span ng-repeat="o in selects"
+                                              class="btn btn-sm" style="margin: 3px 3px;" ng-class="{true:'btn-primary',false:'btn-default'}[checkExist(o)]"
+                                              dnd-draggable="{type: 'column', column: o}" dnd-type="'column'" ng-click="toDimension({type: 'column', column: o})">{{o}}</span>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="tree tree-bg-dragin" style="max-height: 700px; overflow: auto;">
+                                        <ul style="padding-left: 5px">
+                                            <li class="parent_li">
+                                                <span>
+                                                    <img src="imgs/schema/dimension.gif">
+                                                    <b>{{'CONFIG.DATASET.DIMENSION'|translate}}</b>
+                                                </span>
+                                                <img src="imgs/schema/hierarchy_add.png"
+                                                     ng-click="curDataset.data.schema.dimension.push({id:uuid4.generate(),type: 'level', alias: hierarchy, columns: []})"
+                                                     title="{{'CONFIG.DATASET.TIP_ADD_HIERARCHY'|translate}}"
+                                                     style="cursor: pointer"
+                                                     />
+                                                <ul dnd-list="curDataset.data.schema.dimension" dnd-drop="createNode(item)"
+                                                    dnd-allowed-types="['column','level']">
+                                                    <li class="dndPlaceholder"><span class="sort-highlight btn btn-default btn-xs">+</span></li>
+                                                    <li ng-repeat="o in curDataset.data.schema.dimension" ng-switch="o.type"
+                                                        ng-class="{'level':'parent_li'}[o.type]">
+                                                        <span ng-switch-when="level"  dnd-draggable="o"
+                                                              dnd-type="o.type"
+                                                              dnd-moved="curDataset.data.schema.dimension.splice($index, 1)">
+                                                            <i class="fa fa-caret-down"/>
+                                                            <img src="imgs/schema/hierarchy.gif">
+                                                            {{o.alias}}
+                                                        </span>
+                                                        <span ng-switch-when="column"  dnd-draggable="o"
+                                                              dnd-type="o.type"
+                                                              dnd-moved="curDataset.data.schema.dimension.splice($index, 1)">
+                                                            <img src="imgs/schema/bullet_blue.png">
+                                                            {{o.alias?o.alias+' ('+o.column+')':o.column}}
+                                                        </span>
+                                                        <i class="fa fa-edit" ng-click="custom(o)" title="{{'CONFIG.DATASET.TIP_EDIT_ALIAS'|translate}}"></i>
+                                                        <i class="fa fa-trash-o" ng-click="toTrash(curDataset.data.schema.dimension,$index)" title="{{'COMMON.DELETE'|translate}}"></i>
+                                                        <i ng-switch-when="column" class="fa fa-exchange" title="{{'CONFIG.DATASET.TIP_SWITCH_TO_MEASURE'|translate}}"
+                                                           ng-click="curDataset.data.schema.dimension.splice($index, 1);curDataset.data.schema.measure.push(o)"></i>
+                                                        <ul ng-switch-when="level"
+                                                            dnd-list="o.columns"
+                                                            dnd-allowed-types="['column']" dnd-drop="createNode(item)">
+                                                            <li class="dndPlaceholder">
+                                                                <span class="sort-highlight btn btn-default btn-xs">+</span></li>
+                                                            <li ng-repeat="c in o.columns">
+                                                                <span dnd-draggable="c" dnd-type="c.type"
+                                                                      dnd-moved="o.columns.splice($index, 1)">
+                                                                    <img src="imgs/schema/bullet_blue.png">
+                                                                    {{c.alias?c.alias+' ('+c.column+')':c.column}}
+                                                                </span>
+                                                                <i class="fa fa-edit" ng-click="custom(c)" title="{{'CONFIG.DATASET.TIP_EDIT_ALIAS'|translate}}"></i>
+                                                                <i class="fa fa-trash-o" ng-click="toTrash(o.columns,$index)" title="{{'COMMON.DELETE'|translate}}"></i>
+                                                                <i class="fa fa-exchange" title="{{'CONFIG.DATASET.TIP_SWITCH_TO_MEASURE'|translate}}"
+                                                                   ng-click="o.columns.splice($index, 1);curDataset.data.schema.measure.push(c)"></i>
+                                                            </li>
+                                                        </ul>
+                                                    </li>
+                                                </ul>
+                                            </li>
+                                        </ul>
+                                        <ul style="padding-left: 5px">
+                                            <li class="parent_li">
+                                                <span>
+                                                    <img src="imgs/schema/measure.gif">
+                                                    <b>{{'CONFIG.DATASET.MEASURE'|translate}}</b>
+                                                </span>
+                                                <ul dnd-list="curDataset.data.schema.measure" dnd-allowed-types="['column']" dnd-drop="createNode(item)">
+                                                    <li class="dndPlaceholder"><span class="sort-highlight btn btn-default btn-sm">+</span>
+                                                    </li>
+                                                    <li ng-repeat="o in curDataset.data.schema.measure">
+                                                        <span  dnd-draggable="o" dnd-type="o.type"
+                                                              dnd-moved="curDataset.data.schema.measure.splice($index, 1)">
+                                                            <img src="imgs/schema/bullet_red.png">
+                                                            {{o.alias?o.alias+'('+o.column+')':o.column}}
+                                                        </span>
+                                                        <i class="fa fa-edit" ng-init="show=false" ng-click="show=true" title="{{'CONFIG.DATASET.TIP_EDIT_ALIAS'|translate}}">
+                                                            <input ng-show="show" type="text" ng-model="o.alias" ng-blur="show=false"/></i>
+                                                        <i class="fa fa-trash-o"
+                                                           ng-click="toTrash(curDataset.data.schema.measure,$index)" title="{{'COMMON.DELETE'|translate}}"></i>
+                                                        <i class="fa fa-exchange" title="{{'CONFIG.DATASET.TIP_SWITCH_TO_DIMENSION'|translate}}"
+                                                           ng-click="measureToDimension($index, o);"></i>
+                                                    </li>
+                                                </ul>
+                                            </li>
+                                        </ul>
+                                        <ul style="padding-left: 5px">
+                                            <li class="parent_li">
+                                                <span>
+                                                    <img src="imgs/schema/measure.gif"/>
+                                                    <b>{{'CONFIG.COMMON.CUSTOM_EXPRESSION'|translate}}</b>
+                                                </span>
+                                                <i class="glyphicon glyphicon-plus" ng-click="editExp()" title="{{'COMMON.NEW'|translate}}"></i>
+                                                <ul dnd-list="curDataset.data.expressions" dnd-allowed-types="['exp']">
+                                                    <li class="dndPlaceholder"><span class="sort-highlight btn btn-default btn-sm">+</span>
+                                                    </li>
+                                                    <li ng-repeat="o in curDataset.data.expressions">
+                                                        <span dnd-draggable="o" dnd-type="'exp'" dnd-moved="curDataset.data.expressions.splice($index, 1)"><img src="imgs/schema/bullet_red.png">{{o.alias}}</span>
+                                                        <i class="fa fa-edit" ng-click="editExp(o)" title="{{'COMMON.EDIT'|translate}}"></i>
+                                                        <i class="fa fa-trash-o" ng-click="deleteExp($index)" title="{{'COMMON.DELETE'|translate}}"></i>
+                                                    </li>
+                                                </ul>
+                                            </li>
+                                        </ul>
+                                        <ul style="padding-left: 5px">
+                                            <li class="parent_li">
+                                                <span>
+                                                    <img src="imgs/schema/filter.png"/>
+                                                    <b>{{'COMMON.FILTER_GROUP'|translate}}</b>
+                                                </span>
+                                                <i class="glyphicon glyphicon-plus" ng-click="editFilterGroup()" title="{{'COMMON.DELETE'|translate}}"></i>
+                                                <ul dnd-list="curDataset.data.filters" dnd-allowed-types="['filterGroup']">
+                                                    <li class="dndPlaceholder"><span class="sort-highlight btn btn-default btn-sm">+</span>
+                                                    </li>
+                                                    <li ng-repeat="o in curDataset.data.filters">
+                                                        <span dnd-draggable="o" dnd-type="'filterGroup'" dnd-moved="curDataset.data.filters.splice($index, 1)"><img src="imgs/schema/bullet_green.png">{{o.group}}</span>
+                                                        <i class="fa fa-edit" ng-click="editFilterGroup(o)" title="{{'COMMON.EDIT'|translate}}"></i>
+                                                        <i class="fa fa-trash-o"  ng-click="deleteFilterGroup($index)" title="{{'COMMON.DELETE'|translate}}"></i>
+                                                    </li>
+                                                </ul>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- /.box-body -->
+                <div class="box-footer">
+                    <button type="submit" class="btn btn-danger pull-right">{{'COMMON.CANCEL'|translate}}</button>
+                    <button type="submit" ng-click="save()" class="btn btn-success pull-right"
+                            style="margin-right: 5px">{{'COMMON.SAVE'|translate}}
+                    </button>
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div id="dataset_preview" style="height: 300px;"></div>
+                        </div>
+                    </div>
+                </div>
+                <!-- /.box-footer-->
+                <div class="overlay" ng-show="loading">
+                    <i class="fa fa-spinner fa-spin"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,24 @@
+<div class="modal-header">
+    <button type="button" class="close" data-dismiss="modal" aria-label="Close" ng-click="close()">
+        <span aria-hidden="true">×</span></button>
+    <h4 class="modal-title">{{'HEADER.CHANGE_PASSWORD'|translate}}</h4>
+</div>
+<div class="modal-body">
+    <div class="form-group has-feedback">
+        <input type="password" class="form-control" ng-model="curPwd" placeholder="{{'HEADER.CURRENT_PASSWORD'|translate}}">
+    </div>
+    <div class="form-group has-feedback">
+        <input type="password" class="form-control" ng-model="newPwd" placeholder="{{'HEADER.NEW_PASSWORD'|translate}}">
+    </div>
+    <div class="form-group has-feedback">
+        <input type="password" class="form-control" ng-model="cfmPwd" placeholder="{{'HEADER.CONFIRM_PASSWORD'|translate}}">
+    </div>
+</div>
+<div class="modal-footer">
+    <button type="button" class="btn btn-default pull-left" data-dismiss="modal" ng-click="close()">
+        {{"COMMON.CANCEL"|translate}}
+    </button>
+    <button type="button" class="btn btn-primary" ng-click="ok()">
+        {{"COMMON.OK"|translate}}
+    </button>
+</div>

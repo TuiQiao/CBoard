@@ -1,0 +1,13 @@
+<button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
+    <span class="fa fa-caret-down"></span></button>
+<ul class="dropdown-menu">
+    <li ng-click="param.values[_i]='{now(\'M\', -1, \'yyyy-MM-dd\')}'"><a>{{'COMMON.LAST1M'|translate}}</a></li>
+    <li ng-click="param.values[_i]='{now(\'W\', -1, \'yyyy-MM-dd\')}'"><a>{{'COMMON.LAST1W'|translate}}</a></li>
+    <li ng-click="param.values[_i]='{now(\'D\', -10, \'yyyy-MM-dd\')}'"><a>{{'COMMON.LAST10D'|translate}}</a></li>
+    <li ng-click="param.values[_i]='{now(\'D\', -10, \'timestamp\')}'"><a>{{'COMMON.LAST10D_TIMESTAMP'|translate}}</a></li>
+    <li ng-click="param.values[_i]='{now(\'h\', -3, \'timestamp\')}'"><a>{{'COMMON.LAST3H_TIMESTAMP'|translate}}</a></li>
+    <li ng-click="param.values[_i]='{now(\'m\', -60, \'timestamp\')}'"><a>{{'COMMON.LAST60MIN_TIMESTAMP'|translate}}</a></li>
+    <li ng-click="param.values[_i]='{loginName}'"><a>{{'COMMON.LOGIN_NAME'|translate}}</a></li>
+    <li ng-click="param.values[_i]='{userName}'"><a>{{'COMMON.USER_NAME'|translate}}</a></li>
+    <li ng-click="param.values[_i]='{userRoles}'"><a>{{'COMMON.USER_ROLES'|translate}}</a></li>
+</ul>

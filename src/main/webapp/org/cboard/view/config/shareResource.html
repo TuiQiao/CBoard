@@ -1,0 +1,52 @@
+<!-- Content Wrapper. Contains page content -->
+<div id="inner-container" class="content">
+    <div class="row">
+        <div class="col-md-4">
+            <div class="box box-solid">
+                <div class="box-header with-border">
+                    <i class="fa fa-share-alt"></i> <h3 class="box-title">{{'CONFIG.SHARE_RES.YOUR_RES'|translate}}</h3>
+                    <div class="box-tools pull-right">
+                        <i class="fa fa-plus-square-o toolbar-icon" ng-click="jstree_open_all()" title="{{'COMMON.UNFOLD_TREE'|translate}}"></i>
+                        <i class="fa fa-minus-square-o toolbar-icon" ng-click="jstree_close_all()" title="{{'COMMON.FOLD_TREE'|translate}}"></i>
+                    </div>
+                </div>
+                <!--<div class="box-body">
+                    <input type="text" class="form-control" placeholder="Search">
+                </div>-->
+                <div class="panel-body">
+                    <div js-tree="treeConfig" ng-model="resList" tree="treeInstance" tree-events="changed:changed;" style="height: 75vh; overflow: auto;" ></div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="row" style="margin-bottom: 10px">
+                <div class="col-md-12">
+                    <div class="input-group">
+                        <span class="input-group-addon">{{'CONFIG.WIDGET.FIND'|translate}}</span>
+                        <input type="text" class="form-control" ng-model="roleKeyword" placeholder="{{'ADMIN.ROLE.ROLE'|translate}}">
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-12">
+                    <select multiple class="form-control" ng-model="selectRole" ng-options="u.roleName for u in roleList | filter:{roleName:roleKeyword}"
+                            style="height: 65vh; overflow: auto;">
+                    </select>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="form-group">
+                        <div class="col-sm-offset-2 col-sm-10" style="padding-right: 0px; padding-top: 5px">
+                            <button type="submit" ng-click="grantRes()" class="btn btn-success pull-right">
+                                {{'CONFIG.SHARE_RES.SHARE'|translate}}
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+</div>

@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="org.cboard.dao.HomepageDao">
+    
+    <insert id="saveHomepage">
+        INSERT INTO dashboard_homepage (board_id, user_id) VALUES (#{0}, #{1})
+    </insert>
+    
+    <delete id="resetHomepage">
+        DELETE FROM dashboard_homepage WHERE user_id=#{0}
+    </delete>
+    
+    <select id="selectHomepage" resultType="java.lang.Long">
+        SELECT h.board_id FROM dashboard_homepage h inner join dashboard_board b ON h.BOARD_ID = b.BOARD_ID WHERE h.user_id=#{0}
+    </select>
+
+</mapper>

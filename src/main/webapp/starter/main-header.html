@@ -1,0 +1,64 @@
+<!-- Logo -->
+<a href="starter.html" class="logo">
+    <!-- mini logo for sidebar mini 50x50 pixels -->
+    <span class="logo-mini"><i class="fa fa-home"></i></span>
+    <!-- logo for regular state and mobile devices -->
+    <span class="logo-lg"><b>CB</b>oard</span>
+</a>
+
+<!-- Header Navbar -->
+<nav class="navbar navbar-static-top" role="navigation">
+    <!-- Sidebar toggle button-->
+    <a href="" class="sidebar-toggle" data-toggle="offcanvas" role="button">
+        <span class="sr-only">{{'HEADER.TOGGLE_NAVIGATION'|translate}}</span>
+    </a>
+    <!-- Navbar Right Menu -->
+    <div class="navbar-custom-menu">
+        <ul class="nav navbar-nav">
+            <!-- User Account Menu -->
+            <li class="dropdown user user-menu">
+                <!-- Menu Toggle Button -->
+                <a href="javascript:void(0);" class="dropdown-toggle" data-toggle="dropdown">
+                    <!-- The user image in the navbar-->
+                    <img src="{{user.avatar}}" class="user-image">
+                    <!-- hidden-xs hides the username on small devices so only the image appears. -->
+                    <span class="hidden-xs">{{user.username}}</span>
+                </a>
+                <ul class="dropdown-menu">
+                    <!-- The user image in the menu -->
+                    <li class="user-header">
+                        <img src="{{user.avatar}}" class="img-circle">
+                        <p>
+                            {{user.username + ' - ' + user.company + ' ' + user.department}}
+                            <small>{{user.userId}}</small>
+                        </p>
+                    </li>
+                    <!-- Menu Body -->
+                    <!--<li class="user-body">-->
+                        <!--<div class="row">-->
+                            <!--<div class="col-xs-4 text-center">-->
+                                <!--<a href="#">Followers</a>-->
+                            <!--</div>-->
+                            <!--<div class="col-xs-4 text-center">-->
+                                <!--<a href="#">Sales</a>-->
+                            <!--</div>-->
+                            <!--<div class="col-xs-4 text-center">-->
+                                <!--<a href="#">Friends</a>-->
+                            <!--</div>-->
+                        <!--</div>-->
+                        <!--&lt;!&ndash; /.row &ndash;&gt;-->
+                    <!--</li>-->
+                    <!-- Menu Footer-->
+                    <li class="user-footer">
+                        <div class="pull-left">
+                            <div class="btn btn-default btn-flat" ng-click="changePwd()">{{'HEADER.CHANGE_PASSWORD'|translate}}</div>
+                        </div>
+                        <div class="pull-right">
+                            <a href="j_spring_cas_security_logout" class="btn btn-default btn-flat">{{'HEADER.SIGN_OUT'|translate}}</a>
+                        </div>
+                    </li>
+                </ul>
+            </li>
+        </ul>
+    </div>
+</nav>

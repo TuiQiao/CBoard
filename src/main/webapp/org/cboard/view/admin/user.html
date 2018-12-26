@@ -1,0 +1,182 @@
+<!-- Content Wrapper. Contains page content -->
+<div id="inner-container" class="content">
+    <div class="row">
+        <div class="col-md-3" >
+            <div class="box-header with-border">
+                <i class="fa fa-fw fa-user"></i> <h3 class="box-title"> {{'ADMIN.USER.USER'|translate}}</h3>
+                <div class="box-tools pull-right" ng-if="isAdmin">
+                    <i class="fa fa-fw fa-user-plus toolbar-icon" ng-click="newUser()" title="{{'COMMON.NEW'|translate}}"></i>&nbsp;&nbsp;
+                    <i class="fa fa-edit toolbar-icon" ng-click="editUser(selectUser[0])" title="{{'COMMON.EDIT'|translate}}"></i>&nbsp;&nbsp;
+                    <i class="fa fa-trash-o toolbar-icon" ng-if="selectUser.length==1" ng-click="deleteUser()" title="{{'COMMON.DELETE'|translate}}"></i>
+                </div>
+            </div>
+            <div class="row" style="margin-bottom: 10px">
+                <div class="col-md-12">
+                    <div class="input-group">
+                        <span class="input-group-addon" style="cursor:pointer" ng-click="filterByRole=!filterByRole;userKeyword=''">{{filterByRole?'ADMIN.BY_ROLE':'ADMIN.BY_NAME'|translate}}</span>
+                        <input ng-show="!filterByRole" type="text" class="form-control" ng-model="userKeyword">
+                        <ui-select ng-show="filterByRole" ng-model="selectedRoleFilter" on-select="onRoleFilter($item)">
+                            <ui-select-match>
+                                {{$select.selected.roleName}}
+                            </ui-select-match>
+                            <ui-select-choices repeat="r in roleList | filter:{roleName : $select.search}">
+                                {{r.roleName}}
+                            </ui-select-choices>
+                        </ui-select>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-12" >
+                    <select multiple class="form-control" ng-model="selectUser" ng-change="changeRoleSelect()"
+                            ng-options="u.loginName+'('+u.userName+')' for u in userList | filter: searchUserByName | filter: searchUserByRole"
+                            style="height: 70vh; overflow: auto;">
+                    </select>
+                </div>
+            </div>
+            <div class="row" style="padding-top: 5px">
+                <div class="col-md-12">
+                    <button type="submit" ng-click="revokeRole()" class="btn btn-danger">
+                        {{'ADMIN.DELETE_USER_IN_ROLE'|translate}}
+                    </button>
+                    <button type="submit" ng-click="grantRole()" class="btn btn-success pull-right">
+                        {{'ADMIN.ADD_USER2ROLE'|translate}}
+                    </button>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="box-header with-border">
+                <i class="fa fa-fw fa-group"></i> <h3 class="box-title"> {{'ADMIN.ROLE.ROLE'|translate}}</h3>
+                <div class="box-tools pull-right">
+                    <i class="fa fa-fw fa-plus toolbar-icon" ng-click="newRole()" title="{{'COMMON.NEW'|translate}}"></i>&nbsp;&nbsp;
+                    <i class="fa fa-edit toolbar-icon" ng-if="selectRole.length==1" ng-click="editRole(selectRole[0])" title="{{'COMMON.EDIT'|translate}}"></i>&nbsp;&nbsp;
+                    <i class="fa fa-trash-o toolbar-icon" ng-if="selectRole.length==1" ng-click="deleteRole()" title="{{'COMMON.DELETE'|translate}}"></i>
+                </div>
+            </div>
+            <div class="row" style="margin-bottom: 10px">
+                <div class="col-md-12">
+                    <div class="input-group">
+                        <span class="input-group-addon">{{'CONFIG.WIDGET.FIND'|translate}}</span>
+                        <input type="text" class="form-control" ng-model="roleKeyword">
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-12">
+                    <select multiple class="form-control" ng-model="selectRole" ng-change="changeResSelect()"
+                            ng-options="u.roleName for u in roleList | filter:{roleName:roleKeyword}"
+                            style="height: 70vh; overflow: auto;">
+                    </select>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="form-group">
+                        <div class="col-sm-offset-2 col-sm-10" style="padding-right: 0px; padding-top: 5px">
+                            <button type="submit" ng-disabled="selectRole.length!=1" ng-click="grantRes()" class="btn btn-success pull-right">
+                                {{'ADMIN.ADD_RES2ROLE'|translate}}
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="box" ng-show="optFlag == 'newUser' || optFlag == 'editUser'">
+                <div class="box-header with-border">
+                    <h3 class="box-title">{{'ADMIN.USER.USER'|translate}}</h3>
+                </div>
+                <div class="box-body">
+                    <form>
+                        <div class="form-group">
+                            <label>{{'ADMIN.USER.LOGIN_NAME'|translate}}</label>
+                            <input ng-model="curUser.loginName" class="form-control"/>
+                        </div>
+                        <div class="form-group">
+                            <label>{{'ADMIN.USER.NAME'|translate}}</label>
+                            <input ng-model="curUser.userName" class="form-control"/>
+                        </div>
+                        <div class="form-group">
+                            <label>{{'ADMIN.USER.PASSWORD'|translate}}</label>
+                            <input ng-model="curUser.userPassword" class="form-control" type="password"/>
+                        </div>
+                    </form>
+                </div>
+                <!-- /.box-body -->
+                <div class="box-footer">
+                    <button type="submit" ng-click="saveUser()" class="btn btn-success pull-right"
+                            style="margin-right: 5px">{{'COMMON.SAVE'|translate}}
+                    </button>
+                </div>
+                <!-- /.box-footer-->
+            </div>
+
+            <div class="box" ng-show="optFlag == 'newRole' || optFlag == 'editRole'">
+                <div class="box-header with-border">
+                    <h3 class="box-title">{{'ADMIN.ROLE.ROLE'|translate}}</h3>
+                </div>
+                <div class="box-body">
+                    <form>
+                        <div class="form-group">
+                            <label>{{'ADMIN.ROLE.ROLE_NAME'|translate}}</label>
+                            <input ng-model="curRole.roleName" class="form-control"/>
+                        </div>
+                        <div class="form-group">
+                            <label>{{'ADMIN.ROLE.ADMIN'|translate}}</label>
+                            <ui-select ng-model="curRole.userId" on-select="curRole.userId = $item.userId">
+                                <ui-select-match>
+                                    {{$select.selected.loginName}} ({{$select.selected.userName}})
+                                </ui-select-match>
+                                <ui-select-choices repeat="u.userId as u in userList | filter:{userName : $select.search}">
+                                    {{u.loginName + "(" + u.userName + ")"}}
+                                </ui-select-choices>
+                            </ui-select>
+                        </div>
+                    </form>
+                </div>
+                <!-- /.box-body -->
+                <div class="box-footer">
+                    <button type="submit" ng-click="saveRole()" class="btn btn-success pull-right"
+                            style="margin-right: 5px">{{'COMMON.SAVE'|translate}}
+                    </button>
+                </div>
+                <!-- /.box-footer-->
+            </div>
+            <div class="col-md-12" ng-show="optFlag == 'selectRes'">
+                <div class="nav-tabs-custom">
+                    <ul class="nav nav-tabs">
+                        <li class="active"><a ng-click="tab='menu'" data-toggle="tab" aria-expanded="true">{{'ADMIN.MENU'|translate}}</a></li>
+                        <li class=""><a ng-click="tab='board'" data-toggle="tab" aria-expanded="false">{{'ADMIN.BOARD'|translate}}</a></li>
+                        <li class=""><a ng-click="tab='datasource'" data-toggle="tab" aria-expanded="false">{{'ADMIN.DATASOURCE'|translate}}</a></li>
+                        <li class=""><a ng-click="tab='dataset'" data-toggle="tab" aria-expanded="false">{{'ADMIN.DATASET'|translate}}</a></li>
+                        <li class=""><a ng-click="tab='widget'" data-toggle="tab" aria-expanded="false">{{'ADMIN.WIDGET'|translate}}</a></li>
+                        <li class=""><a ng-click="tab='job'" data-toggle="tab" aria-expanded="false">{{'ADMIN.JOB'|translate}}</a></li>
+                    </ul>
+                    <div class="tab-content">
+                        <div class="tab-pane" ng-class="{'menu': 'active'}[tab]">
+                            <div js-tree="treeMenuConfig" ng-model="tree.menu.resList" tree="tree.menu.treeInstance" style="height: 70vh; overflow: auto;" ></div>
+                        </div>
+                        <div class="tab-pane" ng-class="{'board': 'active'}[tab]">
+                            <div js-tree="treeConfig" ng-model="tree.board.resList" tree="tree.board.treeInstance" style="height: 70vh; overflow: auto;" ></div>
+                        </div>
+                        <div class="tab-pane" ng-class="{'datasource': 'active'}[tab]">
+                            <div js-tree="treeConfig" ng-model="tree.datasource.resList" tree="tree.datasource.treeInstance" style="height: 70vh; overflow: auto;" ></div>
+                        </div>
+                        <div class="tab-pane" ng-class="{'dataset': 'active'}[tab]">
+                            <div js-tree="treeConfig" ng-model="tree.dataset.resList" tree="tree.dataset.treeInstance" style="height: 70vh; overflow: auto;" ></div>
+                        </div>
+                        <div class="tab-pane" ng-class="{'widget': 'active'}[tab]">
+                            <div js-tree="treeConfig" ng-model="tree.widget.resList" tree="tree.widget.treeInstance" style="height: 70vh; overflow: auto;" ></div>
+                        </div>
+                        <div class="tab-pane" ng-class="{'job': 'active'}[tab]">
+                            <div js-tree="treeConfig" ng-model="tree.job.resList" tree="tree.job.treeInstance" style="height: 70vh; overflow: auto;" ></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+</div>

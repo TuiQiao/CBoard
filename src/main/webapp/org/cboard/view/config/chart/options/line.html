@@ -1,0 +1,84 @@
+<div class="col-xs-3 col-md-2">
+    <!-- Nav tabs -->
+    <ul class="nav nav-tabs tabs-left"><!-- 'tabs-right' for right tabs -->
+        <li class="active"><a href="#grid" data-toggle="tab">Grid</a></li>
+        <li><a href="#legend" data-toggle="tab">Legend</a></li>
+        <li><a href="#ctgAxis" data-toggle="tab">Category Axis</a></li>
+        <li><a href="#valAxis" data-toggle="tab">Value Axis</a></li>
+        <li><a href="#ext" data-toggle="tab">Ext</a></li>
+    </ul>
+</div>
+<div class="col-xs-9 col-md-10">
+    <!-- Tab panes -->
+    <div class="tab-content">
+        <div class="tab-pane active" id="grid">
+            <ng-include src="'org/cboard/view/config/chart/options/common/grid.html'"></ng-include>
+        </div>
+        <div class="tab-pane" id="legend">
+            <ng-include src="'org/cboard/view/config/chart/options/common/legend.html'"></ng-include>
+        </div>
+        <div class="tab-pane" id="ctgAxis">
+            <ng-include src="'org/cboard/view/config/chart/options/common/categoryAxis.html'"></ng-include>
+        </div>
+        <div class="tab-pane" id="valAxis">
+            <form class="form-horizontal">
+                <div class="row" ng-repeat="v in curWidget.config.values">
+                    <div class="form-group col-md-6">
+                        <label class="col-md-4 control-label" style="padding: 7px 2px">{{$index}}-{{'CONFIG.WIDGET.AXIS_NAME'|translate}}</label>
+                        <div class="col-md-8">
+                            <input type="text" class="form-control" ng-model="v.name">
+                        </div>
+                    </div>
+                    <div class="form-group col-md-3">
+                        <label class="col-md-4 control-label" style="padding: 7px 2px">{{$index}}-Min</label>
+                        <div class="col-md-8">
+                            <input type="text" class="form-control" ng-model="v.min">
+                        </div>
+                    </div>
+                    <div class="form-group col-md-3">
+                        <label class="col-md-4 control-label" style="padding: 7px 2px">{{$index}}-Max</label>
+                        <div class="col-md-8">
+                            <input type="text" class="form-control" ng-model="v.max">
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+        <div class="tab-pane" id="ext">
+            <form class="form-horizontal">
+                <div class="row">
+                    <div class="form-group col-md-4">
+                        <div class="checkbox">
+                            <label>
+                                <input type="checkbox" ng-model="curWidget.config.option.dataZoom" ng-init="curWidget.config.option.dataZoom=false"> Show DataZoom
+                            </label>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="form-group col-md-6">
+                        <label class="col-md-4 control-label">Value Orient</label>
+                        <div class="col-md-8">
+                            <select class="form-control" ng-model="curWidget.config.valueAxis"
+                                    ng-init="curWidget.config.valueAxis ? null : curWidget.config.valueAxis='vertical'">
+                                <option value="horizontal">horizontal</option>
+                                <option value="vertical">vertical</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group col-md-6">
+                        <label class="col-md-4 control-label">Coordinate System</label>
+                        <div class="col-md-8">
+                            <select class="form-control" ng-model="curWidget.config.coordinateSystem"
+                                    ng-init="curWidget.config.coordinateSystem ? null : curWidget.config.coordinateSystem='cartesian2d'"
+                                    ng-change="curWidget.config.coordinateSystem == 'polar' ? curWidget.config.values = curWidget.config.values.slice(0, 1) : null">
+                                <option value="cartesian2d">Cartesian2d</option>
+                                <option value="polar">Polar</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

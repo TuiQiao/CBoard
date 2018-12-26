@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>CBoard | Starter</title>
+    <!-- Tell the browser to be responsive to screen width -->
+    <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
+    <!-- Bootstrap 3.3.6 -->
+    <link rel="stylesheet" href="bootstrap/css/bootstrap.css">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="css/font-awesome.min.css">
+    <!-- Ionicons -->
+    <link rel="stylesheet" href="css/ionicons.min.css">
+    <!-- Theme style -->
+    <link rel="stylesheet" href="dist/css/AdminLTE.css">
+    <link rel="stylesheet" href="css/cboard.css">
+    <!-- ngJsTree -->
+    <link rel="stylesheet" href="plugins/ngJsTree/style.css">
+    <link rel="stylesheet" href="plugins/jQueryUI/theme.css">
+    <link rel="stylesheet" href="plugins/jQueryUI/jquery-ui.css">
+
+    <!-- bmap-->
+    <script src="http://api.map.baidu.com/api?v=2.0&ak=ZUONbpqGBsYGXNIYHicvbAbM"></script>
+    <script src="plugins/echart/echarts-3.6.2.min.js"></script>
+    <script src="plugins/echart/echarts-bmap.min.js"></script>
+
+    <script src="plugins/jQuery/jquery-2.2.3.min.js"></script>
+    <script src="org/cboard/Settings.js"></script>
+    <!--<script src="http://cdn.bootcss.com/angular.js/1.5.8/angular.js"></script>-->
+    <script src="lib/angular.min.js"></script>
+    <script src="lib/angular-ui-router.min.js"></script>
+    <script src="lib/angular-md5.min.js"></script>
+    <script src="lib/angular-drag-and-drop-lists.js"></script>
+    <script src="lib/angular-sanitize.min.js"></script>
+    <script src="lib/ui-bootstrap-tpls-2.1.3.min.js"></script>
+    <script src="lib/angular-translate.js"></script>
+    <script src="lib/angular-translate-loader-partial.js"></script>
+
+    <script src="lib/underscore-min.js"></script>
+    <script src="lib/numbro.min.js"></script>
+    <script src="lib/ui-select.min.js"></script>
+
+    <script src="plugins/jQueryUI/jquery-ui.min.js"></script>
+    <!-- AdminLTE App -->
+    <script src="dist/js/app.js"></script>
+    <!--ngJsTree -->
+    <script src="plugins/ngJsTree/jstree.js"></script>
+    <script src="plugins/ngJsTree/ngJsTree.js"></script>
+
+    <!-- ECharts -->
+    <script src="plugins/echart/theme-fin1.js"></script>
+    <script src="plugins/echart/dark.js"></script>
+    <script src="plugins/echart/echarts-wordcloud.min.js"></script>
+    <script src="plugins/echart/echarts-liquidfill.min.js"></script>
+
+    <!-- vue -->
+    <script src="plugins/vue/vue.js"></script>
+    <script src="plugins/vue/vue-resource.min.js"></script>
+    <link rel="stylesheet" href="css/admin.css">
+
+    <script src="lib/jquery.ba-resize.js"></script>
+    <script src="plugins/ace/ace.js"></script>
+    <script src="plugins/ui-ace/ui-ace.js"></script>
+    <script src="plugins/FineMap/d3.v3.js"></script>
+    <script src="plugins/FineMap/d3.tip.js"></script>
+
+    <link rel="stylesheet" href="plugins/rzslider/rzslider.min.css">
+    <script src="plugins/rzslider/rzslider.min.js"></script>
+    <script src="lib/angular-uuid4.min.js"></script>
+
+    <link rel="stylesheet" href="plugins/jquery-contextmenu/jquery.contextMenu.min.css">
+    <script src="plugins/jquery-contextmenu/jquery.contextMenu.min.js"></script>
+    <script src="plugins/jquery-contextmenu/jquery.ui.position.min.js"></script>
+
+    <script src="lib/html2canvas.js"></script>
+
+    <link rel="stylesheet" href="plugins/daterangepicker/daterangepicker.css">
+    <script src="plugins/daterangepicker/moment.js"></script>
+    <script src="plugins/daterangepicker/daterangepicker.js"></script>
+    <script src="lib/angular-daterangepicker.min.js"></script>
+    <link rel="stylesheet" href="css/angular-cron-jobs.min.css">
+    <script src="lib/angular-cron-jobs.min.js"></script>
+
+    <link rel="stylesheet" href="css/select.css">
+    <style>
+        .modal-fit .modal-dialog {
+            left: 0;
+            top: 0;
+            right: 0;
+            bottom: 0;
+            margin: auto;
+            padding: 50px;
+        }
+
+        .modal-fit .modal-body {
+            height: calc(100vh - 200px);
+            overflow: auto;
+        }
+
+        @media (min-width: 768px) {
+            .modal-fit .modal-dialog {
+                width: auto;
+            }
+        }
+    </style>
+</head>
+<body ng-app="cBoard" ng-controller="renderCtrl">
+<div ng-switch="board.layout.type">
+    <div ng-switch-when="cockpit">
+        <div ng-include="'org/cboard/view/dashboard/layout/cockpit.html'"></div>
+    </div>
+    <div ng-switch-default>
+        <section class="content-header">
+            <h1>
+                {{board.name}}
+            </h1>
+        </section>
+        <div ng-if="persistFinish" class="persistFinish">
+        </div>
+        <div id="inner-container" class="content" style="margin-top: 15px;">
+            <div class="row" ng-repeat="row in board.layout.rows track by $index" ng-style="{height:row.height+'px'}">
+                <ng-switch on="row.type">
+                    <div ng-switch-when="cockpit">
+                    </div>
+                    <div ng-switch-default>
+                        <div ng-repeat="widget in row.widgets track by $index">
+                            <div ng-if="widget.show">
+                                <dashboard-widget ng-show="widget.loading == false"></dashboard-widget>
+                            </div>
+                            <div ng-if="widget.hasRole != false && (widget.loading || !widget.show)"
+                                 class="col-md-{{widget.width}}" style="height: 50px;">
+                                <div class="box box-solid">
+                                    <div class="box-header">
+                                        <i class="fa fa-bar-chart-o"></i>
+                                        <h3 class="box-title">{{widget.name}}</h3>
+                                        <div class="box-tools pull-right">
+                                            <button type="button" class="btn btn-box-tool" ng-if="widgetCfg"
+                                                    ng-click="config(widget)"><i
+                                                    class="fa fa-wrench"></i>
+                                            </button>
+                                            <button type="button" class="btn btn-box-tool" data-widget="collapse"><i
+                                                    class="fa fa-minus"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+                                    <div class="box-body" ng-style="{height:row.height?row.height:300+'px'}">
+                                        <i class="fa fa-spinner fa-spin"></i> {{"COMMON.LOADING" | translate}}
+                                    </div>
+                                </div>
+                            </div>
+                            <div ng-if="widget.hasRole == false" class="col-md-{{widget.width}}">
+                                <div class="box box-solid">
+                                    <div class="box-header">
+                                        <i class="fa fa-bar-chart-o"></i>
+                                        <h3 class="box-title">{{widget.name}}</h3>
+                                        <div class="box-tools pull-right">
+                                            <button type="button" class="btn btn-box-tool" data-widget="collapse"><i
+                                                    class="fa fa-minus"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+                                    <div class="box-body" ng-style="{height:row.height?row.height:300+'px'}">
+                                        {{'ADMIN.CONTACT_ADMIN' | translate}}：<br>
+                                        <ul>
+                                            <li ng-repeat="ri in widget.roleInfo"> {{ri.type | translate}}：{{ri.name}}
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </ng-switch>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<script src="org/cboard/util/CBoardEChartUtils.js"></script>
+<script src="org/cboard/util/CBoardEChartRender.js"></script>
+<script src="org/cboard/util/CBoardCommonUtils.js"></script>
+<script src="org/cboard/util/CBoardKpiRender.js"></script>
+<script src="org/cboard/util/CBoardTableRender.js"></script>
+<script src="org/cboard/util/CBoardMapRender.js"></script>
+<script src="org/cboard/util/CBoardJsTreeUtils.js"></script>
+<script src="org/cboard/util/CBoardHeatMapRender.js"></script>
+<script src="org/cboard/util/CBoardBmapRender.js"></script>
+
+<!-- AngularJS-->
+<script src="org/cboard/ng-app.js"></script>
+<script src="org/cboard/ng-config.js"></script>
+<script src="org/cboard/controller/cboard/renderCtrl.js"></script>
+<script src="org/cboard/controller/config/folderTreeCtrl.js"></script>
+<script src="org/cboard/controller/config/cockpitLayoutCtrl.js"></script>
+<script src="org/cboard/service/dashboard/cockpitLayoutService.js"></script>
+<script src="org/cboard/service/dashboard/dashboardService.js"></script>
+<script src="org/cboard/service/data/dataService.js"></script>
+<script src="org/cboard/service/util/ModalUtils.js"></script>
+<script src="org/cboard/service/updater/updateService.js"></script>
+<script src="org/cboard/service/chart/chartDataProcess.js"></script>
+<script src="org/cboard/service/chart/chartFunnelService.js"></script>
+<script src="org/cboard/service/chart/chartKpiService.js"></script>
+<script src="org/cboard/service/chart/chartLineService.js"></script>
+<script src="org/cboard/service/chart/chartContrastService.js"></script>
+<script src="org/cboard/service/chart/chartPieService.js"></script>
+<script src="org/cboard/service/chart/chartSankeyService.js"></script>
+<script src="org/cboard/service/chart/chartRadarService.js"></script>
+<script src="org/cboard/service/chart/chartService.js"></script>
+<script src="org/cboard/service/chart/chartMapService.js"></script>
+<script src="org/cboard/service/chart/chartTableService.js"></script>
+<script src="org/cboard/service/chart/chartScatterService.js"></script>
+<script src="org/cboard/service/chart/chartGaugeService.js"></script>
+<script src="org/cboard/service/chart/chartWordCloudService.js"></script>
+<script src="org/cboard/service/chart/chartTreeMapService.js"></script>
+<script src="org/cboard/service/chart/chartAreaMapService.js"></script>
+<script src="org/cboard/service/chart/chartHeatMapCalendarService.js"></script>
+<script src="org/cboard/service/chart/chartHeatMapTableService.js"></script>
+<script src="org/cboard/service/chart/chartLiquidFillService.js"></script>
+<script src="org/cboard/service/chart/chartChinaMapService.js"></script>
+<script src="org/cboard/service/chart/chartWorldMapService.js"></script>
+<script src="org/cboard/service/chart/chartChinaMapBmapService.js"></script>
+<script src="org/cboard/service/chart/chartRelationService.js"></script>
+<script src="org/cboard/directive/dashboard/dashboardWidget.js"></script>
+
+
+<script src="plugins/crossTable/plugin.js"></script>
+<script src="plugins/FineMap/plugin.js"></script>
+
+<!--<script src="plugins/echart/echarts-bmap.min.js"></script>-->
+
+<script type="text/ng-template" id="echartContent">
+    <div class="col-md-{{widget.width}}">
+        <div class="box box-solid">
+            <div class="box-header">
+                <i class="fa fa-bar-chart-o"></i>
+                <h3 class="box-title">{{widget.name}}</h3>
+            </div>
+            <div class="box-body" ng-style="{height:myheight+'px'}">
+            </div>
+        </div>
+    </div>
+</script>
+<script type="text/ng-template" id="kpiContent">
+    <div class="col-md-{{widget.width}} kpi-body">
+    </div>
+</script>
+<script type="text/ng-template" id="chartContent">
+    <div class="col-md-{{widget.width}}">
+        <div class="box box-solid">
+            <div class="box-header">
+                <i class="fa fa-bar-chart-o"></i>
+                <h3 class="box-title">{{widget.name}}</h3>
+            </div>
+            <div class="box-body" ng-style="{height:myheight+'px'}">
+            </div>
+        </div>
+    </div>
+</script>
+</body>
+</html>

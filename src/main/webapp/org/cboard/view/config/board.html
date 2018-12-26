@@ -1,0 +1,111 @@
+<!-- Content Wrapper. Contains page content -->
+<div id="inner-container" class="content">
+    <div class="row" ng-show="!freeLayout">
+        <div class="col-md-3">
+            <div class="box box-solid">
+                <div class="box-header with-border">
+                    <i class="fa fa-dashboard"></i><h3 class="box-title">{{'CONFIG.DASHBOARD.DASHBOARD'|translate}}</h3>
+                    <div class="box-tools pull-right operateBox">
+                        <i class="fa fa-info toolbar-icon" ng-click="showInfo()" title="{{'COMMON.INFORMATION'|translate}}"></i>&nbsp;&nbsp;
+                        <i class="fa fa-copy toolbar-icon" ng-click="copyNode()" title="{{'COMMON.COPY'|translate}}"></i>&nbsp;&nbsp;
+                        <i class="fa fa-edit toolbar-icon" ng-click="editNode()" title="{{'COMMON.EDIT'|translate}}"></i>&nbsp;&nbsp;
+                        <i class="fa fa-trash-o toolbar-icon"  ng-click="deleteNode()" title="{{'COMMON.DELETE'|translate}}"></i>&nbsp;&nbsp;
+                        <i class="fa fa-plus toolbar-icon" ng-click="newOperate()" title="{{'COMMON.NEW'|translate}}"></i>
+                        <div class="newBoard hideOperate">
+                            <!--<span class="newFreeLayout" ng-click="newFreeLayout()">New free layout</span>-->
+                            <span class="newGridLayout" ng-click="newGridLayout()">{{'CONFIG.DASHBOARD.NEW_GRID_LAYOUT'|translate}}</span>
+                            <span class="newGridLayout" ng-click="newTimelineLayout()">{{'CONFIG.DASHBOARD.NEW_TIMELINE_LAYOUT'|translate}}</span>
+                            <span class="newGridLayout" ng-click="newCockpitLayout()">{{'CONFIG.DASHBOARD.NEW_COCKPIT_LAYOUT'|translate}}</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="panel-body">
+                    <div id="boardTreeID" js-tree="treeConfig" should-apply="applyModelChanges()" ng-model="treeData" tree="treeInstance"
+                         tree-events-obj="treeEventsObj"></div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-9">
+            <div class="box" ng-show="optFlag == 'new' || optFlag == 'edit'">
+                <div class="box-header with-border">
+                    <h3 class="box-title">{{curBoard.name}}</h3>
+                    <div class="box-tools pull-right" ng-switch="optFlag">
+                        <span ng-switch-when="edit" class="label label-info">{{'COMMON.EDIT'|translate}}</span>
+                        <span ng-switch-when="new" class="label label-danger">{{'COMMON.NEW'|translate}}</span>
+                    </div>
+                </div>
+                <div class="box-body">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <div class="form-group">
+                                        <button type="submit" class="btn btn-danger pull-right">{{'COMMON.CANCEL'|translate}}</button>
+                                        <a class="btn btn-success pull-right" ng-click="checkBeforPreview(curBoard.id)" target="_blank"
+                                                style="margin-right: 5px">{{'CONFIG.DASHBOARD.PREVIEW'|translate}}
+                                        </a>
+                                        <button type="submit" class="btn btn-success pull-right" ng-click="saveBoard()"
+                                                style="margin-right: 5px">{{'COMMON.SAVE'|translate}}
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <div class="form-group">
+                                        <label>{{'CONFIG.DASHBOARD.CATEGORY'|translate}}</label>
+                                        <select class="form-control" ng-model="curBoard.categoryId"
+                                                ng-options="w.id as w.name for w in categoryList"></select>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <div class="form-group" ng-class="{'has-error': !(verify.boardName || curBoard.name.length)}">
+                                        <label>{{'CONFIG.DASHBOARD.NAME'|translate}}</label>
+                                        <input id="BoardName" ng-model="curBoard.name" class="form-control"/>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group" ng-repeat="alert in alerts">
+                                <div uib-alert ng-class="'alert-' + (alert.type || 'warning')"
+                                     close="alerts.splice($index, 1)">{{alert.msg}}
+                                </div>
+                            </div>
+                            <ng-switch on="curBoard.layout.type">
+                                <div ng-switch-when="timeline">
+                                    <div ng-include="'org/cboard/view/config/board/timeline/timeline.html'"></div>
+                                </div>
+                                <div ng-switch-when="cockpit">
+                                    <div ng-include="'org/cboard/view/config/board/cockpit/view.html'"></div>
+                                </div>
+                                <div ng-switch-default>
+                                    <div ng-include="'org/cboard/view/config/board/grid/grid.html'"></div>
+                                </div>
+                            </ng-switch>
+                        </div>
+                    </div>
+                    </form>
+                    <!-- /.box-body -->
+                    <div class="box-footer">
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="form-group">
+                                    <button type="submit" class="btn btn-danger pull-right">{{'COMMON.CANCEL'|translate}}</button>
+                                    <a class="btn btn-success pull-right" ng-click="checkBeforPreview(curBoard.id)" target="_blank"
+                                       style="margin-right: 5px">{{'CONFIG.DASHBOARD.PREVIEW'|translate}}
+                                    </a>
+                                    <button type="submit" class="btn btn-success pull-right" ng-click="saveBoard()"
+                                            style="margin-right: 5px">{{'COMMON.SAVE'|translate}}
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- /.box-footer-->
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row" ng-show="freeLayout" ng-include="'org/cboard/view/config/free_layout.html'"></div>
+</div>

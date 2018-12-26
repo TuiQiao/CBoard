@@ -1,0 +1,59 @@
+<div class="modal-header">
+    <button type="button" class="close" data-dismiss="modal" aria-label="Close" ng-click="close()">
+        <span aria-hidden="true">×</span></button>
+    <h4 class="modal-title">{{'COMMON.FILTER_GROUP'|translate}}</h4>
+</div>
+<div class="modal-body">
+    <div class="row">
+        <div class="col-md-12 form-horizontal">
+            <div class="form-group">
+                <label class="col-sm-2 control-label">{{'CONFIG.WIDGET.COLUMN'|translate}}</label>
+                <div class="col-sm-10">
+                    <div class="form-control"
+                         style="min-height: 35px;height: auto;padding: 0px">
+                <span ng-repeat="o in columnObjs"
+                      class="btn btn-default btn-sm" style="margin: 3px 3px;"
+                      ng-click="addColumn(o.column)">{{o.alias?o.column+'('+o.alias+')':o.column}}</span>
+                    </div>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-2 control-label">{{'CONFIG.WIDGET.FILTER'|translate}}</label>
+                <div class="col-sm-10">
+                    <div class="form-control"
+                         style="min-height: 38px;height: auto;padding: 0px">
+                        <div ng-repeat="o in data.filters" class="btn-group"
+                             style="margin: 3px 3px;">
+                            <button type="button" class="btn btn-default btn-sm"
+                                    style="cursor: move;">
+                                {{o.col}}
+                            </button>
+                            <button type="button"
+                                    class="btn btn-default btn-sm dropdown-toggle"
+                                    ng-click="editFilter(o)">
+                                <span class="fa fa-edit"></span>
+                            </button>
+                            <button type="button"
+                                    class="btn btn-default btn-sm dropdown-toggle"
+                                    ng-click="data.filters.splice($index, 1)">
+                                <span class="fa fa-trash-o"></span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-2 control-label">{{'CONFIG.WIDGET.ALIAS'|translate}}</label>
+                <div class="col-sm-10">
+                    <input class="form-control" ng-model="data.group">
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal-footer">
+    <button type="button" class="btn btn-default pull-left" data-dismiss="modal" ng-click="close()">
+        {{'COMMON.CANCEL'|translate}}
+    </button>
+    <button type="button" class="btn btn-primary" ng-click="ok()">{{'COMMON.OK'|translate}}</button>
+</div>

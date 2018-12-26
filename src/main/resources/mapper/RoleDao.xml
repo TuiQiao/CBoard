@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="org.cboard.dao.RoleDao">
+
+    <update id="save">
+        <![CDATA[
+        INSERT INTO dashboard_role(role_id,role_name,user_id) VALUES (#{roleId},#{roleName},#{userId})
+        ]]>
+    </update>
+
+    <select id="getRole" resultType="org.cboard.pojo.DashboardRole">
+        SELECT role_id roleId,role_name roleName,user_id userId FROM dashboard_role where role_id = #{0}
+    </select>
+
+    <select id="getRoleList" resultType="org.cboard.pojo.DashboardRole">
+        SELECT role_id roleId,
+               role_name roleName,
+               user_id userId
+          FROM dashboard_role
+         WHERE #{0} = '${admin_user_id}' or user_id = #{0}
+        ORDER BY role_name
+    </select>
+
+    <select id="getCurrentRoleList" resultType="org.cboard.pojo.DashboardRole">
+        SELECT r.role_id roleId,r.role_name roleName,ur.user_id userId
+          FROM dashboard_role r
+          LEFT JOIN dashboard_user_role ur on ur.role_id=r.role_id
+         WHERE ur.user_id = #{0}
+         ORDER BY r.role_name
+    </select>
+
+    <select id="getRoleListAll" resultType="org.cboard.pojo.DashboardRole">
+        SELECT role_id roleId,role_name roleName,user_id userId FROM dashboard_role
+        order by role_name
+    </select>
+
+    <update id="update" parameterType="org.cboard.pojo.DashboardUser">
+        <![CDATA[
+        update dashboard_role set role_name = #{roleName},user_id = #{userId} where role_id = #{roleId}
+        ]]>
+    </update>
+
+    <select id="getRoleResList" resultType="org.cboard.pojo.DashboardRoleRes">
+        SELECT role_res_id roleResId,role_id roleId,res_id resId,res_type resType,permission permission FROM dashboard_role_res
+    </select>
+
+    <insert id="saveRoleRes" parameterType="org.cboard.pojo.DashboardRoleRes">
+        <![CDATA[
+        insert into dashboard_role_res (res_id, role_id,res_type,permission) values (#{resId}, #{roleId} ,#{resType},#{permission})
+        ]]>
+    </insert>
+
+    <delete id="deleteRoleRes">
+        delete from dashboard_role_res where role_id = #{0}
+    </delete>
+
+    <delete id="deleteRoleResByResId">
+        delete from dashboard_role_res where res_id = #{0} and res_type = #{1}
+    </delete>
+
+    <delete id="deleteRole">
+        delete from dashboard_role where role_id = #{0}
+    </delete>
+
+    <select id="getUserRoleResList" resultType="org.cboard.pojo.DashboardRoleRes">
+        select rr.role_res_id roleResId,rr.role_id roleId,rr.res_id resId,rr.res_type resType,rr.permission permission FROM dashboard_user_role ur LEFT JOIN dashboard_role_res rr ON ur.role_id = rr.role_id WHERE ur.user_id = #{0} AND rr.res_type = #{1}
+    </select>
+
+</mapper>

@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:p="http://www.springframework.org/schema/p"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+    <bean name="rawDataCache" class="org.cboard.cache.RedisCacheManager">
+        <property name="redisTemplate">
+            <bean id="redisTemplate" class="org.springframework.data.redis.core.RedisTemplate">
+                <property name="connectionFactory">
+                    <bean class="org.springframework.data.redis.connection.jedis.JedisConnectionFactory"
+                          p:hostName="${cache.redis.hostName}"
+                          p:port="${cache.redis.port}"
+                          p:usePool="true"/>
+                </property>
+                <property name="keySerializer">
+                    <bean class="org.springframework.data.redis.serializer.StringRedisSerializer"/>
+                </property>
+            </bean>
+        </property>
+    </bean>
+</beans>

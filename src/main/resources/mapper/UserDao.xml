@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="org.cboard.dao.UserDao">
+
+    <update id="save">
+        INSERT INTO dashboard_user(user_id,login_name,user_name,user_password,user_status) VALUES (#{userId},#{loginName},#{userName},#{userPassword},
+            <choose>
+                <when test="userStatus == null">
+                    null
+                </when>
+                <otherwise>
+                    #{userStatus}
+                 </otherwise>
+            </choose>        
+        )
+    </update>
+
+    <select id="getUserList" resultType="org.cboard.pojo.DashboardUser">
+        SELECT user_id userId,login_name loginName,user_name userName,user_status userStatus FROM dashboard_user
+        order by login_name
+    </select>
+
+    <update id="update" parameterType="org.cboard.pojo.DashboardUser">
+        update dashboard_user set login_name = #{loginName},user_name = #{userName}
+        <if test="userPassword!=null">
+            ,user_password = #{userPassword}
+        </if>
+        where user_id = #{userId}
+    </update>
+
+    <delete id="deleteUserById" parameterType="Map">
+        DELETE FROM dashboard_user WHERE user_id = #{userId}
+    </delete>
+
+    <delete id="deleteUserRole" parameterType="Map">
+        DELETE FROM dashboard_user_role
+         WHERE user_id = #{objUid}
+        <if test="curUid != adminUid">
+            AND role_id IN (SELECT role_id FROM dashboard_role WHERE user_id = #{curUid})
+        </if>
+    </delete>
+
+    <delete id="deleteUserRoles" parameterType="Map">
+        DELETE FROM dashboard_user_role
+        WHERE user_id IN
+        <foreach item="item" index="index" collection="userIds" open="("
+                 separator="," close=")">
+            #{item}
+        </foreach>
+        <if test="curUid != adminUid">
+            AND role_id IN (select role_id from dashboard_role where user_id = #{curUid} and role_id in
+            <foreach item="item" index="index" collection="roleIds" open="(" separator="," close=")">
+            #{item}
+            </foreach>)
+        </if>
+        <if test="curUid == adminUid">
+            AND role_id IN
+            <foreach item="item" index="index" collection="roleIds" open="(" separator="," close=")">
+                #{item}
+            </foreach>
+        </if>
+    </delete>
+
+    <insert id="saveUserRole" parameterType="java.util.List">
+        insert into dashboard_user_role
+        (user_id, role_id)
+        values
+        <foreach collection="list" item="ur" index="index" separator=",">
+            (#{ur.userId}, #{ur.roleId})
+        </foreach>
+    </insert>
+
+    <select id="getUserRoleList" resultType="org.cboard.pojo.DashboardUserRole">
+        SELECT user_id userId,role_id roleId FROM dashboard_user_role
+    </select>
+
+    <select id="getUserByLoginName" resultType="org.cboard.pojo.DashboardUser">
+        SELECT user_id userId,login_name loginName,user_name userName,user_status userStatus FROM dashboard_user where login_name = #{0}
+    </select>
+
+    <insert id="saveNewUser" >
+        INSERT INTO dashboard_user(user_id, login_name, user_name)
+        SELECT a.*
+        FROM (SELECT #{0} AS uid, #{2} AS login_name, #{1} AS user_name) a
+        LEFT JOIN (SELECT user_id AS uid FROM dashboard_user WHERE user_id=#{0}) b ON a.uid = b.uid
+        WHERE b.uid IS NULL
+    </insert>
+
+    <update id="updateUserPassword">
+        <![CDATA[
+        update dashboard_user set user_password = #{2} where user_id = #{0} and user_password = #{1}
+        ]]>
+    </update>
+
+    <delete id="deleteUserRoleByRoleId">
+        delete from dashboard_user_role where role_id = #{0}
+    </delete>
+</mapper>

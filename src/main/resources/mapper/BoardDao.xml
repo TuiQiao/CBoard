@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="org.cboard.dao.BoardDao">
+
+    <select id="getBoard" resultType="org.cboard.pojo.DashboardBoard">
+        SELECT
+          board_id    AS id,
+          b.user_id   AS userId,
+          board_name  AS name,
+          layout_json AS layout,
+          category_id AS categoryId,
+          u.user_name AS userName,
+          create_time AS createTime,
+          update_time AS updateTime
+        FROM dashboard_board b
+        LEFT JOIN dashboard_user u ON u.user_id = b.user_id
+        WHERE board_id = #{0}
+    </select>
+
+    <select id="getBoardList" resultType="org.cboard.pojo.DashboardBoard">
+          SELECT
+               board_id        AS id,
+               a.user_id       AS userId,
+               board_name      AS NAME,
+               layout_json     AS layout,
+               a.category_id   AS categoryId,
+               b.category_name AS categoryName,
+               u.user_name     AS userName,
+               u.login_name    AS loginName,
+               create_time     AS createTime,
+               update_time     AS updateTime
+          FROM dashboard_board a
+          LEFT JOIN dashboard_user u ON u.user_id = a.user_id
+          LEFT JOIN dashboard_category b ON a.category_id = b.category_id
+         WHERE #{0} = '${admin_user_id}' OR a.user_id = #{0} OR a.board_id IN (
+             SELECT res_id
+               FROM dashboard_user_role ur
+               LEFT JOIN dashboard_role_res rr ON ur.role_id = rr.role_id
+              WHERE ur.user_id = #{0} AND rr.res_type = 'board'
+          ) ORDER BY a.board_name
+    </select>
+
+    <select id="getBoardListAdmin" resultType="org.cboard.pojo.DashboardBoard">
+        SELECT
+               board_id        AS id,
+               a.user_id       AS userId,
+               board_name      AS NAME,
+               layout_json     AS layout,
+               a.category_id   AS categoryId,
+               b.category_name AS categoryName,
+               u.user_name     AS userName,
+               u.login_name    AS loginName,
+               create_time     AS createTime,
+               update_time     AS updateTime
+          FROM dashboard_board a
+          LEFT JOIN dashboard_user u ON u.user_id = a.user_id
+          LEFT JOIN dashboard_category b ON a.category_id = b.category_id
+         WHERE #{0} = '${admin_user_id}'
+            OR a.user_id = #{0}
+            OR a.board_id IN (
+                SELECT res_id
+                FROM dashboard_role r
+                LEFT JOIN dashboard_role_res rr ON r.role_id = rr.role_id
+                WHERE r.user_id = #{0} AND rr.res_type = 'board'
+            )
+        ORDER BY a.board_name
+    </select>
+
+    <insert id="save" useGeneratedKeys="true" keyProperty="id" keyColumn="board_id" parameterType="org.cboard.pojo.DashboardBoard">
+        INSERT INTO dashboard_board(user_id,board_name,layout_json,category_id)
+        VALUES (#{userId},#{name},#{layout},
+        <choose>
+            <when test="categoryId == null">
+                null
+            </when>
+            <otherwise>
+                #{categoryId}
+            </otherwise>
+        </choose>
+        )
+    </insert>
+
+    <update id="update" parameterType="org.cboard.pojo.DashboardBoard">
+        UPDATE dashboard_board
+        SET board_name = #{name},layout_json = #{layout},update_time = #{updateTime},
+        <choose>
+            <when test="categoryId == null">
+                category_id = null
+            </when>
+            <otherwise>
+                category_id = #{categoryId}
+            </otherwise>
+        </choose>
+        WHERE board_id = #{id}
+    </update>
+
+    <select id="countExistBoardName" parameterType="Map" resultType="java.lang.Long">
+        SELECT count(1) FROM dashboard_board WHERE user_id = #{user_id}
+        <if test="board_id != null" >
+            <![CDATA[
+            AND board_id <> #{board_id}
+            ]]>
+        </if>
+        AND board_name = #{board_name}
+    </select>
+
+    <delete id="delete">
+        DELETE FROM dashboard_board WHERE board_id = #{0}
+    </delete>
+
+    <select id="checkBoardRole" resultType="java.lang.Long">
+        SELECT count(1)
+          FROM dashboard_board
+         WHERE board_id = #{1}
+               AND (#{0} = '${admin_user_id}'
+                 OR user_id = #{0}
+                 OR board_id IN (
+                    SELECT res_id
+                      FROM dashboard_user_role ur
+                      LEFT JOIN dashboard_role_res rr ON ur.role_id = rr.role_id
+                     WHERE ur.user_id = #{0} AND rr.res_type = 'board' AND rr.permission LIKE #{2})
+                 )
+    </select>
+
+    <select id="getBoardParam" resultType="org.cboard.pojo.DashboardBoardParam">
+        SELECT board_param_id id,user_id userId,board_id boardId,config
+        FROM dashboard_board_param where board_id = #{0} and user_id = #{1}
+    </select>
+
+    <insert id="saveBoardParam" parameterType="org.cboard.pojo.DashboardBoardParam">
+        <![CDATA[
+        INSERT INTO dashboard_board_param(user_id,board_id,config) VALUES (#{userId},#{boardId},#{config})
+        ]]>
+    </insert>
+
+    <delete id="deleteBoardParam">
+        DELETE FROM dashboard_board_param WHERE board_id = #{0} and user_id = #{1}
+    </delete>
+
+</mapper>

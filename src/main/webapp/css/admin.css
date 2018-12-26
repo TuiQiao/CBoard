@@ -1,0 +1,350 @@
+/*
+ * Create by xiaomingmiao on 2018/1/16
+ */
+.cockpit-row{
+    display: flex;
+    flex-direction: row;
+    flex-grow: 100;
+}
+
+.cockpit-col{
+    display: flex;
+    flex-direction: column;
+    flex-grow: 100;
+}
+
+.cockpit-header{
+    height: 48px;
+    background-color: #2185d0;
+}
+
+.cockpit-header-title{
+    color: #fff;
+    font-size: 20px;
+    margin-top: auto!important;
+    margin-bottom: auto!important;
+    margin-left: 6px;
+}
+
+.cockpit-header-title span{
+    color: #ddd;
+}
+
+.cockpit-header-func{
+    width: 80px;
+    flex-grow: 0!important;
+    padding-top: 5px;
+    padding-bottom: 5px;
+    padding-right: 10px;
+}
+
+.cockpit-header-func .icon{
+    text-align: center;
+    color: #fff;
+    font-size: 20px;
+}
+
+.cockpit-header-func .label{
+    text-align: center;
+    color: #fff;
+    font-size: 12px!important;
+}
+
+.cockpit-canvas{
+    margin: auto;
+}
+
+.cockpit-drag{
+    background:url(../imgs/cockpit/drag.png) repeat;
+}
+
+.cockpit-component{
+    flex-grow: 0!important;
+    background-color: #fff;
+    border-right: 1px solid #c0c0c0;
+}
+
+.cockpit-component-conf{
+    flex-grow: 0!important;
+    background-color: #fff;
+    border-left: 1px solid #c0c0c0;
+    width: 275px;
+}
+
+.cockpit-component-conf .title{
+    font-size: 16px;
+    background-color: #eee;
+    color: #333;
+    text-align: center;
+    padding-top: 6px;
+    padding-bottom: 6px;
+}
+
+#cockpitComponentConf .el-tabs__header{
+    margin-bottom: 0px;
+}
+
+#cockpitComponentConf form{
+    padding-right: 5px;
+}
+
+.color-selector{
+    margin-top: 8px;
+}
+
+.interface-field-row{
+    margin-bottom: 6px;
+    text-align: center;
+}
+
+.cockpit-block{
+    position: absolute;
+    width: 207px;
+    height: 105px;
+}
+
+.cockpit-block:hover{
+    border: 1px solid #2185d0;
+    background-color: rgba(33, 133, 208, 0.4)!important;
+}
+
+.cockpit-block-select{
+    border: 1px solid #2185d0;
+}
+
+.cockpit-component-conf-tips{
+    color: #999;
+    line-height: 1;
+    text-align: center;
+    padding-top: 2px;
+}
+
+.cockpit-title{
+    margin:auto!important;
+    width: 470px;
+    height: 70px;
+    background-image: url("../imgs/cockpit/title-footer.gif");
+    background-size: 100%;
+    background-repeat: no-repeat;
+    background-position: center center;
+    text-align: center;
+    color: #fff;
+    font-size: 20px;
+    padding-top: 10px;
+}
+
+.el-form-item{
+    margin-bottom: 8px!important;
+}
+
+
+.cockpit-temp{
+    width: 225px;
+    height: 105px;
+}
+
+/*.cockpit-col .el-submenu .el-menu,
+.cockpit-col .el-submenu .el-menu-item{
+    height: 105px;
+}*/
+
+.cockpit-col .el-submenu .el-menu-item{
+    /*padding-left: 0px!important;*/
+    padding-right: 0px!important;
+}
+
+
+.cockpit-view-close{
+    color: #fff;
+    height: 26px;
+    position: absolute;
+    text-align: right;
+    padding-right: 5px;
+    padding-top: 5px;
+    z-index: 999;
+    width: 100%;
+    top: 0;
+}
+
+.cockpit-view-close i:hover{
+    color: #ccc;
+    cursor: pointer;
+}
+
+/*柱状图组件样式*/
+.cockpit-bar{
+    height: 100%;
+}
+
+/*折线图组件样式*/
+.cockpit-line{
+    height: 100%;
+}
+
+/*滚动文本样式*/
+.cockpit-rlabel{
+    height: 100%;
+}
+
+/*饼图组件样式*/
+.cockpit-pie{
+    height: 100%;
+}
+
+/*标题组件样式*/
+.cockpit-label{
+    height: 100%;
+    /*border: 1px #17286F solid;*/
+}
+
+.cockpit-label-label{
+    text-align: center;
+    font-size: 16px;
+    color: #fff;
+}
+
+/*表格组件样式*/
+.cockpit-table{
+    height: 100%;
+}
+
+.cockpit-table table{
+    border: 1px #57D2FE solid;
+}
+
+.cockpit-table-body label{
+    margin-left: 5px;
+    margin-right: 5px;
+}
+
+
+/*时钟组件样式*/
+.cockpit-clock{
+    height: 100%;
+    text-align: center;
+}
+
+.cockpit-clock,
+.cockpit-clock i{
+    font-size: 16px;
+    color: #fff;
+    padding-left: 5px;
+}
+
+/*指标卡组件样式*/
+.cockpit-kpi{
+    border: 1px #2185d0 solid;
+    height: 100%;
+    background-color: #0b375a;
+}
+
+.cockpit-kpi table,
+.cockpit-label table,
+.cockpit-table table{
+    width: 100%;
+    height: 100%;
+}
+
+.cockpit-kpi-label{
+    text-align: left;
+    font-size: 14px;
+    color: #03A2C9;
+    padding-left: 5px;
+}
+
+.cockpit-kpi-number{
+    text-align: right;
+    font-size: 12px;
+    color: #5CFFAC;
+    padding-right: 5px;
+}
+
+/*边框组件样式*/
+.cockpit-border{
+    height: 100%;
+    border-style: solid;
+    border-width: 14px;
+    border-image-slice: 14 fill;
+    border-image-width: initial;
+    border-image-outset: initial;
+    border-image-repeat: initial;
+    background: none;
+}
+
+.cockpit-ornament{
+    width: 100%;
+    height: 100%;
+    background-size: 100%;
+    background-repeat: no-repeat;
+    background-position: center center;
+    opacity: 1;
+}
+
+div.func-btn:hover div.cockpit-col{
+    color: #ccc;
+    cursor: pointer;
+}
+
+
+/*组件icon背景*/
+/*li.el-submenu ul.el-menu{
+    background-color: #0b375a!important;
+    border: #0b375a!important;
+}*/
+
+/*组件icon背景*/
+/*li.el-submenu ul.el-menu:hover,
+li.el-submenu ul.el-menu::selection{
+    background-color: #0b1f3b!important;
+    border: #0b1f3b!important;
+}*/
+
+.cockpit-no-data{
+    width: 100%;
+    text-align: center;
+    margin-top: 20px;
+    color: #999;
+}
+
+.cockpit-color-selector{
+    flex-grow: 0!important;
+    width: 30px!important;
+    padding-right: 5px;
+}
+
+.cockpit-component-conf label{
+    font-size: 12px!important;
+}
+
+/*图表数据源配置表单*/
+#chartDataForm label{
+    padding-left: 5px;
+}
+
+/*表格组件列配置*/
+#tableCol div.el-collapse-item__content{
+    height: 275px;
+    overflow-y: auto;
+}
+
+.cockpit-upload{
+    width: 100%;
+    height: 80px;
+    border: 3px dashed silver;
+    line-height: 80px;
+    text-align: center;
+    font-size: 14px;
+    color: #d3d3d3;
+}
+
+body{
+    margin: 0;
+    padding: 0;
+}
+.gf-fit-box{
+    display: flex;
+    display:  -ms-flexbox;
+    flex-direction: column;
+    -ms-flex-direction: column;
+    height:100%;
+}

@@ -1,0 +1,20 @@
+<div class="form-group" ng-repeat="alert in alerts">
+    <div uib-alert ng-class="'alert-' + (alert.type || 'warning')"
+         close="alerts.splice($index, 1)">{{alert.msg}}
+    </div>
+</div>
+<div class="form-group">
+    <label>{{'CONFIG.DATA_SOURCE.DATA_PROVIDER'|translate}}</label>
+    <input ng-model="curDatasource.type" class="form-control input-sm" disabled>
+</div>
+<div class="form-group">
+    <label>{{'CONFIG.DATA_SOURCE.NAME'|translate}}</label>
+    <input id="DataSetName" ng-model="curDatasource.name" class="form-control input-sm"/>
+</div>
+<div ng-include="dsView"></div>
+</div>
+<div class="form-group">
+    <button type="submit" class="btn btn-danger pull-right">{{'COMMON.CANCEL'|translate}}</button>
+    <button type="submit" ng-click="saveEdit()" class="btn btn-success pull-right" style="margin-right: 5px">{{'COMMON.SAVE'|translate}}</button>
+    <button type="submit" ng-click="test()" class="btn btn-success pull-right" style="margin-right: 5px">{{'CONFIG.DATA_SOURCE.TEST'|translate}}</button>
+</div>

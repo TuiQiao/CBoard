@@ -1,0 +1,9 @@
+<div class="btn-group" style="cursor: move;margin: 3px 3px;">
+    <button type="button" class="btn btn-sm" title="{{param.title}}" ng-class="{true:'btn-primary',false:'btn-default'}[param.values.length>0]">
+        {{param.name}}
+    </button>
+    <button type="button" class="btn btn-sm dropdown-toggle" ng-class="{true:'btn-primary',false:'btn-default'}[param.values.length>0]"
+            ng-click="editParam()">
+        <span class="fa fa-edit"></span>
+    </button>
+</div>

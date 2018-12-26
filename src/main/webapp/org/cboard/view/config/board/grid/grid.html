@@ -1,0 +1,35 @@
+<div class="row">
+    <div class="form-group" style="margin: 5px 15px;">
+        <button type="submit" class="btn btn-success" ng-click="addRow()">
+            {{'CONFIG.DASHBOARD.ADD_ROW'|translate}}
+        </button>
+        <button type="submit" class="btn btn-success" ng-click="addPramRow()">
+            {{'CONFIG.DASHBOARD.ADD_PARAMROW'|translate}}
+        </button>
+    </div>
+</div>
+<div dnd-list="curBoard.layout.rows" dnd-allowed-types="['r']">
+    <div class="dndPlaceholder row margin">
+        <div class="box sort-highlight" style="height: 130px"></div>
+    </div>
+    <div class="row margin" ng-repeat="row in curBoard.layout.rows" ng-init="rowIndex = $index">
+        <ng-switch on="row.type">
+            <div ng-switch-when="param">
+                <div ng-include="'org/cboard/view/config/board/grid/param.html'"></div>
+            </div>
+            <div ng-switch-default>
+                <div ng-include="'org/cboard/view/config/board/grid/widget.html'"></div>
+            </div>
+        </ng-switch>
+    </div>
+</div>
+<div class="row" ng-if="curBoard.layout.rows.length >= 3">
+    <div class="form-group" style="margin: 5px 15px;">
+        <button type="submit" class="btn btn-success" ng-click="addRow()">
+            {{'CONFIG.DASHBOARD.ADD_ROW'|translate}}
+        </button>
+        <button type="submit" class="btn btn-success" ng-click="addPramRow()">
+            {{'CONFIG.DASHBOARD.ADD_PARAMROW'|translate}}
+        </button>
+    </div>
+</div>

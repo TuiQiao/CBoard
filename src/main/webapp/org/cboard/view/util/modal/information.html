@@ -1,0 +1,41 @@
+<div class="modal-header">
+    <button type="button" class="close" data-dismiss="modal" aria-label="Close" ng-click="close()">
+        <span aria-hidden="true">×</span></button>
+    <h4 class="modal-title">{{"COMMON.TIP"|translate}} :</h4>
+</div>
+<div class="modal-body">
+    <!-- show information-->
+    <div class="col-md-12">
+        <div class="box box-solid">
+            <!-- /.box-header -->
+            <div class="box-body" style="color: black">
+                <dl class="dl-horizontal">
+                    <dt>Id</dt>
+                    <dd>{{content.id}}</dd>
+                    <dt>{{"CONFIG.DASHBOARD.NAME"|translate}}</dt>
+                    <dd>{{content.name}}</dd>
+                    <dt>{{"COMMON.USER_ID"|translate}}</dt>
+                    <dd>{{content.userId}}</dd>
+                    <dt>{{"CONFIG.JOB.USERNAME"|translate}}</dt>
+                    <dd>{{content.userName}}</dd>
+                    <dt>{{"COMMON.CREATOR_NAME"|translate}}</dt>
+                    <dd>{{content.loginName}}</dd>
+                    <dt>{{"COMMON.CREATE_TIME"|translate}}</dt>
+                    <dd>{{content.createTime}}</dd>
+                    <dt>{{"COMMON.UPDATE_TIM"|translate}}</dt>
+                    <dd>{{content.updateTime}}</dd>
+                </dl>
+            </div>
+            <!-- /.box-body -->
+        </div>
+        <!-- /.box -->
+    </div>
+</div>
+<div class="modal-footer">
+    <button type="button" class="btn btn-outline pull-left" data-dismiss="modal" ng-click="close()">
+        {{"COMMON.CANCEL"|translate}}
+    </button>
+    <button type="button" class="btn btn-outline" ng-click="ok()">
+        {{"COMMON.OK"|translate}}
+    </button>
+</div>

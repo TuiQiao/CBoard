@@ -1,0 +1,574 @@
+<div id="app">
+    <div class="gf-fit-box cockpit-drag" style="padding: 0px;">
+        <div class="cockpit-row">
+            <!-- 图形选择-->
+            <div class="cockpit-col cockpit-component">
+                <el-menu default-active="1-1" class="el-menu-vertical-demo" :collapse="true">
+                    <el-submenu index="1">
+                        <template slot="title">
+                            <i class="el-icon-picture"></i>
+                            <span slot="title">图表</span>
+                        </template>
+                        <el-submenu :index="'1-'+index" v-for="(value,key,index) in widgetList" :key="index">
+                            <span slot="title">{{key}}</span>
+                            <div style="max-height: 400px;overflow: auto">
+                                <el-menu-item :index="'1-'+index+widget.id" v-for="widget in value" :key="widget.id"
+                                              :name="widget.name" type="chart" componentName="hex-cockpit-chart"
+                                              @click="drag($event)">
+                                    <i :style="widget.iconUrl"></i>
+                                    {{widget.name}}
+                                </el-menu-item>
+                            </div>
+                        </el-submenu>
+                    </el-submenu>
+                    <el-submenu index="2">
+                        <template slot="title">
+                            <i class="el-icon-menu"></i>
+                            <span slot="title">其它</span>
+                        </template>
+                        <el-menu-item index="2-0" type="clock" componentName="hex-cockpit-clock" @click="drag($event)">
+                            时钟
+                        </el-menu-item>
+                        <el-menu-item index="2-1" type="label" componentName="hex-cockpit-label" @click="drag($event)">
+                            标题
+                        </el-menu-item>
+                        <el-menu-item index="2-2" type="rlabel" componentName="hex-cockpit-rlabel"
+                                      @click="drag($event)">
+                            滚动文本
+                        </el-menu-item>
+                        <el-menu-item index="2-3" type="table" componentName="hex-cockpit-table" @click="drag($event)">
+                            静态表格
+                        </el-menu-item>
+                        <el-menu-item index="2-4" type="kpi" componentName="hex-cockpit-kpi" @click="drag($event)">静态指标
+                        </el-menu-item>
+                        <el-menu-item index="2-5" type="border" componentName="hex-cockpit-border"
+                                      @click="drag($event)">
+                            静态边框
+                        </el-menu-item>
+                        <el-menu-item index="2-6" type="ornament" componentName="hex-cockpit-ornament"
+                                      @click="drag($event)">动态边框
+                        </el-menu-item>
+                    </el-submenu>
+                    <el-submenu index="4">
+                        <template slot="title">
+                            <i class="el-icon-setting"></i>
+                            <span slot="title">操作</span>
+                        </template>
+                        <el-menu-item index="4-1" @click="saveCockpitConf">保存</el-menu-item>
+                        <el-menu-item index="4-2" @click="viewCockpit">预览</el-menu-item>
+                    </el-submenu>
+                </el-menu>
+            </div>
+            <!-- 画布-->
+            <div class="cockpit-col">
+                <div id="cockpit-drag" class="cockpit-canvas"
+                     v-bind:style=" {width:dragWidth,height:dragHeight,background:(cockpitConf.background.includes('.')?'url(' + basePath + 'imgs/cockpit/' + cockpitConf.background + ') repeat':cockpitConf.background)} "
+                     @drop='drop($event)' @dragover='allowDrop($event)'>
+                    <div class="cockpit-block" v-for="cockpitComponent in cockpitComponents"
+                         :id="cockpitComponent.domId"
+                         :type="cockpitComponent.componentType" @click="cockpitBlockClick(cockpitComponent.domId)"
+                         :yprop="cockpitComponent.chartData.yprop" :xprop="cockpitComponent.chartData.xprop"
+                         :data-x="(cockpitComponent.chartData.positionX*cockpitComponent.chartData.xprop).toFixed()"
+                         :data-y="(cockpitComponent.chartData.positionY*cockpitComponent.chartData.yprop).toFixed()"
+                         :x="(cockpitComponent.chartData.positionX*cockpitComponent.chartData.xprop).toFixed()"
+                         :y="(cockpitComponent.chartData.positionY*cockpitComponent.chartData.yprop).toFixed()"
+                         v-bind:style=" {width:(cockpitComponent.chartData.chartWidth*cockpitComponent.chartData.xprop).toFixed() + 'px', height:(cockpitComponent.chartData.chartHeight*cockpitComponent.chartData.yprop).toFixed() + 'px', transform:'translate(' + (cockpitComponent.chartData.positionX*cockpitComponent.chartData.xprop).toFixed() + 'px,' + (cockpitComponent.chartData.positionY*cockpitComponent.chartData.yprop).toFixed() + 'px)'} ">
+                        <div class="cockpit-view-close" style="display: none;"><i class="fa fa-times" aria-hidden="true"
+                                                                                  @click="closeCockpitWin(cockpitComponent.domId)"></i>
+                        </div>
+                        <component v-bind:is="cockpitComponent.componentName"
+                                   v-bind:chartData="cockpitComponent.chartData"></component>
+                    </div>
+                </div>
+            </div>
+            <!-- 数据修改-->
+            <div class="cockpit-col cockpit-component-conf" style="position: relative">
+                <el-tabs id="cockpitComponentConf" v-model="tabActiveName">
+                    <el-tab-pane label="样式" name="one">
+                        <div class="title">页面设置</div>
+                        <el-collapse v-model="pageCssItem" accordion>
+                            <!-- 全局样式设置-->
+                            <el-collapse-item title="全局样式" name="1">
+                                <el-form label-width="84px" label-position="left" class="scrolling content">
+                                    <el-form-item label="分类">
+                                        <el-select v-model="cockpitConf.categoryId" placeholder="请选择">
+                                            <el-option v-for="data in categoryList"
+                                                       :key="data.id" :label="data.name" :value="data.id">
+                                            </el-option>
+                                        </el-select>
+                                    </el-form-item>
+                                    <el-form-item label="监控主题">
+                                        <el-input v-model="cockpitConf.viewName"></el-input>
+                                    </el-form-item>
+                                    <el-form-item label="屏幕大小(%)">
+                                        <div class="cockpit-row">
+                                            <div class="cockpit-col" style="width: 30px;padding-right: 2px;">
+                                                <el-input v-model="cockpitConf.screenWidth"
+                                                          @change="screenSizeChange"></el-input>
+                                                <div class="cockpit-component-conf-tips">宽度</div>
+                                            </div>
+                                            <div class="cockpit-col" style="width: 30px;padding-left: 2px;">
+                                                <el-input v-model="cockpitConf.screenHeight"
+                                                          @change="screenSizeChange"></el-input>
+                                                <div class="cockpit-component-conf-tips">高度</div>
+                                            </div>
+                                        </div>
+                                    </el-form-item>
+                                    <el-form-item label="背景色">
+                                        <input v-model="cockpitConf.background" type="color"/>
+                                    </el-form-item>
+                                    <el-form-item label="背景图">
+                                        <div class="cockpit-upload" @drop='dropUpload($event)'
+                                             @dragover='allowDrop($event)'>将图片拖拽到此区域
+                                        </div>
+                                    </el-form-item>
+                                    <el-form-item label="背景图">
+                                        <div style="width: 100%;height: 80px;"
+                                             v-bind:style="{background:cockpitConf.background.includes('.')?'url(' + basePath + 'imgs/cockpit/' + cockpitConf.background + ')  0% 0% / cover':cockpitConf.background,backgroundSize:'cover'}"/>
+                                    </el-form-item>
+                                </el-form>
+                            </el-collapse-item>
+                            <!---图表尺寸位置设置-->
+                            <el-collapse-item title="图表尺寸位置" name="2" v-show="cockpitChartData.chartType!=null">
+                                <el-form label-width="84px" label-position="left" class="scrolling content">
+                                    <el-form-item label="图表编号">
+                                        <el-input :disabled="true" v-model="cockpitChartData.domId"></el-input>
+                                    </el-form-item>
+                                    <el-form-item label="图表尺寸">
+                                        <div class="cockpit-row">
+                                            <div class="cockpit-col" style="width: 30px;padding-right: 2px;">
+                                                <el-input v-model="cockpitChartData.chartWidth"></el-input>
+                                                <div class="cockpit-component-conf-tips">宽度</div>
+                                            </div>
+                                            <div class="cockpit-col" style="width: 30px;padding-left: 2px;">
+                                                <el-input v-model="cockpitChartData.chartHeight"></el-input>
+                                                <div class="cockpit-component-conf-tips">高度</div>
+                                            </div>
+                                        </div>
+                                    </el-form-item>
+                                    <el-form-item label="图表位置">
+                                        <div class="cockpit-row">
+                                            <div class="cockpit-col" style="width: 30px;padding-right: 2px;">
+                                                <el-input v-model="cockpitChartData.positionX"></el-input>
+                                                <div class="cockpit-component-conf-tips">横坐标</div>
+                                            </div>
+                                            <div class="cockpit-col" style="width: 30px;padding-left: 2px;">
+                                                <el-input v-model="cockpitChartData.positionY"></el-input>
+                                                <div class="cockpit-component-conf-tips">纵坐标</div>
+                                            </div>
+                                        </div>
+                                    </el-form-item>
+                                </el-form>
+                            </el-collapse-item>
+                            <!--图表组件设置-->
+                            <el-collapse-item title="图表组件" name="3"
+                                              v-show="cockpitChartData.chartType=='chart' ">
+                                <el-form label-width="84px" label-position="left" class="scrolling content">
+                                    <el-form-item label="背景颜色">
+                                        <input v-model="cockpitChartData.bgColor" type="color"/>
+                                    </el-form-item>
+                                    <el-form-item label="框样式">
+                                        <el-select v-model="cockpitChartData.border" placeholder="请选择">
+                                            <el-option key="无框" label="无框" value=""></el-option>
+                                            <el-option v-for="data in borderStyle"
+                                                       :key="data.key" :label="data.key" :value="data.value">
+                                            </el-option>
+                                        </el-select>
+                                    </el-form-item>
+                                </el-form>
+                            </el-collapse-item>
+                            <!--指标卡组件设置-->
+                            <el-collapse-item title="指标卡Label样式" name="14-1" v-show="cockpitChartData.chartType=='kpi'">
+                                <el-form label-width="84px" label-position="left" class="scrolling content">
+                                    <el-form-item label="字号">
+                                        <el-input placeholder="数值"
+                                                  v-model="cockpitChartData.cockpitConfChartCSS.labelFontSize"></el-input>
+                                    </el-form-item>
+                                    <el-form-item label="字体颜色">
+                                        <input v-model="cockpitChartData.cockpitConfChartCSS.labelColor" type="color"/>
+                                    </el-form-item>
+                                    <el-form-item label="字体粗细">
+                                        <el-select v-model="cockpitChartData.cockpitConfChartCSS.labelFontWeight"
+                                                   placeholder="请选择">
+                                            <el-option v-for="data in fontWeight"
+                                                       :key="data.key" :label="data.key" :value="data.value">
+                                            </el-option>
+                                        </el-select>
+                                    </el-form-item>
+                                    <el-form-item label="背景颜色">
+                                        <input v-model="cockpitChartData.cockpitConfChartCSS.labelBgColor"
+                                               type="color"/>
+                                    </el-form-item>
+                                </el-form>
+                            </el-collapse-item>
+                            <el-collapse-item title="指标卡Value样式" name="14-2" v-show="cockpitChartData.chartType=='kpi'">
+                                <el-form label-width="84px" label-position="left" class="scrolling content">
+                                    <el-form-item label="字号">
+                                        <el-input placeholder="数值"
+                                                  v-model="cockpitChartData.cockpitConfChartCSS.textFontSize"></el-input>
+                                    </el-form-item>
+                                    <el-form-item label="字体颜色">
+                                        <input v-model="cockpitChartData.cockpitConfChartCSS.textColor" type="color"/>
+                                    </el-form-item>
+                                    <el-form-item label="字体粗细">
+                                        <el-select v-model="cockpitChartData.cockpitConfChartCSS.textFontWeight"
+                                                   placeholder="请选择">
+                                            <el-option v-for="data in fontWeight"
+                                                       :key="data.key" :label="data.key" :value="data.value">
+                                            </el-option>
+                                        </el-select>
+                                    </el-form-item>
+                                    <el-form-item label="背景颜色">
+                                        <input v-model="cockpitChartData.cockpitConfChartCSS.textBgColor" type="color"/>
+                                    </el-form-item>
+                                </el-form>
+                            </el-collapse-item>
+                            <!--标题组件设置-->
+                            <el-collapse-item title="标题组件" name="15" v-show="cockpitChartData.chartType=='label'">
+                                <el-form label-width="84px" label-position="left" class="scrolling content">
+                                    <el-form-item label="标题名">
+                                        <el-input v-model="cockpitChartData.cockpitConfChartCSS.chartTitle"></el-input>
+                                    </el-form-item>
+                                    <el-form-item label="字号">
+                                        <el-input placeholder="数值"
+                                                  v-model="cockpitChartData.cockpitConfChartCSS.titleFontSize"></el-input>
+                                    </el-form-item>
+                                    <el-form-item label="字体颜色">
+                                        <input v-model="cockpitChartData.cockpitConfChartCSS.titleColor" type="color"/>
+                                    </el-form-item>
+                                    <el-form-item label="字体粗细">
+                                        <el-select v-model="cockpitChartData.cockpitConfChartCSS.titleFontWeight"
+                                                   placeholder="请选择">
+                                            <el-option v-for="data in fontWeight"
+                                                       :key="data.key" :label="data.key" :value="data.value">
+                                            </el-option>
+                                        </el-select>
+                                    </el-form-item>
+                                </el-form>
+                            </el-collapse-item>
+                            <!--边框组件设置-->
+                            <el-collapse-item title="边框组件" name="16" v-show="cockpitChartData.chartType=='border'">
+                                <el-form label-width="84px" label-position="left" class="scrolling content">
+                                    <el-form-item label="框样式">
+                                        <el-select v-model="cockpitChartData.chartStyle" placeholder="请选择">
+                                            <el-option v-for="data in borderStyle"
+                                                       :key="data.key" :label="data.key" :value="data.value">
+                                            </el-option>
+                                        </el-select>
+                                    </el-form-item>
+                                </el-form>
+                            </el-collapse-item>
+                            <!--装饰组件设置-->
+                            <el-collapse-item title="装饰组件" name="19" v-show="cockpitChartData.chartType=='ornament'">
+                                <el-form label-width="84px" label-position="left" class="scrolling content">
+                                    <el-form-item label="装饰元素">
+                                        <el-select v-model="cockpitChartData.chartStyle" placeholder="请选择">
+                                            <el-option v-for="data in ornamentStyle"
+                                                       :key="data.key" :label="data.key" :value="data.value">
+                                            </el-option>
+                                        </el-select>
+                                    </el-form-item>
+                                </el-form>
+                            </el-collapse-item>
+                            <!--时钟组件设置-->
+                            <el-collapse-item title="图标样式" name="17-1" v-show="cockpitChartData.chartType=='clock'">
+                                <el-form label-width="84px" label-position="left" class="scrolling content">
+                                    <el-form-item label="大小">
+                                        <el-input placeholder="数值"
+                                                  v-model="cockpitChartData.cockpitConfChartCSS.labelFontSize"></el-input>
+                                    </el-form-item>
+                                    <el-form-item label="颜色">
+                                        <input v-model="cockpitChartData.cockpitConfChartCSS.labelColor" type="color"/>
+                                    </el-form-item>
+                                    <el-form-item label="边距">
+                                        <el-input placeholder="数值"
+                                                  v-model="cockpitChartData.cockpitConfChartCSS.labelPadding"></el-input>
+                                    </el-form-item>
+                                </el-form>
+                            </el-collapse-item>
+                            <el-collapse-item title="时间器样式" name="17-2" v-show="cockpitChartData.chartType=='clock'">
+                                <el-form label-width="84px" label-position="left" class="scrolling content">
+                                    <el-form-item label="字号">
+                                        <el-input placeholder="数值"
+                                                  v-model="cockpitChartData.cockpitConfChartCSS.textFontSize"></el-input>
+                                    </el-form-item>
+                                    <el-form-item label="字体颜色">
+                                        <input v-model="cockpitChartData.cockpitConfChartCSS.textColor" type="color"/>
+                                    </el-form-item>
+                                    <el-form-item label="字体粗细">
+                                        <el-select v-model="cockpitChartData.cockpitConfChartCSS.textFontWeight"
+                                                   placeholder="请选择">
+                                            <el-option v-for="data in fontWeight"
+                                                       :key="data.key" :label="data.key" :value="data.value">
+                                            </el-option>
+                                        </el-select>
+                                    </el-form-item>
+                                    <el-form-item label="格式化">
+                                        <el-input placeholder="yyyy-MM-dd hh:mm:ss"
+                                                  v-model="cockpitChartData.cockpitConfChartCSS.textFormat"></el-input>
+                                    </el-form-item>
+                                </el-form>
+                            </el-collapse-item>
+                            <!--滚动文本组件-->
+                            <el-collapse-item title="滚动文本" name="20" v-show="cockpitChartData.chartType=='rlabel'">
+                                <el-form label-width="84px" label-position="left" class="scrolling content">
+                                    <el-form-item label="滚动文本">
+                                        <el-input v-model="cockpitChartData.jsonData.value"></el-input>
+                                    </el-form-item>
+                                    <el-form-item label="字号">
+                                        <el-input placeholder="数值"
+                                                  v-model="cockpitChartData.cockpitConfChartCSS.titleFontSize"></el-input>
+                                    </el-form-item>
+                                    <el-form-item label="字体颜色">
+                                        <input v-model="cockpitChartData.cockpitConfChartCSS.titleColor" type="color"/>
+                                    </el-form-item>
+                                    <el-form-item label="字体粗细">
+                                        <el-select v-model="cockpitChartData.cockpitConfChartCSS.titleFontWeight"
+                                                   placeholder="请选择">
+                                            <el-option v-for="data in fontWeight"
+                                                       :key="data.key" :label="data.key" :value="data.value">
+                                            </el-option>
+                                        </el-select>
+                                    </el-form-item>
+                                </el-form>
+                            </el-collapse-item>
+                            <!--表格组件-->
+                            <el-collapse-item title="表格" name="18-1"
+                                              v-show="cockpitChartData.chartType=='table' || cockpitChartData.chartType=='list'">
+                                <el-form label-width="84px" label-position="left" class="scrolling content">
+                                    <el-form-item label="表格行数" v-if="cockpitChartData.chartType=='list'">
+                                        <el-input placeholder="数值"
+                                                  v-model="cockpitChartData.cockpitConfChartCSS.rowNum"></el-input>
+                                    </el-form-item>
+                                    <hex-cockpit-splitline
+                                            v-if="cockpitChartData.chartType=='list'"></hex-cockpit-splitline>
+                                    <el-form-item label="边框线"></el-form-item>
+                                    <el-form-item label="线条粗细">
+                                        <el-input placeholder="数值"
+                                                  v-model="cockpitChartData.cockpitConfChartCSS.borderWidth"></el-input>
+                                    </el-form-item>
+                                    <el-form-item label="线条颜色">
+                                        <input type="color" v-model="cockpitChartData.cockpitConfChartCSS.borderColor"/>
+                                    </el-form-item>
+                                </el-form>
+                            </el-collapse-item>
+                            <el-collapse-item title="表头" name="18-2"
+                                              v-show="cockpitChartData.chartType=='table' || cockpitChartData.chartType=='list'">
+                                <el-form label-width="84px" label-position="left" class="scrolling content">
+                                    <el-form-item label="字号">
+                                        <el-input placeholder="数值"
+                                                  v-model="cockpitChartData.cockpitConfChartCSS.headFontSize"></el-input>
+                                    </el-form-item>
+                                    <el-form-item label="字体颜色">
+                                        <input v-model="cockpitChartData.cockpitConfChartCSS.headColor" type="color"/>
+                                    </el-form-item>
+                                    <el-form-item label="字体粗细">
+                                        <el-select v-model="cockpitChartData.cockpitConfChartCSS.headFontWeight"
+                                                   placeholder="请选择">
+                                            <el-option v-for="data in fontWeight"
+                                                       :key="data.key" :label="data.key" :value="data.value">
+                                            </el-option>
+                                        </el-select>
+                                    </el-form-item>
+                                    <el-form-item label="背景颜色">
+                                        <input v-model="cockpitChartData.cockpitConfChartCSS.headBgColor" type="color"/>
+                                    </el-form-item>
+                                    <el-form-item label="对齐方式">
+                                        <el-select v-model="cockpitChartData.cockpitConfChartCSS.headAlign"
+                                                   placeholder="请选择">
+                                            <el-option v-for="data in textAlign"
+                                                       :key="data.text" :label="data.text" :value="data.value">
+                                            </el-option>
+                                        </el-select>
+                                    </el-form-item>
+                                </el-form>
+                            </el-collapse-item>
+                            <el-collapse-item id="tableCol" title="列" name="18-3"
+                                              v-show="cockpitChartData.chartType=='table'">
+                                <el-form label-width="84px" label-position="left" class="scrolling content">
+                                    <el-form-item label="宽度百分比%">
+                                        <el-input placeholder="数值"
+                                                  v-model="cockpitChartData.cockpitConfChartCSS.widthPercentage"></el-input>
+                                    </el-form-item>
+                                    <hex-cockpit-splitline></hex-cockpit-splitline>
+                                    <el-form-item label="线条粗细">
+                                        <el-input placeholder="数值"
+                                                  v-model="cockpitChartData.cockpitConfChartCSS.colBorderWidth"></el-input>
+                                    </el-form-item>
+                                    <el-form-item label="线条颜色">
+                                        <input v-model="cockpitChartData.cockpitConfChartCSS.colBorderColor"
+                                               type="color"/>
+                                    </el-form-item>
+                                    <hex-cockpit-splitline></hex-cockpit-splitline>
+                                    <el-form-item label="第一列"></el-form-item>
+                                    <el-form-item label="字号">
+                                        <el-input placeholder="数值"
+                                                  v-model="cockpitChartData.cockpitConfChartCSS.labelFontSize"></el-input>
+                                    </el-form-item>
+                                    <el-form-item label="字体颜色">
+                                        <input v-model="cockpitChartData.cockpitConfChartCSS.labelColor" type="color"/>
+                                    </el-form-item>
+                                    <el-form-item label="字体粗细">
+                                        <el-select v-model="cockpitChartData.cockpitConfChartCSS.labelFontWeight"
+                                                   placeholder="请选择">
+                                            <el-option v-for="data in fontWeight"
+                                                       :key="data.key" :label="data.key" :value="data.value">
+                                            </el-option>
+                                        </el-select>
+                                    </el-form-item>
+                                    <el-form-item label="对齐方式">
+                                        <el-select v-model="cockpitChartData.cockpitConfChartCSS.labelAlign"
+                                                   placeholder="请选择">
+                                            <el-option v-for="data in textAlign"
+                                                       :key="data.text" :label="data.text" :value="data.value">
+                                            </el-option>
+                                        </el-select>
+                                    </el-form-item>
+                                    <hex-cockpit-splitline></hex-cockpit-splitline>
+                                    <el-form-item label="第二列"></el-form-item>
+                                    <el-form-item label="字号">
+                                        <el-input placeholder="数值"
+                                                  v-model="cockpitChartData.cockpitConfChartCSS.textFontSize"></el-input>
+                                    </el-form-item>
+                                    <el-form-item label="字体颜色">
+                                        <input v-model="cockpitChartData.cockpitConfChartCSS.textColor" type="color"/>
+                                    </el-form-item>
+                                    <el-form-item label="字体粗细">
+                                        <el-select v-model="cockpitChartData.cockpitConfChartCSS.textFontWeight"
+                                                   placeholder="请选择">
+                                            <el-option v-for="data in fontWeight"
+                                                       :key="data.key" :label="data.key" :value="data.value">
+                                            </el-option>
+                                        </el-select>
+                                    </el-form-item>
+                                    <el-form-item label="对齐方式">
+                                        <el-select v-model="cockpitChartData.cockpitConfChartCSS.textAlign"
+                                                   placeholder="请选择">
+                                            <el-option v-for="data in textAlign"
+                                                       :key="data.text" :label="data.text" :value="data.value">
+                                            </el-option>
+                                        </el-select>
+                                    </el-form-item>
+                                </el-form>
+                            </el-collapse-item>
+                            <el-collapse-item id="listCol" title="列" name="18-3-1"
+                                              v-show="cockpitChartData.chartType=='list'">
+                                <el-form label-width="84px" label-position="left" class="scrolling content">
+                                    <el-form-item label="线条粗细">
+                                        <el-input placeholder="数值"
+                                                  v-model="cockpitChartData.cockpitConfChartCSS.colBorderWidth"></el-input>
+                                    </el-form-item>
+                                    <el-form-item label="线条颜色">
+                                        <input v-model="cockpitChartData.cockpitConfChartCSS.colBorderColor"
+                                               type="color"/>
+                                    </el-form-item>
+                                    <hex-cockpit-splitline></hex-cockpit-splitline>
+                                    <el-form-item label="序号列"></el-form-item>
+                                    <el-form-item label="字号">
+                                        <el-input placeholder="数值"
+                                                  v-model="cockpitChartData.cockpitConfChartCSS.labelFontSize"></el-input>
+                                    </el-form-item>
+                                    <el-form-item label="字体颜色">
+                                        <input v-model="cockpitChartData.cockpitConfChartCSS.labelColor" type="color"/>
+                                    </el-form-item>
+                                    <el-form-item label="字体粗细">
+                                        <el-select v-model="cockpitChartData.cockpitConfChartCSS.labelFontWeight"
+                                                   placeholder="请选择">
+                                            <el-option v-for="data in fontWeight"
+                                                       :key="data.key" :label="data.key" :value="data.value">
+                                            </el-option>
+                                        </el-select>
+                                    </el-form-item>
+                                    <el-form-item label="对齐方式">
+                                        <el-select v-model="cockpitChartData.cockpitConfChartCSS.labelAlign"
+                                                   placeholder="请选择">
+                                            <el-option v-for="data in textAlign"
+                                                       :key="data.text" :label="data.text" :value="data.value">
+                                            </el-option>
+                                        </el-select>
+                                    </el-form-item>
+                                    <hex-cockpit-splitline></hex-cockpit-splitline>
+                                    <el-form-item label="自定义列"></el-form-item>
+                                    <el-form-item label="字号">
+                                        <el-input placeholder="数值"
+                                                  v-model="cockpitChartData.cockpitConfChartCSS.textFontSize"></el-input>
+                                    </el-form-item>
+                                    <el-form-item label="字体颜色">
+                                        <input v-model="cockpitChartData.cockpitConfChartCSS.textColor" type="color"/>
+                                    </el-form-item>
+                                    <el-form-item label="字体粗细">
+                                        <el-select v-model="cockpitChartData.cockpitConfChartCSS.textFontWeight"
+                                                   placeholder="请选择">
+                                            <el-option v-for="data in fontWeight"
+                                                       :key="data.key" :label="data.key" :value="data.value">
+                                            </el-option>
+                                        </el-select>
+                                    </el-form-item>
+                                    <el-form-item label="对齐方式">
+                                        <el-select v-model="cockpitChartData.cockpitConfChartCSS.textAlign"
+                                                   placeholder="请选择">
+                                            <el-option v-for="data in textAlign"
+                                                       :key="data.text" :label="data.text" :value="data.value">
+                                            </el-option>
+                                        </el-select>
+                                    </el-form-item>
+                                </el-form>
+                            </el-collapse-item>
+                            <el-collapse-item title="行" name="18-4"
+                                              v-show="cockpitChartData.chartType=='table' || cockpitChartData.chartType=='list'">
+                                <el-form label-width="84px" label-position="left" class="scrolling content">
+                                    <el-form-item label="线条粗细">
+                                        <el-input placeholder="数值"
+                                                  v-model="cockpitChartData.cockpitConfChartCSS.rowBorderWidth"></el-input>
+                                    </el-form-item>
+                                    <el-form-item label="线条颜色">
+                                        <input v-model="cockpitChartData.cockpitConfChartCSS.rowBorderColor"
+                                               type="color"/>
+                                    </el-form-item>
+                                    <hex-cockpit-splitline></hex-cockpit-splitline>
+                                    <el-form-item label="奇行背景色">
+                                        <input v-model="cockpitChartData.cockpitConfChartCSS.oddRowBgColor"
+                                               type="color"/>
+                                    </el-form-item>
+                                    <el-form-item label="偶行背景色">
+                                        <input v-model="cockpitChartData.cockpitConfChartCSS.evenRowBgColor"
+                                               type="color"/>
+                                    </el-form-item>
+                                </el-form>
+                            </el-collapse-item>
+                        </el-collapse>
+                    </el-tab-pane>
+                    <el-tab-pane label="数据" name="two">
+                        <div class="title">数据设置</div>
+                        <el-collapse v-model="pageCssItem" accordion>
+                            <div class="cockpit-row cockpit-col"
+                                 v-show="cockpitChartData.chartType!='kpi' && cockpitChartData.chartType!='table'">
+                                <div class="cockpit-no-data">
+                                    <i class="fa fa-info-circle" aria-hidden="true"></i>&nbsp;该组件不需要配置数据
+                                </div>
+                            </div>
+                            <!--指标卡组件-->
+                            <el-collapse-item title="指标卡参数" name="14-3" v-show="cockpitChartData.chartType=='kpi'">
+                                <el-form label-width="84px" label-position="left" class="scrolling content">
+                                    <el-form-item label="Label值">
+                                        <el-input v-model="cockpitChartData.jsonData.label"></el-input>
+                                    </el-form-item>
+                                    <el-form-item label="Value值">
+                                        <el-input v-model="cockpitChartData.jsonData.value"></el-input>
+                                    </el-form-item>
+                                </el-form>
+                            </el-collapse-item>
+                            <!--表格组件-->
+                            <el-collapse-item title="表格数据" name="14-4" v-show="cockpitChartData.chartType=='table'">
+                                <el-form label-width="84px" label-position="left" class="scrolling content">
+                                    <el-input v-model="cockpitChartData.jsonData.value" type="textarea" :rows="10"
+                                              style="margin-top: 6px;"></el-input>
+                                </el-form>
+                            </el-collapse-item>
+                        </el-collapse>
+                    </el-tab-pane>
+                </el-tabs>
+            </div>
+        </div>
+    </div>
+</div>

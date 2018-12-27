@@ -41,45 +41,25 @@ public class JdbcDataProvider extends DataProvider implements Aggregatable, Init
     @Value("${dataprovider.resultLimit:300000}")
     private int resultLimit;
 
-    @DatasourceParameter(label = "{{'DATAPROVIDER.JDBC.DRIVER'|translate}} *",
-            type = DatasourceParameter.Type.Input,
-            required = true,
-            order = 1)
+    @DatasourceParameter(label = "{{'DATAPROVIDER.JDBC.DRIVER'|translate}} *", type = DatasourceParameter.Type.Input, required = true, order = 1)
     private String DRIVER = "driver";
 
-    @DatasourceParameter(label = "{{'DATAPROVIDER.JDBC.JDBCURL'|translate}} *",
-            type = DatasourceParameter.Type.Input,
-            required = true,
-            order = 2)
+    @DatasourceParameter(label = "{{'DATAPROVIDER.JDBC.JDBCURL'|translate}} *", type = DatasourceParameter.Type.Input, required = true, order = 2)
     private String JDBC_URL = "jdbcurl";
 
-    @DatasourceParameter(label = "{{'DATAPROVIDER.JDBC.USERNAME'|translate}} *",
-            type = DatasourceParameter.Type.Input,
-            required = true,
-            order = 3)
+    @DatasourceParameter(label = "{{'DATAPROVIDER.JDBC.USERNAME'|translate}} *", type = DatasourceParameter.Type.Input, required = true, order = 3)
     private String USERNAME = "username";
 
-    @DatasourceParameter(label = "{{'DATAPROVIDER.JDBC.PASSWORD'|translate}}",
-            type = DatasourceParameter.Type.Password,
-            order = 4)
+    @DatasourceParameter(label = "{{'DATAPROVIDER.JDBC.PASSWORD'|translate}}", type = DatasourceParameter.Type.Password, order = 4)
     private String PASSWORD = "password";
 
-    @DatasourceParameter(label = "{{'DATAPROVIDER.POOLEDCONNECTION'|translate}}",
-            checked = true,
-            type = DatasourceParameter.Type.Checkbox,
-            order = 99)
+    @DatasourceParameter(label = "{{'DATAPROVIDER.POOLEDCONNECTION'|translate}}", checked = true, type = DatasourceParameter.Type.Checkbox, order = 99)
     private String POOLED = "pooled";
 
-    @DatasourceParameter(label = "{{'DATAPROVIDER.AGGREGATABLE_PROVIDER'|translate}}",
-            checked = true,
-            type = DatasourceParameter.Type.Checkbox,
-            order = 100)
+    @DatasourceParameter(label = "{{'DATAPROVIDER.AGGREGATABLE_PROVIDER'|translate}}", checked = true, type = DatasourceParameter.Type.Checkbox, order = 100)
     private String aggregateProvider = "aggregateProvider";
 
-    @QueryParameter(label = "{{'DATAPROVIDER.JDBC.SQLTEXT'|translate}}",
-            type = QueryParameter.Type.TextArea,
-            required = true,
-            order = 1)
+    @QueryParameter(label = "{{'DATAPROVIDER.JDBC.SQLTEXT'|translate}}", type = QueryParameter.Type.TextArea, required = true, order = 1)
     private String SQL = "sql";
 
     private static final CacheManager<Map<String, Integer>> typeCahce = new HeapCacheManager<>();
@@ -104,8 +84,8 @@ public class JdbcDataProvider extends DataProvider implements Aggregatable, Init
         LOG.info("SQL String: " + sql);
 
         try (Connection con = getConnection();
-             Statement ps = con.createStatement();
-             ResultSet rs = ps.executeQuery(sql)) {
+                Statement ps = con.createStatement();
+                ResultSet rs = ps.executeQuery(sql)) {
 
             ResultSetMetaData metaData = rs.getMetaData();
             int columnCount = metaData.getColumnCount();
@@ -131,7 +111,7 @@ public class JdbcDataProvider extends DataProvider implements Aggregatable, Init
 
                 if (resultCount % batchSize == 0) {
                     LOG.info("JDBC load batch {}", resultCount);
-                    final String[][] batchData = list.toArray(new String[][]{});
+                    final String[][] batchData = list.toArray(new String[][] {});
                     Thread loadThread = new Thread(() -> {
                         getInnerAggregator().loadBatch(header, batchData);
                     }, threadId++ + "");
@@ -139,12 +119,14 @@ public class JdbcDataProvider extends DataProvider implements Aggregatable, Init
                     list.clear();
                 }
                 if (resultCount > resultLimit) {
-                    throw new CBoardException("Cube result count " + resultCount + ", is greater than limit " + resultLimit);
+                    throw new CBoardException(
+                            "Cube result count " + resultCount + ", is greater than limit " + resultLimit);
                 }
             }
             executor.shutdown();
-            while (!executor.awaitTermination(10, TimeUnit.SECONDS));
-            final String[][] batchData = list.toArray(new String[][]{});
+            while (!executor.awaitTermination(10, TimeUnit.SECONDS))
+                ;
+            final String[][] batchData = list.toArray(new String[][] {});
             getInnerAggregator().loadBatch(header, batchData);
         } catch (Exception e) {
             LOG.error("ERROR:" + e.getMessage());
@@ -160,27 +142,25 @@ public class JdbcDataProvider extends DataProvider implements Aggregatable, Init
     public void test() throws Exception {
         String queryStr = query.get(SQL);
         LOG.info("Execute query: {}", queryStr);
-        try (Connection con = getConnection();
-             Statement ps = con.createStatement()) {
+        try (Connection con = getConnection(); Statement ps = con.createStatement()) {
             ps.executeQuery(queryStr);
         } catch (Exception e) {
-            LOG.error("Error when execute: {}",  queryStr);
+            LOG.error("Error when execute: {}", queryStr);
             throw new Exception("ERROR:" + e.getMessage(), e);
         }
     }
 
-
     /**
-     * Convert the sql text to subquery string:
-     * remove blank line
-     * remove end semicolon ;
+     * Convert the sql text to subquery string: remove blank line remove end
+     * semicolon ;
      *
      * @param rawQueryText
      * @return
      */
     private String getAsSubQuery(String rawQueryText) {
         String deletedBlankLine = rawQueryText.replaceAll("(?m)^[\\s\t]*\r?\n", "").trim();
-        return deletedBlankLine.endsWith(";") ? deletedBlankLine.substring(0, deletedBlankLine.length() - 1) : deletedBlankLine;
+        return deletedBlankLine.endsWith(";") ? deletedBlankLine.substring(0, deletedBlankLine.length() - 1)
+                : deletedBlankLine;
     }
 
     private Connection getConnection() throws Exception {
@@ -189,7 +169,8 @@ public class JdbcDataProvider extends DataProvider implements Aggregatable, Init
         String password = dataSource.get(PASSWORD);
         Connection conn = null;
         if (usePool != null && "true".equals(usePool)) {
-            String key = Hashing.md5().newHasher().putString(JSONObject.toJSON(dataSource).toString(), Charsets.UTF_8).hash().toString();
+            String key = Hashing.md5().newHasher().putString(JSONObject.toJSON(dataSource).toString(), Charsets.UTF_8)
+                    .hash().toString();
             DataSource ds = datasourceMap.get(key);
             if (ds == null) {
                 synchronized (key.intern()) {
@@ -246,8 +227,8 @@ public class JdbcDataProvider extends DataProvider implements Aggregatable, Init
         exec = String.format(fsql, columnName, sql, whereStr, columnName);
         LOG.info(exec);
         try (Connection connection = getConnection();
-             Statement stat = connection.createStatement();
-             ResultSet rs = stat.executeQuery(exec)) {
+                Statement stat = connection.createStatement();
+                ResultSet rs = stat.executeQuery(exec)) {
             while (rs.next()) {
                 filtered.add(rs.getString(1));
             }
@@ -255,9 +236,8 @@ public class JdbcDataProvider extends DataProvider implements Aggregatable, Init
             LOG.error("ERROR:" + e.getMessage());
             throw new Exception("ERROR:" + e.getMessage(), e);
         }
-        return filtered.toArray(new String[]{});
+        return filtered.toArray(new String[] {});
     }
-
 
     private ResultSetMetaData getMetaData(String subQuerySql, Statement stat) throws Exception {
         ResultSetMetaData metaData;
@@ -282,10 +262,7 @@ public class JdbcDataProvider extends DataProvider implements Aggregatable, Init
         if (result != null) {
             return result;
         } else {
-            try (
-                    Connection connection = getConnection();
-                    Statement stat = connection.createStatement()
-            ) {
+            try (Connection connection = getConnection(); Statement stat = connection.createStatement()) {
                 String subQuerySql = getAsSubQuery(query.get(SQL));
                 ResultSetMetaData metaData = getMetaData(subQuerySql, stat);
                 int columnCount = metaData.getColumnCount();
@@ -302,10 +279,7 @@ public class JdbcDataProvider extends DataProvider implements Aggregatable, Init
     @Override
     public String[] getColumn() throws Exception {
         String subQuerySql = getAsSubQuery(query.get(SQL));
-        try (
-                Connection connection = getConnection();
-                Statement stat = connection.createStatement()
-        ) {
+        try (Connection connection = getConnection(); Statement stat = connection.createStatement()) {
             ResultSetMetaData metaData = getMetaData(subQuerySql, stat);
             int columnCount = metaData.getColumnCount();
             String[] row = new String[columnCount];
@@ -321,25 +295,23 @@ public class JdbcDataProvider extends DataProvider implements Aggregatable, Init
         String exec = sqlHelper.assembleAggDataSql(config);
         List<String[]> list = new LinkedList<>();
         LOG.info(exec);
-        try (
-                Connection connection = getConnection();
+        try (Connection connection = getConnection();
                 Statement stat = connection.createStatement();
-                ResultSet rs = stat.executeQuery(exec)
-        ) {
+                ResultSet rs = stat.executeQuery(exec)) {
             ResultSetMetaData metaData = rs.getMetaData();
             int columnCount = metaData.getColumnCount();
             while (rs.next()) {
                 String[] row = new String[columnCount];
                 for (int j = 0; j < columnCount; j++) {
-                	int columType = metaData.getColumnType(j + 1);
-					switch (columType) {
-					case java.sql.Types.DATE:
-						row[j] = rs.getDate(j + 1).toString();
-						break;
-					default:
-						row[j] = rs.getString(j + 1);
-						break;
-					}
+                    int columType = metaData.getColumnType(j + 1);
+                    switch (columType) {
+                    case java.sql.Types.DATE:
+                        row[j] = rs.getDate(j + 1).toString();
+                        break;
+                    default:
+                        row[j] = rs.getString(j + 1);
+                        break;
+                    }
                 }
                 list.add(row);
             }
@@ -350,12 +322,10 @@ public class JdbcDataProvider extends DataProvider implements Aggregatable, Init
         return DPCommonUtils.transform2AggResult(config, list);
     }
 
-
     @Override
     public String viewAggDataQuery(AggConfig config) throws Exception {
         return sqlHelper.assembleAggDataSql(config);
     }
-
 
     @Override
     public void afterPropertiesSet() throws Exception {
@@ -369,7 +339,7 @@ public class JdbcDataProvider extends DataProvider implements Aggregatable, Init
             try {
                 columnTypes = getColumnType();
             } catch (Exception e) {
-                //  getColumns() and test() methods do not need columnTypes properties,
+                // getColumns() and test() methods do not need columnTypes properties,
                 // it doesn't matter for these methods even getMeta failed
                 LOG.warn("getColumnType failed: {}", e.getMessage());
             }

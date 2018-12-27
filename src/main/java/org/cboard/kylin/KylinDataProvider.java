@@ -26,7 +26,6 @@ import java.sql.*;
 import java.util.*;
 import java.util.stream.Stream;
 
-
 /**
  * Created by yfyuan on 2017/3/6.
  */
@@ -35,18 +34,10 @@ public class KylinDataProvider extends DataProvider implements Aggregatable, Ini
 
     private static final Logger LOG = LoggerFactory.getLogger(KylinDataProvider.class);
 
-    @DatasourceParameter(label = "Kylin Server *",
-            type = DatasourceParameter.Type.Input,
-            required = true,
-            value = "domain:port",
-            placeholder = "domain:port",
-            order = 1)
+    @DatasourceParameter(label = "Kylin Server *", type = DatasourceParameter.Type.Input, required = true, value = "domain:port", placeholder = "domain:port", order = 1)
     public static final String SERVERIP = "serverIp";
 
-    @DatasourceParameter(label = "User Name (for Kylin Server) *",
-            type = DatasourceParameter.Type.Input,
-            required = true,
-            order = 3)
+    @DatasourceParameter(label = "User Name (for Kylin Server) *", type = DatasourceParameter.Type.Input, required = true, order = 3)
     public static final String USERNAME = "username";
 
     @DatasourceParameter(label = "Password", type = DatasourceParameter.Type.Password, order = 4)
@@ -54,9 +45,7 @@ public class KylinDataProvider extends DataProvider implements Aggregatable, Ini
 
     // ----------- QueryParameter Start
 
-    @QueryParameter(label = "Kylin Project *",
-            type = QueryParameter.Type.Input,
-            required = true)
+    @QueryParameter(label = "Kylin Project *", type = QueryParameter.Type.Input, required = true)
     public static final String PROJECT = "project";
 
     @QueryParameter(label = "Data Model *", type = QueryParameter.Type.Input, required = true)
@@ -68,7 +57,10 @@ public class KylinDataProvider extends DataProvider implements Aggregatable, Ini
     private SqlHelper sqlHelper;
 
     private String getKey(Map<String, String> dataSource, Map<String, String> query) {
-        return Hashing.md5().newHasher().putString(JSONObject.toJSON(dataSource).toString() + JSONObject.toJSON(query).toString(), Charsets.UTF_8).hash().toString();
+        return Hashing.md5().newHasher()
+                .putString(JSONObject.toJSON(dataSource).toString() + JSONObject.toJSON(query).toString(),
+                        Charsets.UTF_8)
+                .hash().toString();
     }
 
     @Override
@@ -120,7 +112,8 @@ public class KylinDataProvider extends DataProvider implements Aggregatable, Ini
         Properties props = new Properties();
         props.setProperty("user", username);
         props.setProperty("password", password);
-        return DriverManager.getConnection(String.format("jdbc:kylin:%S//%s/%s", timeZone, dataSource.get(SERVERIP), query.get(PROJECT)), props);
+        return DriverManager.getConnection(
+                String.format("jdbc:kylin:%S//%s/%s", timeZone, dataSource.get(SERVERIP), query.get(PROJECT)), props);
     }
 
     @Override
@@ -130,7 +123,7 @@ public class KylinDataProvider extends DataProvider implements Aggregatable, Ini
         List<String> filtered = new ArrayList<>();
         String tableName = kylinModel.getTableOfColumn(columnName);
         String columnAliasName = kylinModel.getColumnWithAliasPrefix(columnName);
-        
+
         String whereStr = "";
         if (config != null) {
             Stream<DimensionConfig> c = config.getColumns().stream();
@@ -138,7 +131,7 @@ public class KylinDataProvider extends DataProvider implements Aggregatable, Ini
             Stream<ConfigComponent> f = config.getFilters().stream();
             Stream<ConfigComponent> filters = Stream.concat(Stream.concat(c, r), f);
             Stream<ConfigComponent> filterHelpers = filters
-                    //过滤掉其他维表
+                    // 过滤掉其他维表
                     .filter(e -> {
                         if (e instanceof DimensionConfig) {
                             DimensionConfig dc = (DimensionConfig) e;
@@ -147,14 +140,16 @@ public class KylinDataProvider extends DataProvider implements Aggregatable, Ini
                             return true;
                         }
                     });
-            whereStr =  sqlHelper.assembleFilterSql(filterHelpers);
+            whereStr = sqlHelper.assembleFilterSql(filterHelpers);
         }
         fsql = "SELECT %s FROM %s %s %s GROUP BY %s ORDER BY %s";
-        exec = String.format(fsql, columnAliasName, kylinModel.formatTableName(tableName),  kylinModel.formatTableName(kylinModel.getAliasfromColumn(columnName)), whereStr, columnAliasName, columnAliasName);
+        exec = String.format(fsql, columnAliasName, kylinModel.formatTableName(tableName),
+                kylinModel.formatTableName(kylinModel.getAliasfromColumn(columnName)), whereStr, columnAliasName,
+                columnAliasName);
         LOG.info(exec);
         try (Connection connection = getConnection();
-             Statement stat = connection.createStatement();
-             ResultSet rs = stat.executeQuery(exec)) {
+                Statement stat = connection.createStatement();
+                ResultSet rs = stat.executeQuery(exec)) {
             while (rs.next()) {
                 filtered.add(rs.getString(1));
             }
@@ -162,7 +157,7 @@ public class KylinDataProvider extends DataProvider implements Aggregatable, Ini
             LOG.error("ERROR:" + e.getMessage());
             throw new Exception("ERROR:" + e.getMessage(), e);
         }
-        return filtered.toArray(new String[]{});
+        return filtered.toArray(new String[] {});
     }
 
     private KylinBaseModel getModel(boolean reload) throws Exception {
@@ -190,25 +185,23 @@ public class KylinDataProvider extends DataProvider implements Aggregatable, Ini
         String exec = sqlHelper.assembleAggDataSql(config);
         List<String[]> list = new LinkedList<>();
         LOG.info(exec);
-        try (
-                Connection connection = getConnection();
+        try (Connection connection = getConnection();
                 Statement stat = connection.createStatement();
-                ResultSet rs = stat.executeQuery(exec)
-        ) {
+                ResultSet rs = stat.executeQuery(exec)) {
             ResultSetMetaData metaData = rs.getMetaData();
             int columnCount = metaData.getColumnCount();
             while (rs.next()) {
                 String[] row = new String[columnCount];
                 for (int j = 0; j < columnCount; j++) {
-                	int columType = metaData.getColumnType(j + 1);
-					switch (columType) {
-					case java.sql.Types.DATE:
-						row[j] = rs.getDate(j + 1).toString();
-						break;
-					default:
-						row[j] = rs.getString(j + 1);
-						break;
-					}
+                    int columType = metaData.getColumnType(j + 1);
+                    switch (columType) {
+                    case java.sql.Types.DATE:
+                        row[j] = rs.getDate(j + 1).toString();
+                        break;
+                    default:
+                        row[j] = rs.getString(j + 1);
+                        break;
+                    }
                 }
                 list.add(row);
             }

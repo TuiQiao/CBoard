@@ -23,8 +23,8 @@ public abstract class KylinBaseModel implements Serializable {
     Map<String, String> query, dataSource;
     Map<String, String> columnTable = new HashedMap();
     /**
-     * key: table alias , value : full table name 
-     * <BR/><BR/>
+     * key: table alias , value : full table name <BR/>
+     * <BR/>
      * because one look up table may have multy alias
      */
     Map<String, String> tableAlias = new TableMap();
@@ -33,7 +33,8 @@ public abstract class KylinBaseModel implements Serializable {
 
     String serverIp, username, password;
 
-    public KylinBaseModel(JSONObject model, Map<String, String> dataSource, Map<String, String> query, String[] version) throws Exception {
+    public KylinBaseModel(JSONObject model, Map<String, String> dataSource, Map<String, String> query, String[] version)
+            throws Exception {
         if (model == null) {
             throw new CBoardException("Model not found");
         }
@@ -72,15 +73,15 @@ public abstract class KylinBaseModel implements Serializable {
     }
 
     public String getTableAlias(String table) {
-    	Set<String> keys = tableAlias.keySet();
-    	for (String key : keys) {
-			String value = tableAlias.get(key);
-			if(value.equals(table)) {
-				return key;
-			}
-		}
-    	return null;
-        //return tableAlias.get(table);
+        Set<String> keys = tableAlias.keySet();
+        for (String key : keys) {
+            String value = tableAlias.get(key);
+            if (value.equals(table)) {
+                return key;
+            }
+        }
+        return null;
+        // return tableAlias.get(table);
     }
 
     public Map<String, String> initColumnsDataType(String table) {
@@ -89,7 +90,8 @@ public abstract class KylinBaseModel implements Serializable {
         ResponseEntity<String> a = getTableInfoRest(restTemplate, table);
         JSONObject jsonObject = JSONObject.parseObject(a.getBody());
         Map<String, String> result = new HashedMap();
-        jsonObject.getJSONArray("columns").stream().map(e -> (JSONObject) e).forEach(e -> result.put(e.getString("name"), e.getString("datatype")));
+        jsonObject.getJSONArray("columns").stream().map(e -> (JSONObject) e)
+                .forEach(e -> result.put(e.getString("name"), e.getString("datatype")));
         return result;
     }
 
@@ -107,12 +109,14 @@ public abstract class KylinBaseModel implements Serializable {
     private String getJoinSql(String factAlias) {
         String s = model.getJSONArray("lookups").stream().map(e -> {
             JSONObject j = (JSONObject) e;
-            String[] pk = j.getJSONObject("join").getJSONArray("primary_key").stream().map(p -> p.toString()).toArray(String[]::new);
-            String[] fk = j.getJSONObject("join").getJSONArray("foreign_key").stream().map(p -> p.toString()).toArray(String[]::new);
+            String[] pk = j.getJSONObject("join").getJSONArray("primary_key").stream().map(p -> p.toString())
+                    .toArray(String[]::new);
+            String[] fk = j.getJSONObject("join").getJSONArray("foreign_key").stream().map(p -> p.toString())
+                    .toArray(String[]::new);
             List<String> on = new ArrayList<>();
             for (int i = 0; i < pk.length; i++) {
-                on.add(String.format("%s.%s = %s.%s", tableAlias.get(j.getString("table")),
-                        surroundWithQuta(pk[i]), factAlias, surroundWithQuta(fk[i])));
+                on.add(String.format("%s.%s = %s.%s", tableAlias.get(j.getString("table")), surroundWithQuta(pk[i]),
+                        factAlias, surroundWithQuta(fk[i])));
             }
             String type = j.getJSONObject("join").getString("type").toUpperCase();
             String pTable = formatTableName(j.getString("table"));
@@ -124,6 +128,7 @@ public abstract class KylinBaseModel implements Serializable {
 
     /**
      * Return Array[alias.column]
+     * 
      * @return
      */
     public abstract String[] getColumns();
@@ -134,9 +139,9 @@ public abstract class KylinBaseModel implements Serializable {
         Arrays.stream(tmp.split("\\.")).map(i -> surroundWithQuta(i)).forEach(joiner::add);
         return joiner.toString();
     }
-    
+
     public String getAliasfromColumn(String columnName) {
-    	return columnName.split("\\.")[0];
+        return columnName.split("\\.")[0];
     }
 
     protected String surroundWithQuta(String text) {

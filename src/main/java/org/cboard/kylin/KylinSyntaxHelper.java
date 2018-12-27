@@ -25,7 +25,8 @@ public class KylinSyntaxHelper extends SqlSyntaxHelper {
 
     @Override
     public String getDimMemberStr(DimensionConfig config, int index) {
-        if (kylinModel.getColumnType(config.getColumnName()).startsWith("varchar")) {
+        String columnType = kylinModel.getColumnType(config.getColumnName());
+        if (columnType.startsWith("varchar") || columnType.startsWith("date")) {
             return "'" + config.getValues().get(index) + "'";
         } else {
             return config.getValues().get(index);

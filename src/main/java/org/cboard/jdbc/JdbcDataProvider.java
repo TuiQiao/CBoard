@@ -331,7 +331,15 @@ public class JdbcDataProvider extends DataProvider implements Aggregatable, Init
             while (rs.next()) {
                 String[] row = new String[columnCount];
                 for (int j = 0; j < columnCount; j++) {
-                    row[j] = rs.getString(j + 1);
+                    int columType = metaData.getColumnType(j + 1);
+                    switch (columType) {
+                    case java.sql.Types.DATE:
+                        row[j] = rs.getDate(j + 1).toString();
+                        break;
+                    default:
+                        row[j] = rs.getString(j + 1);
+                        break;
+                    }
                 }
                 list.add(row);
             }

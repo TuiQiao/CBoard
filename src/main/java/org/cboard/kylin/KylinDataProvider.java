@@ -115,11 +115,12 @@ public class KylinDataProvider extends DataProvider implements Aggregatable, Ini
 
         String username = dataSource.get(USERNAME);
         String password = dataSource.get(PASSWORD);
+        String timeZone = "timeZone=CST";
         Class.forName("org.apache.kylin.jdbc.Driver");
         Properties props = new Properties();
         props.setProperty("user", username);
         props.setProperty("password", password);
-        return DriverManager.getConnection(String.format("jdbc:kylin://%s/%s", dataSource.get(SERVERIP), query.get(PROJECT)), props);
+        return DriverManager.getConnection(String.format("jdbc:kylin:%S//%s/%s", timeZone ,dataSource.get(SERVERIP), query.get(PROJECT)), props);
     }
 
     @Override
@@ -148,7 +149,7 @@ public class KylinDataProvider extends DataProvider implements Aggregatable, Ini
             whereStr =  sqlHelper.assembleFilterSql(filterHelpers);
         }
         fsql = "SELECT %s FROM %s %s %s GROUP BY %s ORDER BY %s";
-        exec = String.format(fsql, columnAliasName, tableName, kylinModel.getTableAlias(tableName), whereStr, columnAliasName, columnAliasName);
+        exec = String.format(fsql, columnAliasName, kylinModel.formatTableName(tableName), kylinModel.formatTableName(kylinModel.getAliasfromColumn(columnName)), whereStr, columnAliasName, columnAliasName);
         LOG.info(exec);
         try (Connection connection = getConnection();
              Statement stat = connection.createStatement();
@@ -198,7 +199,15 @@ public class KylinDataProvider extends DataProvider implements Aggregatable, Ini
             while (rs.next()) {
                 String[] row = new String[columnCount];
                 for (int j = 0; j < columnCount; j++) {
-                    row[j] = rs.getString(j + 1);
+                    int columType = metaData.getColumnType(j + 1);
+                    switch (columType) {
+                    case java.sql.Types.DATE:
+                        row[j] = rs.getDate(j + 1).toString();
+                        break;
+                    default:
+                        row[j] = rs.getString(j + 1);
+                        break;
+                    }
                 }
                 list.add(row);
             }

@@ -23,7 +23,9 @@ public abstract class KylinBaseModel implements Serializable {
     Map<String, String> query, dataSource;
     Map<String, String> columnTable = new HashedMap();
     /**
-     * key: db.tablename, alias: anystring
+     * key: table alias , value : full table name 
+     * <BR/><BR/>
+     * because one look up table may have multy alias
      */
     Map<String, String> tableAlias = new TableMap();
     Map<String, String> columnType = new HashedMap();
@@ -70,7 +72,15 @@ public abstract class KylinBaseModel implements Serializable {
     }
 
     public String getTableAlias(String table) {
-        return tableAlias.get(table);
+    	Set<String> keys = tableAlias.keySet();
+    	for (String key : keys) {
+			String value = tableAlias.get(key);
+			if(value.equals(table)) {
+				return key;
+			}
+		}
+    	return null;
+        //return tableAlias.get(table);
     }
 
     public Map<String, String> initColumnsDataType(String table) {
@@ -123,6 +133,10 @@ public abstract class KylinBaseModel implements Serializable {
         StringJoiner joiner = new StringJoiner(".");
         Arrays.stream(tmp.split("\\.")).map(i -> surroundWithQuta(i)).forEach(joiner::add);
         return joiner.toString();
+    }
+    
+    public String getAliasfromColumn(String columnName) {
+    	return columnName.split("\\.")[0];
     }
 
     protected String surroundWithQuta(String text) {

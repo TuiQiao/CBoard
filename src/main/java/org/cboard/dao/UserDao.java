@@ -19,8 +19,8 @@ public interface UserDao {
     List<DashboardUser> getUserList();
 
     int update(DashboardUser user);
-
-    int saveUserRole(List<DashboardUserRole> list);
+    
+    int saveUserRole(Map<String, Object> param);
 
     int deleteUserRole(Map<String, Object> param);
 

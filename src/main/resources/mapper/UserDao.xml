@@ -61,13 +61,11 @@
         </if>
     </delete>
 
-    <insert id="saveUserRole" parameterType="java.util.List">
+    <insert id="saveUserRole" parameterType="Map">
         insert into dashboard_user_role
         (user_id, role_id)
         values
-        <foreach collection="list" item="ur" index="index" separator=",">
-            (#{ur.userId}, #{ur.roleId})
-        </foreach>
+            (#{userId}, #{roleId})
     </insert>
 
     <select id="getUserRoleList" resultType="org.cboard.pojo.DashboardUserRole">

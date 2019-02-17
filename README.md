@@ -52,3 +52,8 @@ Any bugs or question please feel free to post at Github[Issue system](https://gi
 ## More Document
 - [帮助文档](http://peter_zhang921.gitee.io/cboard_docsify/#/zh-cn/)
 - [Document](https://tuiqiao.github.io/CBoardDoc/#/en-us/)
+
+## 中国用户QQ交流群
+
+- 1群：301028618 (已满)
+- 2群：985222441 

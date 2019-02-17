@@ -49,3 +49,8 @@ CBoard由[上海楚果信息技术有限公司](http://www.chuguotech.com/)主�
 :books: 更多文档
 - [:cn: 帮助文档](http://peter_zhang921.gitee.io/cboard_docsify/#/zh-cn/)
 - [:uk: Document](https://tuiqiao.github.io/CBoardDoc/#/en-us/)
+
+## 中国用户QQ交流群
+
+- 1群：301028618 (已满)
+- 2群：985222441 

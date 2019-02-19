@@ -17,8 +17,8 @@ public abstract class InnerAggregator implements Aggregatable {
     protected Map<String, String> dataSource;
     protected Map<String, String> query;
 
-    @Autowired
-    @Qualifier("rawDataCache")
+//    @Autowired
+//    @Qualifier("rawDataCache")
     protected CacheManager<String[][]> rawDataCache;
 
     public InnerAggregator() {}

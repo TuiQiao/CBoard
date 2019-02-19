@@ -15,7 +15,7 @@
     </bean>
 
     <!--<import resource="spring-cacher-redis.xml"/>-->
-    <import resource="spring-cacher-ehcache.xml"/>
+    <!--<import resource="spring-cacher-ehcache.xml"/>-->
 
     <bean id="h2DataSource" class="org.apache.commons.dbcp2.BasicDataSource" destroy-method="close" >
         <property name="driverClassName" value="org.h2.Driver" />

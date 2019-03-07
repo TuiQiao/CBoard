@@ -80,5 +80,16 @@ SDK级别外部集成  | :x: | :white_check_mark: 便于个性化集成
 
 ## 中国用户QQ交流群
 
-- 1群：301028618 (已满)
+- 重启交流群须知
+    - 在讨论相关问题之前，请务必自己阅读[官方文档](http://peter_zhang921.gitee.io/cboard_docsify/#/zh-cn/), 相信大部分问题您都能在文档中找到答案
+    - 用户交流群是为方便CBoard使用者之间进行沟通，请注意**不是答疑群，请大家能够尽量互相帮助**
+    - 管理员会定义清理最近3个月不曾发言的僵尸用户
+    - 在Issue系统里面搜索看看是否有类似问题
+    - 确定是程序上的bug请再GitHub issue系统里面[创建新的issue](https://github.com/TuiQiao/CBoard/issues/new)， 参照如何真确提问创建Issue主题
+        - What steps will reproduce the problem?（该问题的重现步骤是什么？）
+        - What is the expected output? What do you see instead?（你期待的结果是什么？实际看到的又是什么？）
+        - What version of the product are you using? On what operating system?（你正在使用产品的哪个版本？在什么操作系统上？）
+        - Please provide any additional information below.（如果有的话，请在下面提供更多信息。）
+
+- 1群：301028618 (已满, 请不要再申请入群)
 - 2群：985222441 

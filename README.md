@@ -110,9 +110,9 @@ Any bugs or question please feel free to post at Github[Issue system](https://gi
 - [帮助文档](http://peter_zhang921.gitee.io/cboard_docsify/#/zh-cn/)
 - [Document](https://tuiqiao.github.io/CBoardDoc/#/en-us/)
 
-## 中国用户QQ交流群
+## Gitter交流 
 
-- 重启交流群须知
+- 交流群须知
     - 在讨论相关问题之前，请务必自己阅读[官方文档](http://peter_zhang921.gitee.io/cboard_docsify/#/zh-cn/), 相信大部分问题您都能在文档中找到答案
     - 用户交流群是为方便CBoard使用者之间进行沟通，请注意**不是答疑群，请大家能够尽量互相帮助**
     - 管理员会定义清理最近3个月不曾发言的僵尸用户
@@ -123,5 +123,4 @@ Any bugs or question please feel free to post at Github[Issue system](https://gi
         - What version of the product are you using? On what operating system?（你正在使用产品的哪个版本？在什么操作系统上？）
         - Please provide any additional information below.（如果有的话，请在下面提供更多信息。）
 
-- 1群：301028618 (已满, 请不要再申请入群)
-- 2群：985222441 
+[![Gitter](https://badges.gitter.im/tuiqiao_cboard/community.svg)](https://gitter.im/tuiqiao_cboard/community?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge)

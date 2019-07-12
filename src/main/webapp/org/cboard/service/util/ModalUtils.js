@@ -40,6 +40,40 @@ cBoard.service('ModalUtils', function ($uibModal, $filter) {
             windowClass: style,
             size: size,
             controller: function ($scope, $uibModalInstance) {
+            	/*Confirmation for Delete "ok" enable/disable*/
+            	$scope.deleteConfirmationbtn = true;		
+            	$scope.confirmDeleteText = function () {
+            		if ($scope.deleteText == "DELETE") {
+            			$scope.deleteConfirmationbtn = false;
+            		} else {
+            			$scope.deleteConfirmationbtn = true;
+            		}
+            	};
+                content ? $scope.content = content : $scope.content = translate('CONFIG.DASHBOARD.DASHBOARD_SOMETHING_WRONG');
+                $scope.ok = function () {
+                    $uibModalInstance.close();
+                    if (ok) {
+                        ok();
+                    }
+                };
+                $scope.close = function () {
+                    $uibModalInstance.close();
+                    if (close) {
+                        close();
+                    }
+                };
+            }
+        });
+    };
+    
+    this.saveConfirm = function (content, style, size, ok, close) {
+        $uibModal.open({
+            templateUrl: 'org/cboard/view/util/modal/saveConfirm.html',
+            windowTemplateUrl: 'org/cboard/view/util/modal/window.html',
+            backdrop: false,
+            windowClass: style,
+            size: size,
+            controller: function ($scope, $uibModalInstance) {
                 content ? $scope.content = content : $scope.content = translate('CONFIG.DASHBOARD.DASHBOARD_SOMETHING_WRONG');
                 $scope.ok = function () {
                     $uibModalInstance.close();

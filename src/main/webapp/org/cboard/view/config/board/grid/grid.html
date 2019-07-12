@@ -1,11 +1,7 @@
 <div class="row">
     <div class="form-group" style="margin: 5px 15px;">
-        <button type="submit" class="btn btn-success" ng-click="addRow()">
-            {{'CONFIG.DASHBOARD.ADD_ROW'|translate}}
-        </button>
-        <button type="submit" class="btn btn-success" ng-click="addPramRow()">
-            {{'CONFIG.DASHBOARD.ADD_PARAMROW'|translate}}
-        </button>
+        <button type="submit"  ng-click="addRow()" class="btn btn-primary btn-test " >{{'CONFIG.DASHBOARD.ADD_ROW'|translate}}</button>
+		<button type="submit"  ng-click="addPramRow()"class="btn  btn-cancel"> {{'CONFIG.DASHBOARD.ADD_PARAMROW'|translate}}</button>
     </div>
 </div>
 <div dnd-list="curBoard.layout.rows" dnd-allowed-types="['r']">
@@ -25,11 +21,7 @@
 </div>
 <div class="row" ng-if="curBoard.layout.rows.length >= 3">
     <div class="form-group" style="margin: 5px 15px;">
-        <button type="submit" class="btn btn-success" ng-click="addRow()">
-            {{'CONFIG.DASHBOARD.ADD_ROW'|translate}}
-        </button>
-        <button type="submit" class="btn btn-success" ng-click="addPramRow()">
-            {{'CONFIG.DASHBOARD.ADD_PARAMROW'|translate}}
-        </button>
+        <button type="submit"  ng-click="addRow()" class="btn btn-primary btn-test " >{{'CONFIG.DASHBOARD.ADD_ROW'|translate}}</button>
+		<button type="submit"  ng-click="addPramRow()"class="btn  btn-cancel"> {{'CONFIG.DASHBOARD.ADD_PARAMROW'|translate}}</button>
     </div>
 </div>

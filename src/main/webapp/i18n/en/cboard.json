@@ -8,7 +8,7 @@
     "REFRESH": "Refresh",
     "EDIT": "Edit",
     "EDIT_DEFAULT_VALUE": "Edit Default Value",
-    "CONFIRM_DELETE": "Confirm to Delete?",
+    "CONFIRM_DELETE": "Are you sure you want to delete ",
     "CONFIRM_RESET": "Confirm to Reset?",
     "CONFIRM_SAVE_BEFORE_PREVIEW": "Need save board before preview, confirm to save?",
     "NOT_ALLOWED_TO_DELETE_BECAUSE_BE_DEPENDENT": "Not allowed to delete, because be dependent",
@@ -19,6 +19,7 @@
     "NOT_EMPTY": " can not be empty.",
     "NEW": "New",
     "COPY": "Copy",
+    "RESOURCE":"Grant Resource",
     "DELETE": "Delete",
     "EXPORT": "Export",
     "LOG": "Log",
@@ -30,7 +31,7 @@
     "LAST60MIN_TIMESTAMP": "Last 60 Hours(Timestamp)",
     "LOGIN_NAME": "Current Login Name",
     "USER_NAME": "Current User Name",
-    "USER_ROLES": "Roles of Current User",
+    "USER_ROLES": "Current User Name",
     "FILTER_GROUP": "Filter Group",
     "SAVE_AS": "Save As",
     "PARAM": "Parameter",
@@ -52,6 +53,9 @@
     "UPDATE_TIM": "last update time",
     "FOLD_TREE": "Fold all nodes",
     "UNFOLD_TREE": "Unflod all nodes",
+    "PREVIEW" : "Preview",
+    "ACTION" : "Actions",
+    "CLOSE" : "Close",
     "MUST_SELECT_ONE_BOARD": "Please choose one board first",
     "SKIP_TO": "Skip to",
     "SKIP": "Skip"
@@ -68,16 +72,18 @@
   },
   "SIDEBAR": {
     "MENU": "MENU",
-    "C_DASHBOARD": "Dashboard",
-    "MY_DASHBOARD": "My DashBoard",
+    "C_DASHBOARD": "My Dashboard",
+    "MY_DASHBOARD": "Dashboard",
     "CONFIG": "Configuration",
     "DATA_SOURCE": "DataSource",
     "DATASET": "Dataset",
     "WIDGET": "Widget",
+    "DASHBOARD_CONFIG": "Dashboard Config",
     "DASHBOARD": "Dashboard",
     "DASHBOARD_CATEGORY": "Dashboard Category",
     "ADMIN": "Admin",
-    "USER_ADMIN": "User Admin",
+    "USER_ADMIN": "User",
+    "ROLE_ADMIN": "Role",
     "RES_ADMIN": "Resource Admin",
     "JOB": "Job",
     "SHARE_RESOURCE": "Share Resource",
@@ -89,7 +95,8 @@
     "CHANGE_PASSWORD": "Change Password",
     "CURRENT_PASSWORD": "Current Password",
     "NEW_PASSWORD": "New Password",
-    "CONFIRM_PASSWORD": "Confirm Password"
+    "CONFIRM_PASSWORD": "Confirm Password",
+    "CHANGE_THEME" : "Change Theme"
   },
   "FOOTER": {
     "COPYRIGHT": "CBoard OpenSource Team",
@@ -111,7 +118,8 @@
   },
   "CONFIG": {
     "COMMON": {
-      "CUSTOM_EXPRESSION": "Calculated Measures"
+      "CUSTOM_EXPRESSION": "Calculated Measures",
+      "NEW": "New"
     },
     "DATA_SOURCE": {
       "DATA_SOURCE_HEADER": "Data Source",
@@ -121,8 +129,9 @@
     },
     "WIDGET": {
       "WIDGET": "Widget",
+      "NAME" : "Name",
       "DATA_SOURCE": "Data Source",
-      "DATASET": "Cube",
+      "DATASET": "Dataset",
       "LOAD_DATA": "Load Data",
       "WIDGET_NAME": "Widget Name",
       "AXIS_NAME": "Axis Name",
@@ -133,6 +142,8 @@
       "PREVIEW": "Preview",
       "EXIST_QUERY": "Exist Cube",
       "NEW_QUERY": "New Query",
+      "QUERY_TAB" :"Query",
+      "OPTION_TAB":"Option",
       "SWITCH": "Switch",
       "ROW": "Row",
       "GROUP": "Column",
@@ -154,6 +165,7 @@
       "FUNNEL": "Funnel",
       "SANKEY": "Sankey",
       "TABLE": "Table",
+      "GRID": "Grid",
       "KPI": "KPI",
       "PIE": "Pie",
       "DOUGHNUT": "Doughnut",
@@ -305,10 +317,10 @@
     },
     "CATEGORY": {
       "NAME": "Category Name",
-      "CATEGORY": "Category"
+      "CATEGORY": "Dashboard Category"
     },
     "DATASET": {
-      "DATASET": "Cube",
+      "DATASET": "Dataset",
       "NAME": "Name",
       "CATEGORY": "Category",
       "LOAD_DATA": "Load Data",
@@ -380,7 +392,7 @@
     "BOARD": "Dashboard",
     "MENU": "Menu",
     "DATASOURCE": "Datasource",
-    "DATASET": "Cube",
+    "DATASET": "Dataset",
     "WIDGET": "Widget",
     "JOB": "Job",
     "CONTACT_ADMIN": "Please contact the administrator to apply the following resources' access",
@@ -390,7 +402,7 @@
     "GRANT": "Grant",
     "DELETE_USER_IN_ROLE": "Revoke User's Role(s)",
     "ADD_USER2ROLE": "Grant User Role(s)",
-    "ADD_RES2ROLE": "Upate Resource of Role",
+    "ADD_RES2ROLE": "Grant",
     "TOGGLE_UPDATE": "Toggle UDATE",
     "TOGGLE_DELETE": "Toggle DELETE"
   },

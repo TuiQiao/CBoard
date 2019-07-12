@@ -24,31 +24,59 @@
                     <!-- hidden-xs hides the username on small devices so only the image appears. -->
                     <span class="hidden-xs">{{user.username}}</span>
                 </a>
-                <ul class="dropdown-menu">
+                <ul class="dropdown-menu box profile" style="width: 190px !important;">
                     <!-- The user image in the menu -->
-                    <li class="user-header">
+					<li><div class="up-arrow"></div></li>
+                    
+					<li class="user-header">
                         <img src="{{user.avatar}}" class="img-circle">
                         <p>
                             {{user.username + ' - ' + user.company + ' ' + user.department}}
                             <small>{{user.userId}}</small>
                         </p>
+					 </li>
+					<li class="border-top">
+						<a href="" ng-click="changePwd()"><i class="fa fa-lock"></i>{{'HEADER.CHANGE_PASSWORD'|translate}}</a>
+					</li>
+					<li>
+						<a href="j_spring_cas_security_logout"><i class="fa fa-power-off"></i>{{'HEADER.SIGN_OUT'|translate}}</a>
+					</li>
+					<li class="theme-changer">
+	                       <h5>Skins</h5>
+	                       <a ><div class="skin-selector" ng-click = changeTheme(0); style="background: #000000;"></div></a>
+	                       <a ><div class="skin-selector" ng-click = changeTheme(1); style="background: #007be9;"></div></a>
+	                       <a ><div class="skin-selector"  ng-click = changeTheme(2); style="background: #7d7d7d;"></div></a>
+	            </li>
+                </ul>
+                
+                
+                
+                
+                <!-- <ul class="dropdown-menu">
+                    The user image in the menu
+                    <li class="user-header" style="height:81px">
+                    user image is hide now
+                        <img src="{{user.avatar}}" class="img-circle">
+                        <p>
+                            {{user.username }}
+                        </p>
                     </li>
-                    <!-- Menu Body -->
-                    <!--<li class="user-body">-->
-                        <!--<div class="row">-->
-                            <!--<div class="col-xs-4 text-center">-->
-                                <!--<a href="#">Followers</a>-->
-                            <!--</div>-->
-                            <!--<div class="col-xs-4 text-center">-->
-                                <!--<a href="#">Sales</a>-->
-                            <!--</div>-->
-                            <!--<div class="col-xs-4 text-center">-->
-                                <!--<a href="#">Friends</a>-->
-                            <!--</div>-->
-                        <!--</div>-->
-                        <!--&lt;!&ndash; /.row &ndash;&gt;-->
-                    <!--</li>-->
-                    <!-- Menu Footer-->
+                    Menu Body
+                    <li class="user-body">
+                        <div class="row">
+                            <div class="col-xs-4 text-center">
+                                <a href="#">Followers</a>
+                            </div>
+                            <div class="col-xs-4 text-center">
+                                <a href="#">Sales</a>
+                            </div>
+                            <div class="col-xs-4 text-center">
+                                <a href="#">Friends</a>
+                            </div>
+                        </div>
+                        &lt;!&ndash; /.row &ndash;&gt;
+                    </li>
+                    Menu Footer
                     <li class="user-footer">
                         <div class="pull-left">
                             <div class="btn btn-default btn-flat" ng-click="changePwd()">{{'HEADER.CHANGE_PASSWORD'|translate}}</div>
@@ -57,7 +85,7 @@
                             <a href="j_spring_cas_security_logout" class="btn btn-default btn-flat">{{'HEADER.SIGN_OUT'|translate}}</a>
                         </div>
                     </li>
-                </ul>
+                </ul> -->
             </li>
         </ul>
     </div>

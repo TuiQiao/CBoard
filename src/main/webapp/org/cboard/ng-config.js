@@ -34,6 +34,14 @@ angular.module('cBoard').config(['$stateProvider', function ($stateProvider) {
             templateUrl: 'org/cboard/view/dashboard/view.html',
             controller: 'dashboardViewCtrl'
         })
+        .state('dashboard.dashBoard', {
+            url: '/dashBoard',
+            templateUrl: 'org/cboard/view/dashboard/dashBoard.html'
+        })
+        .state('dashboard.myDashBoard', {
+            url: '/myDashBoard',
+            templateUrl: 'org/cboard/view/dashboard/myDashBoard.html'
+        })
         .state('config', {
             url: '/config',
             abstract: true,
@@ -94,12 +102,17 @@ angular.module('cBoard').config(['$stateProvider', function ($stateProvider) {
             templateUrl: 'org/cboard/view/admin/user.html',
             controller: 'userAdminCtrl'
         })
+        .state('admin.role', {
+        	url: '/role',
+            templateUrl: 'org/cboard/view/admin/role.html',
+            controller: 'userAdminCtrl'
+        })
         .state('config.cockpit', {
             url: '/cockpit/{boardId}',
             params: {boardId: null},
             templateUrl: 'org/cboard/view/config/board/cockpit/view.html',
             controller: 'cockpitLayoutCtrl'
-        })
+        });
 }]);
 
 angular.module('cBoard').factory('sessionHelper', ["$rootScope", "$q", function ($rootScope, $q) {

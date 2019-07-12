@@ -37,7 +37,12 @@ var CBoardHeatMapRender = function (jqContainer, options, isDeepSpec) {
     this.options = options;
 };
 
-CBoardHeatMapRender.prototype.theme = "theme-fin1"; // 主题
+//CBoardHeatMapRender.prototype.theme = "dark"; // 主题
+
+var changeTheme1 = function(themeName) {
+	CBoardHeatMapRender.prototype.theme = themeName; 
+}
+
 
 CBoardHeatMapRender.prototype.chart = function (group, persist) {
     var self = this;

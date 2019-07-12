@@ -25,13 +25,17 @@ scratch. This page gets rid of all links and provides the needed markup only.
     <link rel="stylesheet" href="plugins/jQueryUI/theme.css">
     <link rel="stylesheet" href="plugins/jQueryUI/jquery-ui.css">
 
+    <!--SyncFusion-->
+    <link href="plugins/syncfusiongrid/material.css" rel="stylesheet">
+
     <!-- AdminLTE Skins. We have chosen the skin-blue for this starter
           page. However, you can choose any other skin. Make sure you
           apply the skin class to the body tag so the changes take effect.
     -->
     <link rel="stylesheet" href="dist/css/skins/skin-blue.min.css">
-
+    <link rel="stylesheet" ng-href="dist/css/skins/{{choosenTheme}}">
     <script src="http://api.map.baidu.com/api?v=2.0&ak=ZUONbpqGBsYGXNIYHicvbAbM"></script>
+    <script src="plugins/BMap/bmap.js"></script>
     <script src="plugins/echart/echarts-3.6.2.min.js"></script>
     <!-- bmap-->
     <script src="plugins/echart/echarts-bmap.min.js"></script>
@@ -72,6 +76,12 @@ scratch. This page gets rid of all links and provides the needed markup only.
     <!-- ECharts -->
     <script src="plugins/echart/theme-fin1.js"></script>
     <script src="plugins/echart/dark.js"></script>
+	<script src="plugins/echart/themes/dark.js"></script>
+	<script src="plugins/echart/themes/infographic.js"></script>
+	<script src="plugins/echart/themes/macarons.js"></script>
+	<script src="plugins/echart/themes/roma.js"></script>
+	<script src="plugins/echart/themes/shine.js"></script>
+	<script src="plugins/echart/themes/vintage.js"></script>
     <script src="plugins/echart/echarts-wordcloud.min.js"></script>
     <script src="plugins/echart/echarts-liquidfill.min.js"></script>
 
@@ -176,7 +186,7 @@ desired effect
 |               | sidebar-mini                            |
 |---------------------------------------------------------|
 -->
-<body class="hold-transition skin-blue sidebar-mini" ng-class="{'sidebar-collapse': liteMode}">
+<body class="hold-transition skin-black-light sidebar-mini" ng-class="{'sidebar-collapse': liteMode}">
 <div class="wrapper">
 
     <!-- Main Header -->
@@ -264,6 +274,7 @@ desired effect
 <script src="org/cboard/service/chart/chartService.js"></script>
 <script src="org/cboard/service/chart/chartMapService.js"></script>
 <script src="org/cboard/service/chart/chartTableService.js"></script>
+<script src="org/cboard/service/chart/chartGridService.js"></script>
 <script src="org/cboard/service/chart/chartScatterService.js"></script>
 <script src="org/cboard/service/chart/chartGaugeService.js"></script>
 <script src="org/cboard/service/chart/chartWordCloudService.js"></script>
@@ -282,6 +293,9 @@ desired effect
 <script src="plugins/crossTable/plugin.js"></script>
 <script src="plugins/FineMap/plugin.js"></script>
 <!--<script src="plugins/FineMap/.js"></script>-->
+
+<!--SyncFusion-->
+<script src="plugins/syncfusiongrid/ej2.min.js"></script>
 
 <script type="text/ng-template" id="echartContent">
     <div class="col-md-{{widget.width}}">
@@ -336,6 +350,33 @@ desired effect
                 </div>
             </div>
             <div class="box-body" ng-style="{height:myheight+'px'}" style="padding: 3px 0px 3px 13px;">
+            </div>
+        </div>
+    </div>
+</script>
+<!--template to hold the grid chart content-->
+<script type="text/ng-template" id="gridChartContent">
+    <div class="col-md-{{widget.width}}" style="z-index: 99;">
+        <div class="box box-solid">
+            <div class="box-header" ng-mouseover="x=true" ng-mouseleave="x=false" >
+                <!--<i class="fa fa-bar-chart-o"></i>-->
+                <h3 class="box-title">{{widget.name}}</h3>
+                <div class="box-tools pull-right" ng-show="x" ng-init="x=false">
+                    <button type="button" class="btn btn-box-tool" ng-click="reload(widget)"><i
+                            class="fa fa-refresh"></i>
+                    </button>
+                    <button type="button" class="btn btn-box-tool" ng-if="widgetCfg" ng-click="config(widget)"><i
+                            class="fa fa-wrench"></i>
+                    </button>
+                    <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i>
+                    </button>
+                    <button type="button" class="btn btn-box-tool" ng-click="modalTable(widget)"><i
+                            class="fa fa-square-o"></i>
+                    </button>
+                </div>
+            </div>
+            <div class="box-body" ng-style="{height:myheight+'px'}" style="padding: 3px 0px 3px 13px;" ><!--Here I will be showing the grid content-->
+                <div id="preview"></div>
             </div>
         </div>
     </div>

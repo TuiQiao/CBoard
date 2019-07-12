@@ -2,144 +2,154 @@
  * Created by yfyuan on 2016/8/12.
  */
 'use strict';
-cBoard.controller('widgetCtrl', function ($scope, $state, $stateParams, $http, $uibModal, dataService, ModalUtils, updateService, $filter, chartService, $timeout) {
+cBoard.controller('widgetCtrl', function ($rootScope,$scope, $state, $stateParams, $http, $uibModal, dataService, ModalUtils, updateService, $filter, chartService, chartGridService, $timeout, $location) {
+    $scope.showWidgetList = false;
 
         var translate = $filter('translate');
         var updateUrl = "dashboard/updateWidget.do";
         $scope.liteMode = false;
         $scope.tab = 'preview_widget2';
-        //图表类型初始化
-        $scope.chart_types = [
-            {
-                name: translate('CONFIG.WIDGET.TABLE'), value: 'table', class: 'cTable',
-                row: translate('CONFIG.WIDGET.TIPS_DIM_NUM_0_MORE'),
-                column: translate('CONFIG.WIDGET.TIPS_DIM_NUM_0_MORE'),
-                measure: translate('CONFIG.WIDGET.TIPS_DIM_NUM_0_MORE')
-            },
-            {
-                name: translate('CONFIG.WIDGET.LINE_BAR'), value: 'line', class: 'cLine',
-                row: translate('CONFIG.WIDGET.TIPS_DIM_NUM_1_MORE'),
-                column: translate('CONFIG.WIDGET.TIPS_DIM_NUM_0_MORE'),
-                measure: translate('CONFIG.WIDGET.TIPS_DIM_NUM_1_MORE')
-            },
-            {
-                name: translate('CONFIG.WIDGET.CONTRAST'), value: 'contrast', class: 'cContrast',
-                row: translate('CONFIG.WIDGET.TIPS_DIM_NUM_1'),
-                column: translate('CONFIG.WIDGET.TIPS_DIM_NUM_0'),
-                measure: translate('CONFIG.WIDGET.TIPS_DIM_NUM_2')
-            },
-            {
-                name: translate('CONFIG.WIDGET.SCATTER'), value: 'scatter', class: 'cScatter',
-                row: translate('CONFIG.WIDGET.TIPS_DIM_NUM_1_MORE'),
-                column: translate('CONFIG.WIDGET.TIPS_DIM_NUM_0_MORE'),
-                measure: translate('CONFIG.WIDGET.TIPS_DIM_NUM_1_MORE')
-            },
-            {
-                name: translate('CONFIG.WIDGET.PIE'), value: 'pie', class: 'cPie',
-                row: translate('CONFIG.WIDGET.TIPS_DIM_NUM_1_MORE'),
-                column: translate('CONFIG.WIDGET.TIPS_DIM_NUM_0_MORE'),
-                measure: translate('CONFIG.WIDGET.TIPS_DIM_NUM_1_MORE')
-            },
-            {
-                name: translate('CONFIG.WIDGET.KPI'), value: 'kpi', class: 'cKpi',
-                row: translate('CONFIG.WIDGET.TIPS_DIM_NUM_0'),
-                column: translate('CONFIG.WIDGET.TIPS_DIM_NUM_0'),
-                measure: translate('CONFIG.WIDGET.TIPS_DIM_NUM_1')
-            },
-            {
-                name: translate('CONFIG.WIDGET.FUNNEL'), value: 'funnel', class: 'cFunnel',
-                row: translate('CONFIG.WIDGET.TIPS_DIM_NUM_0_MORE'),
-                column: translate('CONFIG.WIDGET.TIPS_DIM_NUM_0'),
-                measure: translate('CONFIG.WIDGET.TIPS_DIM_NUM_1_MORE')
-            },
-            {
-                name: translate('CONFIG.WIDGET.SANKEY'), value: 'sankey', class: 'cSankey',
-                row: translate('CONFIG.WIDGET.TIPS_DIM_NUM_1_MORE'),
-                column: translate('CONFIG.WIDGET.TIPS_DIM_NUM_0_MORE'),
-                measure: translate('CONFIG.WIDGET.TIPS_DIM_NUM_1')
-            },
-            {
-                name: translate('CONFIG.WIDGET.RADAR'), value: 'radar', class: 'cRadar',
-                row: translate('CONFIG.WIDGET.TIPS_DIM_NUM_1_MORE'),
-                column: translate('CONFIG.WIDGET.TIPS_DIM_NUM_0_MORE'),
-                measure: translate('CONFIG.WIDGET.TIPS_DIM_NUM_1_MORE')
-            },
-            {
-                name: translate('CONFIG.WIDGET.MAP'), value: 'map', class: 'cMap',
-                row: translate('CONFIG.WIDGET.TIPS_DIM_NUM_1_MORE'),
-                column: translate('CONFIG.WIDGET.TIPS_DIM_NUM_0_MORE'),
-                measure: translate('CONFIG.WIDGET.TIPS_DIM_NUM_1_MORE')
-            },
-            {
-                name: translate('CONFIG.WIDGET.GAUGE'), value: 'gauge', class: 'cGauge',
-                row: translate('CONFIG.WIDGET.TIPS_DIM_NUM_0'),
-                column: translate('CONFIG.WIDGET.TIPS_DIM_NUM_0'),
-                measure: translate('CONFIG.WIDGET.TIPS_DIM_NUM_1')
-            },
-            {
-                name: translate('CONFIG.WIDGET.WORD_CLOUD'), value: 'wordCloud', class: 'cWordCloud',
-                row: translate('CONFIG.WIDGET.TIPS_DIM_NUM_1_MORE'),
-                column: translate('CONFIG.WIDGET.TIPS_DIM_NUM_0'),
-                measure: translate('CONFIG.WIDGET.TIPS_DIM_NUM_1')
-            },
-            {
-                name: translate('CONFIG.WIDGET.TREE_MAP'), value: 'treeMap', class: 'cTreeMap',
-                row: translate('CONFIG.WIDGET.TIPS_DIM_NUM_1_MORE'),
-                column: translate('CONFIG.WIDGET.TIPS_DIM_NUM_0'),
-                measure: translate('CONFIG.WIDGET.TIPS_DIM_NUM_1')
-            },
-            {
-                name: translate('CONFIG.WIDGET.HEAT_MAP_CALENDER'), value: 'heatMapCalendar', class: 'cHeatMapCalendar',
-                row: translate('CONFIG.WIDGET.TIPS_DIM_NUM_1'),
-                column: translate('CONFIG.WIDGET.TIPS_DIM_NUM_0'),
-                measure: translate('CONFIG.WIDGET.TIPS_DIM_NUM_1')
-            },
-            {
-                name: translate('CONFIG.WIDGET.HEAT_MAP_TABLE'), value: 'heatMapTable', class: 'cHeatMapTable',
-                row: translate('CONFIG.WIDGET.TIPS_DIM_NUM_1_MORE'),
-                column: translate('CONFIG.WIDGET.TIPS_DIM_NUM_1_MORE'),
-                measure: translate('CONFIG.WIDGET.TIPS_DIM_NUM_1')
-            },
-            {
-                name: translate('CONFIG.WIDGET.LIQUID_FILL'), value: 'liquidFill', class: 'cLiquidFill',
-                row: translate('CONFIG.WIDGET.TIPS_DIM_NUM_0'),
-                column: translate('CONFIG.WIDGET.TIPS_DIM_NUM_0'),
-                measure: translate('CONFIG.WIDGET.TIPS_DIM_NUM_1')
-            },
-            {
-                name: translate('CONFIG.WIDGET.AREA_MAP'), value: 'areaMap', class: 'cAreaMap',
-                row: translate('CONFIG.WIDGET.TIPS_DIM_NUM_1_MORE'),
-                column: translate('CONFIG.WIDGET.TIPS_DIM_NUM_0_MORE'),
-                measure: translate('CONFIG.WIDGET.TIPS_DIM_NUM_1')
-            },
-            {
-                name: translate('CONFIG.WIDGET.CHINA_MAP'), value: 'chinaMap', class: 'cChinaMap',
-                row: translate('CONFIG.WIDGET.TIPS_DIM_NUM_1_MORE'),
-                column: translate('CONFIG.WIDGET.TIPS_DIM_NUM_0_MORE'),
-                measure: translate('CONFIG.WIDGET.TIPS_DIM_NUM_1_MORE')
-            },
-            {
-                name: translate('CONFIG.WIDGET.CHINA_MAP_BMAP'), value: 'chinaMapBmap', class: 'cChinaMapBmap',
-                row: translate('CONFIG.WIDGET.TIPS_DIM_NUM_1_MORE'),
-                column: translate('CONFIG.WIDGET.TIPS_DIM_NUM_0_MORE'),
-                measure: translate('CONFIG.WIDGET.TIPS_DIM_NUM_1_MORE')
-            },
-            {
-                name: translate('CONFIG.WIDGET.RELATION'), value: 'relation', class: 'cRelation',
-                row: translate('CONFIG.WIDGET.TIPS_DIM_NUM_1_2'),
-                column: translate('CONFIG.WIDGET.TIPS_DIM_NUM_1_2'),
-                measure: translate('CONFIG.WIDGET.TIPS_DIM_NUM_1')
-            },
+    $scope.colorArray = ['#5d9fe6', '#9fc173', '#a789c7', '#e88b8a', '#f5d451', '#ecb44d', '#aee8f4', '#7272af', '#7c8798',
+        '#90c3c6', '#bc7676', '#8b9bc7', '#c189ba', '#bb8cf2'];
+    //图表类型初始化
+    $scope.chart_types = [
+
+        {
+            name: translate('CONFIG.WIDGET.TABLE'), value: 'table', class: 'cTable',
+            row: translate('CONFIG.WIDGET.TIPS_DIM_NUM_1_MORE'),
+            column: translate('CONFIG.WIDGET.TIPS_DIM_NUM_0_MORE'),
+            measure: translate('CONFIG.WIDGET.TIPS_DIM_NUM_1_MORE')
+        },
+        {
+                    name: translate('CONFIG.WIDGET.GRID'), value: 'grid', class: 'cGrid',
+                    row: translate('CONFIG.WIDGET.TIPS_DIM_NUM_1_MORE'),
+                    column: translate('CONFIG.WIDGET.TIPS_DIM_NUM_0_MORE'),
+                    measure: translate('CONFIG.WIDGET.TIPS_DIM_NUM_1_MORE')
+        },
+        {
+            name: translate('CONFIG.WIDGET.LINE_BAR'), value: 'line', class: 'cLine',
+            row: translate('CONFIG.WIDGET.TIPS_DIM_NUM_1_MORE'),
+            column: translate('CONFIG.WIDGET.TIPS_DIM_NUM_0_MORE'),
+            measure: translate('CONFIG.WIDGET.TIPS_DIM_NUM_1_MORE')
+        },
+        {
+            name: translate('CONFIG.WIDGET.CONTRAST'), value: 'contrast', class: 'cContrast',
+            row: translate('CONFIG.WIDGET.TIPS_DIM_NUM_1'),
+            column: translate('CONFIG.WIDGET.TIPS_DIM_NUM_0'),
+            measure: translate('CONFIG.WIDGET.TIPS_DIM_NUM_2')
+        },
+        {
+            name: translate('CONFIG.WIDGET.SCATTER'), value: 'scatter', class: 'cScatter',
+            row: translate('CONFIG.WIDGET.TIPS_DIM_NUM_1_MORE'),
+            column: translate('CONFIG.WIDGET.TIPS_DIM_NUM_0_MORE'),
+            measure: translate('CONFIG.WIDGET.TIPS_DIM_NUM_1_MORE')
+        },
+        {
+            name: translate('CONFIG.WIDGET.PIE'), value: 'pie', class: 'cPie',
+            row: translate('CONFIG.WIDGET.TIPS_DIM_NUM_1_MORE'),
+            column: translate('CONFIG.WIDGET.TIPS_DIM_NUM_0_MORE'),
+            measure: translate('CONFIG.WIDGET.TIPS_DIM_NUM_1_MORE')
+        },
+        {
+            name: translate('CONFIG.WIDGET.KPI'), value: 'kpi', class: 'cKpi',
+            row: translate('CONFIG.WIDGET.TIPS_DIM_NUM_0'),
+            column: translate('CONFIG.WIDGET.TIPS_DIM_NUM_0'),
+            measure: translate('CONFIG.WIDGET.TIPS_DIM_NUM_1')
+        },
+        {
+            name: translate('CONFIG.WIDGET.FUNNEL'), value: 'funnel', class: 'cFunnel',
+            row: translate('CONFIG.WIDGET.TIPS_DIM_NUM_0_MORE'),
+            column: translate('CONFIG.WIDGET.TIPS_DIM_NUM_0'),
+            measure: translate('CONFIG.WIDGET.TIPS_DIM_NUM_1_MORE')
+        },
+        {
+            name: translate('CONFIG.WIDGET.SANKEY'), value: 'sankey', class: 'cSankey',
+            row: translate('CONFIG.WIDGET.TIPS_DIM_NUM_1_MORE'),
+            column: translate('CONFIG.WIDGET.TIPS_DIM_NUM_0_MORE'),
+            measure: translate('CONFIG.WIDGET.TIPS_DIM_NUM_1')
+        },
+        {
+            name: translate('CONFIG.WIDGET.RADAR'), value: 'radar', class: 'cRadar',
+            row: translate('CONFIG.WIDGET.TIPS_DIM_NUM_1_MORE'),
+            column: translate('CONFIG.WIDGET.TIPS_DIM_NUM_0_MORE'),
+            measure: translate('CONFIG.WIDGET.TIPS_DIM_NUM_1_MORE')
+        },
+        {
+            name: translate('CONFIG.WIDGET.MAP'), value: 'map', class: 'cMap',
+            row: translate('CONFIG.WIDGET.TIPS_DIM_NUM_1_MORE'),
+            column: translate('CONFIG.WIDGET.TIPS_DIM_NUM_0_MORE'),
+            measure: translate('CONFIG.WIDGET.TIPS_DIM_NUM_1_MORE')
+        },
+        {
+            name: translate('CONFIG.WIDGET.GAUGE'), value: 'gauge', class: 'cGauge',
+            row: translate('CONFIG.WIDGET.TIPS_DIM_NUM_0'),
+            column: translate('CONFIG.WIDGET.TIPS_DIM_NUM_0'),
+            measure: translate('CONFIG.WIDGET.TIPS_DIM_NUM_1')
+        },
+        {
+            name: translate('CONFIG.WIDGET.WORD_CLOUD'), value: 'wordCloud', class: 'cWordCloud',
+            row: translate('CONFIG.WIDGET.TIPS_DIM_NUM_1_MORE'),
+            column: translate('CONFIG.WIDGET.TIPS_DIM_NUM_0'),
+            measure: translate('CONFIG.WIDGET.TIPS_DIM_NUM_1')
+        },
+        {
+            name: translate('CONFIG.WIDGET.TREE_MAP'), value: 'treeMap', class: 'cTreeMap',
+            row: translate('CONFIG.WIDGET.TIPS_DIM_NUM_1_MORE'),
+            column: translate('CONFIG.WIDGET.TIPS_DIM_NUM_0'),
+            measure: translate('CONFIG.WIDGET.TIPS_DIM_NUM_1')
+        },
+        {
+            name: translate('CONFIG.WIDGET.HEAT_MAP_CALENDER'), value: 'heatMapCalendar', class: 'cHeatMapCalendar',
+            row: translate('CONFIG.WIDGET.TIPS_DIM_NUM_1'),
+            column: translate('CONFIG.WIDGET.TIPS_DIM_NUM_0'),
+            measure: translate('CONFIG.WIDGET.TIPS_DIM_NUM_1')
+        },
+        {
+            name: translate('CONFIG.WIDGET.HEAT_MAP_TABLE'), value: 'heatMapTable', class: 'cHeatMapTable',
+            row: translate('CONFIG.WIDGET.TIPS_DIM_NUM_1_MORE'),
+            column: translate('CONFIG.WIDGET.TIPS_DIM_NUM_1_MORE'),
+            measure: translate('CONFIG.WIDGET.TIPS_DIM_NUM_1')
+        },
+        {
+            name: translate('CONFIG.WIDGET.LIQUID_FILL'), value: 'liquidFill', class: 'cLiquidFill',
+            row: translate('CONFIG.WIDGET.TIPS_DIM_NUM_0'),
+            column: translate('CONFIG.WIDGET.TIPS_DIM_NUM_0'),
+            measure: translate('CONFIG.WIDGET.TIPS_DIM_NUM_1')
+        },
+        {
+            name: translate('CONFIG.WIDGET.AREA_MAP'), value: 'areaMap', class: 'cAreaMap',
+            row: translate('CONFIG.WIDGET.TIPS_DIM_NUM_1_MORE'),
+            column: translate('CONFIG.WIDGET.TIPS_DIM_NUM_0_MORE'),
+            measure: translate('CONFIG.WIDGET.TIPS_DIM_NUM_1')
+        },
+        {
+            name: translate('CONFIG.WIDGET.CHINA_MAP'), value: 'chinaMap', class: 'cChinaMap',
+            row: translate('CONFIG.WIDGET.TIPS_DIM_NUM_1_MORE'),
+            column: translate('CONFIG.WIDGET.TIPS_DIM_NUM_0_MORE'),
+            measure: translate('CONFIG.WIDGET.TIPS_DIM_NUM_1_MORE')
+        },
+        {
+            name: translate('CONFIG.WIDGET.CHINA_MAP_BMAP'), value: 'chinaMapBmap', class: 'cChinaMapBmap',
+            row: translate('CONFIG.WIDGET.TIPS_DIM_NUM_1_MORE'),
+            column: translate('CONFIG.WIDGET.TIPS_DIM_NUM_0_MORE'),
+            measure: translate('CONFIG.WIDGET.TIPS_DIM_NUM_1_MORE')
+        },
+        {
+            name: translate('CONFIG.WIDGET.RELATION'), value: 'relation', class: 'cRelation',
+            row: translate('CONFIG.WIDGET.TIPS_DIM_NUM_1_2'),
+            column: translate('CONFIG.WIDGET.TIPS_DIM_NUM_1_2'),
+            measure: translate('CONFIG.WIDGET.TIPS_DIM_NUM_1')
+        },
             {
                 name: translate('CONFIG.WIDGET.WORLD_MAP'), value: 'worldMap', class: 'cWorldMap',
                 row: translate('CONFIG.WIDGET.TIPS_DIM_NUM_1_MORE'),
                 column: translate('CONFIG.WIDGET.TIPS_DIM_NUM_0_MORE'),
                 measure: translate('CONFIG.WIDGET.TIPS_DIM_NUM_1')
             }
-        ];
+    ];
 
         $scope.chart_types_status = {
-            "line": true, "pie": true, "kpi": true, "table": true,
+        "line": true, "pie": true, "kpi": true, "table": true, "grid": true,
             "funnel": true, "sankey": true, "radar": true, "map": true,
             "scatter": true, "gauge": true, "wordCloud": true, "treeMap": true,
             "heatMapCalendar": true, "heatMapTable": true, "liquidFill": true,
@@ -237,6 +247,7 @@ cBoard.controller('widgetCtrl', function ($scope, $state, $stateParams, $http, $
             pie: {keys: 2, groups: -1, filters: -1, values: 2},
             kpi: {keys: 0, groups: 0, filters: -1, values: 1},
             table: {keys: -1, groups: -1, filters: -1, values: -1},
+        grid: { keys: -1, groups: -1, filters: -1, values: -1 },
             funnel: {keys: -1, groups: 0, filters: -1, values: 2},
             sankey: {keys: 2, groups: 2, filters: -1, values: 1},
             radar: {keys: 2, groups: -1, filters: -1, values: 2},
@@ -333,6 +344,8 @@ cBoard.controller('widgetCtrl', function ($scope, $state, $stateParams, $http, $
         var getWidgetList = function (callback) {
             $http.get("dashboard/getWidgetList.do").success(function (response) {
                 $scope.widgetList = response;
+            setPage(1);
+            getCubeName();
                 if (callback) {
                     callback();
                 }
@@ -349,10 +362,28 @@ cBoard.controller('widgetCtrl', function ($scope, $state, $stateParams, $http, $
             });
         };
 
-        $scope.viewExp = function(exp) {
-            ModalUtils.alert({title: translate('CONFIG.COMMON.CUSTOM_EXPRESSION') + ': ' + exp.alias, body: exp.exp},
-                "modal-info", 'lg');
-        }
+    $scope.viewExp = function (exp) {
+        ModalUtils.alert({ title: translate('CONFIG.COMMON.CUSTOM_EXPRESSION') + ': ' + exp.alias, body: exp.exp },
+            'modal-info', 'lg');
+    }
+    
+    
+    
+    function getCubeName () {
+		if($scope.widgetList != null) {
+			var wgtList = $scope.widgetList;
+			wgtList.forEach(function(wgtListVal, index) {
+				if($scope.datasetList != null) {
+					$scope.datasetList.forEach(function(dsList, index){
+						var wlData = wgtListVal.data;
+						if(wlData.datasetId == dsList.id)
+							$scope.cubeNameArr[wgtListVal.data.datasetId] = dsList.name;
+					});
+				}
+			});
+			
+		}
+	}
 
         $scope.editExp = function (col) {
             var columnObjs = schemaToSelect($scope.schema);
@@ -455,6 +486,7 @@ cBoard.controller('widgetCtrl', function ($scope, $state, $stateParams, $http, $
             $scope.widgetCategory = null;
             $scope.widgetId = null;
             $scope.optFlag = 'new';
+            $scope.showWidgetList = true;
             $scope.customDs = false;
             $scope.schema = null;
             $scope.liteMode = false;
@@ -858,7 +890,42 @@ cBoard.controller('widgetCtrl', function ($scope, $state, $stateParams, $http, $
                     datasetId: $scope.customDs ? undefined : $scope.curWidget.datasetId
                 });
                 $scope.loadingPre = false;
-            } else {
+            } else if (charType == 'grid') {// do differently as we are going to use syncfusion
+
+            //Fetch the data
+            var config = $scope.curWidget.config;
+            var dataSource = $scope.datasource ? $scope.datasource.id : null;
+            var query = $scope.curWidget.query;
+            var datasetId = $scope.customDs ? undefined : $scope.curWidget.datasetId;
+
+            //Fetch the measure columns
+            $scope.measureColumns = getSelectedMeasureColumns(config);
+            $scope.dimensionColumns = getSelectedDimensionColumns(config);
+            
+            var aggregateClmnsObj = {
+                "type":'',
+                "field":"",
+                "groupFooterTemplate": 'Total units: ${sum}'
+            };
+
+            $scope.aggregateClmns = [];
+
+            $scope.measureColumns.forEach(function(value, index) {
+                value.forEach(function(v, i) {
+                var aggregate_type = v.aggregate_type;
+                    aggregateClmnsObj =  {};
+                    aggregateClmnsObj.type = v.aggregate_type;
+                    aggregateClmnsObj.field = v.col;
+                    aggregateClmnsObj.groupFooterTemplate = 'Total '+ v.col +': ${'+aggregate_type+'}';
+                    $scope.aggregateClmns.push(aggregateClmnsObj);
+                })
+            });
+            
+
+            dataService.getRawData(dataSource, query, datasetId, config).then(function (response) {
+                renderGridChart(response);
+            });
+        } else {
                 chartService.render($('#preview'), {
                     config: $scope.curWidget.config,
                     datasource: $scope.datasource ? $scope.datasource.id : null,
@@ -994,7 +1061,7 @@ cBoard.controller('widgetCtrl', function ($scope, $state, $stateParams, $http, $
         };
 
         $scope.saveWgt = function () {
-            $scope.liteMode = false;
+        //$scope.liteMode = false;
             if (!validation()) {
                 return;
             }
@@ -1055,11 +1122,14 @@ cBoard.controller('widgetCtrl', function ($scope, $state, $stateParams, $http, $
                         getWidgetList();
                         getCategoryList();
                         ModalUtils.alert(translate("COMMON.SUCCESS"), "modal-success", "sm");
+                    //Hide Widget List
+                    $scope.showWidgetList = false;
                     } else {
                         $scope.alerts = [{msg: serviceStatus.msg, type: 'danger'}];
                     }
                 });
             }
+        $scope.showWidgetList = false;  /*To hide Widget list*/
         };
 
         $scope.editWgt = function (widget) {
@@ -1106,6 +1176,7 @@ cBoard.controller('widgetCtrl', function ($scope, $state, $stateParams, $http, $
 
             $scope.widgetId = widget.id;
             $scope.optFlag = 'edit';
+            $scope.showWidgetList = true;
             $scope.customDs = _.isUndefined($scope.curWidget.datasetId);
             loadDataset(function () {
                 loadDsExpressions();
@@ -1116,15 +1187,23 @@ cBoard.controller('widgetCtrl', function ($scope, $state, $stateParams, $http, $
             addWatch();
         };
 
-        $scope.doCancel = function () {
-            if ($scope.optFlag == 'new') {
-                $scope.newConfig();
-                $scope.filterSelect = {};
-                cleanPreview();
-            } else {
-                $scope.editCurWgt();
-            }
+    $scope.doCancel = function () {
+        //Hide Widget List
+        $scope.showWidgetList = false;
+
+        if ($scope.optFlag == 'new') {
+            $scope.newConfig();
+            $scope.filterSelect = {};
+            cleanPreview();
+        } else {
+            $scope.editCurWgt();
         }
+
+        $state.go('config.widget', { id: '' }, { notify: false, inherit: false });
+        $scope.showWidgetList = false;
+
+
+    }
 
         $scope.filterDimension = function (e) {
             if (e.type == 'level') {
@@ -1213,18 +1292,18 @@ cBoard.controller('widgetCtrl', function ($scope, $state, $stateParams, $http, $
             }
         };
 
-        $scope.deleteWgt = function (widget) {
-            ModalUtils.confirm(translate("COMMON.CONFIRM_DELETE"), "modal-info", "lg", function () {
-                $http.post("dashboard/deleteWidget.do", {id: widget.id}).success(function (serviceStatus) {
-                    if (serviceStatus.status == '1') {
-                        getWidgetList();
-                    } else {
-                        ModalUtils.alert(serviceStatus.msg, "modal-warning", "lg");
-                    }
-                    $scope.optFlag == 'none';
-                });
+    $scope.deleteWgt = function (widget) {
+        ModalUtils.confirm(translate('COMMON.CONFIRM_DELETE')+widget.name, 'modal-warning', 'lg', function () {
+            $http.post("dashboard/deleteWidget.do", { id: widget.id }).success(function (serviceStatus) {
+                if (serviceStatus.status == '1') {
+                    getWidgetList();
+                } else {
+                    ModalUtils.alert(serviceStatus.msg, 'modal-warning', 'lg');
+                }
+                $scope.optFlag == 'none';
             });
-        };
+        });
+    };
 
         $scope.copyWgt = function (widget) {
             var o = angular.copy(widget);
@@ -1616,7 +1695,7 @@ cBoard.controller('widgetCtrl', function ($scope, $state, $stateParams, $http, $
 
         $scope.treeEventsObj = function () {
             var baseEventObj = jstree_baseTreeEventsObj({
-                ngScope: $scope, ngHttp: $http, ngTimeout: $timeout, ModalUtils: ModalUtils,
+                ngScope: $scope, ngHttp: $http, ngTimeout: $timeout,
                 treeID: treeID, listName: "widgetList", updateUrl: updateUrl
             });
             return baseEventObj;
@@ -1702,8 +1781,286 @@ cBoard.controller('widgetCtrl', function ($scope, $state, $stateParams, $http, $
             }, 500);
         };
 
-        /** Ace Editor Starer... **/
-        $scope.queryAceOpt = datasetEditorOptions();
+    /** Ace Editor Starer... **/
+    $scope.queryAceOpt = datasetEditorOptions();
+
+    /**
+     * editNodeWithClick()
+     */
+    $scope.editNodeOnClick = function (evt, selectedId) {
+
+        //hide list
+        $scope.showWidgetList = true;
+        $state.go('config.widget', { id: selectedId }, { notify: false, inherit: false });
+        $scope.editWgt(getSelectedWidgetOnClick(selectedId));
+    };
+
+    /**
+     * Returns the widgetId
+     * @param {selectedId}
+     */
+
+    var getSelectedWidgetOnClick = function (selectedId) {
+        //var selectedNode = jstree_GetSelectedNodes(treeID)[0];
+        return _.find($scope.widgetList, function (w) {
+            return w.id == selectedId;
+        });
+    };
+
+    /**
+         *
+         * @param {*Event} evt
+         * @param {*string} selectedId
+         */
+    $scope.showInfoOnClick = function (evt, selectedId) {
+        var content = getSelectedWidgetOnClick(selectedId);
+        ModalUtils.info(content, 'modal-info', 'lg');
     }
-)
-;
+
+    /**
+     *
+     * @param {*$event} event
+     * @param {*object} wgtObj
+     * @param {*string} id
+     */
+    $scope.newWgtOnClick = function () {
+        //hide the widget list
+        $scope.showWidgetList = true;
+
+        $scope.curWidget = {};
+        $scope.curWidget.config = {};
+        $scope.curWidget.config.option = {};
+        $scope.curWidget.expressions = [];
+        $scope.curWidget.filterGroups = [];
+        $scope.curWidget.query = {};
+        $scope.datasource = null;
+        $scope.widgetName = null;
+        $scope.widgetCategory = null;
+        $scope.widgetId = null;
+        $scope.optFlag = 'new';
+        $scope.customDs = false;
+        $scope.schema = null;
+        $scope.liteMode = false;
+        //clean the preview
+        cleanPreview();
+        addValidateWatch();
+    }
+
+    /**
+     * Returns the widgetId
+     * @param {selectedId}
+     * This is a utility function which helps to findout the widget-id
+     */
+    var getSelectedWidgetOnClick = function (selectedId) {
+        return _.find($scope.widgetList, function (w) {
+            return w.id == selectedId;
+        });
+    };
+
+    /**
+     * 
+     * @param {*wdget} widget 
+     */
+    $scope.copyWgtOnClick = function (widget) {
+        var o = angular.copy(widget);
+        o.name = o.name + "_copy";
+        $http.post("dashboard/saveNewWidget.do", { json: angular.toJson(o) }).success(function (serviceStatus) {
+            if (serviceStatus.status == '1') {
+                getWidgetList();
+                ModalUtils.alert(translate('COMMON.SUCCESS'), 'modal-success', 'sm');
+            } else {
+                ModalUtils.alert(serviceStatus.msg, 'modal-warning', 'lg');
+            }
+            $scope.optFlag == 'none';
+        });
+    };
+    
+    
+    $rootScope.refreshPreview = function() {
+  	 $scope.preview();
+    }
+    
+    
+   
+
+
+    /*
+     * Code for pagination
+    */
+    $scope.pageSize = 10;
+    $scope.pager = {};
+    $scope.setPage = setPage;
+    $scope.cubeNameArr = [];
+
+    var pageSizeArr = [5, 10, 15, 20, 25, 30, 40, 50, 60, 70, 80, 90, 100, "ALL"];
+    $scope.pageSizeArr = pageSizeArr;
+    function setPage(page) {
+        if (page < 1 || page > $scope.pager.totalPages) {
+            return;
+        }
+        $scope.pager = getPager($scope.widgetList.length, page, $scope.pageSize);
+        $scope.finalWidgetList = $scope.widgetList.slice($scope.pager.startIndex, $scope.pager.endIndex + 1);
+        
+        
+    }
+    
+    var changePageSize = function () {
+        if ($scope.pageSize == "ALL")
+            $scope.pageSize = $scope.widgetList.length;
+        $scope.pager = getPager($scope.widgetList.length, 1, $scope.pageSize);
+        $scope.finalWidgetList = $scope.widgetList.slice($scope.pager.startIndex, $scope.pager.endIndex + 1);
+        
+        
+    }
+    $scope.changePageSize = changePageSize;
+
+    function getPager(totalItems, currentPage, pageSize) {
+        currentPage = currentPage || 1;
+        var totalPages = Math.ceil(totalItems / pageSize);
+        var startPage, endPage;
+        if (totalPages <= 10) {
+            startPage = 1;
+            endPage = totalPages;
+        } else {
+            if (currentPage <= 6) {
+                startPage = 1;
+                endPage = 10;
+            } else if (currentPage + 4 >= totalPages) {
+                startPage = totalPages - 9;
+                endPage = totalPages;
+            } else {
+                startPage = currentPage - 5;
+                endPage = currentPage + 4;
+            }
+        }
+        var startIndex = (currentPage - 1) * pageSize;
+        var endIndex = Math.min(startIndex + pageSize - 1, totalItems - 1);
+        var pages = _.range(startPage, endPage + 1);
+        return {
+            totalItems: totalItems,
+            currentPage: currentPage,
+            pageSize: pageSize,
+            totalPages: totalPages,
+            startPage: startPage,
+            endPage: endPage,
+            startIndex: startIndex,
+            endIndex: endIndex,
+            pages: pages
+        };
+    }
+
+    var renderGridChart = function (chartData) {
+        var columnList = chartData.columnList;
+        var columnData = chartData.data;
+        var gridDataArr = [];
+        var gridRowObj = {};
+
+        columnData.forEach(cd => {
+            gridRowObj = {};
+            columnList.forEach(function (val, index) {
+                gridRowObj[val.name] = cd[index];
+            });
+            gridDataArr.push(gridRowObj);
+        });
+
+        var measureClmArr = [];
+        $scope.measureColumns.forEach(function(value, index) {
+            value.forEach(function(v, i) {
+                measureClmArr.push(v.col);
+            })
+        });
+
+
+        var columnObj = { "field": "", "headerText": "", "width": "", textAlign: 'middle' };
+        var columnsArr = columnList.map(clmObj => {
+            columnObj = {};
+            columnObj.field = clmObj.name;
+            columnObj.headerText = clmObj.name;
+            columnObj.width = 100;
+            columnObj.minWidth = 120;
+            columnObj.maxWidth = 300;
+            columnObj.textAlign = 'left';
+            if(clmObj.aggType != undefined || clmObj.aggType != null)
+                columnObj.textAlign = 'right';
+
+            return columnObj;
+        });
+
+        ej.base.enableRipple(true);
+
+        var gridConfiguration = getGridConfiguration(gridDataArr, columnsArr, measureClmArr, $scope.dimensionColumns);
+
+        var grid = new ej.grids.Grid(gridConfiguration);
+
+        grid.appendTo('#preview');
+
+        grid.toolbarClick = function (args) {
+            if (args.item.id === 'preview_pdfexport') {
+                grid.pdfExport();
+            }
+            if (args.item.id === 'preview_excelexport') {
+                grid.excelExport();
+            }
+            if (args.item.id === 'preview_csvexport') {
+                grid.csvExport();
+            }
+        };
+
+        //hide the loader
+        $scope.loadingPre = false;
+    }
+
+    /**
+     * Provides grid configuration
+     * 
+     * @param {*} gridDataArr 
+     * @param {*} columnsArr 
+     */
+    var getGridConfiguration = function (gridDataArr, columnsArr, measureClmArr, dimensionClmArr) {
+        return {
+            dataSource: gridDataArr,
+            allowPaging: true,
+            allowSorting: true,
+            allowGrouping: true,
+            allowExcelExport: true,
+            allowPdfExport: true,
+            allowResizing: true,
+            allowFiltering: true,
+            filterSettings: {type:'menu'},
+            toolbar: ['excelexport', 'pdfexport', 'csvexport', 'search'],
+            groupSettings: { columns: dimensionClmArr },
+            //height: 500,
+            columns: columnsArr,
+            pageSettings: { pageCount: 5, pageSize: 5 },
+            aggregates: [{
+                columns: $scope.aggregateClmns
+            }]
+        };
+    };
+
+    /**
+     * Used to find measure columns
+     * @param {*} config 
+     */
+    var getSelectedMeasureColumns = function(config) {
+        var measureColumns = config.values.map(cfgVal => {
+            var columns = cfgVal.cols;
+            return columns;
+        });
+        return measureColumns;
+    };
+
+    /**
+     * Get the dimension Columns
+     * @param {*} config 
+     */
+    var getSelectedDimensionColumns = function(config) {
+        var dimensionColumns = config.groups.map(cfgGrp => {
+            var columns = cfgGrp.col;
+            return columns;
+        });
+        return dimensionColumns;
+    }
+
+}
+);

@@ -29,9 +29,13 @@ public class MenuService {
         menuList.add(new DashboardMenu(6, 1, "SIDEBAR.DASHBOARD_CATEGORY", "config.category"));
         menuList.add(new DashboardMenu(7, -1, "SIDEBAR.ADMIN", "admin"));
         menuList.add(new DashboardMenu(8, 7, "SIDEBAR.USER_ADMIN", "admin.user"));
-        menuList.add(new DashboardMenu(9, 1, "SIDEBAR.JOB", "config.job"));
-        menuList.add(new DashboardMenu(10, 1, "SIDEBAR.SHARE_RESOURCE", "config.role"));
-        menuList.add(new DashboardMenu(11, 1, "SIDEBAR.HOMEPAGE", "config.homepage"));
+        //left navigation bar, new link(Role)added under 'ADMIN'
+        menuList.add(new DashboardMenu(9, 7, "SIDEBAR.ROLE_ADMIN", "admin.role"));
+        menuList.add(new DashboardMenu(10, 1, "SIDEBAR.JOB", "config.job"));
+        menuList.add(new DashboardMenu(11, 1, "SIDEBAR.SHARE_RESOURCE", "config.role"));
+        menuList.add(new DashboardMenu(12, 1, "SIDEBAR.C_DASHBOARD", "dashboard.dashBoard"));
+        menuList.add(new DashboardMenu(13, 1, "SIDEBAR.MY_DASHBOARD", "dashboard.myDashBoard"));
+        menuList.add(new DashboardMenu(14, 1, "SIDEBAR.HOMEPAGE", "config.homepage"));
 
     }
 

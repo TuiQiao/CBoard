@@ -7,33 +7,39 @@ cBoard.controller('boardCtrl',
               $timeout, dataService, $state, $window, $stateParams) {
         var translate = $filter('translate');
 
-        $scope.optFlag = 'none';
-        $scope.curBoard = {layout: {rows: []}};
-        $scope.alerts = [];
-        $scope.verify = {boardName: true};
-        $rootScope.freeLayout = false;
-        $scope.treeData = [];
+    $scope.optFlag = 'none';
+    $scope.curBoard = {layout: {rows: []}};
+    $scope.alerts = [];
+    $scope.verify = {boardName: true};
+    $rootScope.freeLayout = false;
+    $scope.treeData = [];
+    $scope.hideList = true;
+    
+    $scope.colorArray = ['#5d9fe6','#9fc173','#a789c7','#e88b8a','#f5d451','#ecb44d','#aee8f4','#7272af','#7c8798',
+                         '#90c3c6','#bc7676','#8b9bc7','#c189ba','#bb8cf2'];
+    
+    var treeID = "boardTreeID";
+    var originalData = [];
+    var updateUrl = "dashboard/updateBoard.do";
 
-        var treeID = "boardTreeID";
-        var originalData = [];
-        var updateUrl = "dashboard/updateBoard.do";
-
-        var getBoardList = function () {
-            return $http.get("dashboard/getBoardList.do").success(function (response) {
-                $scope.boardList = response;
-                originalData = jstree_CvtVPath2TreeData(
-                    $scope.boardList.map(function (ds) {
-                        var categoryName = ds.categoryName == null ? translate('CONFIG.DASHBOARD.MY_DASHBOARD') : ds.categoryName;
-                        return {
-                            "id": ds.id,
-                            "name": ds.name,
-                            "categoryName": categoryName
-                        };
-                    })
-                );
-                jstree_ReloadTree(treeID, originalData);
-            });
-        };
+    var getBoardList = function () {
+        return $http.get('dashboard/getBoardList.do').success(function (response) {
+            $scope.boardList = response;
+            setPage(1);
+            originalData = jstree_CvtVPath2TreeData(
+                $scope.boardList.map(function (ds) {
+                    var categoryName = ds.categoryName == null ? translate('CONFIG.DASHBOARD.MY_DASHBOARD') : ds.categoryName;
+                    return {
+                        'id': ds.id,
+                        'name': ds.name,
+                        'categoryName': categoryName
+                    };
+                })
+            );
+            //ignoring the tree
+            //jstree_ReloadTree(treeID, originalData);
+        });
+    };
 
         var getCategoryList = function () {
             $http.get("dashboard/getCategoryList.do").success(function (response) {
@@ -147,6 +153,7 @@ cBoard.controller('boardCtrl',
             $scope.optFlag = 'new';
             $scope.curBoard = {layout: {rows: []}};
             $('div.newBoard').addClass('hideOperate');
+            $scope.hideList = false;
         };
 
         $scope.newCockpitLayout = function () {
@@ -154,6 +161,7 @@ cBoard.controller('boardCtrl',
         };
 
         $scope.newTimelineLayout = function () {
+            $scope.hideList = false;
             $rootScope.freeLayout = false;
             $scope.optFlag = 'new';
             $scope.curBoard = {
@@ -186,26 +194,38 @@ cBoard.controller('boardCtrl',
             $http.post("dashboard/saveNewBoard.do", {json: angular.toJson(o)}).success(saveBoardCallBack);
         };
 
-        $scope.deleteBoard = function (board) {
-            ModalUtils.confirm(translate("COMMON.CONFIRM_DELETE"), "modal-warning", "lg", function () {
-                $http.post("dashboard/deleteBoard.do", {id: board.id}).success(function (serviceStatus) {
-                    if (serviceStatus.status == '1') {
-                        getBoardList();
-                        boardChange();
-                        ModalUtils.alert(serviceStatus.msg, "modal-success", "sm");
-                    } else {
-                        ModalUtils.alert(serviceStatus.msg, "modal-warning", "lg");
-                    }
-                    $scope.optFlag == 'none';
-                });
+    $scope.deleteBoard = function (board) {
+        ModalUtils.confirm(translate('COMMON.CONFIRM_DELETE')+board.name, 'modal-warning', 'lg', function () {
+            $http.post('dashboard/deleteBoard.do', {id: board.id}).success(function (serviceStatus) {
+                if (serviceStatus.status == '1') {
+                    getBoardList();
+                    boardChange();
+                    ModalUtils.alert(serviceStatus.msg, 'modal-success', 'sm');
+                } else {
+                    ModalUtils.alert(serviceStatus.msg, 'modal-warning', 'lg');
+                }
+                $scope.optFlag == 'none';
             });
-        };
+        });
+    };
+    
+    $scope.cancelDiv = function () {
+    	$rootScope.freeLayout = false;
+        $scope.optFlag = 'new';
+        $scope.curBoard = {layout: {rows: []}};
+        $('div.newBoard').addClass('hideOperate');
+        $scope.hideList = true;
+    };
 
-        $scope.showInfo = function () {
-            if (!checkTreeNode("info")) return;
-            var content = getSelectedBoard();
-            ModalUtils.info(content, "modal-info", "lg");
-        };
+   /* $scope.showInfo = function () {
+        if (!checkTreeNode('info')) return;
+        var content = getSelectedBoard();
+        ModalUtils.info(content, 'modal-info', 'lg');
+    };*/
+    $scope.showInfo = function (selectedData) {
+        var content = selectedData;
+        ModalUtils.info(content, 'modal-info', 'lg');
+    };
 
         $scope.widgetGroup = function (item) {
             return item.categoryName;
@@ -283,21 +303,21 @@ cBoard.controller('boardCtrl',
             }
         }
 
-        $scope.checkBeforPreview = function (Id) {
-            $scope.isPreview = true;
-            if (!validate()) {
-                return;
-            }
-            ModalUtils.confirm(translate("COMMON.CONFIRM_SAVE_BEFORE_PREVIEW"), "modal-warning", "lg", function () {
-                $scope.saveBoard(false)
-                    .then(function () {
-                        if (!Id) {
-                            Id = $scope.curBoard.id;
-                        }
-                        $state.go('mine.view', {id: Id});
-                    });
-            });
-        };
+    $scope.checkBeforPreview = function (Id) {
+        $scope.isPreview = true;
+        if (!validate()) {
+            return;
+        }
+        ModalUtils.saveConfirm(translate('COMMON.CONFIRM_SAVE_BEFORE_PREVIEW'), 'modal-warning', 'lg', function () {
+            $scope.saveBoard(false)
+                .then(function () {
+                    if (!Id) {
+                        Id = $scope.curBoard.id;
+                    }
+                    $state.go('mine.view', {id: Id});
+                });
+        });
+    };
 
         $scope.saveBoard = function (notify) {
             if (!validate()) {
@@ -468,26 +488,41 @@ cBoard.controller('boardCtrl',
             return !$scope.ignoreChanges;
         };
 
-        $scope.copyNode = function () {
-            if (!checkTreeNode("copy")) return;
-            $scope.copyBoard(getSelectedBoard());
-        };
+    /*$scope.copyNode = function () {
+        if (!checkTreeNode('copy')) return;
+        $scope.copyBoard(getSelectedBoard());
+    };*/
+    $scope.copyNode = function (selectedData) {
+        $scope.copyBoard(selectedData);
+    };
 
-        $scope.editNode = function () {
-            if (!checkTreeNode("edit")) return;
-            $scope.editBoard(getSelectedBoard());
-            var selectedNode = jstree_GetSelectedNodes(treeID)[0];
-            if ($scope.curBoard.layout.type == 'cockpit') {
+    /*$scope.editNode = function () {
+        if (!checkTreeNode('edit')) return;
+        $scope.editBoard(getSelectedBoard());
+        var selectedNode = jstree_GetSelectedNodes(treeID)[0];
+        $state.go('config.board', {boardId: selectedNode.id}, {notify: false});
+    };*/
+    
+    $scope.editNode = function (selectedData) {
+    	$scope.hideList = false;
+        $scope.editBoard(selectedData);
+        var selectedNode = jstree_GetSelectedNodes(treeID)[0];
+        if ($scope.curBoard.layout.type == 'cockpit') {
                 $state.go('config.cockpit', {boardId: selectedNode.id});
             } else {
                 $state.go('config.board', {boardId: selectedNode.id}, {notify: false});
-            }
-        };
+        }
+        $scope.cancelDiv();
+        
+    };
 
-        $scope.deleteNode = function () {
-            if (!checkTreeNode("delete")) return;
-            $scope.deleteBoard(getSelectedBoard());
-        };
+    /*$scope.deleteNode = function () {
+        if (!checkTreeNode('delete')) return;
+        $scope.deleteBoard(getSelectedBoard());
+    };*/
+    $scope.deleteNode = function (selectedData) {
+        $scope.deleteBoard(selectedData);
+    };
 
         $scope.treeEventsObj = function () {
             var baseEventObj = jstree_baseTreeEventsObj({
@@ -642,15 +677,78 @@ cBoard.controller('boardCtrl',
             $("#" + prefixId + index + "_" + "content").addClass('active');
         };
 
-        var paramBoardId = $stateParams.boardId;
-        if (paramBoardId) {
-            boardListPromise.then(function () {
-                var board = _.find($scope.boardList, function (ds) {
-                    return ds.id == paramBoardId;
-                });
-                if (board) {
-                    $scope.editBoard(board)
-                }
+    var paramBoardId = $stateParams.boardId;
+    if (paramBoardId) {
+        boardListPromise.then(function () {
+            var board = _.find($scope.boardList, function (ds) {
+                return ds.id == paramBoardId;
             });
+            if (board) {
+                $scope.editBoard(board)
+            }
+        });
+    }
+    
+    /*
+     * Code for pagination
+    */
+    $scope.pageSize = 10;
+    $scope.pager = {};
+    $scope.setPage = setPage;
+    
+    
+    var pageSizeArr = [5, 10, 15, 20, 25, 30, 40, 50, 60, 70, 80, 90, 100, 'ALL'];
+    $scope.pageSizeArr = pageSizeArr;
+    function setPage(page) {
+        if (page < 1 || page > $scope.pager.totalPages) {
+            return;
         }
-    });
+        $scope.pager = getPager($scope.boardList.length, page, $scope.pageSize);
+        $scope.finalBoardList = $scope.boardList.slice($scope.pager.startIndex, $scope.pager.endIndex + 1);
+    }
+    
+    var changePageSize = function() {
+    	if($scope.pageSize == 'ALL')
+    		$scope.pageSize = $scope.boardList.length;
+    	$scope.pager = getPager($scope.boardList.length, 1, $scope.pageSize);
+        $scope.finalBoardList = $scope.boardList.slice($scope.pager.startIndex, $scope.pager.endIndex + 1);
+    }
+    $scope.changePageSize = changePageSize;
+    
+    function getPager(totalItems, currentPage, pageSize) {
+        currentPage = currentPage || 1;
+        var totalPages = Math.ceil(totalItems / pageSize);
+        var startPage, endPage;
+        if (totalPages <= 10) {
+            startPage = 1;
+            endPage = totalPages;
+        } else {
+            if (currentPage <= 6) {
+                startPage = 1;
+                endPage = 10;
+            } else if (currentPage + 4 >= totalPages) {
+                startPage = totalPages - 9;
+                endPage = totalPages;
+            } else {
+                startPage = currentPage - 5;
+                endPage = currentPage + 4;
+            }
+        }
+        var startIndex = (currentPage - 1) * pageSize;
+        var endIndex = Math.min(startIndex + pageSize - 1, totalItems - 1);
+        var pages = _.range(startPage, endPage + 1);
+        return {
+            totalItems: totalItems,
+            currentPage: currentPage,
+            pageSize: pageSize,
+            totalPages: totalPages,
+            startPage: startPage,
+            endPage: endPage,
+            startIndex: startIndex,
+            endIndex: endIndex,
+            pages: pages
+        };
+    }
+    
+    
+});

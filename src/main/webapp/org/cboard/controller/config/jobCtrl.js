@@ -5,6 +5,8 @@ cBoard.controller('jobCtrl', function ($scope, $rootScope, $http, dataService, $
     var translate = $filter('translate');
 
     $scope.jobTypes = [{name: 'Send Mail', type: 'mail'}];
+    $scope.colorArray = ['#5d9fe6','#9fc173','#a789c7','#e88b8a','#f5d451','#ecb44d','#aee8f4','#7272af','#7c8798',
+        '#90c3c6','#bc7676','#8b9bc7','#c189ba','#bb8cf2'];
 
     $scope.interval = $interval(function () {
         $http.get("dashboard/getJobList.do").success(function (response) {
@@ -28,6 +30,7 @@ cBoard.controller('jobCtrl', function ($scope, $rootScope, $http, dataService, $
     $scope.loadJobList = function () {
         $http.get("dashboard/getJobList.do").success(function (response) {
             $scope.jobList = response;
+            setPage(1);
         });
     };
     $scope.loadJobList();
@@ -153,7 +156,8 @@ cBoard.controller('jobCtrl', function ($scope, $rootScope, $http, dataService, $
     };
 
     $scope.deleteJob = function (job) {
-        ModalUtils.confirm(translate("COMMON.CONFIRM_DELETE"), "modal-info", "lg", function () {
+    	var jobName = job.name;
+        ModalUtils.confirm(translate('COMMON.CONFIRM_DELETE')+jobName, 'modal-info', 'lg', function () {
             $http.post("dashboard/deleteJob.do", {id: job.id}).success(function (serviceStatus) {
                 if (serviceStatus.status == '1') {
                     $scope.loadJobList();
@@ -163,4 +167,65 @@ cBoard.controller('jobCtrl', function ($scope, $rootScope, $http, dataService, $
             });
         });
     };
+
+    /*
+     * Code for pagination
+    */
+    $scope.pageSize = 10;
+    $scope.pager = {};
+    $scope.setPage = setPage;
+    
+    
+    var pageSizeArr = [5, 10, 15, 20, 25, 30, 40, 50, 60, 70, 80, 90, 100, 'ALL'];
+    $scope.pageSizeArr = pageSizeArr;
+    function setPage(page) {
+        if (page < 1 || page > $scope.pager.totalPages) {
+            return;
+        }
+        $scope.pager = getPager($scope.jobList.length, page, $scope.pageSize);
+        $scope.finalJobList = $scope.jobList.slice($scope.pager.startIndex, $scope.pager.endIndex + 1);
+    }
+    
+    var changePageSize = function() {
+    	if($scope.pageSize == 'ALL')
+    		$scope.pageSize = $scope.jobList.length;
+    	$scope.pager = getPager($scope.jobList.length, 1, $scope.pageSize);
+        $scope.finalJobList = $scope.jobList.slice($scope.pager.startIndex, $scope.pager.endIndex + 1);
+    }
+    $scope.changePageSize = changePageSize;
+    
+    function getPager(totalItems, currentPage, pageSize) {
+        currentPage = currentPage || 1;
+        var totalPages = Math.ceil(totalItems / pageSize);
+        var startPage, endPage;
+        if (totalPages <= 10) {
+            startPage = 1;
+            endPage = totalPages;
+        } else {
+            if (currentPage <= 6) {
+                startPage = 1;
+                endPage = 10;
+            } else if (currentPage + 4 >= totalPages) {
+                startPage = totalPages - 9;
+                endPage = totalPages;
+            } else {
+                startPage = currentPage - 5;
+                endPage = currentPage + 4;
+            }
+        }
+        var startIndex = (currentPage - 1) * pageSize;
+        var endIndex = Math.min(startIndex + pageSize - 1, totalItems - 1);
+        var pages = _.range(startPage, endPage + 1);
+        return {
+            totalItems: totalItems,
+            currentPage: currentPage,
+            pageSize: pageSize,
+            totalPages: totalPages,
+            startPage: startPage,
+            endPage: endPage,
+            startIndex: startIndex,
+            endIndex: endIndex,
+            pages: pages
+        };
+    }
 });

@@ -198,7 +198,7 @@
         <dependency>
             <groupId>mysql</groupId>
             <artifactId>mysql-connector-java</artifactId>
-            <version>5.1.24</version>
+            <version>5.1.47</version>
         </dependency>
         <dependency>
             <groupId>org.postgresql</groupId>
@@ -374,24 +374,6 @@
                     <showWarnings>true</showWarnings>
                 </configuration>
             </plugin>
-
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-war-plugin</artifactId>
-                <version>2.3</version>
-                <configuration>
-                    <warName>${project.artifactId}</warName>
-                    <webResources>
-                        <resource>
-                            <directory>lib/</directory>
-                            <targetPath>WEB-INF/lib</targetPath>
-                            <includes>
-                                <include>**/*.jar</include>
-                            </includes>
-                        </resource>
-                    </webResources>
-                </configuration>
-            </plugin>
         </plugins>
     </build>
     <profiles>
@@ -416,7 +398,7 @@
                                     <goal>copy-resources</goal>
                                 </goals>
                                 <configuration>
-                                    <outputDirectory>${project.build.outputDirectory}</outputDirectory>
+                                    <outputDirectory>D:/Cboard Latest(Github)/CBoard-branch-0.4.2/apache-tomcat-cboard/webapps</outputDirectory>
                                     <resources>
                                         <resource>
                                             <directory>src/main/resources/${env}</directory>

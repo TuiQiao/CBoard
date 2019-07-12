@@ -1,0 +1,36 @@
+<div class="modal-header">
+	<button type="button" class="close" data-dismiss="modal"
+		aria-label="Close" ng-click="close()">
+		<span aria-hidden="true">×</span>
+	</button>
+	<h3 class="box-title">Edit Role</h3>
+</div>
+<div class="modal-body cboard-div-border" style="padding: 31px;">
+<span class="Query-border-label Query-label">Role Details</span>
+	<form>
+       <div class="form-group">
+           <label>{{'ADMIN.ROLE.ROLE_NAME'|translate}}</label>
+           <input ng-model="curRole.roleName" class="form-control"/>
+       </div>
+       <div class="form-group">
+           <label>{{'ADMIN.ROLE.ADMIN'|translate}}</label>
+           <ui-select ng-model="curRole.userId" on-select="curRole.userId = $item.userId">
+               <ui-select-match>
+                   {{$select.selected.loginName}} ({{$select.selected.userName}})
+               </ui-select-match>
+               <ui-select-choices repeat="u.userId as u in userList | filter:{userName : $select.search}">
+                   {{u.loginName + "(" + u.userName + ")"}}
+               </ui-select-choices>
+           </ui-select>
+       </div>
+   </form>
+</div>
+<div class="modal-footer">
+	<form>
+		<div class="form-group">
+			<button type="submit" ng-click="saveRole();" class="btn btn-primary btn-test " >{{'COMMON.SAVE'|translate}}</button>
+			<button type="submit" ng-click="close()"class="btn  btn-cancel ">{{'COMMON.CANCEL'|translate}}</button>
+		</div>
+	</form>
+</div>
+

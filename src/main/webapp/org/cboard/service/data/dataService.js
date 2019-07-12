@@ -774,4 +774,44 @@ cBoard.service('dataService', function ($http, $q, updateService) {
         });
         return {evalExp: evalExp, aggs: aggs, names: names};
     }
+
+    /**
+     * This method returns the raw data that is coming from the database
+     * 
+     * @param {*} datasource 
+     * @param {*} query 
+     * @param {*} datasetId 
+     * @param {*} chartConfig 
+     * @param {*} callback 
+     * @param {*} reload 
+     */
+    this.getRawData = function (datasource, query, datasetId, chartConfig) {
+        var deferred = $q.defer();
+
+        //if dont pass 'cfg' we will be getting error from the server
+        var dataSeries = getDataSeries(chartConfig);
+        var cfg = {rows: [], columns: [], filters: []};
+        cfg.rows = getDimensionConfig(chartConfig.keys);
+        cfg.columns = getDimensionConfig(chartConfig.groups);
+        cfg.filters = getDimensionConfig(chartConfig.filters);
+        cfg.filters = cfg.filters.concat(getDimensionConfig(chartConfig.boardFilters));
+        cfg.filters = cfg.filters.concat(getDimensionConfig(chartConfig.boardWidgetFilters));
+        cfg.values = _.map(dataSeries, function (s) {
+            return {column: s.name, aggType: s.aggregate};
+        });
+        
+        $http.post("dashboard/getAggregateData.do", {
+            datasourceId: datasource,
+            query: angular.toJson(query),
+            datasetId: datasetId,
+            cfg: angular.toJson(cfg)
+        }).success(function (data) {
+            deferred.resolve(data);
+        });
+        
+        return deferred.promise;
+    };
+
+
+    
 });

@@ -140,7 +140,6 @@ cBoard.controller('widgetCtrl', function ($rootScope,$scope, $state, $stateParam
             column: translate('CONFIG.WIDGET.TIPS_DIM_NUM_1_2'),
             measure: translate('CONFIG.WIDGET.TIPS_DIM_NUM_1')
         },
-            }
         {
             name: translate('CONFIG.WIDGET.WORLD_MAP'), value: 'worldMap', class: 'cWorldMap',
             row: translate('CONFIG.WIDGET.TIPS_DIM_NUM_1_MORE'),

@@ -75,8 +75,8 @@ cBoard.controller('paramSelector', function ($scope, $uibModalInstance, dataServ
     $scope.ok = function () {
         $uibModalInstance.close();
         $scope.param.values = _.filter($scope.param.values, function(e){
-                return e != null && !_.isUndefined(e);
-            }
+            return e != null && !_.isUndefined(e);
+        }
         );
         ok($scope.param);
     };

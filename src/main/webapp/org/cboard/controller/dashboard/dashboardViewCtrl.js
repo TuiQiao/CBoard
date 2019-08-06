@@ -104,16 +104,16 @@ cBoard.controller('dashboardViewCtrl', function ($timeout, $rootScope, $scope, $
                 $scope.dimensionColumns = getSelectedDimensionColumns(config);
 
                 var aggregateClmnsObj = {
-                    "type":'',
-                    "field":"",
-                    "groupFooterTemplate": 'Total units: ${sum}'
+                        "type":'',
+                        "field":"",
+                        "groupFooterTemplate": 'Total units: ${sum}'
                 };
 
                 $scope.aggregateClmns = [];
 
                 $scope.measureColumns.forEach(function(value, index) {
                     value.forEach(function(v, i) {
-                    var aggregate_type = v.aggregate_type;
+                        var aggregate_type = v.aggregate_type;
                         aggregateClmnsObj =  {};
                         aggregateClmnsObj.type = v.aggregate_type;
                         aggregateClmnsObj.field = v.col;
@@ -136,20 +136,20 @@ cBoard.controller('dashboardViewCtrl', function ($timeout, $rootScope, $scope, $
         widget.modalRender = function (content, optionFilter, scope) {
             widget.modalLoading = true;
             widget.modalRealTimeTicket = chartService.render(content, injectFilter(widget.widget).data, optionFilter, scope)
-                .then(function () {
-                    widget.modalLoading = false;
-                });
+            .then(function () {
+                widget.modalLoading = false;
+            });
             widget.modalRealTimeOption = {optionFilter: optionFilter, scope: scope};
         };
     };
 
     $rootScope.$on('$stateChangeSuccess', function (event, toState, toParams, fromState) {
-            if (fromState.controller == 'dashboardViewCtrl') {
-                _.each($scope.intervals, function (i) {
-                    $interval.cancel(i);
-                })
-            }
+        if (fromState.controller == 'dashboardViewCtrl') {
+            _.each($scope.intervals, function (i) {
+                $interval.cancel(i);
+            })
         }
+    }
     );
 
     $scope.export = function () {
@@ -360,9 +360,9 @@ cBoard.controller('dashboardViewCtrl', function ($timeout, $rootScope, $scope, $
                 }
                 _.each(param.col, function (col) {
                     var p = {
-                        col: col.column,
-                        type: param.type,
-                        values: param.values
+                            col: col.column,
+                            type: param.type,
+                            values: param.values
                     };
                     if (_.isUndefined(col.datasetId)) {
                         if (!$scope.widgetFilters[col.widgetId]) {
@@ -388,9 +388,9 @@ cBoard.controller('dashboardViewCtrl', function ($timeout, $rootScope, $scope, $
             if (relations[i].targetId && relations[i].params && relations[i].params.length > 0) {
                 for (var j = 0; j < relations[i].params.length; j++) {
                     var p = {
-                        col: relations[i].params[j].targetField,
-                        type: "=",
-                        values: [relations[i].params[j].value]
+                            col: relations[i].params[j].targetField,
+                            type: "=",
+                            values: [relations[i].params[j].value]
                     };
                     if (!$scope.relationFilters[relations[i].targetId]) {
                         $scope.relationFilters[relations[i].targetId] = [];
@@ -438,22 +438,22 @@ cBoard.controller('dashboardViewCtrl', function ($timeout, $rootScope, $scope, $
                 $scope.render1 = function () {
                     widget.modalRender($('#modal_chart'), function (option) {
                         option.toolbox = {
-                            feature: {
-                                //saveAsImage: {},
-                                dataView: {
-                                    show: true,
-                                    readOnly: true
-                                },
-                                magicType: {
-                                    type: ['line', 'bar', 'stack', 'tiled']
-                                },
-                                dataZoom: {
-                                    show: true
-                                },
-                                restore: {
-                                    show: true
+                                feature: {
+                                    //saveAsImage: {},
+                                    dataView: {
+                                        show: true,
+                                        readOnly: true
+                                    },
+                                    magicType: {
+                                        type: ['line', 'bar', 'stack', 'tiled']
+                                    },
+                                    dataZoom: {
+                                        show: true
+                                    },
+                                    restore: {
+                                        show: true
+                                    }
                                 }
-                            }
                         };
                     }, null);
                 };
@@ -482,9 +482,9 @@ cBoard.controller('dashboardViewCtrl', function ($timeout, $rootScope, $scope, $
     $scope.config = function (widget) {
         $state.go('config.widget', {id: widget.widget.id});
     };
-    
+
     $scope.skip = function (widget) {
-         $state.go('dashboard.category.view', {id: widget.extenal.targetId});
+        $state.go('dashboard.category.view', {id: widget.extenal.targetId});
     };
 
     $scope.reload = function (widget) {
@@ -609,7 +609,7 @@ cBoard.controller('dashboardViewCtrl', function ($timeout, $rootScope, $scope, $
         var columnData = chartData.data;
         var gridDataArr = [];
         var gridRowObj = {};
-        columnData.forEach(cd => {
+        columnData.forEach(function(cd) {
             gridRowObj = {};
             columnList.forEach(function (val, index) {
                 gridRowObj[val.name] = cd[index];
@@ -618,7 +618,7 @@ cBoard.controller('dashboardViewCtrl', function ($timeout, $rootScope, $scope, $
         });
 
         var columnObj = { "field": "", "headerText": "", "width": "", textAlign: 'middle' };
-        var columnsArr = columnList.map(clmObj => {
+        var columnsArr = columnList.map(function(clmObj) {
             columnObj = {};
             columnObj.field = clmObj.name;
             columnObj.headerText = clmObj.name;
@@ -690,7 +690,7 @@ cBoard.controller('dashboardViewCtrl', function ($timeout, $rootScope, $scope, $
      * @param {*} config 
      */
     var getSelectedMeasureColumns = function(config) {
-        var measureColumns = config.values.map(cfgVal => {
+        var measureColumns = config.values.map(function(cfgVal) {
             var columns = cfgVal.cols;
             return columns;
         });
@@ -702,7 +702,7 @@ cBoard.controller('dashboardViewCtrl', function ($timeout, $rootScope, $scope, $
      * @param {*} config 
      */
     var getSelectedDimensionColumns = function(config) {
-        var dimensionColumns = config.groups.map(cfgGrp => {
+        var dimensionColumns = config.groups.map(function(cfgGrp) {
             var columns = cfgGrp.col;
             return columns;
         });

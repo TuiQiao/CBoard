@@ -35,16 +35,16 @@ cBoard.controller('datasetCtrl', function ($scope, $http, $state, $stateParams, 
     };
 
     $scope.dndTransfer = {
-        dimension: function (list, index, item, type) {
-            if (type == 'column') {
-                list[index] = {type: 'column', column: item};
+            dimension: function (list, index, item, type) {
+                if (type == 'column') {
+                    list[index] = {type: 'column', column: item};
+                }
+            },
+            measure: function (list, index, item, type) {
+                if (type == 'column') {
+                    list[index] = {type: 'column', column: item};
+                }
             }
-        },
-        measure: function (list, index, item, type) {
-            if (type == 'column') {
-                list[index] = {type: 'column', column: item};
-            }
-        }
     };
 
     $http.get("dashboard/getDatasourceList.do").success(function (response) {
@@ -156,7 +156,7 @@ cBoard.controller('datasetCtrl', function ($scope, $http, $state, $stateParams, 
                 ModalUtils.alert(translate('COMMON.NOT_ALLOWED_TO_DELETE_BECAUSE_BE_DEPENDENT') + warnStr, 'modal-warning', 'lg');
                 return false;
             }
-            
+
             ModalUtils.confirm(translate('COMMON.CONFIRM_DELETE')+ds.name, 'modal-warning', 'lg', function () {
                 $http.post("dashboard/deleteDataset.do", {id: ds.id}).success(function (serviceStatus) {
                     if (serviceStatus.status == '1') {
@@ -323,22 +323,22 @@ cBoard.controller('datasetCtrl', function ($scope, $http, $state, $stateParams, 
 
     $scope.deleteFilterGroup = function (index) {
         ModalUtils.confirm(translate("COMMON.FILTER_GROUP") + ": [" + $scope.curDataset.data.filters[index].group + "], " +
-            translate("COMMON.CONFIRM_DELETE"), "modal-warning", "lg",
-            function () {
-                $scope.curDataset.data.filters.splice(index, 1)
-            }
+                translate("COMMON.CONFIRM_DELETE"), "modal-warning", "lg",
+                function () {
+            $scope.curDataset.data.filters.splice(index, 1)
+        }
         );
     };
-    
-   
+
+
     $scope.cancelDiv = function () {
-    	$scope.showDataSetList=false;
-    	 $scope.optFlag = 'none';
-         $scope.curDataset = {data: {expressions: [], filters: [], schema: {dimension: [], measure: []}}};
-         $scope.datasource = {};
-         $scope.curWidget = {};
-         $scope.selects = [];
-         cleanPreview();
+        $scope.showDataSetList=false;
+        $scope.optFlag = 'none';
+        $scope.curDataset = {data: {expressions: [], filters: [], schema: {dimension: [], measure: []}}};
+        $scope.datasource = {};
+        $scope.curWidget = {};
+        $scope.selects = [];
+        cleanPreview();
     };
 
     var schemaToSelect = function (schema, rawSelects) {
@@ -357,11 +357,11 @@ cBoard.controller('datasetCtrl', function ($scope, $http, $state, $stateParams, 
                 }
             });
             _.each(rawSelects, function(col) {
-               if (_.find(selects, function(o) { return col == o.column;}) === undefined) {
+                if (_.find(selects, function(o) { return col == o.column;}) === undefined) {
                     selects.push({
                         column: col
                     });
-               }
+                }
             });
             return angular.copy(selects);
         }
@@ -375,7 +375,7 @@ cBoard.controller('datasetCtrl', function ($scope, $http, $state, $stateParams, 
             {name: 'max', value: 'max'},
             {name: 'min', value: 'min'},
             {name: 'distinct', value: 'distinct'}
-        ];
+            ];
         var ok;
         var data = {expression: ''};
         if (!col) {
@@ -428,7 +428,7 @@ cBoard.controller('datasetCtrl', function ($scope, $http, $state, $stateParams, 
                     var v = verifyAggExpRegx($scope.data.expression);
                     $scope.alerts = [{
                         msg: v.isValid ? translate("COMMON.SUCCESS") : v.msg,
-                        type: v.isValid ? 'success' : 'danger'
+                                type: v.isValid ? 'success' : 'danger'
                     }];
                 };
                 $scope.ok = function () {
@@ -446,10 +446,10 @@ cBoard.controller('datasetCtrl', function ($scope, $http, $state, $stateParams, 
 
     $scope.deleteExp = function (index) {
         ModalUtils.confirm(translate("CONFIG.COMMON.CUSTOM_EXPRESSION") + ": [" + $scope.curDataset.data.expressions[index].alias + "], " +
-            translate("COMMON.CONFIRM_DELETE"), "modal-warning", "lg",
-            function () {
-                $scope.curDataset.data.expressions.splice(index, 1)
-            }
+                translate("COMMON.CONFIRM_DELETE"), "modal-warning", "lg",
+                function () {
+            $scope.curDataset.data.expressions.splice(index, 1)
+        }
         );
     };
 
@@ -468,9 +468,9 @@ cBoard.controller('datasetCtrl', function ($scope, $http, $state, $stateParams, 
         $scope.curDataset.data.schema.measure.splice(index, 1);
         $scope.curDataset.data.schema.dimension.push(o);
     };
-    
+
     $scope.toDimension = function (o,index) {
-    	
+
         $scope.curDataset.data.schema.dimension.push($scope.createNode(o));
     };
 
@@ -512,15 +512,15 @@ cBoard.controller('datasetCtrl', function ($scope, $http, $state, $stateParams, 
                 }
 
                 var widget = {
-                    chart_type: "table",
-                    filters: [],
-                    groups: [],
-                    keys: [],
-                    selects: [],
-                    values: [{
-                        cols: []
-                    }
-                    ]
+                        chart_type: "table",
+                        filters: [],
+                        groups: [],
+                        keys: [],
+                        selects: [],
+                        values: [{
+                            cols: []
+                        }
+                        ]
                 };
                 _.each($scope.selects, function (c) {
                     widget.keys.push({
@@ -586,12 +586,12 @@ cBoard.controller('datasetCtrl', function ($scope, $http, $state, $stateParams, 
         $scope.deleteDs(getSelectedDataSet());
     };
     $scope.showInfo = function (o) {
-    	if(o == undefined){
-    		if (!checkTreeNode("info")) return;
+        if(o == undefined){
+            if (!checkTreeNode("info")) return;
             var content = getSelectedDataSet();
-            ModalUtils.info(content,'modal-info', 'lg');	
-    	}else
-    	    ModalUtils.info(o,'modal-info', 'lg');
+            ModalUtils.info(content,'modal-info', 'lg');    
+        }else
+            ModalUtils.info(o,'modal-info', 'lg');
     };
     $scope.searchNode = function () {
         var para = {dsName: '', dsrName: ''};
@@ -626,7 +626,7 @@ cBoard.controller('datasetCtrl', function ($scope, $http, $state, $stateParams, 
         }
         //filter data by keywords
         originalData = jstree_CvtVPath2TreeData(
-            $filter('filter')(list, {name: para.dsName, datasourceName: para.dsrName})
+                $filter('filter')(list, {name: para.dsName, datasourceName: para.dsrName})
         );
 
         jstree_ReloadTree(treeID, originalData);
@@ -688,69 +688,22 @@ cBoard.controller('datasetCtrl', function ($scope, $http, $state, $stateParams, 
 
     /** Ace Editor Starer... **/
     $scope.queryAceOpt = datasetEditorOptions();
-    
+
     /*
      * Code for pagination
-    */
+     */
     $scope.pageSize = 10;
-    $scope.pager = {};
-    $scope.setPage = setPage;
-    
-    
-    var pageSizeArr = [5, 10, 15, 20, 25, 30, 40, 50, 60, 70, 80, 90, 100, "ALL"];
+    $scope.currentPage = 1;
+
+    var pageSizeArr = [5, 10, 15, 20, 25, 30, 40, 50, 60, 70, 80, 90, 100, 'ALL'];
     $scope.pageSizeArr = pageSizeArr;
-    function setPage(page) {
-        if (page < 1 || page > $scope.pager.totalPages) {
-            return;
+    var changePageSize = function(pagesize) {
+        if($scope.pageSize == 'ALL') {
+            $scope.pageSize = $scope.datasetList.length;
         }
-        $scope.pager = getPager($scope.datasetList.length, page, $scope.pageSize);
-        
-        $scope.finalDataSetList = $scope.datasetList.slice($scope.pager.startIndex, $scope.pager.endIndex + 1);
-       
-    }
-    
-    var changePageSize = function() {
-    	if($scope.pageSize == "ALL")
-    		$scope.pageSize = $scope.datasetList.length;
-    	 	
-    	$scope.pager = getPager($scope.datasetList.length, 1, $scope.pageSize);
-        $scope.finalDataSetList = $scope.datasetList.slice($scope.pager.startIndex, $scope.pager.endIndex + 1);
+        else {
+            $scope.pageSize = pagesize;
+        }
     }
     $scope.changePageSize = changePageSize;
-    
-    function getPager(totalItems, currentPage, pageSize) {
-        currentPage = currentPage || 1;
-        var totalPages = Math.ceil(totalItems / pageSize);
-        var startPage, endPage;
-        if (totalPages <= 10) {
-            startPage = 1;
-            endPage = totalPages;
-        } else {
-            if (currentPage <= 6) {
-                startPage = 1;
-                endPage = 10;
-            } else if (currentPage + 4 >= totalPages) {
-                startPage = totalPages - 9;
-                endPage = totalPages;
-            } else {
-                startPage = currentPage - 5;
-                endPage = currentPage + 4;
-            }
-        }
-        var startIndex = (currentPage - 1) * pageSize;
-        var endIndex = Math.min(startIndex + pageSize - 1, totalItems - 1);
-        var pages = _.range(startPage, endPage + 1);
-        return {
-            totalItems: totalItems,
-            currentPage: currentPage,
-            pageSize: pageSize,
-            totalPages: totalPages,
-            startPage: startPage,
-            endPage: endPage,
-            startIndex: startIndex,
-            endIndex: endIndex,
-            pages: pages
-        };
-    }
-
 });

@@ -20,36 +20,20 @@
 									class="form-control table-search-input-elemint"
 									placeholder="Search">
 							</div>
-							<div class="col-md-7 col-sm-7" style="">
-								<div class="row" style="margin-top: -21px; float: right;">
-									<ul ng-if="pager.pages.length" class="pagination"
-										style="margin-right: 15px;">
-										<li ng-class="{disabled:pager.currentPage === 1}"><a
-											ng-click="setPageForUser(1)" href="">First</a></li>
-										<li ng-class="{disabled:pager.currentPage === 1}"><a
-											href="" ng-click="setPageForUser(pager.currentPage - 1)">Previous</a>
-										</li>
-										<li ng-repeat="page in pager.pages"
-											ng-class="{active:pager.currentPage === page}"><a
-											href="" ng-click="setPageForUser(page)">{{page}}</a></li>
-										<li
-											ng-class="{disabled:pager.currentPage === pager.totalPages}">
-											<a href="" ng-click="setPageForUser(pager.currentPage + 1)">Next</a>
-										</li>
-										<li
-											ng-class="{disabled:pager.currentPage === pager.totalPages}">
-											<a href="" ng-click="setPageForUser(pager.totalPages)">Last</a>
-										</li>
-									</ul>
-								</div>
+							<div class="col-md-7 col-sm-7"
+								style="text-align: right; top: -20px;">
+								<dir-pagination-controls max-size="pageSize"
+									direction-links="true" boundary-links="true">
+								</dir-pagination-controls>
 							</div>
 							<div class="col-md-1 col-sm-1" style="float: right;">
 								<div style="float: right;">
 									<select data-ng-model="pageSize"
 										style="border-radius: 4px; height: 30px; box-shadow: none; border: 1px solid #ccc;"
 										ng-options="pageSize as pageSize for pageSize in pageSizeArr"
-										ng-change="changePageSizeForUser()">
+										ng-change="changePageSize(pageSize)">
 									</select>
+									 
 								</div>
 							</div>
 						</div>
@@ -63,8 +47,8 @@
 										<th><a style="float: right;"> {{'COMMON.ACTION'|translate}} </a></th>
 									</tr>
 								</thead>
-								<tbody ng-repeat="u in finalUserList | filter:search">
-									<tr>
+								<tbody>
+									<tr dir-paginate="u in userList | filter:search |itemsPerPage: pageSize" >
 										<td style="padding: 4px!important; ">
 											<div class="user-name">
 												<div class="icon" style="background-color: {{colorArray[($index % 14)]}}">
@@ -97,7 +81,7 @@
 										</td>
 									</tr>
 								</tbody>
-								<tr ng-if= "!finalUserList.length">
+								<tr ng-if= "!userList.length">
 									<td><h2 style="text-align: right;">No Data Available</h2></td>
 								</tr>
 							</table>

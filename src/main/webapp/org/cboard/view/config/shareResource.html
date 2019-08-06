@@ -34,39 +34,20 @@
 													class="form-control table-search-input-elemint"
 													placeholder="Search">
 											</div>
-											<div class="col-md-7 col-sm-7" style="">
-												<div class="row" style="margin-top: -21px; float: right;">
-													<ul ng-if="dashBoardPager.pages.length" class="pagination"
-														style="margin-right: 15px;">
-														<li ng-class="{disabled:dashBoardPager.currentPage === 1}"><a
-															ng-click="setPageForDashboard(1)" href="">First</a></li>
-														<li ng-class="{disabled:dashBoardPager.currentPage === 1}"><a
-															href=""
-															ng-click="setPageForDashboard(dashBoardPager.currentPage - 1)">Previous</a>
-														</li>
-														<li ng-repeat="page in dashBoardPager.pages"
-															ng-class="{active:dashBoardPager.currentPage === page}"><a
-															href="" ng-click="setPageForDashboard(page)">{{page}}</a></li>
-														<li
-															ng-class="{disabled:dashBoardPager.currentPage === dashBoardPager.totalPages}">
-															<a href=""
-															ng-click="setPageForDashboard(dashBoardPager.currentPage + 1)">Next</a>
-														</li>
-														<li
-															ng-class="{disabled:dashBoardPager.currentPage === dashBoardPager.totalPages}">
-															<a href=""
-															ng-click="setPageForDashboard(dashBoardPager.totalPages)">Last</a>
-														</li>
-													</ul>
-												</div>
+											<div class="col-md-7 col-sm-7"
+												style="text-align: right; top: -20px;">
+												<dir-pagination-controls max-size="pageSize"
+													direction-links="true" boundary-links="true">
+												</dir-pagination-controls>
 											</div>
 											<div class="col-md-1 col-sm-1" style="float: right;">
 												<div style="float: right;">
-													<select data-ng-model="pageSizeForDashBoard"
+													<select data-ng-model="pageSize"
 														style="border-radius: 4px; height: 30px; box-shadow: none; border: 1px solid #ccc;"
-														ng-options="pageSizeForDashBoard as pageSizeForDashBoard for pageSizeForDashBoard in pageSizeArr"
-														ng-change="changePageSizeForDashboard()">
+														ng-options="pageSize as pageSize for pageSize in pageSizeArr"
+														ng-change="changePageSizeForDashboard(pageSize)">
 													</select>
+													 
 												</div>
 											</div>
 										</div>
@@ -81,9 +62,8 @@
 															<th><a style="float: right;"> {{'COMMON.ACTION'|translate}} </a></th>
 														</tr>
 													</thead>
-													<tbody
-														ng-repeat="dash in finalDashboardList | filter:searchForDashBoard">
-														<tr>
+													<tbody>
+														<tr dir-paginate="data in dashboardList | filter:searchForDashBoard |itemsPerPage: pageSize" current-page="currentPage">
 															<td style="padding: 4px !important;">
 																<div class="user-name">
 																	<div class="icon"
@@ -120,39 +100,20 @@
 													class="form-control table-search-input-elemint"
 													placeholder="Search">
 											</div>
-											<div class="col-md-7 col-sm-7" style="">
-												<div class="row" style="margin-top: -21px; float: right;">
-													<ul ng-if="datasetPager.pages.length" class="pagination"
-														style="margin-right: 15px;">
-														<li ng-class="{disabled:datasetPager.currentPage === 1}"><a
-															ng-click="setPageForDataset(1)" href="">First</a></li>
-														<li ng-class="{disabled:datasetPager.currentPage === 1}"><a
-															href=""
-															ng-click="setPageForDataset(datasetPager.currentPage - 1)">Previous</a>
-														</li>
-														<li ng-repeat="page in datasetPager.pages"
-															ng-class="{active:datasetPager.currentPage === page}"><a
-															href="" ng-click="setPageForDataset(page)">{{page}}</a></li>
-														<li
-															ng-class="{disabled:datasetPager.currentPage === datasetPager.totalPages}">
-															<a href=""
-															ng-click="setPageForDataset(datasetPager.currentPage + 1)">Next</a>
-														</li>
-														<li
-															ng-class="{disabled:datasetPager.currentPage === datasetPager.totalPages}">
-															<a href=""
-															ng-click="setPageForDataset(datasetPager.totalPages)">Last</a>
-														</li>
-													</ul>
-												</div>
+											<div class="col-md-7 col-sm-7"
+												style="text-align: right; top: -20px;">
+												<dir-pagination-controls max-size="pageSize"
+													direction-links="true" boundary-links="true">
+												</dir-pagination-controls>
 											</div>
 											<div class="col-md-1 col-sm-1" style="float: right;">
 												<div style="float: right;">
-													<select data-ng-model="pageSizeForDataset"
+													<select data-ng-model="pageSize"
 														style="border-radius: 4px; height: 30px; box-shadow: none; border: 1px solid #ccc;"
-														ng-options="pageSizeForDataset as pageSizeForDataset for pageSizeForDataset in pageSizeArr"
-														ng-change="changePageSizeForDataset()">
+														ng-options="pageSize as pageSize for pageSize in pageSizeArr"
+														ng-change="changePageSizeForDataset(pageSize)">
 													</select>
+													 
 												</div>
 											</div>
 										</div>
@@ -167,9 +128,8 @@
 															<th><a style="float: right;"> {{'COMMON.ACTION'|translate}} </a></th>
 														</tr>
 													</thead>
-													<tbody
-														ng-repeat="data in finalDatasetList | filter:searchForDataSet">
-														<tr>
+													<tbody>
+														<tr dir-paginate="data in datasetList | filter:searchForDataSet |itemsPerPage: pageSize" current-page="currentPage">
 															<td style="padding: 4px !important;">
 																<div class="user-name">
 																	<div class="icon"
@@ -206,39 +166,20 @@
 													class="form-control table-search-input-elemint"
 													placeholder="Search">
 											</div>
-											<div class="col-md-7 col-sm-7" style="">
-												<div class="row" style="margin-top: -21px; float: right;">
-													<ul ng-if="widgetPager.pages.length" class="pagination"
-														style="margin-right: 15px;">
-														<li ng-class="{disabled:widgetPager.currentPage === 1}"><a
-															ng-click="setPageForWidget(1)" href="">First</a></li>
-														<li ng-class="{disabled:widgetPager.currentPage === 1}"><a
-															href=""
-															ng-click="setPageForWidget(widgetPager.currentPage - 1)">Previous</a>
-														</li>
-														<li ng-repeat="page in widgetPager.pages"
-															ng-class="{active:widgetPager.currentPage === page}"><a
-															href="" ng-click="setPageForWidget(page)">{{page}}</a></li>
-														<li
-															ng-class="{disabled:widgetPager.currentPage === widgetPager.totalPages}">
-															<a href=""
-															ng-click="setPageForWidget(widgetPager.currentPage + 1)">Next</a>
-														</li>
-														<li
-															ng-class="{disabled:widgetPager.currentPage === widgetPager.totalPages}">
-															<a href=""
-															ng-click="setPageForWidget(widgetPager.totalPages)">Last</a>
-														</li>
-													</ul>
-												</div>
+											<div class="col-md-7 col-sm-7"
+												style="text-align: right; top: -20px;">
+												<dir-pagination-controls max-size="pageSize"
+													direction-links="true" boundary-links="true">
+												</dir-pagination-controls>
 											</div>
 											<div class="col-md-1 col-sm-1" style="float: right;">
 												<div style="float: right;">
-													<select data-ng-model="pageSizeForWidget"
+													<select data-ng-model="pageSize"
 														style="border-radius: 4px; height: 30px; box-shadow: none; border: 1px solid #ccc;"
-														ng-options="pageSizeForWidget as pageSizeForWidget for pageSizeForWidget in pageSizeArr"
-														ng-change="changePageSizeForWidget()">
+														ng-options="pageSize as pageSize for pageSize in pageSizeArr"
+														ng-change="changePageSizeForWidget(pageSize)">
 													</select>
+													 
 												</div>
 											</div>
 										</div>
@@ -253,9 +194,8 @@
 															<th><a style="float: right;"> {{'COMMON.ACTION'|translate}} </a></th>
 														</tr>
 													</thead>
-													<tbody
-														ng-repeat="widget in finalWidgetList | filter:searchForWidget">
-														<tr>
+													<tbody>
+														<tr dir-paginate="widget in widgetList | filter:searchForWidget |itemsPerPage: pageSize" current-page="currentPage">
 															<td style="padding: 4px !important;">
 																<div class="user-name">
 																	<div class="icon"

@@ -3,9 +3,9 @@
 /**
  * Created by yfyuan on 2016/12/5.
  */
- cBoard.controller('userAdminCtrl', function ($scope, $http, ModalUtils, $filter,$uibModal) {
-	
-	$scope.readyCB = function() {
+cBoard.controller('userAdminCtrl', function ($scope, $http, ModalUtils, $filter,$uibModal) {
+
+    $scope.readyCB = function() {
     };
 
     $scope.choosenRole = {};
@@ -18,11 +18,11 @@
     $scope.userKeyword = '';
     $scope.dashboardData1 = [];
     $scope.tab = 'menu';
-    
+
     //colorArray declared here
     $scope.colorArray = ['#5d9fe6','#9fc173','#a789c7','#e88b8a','#f5d451','#ecb44d','#aee8f4','#7272af','#7c8798',
-        					'#90c3c6','#bc7676','#8b9bc7','#c189ba','#bb8cf2'];
-    
+        '#90c3c6','#bc7676','#8b9bc7','#c189ba','#bb8cf2'];
+
     $http.get("admin/isAdmin.do").success(function (response) {
         $scope.isAdmin = response;
     });
@@ -30,7 +30,6 @@
     var getUserList = function () {
         $http.get("admin/getUserList.do").success(function (response) {
             $scope.userList = response;
-            setPageForUser(1);
         });
     };
     getUserList();
@@ -38,7 +37,6 @@
     var getRoleList = function () {
         $http.get("admin/getRoleList.do").success(function (response) {
             $scope.roleList = response;
-            setPageForRole(1);
         });
     };
     getRoleList();
@@ -96,29 +94,29 @@
     $scope.boardListInMultiselect = [];
     var getBoardList = function () {
         return $http.get("admin/getBoardList.do").success(function (response) {
-        	 $scope.boardList = response;
-        	 _.each(response, function (e) {
-                 if(e.parentId != -1 ){
-              	   $scope.boardListArr.push(e);
-                 }
-              });
-        	 _.each($scope.boardList, function (e) {
-                 $scope.tree.board.resList.push({
-                     id: e.id,
-                     text: translate(e.name),                 
-                     resId: e.id,
-                     type: 'board'
-                  });
-              });
-        	 _.each($scope.tree.board.resList, function (f) {
-                 if(f.id != 'Dashboard')
-                 	{
-                 		$scope.boardListInMultiselect.push(f);
-                 	}
-              });
+            $scope.boardList = response;
+            _.each(response, function (e) {
+                if(e.parentId != -1 ){
+                    $scope.boardListArr.push(e);
+                }
+            });
+            _.each($scope.boardList, function (e) {
+                $scope.tree.board.resList.push({
+                    id: e.id,
+                    text: translate(e.name),                 
+                    resId: e.id,
+                    type: 'board'
+                });
+            });
+            _.each($scope.tree.board.resList, function (f) {
+                if(f.id != 'Dashboard')
+                {
+                    $scope.boardListInMultiselect.push(f);
+                }
+            });
         });
     };
-    
+
     $scope.menuListArr = [];
     $scope.menuListInMultiselect = [];
     var getMenuList = function () {
@@ -126,53 +124,53 @@
             $scope.menuList = response;
             _.each(response, function (e) {
                 if(e.parentId != -1 ){
-             	   $scope.menuListArr.push(e);
+                    $scope.menuListArr.push(e);
                 }
-             });
-            
-           _.each($scope.menuListArr, function (e) {
-               $scope.tree.menu.resList.push({
-                   id: e.menuId,
-                   text: translate(e.menuName),                  
+            });
+
+            _.each($scope.menuListArr, function (e) {
+                $scope.tree.menu.resList.push({
+                    id: e.menuId,
+                    text: translate(e.menuName),                  
                     parent: e.parentId == -1 ? 'Menu' : ('menu_' + e.parentId),
-                    resId: e.menuId,
-                    type: 'menu', icon: 'fa fa-cog'
+                            resId: e.menuId,
+                            type: 'menu', icon: 'fa fa-cog'
                 });
             });
-          
-           _.each($scope.tree.menu.resList, function (f) {
-               if(f.id != 'Menu')
-               	{
-               		$scope.menuListInMultiselect.push(f);
-               	}
+
+            _.each($scope.tree.menu.resList, function (f) {
+                if(f.id != 'Menu')
+                {
+                    $scope.menuListInMultiselect.push(f);
+                }
             });
         });
     };
-    
+
     $scope.datasourceListArr = [];
     $scope.datasourceListInMultiselect = [];
     var getDatasourceList = function () {
         return $http.get("admin/getDatasourceList.do").success(function (response) {
-        	$scope.dataSourceList = response;
-        	_.each(response, function (e) {
+            $scope.dataSourceList = response;
+            _.each(response, function (e) {
                 if(e.parentId != -1 ){
-             	   $scope.datasourceListArr.push(e);
+                    $scope.datasourceListArr.push(e);
                 }
-             });
-        	 _.each($scope.dataSourceList, function (e) {
-        		 $scope.tree.datasource.resList.push({
-                     id: e.id,
-                     text: translate(e.name),                 
-                     resId: e.id,
-                     type: 'datasource'
-                  });
-              });
-        	 _.each($scope.tree.datasource.resList, function (f) {
-                 if(f.id != 'Datasource')
-                 	{
-                 		$scope.datasourceListInMultiselect.push(f);
-                 	}
-              });
+            });
+            _.each($scope.dataSourceList, function (e) {
+                $scope.tree.datasource.resList.push({
+                    id: e.id,
+                    text: translate(e.name),                 
+                    resId: e.id,
+                    type: 'datasource'
+                });
+            });
+            _.each($scope.tree.datasource.resList, function (f) {
+                if(f.id != 'Datasource')
+                {
+                    $scope.datasourceListInMultiselect.push(f);
+                }
+            });
         });
     };
 
@@ -180,28 +178,28 @@
     $scope.datasetListInMultiselect = [];
     var getDatasetList = function () {
         return $http.get("admin/getDatasetList.do").success(function (response) {
-        	$scope.datasetList = response;
-        	_.each(response, function (e) {
+            $scope.datasetList = response;
+            _.each(response, function (e) {
                 if(e.parentId != -1 ){
-             	   $scope.datasetListArr.push(e);
+                    $scope.datasetListArr.push(e);
                 }
-             });
-        	
-       	 	_.each($scope.datasetList, function (e) {
-       		 $scope.tree.dataset.resList.push({
+            });
+
+            _.each($scope.datasetList, function (e) {
+                $scope.tree.dataset.resList.push({
                     id: e.id,
                     text: translate(e.name),
                     resId: e.id,
                     type: 'dataset'
-                 });
-             });
-       	 	
-	       	 _.each($scope.tree.dataset.resList, function (f) {
-	             if(f.id != 'Dataset')
-	             	{
-	             		$scope.datasetListInMultiselect.push(f);
-	             	}
-	          });
+                });
+            });
+
+            _.each($scope.tree.dataset.resList, function (f) {
+                if(f.id != 'Dataset')
+                {
+                    $scope.datasetListInMultiselect.push(f);
+                }
+            });
         });
     };
 
@@ -209,28 +207,28 @@
     $scope.widgetListInMultiselect = [];
     var getWidgetList = function () {
         return $http.get("admin/getWidgetList.do").success(function (response) {
-        	$scope.widgetList = response;
-        	_.each(response, function (e) {
+            $scope.widgetList = response;
+            _.each(response, function (e) {
                 if(e.parentId != -1 ){
-             	   $scope.datasetListArr.push(e);
+                    $scope.datasetListArr.push(e);
                 }
-             });
-        	
-       	 	_.each($scope.widgetList, function (e) {
-       		 $scope.tree.widget.resList.push({
+            });
+
+            _.each($scope.widgetList, function (e) {
+                $scope.tree.widget.resList.push({
                     id: e.id,
                     text: translate(e.name),
                     resId: e.id,
                     type: 'widget'
-                 });
-             });
-       	 	
-	       	 _.each($scope.tree.widget.resList, function (f) {
-	             if(f.id != 'Widget')
-	             	{
-	             		$scope.widgetListInMultiselect.push(f);
-	             	}
-	          });
+                });
+            });
+
+            _.each($scope.tree.widget.resList, function (f) {
+                if(f.id != 'Widget')
+                {
+                    $scope.widgetListInMultiselect.push(f);
+                }
+            });
         });
     };
 
@@ -238,28 +236,28 @@
     $scope.jobListinMultiselect = [];
     var getJobList = function () {
         return $http.get("admin/getJobList.do").success(function (response) {
-        	$scope.jobList = response;
-        	_.each(response, function (e) {
+            $scope.jobList = response;
+            _.each(response, function (e) {
                 if(e.parentId != -1 ){
-             	   $scope.jobListArr.push(e);
+                    $scope.jobListArr.push(e);
                 }
-             });
-        	
-       	 	_.each($scope.jobList, function (e) {
-       		 $scope.tree.job.resList.push({
+            });
+
+            _.each($scope.jobList, function (e) {
+                $scope.tree.job.resList.push({
                     id: e.id,
                     text: translate(e.name),
                     resId: e.id,
                     type: 'job'
-                 });
-             });
-       	 	
-	       	 _.each($scope.tree.job.resList, function (f) {
-	             if(f.id != 'Job')
-	             	{
-	             		$scope.jobListinMultiselect.push(f);
-	             	}
-	          });
+                });
+            });
+
+            _.each($scope.tree.job.resList, function (f) {
+                if(f.id != 'Job')
+                {
+                    $scope.jobListinMultiselect.push(f);
+                }
+            });
         });
     };
 
@@ -394,7 +392,7 @@
         }).then(function () {
             return getJobList();
         }).then(function () {
-            
+
         });
     }();
 
@@ -449,34 +447,34 @@
     $scope.newUser = function () {
         $scope.optFlag = 'newUser';
         $scope.curUser = {};
-    	$uibModal.open({
+        $uibModal.open({
             templateUrl: 'org/cboard/view/admin/modal/newUser.html',
             windowTemplateUrl: 'org/cboard/view/util/modal/window.html',
             backdrop: false,
             size: 'lg',
             scope: $scope,
             controller: ('userAdminCtrl',function ($scope, $uibModalInstance) {
-            	$scope.close = function () {
+                $scope.close = function () {
                     $uibModalInstance.close();
                 };
                 $scope.saveUser = function() {
-                	saveUser();
-                	$uibModalInstance.close();
- 				}
+                    saveUser();
+                    $uibModalInstance.close();
+                }
             })
         });
     };
-    
+
     $scope.reqRole = {};
     $scope.getRoleForParticularUser = function(userObj){
-    	$http.get("admin/getUserRoleList.do").success(function (response) {
-    		$scope.userRoleList = response;
-    	 }); 
-         $scope.userRoleList.forEach(function(element) {
-        	 if(element.userId == userObj.userId ){
-        		 $scope.reqRole.roleId = element.roleId;
-               }
-         });
+        $http.get("admin/getUserRoleList.do").success(function (response) {
+            $scope.userRoleList = response;
+        }); 
+        $scope.userRoleList.forEach(function(element) {
+            if(element.userId == userObj.userId ){
+                $scope.reqRole.roleId = element.roleId;
+            }
+        });
     };
 
     $scope.editUser = function (user) {
@@ -489,15 +487,15 @@
             size: 'lg',
             scope: $scope,
             controller: ('userAdminCtrl',function ($scope, $uibModalInstance) {
-        		$scope.close = function () {
+                $scope.close = function () {
                     $uibModalInstance.close();
                 };
                 $scope.saveUser = function() {
-                	saveUser();
-                	$uibModalInstance.close();
- 				}
+                    saveUser();
+                    $uibModalInstance.close();
+                }
             })
-            
+
         });
     };
 
@@ -512,7 +510,7 @@
                     $scope.optFlag = 'none';
                     $http.get("admin/getUserList.do").success(function (response) {
                         $scope.userList = response;
-                        var filterUserObj = $scope.userList.filter(data=> {
+                        var filterUserObj = $scope.userList.filter(function(data) {
                             if(data.loginName  == $scope.curUser.loginName && data.userName == $scope.curUser.userName) {
                                 return true;
                             } else {
@@ -521,19 +519,19 @@
                         });
                         var reqUser = {};
                         // to avoid duplicacy
-                          if(filterUserObj instanceof Array) {
-                          	reqUser = filterUserObj[0];
-                          }else {
-                          	reqUser = filterUserObj;
-                          }
-                          reqUser.roleId = $scope.curUser.roleId;
-                          grantRole(reqUser);
-                       });
-                    
+                        if(filterUserObj instanceof Array) {
+                            reqUser = filterUserObj[0];
+                        }else {
+                            reqUser = filterUserObj;
+                        }
+                        reqUser.roleId = $scope.curUser.roleId;
+                        grantRole(reqUser);
+                    });
+
                     $scope.verify = {dsName: true};
                     getUserList();
-                    
-                    var filterUserObj = $scope.userList.filter(data=> {
+
+                    var filterUserObj = $scope.userList.filter(function(data) {
                         if(data.loginName  == $scope.curUser.loginName && data.userName == $scope.curUser.userName) {
                             return true;
                         } else {
@@ -545,7 +543,7 @@
                 }
             });
         }
-    	else {
+        else {
             $http.post("admin/updateUser.do", {user: angular.toJson($scope.curUser)}).success(function (serviceStatus) {
                 if (serviceStatus == '1') {
                     $scope.optFlag = 'none';
@@ -562,7 +560,7 @@
             });
         }
     };
-    
+
     $scope.newRole = function () {
         $scope.optFlag = 'newRole';
         $scope.curRole = {};
@@ -573,13 +571,13 @@
             size: 'lg',
             scope: $scope,
             controller: ('userAdminCtrl',function ($scope, $uibModalInstance) {
-            	$scope.close = function () {
+                $scope.close = function () {
                     $uibModalInstance.close();
                 };
                 $scope.saveRole = function() {
-                	saveRole();
-                	$uibModalInstance.close();
- 				}
+                    saveRole();
+                    $uibModalInstance.close();
+                }
             })
         });
     };
@@ -594,17 +592,17 @@
             size: 'lg',
             scope: $scope,
             controller: ('userAdminCtrl',function ($scope, $uibModalInstance) {
-            	$scope.close = function () {
+                $scope.close = function () {
                     $uibModalInstance.close();
                 };
                 $scope.saveRole = function() {
-                	saveRole();
-                	$uibModalInstance.close();
- 				}
+                    saveRole();
+                    $uibModalInstance.close();
+                }
             })
         });
     };
-   
+
     var saveRole = function () {
         if ($scope.optFlag == 'newRole') {
             $http.post("admin/saveRole.do", {role: angular.toJson($scope.curRole)}).success(function (serviceStatus) {
@@ -631,11 +629,11 @@
         }
 
     };
-    
+
     var grantRole = function (userObj) {
         var userIds = [userObj.userId];
-    	var roleIds = [userObj.roleId];
-    	$http.post("admin/updateUserRole.do", {
+        var roleIds = [userObj.roleId];
+        $http.post("admin/updateUserRole.do", {
             userIdArr: angular.toJson(userIds),
             roleIdArr: angular.toJson(roleIds)
         }).success(function (serviceStatus) {
@@ -671,55 +669,55 @@
             }
         });
     };
-   
+
     $scope.resData = {};
     var roleIdSelected;
     $scope.changeResSelect = function (roleId) {
-    	roleIdSelected = roleId;
-		$scope.menuObj = {menuData : []};
-		$scope.dashboardObj = {dashboardData : []};
-	  	$scope.datasourceObj = {datasourceData : []};
-	    $scope.datasetObj = {datasetData : []};
-	    $scope.widgetObj = {widgetData : []};
-	    $scope.jobObj = {jobData : []};
-	    
-    	$scope.roleResList.forEach(function(r){
-      		if(roleIdSelected == r.roleId ){
-      			if(r.resType == 'menu'){
-      				$scope.menuObj.menuData.push(r.resId);
-      			}
-      			if(r.resType == 'board'){
-      				$scope.dashboardObj.dashboardData.push(r.resId);
-      			}
-      			if(r.resType == 'datasource'){
-      				$scope.datasourceObj.datasourceData.push(r.resId);
-      			}
-      			if(r.resType == 'dataset'){
-      				$scope.datasetObj.datasetData.push(r.resId);
-      			}
-      			if(r.resType == 'widget'){
-      				$scope.widgetObj.widgetData.push(r.resId);
-      			}
-      			if(r.resType == 'job'){
-      				$scope.jobObj.jobData.push(r.resId);
-      			}
-      		}
-    	});
-    	$uibModal.open({
+        roleIdSelected = roleId;
+        $scope.menuObj = {menuData : []};
+        $scope.dashboardObj = {dashboardData : []};
+        $scope.datasourceObj = {datasourceData : []};
+        $scope.datasetObj = {datasetData : []};
+        $scope.widgetObj = {widgetData : []};
+        $scope.jobObj = {jobData : []};
+
+        $scope.roleResList.forEach(function(r){
+            if(roleIdSelected == r.roleId ){
+                if(r.resType == 'menu'){
+                    $scope.menuObj.menuData.push(r.resId);
+                }
+                if(r.resType == 'board'){
+                    $scope.dashboardObj.dashboardData.push(r.resId);
+                }
+                if(r.resType == 'datasource'){
+                    $scope.datasourceObj.datasourceData.push(r.resId);
+                }
+                if(r.resType == 'dataset'){
+                    $scope.datasetObj.datasetData.push(r.resId);
+                }
+                if(r.resType == 'widget'){
+                    $scope.widgetObj.widgetData.push(r.resId);
+                }
+                if(r.resType == 'job'){
+                    $scope.jobObj.jobData.push(r.resId);
+                }
+            }
+        });
+        $uibModal.open({
             templateUrl: 'org/cboard/view/admin/modal/grantResource.html',
             windowTemplateUrl: 'org/cboard/view/util/modal/window.html',
             backdrop: false,
             size: 'md',
             scope: $scope,
             controller: ('userAdminCtrl',function ($scope, $uibModalInstance) {
-            	$scope.close = function () {
+                $scope.close = function () {
                     $uibModalInstance.close();
                 };
                 $scope.grantRes = function() {
-                	grantRes();
-                	$uibModalInstance.close();
- 				}
-             })
+                    grantRes();
+                    $uibModalInstance.close();
+                }
+            })
         });
     };
 
@@ -756,7 +754,7 @@
             });
         }
     };
-    
+
     $scope.menuObj = {menuData : []};
     $scope.dashboardObj = {dashboardData : []};
     $scope.datasourceObj = {datasourceData : []};
@@ -765,66 +763,66 @@
     $scope.jobObj = {jobData : []};
     $scope.roleObj = {roleData : []};
     var grantRes = function () {
-    	var roleIds = [];
-    	roleIds.push(roleIdSelected);
+        var roleIds = [];
+        roleIds.push(roleIdSelected);
         $scope.dataForSaveResource = [];
         // for menu tab
         if($scope.menuObj.menuData.length > 0) {
-        	_.each($scope.menuObj.menuData, function (m) {
-        		_.each($scope.menuListInMultiselect, function (r) {
-        			if(m == r.resId){
-        				$scope.dataForSaveResource.push({"resId":r.resId,"resType":r.type});
-        			}
+            _.each($scope.menuObj.menuData, function (m) {
+                _.each($scope.menuListInMultiselect, function (r) {
+                    if(m == r.resId){
+                        $scope.dataForSaveResource.push({"resId":r.resId,"resType":r.type});
+                    }
                 });
             });
         }
         // for dashboard tab
         if($scope.dashboardObj.dashboardData.length > 0) {
-        	_.each($scope.dashboardObj.dashboardData, function (m) {
-        		_.each($scope.boardListInMultiselect, function (r) {
-        			if(m == r.resId){
-        				$scope.dataForSaveResource.push({"resId":r.resId,"resType":r.type});
-        			}
+            _.each($scope.dashboardObj.dashboardData, function (m) {
+                _.each($scope.boardListInMultiselect, function (r) {
+                    if(m == r.resId){
+                        $scope.dataForSaveResource.push({"resId":r.resId,"resType":r.type});
+                    }
                 });
             });
         }
-      // for datasource tab
+        // for datasource tab
         if($scope.datasourceObj.datasourceData.length > 0) {
-        	_.each($scope.datasourceObj.datasourceData, function (m) {
-        		_.each($scope.datasourceListInMultiselect, function (r) {
-        			if(m == r.resId){
-        				$scope.dataForSaveResource.push({"resId":r.resId,"resType":r.type});
-        			}
+            _.each($scope.datasourceObj.datasourceData, function (m) {
+                _.each($scope.datasourceListInMultiselect, function (r) {
+                    if(m == r.resId){
+                        $scope.dataForSaveResource.push({"resId":r.resId,"resType":r.type});
+                    }
                 });
             });
         }
-      // for dataset tab
+        // for dataset tab
         if($scope.datasetObj.datasetData.length > 0) {
-        	_.each($scope.datasetObj.datasetData, function (m) {
-        		_.each($scope.datasetListInMultiselect, function (r) {
-        			if(m == r.resId){
-        				$scope.dataForSaveResource.push({"resId":r.resId,"resType":r.type});
-        			}
+            _.each($scope.datasetObj.datasetData, function (m) {
+                _.each($scope.datasetListInMultiselect, function (r) {
+                    if(m == r.resId){
+                        $scope.dataForSaveResource.push({"resId":r.resId,"resType":r.type});
+                    }
                 });
             });
         }
-      // for widget tab
+        // for widget tab
         if($scope.widgetObj.widgetData.length > 0) {
-        	_.each($scope.widgetObj.widgetData, function (m) {
-        		_.each($scope.widgetListInMultiselect, function (r) {
-        			if(m == r.resId){
-        				$scope.dataForSaveResource.push({"resId":r.resId,"resType":r.type});
-        			}
+            _.each($scope.widgetObj.widgetData, function (m) {
+                _.each($scope.widgetListInMultiselect, function (r) {
+                    if(m == r.resId){
+                        $scope.dataForSaveResource.push({"resId":r.resId,"resType":r.type});
+                    }
                 });
             });
         }
-      // for job tab
+        // for job tab
         if($scope.jobObj.jobData.length > 0) {
-        	_.each($scope.jobObj.jobData, function (m) {
-        		_.each($scope.jobListinMultiselect, function (r) {
-        			if(m == r.resId){
-        				$scope.dataForSaveResource.push({"resId":r.resId,"resType":r.type});
-        			}
+            _.each($scope.jobObj.jobData, function (m) {
+                _.each($scope.jobListinMultiselect, function (r) {
+                    if(m == r.resId){
+                        $scope.dataForSaveResource.push({"resId":r.resId,"resType":r.type});
+                    }
                 });
             });
         }
@@ -845,8 +843,8 @@
     };
 
     $scope.deleteRole = function (roleObj) {
-    	var roleName = roleObj.roleName;
-    	ModalUtils.confirm(translate('COMMON.CONFIRM_DELETE')+roleName, 'modal-info', 'lg', function () {
+        var roleName = roleObj.roleName;
+        ModalUtils.confirm(translate('COMMON.CONFIRM_DELETE')+roleName, 'modal-info', 'lg', function () {
             $http.post("admin/deleteRole.do", {
                 roleId: roleObj.roleId
             }).success(function (serviceStatus) {
@@ -864,7 +862,7 @@
     }
 
     $scope.deleteUser = function (userObj) {
-    	var username=userObj.loginName;
+        var username=userObj.loginName;
         ModalUtils.confirm(translate('COMMON.CONFIRM_DELETE')+username, 'modal-info', 'lg', function () {
             $http.post("admin/deleteUser.do", {
                 userId: userObj.userId
@@ -880,81 +878,36 @@
         });
     }
     /*
-	 * Code for pagination
-	 */
+     * Code for pagination
+     */
+
     $scope.pageSize = 10;
-    $scope.pager = {};
-    $scope.setPageForUser = setPageForUser;
-    $scope.setPageForRole = setPageForRole;
-    
+    $scope.currentPage = 1;
+
     var pageSizeArr = [5, 10, 15, 20, 25, 30, 40, 50, 60, 70, 80, 90, 100, 'ALL'];
     $scope.pageSizeArr = pageSizeArr;
-    
-    function setPageForUser(page) {
-        if (page < 1 || page > $scope.pager.totalPages) {
-            return;
+
+
+    var changePageSizeForUser = function(pagesize) {
+        if($scope.pageSize == 'ALL') {
+            $scope.pageSize = $scope.userList.length;
         }
-        $scope.pager = getPager($scope.userList.length, page, $scope.pageSize);
-        $scope.finalUserList = $scope.userList.slice($scope.pager.startIndex, $scope.pager.endIndex + 1);
-    }
-    
-    var changePageSizeForUser = function() {
-    	if($scope.pageSize == 'ALL')
-    		$scope.pageSize = $scope.userList.length;
-    	$scope.pager = getPager($scope.userList.length, 1, $scope.pageSize);
-        $scope.finalUserList = $scope.userList.slice($scope.pager.startIndex, $scope.pager.endIndex + 1);
+        else {
+            $scope.pageSize = pagesize;
+        }
     }
     $scope.changePageSizeForUser = changePageSizeForUser;
-    
-    function setPageForRole(page) {
-        if (page < 1 || page > $scope.pager.totalPages) {
-            return;
-        }
-        $scope.pager = getPager($scope.roleList.length, page, $scope.pageSize);
-        $scope.finalRoleList = $scope.roleList.slice($scope.pager.startIndex, $scope.pager.endIndex + 1);
-    }
-    
+
+
     var changePageSizeForRole = function() {
-    	if($scope.pageSize == 'ALL')
-    		$scope.pageSize = $scope.roleList.length;
-    	$scope.pager = getPager($scope.roleList.length, 1, $scope.pageSize);
-        $scope.finalRoleList = $scope.roleList.slice($scope.pager.startIndex, $scope.pager.endIndex + 1);
-    }
-    
-    $scope.changePageSizeForRole = changePageSizeForRole;
-    
-    function getPager(totalItems, currentPage, pageSize) {
-        currentPage = currentPage || 1;
-        var totalPages = Math.ceil(totalItems / pageSize);
-        var startPage, endPage;
-        if (totalPages <= 10) {
-            startPage = 1;
-            endPage = totalPages;
-        } else {
-            if (currentPage <= 6) {
-                startPage = 1;
-                endPage = 10;
-            } else if (currentPage + 4 >= totalPages) {
-                startPage = totalPages - 9;
-                endPage = totalPages;
-            } else {
-                startPage = currentPage - 5;
-                endPage = currentPage + 4;
-            }
+        if($scope.pageSize == 'ALL') {
+            $scope.pageSize = $scope.roleList.length;
         }
-        var startIndex = (currentPage - 1) * pageSize;
-        var endIndex = Math.min(startIndex + pageSize - 1, totalItems - 1);
-        var pages = _.range(startPage, endPage + 1);
-        return {
-            totalItems: totalItems,
-            currentPage: currentPage,
-            pageSize: pageSize,
-            totalPages: totalPages,
-            startPage: startPage,
-            endPage: endPage,
-            startIndex: startIndex,
-            endIndex: endIndex,
-            pages: pages
-        };
+        else {
+            $scope.pageSize = pagesize;
+        }
     }
+
+    $scope.changePageSizeForRole = changePageSizeForRole;
+
 });

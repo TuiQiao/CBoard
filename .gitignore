@@ -98,3 +98,4 @@ hs_err_pid*
 *.log
 
 **/CElasticsearchDataProvider.java
+src/main/webapp/org/cboard/controller/dashboard/paramCtrl.js

@@ -21,36 +21,20 @@
 									class="form-control table-search-input-elemint"
 									placeholder="Search">
 							</div>
-							<div class="col-md-7 col-sm-7" style="">
-								<div class="row" style="margin-top: -21px; float: right;">
-									<ul ng-if="pager.pages.length" class="pagination"
-										style="margin-right: 15px;">
-										<li ng-class="{disabled:pager.currentPage === 1}"><a
-											ng-click="setPage(1)" href="">First</a></li>
-										<li ng-class="{disabled:pager.currentPage === 1}"><a
-											href="" ng-click="setPage(pager.currentPage - 1)">Previous</a>
-										</li>
-										<li ng-repeat="page in pager.pages"
-											ng-class="{active:pager.currentPage === page}"><a
-											href="" ng-click="setPage(page)">{{page}}</a></li>
-										<li
-											ng-class="{disabled:pager.currentPage === pager.totalPages}">
-											<a href="" ng-click="setPage(pager.currentPage + 1)">Next</a>
-										</li>
-										<li
-											ng-class="{disabled:pager.currentPage === pager.totalPages}">
-											<a href="" ng-click="setPage(pager.totalPages)">Last</a>
-										</li>
-									</ul>
-								</div>
+							<div class="col-md-7 col-sm-7"
+								style="text-align: right; top: -20px;">
+								<dir-pagination-controls max-size="pageSize"
+									direction-links="true" boundary-links="true">
+								</dir-pagination-controls>
 							</div>
 							<div class="col-md-1 col-sm-1" style="float: right;">
 								<div style="float: right;">
 									<select data-ng-model="pageSize"
 										style="border-radius: 4px; height: 30px; box-shadow: none; border: 1px solid #ccc;"
 										ng-options="pageSize as pageSize for pageSize in pageSizeArr"
-										ng-change="changePageSize()">
+										ng-change="changePageSize(pageSize)">
 									</select>
+									 
 								</div>
 							</div>
 						</div>
@@ -69,9 +53,7 @@
 			                        </tr>
 								</thead>
 								<tbody>
-			                        
-			                        <tr ng-repeat="job in finalJobList | filter:search">
-			                           
+			                        <tr dir-paginate="job in jobList | filter:search |itemsPerPage: pageSize" current-page="currentPage">
 			                            <td style="padding: 4px!important; ">
 											
 											<div class="user-name">
@@ -108,6 +90,9 @@
 										</td>
 			                        </tr>
                         		</tbody>
+                        		<tr ng-if= "!jobList.length">
+									<td><h2 style="text-align: right;">No Data Available</h2></td>
+								</tr>
 							</table>
 						</div>
 					</div>

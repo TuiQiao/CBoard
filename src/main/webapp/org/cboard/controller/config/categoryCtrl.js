@@ -14,7 +14,6 @@ cBoard.controller('categoryCtrl', function ($scope, $http, ModalUtils, $filter,$
     var getCategoryList = function () {
         $http.get("dashboard/getCategoryList.do").success(function (response) {
             $scope.categoryList = response;
-            setPage(1);
         });
     };
 
@@ -35,15 +34,15 @@ cBoard.controller('categoryCtrl', function ($scope, $http, ModalUtils, $filter,$
             size: 'lg',
             scope: $scope,
             controller: ('categoryCtrl',function ($scope, $uibModalInstance) {
-            	$scope.close = function () {
+                $scope.close = function () {
                     $uibModalInstance.close();
                 };
                 $scope.save = function() {
-                	save();
-                	$uibModalInstance.close();
- 				}
+                    save();
+                    $uibModalInstance.close();
+                }
             })
-            
+
         });
     };
     $scope.editBordCategory = function (ds) {
@@ -56,15 +55,15 @@ cBoard.controller('categoryCtrl', function ($scope, $http, ModalUtils, $filter,$
             size: 'lg',
             scope: $scope,
             controller: ('categoryCtrl',function ($scope, $uibModalInstance) {
-            	$scope.close = function () {
+                $scope.close = function () {
                     $uibModalInstance.close();
                 };
                 $scope.save = function() {
-             	save();
-                	$uibModalInstance.close();
- 				}
+                    save();
+                    $uibModalInstance.close();
+                }
             })
-            
+
         });
     };
     $scope.deleteBordCategory = function (ds) {
@@ -117,65 +116,24 @@ cBoard.controller('categoryCtrl', function ($scope, $http, ModalUtils, $filter,$
         }
 
     };
-    
+
     /*
      * Code for pagination
-    */
+     */
     $scope.pageSize = 10;
-    $scope.pager = {};
-    $scope.setPage = setPage;
-    
-    
+    $scope.currentPage = 1;
+
     var pageSizeArr = [5, 10, 15, 20, 25, 30, 40, 50, 60, 70, 80, 90, 100, 'ALL'];
     $scope.pageSizeArr = pageSizeArr;
-    function setPage(page) {
-        if (page < 1 || page > $scope.pager.totalPages) {
-            return;
+    var changePageSize = function(pagesize) {
+        if($scope.pageSize == 'ALL') {
+            $scope.pageSize = $scope.categoryList.length;
         }
-        $scope.pager = getPager($scope.categoryList.length, page, $scope.pageSize);
-        $scope.finalCategoryList = $scope.categoryList.slice($scope.pager.startIndex, $scope.pager.endIndex + 1);
-    }
-    
-    var changePageSize = function() {
-    	if($scope.pageSize == 'ALL')
-    		$scope.pageSize = $scope.categoryList.length;
-    	$scope.pager = getPager($scope.categoryList.length, 1, $scope.pageSize);
-        $scope.finalCategoryList = $scope.categoryList.slice($scope.pager.startIndex, $scope.pager.endIndex + 1);
+        else {
+            $scope.pageSize = pagesize;
+        }
     }
     $scope.changePageSize = changePageSize;
-    
-    function getPager(totalItems, currentPage, pageSize) {
-        currentPage = currentPage || 1;
-        var totalPages = Math.ceil(totalItems / pageSize);
-        var startPage, endPage;
-        if (totalPages <= 10) {
-            startPage = 1;
-            endPage = totalPages;
-        } else {
-            if (currentPage <= 6) {
-                startPage = 1;
-                endPage = 10;
-            } else if (currentPage + 4 >= totalPages) {
-                startPage = totalPages - 9;
-                endPage = totalPages;
-            } else {
-                startPage = currentPage - 5;
-                endPage = currentPage + 4;
-            }
-        }
-        var startIndex = (currentPage - 1) * pageSize;
-        var endIndex = Math.min(startIndex + pageSize - 1, totalItems - 1);
-        var pages = _.range(startPage, endPage + 1);
-        return {
-            totalItems: totalItems,
-            currentPage: currentPage,
-            pageSize: pageSize,
-            totalPages: totalPages,
-            startPage: startPage,
-            endPage: endPage,
-            startIndex: startIndex,
-            endIndex: endIndex,
-            pages: pages
-        };
-    }
+
+
 });

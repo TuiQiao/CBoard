@@ -1,13 +1,28 @@
 package org.cboard.services.job;
 
-import com.alibaba.fastjson.JSONObject;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.List;
+import java.util.Set;
+import java.util.TimeZone;
+
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.cboard.dao.JobDao;
 import org.cboard.dto.ViewDashboardJob;
 import org.cboard.pojo.DashboardJob;
 import org.cboard.services.MailService;
 import org.cboard.services.ServiceStatus;
-import org.quartz.*;
+import org.quartz.CronScheduleBuilder;
+import org.quartz.CronTrigger;
+import org.quartz.Job;
+import org.quartz.JobBuilder;
+import org.quartz.JobDetail;
+import org.quartz.Scheduler;
+import org.quartz.SchedulerException;
+import org.quartz.TriggerBuilder;
+import org.quartz.TriggerKey;
+import org.quartz.impl.matchers.GroupMatcher;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
@@ -16,11 +31,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.quartz.SchedulerFactoryBean;
 import org.springframework.stereotype.Service;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.List;
-import java.util.TimeZone;
+import com.alibaba.fastjson.JSONObject;
 
 /**
  * Created by yfyuan on 2017/2/17.
@@ -46,6 +57,17 @@ public class JobService implements InitializingBean {
         Scheduler scheduler = schedulerFactoryBean.getScheduler();
 
         try {
+            GroupMatcher<TriggerKey> matcher = GroupMatcher.anyTriggerGroup();
+            Set<TriggerKey> triggerKeySet = scheduler.getTriggerKeys(matcher);
+            if(!triggerKeySet.isEmpty()) {
+                triggerKeySet.forEach(triggerKey -> {
+                    try {
+                        scheduler.unscheduleJob(triggerKey);
+                    } catch (SchedulerException e) {
+                        LOG.error("" , e);
+                    }
+                });
+            }    
             scheduler.clear();
         } catch (SchedulerException e) {
             LOG.error("" , e);

@@ -22,6 +22,7 @@ public class SqlSyntaxHelper {
     }
 
     public String getDimMemberStr(DimensionConfig config, int index) {
+        String memberStr =  config.getValues().get(index).replaceAll("'", "\\\\'");
         switch (columnTypes.get(config.getColumnName().toUpperCase())) {
             case Types.VARCHAR:
             case Types.CHAR:
@@ -34,9 +35,9 @@ public class SqlSyntaxHelper {
             case Types.DATE:
             case Types.TIMESTAMP:
             case Types.TIMESTAMP_WITH_TIMEZONE:
-                return "'" + config.getValues().get(index) + "'";
+                return "'" + memberStr + "'";
             default:
-                return config.getValues().get(index);
+                return memberStr;
         }
     }
 

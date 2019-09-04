@@ -1,0 +1,97 @@
+<div id="inner-container" class="content">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="box box-solid">
+                <div class="box-header with-border">
+                    <i class="fa fa-user-secret "></i> <h3 class="box-title">{{'ADMIN.ROLE.ROLE'|translate}}</h3>
+                    
+                    <div class="box-tools pull-right">
+                        <span ng-click="newRole()" style="font-size:13px; cursor: pointer; color:#27aad5;font-weight: 700;">&nbsp;New 
+					 		<span><i class="fa fa-plus" style="font-weight: 700;"></i></span>
+					 	</span>
+                    </div>
+                </div>
+                <div class="box-body no-padding">
+                    <div class="row">
+                    <div class="col-md-12 col-sm-12" style="padding: 10px;">
+							<div class="col-md-4 col-sm-4">
+								<input type="text" style="width: 75%; float: left; border-radius: 6px;"
+									ng-model="search"
+									class="form-control table-search-input-elemint"
+									placeholder="Search">
+							</div>
+							<div class="col-md-7 col-sm-7"
+								style="text-align: right; top: -20px;">
+								<dir-pagination-controls max-size="pageSize"
+									direction-links="true" boundary-links="true">
+								</dir-pagination-controls>
+							</div>
+							<div class="col-md-1 col-sm-1" style="float: right;">
+								<div style="float: right;">
+									<select data-ng-model="pageSize"
+										style="border-radius: 4px; height: 30px; box-shadow: none; border: 1px solid #ccc;"
+										ng-options="pageSize as pageSize for pageSize in pageSizeArr"
+										ng-change="changePageSize(pageSize)">
+									</select>
+									 
+								</div>
+							</div>
+						</div>
+                        <div class="col-md-12">
+                        <table class="table table-hover " style="margin-bottom:0px !important">
+								<thead>
+									<tr>
+										<th><a> {{'ADMIN.ROLE.ROLE_NAME'|translate}} </a></th>
+										<th><a> {{'ADMIN.ROLE.ADMIN'|translate}} </a></th>
+										<th><a style="float: right;"> {{'COMMON.ACTION'|translate}} </a></th>
+									</tr>
+								</thead>
+								<tbody>
+									<tr dir-paginate="r in roleList | filter:search | itemsPerPage: pageSize" >
+										<td style="padding: 4px!important; ">
+											<div class="user-name">
+												<div class="icon" style="background-color: {{colorArray[($index % 14)]}}">
+												{{r.roleName.charAt(0). toUpperCase() +r.roleName.split(' ')[1].charAt(0).toUpperCase() }}
+												</div>
+												<span class="name">{{r.roleName}}</span>
+											</div>
+										</td>
+										<td>
+											<div ng-repeat="user in userList" ng-if="r.userId == user.userId">
+												<p>{{user.loginName + "(" + user.userName + ")"}}</p>
+											</div>
+										</td>
+										<td>
+											<span class="pull-right text-red dropdown user user-menu"> 
+												<a href="" class="dropdown-toggle action-icon-size" data-toggle="dropdown" aria-expanded="false"><i class="fa fa-ellipsis-h"></i></a>
+                                                <ul class="dropdown-menu box profile action-box-dropdown">
+                                                    <li><div class="up-arrow action-uparrow"></div></li>
+                                                    <li class="border-top">
+                                                        <a href="" ng-click="editRole(r)" title="{{'COMMON.EDIT'|translate}}"><i class="fa fa-edit"></i>{{'COMMON.EDIT'|translate}}</a>
+                                                    </li>
+                                                 
+                                                    <li>
+                                                        <a href="" ng-model="r.roleId" ng-click="changeResSelect(r.roleId)" title="{{'COMMON.RESOURCE'|translate}}"><i class="fa fa-user"></i>{{'COMMON.RESOURCE'|translate}}</a>
+                                                    </li>
+                                                    
+                                                     <li>
+                                                        <a href="" ng-click="deleteRole(r)" title="{{'COMMON.DELETE'|translate}}"><i class="fa fa-trash-o"></i>{{'COMMON.DELETE'|translate}}</a>
+                                                    </li> 
+                                                </ul>
+											</span>
+										</td>
+									</tr>
+								</tbody>
+							</table>
+                        </div>
+                    </div>
+                   </div>
+            </div>
+        </div>
+     </div>
+	</div>
+
+
+
+
+

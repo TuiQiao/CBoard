@@ -1,58 +1,94 @@
-<!-- Content Wrapper. Contains page content -->
 <div id="inner-container" class="content">
-    <div class="row">
-        <div class="col-md-3">
-            <div class="box box-solid">
-                <div class="box-header with-border">
-                    <i class="fa fa-database"></i> <h3 class="box-title"> {{'CONFIG.DATA_SOURCE.DATA_SOURCE_HEADER'|translate}}</h3>
-                    <div class="box-tools pull-right">
-                        <i class="fa fa-plus toolbar-icon" ng-click="newDs()" title="{{'COMMON.NEW'|translate}}"></i>&nbsp;&nbsp;
-                    </div>
-                </div>
-                <div class="box-body no-padding">
-                    <div class="row">
-                        <div class="col-md-12">
-                            <ul class="nav nav-pills nav-stacked">
-                                <li ng-repeat="o in datasourceList">
-                                    <a>
-                                        {{o.name}}
-                                        <span class="pull-right text-red">
-                                            <i class="fa fa-info" style="cursor: pointer" ng-click="showInfo(o)" title="{{'COMMON.INFORMATION'|translate}}"></i>&nbsp;
-                                            <i class="fa fa-copy" style="cursor: pointer" ng-click="copyDs(o)" title="{{'COMMON.COPY'|translate}}"></i>&nbsp;
-                                            <i class="fa fa-edit" style="cursor: pointer" ng-click="editDs(o)" title="{{'COMMON.EDIT'|translate}}"></i>&nbsp;
-                                            <i class="fa fa-trash-o" style="cursor: pointer" ng-click="deleteDs(o)" title="{{'COMMON.DELETE'|translate}}"></i>
-                                        </span>
-                                    </a>
-                                </li>
-                            </ul>
-                        </div>
-                    </div>
-                    </form>
-                    <!-- /.box-body -->
-                    <div class="box-footer">
-                    </div>
-                    <!-- /.box-footer-->
-                </div>
-            </div>
-        </div>
-        <div class="col-md-9">
-            <div class="box" ng-show="optFlag == 'new' || optFlag == 'edit'">
-                <div class="box-header with-border">
-                    <h3 class="box-title">{{curDatasource.name}}</h3>
-                </div>
-                <div class="box-body">
-                    <div ng-show="optFlag == 'new'"
-                         ng-include="'org/cboard/view/config/datasource/new.html'"></div>
-                    <div ng-show="optFlag == 'edit'"
-                         ng-include="'org/cboard/view/config/datasource/edit.html'"></div>
-                </div>
-                <!-- /.box-body -->
-                <div class="box-footer">
-                </div>
-                <!-- /.box-footer-->
-            </div>
-        </div>
-    </div>
-</div>
+	<div class="row">
+		<div class="col-md-12">
+			<div class="box box-solid">
+				<div class="box-header with-border">
+					<i class="fa fa-database"></i>
+					<h3 class="box-title">
+						{{'CONFIG.DATA_SOURCE.DATA_SOURCE_HEADER'|translate }}</h3>
+					<div class="box-tools pull-right">
+					<span ng-click="newDs()" style="font-size:13px; cursor: pointer; color:#27aad5;font-weight: 700;">&nbsp;New 
+					 <span><i class="fa fa-plus" style="font-weight: 700;"></i></span></span>
+					</div>
+				</div>
+				<div class="box-body no-padding">
+					<div class="row">
+						<div class="col-md-12 col-sm-12" style="padding: 10px;">
+							<div class="col-md-4 col-sm-4">
+								<input type="text" style="width: 75%; float: left; border-radius: 6px;"
+									ng-model="search"
+									class="form-control table-search-input-elemint"
+									placeholder="Search">
+							</div>
+							<div class="col-md-7 col-sm-7"
+								style="text-align: right; top: -20px;">
+								<dir-pagination-controls max-size="pageSize"
+									direction-links="true" boundary-links="true">
+								</dir-pagination-controls>
+							</div>
+							<div class="col-md-1 col-sm-1" style="float: right;">
+								<div style="float: right;">
+									<select data-ng-model="pageSize"
+										style="border-radius: 4px; height: 30px; box-shadow: none; border: 1px solid #ccc;"
+										ng-options="pageSize as pageSize for pageSize in pageSizeArr"
+										ng-change="changePageSize(pageSize)">
+									</select>
+									 
+								</div>
+							</div>
+						</div>
+						<div class="col-md-12">
+							<table class="table table-hover " style="margin-bottom: 0;">
+								<thead>
+									<tr>
+										<th><a> {{'CONFIG.DATA_SOURCE.NAME'|translate}} </a></th>
+										<th><a> {{'CONFIG.DATA_SOURCE.DATA_PROVIDER'|translate}} </a></th>
+										<th><a style="float: right;"> Actions </a></th>
+									</tr>
+								</thead>
+								<tbody>
+									<tr dir-paginate="o in datasourceList | filter:search |itemsPerPage: pageSize" current-page="currentPage">
+										<td style="padding: 4px!important; ">
+											<div class="user-name">
+												<div class="icon " style="background-color: {{colorArray[($index % 14)]}}">
+												{{o.name.charAt(0). toUpperCase() +o.name.split(' ')[1].charAt(0).toUpperCase() }}
+												</div>
+												<span class="name">{{o.name}}</span>
+											</div>
+										</td>
+										<td>{{o.type}}</td>
+										<td>
+											<span class="pull-right text-red dropdown user user-menu"> 
+												<a href="" class="dropdown-toggle action-icon-size" data-toggle="dropdown" aria-expanded="false"><i class="fa fa-ellipsis-h"></i></a>
+                                                <ul class="dropdown-menu box profile action-box-dropdown">
+                                                    <li><div class="up-arrow action-uparrow"></div></li>
+                                                    <li class="border-top">
+                                                        <a href="" ng-click="showInfo(o)" title="{{'COMMON.INFORMATION'|translate}}"><i class="fa fa-info"></i>{{'COMMON.INFORMATION'|translate}}</a>
+                                                    </li>
+                                                    <li>
+                                                        <a href="" ng-click="copyDs(o)" title="{{'COMMON.COPY'|translate}}"><i class="fa fa-copy"></i>{{'COMMON.COPY'|translate}}</a>
+                                                    </li>
+                                                    <li>
+                                                        <a href="" ng-click="editDs(o)" title="{{'COMMON.EDIT'|translate}}"><i class="fa fa-edit"></i>{{'COMMON.EDIT'|translate}}</a>
+                                                    </li>
+                                                    <li>
+                                                        <a href="" ng-click="deleteDs(o)" title="{{'COMMON.DELETE'|translate}}"><i class="fa fa-trash-o"></i>{{'COMMON.DELETE'|translate}}</a>
+                                                    </li> 
+                                                </ul>
+											</span>
+										</td>
+									</tr>
+								</tbody>
+								<tr ng-if= "!datasourceList.length">
+									<td><h2 style="text-align: right;">No Data Available</h2></td>
+								</tr>
+							</table>
+						</div>
+					</div>
+					</form>
+				</div>
+			</div>
+		</div>
 
+	</div>
 </div>

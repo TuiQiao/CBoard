@@ -193,11 +193,11 @@ cBoard.controller('cockpitLayoutCtrl', function ($stateParams, $state, chartServ
                 vm._data.cockpitChartData = cockpitChartData;
                 cockpitChartDataJSON[domId] = cockpitChartData;
                 var cockpitComponent = {
-                    domId: domId,
-                    componentName: dom.componentName,
-                    componentType: dom.type,
-                    chartData: cockpitChartData,
-                    widgetId: dom.widgetId
+                        domId: domId,
+                        componentName: dom.componentName,
+                        componentType: dom.type,
+                        chartData: cockpitChartData,
+                        widgetId: dom.widgetId
                 };
 
                 if (!vm._data.viewType) {
@@ -275,16 +275,16 @@ cBoard.controller('cockpitLayoutCtrl', function ($stateParams, $state, chartServ
                                 var widgets = layout.rows[i].widgets;
                                 for (var j = 0; j < widgets.length; j++) {
                                     var componentDom = {
-                                        type: "chart",
-                                        componentName: "hex-cockpit-chart",
-                                        widgetId: widgets[j].widgetId,
-                                        chartWidth: widgets[j].chartWidth,
-                                        chartHeight: widgets[j].chartHeight,
-                                        bgColor: widgets[j].bgColor,
-                                        positionX: widgets[j].positionX,
-                                        positionY: widgets[j].positionY,
-                                        domId: widgets[j].domId,
-                                        border: widgets[j].border
+                                            type: "chart",
+                                            componentName: "hex-cockpit-chart",
+                                            widgetId: widgets[j].widgetId,
+                                            chartWidth: widgets[j].chartWidth,
+                                            chartHeight: widgets[j].chartHeight,
+                                            bgColor: widgets[j].bgColor,
+                                            positionX: widgets[j].positionX,
+                                            positionY: widgets[j].positionY,
+                                            domId: widgets[j].domId,
+                                            border: widgets[j].border
                                     };
                                     hexCockpit.componentDom = componentDom;
                                     vm.drop();
@@ -293,16 +293,16 @@ cBoard.controller('cockpitLayoutCtrl', function ($stateParams, $state, chartServ
                                 var others = layout.rows[i].others;
                                 for (var j = 0; j < others.length; j++) {
                                     var componentDom = {
-                                        type: others[j].type,
-                                        componentName: "hex-cockpit-" + others[j].type,
-                                        chartWidth: others[j].chartWidth,
-                                        chartHeight: others[j].chartHeight,
-                                        positionX: others[j].positionX,
-                                        positionY: others[j].positionY,
-                                        chartStyle: others[j].chartStyle,
-                                        cockpitConfChartCSS: others[j].cockpitConfChartCSS,
-                                        jsonData: others[j].jsonData,
-                                        domId: others[j].domId
+                                            type: others[j].type,
+                                            componentName: "hex-cockpit-" + others[j].type,
+                                            chartWidth: others[j].chartWidth,
+                                            chartHeight: others[j].chartHeight,
+                                            positionX: others[j].positionX,
+                                            positionY: others[j].positionY,
+                                            chartStyle: others[j].chartStyle,
+                                            cockpitConfChartCSS: others[j].cockpitConfChartCSS,
+                                            jsonData: others[j].jsonData,
+                                            domId: others[j].domId
                                     };
                                     hexCockpit.componentDom = componentDom;
                                     vm.drop();
@@ -339,10 +339,10 @@ cBoard.controller('cockpitLayoutCtrl', function ($stateParams, $state, chartServ
 
         //数据封装
         var json = {
-            name: hexCockpitInfo.cockpitConf.viewName,
-            layout: {rows: [], type: "cockpit"},
-            categoryId: hexCockpitInfo.cockpitConf.categoryId,
-            id: $stateParams.boardId ? $stateParams.boardId : ""
+                name: hexCockpitInfo.cockpitConf.viewName,
+                layout: {rows: [], type: "cockpit"},
+                categoryId: hexCockpitInfo.cockpitConf.categoryId,
+                id: $stateParams.boardId ? $stateParams.boardId : ""
         };
         json.layout.cockpitConf = hexCockpitInfo.cockpitConf;
         json.layout.rows.push({
@@ -493,41 +493,41 @@ cBoard.controller('cockpitLayoutCtrl', function ($stateParams, $state, chartServ
     //初始化拖拽
     function initDrag(domId) {
         interact('#' + domId)
-            .draggable({
-                onmove: dragMoveListener,
-                restrict: {
-                    restriction: 'parent',
-                    elementRect: {top: 0, left: 0, bottom: 1, right: 1}
-                },
-            })
-            .resizable({
-                edges: {left: true, right: true, bottom: true, top: true},
-                restrictEdges: {outer: 'parent', endOnly: true},
-                restrictSize: {
-                    min: {width: 0, height: 0}
-                },
-                inertia: true,
-            })
-            .on('resizemove', function (event) {
-                var target = event.target,
-                    x = (parseFloat(target.getAttribute('data-x')) || 0),
-                    y = (parseFloat(target.getAttribute('data-y')) || 0);
+        .draggable({
+            onmove: dragMoveListener,
+            restrict: {
+                restriction: 'parent',
+                elementRect: {top: 0, left: 0, bottom: 1, right: 1}
+            },
+        })
+        .resizable({
+            edges: {left: true, right: true, bottom: true, top: true},
+            restrictEdges: {outer: 'parent', endOnly: true},
+            restrictSize: {
+                min: {width: 0, height: 0}
+            },
+            inertia: true,
+        })
+        .on('resizemove', function (event) {
+            var target = event.target,
+            x = (parseFloat(target.getAttribute('data-x')) || 0),
+            y = (parseFloat(target.getAttribute('data-y')) || 0);
 
-                target.style.width = event.rect.width + 'px';
-                target.style.height = event.rect.height + 'px';
-                x += event.deltaRect.left;
-                y += event.deltaRect.top;
-                target.style.webkitTransform = target.style.transform = 'translate(' + x + 'px,' + y + 'px)';
-                target.setAttribute('data-x', x);
-                target.setAttribute('data-y', y);
-                var domId = target.getAttribute('id');
-                domPosition(domId);
-            });
+            target.style.width = event.rect.width + 'px';
+            target.style.height = event.rect.height + 'px';
+            x += event.deltaRect.left;
+            y += event.deltaRect.top;
+            target.style.webkitTransform = target.style.transform = 'translate(' + x + 'px,' + y + 'px)';
+            target.setAttribute('data-x', x);
+            target.setAttribute('data-y', y);
+            var domId = target.getAttribute('id');
+            domPosition(domId);
+        });
 
         function dragMoveListener(event) {
             var target = event.target,
-                x = (parseFloat(target.getAttribute('data-x')) || 0) + event.dx,
-                y = (parseFloat(target.getAttribute('data-y')) || 0) + event.dy;
+            x = (parseFloat(target.getAttribute('data-x')) || 0) + event.dx,
+            y = (parseFloat(target.getAttribute('data-y')) || 0) + event.dy;
 
             target.style.webkitTransform =
                 target.style.transform =

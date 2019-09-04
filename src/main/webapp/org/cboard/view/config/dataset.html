@@ -1,7 +1,7 @@
 <!-- Content Wrapper. Contains page content -->
 <div id="inner-container" class="content">
     <div class="row">
-        <div class="col-md-3">
+        <div class="col-md-3" ng-hide="true">
             <div class="box box-solid">
                 <div class="box-header with-border">
                     <i class="fa fa-cubes"></i> <h3 class="box-title"> {{'CONFIG.DATASET.DATASET'|translate}}</h3>
@@ -22,7 +22,92 @@
                 </div>
             </div>
         </div>
-        <div class="col-md-9">
+		<div  class=" col-md-12" ng-hide="showDataSetList">  <!-- To hide and Show Datasetlist =>nghide="showDataSetList" -->
+			<div class="box box-solid">
+			<!-- testing -->
+			<div class="box-header with-border">
+                    <i class="fa fa-cubes"></i> <h3 class="box-title"> {{'CONFIG.DATASET.DATASET'|translate}}</h3>
+                    <div class="box-tools pull-right">
+                          <span ng-click="newDs()" style="font-size:13px; cursor: pointer; color:#27aad5;font-weight: 700;">&nbsp;New 
+					 <span><i class="fa fa-plus" style="font-weight: 700;"></i></span></span>
+                    </div>
+                </div>
+			<!-- Pagination -->
+			<div class="box-body no-padding">
+				<div class="row ">
+				<div class="col-md-12 col-sm-12" style="padding: 10px;">
+					<div class="col-md-4 col-sm-4">
+							<input type="text" style="width: 75%; float: left; border-radius: 6px;"
+									ng-model="search"
+									class="form-control table-search-input-elemint"
+									placeholder="Search">
+					</div>
+					<div class="col-md-7 col-sm-7"
+						style="text-align: right; top: -20px;">
+						<dir-pagination-controls max-size="pageSize"
+							direction-links="true" boundary-links="true">
+						</dir-pagination-controls>
+					</div>
+					<div class="col-md-1 col-sm-1" style="float: right;">
+						<div style="float: right;">
+							<select data-ng-model="pageSize"
+								style="border-radius: 4px; height: 30px; box-shadow: none; border: 1px solid #ccc;"
+								ng-options="pageSize as pageSize for pageSize in pageSizeArr"
+								ng-change="changePageSize(pageSize)">
+							</select>
+						</div>
+					</div>
+				</div>
+				<div class="col-md-12">
+					<table class="table table-hover " style="margin-bottom: 0;">
+						<thead>
+							<tr>
+								<th><a>{{'CONFIG.DATASET.NAME'|translate}}</a></th>
+								<th><span style="float: right;"><a>{{'COMMON.ACTION'|translate}} </a></span></th>
+							</tr>
+						</thead>
+						<tbody>
+						<tr  dir-paginate="o in datasetList | filter:search |itemsPerPage: pageSize" current-page="currentPage">
+								<td style="padding: 4px!important; ">
+									<div class="user-name">
+										<div class="icon " style="background-color: {{colorArray[($index % 14)]}}">
+											{{o.name.charAt(0). toUpperCase() +o.name.split(' ')[1].charAt(0).toUpperCase() }}</div>
+										<span class="name">{{o.name}}</span>
+									</div>
+								</td>
+
+								<td>
+								<span class="pull-right text-red dropdown user user-menu"> 
+												<a href="" class="dropdown-toggle action-icon-size" data-toggle="dropdown" aria-expanded="false"><i class="fa fa-ellipsis-h"></i></a>
+                                                <ul class="dropdown-menu box profile action-box-dropdown">
+                                                    <li><div class="up-arrow action-uparrow"></div></li>
+                                                    <li class="border-top">
+                                                        <a href="" ng-click="showInfo(o)" title="{{'COMMON.INFORMATION'|translate}}"><i class="fa fa-info"></i>{{'COMMON.INFORMATION'|translate}}</a>
+                                                    </li>
+                                                    <li>
+                                                        <a href="" ng-click="copyDs(o)" title="{{'COMMON.COPY'|translate}}"><i class="fa fa-copy"></i>{{'COMMON.COPY'|translate}}</a>
+                                                    </li>
+                                                    <li>
+                                                        <a href="" ng-click="editDs(o)" title="{{'COMMON.EDIT'|translate}}"><i class="fa fa-edit"></i>{{'COMMON.EDIT'|translate}}</a>
+                                                    </li>
+                                                    <li>
+                                                        <a href="" ng-click="deleteDs(o)" title="{{'COMMON.DELETE'|translate}}"><i class="fa fa-trash-o"></i>{{'COMMON.DELETE'|translate}}</a>
+                                                    </li> 
+                                                </ul>
+											</span>
+								</td>
+							</tr>
+						</tbody>
+								<tr ng-if= "!datasetList.length">
+									<td><h2 style="text-align: right;">No Data Available</h2></td>
+								</tr>
+					</table>
+				</div>
+			 </div>
+			</div>
+		  </div>
+		</div>
+		<div class="col-md-12" ng-hide="!showDataSetList"> <!-- New Dataset Div -->
             <div class="box" ng-show="optFlag == 'new' || optFlag == 'edit'">
                 <div class="box-header with-border">
                     <h3 class="box-title">{{curDataset.name}}</h3>
@@ -34,12 +119,15 @@
                 <div class="box-body">
                     <div class="row">
                         <div class="col-md-12 form-horizontal">
-                            <div class="row">
+                          <div class="col-md-6" >
+                           <div class="row"> 
                                 <div class="col-md-12">
                                     <div class="form-group" ng-class="{'has-error': !(verify.dsName || curDataset.name.length)}">
-                                        <label class="col-sm-2 control-label">{{'CONFIG.DATASET.NAME'|translate}}</label>
-                                        <div class="col-sm-10">
-                                            <input id="DatasetName" ng-model="curDataset.name" class="form-control" placeholder="{{'CONFIG.DATASET.CATEGORY'|translate}}/{{'CONFIG.DATASET.NAME'|translate}}"/>
+                                    	<div class="col-sm-12">
+                                            <label class=" control-label">{{'CONFIG.DATASET.NAME'|translate}}</label>
+                                        </div>
+                                       <div class="col-sm-12">
+                                            <input id="DatasetName" ng-model="curDataset.name" class="form-control" placeholder="{{'CONFIG.DATASET.NAME'|translate}}"/>
                                         </div>
                                     </div>
                                 </div>
@@ -47,40 +135,13 @@
                             <div class="row">
                                 <div class="col-md-12">
                                     <div class="form-group">
-                                        <label class="col-sm-2 control-label">{{'CONFIG.DATASET.DATASOURCE'|translate}}</label>
-                                        <div class="col-sm-10">
-                                            <select class="form-control" ng-model="datasource"
-                                                    ng-change="changeDs()"
-                                                    ng-options="d as d.name+' ('+d.type+')' for d in datasourceList"></select>
+                                    	<div class="col-sm-12">
+                                    	<label class=" control-label">{{'CONFIG.DATASET.DATASOURCE'|translate}}</label>
                                         </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="form-group" ng-repeat="alert in alerts">
-                                <div class="col-sm-offset-2 col-sm-10">
-                                    <div uib-alert ng-class="'alert-' + (alert.type || 'warning')"
-                                         close="alerts.splice($index, 1)">{{alert.msg}}
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="row">
-                                <div class="col-md-12" ng-show="datasource.name"
-                                     ng-include="datasource.type?('dashboard/getConfigView.do?type=' + datasource.type + '&datasourceId=' + datasource.id + '&page=dataset.html'):''"></div>
-                            </div>
-                            <div class="row">
-                                <div class="col-md-12">
-                                    <div class="form-group">
-                                        <div class="col-sm-offset-2 col-sm-2 col-md-3">
-                                            <div class="btn-group">
-                                                <button type="button" class="btn btn-success" ng-click="loadData()">{{'CONFIG.DATASET.LOAD_DATA'|translate}}</button>
-                                                <button type="button" class="btn btn-success dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
-                                                    <span class="caret"></span>
-                                                    <span class="sr-only">Toggle Dropdown</span>
-                                                </button>
-                                                <ul class="dropdown-menu" role="menu">
-                                                    <li ng-click="loadData(true)"><a>{{'CONFIG.WIDGET.FROM_CACHE'|translate}}</a></li>
-                                                </ul>
-                                            </div>
+                                        <div class="col-sm-12">
+												<select class="form-control"  ng-model="datasource" ng-change="changeDs()"
+                                                 ng-options="d as d.name+' ('+d.type+')' for d in datasourceList">
+                                                </select>
                                         </div>
                                     </div>
                                 </div>
@@ -88,25 +149,59 @@
                             <div class="row">
                                 <div class="col-md-12">
                                     <div class="form-group">
-                                        <label class="col-sm-2 control-label">
+                                        <div class="col-sm-12">
+                                         <label class=" control-label">
                                             {{'CONFIG.DATASET.REAL_TIME_INTERVAL'|translate}}
                                         </label>
-                                        <div class="col-sm-10">
+                                        </div>
+                                        <div class="col-sm-12">
                                             <input ng-model="curDataset.data.interval" class="form-control" placeholder="{{'CONFIG.DATASET.REAL_TIME_TIP'|translate}}"/>
                                         </div>
                                     </div>
                                 </div>
                             </div>
-                            <div class="row" ng-show="curDataset.data.schema">
-                                <div class="col-md-6">
-                                    <div class="form-control" style="min-height: 200px;height: auto;padding: 0px; border: 2px dashed #d2d6de">
-                                        <span ng-repeat="o in selects"
-                                              class="btn btn-sm" style="margin: 3px 3px;" ng-class="{true:'btn-primary',false:'btn-default'}[checkExist(o)]"
-                                              dnd-draggable="{type: 'column', column: o}" dnd-type="'column'" ng-click="toDimension({type: 'column', column: o})">{{o}}</span>
+                            <!-- -SqlText -->
+                            <div class="form-group" ng-repeat="alert in alerts">
+                                <div class="col-sm-12">
+                                    <div uib-alert ng-class="'alert-' + (alert.type || 'warning')"
+                                         close="alerts.splice($index, 1)">{{alert.msg}}
                                     </div>
                                 </div>
-                                <div class="col-md-6">
-                                    <div class="tree tree-bg-dragin" style="max-height: 700px; overflow: auto;">
+                            </div>
+                            
+                            <div class="row">
+                                <div class="col-md-12" ng-show="datasource.name"
+                                     ng-include="datasource.type?('dashboard/getConfigView.do?type=' + datasource.type + '&page=dataset.html'):''"></div>
+                            </div><!-- -Sql text Warning -->
+                            <!-- Load Cache -->
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <div class="form-group">
+                                        <div class="col-xs-12 col-sm-4">
+                                            <label>
+                                                <input type="checkbox" ng-model="loadFromCache"> {{'CONFIG.WIDGET.FROM_CACHE'|translate}}
+                                            </label>
+                                        </div>
+                                        <div class="col-sm-4 "style="float: right;">
+                                            <button type="button" class="btn btn-block btn-primary"
+                                                    ng-click="loadData()">{{'CONFIG.DATASET.LOAD_DATA'|translate}}
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+						</div>
+					                           
+                            <div class=" col-md-6" ng-show="curDataset.data.schema">
+                                <div class="col-md-6"style="padding-top: 10px;">
+                                    <div class="form-control" style="height: 500px;padding: 10px;overflow-y: auto; border: 2px dashed #d2d6de">
+	                                    <ul ng-repeat="o in selects" style="padding-left: unset;">
+	                                    <span class="btn btn-sm" style="margin: 3px 3px;font-size:10px;" ng-class="{true:'btn-primary',false:'btn-default'}[checkExist(o)]"  dnd-draggable="{type: 'column', column: o}" dnd-type="'column'" ng-click="toDimension({type: 'column', column: o},$index)">{{o}}</span>
+	                                    </ul>  
+                                    </div>
+                                </div>
+                                <div class="col-md-6"style="padding-top: 10px;">
+                                    <div class="tree tree-bg-dragin" style="height: 500px; overflow: auto;padding:10px">
                                         <ul style="padding-left: 5px">
                                             <li class="parent_li">
                                                 <span>
@@ -227,11 +322,11 @@
                             </div>
                         </div>
                     </div>
-                </div>
-                <!-- /.box-body -->
+                </div><br>
+                <br>
                 <div class="box-footer">
-                    <button type="submit" class="btn btn-danger pull-right">{{'COMMON.CANCEL'|translate}}</button>
-                    <button type="submit" ng-click="save()" class="btn btn-success pull-right"
+                    <button type="submit" class="btn btn-cancel pull-right">{{'COMMON.CANCEL'|translate}}</button>
+                    <button type="submit" ng-click="save()" class="btn btn-primary btn-test pull-right"
                             style="margin-right: 5px">{{'COMMON.SAVE'|translate}}
                     </button>
                     <div class="row">

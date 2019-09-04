@@ -2,27 +2,100 @@
 <!-- Content Wrapper. Contains page content -->
 <div id="inner-container" class="content">
     <div class="row">
-        <div ng-class="{'col-md-2': liteMode, 'col-md-3': !liteMode}">
-            <div class="box box-solid" ng-class="{true:'collapsed-box'}[schema?true:false]">
+        <div class="col-md-12" ng-hide="showWidgetList">
+            <div class="box box-solid" ng-class="{true:'collapsed-box'}[showWidgetList?true:false]">
                 <div class="box-header with-border">
                     <i class="fa fa-bar-chart-o"></i> <h3 class="box-title"> {{'CONFIG.WIDGET.WIDGET'|translate}}</h3>
                     <div class="box-tools pull-right">
-                        <i class="fa fa-info toolbar-icon" ng-click="showInfo()" title="{{'COMMON.INFORMATION'|translate}}"></i>&nbsp;
-                        <i class="fa fa-plus toolbar-icon" ng-click="newWgt()" title="{{'COMMON.NEW'|translate}}"></i>&nbsp;
-                        <i ng-show="!liteMode" class="fa fa-copy toolbar-icon" ng-click="copyNode()" title="{{'COMMON.COPY'|translate}}"></i>
-                        <i ng-show="!liteMode" class="fa fa-edit toolbar-icon" ng-click="editNode()" title="{{'COMMON.EDIT'|translate}}"></i>
-                        <i ng-show="!liteMode" class="fa fa-trash-o toolbar-icon" ng-click="deleteNode()" title="{{'COMMON.DELETE'|translate}}"></i>
-                        <i class="fa fa-reorder toolbar-icon" data-widget="collapse"></i>
+                        <span ng-click="newWgtOnClick()" style="font-size:13px; cursor: pointer; color:#27aad5;font-weight: 700;">&nbsp;New
+					 <span><i class="fa fa-plus" style="font-weight: 700;"></i></span></span>&nbsp;
                     </div>
                 </div>
                 <div class="box-body">
-                    <input type="text" class="form-control" placeholder="Search" ng-model="keywords" ng-change="searchNode()" title="dsr:kylin ds:Bill wg:test">
-                    <div class="panel-body" style="padding: 10px 0px; overflow-x: auto; font-size: small; max-height: 45vh">
+                     <div class="panel-body">
                         <div id="widgetTreeID" js-tree="treeConfig" should-apply="applyModelChanges()" ng-model="treeData" tree="treeInstance"
-                             tree-events-obj="treeEventsObj"></div>
+                             tree-events-obj="treeEventsObj" ng-hide="true"></div>
+                        <div class="row">
+                        	<div class="col-md-12 col-sm-12" style="padding: 10px;">
+							<div class="col-md-4 col-sm-4">
+								<input type="text" style="width: 75%; float: left;  border-radius: 6px;"
+									ng-model="search"
+									class="form-control table-search-input-elemint"
+									placeholder="Search">
+							</div>
+							<div class="col-md-7 col-sm-7"
+								style="text-align: right; top: -20px;">
+								<dir-pagination-controls max-size="pageSize"
+									direction-links="true" boundary-links="true">
+								</dir-pagination-controls>
+							</div>
+							<div class="col-md-1 col-sm-1" style="float: right;">
+								<div style="float: right;">
+									<select data-ng-model="pageSize"
+										style="border-radius: 4px; height: 30px; box-shadow: none; border: 1px solid #ccc;"
+										ng-options="pageSize as pageSize for pageSize in pageSizeArr"
+										ng-change="changePageSize(pageSize)">
+									</select>
+									 
+								</div>
+							</div>
+						</div>
+                            <div class="col-md-12">
+                                <table class="table table-hover "  style="margin-bottom: 0;">
+                                    <thead>
+                                    <tr>
+                                        <th><a> {{'CONFIG.WIDGET.NAME'|translate}} </a></th>
+                                        <th><a> {{'CONFIG.WIDGET.DATASET'|translate}} </a></th> 
+                                        <th><a style="float: right;">{{'COMMON.ACTION'|translate}}</a></th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    <tr dir-paginate="o in widgetList | filter:search |itemsPerPage: pageSize" current-page="currentPage">
+                                        <td style="padding: 4px!important; ">
+                                            <div class="user-name">
+                                                <div class="icon " style="background-color: {{colorArray[($index % 14)]}}">
+												{{o.name.charAt(0). toUpperCase() +o.name.split(' ')[1].charAt(0).toUpperCase() }}
+												</div>
+                                                
+                                                <span class="name disable-select" style="cursor: pointer" ng-dblclick="editNodeOnClick($event, o.id)">{{o.name}}</span>
+                                            </div>
+                                        </td>
+                                        <td >{{cubeNameArr[o.data.datasetId]}}</td> 
+                                        
+                                        <td>
+                                        <span class="pull-right text-red dropdown user user-menu"> 
+												<a href="" class="dropdown-toggle action-icon-size" data-toggle="dropdown" aria-expanded="false"><i class="fa fa-ellipsis-h"></i></a>
+                                                <ul class="dropdown-menu box profile action-box-dropdown">
+                                                    <li><div class="up-arrow action-uparrow"></div></li>
+                                                    <li class="border-top">
+                                                        <a href="" ng-click="showInfoOnClick($event, o.id)" title="{{'COMMON.INFORMATION'|translate}}"><i class="fa fa-info"></i>{{'COMMON.INFORMATION'|translate}}</a>
+                                                    </li>
+                                                    <li>
+                                                        <a href="" ng-click="copyWgtOnClick(o)" title="{{'COMMON.COPY'|translate}}"><i class="fa fa-copy"></i>{{'COMMON.COPY'|translate}}</a>
+                                                    </li>
+                                                    <li>
+                                                        <a href="" ng-click="editNodeOnClick($event, o.id)" title="{{'COMMON.EDIT'|translate}}"><i class="fa fa-edit"></i>{{'COMMON.EDIT'|translate}}</a>
+                                                    </li>
+                                                    <li>
+                                                        <a href="" ng-click="deleteWgt(o)" title="{{'COMMON.DELETE'|translate}}"><i class="fa fa-trash-o"></i>{{'COMMON.DELETE'|translate}}</a>
+                                                    </li> 
+                                                </ul>
+											</span>
+                                        </td>
+                                    </tr>
+                                    </tbody>
+                                    <tr ng-if= "!widgetList.length">
+									<td><h2 style="text-align: right;">No Data Available</h2></td>
+								</tr>
+                                </table>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
+        </div>
+        <div ng-class="{'col-md-2': liteMode, 'col-md-3': !liteMode}" ng-hide="!showWidgetList"> <!--ng-hide="!showWidgetList"-->
+
             <div class="box box-solid" ng-if="schema">
                 <div class="box-header with-border">
                     <i class="fa fa-cube"></i> <h3 class="box-title"> {{'CONFIG.DATASET.DATASET'|translate}}</h3>
@@ -34,7 +107,7 @@
                 <div class="box-body" ng-include="'org/cboard/view/config/chart/template/schema.html'" style="padding: 10px 0px; overflow-x: auto; font-size: small;"></div>
             </div>
         </div>
-        <div style="padding-left: 0px;" ng-class="{'col-md-10': liteMode, 'col-md-9': !liteMode}">
+        <div style="padding-left: 10px;" ng-class="{'col-md-10': liteMode, 'col-md-9': !liteMode, 'col-md-12': !showWidgetList}" ng-hide="!showWidgetList">
             <div class="box" ng-show="optFlag == 'new' || optFlag == 'edit'">
                 <div class="box-header with-border">
                     <div class="user-block">
@@ -88,12 +161,12 @@
                                     <div class="col-md-12">
                                         <div class="form-group">
                                             <div class="col-sm-offset-2 col-xs-12 col-sm-5 col-md-4 col-lg-2">
-                                                <a class="btn btn-block btn-success" ng-click="customDs=!customDs">
+                                                <a class="btn btn-block btn-primary" ng-click="customDs=!customDs">
                                                     <i class="fa fa-fw {{customDs?'fa-table':'fa-edit'}}"></i>{{(customDs?'CONFIG.WIDGET.EXIST_QUERY':'CONFIG.WIDGET.NEW_QUERY')|translate}}
                                                 </a>
                                             </div>
                                             <div class="col-xs-12 col-sm-5 col-md-3 col-lg-2">
-                                                <button type="button" class="btn btn-block btn-success" ng-click="loadData()">
+                                                <button type="button" class="btn btn-block btn-primary" ng-click="loadData()">
                                                     {{'CONFIG.WIDGET.LOAD_DATA'|translate}}
                                                 </button>
                                             </div>
@@ -104,7 +177,7 @@
                                             </div>
                                         </div>
                                         <div class="form-group" ng-repeat="alert in alerts">
-                                            <div class="col-sm-offset-2 col-sm-10">
+                                            <div class="col-sm-12">
                                                 <div uib-alert ng-class="'alert-' + (alert.type || 'warning')">{{alert.msg}}
                                                 </div>
                                             </div>
@@ -164,24 +237,30 @@
                                                 <a id="options_tab" ng-click="tab='options'" data-toggle="tab" aria-expanded="false">Option</a>
                                             </li>
                                             <li class="pull-right">
-                                                <button type="submit" ng-click="preview()"
-                                                        class="btn btn-success btn-sm">
-                                                    {{'CONFIG.WIDGET.PREVIEW'|translate}}
-                                                </button>
-                                                <button type="submit" ng-click="previewQuery()"
-                                                        class="btn btn-success btn-sm">
-                                                    {{'CONFIG.WIDGET.PREVIEW_QUERY'|translate}}
-                                                </button>
-                                                <button type="submit" ng-click="saveWgt()"
-                                                        class="btn btn-success btn-sm">
-                                                    {{'CONFIG.WIDGET.SAVE'|translate}}
-                                                </button>
-                                                <button type="submit" ng-click="doCancel()"
-                                                        class="btn btn-danger btn-sm">
+                                            	 <button type="submit" ng-click="doCancel()"
+                                                        class="btn  btn-cancel pull-right">
                                                     {{'CONFIG.WIDGET.CANCEL'|translate}}
                                                 </button>
+                                                
+                                                <button type="submit" ng-click="saveWgt()"
+                                                		style="border-right-color: #dfe7ef !important;"
+                                                        class="btn btn-primary btn-save pull-right">
+                                                    {{'CONFIG.WIDGET.SAVE'|translate}}
+                                                </button>
+                                                <button type="submit" ng-click="previewQuery()"
+                                               			 style="border-right-color: #dfe7ef !important;"
+                                                        class="btn btn-primary btn-save pull-right">
+                                                    {{'CONFIG.WIDGET.PREVIEW_QUERY'|translate}}
+                                                </button>
+                                                
+                                                <button type="submit" ng-click="preview()"
+                                               			 style="border-right-color: #dfe7ef !important;"
+                                                        class="btn btn-primary btn-save pull-right">
+                                                    {{'CONFIG.WIDGET.PREVIEW'|translate}}
+                                                </button>
+                                                
                                                 <button type="submit" ng-click="switchLiteMode()"
-                                                        class="btn btn-info btn-sm">
+                                                        class="btn btn-primary btn-test pull-right">
                                                     {{liteMode ? 'S' : 'L'}}
                                                 </button>
                                             </li>

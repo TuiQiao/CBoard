@@ -1,0 +1,45 @@
+<div id="inner-container" class="content">
+	<div class="row">
+		<div class="col-md-12">
+			<div class="box box-solid">
+				<div class="box-header with-border">
+					<i class="fa fa-database"></i>
+					<h3 class="box-title">
+						{{'CONFIG.DASHBOARD.MY_DASHBOARD'|translate}}</h3>
+				</div>
+				<div class="box-body no-padding">
+					<div class="row">
+						<div class="col-md-12">
+
+							<table class="table table-hover " style="margin-bottom: 0;">
+								<thead>
+									<tr>
+										<th><a> Name </a></th>
+										<th><a> Category </a></th>
+									</tr>
+								</thead>
+								<tbody
+									ng-repeat="b in boardList | filter:{userId:user.userId}:true | filter:search">
+									<tr>
+										<td style="padding: 4px !important;">
+											<div class="user-name">
+												<div class="icon "
+													style="background-color: {{colorArray[($index% 14)]">
+													{{b.name.charAt(0). toUpperCase() +b.name.split('
+													')[1].charAt(0).toUpperCase() }}</div>
+												<span style="cursor: pointer" ui-sref="mine.view({id:b.id})">{{b.name}}</span>
+											</div>
+										</td>
+										<td>{{b.categoryName}}</td>
+									</tr>
+								</tbody>
+								<tr ng-if="!boardList.length">
+									<td><h2 style="margin-left: 50%">No Data Available</h2></td>
+								</tr>
+							</table>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>

@@ -49,8 +49,8 @@ cBoard.controller('renderCtrl', function ($timeout, $rootScope, $scope, $state, 
             onrendered: function (canvas) {
                 result['img'] = canvas.toDataURL("image/jpeg");
                 var obj = {
-                    persistId: $location.search().pid,
-                    data: result
+                        persistId: $location.search().pid,
+                        data: result
                 };
                 var xmlhttp = new XMLHttpRequest();
                 xmlhttp.open("POST", "commons/persist.do", false);

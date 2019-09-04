@@ -1,53 +1,105 @@
 <!-- Content Wrapper. Contains page content -->
 <div id="inner-container" class="content">
-    <div class="row">
-        <div class="col-xs-12">
-            <div class="box">
-                <div class="box-header">
-                    <h3 class="box-title">{{'CONFIG.JOB.JOB'|translate}}</h3>
-                    <div class="box-tools">
-                        <i class="fa fa-plus toolbar-icon" ng-click="editJob()" title="{{'COMMON.NEW'|translate}}" style="margin-top: 4px;"></i>
-                        <div class="input-group input-group-sm" style="width: 150px; margin-left: 5px; float: right;">
-                            <input type="text" name="table_search" class="form-control pull-right" placeholder="Search">
-                            <div class="input-group-btn">
-                                <button type="submit" class="btn btn-default"><i class="fa fa-search"></i></button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <!-- /.box-header -->
-                <div class="box-body table-responsive no-padding">
-                    <table class="table table-hover">
-                        <tbody>
-                        <tr>
-                            <th>ID</th>
-                            <th>{{'CONFIG.JOB.NAME'|translate}}</th>
-                            <th>{{'CONFIG.JOB.TYPE'|translate}}</th>
-                            <th>{{'CONFIG.JOB.ACTIVE_RANGE'|translate}}</th>
-                            <th>{{'CONFIG.JOB.LAST_EXEC_TIME'|translate}}</th>
-                            <th>{{'CONFIG.JOB.STATUS'|translate}}</th>
-                            <th>{{'CONFIG.JOB.USERNAME'|translate}}</th>
-                            <th></th>
-                        </tr>
-                        <tr ng-repeat="job in jobList">
-                            <td>{{job.id}}</td>
-                            <td>{{job.name}}</td>
-                            <td>{{getName(job.jobType)}}</td>
-                            <td>{{getDateRange(job.daterange)}}</td>
-                            <td>{{getTime(job.lastExecTime)}}</td>
-                            <td>{{getStatus(job.jobStatus)|translate}}</td>
-                            <td>{{job.userName}}</td>
-                            <td>
-                                <i class="fa fa-play toolbar-icon" ng-click="runJob(job)" title="{{'CONFIG.JOB.EXEC_NOW'|translate}}"></i>&nbsp;&nbsp;
-                                <i class="fa fa-edit toolbar-icon" ng-click="editJob(job)" title="{{'COMMON.EDIT'|translate}}"></i>&nbsp;&nbsp;
-                                <i class="fa fa-trash-o toolbar-icon"  ng-click="deleteJob(job)" title="{{'COMMON.DELETE'|translate}}"></i>&nbsp;&nbsp;
-                                <i class="fa fa-bug toolbar-icon"  ng-click="showLog(job)" title="{{'COMMON.LOG'|translate}}"></i>
-                            </td>
-                        </tr>
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-        </div>
-    </div>
+	<div class="row">
+		<div class="col-md-12">
+			<div class="box box-solid">
+				<div class="box-header with-border">
+					<i class="fa fa-clock-o"></i>
+					<h3 class="box-title">
+						{{'CONFIG.JOB.JOB'|translate}}</h3>
+					<div class="box-tools pull-right">
+					<span ng-click="editJob()" style="font-size:13px; cursor: pointer; color:#27aad5;font-weight: 700;">&nbsp;New 
+					 <span><i class="fa fa-plus" style="font-weight: 700;"></i></span></span>
+					</div>
+				</div>
+				<div class="box-body no-padding">
+					<div class="row">
+						<div class="col-md-12 col-sm-12" style="padding: 10px;">
+							<div class="col-md-4 col-sm-4">
+								<input type="text" style="width: 75%; float: left; border-radius: 6px;"
+									ng-model="search"
+									class="form-control table-search-input-elemint"
+									placeholder="Search">
+							</div>
+							<div class="col-md-7 col-sm-7"
+								style="text-align: right; top: -20px;">
+								<dir-pagination-controls max-size="pageSize"
+									direction-links="true" boundary-links="true">
+								</dir-pagination-controls>
+							</div>
+							<div class="col-md-1 col-sm-1" style="float: right;">
+								<div style="float: right;">
+									<select data-ng-model="pageSize"
+										style="border-radius: 4px; height: 30px; box-shadow: none; border: 1px solid #ccc;"
+										ng-options="pageSize as pageSize for pageSize in pageSizeArr"
+										ng-change="changePageSize(pageSize)">
+									</select>
+									 
+								</div>
+							</div>
+						</div>
+						<div class="col-md-12 ">
+							<table class="table table-hover " style="margin-bottom:0px !important">
+								<thead>
+									<tr>
+			                            <th><a>ID</a></th>
+			                            <th><a>{{'CONFIG.JOB.NAME'|translate}}</a></th>
+			                            <th><a>{{'CONFIG.JOB.TYPE'|translate}}</a></th>
+			                            <th><a>{{'CONFIG.JOB.ACTIVE_RANGE'|translate}}</a></th>
+			                            <th><a>{{'CONFIG.JOB.LAST_EXEC_TIME'|translate}}</a></th>
+			                            <th><a>{{'CONFIG.JOB.STATUS'|translate}}</a></th>
+			                            <th><a>{{'CONFIG.JOB.USERNAME'|translate}}</a></th>
+			                            <th><a style="float: right;"> {{'COMMON.ACTION'|translate}} </a></th>
+			                        </tr>
+								</thead>
+								<tbody>
+			                        <tr dir-paginate="job in jobList | filter:search |itemsPerPage: pageSize" current-page="currentPage">
+			                            <td style="padding: 4px!important; ">
+											
+											<div class="user-name">
+												<div class="icon " style="background-color: {{colorArray[($index % 14)]}}">
+												{{job.id}}
+												</div>
+											</div>
+										</td>
+										 <td>{{job.name}}</td>
+			                            <td>{{getName(job.jobType)}}</td>
+			                            <td>{{getDateRange(job.daterange)}}</td>
+			                            <td>{{getTime(job.lastExecTime)}}</td>
+			                            <td>{{getStatus(job.jobStatus)|translate}}</td>
+			                            <td>{{job.userName}}</td>
+			                            <td>
+			                            <span class="pull-right text-red dropdown user user-menu"> 
+												<a href="" class="dropdown-toggle action-icon-size" data-toggle="dropdown" aria-expanded="false"><i class="fa fa-ellipsis-h"></i></a>
+                                                <ul class="dropdown-menu box profile action-box-dropdown">
+                                                    <li><div class="up-arrow action-uparrow"></div></li>
+                                                    <li class="border-top">
+                                                        <a href="" ng-click="runJob(job)" title="{{'CONFIG.JOB.EXEC_NOW'|translate}}"><i class="fa fa-play"></i>{{'CONFIG.JOB.EXEC_NOW'|translate}}</a>
+                                                    </li>
+                                                    <li>
+                                                        <a href="" ng-click="editJob(job)" title="{{'COMMON.EDIT'|translate}}"><i class="fa fa-edit"></i>{{'COMMON.EDIT'|translate}}</a>
+                                                    </li>
+                                                    <li>
+                                                        <a href="" ng-click="deleteJob(job)" title="{{'COMMON.DELETE'|translate}}"><i class="fa fa-trash-o"></i>{{'COMMON.DELETE'|translate}}</a>
+                                                    </li> 
+                                                    <li>
+                                                        <a href="" ng-click="showLog(job)" title="{{'COMMON.LOG'|translate}}"><i class="fa fa-bug"></i>{{'COMMON.LOG'|translate}}</a>
+                                                    </li>
+                                                </ul>
+											</span>
+										</td>
+			                        </tr>
+                        		</tbody>
+                        		<tr ng-if= "!jobList.length">
+									<td><h2 style="text-align: right;">No Data Available</h2></td>
+								</tr>
+							</table>
+						</div>
+					</div>
+					</form>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
 </div>

@@ -3,6 +3,11 @@
  */
 cBoard.controller('cBoardCtrl', function ($rootScope, $scope, $location, $http, $q, $filter, $uibModal, ModalUtils) {
 
+    $scope.colorArray = ['#5d9fe6','#9fc173','#a789c7','#e88b8a','#f5d451','#ecb44d','#aee8f4','#7272af','#7c8798',
+        '#90c3c6','#bc7676','#8b9bc7','#c189ba','#bb8cf2'];
+
+    $scope.colorArrayLength = $scope.colorArray.length;
+
     var translate = $filter('translate');
 
     $rootScope.alert = function (msg) {
@@ -78,4 +83,28 @@ cBoard.controller('cBoardCtrl', function ($rootScope, $scope, $location, $http, 
             }
         });
     }
+
+
+
+    $scope.choosenTheme = "skin-white-light.css"; 
+    window ["changeTheme"]('vintage');
+    window ["changeTheme1"]('vintage');
+    $scope.changeTheme = function (theme) {
+        if (theme == 0) {
+            $scope.choosenTheme = "skin-dark-black.css";
+            window ["changeTheme"]('dark');
+            window ["changeTheme1"]('dark');
+
+        } else if (theme == 1){
+            $scope.choosenTheme = "skin-white-light.css";
+            window ["changeTheme"]('vintage');
+            window ["changeTheme1"]('vintage');
+        } else if (theme == 2){
+            $scope.choosenTheme = "skin-black-light.css";
+            window ["changeTheme"]('dark');
+            window ["changeTheme1"]('dark');
+        }
+        $rootScope.refreshPreview();
+    }
+
 });

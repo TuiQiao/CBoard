@@ -1,31 +1,120 @@
 <!-- Content Wrapper. Contains page content -->
 <div id="inner-container" class="content">
     <div class="row" ng-show="!freeLayout">
-        <div class="col-md-3">
-            <div class="box box-solid">
-                <div class="box-header with-border">
-                    <i class="fa fa-dashboard"></i><h3 class="box-title">{{'CONFIG.DASHBOARD.DASHBOARD'|translate}}</h3>
-                    <div class="box-tools pull-right operateBox">
-                        <i class="fa fa-info toolbar-icon" ng-click="showInfo()" title="{{'COMMON.INFORMATION'|translate}}"></i>&nbsp;&nbsp;
-                        <i class="fa fa-copy toolbar-icon" ng-click="copyNode()" title="{{'COMMON.COPY'|translate}}"></i>&nbsp;&nbsp;
-                        <i class="fa fa-edit toolbar-icon" ng-click="editNode()" title="{{'COMMON.EDIT'|translate}}"></i>&nbsp;&nbsp;
-                        <i class="fa fa-trash-o toolbar-icon"  ng-click="deleteNode()" title="{{'COMMON.DELETE'|translate}}"></i>&nbsp;&nbsp;
-                        <i class="fa fa-plus toolbar-icon" ng-click="newOperate()" title="{{'COMMON.NEW'|translate}}"></i>
-                        <div class="newBoard hideOperate">
-                            <!--<span class="newFreeLayout" ng-click="newFreeLayout()">New free layout</span>-->
-                            <span class="newGridLayout" ng-click="newGridLayout()">{{'CONFIG.DASHBOARD.NEW_GRID_LAYOUT'|translate}}</span>
-                            <span class="newGridLayout" ng-click="newTimelineLayout()">{{'CONFIG.DASHBOARD.NEW_TIMELINE_LAYOUT'|translate}}</span>
-                            <span class="newGridLayout" ng-click="newCockpitLayout()">{{'CONFIG.DASHBOARD.NEW_COCKPIT_LAYOUT'|translate}}</span>
-                        </div>
-                    </div>
-                </div>
-                <div class="panel-body">
-                    <div id="boardTreeID" js-tree="treeConfig" should-apply="applyModelChanges()" ng-model="treeData" tree="treeInstance"
-                         tree-events-obj="treeEventsObj"></div>
-                </div>
-            </div>
-        </div>
-        <div class="col-md-9">
+		<div class="col-md-12" ng-hide="!hideList">
+			<div class="box box-solid">
+				<div class="box-header with-border">
+					<i class="fa fa-dashboard"></i>
+					<h3 class="box-title">
+						{{'SIDEBAR.DASHBOARD_CONFIG'|translate}}</h3>
+					<div class="box-tools pull-right operateBox">
+						
+						<span class="pull-right text-red dropdown user user-menu"> 
+							<a href="" class="dropdown-toggle action-icon-size" data-toggle="dropdown" aria-expanded="false">
+							<span style="font-size: 13px; cursor: pointer; color: #27aad5; font-weight: 700;">&nbsp;New
+							<span><i class="fa fa-plus" style="font-weight: 700;"></i></span>
+							</a>
+                               <ul class="dropdown-menu box profile new-button-dropdown ">
+                                   <li><div class="up-arrow action-uparrow"></div></li>
+                                   <li class="border-top">
+                                       <a href="" ng-click="newGridLayout()" title="{{'CONFIG.DASHBOARD.NEW_GRID_LAYOUT'|translate}}"><b>{{'CONFIG.DASHBOARD.NEW_GRID_LAYOUT'|translate}}</b></a>
+                                   </li>
+                                   <li >
+                                       <a href="" ng-click="newTimelineLayout()" title="{{'CONFIG.DASHBOARD.NEW_TIMELINE_LAYOUT'|translate}}"><b>{{'CONFIG.DASHBOARD.NEW_TIMELINE_LAYOUT'|translate}}</b></a>
+                                   </li>
+								   <li >
+                                       <a href="" ng-click="newCockpitLayout()" title="{{'CONFIG.DASHBOARD.NEW_COCKPIT_LAYOUT'|translate}}"><b>{{'CONFIG.DASHBOARD.NEW_COCKPIT_LAYOUT'|translate}}</b></a>
+                                   </li>
+                                  
+                               </ul>
+						</span>
+						
+					</div>
+				</div>
+				<div class="box-body no-padding">
+					<div class="row">
+						<div class="col-md-12 col-sm-12" style="padding: 10px;">
+							<div class="col-md-4 col-sm-4">
+								<input type="text" style="width: 75%; float: left; border-radius: 6px;"
+									ng-model="search"
+									class="form-control table-search-input-elemint"
+									placeholder="Search">
+							</div>
+							<div class="col-md-7 col-sm-7"
+								style="text-align: right; top: -20px;">
+								<dir-pagination-controls max-size="pageSize"
+									direction-links="true" boundary-links="true">
+								</dir-pagination-controls>
+							</div>
+							<div class="col-md-1 col-sm-1" style="float: right;">
+								<div style="float: right;">
+									<select data-ng-model="pageSize"
+										style="border-radius: 4px; height: 30px; box-shadow: none; border: 1px solid #ccc;"
+										ng-options="pageSize as pageSize for pageSize in pageSizeArr"
+										ng-change="changePageSize(pageSize)">
+									</select>
+									 
+								</div>
+							</div>
+						</div>
+
+						<div class="col-md-12">
+							<table class="table table-hover " style="margin-bottom: 0;">
+								<thead>
+									<tr>
+										<th><a>{{'CONFIG.DASHBOARD.NAME'|translate}} </a></th>
+										<th><a> {{'CONFIG.DASHBOARD.CATEGORY'|translate}}</a></th>
+										<th><a style="float: right;"> Actions </a></th>
+									</tr>
+								</thead>
+								<tbody">
+									<tr dir-paginate="o in boardList | filter:search |itemsPerPage: pageSize" >
+										<td style="padding: 4px!important; ">
+									<div class="user-name">
+										<div class="icon " style="background-color: {{colorArray[($index % 14)]}}">
+											{{o.name.charAt(0). toUpperCase() +o.name.split('
+											')[1].charAt(0).toUpperCase() }}</div>
+										<span class="name">{{o.name}}</span>
+									</div>
+								</td>
+										<td>{{o.categoryName}}</td>
+										<td>
+										<span class="pull-right text-red dropdown user user-menu"> 
+												<a href="" class="dropdown-toggle action-icon-size" data-toggle="dropdown" aria-expanded="false"><i class="fa fa-ellipsis-h"></i></a>
+                                                <ul class="dropdown-menu box profile action-box-dropdown">
+                                                    <li><div class="up-arrow action-uparrow"></div></li>
+                                                    <li class="border-top">
+                                                        <a href="" ng-click="showInfo(o)" title="{{'COMMON.INFORMATION'|translate}}"><i class="fa fa-info"></i>{{'COMMON.INFORMATION'|translate}}</a>
+                                                    </li>
+                                                    <li>
+                                                        <a href="" ui-sref="mine.view({id:o.id})"  title="{{'COMMON.PREVIEW'|translate}}"><i class="fa fa-eye"></i>{{'COMMON.PREVIEW'|translate}}</a>
+                                                    </li>
+                                                    
+                                                    <li>
+                                                        <a href="" ng-click="copyNode(o)" title="{{'COMMON.COPY'|translate}}"><i class="fa fa-copy"></i>{{'COMMON.COPY'|translate}}</a>
+                                                    </li>
+                                                    <li>
+                                                        <a href="" ng-click="editNode(o)" title="{{'COMMON.EDIT'|translate}}"><i class="fa fa-edit"></i>{{'COMMON.EDIT'|translate}}</a>
+                                                    </li>
+                                                    <li>
+                                                        <a href="" ng-click="deleteNode(o)" title="{{'COMMON.DELETE'|translate}}"><i class="fa fa-trash-o"></i>{{'COMMON.DELETE'|translate}}</a>
+                                                    </li> 
+                                                </ul>
+											</span>
+										
+										</td>
+									</tr>
+								</tbody>
+								<tr ng-if="!boardList.length">
+									<td><h2 style="text-align: right;">No Data Available</h2></td>
+								</tr>
+							</table>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class="col-md-12" ng-hide="hideList">
             <div class="box" ng-show="optFlag == 'new' || optFlag == 'edit'">
                 <div class="box-header with-border">
                     <h3 class="box-title">{{curBoard.name}}</h3>
@@ -90,14 +179,10 @@
                     <div class="box-footer">
                         <div class="row">
                             <div class="col-md-12">
-                                <div class="form-group">
-                                    <button type="submit" class="btn btn-danger pull-right">{{'COMMON.CANCEL'|translate}}</button>
-                                    <a class="btn btn-success pull-right" ng-click="checkBeforPreview(curBoard.id)" target="_blank"
-                                       style="margin-right: 5px">{{'CONFIG.DASHBOARD.PREVIEW'|translate}}
-                                    </a>
-                                    <button type="submit" class="btn btn-success pull-right" ng-click="saveBoard()"
-                                            style="margin-right: 5px">{{'COMMON.SAVE'|translate}}
-                                    </button>
+                                <div class="form-group" style="float: right;">
+                                    <button type="submit"  ng-click="saveBoard()" class="btn btn-primary btn-test " ng-disabled="!curBoard.name " style="margin-right: -4px;">{{'COMMON.SAVE'|translate}}</button>
+									<button type="submit"  ng-click="checkBeforPreview(curBoard.id)" class="btn btn-primary btn-save " >{{'CONFIG.DASHBOARD.PREVIEW'|translate}}</button>
+									<button type="submit"  ng-click="cancelDiv()"class="btn  btn-cancel"style="    margin-left: -3px !important;">{{'COMMON.CANCEL'|translate}}</button>
                                 </div>
                             </div>
                         </div>

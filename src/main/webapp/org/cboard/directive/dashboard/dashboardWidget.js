@@ -39,6 +39,15 @@ cBoard.directive('dashboardWidget', function ($compile, $templateCache, dataServ
         scope.widget.render(ndWrapper, null, scope);
     };
 
+    var renderGrid = function (scope, element, attrs) {
+            var template = $templateCache.get("gridChartContent");
+            scope.myheight = scope.row.height ? (scope.row.height - 44) : 700;
+            var aa = $compile(template)(scope);
+            element.append(aa);
+            var ndWrapper = $(element).find('.box-body');
+            scope.widget.render(ndWrapper, null, scope);
+    };
+
     return {
         restrict: 'E',
         scope: true,
@@ -56,6 +65,9 @@ cBoard.directive('dashboardWidget', function ($compile, $templateCache, dataServ
                             break;
                         case 'table':
                             renderTable(scope, element, attrs);
+                            break;
+                        case 'grid':
+                            renderGrid(scope, element, attrs);
                             break;
                         default:
                             renderEchart(scope, element, attrs);

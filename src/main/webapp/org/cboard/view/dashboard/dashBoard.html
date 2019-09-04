@@ -1,0 +1,17 @@
+<div id="inner-container" class="content">
+	<div class="row">
+		<div class="col-md-12">
+				<div ng-repeat="b in boardList " class="col-md-2">
+					<a  ui-sref="dashboard.category.view({id:b.id,category:c.name})">
+						<div class="userDashboard" style="background-image:linear-gradient(135deg, {{colorArray[$index % colorArrayLength]}} 0% , {{colorArray[($index+1 )% colorArrayLength]}} 100%)">
+							<div class="row text-center iconDiv">
+								<i class="fa fa-bar-chart fa-2x"></i>
+							</div>
+						<div class="row text-center labeldiv"
+							style="word-wrap: break-word; padding-left: 15px; padding-right: 16px;">{{b.name}}</div>
+						</div>
+					</a>
+				</div>
+		</div>
+	</div>
+</div>

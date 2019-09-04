@@ -5,6 +5,8 @@ cBoard.controller('jobCtrl', function ($scope, $rootScope, $http, dataService, $
     var translate = $filter('translate');
 
     $scope.jobTypes = [{name: 'Send Mail', type: 'mail'}];
+    $scope.colorArray = ['#5d9fe6','#9fc173','#a789c7','#e88b8a','#f5d451','#ecb44d','#aee8f4','#7272af','#7c8798',
+        '#90c3c6','#bc7676','#8b9bc7','#c189ba','#bb8cf2'];
 
     $scope.interval = $interval(function () {
         $http.get("dashboard/getJobList.do").success(function (response) {
@@ -19,10 +21,10 @@ cBoard.controller('jobCtrl', function ($scope, $rootScope, $http, dataService, $
     }, 5000);
 
     $rootScope.$on('$stateChangeSuccess', function (event, toState, toParams, fromState) {
-            if (fromState.controller == 'jobCtrl') {
-                $interval.cancel($scope.interval);
-            }
+        if (fromState.controller == 'jobCtrl') {
+            $interval.cancel($scope.interval);
         }
+    }
     );
 
     $scope.loadJobList = function () {
@@ -93,16 +95,16 @@ cBoard.controller('jobCtrl', function ($scope, $rootScope, $http, dataService, $
             scope: $scope,
             controller: function ($scope, $uibModalInstance) {
                 $scope.cronConfig = {
-                    quartz: true,
-                    allowMultiple: true,
-                    options: {
-                        allowYear: false
-                    }
+                        quartz: true,
+                        allowMultiple: true,
+                        options: {
+                            allowYear: false
+                        }
                 };
                 $scope.dateRangeCfg = {
-                    locale: {
-                        format: "YYYY-MM-DD"
-                    }
+                        locale: {
+                            format: "YYYY-MM-DD"
+                        }
                 };
                 if (job) {
                     $scope.job = angular.copy(job);
@@ -153,7 +155,8 @@ cBoard.controller('jobCtrl', function ($scope, $rootScope, $http, dataService, $
     };
 
     $scope.deleteJob = function (job) {
-        ModalUtils.confirm(translate("COMMON.CONFIRM_DELETE"), "modal-info", "lg", function () {
+        var jobName = job.name;
+        ModalUtils.confirm(translate('COMMON.CONFIRM_DELETE')+jobName, 'modal-info', 'lg', function () {
             $http.post("dashboard/deleteJob.do", {id: job.id}).success(function (serviceStatus) {
                 if (serviceStatus.status == '1') {
                     $scope.loadJobList();
@@ -163,4 +166,22 @@ cBoard.controller('jobCtrl', function ($scope, $rootScope, $http, dataService, $
             });
         });
     };
+
+    /*
+     * Code for pagination
+     */
+    $scope.pageSize = 10;
+    $scope.currentPage = 1;
+
+    var pageSizeArr = [5, 10, 15, 20, 25, 30, 40, 50, 60, 70, 80, 90, 100, 'ALL'];
+    $scope.pageSizeArr = pageSizeArr;
+    var changePageSize = function(pagesize) {
+        if($scope.pageSize == 'ALL') {
+            $scope.pageSize = $scope.jobList.length;
+        }
+        else {
+            $scope.pageSize = pagesize;
+        }
+    }
+    $scope.changePageSize = changePageSize;
 });

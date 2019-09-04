@@ -5,7 +5,7 @@
     </h1>
     <div class="breadcrumb" style="cursor: pointer" >
         <div style="display: inline-block" ng-show="board.layout.containsParam" >
-            <button type="button" class="btn btn-primary btn-sm dropdown-toggle" data-toggle="dropdown"><i class="fa fa-filter"></i> {{"COMMON.PARAM" | translate}}
+            <button style="margin-right: -3px;" type="button" class="btn btn-primary btn-sm btn-test dropdown-toggle" data-toggle="dropdown"><i class="fa fa-filter"></i> {{"COMMON.PARAM" | translate}}
                 <span class="fa fa-caret-down"></span>
             </button>
             <ul class="dropdown-menu" style="position: relative">
@@ -15,7 +15,7 @@
                             <input class="form-control" placeholder='{{"COMMON.SAVE_AS" | translate}}' style="min-width: 120px"
                                    ng-model="newBoardParamName">
                             <span class="input-group-btn">
-                               <button type="button" class="btn btn-success" ng-click="newBoardParam(newBoardParamName);newBoardParamName='';">
+                               <button type="button" class="btn btn-primary" ng-click="newBoardParam(newBoardParamName);newBoardParamName='';">
                                    <i class="fa fa-save"></i>
                                </button>
                             </span>
@@ -29,18 +29,18 @@
             </ul>
         </div>
         <div style="display: inline-block" ng-click="load(true)">
-            <button class="btn btn-primary btn-sm">
+            <button class="btn btn-primary btn-sm btn-save">
                 <span><i class="fa fa-refresh"></i>&nbsp;{{"COMMON.REFRESH" | translate}}</span>
             </button>
         </div>
         <div style="display: inline-block" ng-click="export(true)">
-            <button class="btn btn-primary btn-sm">
+            <button style="margin-left: -2px !important;" class="btn btn-primary btn-sm btn-save">
                 <span ng-show="!exportStatus"><i class="fa fa-download" ></i>&nbsp;{{"COMMON.EXPORT" | translate}}</span>
                 <span ng-show="exportStatus"><i class="fa fa-spinner fa-spin"></i> Loading</span>
             </button>
         </div>
         <div style="display: inline-block" ng-click="editBoard()" ng-show="isShowMenu('config.board')">
-            <button class="btn btn-primary btn-sm">
+            <button style="margin-left: -3px !important;" class="btn  btn-sm btn-cancel ">
                 <span><i class="fa fa-edit"></i>&nbsp;{{"COMMON.EDIT" | translate}}</span>
             </button>
         </div>

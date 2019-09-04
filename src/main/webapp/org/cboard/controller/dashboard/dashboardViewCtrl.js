@@ -91,6 +91,40 @@ cBoard.controller('dashboardViewCtrl', function ($timeout, $rootScope, $scope, $
             if (charType == 'chinaMapBmap') {
                 chartService.render(content, injectFilter(widget.widget).data, optionFilter, scope, reload);
                 widget.loading = false;
+            } else if (charType == 'grid') {
+                widget.loading = false;
+                //Fetch the data
+                var wdgt = injectFilter(widget.widget).data;
+                var config = wdgt.config;
+                var dataSource = wdgt.datasource ? wdgt.datasource.id : null;
+                var query = wdgt.query;
+                var datasetId = wdgt.datasetId;
+                //Fetch the measure columns
+                $scope.measureColumns = getSelectedMeasureColumns(config);
+                $scope.dimensionColumns = getSelectedDimensionColumns(config);
+
+                var aggregateClmnsObj = {
+                        "type":'',
+                        "field":"",
+                        "groupFooterTemplate": 'Total units: ${sum}'
+                };
+
+                $scope.aggregateClmns = [];
+
+                $scope.measureColumns.forEach(function(value, index) {
+                    value.forEach(function(v, i) {
+                        var aggregate_type = v.aggregate_type;
+                        aggregateClmnsObj =  {};
+                        aggregateClmnsObj.type = v.aggregate_type;
+                        aggregateClmnsObj.field = v.col;
+                        aggregateClmnsObj.groupFooterTemplate = 'Total '+ v.col +': ${'+aggregate_type+'}';
+                        $scope.aggregateClmns.push(aggregateClmnsObj);
+                    })
+                });
+
+                dataService.getRawData(dataSource, query, datasetId, config).then(function (response) {
+                    renderGridChart(response);
+                });
             } else {
                 chartService.render(content, injectFilter(widget.widget).data, optionFilter, scope, reload, null, widget.relations).then(function (d) {
                     widget.realTimeTicket = d;
@@ -102,20 +136,20 @@ cBoard.controller('dashboardViewCtrl', function ($timeout, $rootScope, $scope, $
         widget.modalRender = function (content, optionFilter, scope) {
             widget.modalLoading = true;
             widget.modalRealTimeTicket = chartService.render(content, injectFilter(widget.widget).data, optionFilter, scope)
-                .then(function () {
-                    widget.modalLoading = false;
-                });
+            .then(function () {
+                widget.modalLoading = false;
+            });
             widget.modalRealTimeOption = {optionFilter: optionFilter, scope: scope};
         };
     };
 
     $rootScope.$on('$stateChangeSuccess', function (event, toState, toParams, fromState) {
-            if (fromState.controller == 'dashboardViewCtrl') {
-                _.each($scope.intervals, function (i) {
-                    $interval.cancel(i);
-                })
-            }
+        if (fromState.controller == 'dashboardViewCtrl') {
+            _.each($scope.intervals, function (i) {
+                $interval.cancel(i);
+            })
         }
+    }
     );
 
     $scope.export = function () {
@@ -157,12 +191,12 @@ cBoard.controller('dashboardViewCtrl', function ($timeout, $rootScope, $scope, $
     };
 
     var initDsReloadStatus = function (reload) {
-        var dsReloadStatus = {};
+        var dsReloadStatus = new Map();
         _.each($scope.board.layout.rows, function (row) {
             _.each(row.widgets, function (widget) {
                 var dataSetId = widget.widget.data.datasetId;
                 if (dataSetId != undefined) {
-                    dsReloadStatus[dataSetId] = reload;
+                    dsReloadStatus.set(dataSetId, reload);
                 }
             });
         });
@@ -181,8 +215,8 @@ cBoard.controller('dashboardViewCtrl', function ($timeout, $rootScope, $scope, $
                 var needReload = reload;
                 // avoid repeat load offline dataset data
                 if (dataSetId != undefined && reload) {
-                    var needReload = dsReloadStatus[dataSetId] ? true : false;
-                    dsReloadStatus[dataSetId] = false;
+                    var needReload = dsReloadStatus.get(dataSetId) ? true : false;
+                    dsReloadStatus.set(dataSetId, false);
                 }
                 buildRender(widget, needReload);
                 widget.loading = true;
@@ -326,9 +360,9 @@ cBoard.controller('dashboardViewCtrl', function ($timeout, $rootScope, $scope, $
                 }
                 _.each(param.col, function (col) {
                     var p = {
-                        col: col.column,
-                        type: param.type,
-                        values: param.values
+                            col: col.column,
+                            type: param.type,
+                            values: param.values
                     };
                     if (_.isUndefined(col.datasetId)) {
                         if (!$scope.widgetFilters[col.widgetId]) {
@@ -354,9 +388,9 @@ cBoard.controller('dashboardViewCtrl', function ($timeout, $rootScope, $scope, $
             if (relations[i].targetId && relations[i].params && relations[i].params.length > 0) {
                 for (var j = 0; j < relations[i].params.length; j++) {
                     var p = {
-                        col: relations[i].params[j].targetField,
-                        type: "=",
-                        values: [relations[i].params[j].value]
+                            col: relations[i].params[j].targetField,
+                            type: "=",
+                            values: [relations[i].params[j].value]
                     };
                     if (!$scope.relationFilters[relations[i].targetId]) {
                         $scope.relationFilters[relations[i].targetId] = [];
@@ -404,22 +438,22 @@ cBoard.controller('dashboardViewCtrl', function ($timeout, $rootScope, $scope, $
                 $scope.render1 = function () {
                     widget.modalRender($('#modal_chart'), function (option) {
                         option.toolbox = {
-                            feature: {
-                                //saveAsImage: {},
-                                dataView: {
-                                    show: true,
-                                    readOnly: true
-                                },
-                                magicType: {
-                                    type: ['line', 'bar', 'stack', 'tiled']
-                                },
-                                dataZoom: {
-                                    show: true
-                                },
-                                restore: {
-                                    show: true
+                                feature: {
+                                    //saveAsImage: {},
+                                    dataView: {
+                                        show: true,
+                                        readOnly: true
+                                    },
+                                    magicType: {
+                                        type: ['line', 'bar', 'stack', 'tiled']
+                                    },
+                                    dataZoom: {
+                                        show: true
+                                    },
+                                    restore: {
+                                        show: true
+                                    }
                                 }
-                            }
                         };
                     }, null);
                 };
@@ -448,9 +482,9 @@ cBoard.controller('dashboardViewCtrl', function ($timeout, $rootScope, $scope, $
     $scope.config = function (widget) {
         $state.go('config.widget', {id: widget.widget.id});
     };
-    
+
     $scope.skip = function (widget) {
-         $state.go('dashboard.category.view', {id: widget.extenal.targetId});
+        $state.go('dashboard.category.view', {id: widget.extenal.targetId});
     };
 
     $scope.reload = function (widget) {
@@ -570,4 +604,108 @@ cBoard.controller('dashboardViewCtrl', function ($timeout, $rootScope, $scope, $
         });
     }
 
+    var renderGridChart = function (chartData) {
+        var columnList = chartData.columnList;
+        var columnData = chartData.data;
+        var gridDataArr = [];
+        var gridRowObj = {};
+        columnData.forEach(function(cd) {
+            gridRowObj = {};
+            columnList.forEach(function (val, index) {
+                gridRowObj[val.name] = cd[index];
+            });
+            gridDataArr.push(gridRowObj);
+        });
+
+        var columnObj = { "field": "", "headerText": "", "width": "", textAlign: 'middle' };
+        var columnsArr = columnList.map(function(clmObj) {
+            columnObj = {};
+            columnObj.field = clmObj.name;
+            columnObj.headerText = clmObj.name;
+            columnObj.width = 100;
+            columnObj.minWidth = 120;
+            columnObj.maxWidth = 300;
+
+            columnObj.textAlign = 'left';
+            if(clmObj.aggType != undefined || clmObj.aggType != null)
+                columnObj.textAlign = 'right';            
+
+            return columnObj;
+        });
+
+        var measureClmArr = [];
+        $scope.measureColumns.forEach(function(value, index) {
+            value.forEach(function(v, i) {
+                measureClmArr.push(v.col);
+            })
+        });
+
+        ej.base.enableRipple(true);
+        var gridConfiguration = getGridConfiguration(gridDataArr, columnsArr, measureClmArr, $scope.dimensionColumns);
+
+        var grid = new ej.grids.Grid(gridConfiguration);
+
+        grid.appendTo('#preview');
+
+        grid.toolbarClick = function (args) {
+            if (args.item.id === 'preview_pdfexport') {
+                grid.pdfExport();
+            }
+            if (args.item.id === 'preview_excelexport') {
+                grid.excelExport();
+            }
+            if (args.item.id === 'preview_csvexport') {
+                grid.csvExport();
+            }
+        };
+        //hide the loader
+        $scope.loadingPre = false;
+    }
+
+    var getGridConfiguration = function (gridDataArr, columnsArr, measureClmArr, dimensionClmArr) {
+        return {
+            dataSource: gridDataArr,
+            allowPaging: true,
+            allowSorting: true,
+            allowGrouping: true,
+            allowExcelExport: true,
+            allowPdfExport: true,
+            allowResizing: true,
+            allowFiltering: true,
+            filterSettings: { type: 'menu' },
+            toolbar: ['excelexport', 'pdfexport', 'csvexport', 'search'],
+            groupSettings: { columns: dimensionClmArr },
+            height: 500,
+            columns: columnsArr,
+            pageSettings: { pageCount: 5, pageSize : 10 },
+
+            aggregates: [{
+                columns: $scope.aggregateClmns
+            }]
+        };
+    };
+
+    /**
+     * Used to find measure columns
+     * @param {*} config 
+     */
+    var getSelectedMeasureColumns = function(config) {
+        var measureColumns = config.values.map(function(cfgVal) {
+            var columns = cfgVal.cols;
+            return columns;
+        });
+        return measureColumns;
+    };
+
+    /**
+     * Get the dimension Columns
+     * @param {*} config 
+     */
+    var getSelectedDimensionColumns = function(config) {
+        var dimensionColumns = config.groups.map(function(cfgGrp) {
+            var columns = cfgGrp.col;
+            return columns;
+        });
+        return dimensionColumns;
+    }
 });

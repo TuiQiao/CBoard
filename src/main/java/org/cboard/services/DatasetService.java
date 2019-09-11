@@ -35,12 +35,18 @@ public class DatasetService {
         paramMap.put("dataset_name", dataset.getName());
         paramMap.put("user_id", dataset.getUserId());
         paramMap.put("category_name", dataset.getCategoryName());
-        if (datasetDao.countExistDatasetName(paramMap) <= 0) {
-            datasetDao.save(dataset);
-            return new ServiceStatus(ServiceStatus.Status.Success, "success");
-        } else {
-            return new ServiceStatus(ServiceStatus.Status.Fail, "Duplicated name");
+
+        if (jsonObject.getLong("id") != null) { // 判断前端是否传递id，如果有id，那么执行更新操作
+            return update(userId, json); // 如果判断数据库中有同名的数据集就执行更新操作
+        } else { // 否则执行插入操作
+            if (datasetDao.countExistDatasetName(paramMap) <= 0) {
+                datasetDao.save(dataset);
+                return new ServiceStatus(ServiceStatus.Status.Success, "success", dataset.getId()); // 把保存后生成的主键信息通过ServiceStatus传回给前台
+            } else {
+                return new ServiceStatus(ServiceStatus.Status.Fail, "Duplicated name");
+            }
         }
+
     }
 
     public ServiceStatus update(String userId, String json) {

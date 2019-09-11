@@ -5,10 +5,21 @@ cBoard.controller('datasetCtrl', function ($scope, $http, $state, $stateParams, 
 
     var translate = $filter('translate');
     $scope.optFlag = 'none';
-    $scope.curDataset = {data: {expressions: [], filters: [], schema: {dimension: [], measure: []}}};
+    $scope.curDataset = {
+        data: {
+            expressions: [],
+            filters: [],
+            schema: {
+                dimension: [],
+                measure: []
+            }
+        }
+    };
     $scope.curWidget = {};
     $scope.alerts = [];
-    $scope.verify = {dsName: true};
+    $scope.verify = {
+        dsName: true
+    };
     $scope.queryAceOpt = cbAcebaseOption;
     $scope.hierarchy = translate("CONFIG.DATASET.HIERARCHY");
     $scope.uuid4 = uuid4;
@@ -34,12 +45,18 @@ cBoard.controller('datasetCtrl', function ($scope, $http, $state, $stateParams, 
     $scope.dndTransfer = {
         dimension: function (list, index, item, type) {
             if (type == 'column') {
-                list[index] = {type: 'column', column: item};
+                list[index] = {
+                    type: 'column',
+                    column: item
+                };
             }
         },
         measure: function (list, index, item, type) {
             if (type == 'column') {
-                list[index] = {type: 'column', column: item};
+                list[index] = {
+                    type: 'column',
+                    column: item
+                };
             }
         }
     };
@@ -74,14 +91,25 @@ cBoard.controller('datasetCtrl', function ($scope, $http, $state, $stateParams, 
 
     $scope.newDs = function () {
         $scope.optFlag = 'new';
-        $scope.curDataset = {data: {expressions: [], filters: [], schema: {dimension: [], measure: []}}};
+        $scope.curDataset = {
+            data: {
+                expressions: [],
+                filters: [],
+                schema: {
+                    dimension: [],
+                    measure: []
+                }
+            }
+        };
         $scope.curWidget = {};
         $scope.selects = [];
         cleanPreview();
     };
 
     $scope.editDs = function (ds) {
-        $http.post("dashboard/checkDatasource.do", {id: ds.data.datasource}).success(function (response) {
+        $http.post("dashboard/checkDatasource.do", {
+            id: ds.data.datasource
+        }).success(function (response) {
             if (response.status == '1') {
                 doEditDs(ds);
                 $scope.doConfigParams();
@@ -102,7 +130,10 @@ cBoard.controller('datasetCtrl', function ($scope, $http, $state, $stateParams, 
             $scope.curDataset.data.filters = [];
         }
         if (!$scope.curDataset.data.schema) {
-            $scope.curDataset.data.schema = {dimension: [], measure: []};
+            $scope.curDataset.data.schema = {
+                dimension: [],
+                measure: []
+            };
         }
         $scope.datasource = _.find($scope.datasourceList, function (ds) {
             return ds.id == $scope.curDataset.data.datasource;
@@ -151,7 +182,9 @@ cBoard.controller('datasetCtrl', function ($scope, $http, $state, $stateParams, 
                 return false;
             }
             ModalUtils.confirm(translate("COMMON.CONFIRM_DELETE"), "modal-warning", "lg", function () {
-                $http.post("dashboard/deleteDataset.do", {id: ds.id}).success(function (serviceStatus) {
+                $http.post("dashboard/deleteDataset.do", {
+                    id: ds.id
+                }).success(function (serviceStatus) {
                     if (serviceStatus.status == '1') {
                         getDatasetList();
                     } else {
@@ -166,7 +199,9 @@ cBoard.controller('datasetCtrl', function ($scope, $http, $state, $stateParams, 
     $scope.copyDs = function (ds) {
         var data = angular.copy(ds);
         data.name = data.name + "_copy";
-        $http.post("dashboard/saveNewDataset.do", {json: angular.toJson(data)}).success(function (serviceStatus) {
+        $http.post("dashboard/saveNewDataset.do", {
+            json: angular.toJson(data)
+        }).success(function (serviceStatus) {
             if (serviceStatus.status == '1') {
                 $scope.optFlag = 'none';
                 getDatasetList();
@@ -180,8 +215,13 @@ cBoard.controller('datasetCtrl', function ($scope, $http, $state, $stateParams, 
     var validate = function () {
         $scope.alerts = [];
         if (!$scope.curDataset.name) {
-            $scope.alerts = [{msg: translate('CONFIG.DATASET.NAME') + translate('COMMON.NOT_EMPTY'), type: 'danger'}];
-            $scope.verify = {dsName: false};
+            $scope.alerts = [{
+                msg: translate('CONFIG.DATASET.NAME') + translate('COMMON.NOT_EMPTY'),
+                type: 'danger'
+            }];
+            $scope.verify = {
+                dsName: false
+            };
             $("#DatasetName").focus();
             return false;
         }
@@ -197,7 +237,10 @@ cBoard.controller('datasetCtrl', function ($scope, $http, $state, $stateParams, 
                     msg = translate(msg[0]);
                 else
                     msg = label;
-                $scope.alerts = [{msg: "[" + msg + "]" + translate('COMMON.NOT_EMPTY'), type: 'danger'}];
+                $scope.alerts = [{
+                    msg: "[" + msg + "]" + translate('COMMON.NOT_EMPTY'),
+                    type: 'danger'
+                }];
                 $scope.verify[name] = false;
                 return false;
             }
@@ -221,26 +264,42 @@ cBoard.controller('datasetCtrl', function ($scope, $http, $state, $stateParams, 
         }
 
         if ($scope.optFlag == 'new') {
-            $http.post("dashboard/saveNewDataset.do", {json: angular.toJson(ds)}).success(function (serviceStatus) {
+            $http.post("dashboard/saveNewDataset.do", {
+                json: angular.toJson(ds)
+            }).success(function (serviceStatus) {
                 if (serviceStatus.status == '1') {
                     getCategoryList();
                     getDatasetList();
-                    $scope.verify = {dsName: true};
+                    $scope.verify = {
+                        dsName: true
+                    };
+                    $scope.optFlag = 'edit'
+                    $scope.curDataset.id = serviceStatus.id
                     ModalUtils.alert(translate("COMMON.SUCCESS"), "modal-success", "sm");
                 } else {
-                    $scope.alerts = [{msg: serviceStatus.msg, type: 'danger'}];
+                    $scope.alerts = [{
+                        msg: serviceStatus.msg,
+                        type: 'danger'
+                    }];
                 }
             });
         } else {
-            $http.post(updateUrl, {json: angular.toJson(ds)}).success(function (serviceStatus) {
+            $http.post(updateUrl, {
+                json: angular.toJson(ds)
+            }).success(function (serviceStatus) {
                 if (serviceStatus.status == '1') {
                     $scope.optFlag = 'edit';
                     getCategoryList();
                     getDatasetList();
-                    $scope.verify = {dsName: true};
+                    $scope.verify = {
+                        dsName: true
+                    };
                     ModalUtils.alert(translate("COMMON.SUCCESS"), "modal-success", "sm");
                 } else {
-                    $scope.alerts = [{msg: serviceStatus.msg, type: 'danger'}];
+                    $scope.alerts = [{
+                        msg: serviceStatus.msg,
+                        type: 'danger'
+                    }];
                 }
             });
         }
@@ -258,14 +317,22 @@ cBoard.controller('datasetCtrl', function ($scope, $http, $state, $stateParams, 
                 if (col) {
                     $scope.data = angular.copy(col);
                 } else {
-                    $scope.data = {group: '', filters: [], id: uuid4.generate()};
+                    $scope.data = {
+                        group: '',
+                        filters: [],
+                        id: uuid4.generate()
+                    };
                 }
                 $scope.columnObjs = columnObjs;
                 $scope.close = function () {
                     $uibModalInstance.close();
                 };
                 $scope.addColumn = function (str) {
-                    $scope.data.filters.push({col: str, type: '=', values: []})
+                    $scope.data.filters.push({
+                        col: str,
+                        type: '=',
+                        values: []
+                    })
                 };
                 $scope.ok = function () {
                     if (col) {
@@ -337,28 +404,49 @@ cBoard.controller('datasetCtrl', function ($scope, $http, $state, $stateParams, 
                     selects.push(e);
                 }
             });
-            _.each(rawSelects, function(col) {
-               if (_.find(selects, function(o) { return col == o.column;}) === undefined) {
+            _.each(rawSelects, function (col) {
+                if (_.find(selects, function (o) {
+                        return col == o.column;
+                    }) === undefined) {
                     selects.push({
                         column: col
                     });
-               }
+                }
             });
             return angular.copy(selects);
         }
     };
 
     $scope.editExp = function (col) {
-        var aggregate = [
-            {name: 'sum', value: 'sum'},
-            {name: 'count', value: 'count'},
-            {name: 'avg', value: 'avg'},
-            {name: 'max', value: 'max'},
-            {name: 'min', value: 'min'},
-            {name: 'distinct', value: 'distinct'}
+        var aggregate = [{
+                name: 'sum',
+                value: 'sum'
+            },
+            {
+                name: 'count',
+                value: 'count'
+            },
+            {
+                name: 'avg',
+                value: 'avg'
+            },
+            {
+                name: 'max',
+                value: 'max'
+            },
+            {
+                name: 'min',
+                value: 'min'
+            },
+            {
+                name: 'distinct',
+                value: 'distinct'
+            }
         ];
         var ok;
-        var data = {expression: ''};
+        var data = {
+            expression: ''
+        };
         if (!col) {
             ok = function (exp, alias) {
                 $scope.curDataset.data.expressions.push({
@@ -390,7 +478,7 @@ cBoard.controller('datasetCtrl', function ($scope, $http, $state, $stateParams, 
                 $scope.aggregate = aggregate;
                 $scope.expressions = expressions;
                 $scope.alerts = [];
-                $scope.expAceOpt = expEditorOptions($scope.selects, aggregate, function(_editor) {
+                $scope.expAceOpt = expEditorOptions($scope.selects, aggregate, function (_editor) {
                     $scope.expAceEditor = _editor;
                     $scope.expAceSession = _editor.getSession();
                     _editor.focus();
@@ -493,7 +581,10 @@ cBoard.controller('datasetCtrl', function ($scope, $http, $state, $stateParams, 
                     $scope.alerts = [];
                     $scope.selects = dps.columns;
                 } else {
-                    $scope.alerts = [{msg: dps.msg, type: 'danger'}];
+                    $scope.alerts = [{
+                        msg: dps.msg,
+                        type: 'danger'
+                    }];
                 }
 
                 var widget = {
@@ -504,8 +595,7 @@ cBoard.controller('datasetCtrl', function ($scope, $http, $state, $stateParams, 
                     selects: [],
                     values: [{
                         cols: []
-                    }
-                    ]
+                    }]
                 };
                 _.each($scope.selects, function (c) {
                     widget.keys.push({
@@ -562,7 +652,11 @@ cBoard.controller('datasetCtrl', function ($scope, $http, $state, $stateParams, 
     $scope.editNode = function () {
         if (!checkTreeNode("edit")) return;
         var selectedNode = jstree_GetSelectedNodes(treeID)[0];
-        $state.go('config.dataset', {id: selectedNode.id}, {notify: false});
+        $state.go('config.dataset', {
+            id: selectedNode.id
+        }, {
+            notify: false
+        });
         $scope.editDs(getSelectedDataSet());
     };
 
@@ -573,10 +667,13 @@ cBoard.controller('datasetCtrl', function ($scope, $http, $state, $stateParams, 
     $scope.showInfo = function () {
         if (!checkTreeNode("info")) return;
         var content = getSelectedDataSet();
-        ModalUtils.info(content,"modal-info", "lg");
+        ModalUtils.info(content, "modal-info", "lg");
     };
     $scope.searchNode = function () {
-        var para = {dsName: '', dsrName: ''};
+        var para = {
+            dsName: '',
+            dsrName: ''
+        };
         //map datasetList to list (add datasourceName)
         var list = $scope.datasetList.map(function (ds) {
             var dsr = _.find($scope.datasourceList, function (obj) {
@@ -608,7 +705,10 @@ cBoard.controller('datasetCtrl', function ($scope, $http, $state, $stateParams, 
         }
         //filter data by keywords
         originalData = jstree_CvtVPath2TreeData(
-            $filter('filter')(list, {name: para.dsName, datasourceName: para.dsrName})
+            $filter('filter')(list, {
+                name: para.dsName,
+                datasourceName: para.dsrName
+            })
         );
 
         jstree_ReloadTree(treeID, originalData);
@@ -616,8 +716,13 @@ cBoard.controller('datasetCtrl', function ($scope, $http, $state, $stateParams, 
 
     $scope.treeEventsObj = function () {
         var baseEventObj = jstree_baseTreeEventsObj({
-            ngScope: $scope, ngHttp: $http, ngTimeout: $timeout, ModalUtils: ModalUtils,
-            treeID: treeID, listName: "datasetList", updateUrl: updateUrl
+            ngScope: $scope,
+            ngHttp: $http,
+            ngTimeout: $timeout,
+            ModalUtils: ModalUtils,
+            treeID: treeID,
+            listName: "datasetList",
+            updateUrl: updateUrl
         });
         return baseEventObj;
     }();

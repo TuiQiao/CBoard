@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="org.cboard.dao.DatasetDao">
 
     <select id="getCategoryList" resultType="java.lang.String">
@@ -71,7 +71,7 @@
        SELECT dataset_id id,user_id userId,dataset_name name,data_json data,category_name categoryName,create_time createTime,update_time updateTime FROM dashboard_dataset WHERE dataset_id = #{0}
     </select>
 
-    <insert id="save" parameterType="org.cboard.pojo.DashboardDataset">
+    <insert id="save" parameterType="org.cboard.pojo.DashboardDataset" useGeneratedKeys="true" keyProperty="id">
         <![CDATA[
         INSERT INTO dashboard_dataset(user_id,dataset_name,data_json,category_name) VALUES (#{userId},#{name},#{data},#{categoryName})
         ]]>
@@ -87,12 +87,12 @@
         SELECT count(1)
           FROM dashboard_dataset
          WHERE 1=1
-        <if test="dataset_id != null" >
-          <![CDATA[
+        <if test="dataset_id != null">
+            <![CDATA[
             AND dataset_id <> #{dataset_id}
           ]]>
         </if>
-            AND dataset_name = #{dataset_name}
+        AND dataset_name = #{dataset_name}
             AND category_name = #{category_name}
     </select>
 

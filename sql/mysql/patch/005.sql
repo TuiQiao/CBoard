@@ -1,3 +1,4 @@
+SET SQL_MODE='ALLOW_INVALID_DATES';
 -- 升级0.4需要执行的
 ALTER TABLE dashboard_dataset ADD create_time TIMESTAMP DEFAULT now();
 ALTER TABLE dashboard_dataset ADD update_time TIMESTAMP;

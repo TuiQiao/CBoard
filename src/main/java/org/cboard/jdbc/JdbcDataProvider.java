@@ -132,10 +132,7 @@ public class JdbcDataProvider extends DataProvider implements Aggregatable, Init
                 if (resultCount % batchSize == 0) {
                     LOG.info("JDBC load batch {}", resultCount);
                     final String[][] batchData = list.toArray(new String[][]{});
-                    Thread loadThread = new Thread(() -> {
-                        getInnerAggregator().loadBatch(header, batchData);
-                    }, threadId++ + "");
-                    executor.execute(loadThread);
+                    executor.execute(()-> getInnerAggregator().loadBatch(header, batchData));
                     list.clear();
                 }
                 if (resultCount > resultLimit) {

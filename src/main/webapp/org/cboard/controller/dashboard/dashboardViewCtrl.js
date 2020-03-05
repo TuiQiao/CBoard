@@ -293,8 +293,18 @@ cBoard.controller('dashboardViewCtrl', function ($timeout, $rootScope, $scope, $
                 boardFilters.push(e);
             });
         }
+
+        //row内部参数
+        injectRowParamToFilter(widget, boardFilters);
+
         widget.data.config.boardFilters = boardFilters;
         return widget;
+    };
+
+    var injectRowParamToFilter = function (widget, boardFilters) {
+        _.each(widget.data.config.rowFilters, function (rowFilter) {
+            boardFilters.push(rowFilter);
+        });
     };
 
     var paramToFilter = function () {
@@ -344,6 +354,34 @@ cBoard.controller('dashboardViewCtrl', function ($timeout, $rootScope, $scope, $
                 });
             });
         });
+
+        //记录Row内部的过滤条件
+        _.each($scope.board.layout.rows, function (row) {
+            //先清空
+            _.each(row.widgets, function (widget) {
+                widget.widget.data.config.rowFilters = [];
+            });
+            //填充
+            _.each(row.paramRows, function (paramRow) {
+                _.each(paramRow.params, function (param) {
+                    _.each(param.col, function (col) {
+                        var p = {
+                            col: col.column,
+                            type: param.type,
+                            values: param.values
+                        };
+
+                        var datasetId = col.datasetId;
+                        _.each(row.widgets, function (widget) {
+                            if (datasetId === widget.widget.data.datasetId) {
+                                widget.widget.data.config.rowFilters.push(p);
+                            }
+                        });
+                    });
+                });
+            });
+        });
+
         updateParamTitle();
         //将点击的参数赋值到relationFilters中
         if (_.isUndefined($("#relations").val())) {
@@ -367,9 +405,12 @@ cBoard.controller('dashboardViewCtrl', function ($timeout, $rootScope, $scope, $
         }
     };
 
-    $scope.applyParamFilter = function () {
+    /* 筛选参数变化 图表刷新 */
+    $scope.applyParamFilter = function (crow) {
         paramToFilter();
-        _.each($scope.board.layout.rows, function (row) {
+        //实现单行刷新  在只有行参数改变的情况下
+        var rows = crow ? [crow] : $scope.board.layout.rows;
+        _.each(rows, function (row) {
             _.each(row.widgets, function (w) {
                 try {
                     chartService.realTimeRender(w.realTimeTicket, injectFilter(w.widget).data, null, null, w, true);
@@ -448,7 +489,7 @@ cBoard.controller('dashboardViewCtrl', function ($timeout, $rootScope, $scope, $
     $scope.config = function (widget) {
         $state.go('config.widget', {id: widget.widget.id});
     };
-    
+
     $scope.skip = function (widget) {
          $state.go('dashboard.category.view', {id: widget.extenal.targetId});
     };
@@ -539,35 +580,51 @@ cBoard.controller('dashboardViewCtrl', function ($timeout, $rootScope, $scope, $
     };
 
     var updateParamTitle = function () {
+        //更新全局的参数标题
         _.each($scope.board.layout.rows, function (row) {
-            _.each(row.params, function (param) {
-                if ('slider' == param.paramType) {
-                    return;
-                }
-                var paramObj;
-                switch (param.type) {
-                    case '=':
-                    case '≠':
-                        paramObj = param.name + ' ' + param.type + ' (' + param.values + ')';
-                        break;
-                    case '>':
-                    case '<':
-                    case '≥':
-                    case '≤':
-                        paramObj = param.name + ' ' + param.type + ' ' + param.values;
-                        break;
-                    case '(a,b]':
-                    case '[a,b)':
-                    case '(a,b)':
-                    case '[a,b]':
-                        var leftBrackets = param.type.split('a')[0];
-                        var rightBrackets = param.type.split('b')[1];
-                        paramObj = param.name + ' between ' + leftBrackets + param.values[0] + ',' + param.values[1] + rightBrackets;
-                        break;
-                }
-                param.title = param.values.length > 0 ? paramObj : undefined;
+            _.each(row.params, function(param){
+                updateParamTitle_do(param);
             });
         });
+
+        //更新Row内部的参数标题
+        _.each($scope.board.layout.rows, function (row) {
+            if (row.paramRows) {
+                _.each(row.paramRows, function (row) {
+                    _.each(row.params,  function(param){
+                        updateParamTitle_do(param);
+                    });
+                });
+            }
+        });
+    };
+
+    var updateParamTitle_do = function (param) {
+        if ('slider' == param.paramType) {
+            return;
+        }
+        var paramObj;
+        switch (param.type) {
+            case '=':
+            case '≠':
+                paramObj = param.name + ' ' + param.type + ' (' + param.values + ')';
+                break;
+            case '>':
+            case '<':
+            case '≥':
+            case '≤':
+                paramObj = param.name + ' ' + param.type + ' ' + param.values;
+                break;
+            case '(a,b]':
+            case '[a,b)':
+            case '(a,b)':
+            case '[a,b]':
+                var leftBrackets = param.type.split('a')[0];
+                var rightBrackets = param.type.split('b')[1];
+                paramObj = param.name + ' between ' + leftBrackets + param.values[0] + ',' + param.values[1] + rightBrackets;
+                break;
+        }
+        param.title = param.values.length > 0 ? paramObj : undefined;
     }
 
 });

@@ -219,6 +219,14 @@ cBoard.controller('boardCtrl',
             row.widgets.push(w);
         };
 
+        /*添加行内参数*/
+        $scope.addWidgetPramRow = function (row) {
+            if (!row.paramRows){
+                row.paramRows = [];
+            }
+            row.paramRows.push({type: 'param', params: []});
+        };
+
         $scope.addRow = function () {
             var row = {type: 'widget', widgets: []};
             $scope.curBoard.layout.rows.push(row);
@@ -244,7 +252,7 @@ cBoard.controller('boardCtrl',
                 delete widget.relations;
             }
         };
-        
+
         $scope.addExtenal = function (widget) {
         	widget.extenal = {};
         };
@@ -324,8 +332,8 @@ cBoard.controller('boardCtrl',
                     	if (!_.isUndefined(widget.extenal.name)) {
                     		if(_.isEqual(widget.extenal.name.replace(/\s+/g,""), '')) {
                     			delete widget.extenal.name;
-                        	}    
-                    	}                    	                	
+                        	}
+                    	}
                     }
                     if (!_.isUndefined(widget.relations)) {
                         delete widget.relations.sourceFields;

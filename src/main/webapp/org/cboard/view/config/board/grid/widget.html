@@ -6,13 +6,17 @@
         {{'CONFIG.DASHBOARD.ROW'|translate}}
 
         <div class="box-tools pull-right">
-            <div class="input-group input-group-sm" style="width: 300px;">
+            <div class="input-group input-group-sm" style="width: 400px;">
                 <input type="text" name="table_search" ng-model="row.height"
                        class="form-control pull-right" placeholder="{{'CONFIG.DASHBOARD.HEIGHT'|translate}}">
                 <div class="input-group-btn">
                     <button type="button" class="btn btn-xs btn-success"
-                            ng-click="addWidget(row)">
+                            ng-click="addWidget(row)" style="right: 3px">
                         {{'CONFIG.DASHBOARD.ADD_COLUMN'|translate}}
+                    </button>
+                    <button type="button" class="btn btn-xs btn-success"
+                            ng-click="addWidgetPramRow(row)">
+                        {{'CONFIG.DASHBOARD.ADD_ROW_PARAM'|translate}}
                     </button>
                     <button type="button" class="btn btn-box-tool" data-widget="collapse" title="{{'COMMON.COLLAPSE'|translate}}"><i
                             class="fa fa-minus"></i>
@@ -27,6 +31,75 @@
         </div>
     </div>
     <div class="box-body">
+        <!-- 行内参数 -->
+        <div class="row" dnd-list="row.paramRows" dnd-allowed-types="['pr']">
+            <div class="col-md-12" ng-repeat="paramRow in row.paramRows" ng-init="paramRowIndex = $index">
+                <div class="box box-primary"
+                     style="border-left: 1px solid #d2d6de; border-right: 1px solid #d2d6de">
+                    <div class="box-header" dnd-draggable="paramRow" dnd-type="'pr'"
+                         nd-effect-allowed="move"
+                         dnd-moved="row.paramRows.splice($index, 1)" style="cursor:move">
+                        {{'CONFIG.DASHBOARD.PARAM_ROW'|translate}}
+
+                        <div class="box-tools pull-right">
+                            <div class="input-group input-group-sm" style="width: 300px;">
+                                <input type="text" name="table_search" ng-model="paramRow.height"
+                                       class="form-control pull-right" placeholder="{{'CONFIG.DASHBOARD.HEIGHT'|translate}}">
+                                <div class="input-group-btn">
+                                    <button type="button" class="btn btn-xs btn-success"
+                                            ng-click="editParam(paramRow)">
+                                        {{'CONFIG.DASHBOARD.ADD_PARAM'|translate}}
+                                    </button>
+                                    <button type="button" class="btn btn-box-tool" data-widget="collapse" title="{{'COMMON.COLLAPSE'|translate}}"><i
+                                            class="fa fa-minus"></i>
+                                    </button>
+                                    <button type="button" class="btn btn-box-tool" data-widget="remove" title="{{'COMMON.REMOVE'|translate}}"
+                                            ng-click="row.paramRows.splice($index, 1)"><i
+                                            class="fa fa-times"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="box-body">
+                        <div class="col-sm-12">
+                            <div dnd-list="paramRow.params"
+                                 dnd-allowed-types="['p']"
+                                 class="form-control"
+                                 style="min-height: 35px;height: auto;padding: 0px">
+                                <div class="dndPlaceholder sort-highlight"
+                                     style="height: 24px; width: 93px;margin: 3px 3px;display: inline-block;vertical-align: middle;">
+                                </div>
+                                <div ng-repeat="param in paramRow.params" dnd-draggable="param"
+                                     dnd-effect-allowed="move"
+                                     dnd-moved="paramRow.params.splice($index, 1)"
+                                     dnd-type="'p'"
+                                     class="btn-group" style="cursor: move;margin: 3px 3px;">
+                                    <button type="button" class="btn btn-default btn-sm" style="cursor: move;">
+                                        {{param.name}}
+                                    </button>
+                                    <button type="button" class="btn btn-default btn-sm dropdown-toggle"
+                                            ng-click="editParam(paramRow,$index)" title="{{'COMMON.EDIT'|translate}}">
+                                        <span class="fa fa-edit"></span>
+                                    </button>
+                                    <button type="button" class="btn btn-default btn-sm dropdown-toggle" ng-controller="paramCtrl" ng-init="init()"
+                                            ng-click="editParam()" title="{{'COMMON.EDIT_DEFAULT_VALUE'|translate}}">
+                                        <span class="fa fa-pencil-square"></span>
+                                    </button>
+                                    <button type="button"
+                                            class="btn btn-default btn-sm dropdown-toggle"
+                                            ng-click="paramRow.params.splice($index, 1)" title="{{'COMMON.DELETE'|translate}}">
+                                        <span class="fa fa-trash-o"></span>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
         <div class="row" dnd-list="row.widgets" dnd-allowed-types="['w']"
              style="min-height: 60px">
             <div class="dndPlaceholder col-md-2">

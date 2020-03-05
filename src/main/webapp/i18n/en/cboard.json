@@ -249,6 +249,7 @@
       "WIDGET": "Widget",
       "PREVIEW": "Preview",
       "ADD_PARAMROW": "Add Param Row",
+      "ADD_ROW_PARAM": "Add Internal Param Row",
       "ADD_PARAM": "Add Param",
       "PARAM_ROW": "Param Row",
       "PARAM": "Param",

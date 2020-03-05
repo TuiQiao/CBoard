@@ -249,6 +249,7 @@
       "WIDGET": "图表",
       "PREVIEW": "预览",
       "ADD_PARAMROW": "添加参数行",
+      "ADD_ROW_PARAM": "添加内部参数行",
       "ADD_PARAM": "添加参数",
       "PARAM_ROW": "参数行",
       "PARAM": "查询参数",

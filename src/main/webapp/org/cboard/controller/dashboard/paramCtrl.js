@@ -72,6 +72,7 @@ cBoard.controller('paramCtrl', function ($scope, $uibModal, $http) {
                     },
                     /* 滑动器参数改动 */
                     onChange: function (sliderId, modelValue, highValue, pointerType) {
+                        debugger;
                         $scope.param.type = _.result(cfg, 'filterType', '[a,b]');
                         $scope.param.values = [formatter(modelValue, cfg.value_fmt), formatter(highValue, cfg.value_fmt)];
                         apply(crow);

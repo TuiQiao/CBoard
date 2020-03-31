@@ -47,7 +47,7 @@
                         <span class="fa fa-edit"></span>
                     </button>
                     <button type="button" class="btn btn-default btn-sm dropdown-toggle" ng-controller="paramCtrl" ng-init="init()"
-                            ng-click="editParam()" title="{{'COMMON.EDIT_DEFAULT_VALUE'|translate}}">
+                            ng-click="editParam()" title="{{'COMMON.EDIT_DEFAULT_VALUE'|translate}}" ng-hide="param.paramType == 'dateselector'">
                         <span class="fa fa-pencil-square"></span>
                     </button>
                     <button type="button"

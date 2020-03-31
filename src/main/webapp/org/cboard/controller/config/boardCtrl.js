@@ -373,7 +373,8 @@ cBoard.controller('boardCtrl',
                 controller: function ($scope, $uibModalInstance) {
                     $scope.param_types = [
                         {name: translate('CONFIG.DASHBOARD.PARAM_TYPE_SELECTOR'), value: 'selector'},
-                        {name: translate('CONFIG.DASHBOARD.PARAM_TYPE_SLIDER'), value: 'slider'}
+                        {name: translate('CONFIG.DASHBOARD.PARAM_TYPE_SLIDER'), value: 'slider'},
+                        {name: translate('CONFIG.DASHBOARD.PARAM_TYPE_DATE_PICKER'), value: 'dateselector'}
                     ];
                     $scope.status = status;
                     $scope.param = param;

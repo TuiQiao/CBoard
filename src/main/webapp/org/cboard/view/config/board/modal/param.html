@@ -47,9 +47,13 @@
             </div>
         </div>
     </div>
+    <!-- 看板参数选择器 -->
     <div ng-switch="param.paramType">
         <div ng-switch-when="slider">
             <div ng-include="'org/cboard/view/config/board/modal/param/slider.html'"></div>
+        </div>
+        <div ng-switch-when="dateselector">
+            <div ng-include="'org/cboard/view/config/board/modal/param/dateselector.html'"></div>
         </div>
         <div ng-switch-default>
             <div ng-include="'org/cboard/view/config/board/modal/param/selector.html'"></div>

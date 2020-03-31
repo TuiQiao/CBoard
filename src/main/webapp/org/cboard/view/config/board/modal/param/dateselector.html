@@ -1,0 +1,142 @@
+<style>
+    /*重写 daterangepicker css*/
+    .daterangepicker {
+        /*静态显示*/
+        display: block !important;
+        /*固定位置*/
+        position: relative !important;
+        top: 8px !important;
+        left: 30px !important;
+        right: auto !important;
+        /**/
+        z-index: 0 !important;
+        /*边框颜色*/
+        border-color: #d2d6de !important;
+    }
+</style>
+
+<div ng-controller="dateSelectCtrl" data-ng-init="ctrl_init()">
+
+    <div class="row form-horizontal">
+        <div class="col-md-4">
+            <div class="form-group">
+                <label class="col-sm-4 control-label">{{'CONFIG.DASHBOARD.PARAM_TYPE'|translate}}</label>
+                <div class="col-sm-8">
+                    <select class="form-control" ng-model="param.paramType"
+                            ng-options="d.value as d.name for d in param_types"></select>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="form-group">
+                <label class="col-sm-4 control-label-compact">{{'CONFIG.DASHBOARD.VALUE_FORMMAT'|translate}}</label>
+                <div class="col-sm-8">
+                    <div class="input-group">
+                        <input type="text" ng-model="param.cfg.date_fmt" class="form-control">
+                        <div class="input-group-btn">
+                            <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
+                                <span class="fa fa-question"></span></button>
+                            <ul class="dropdown-menu">
+                                <li ng-click="param.cfg.date_fmt='YYYY-MM-DD'"><a>{{'CONFIG.DASHBOARD.VALUE_FORMMAT_ALERT_DEFAULT'|translate}}
+                                    'YYYY-MM-DD'</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="form-group">
+                <label class="col-sm-2 control-label">{{'COMMON.VALUE'|translate}}</label>
+                <div class="col-sm-10">
+                    <input type="hidden" ng-model="param.cfg.date_enum" class="form-control"/>
+                    <input type="hidden" ng-model="param.cfg.date_range" class="form-control"/>
+                    <input type="text" ng-model="date_string" class="form-control"
+                           disabled="disabled"/>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+
+        <div class="col-md-4 date-opt">
+            <div class="row clearfix">
+                <div class="col-md-6 column">
+                    <button type="button" class="btn btn-block btn-default" value="yesterday">
+                        {{'CONFIG.DASHBOARD.DATE_OPT_YESTERDAY'|translate}}
+                    </button>
+                </div>
+                <div class="col-md-6 column">
+                    <button type="button" class="btn btn-block btn-default" value="today">
+                        {{'CONFIG.DASHBOARD.DATE_OPT_TODAY'|translate}}
+                    </button>
+                </div>
+            </div>
+            <div class="row clearfix">
+                <div class="col-md-6 column">
+                    <button type="button" class="btn btn-block btn-default" value="week_last">
+                        {{'CONFIG.DASHBOARD.DATE_OPT_LAST_WEEK'|translate}}
+                    </button>
+                </div>
+                <div class="col-md-6 column">
+                    <button type="button" class="btn btn-block btn-default" value="week">
+                        {{'CONFIG.DASHBOARD.DATE_OPT_THIS_WEEK'|translate}}
+                    </button>
+                </div>
+            </div>
+            <div class="row clearfix">
+                <div class="col-md-6 column">
+                    <button type="button" class="btn btn-block btn-default" value="month_last">
+                        {{'CONFIG.DASHBOARD.DATE_OPT_LAST_MONTH'|translate}}
+                    </button>
+                </div>
+                <div class="col-md-6 column">
+                    <button type="button" class="btn btn-block btn-default" value="month">
+                        {{'CONFIG.DASHBOARD.DATE_OPT_THIS_MONTH'|translate}}
+                    </button>
+                </div>
+            </div>
+            <div class="row clearfix">
+                <div class="col-md-6 column">
+                    <button type="button" class="btn btn-block btn-default" value="year_last">
+                        {{'CONFIG.DASHBOARD.DATE_OPT_LAST_YEAR'|translate}}
+                    </button>
+                </div>
+                <div class="col-md-6 column">
+                    <button type="button" class="btn btn-block btn-default" value="year">
+                        {{'CONFIG.DASHBOARD.DATE_OPT_THIS_YEAR'|translate}}
+                    </button>
+                </div>
+            </div>
+            <div class="row clearfix">
+                <div class="col-md-12 column">
+                    <button type="button" class="btn btn-block btn-default" value="day_7">
+                        {{'CONFIG.DASHBOARD.DATE_OPT_DAY_7'|translate}}
+                    </button>
+                </div>
+            </div>
+            <div class="row clearfix">
+                <div class="col-md-12 column">
+                    <button type="button" class="btn btn-block btn-default" value="day_30">
+                        {{'CONFIG.DASHBOARD.DATE_OPT_DAY_30'|translate}}
+                    </button>
+                </div>
+            </div>
+            <div class="row clearfix">
+                <div class="col-md-12 column">
+                    <button type="button" class="btn btn-block btn-default" value="all">
+                        {{'CONFIG.DASHBOARD.DATE_OPT_ALL'|translate}}
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-8" id="range_picker_p">
+            <input id="range_picker_" class="form-control date-picker pull-right" type="text"
+                   ng-show="false">
+        </div>
+    </div>
+
+</div>
+

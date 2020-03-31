@@ -2,7 +2,7 @@
  * Created by yfyuan on 2016/8/2.
  */
 
-cBoard.controller('dashboardViewCtrl', function ($timeout, $rootScope, $scope, $state, $stateParams, $http, ModalUtils, chartService, $interval, $uibModal, dataService) {
+cBoard.controller('dashboardViewCtrl', function ($timeout, $rootScope, $scope, $state, $stateParams, $http, ModalUtils, chartService, $interval, $uibModal, dataService, dateSelectService) {
 
     $scope.loading = true;
     $scope.paramInit = 0;
@@ -329,6 +329,9 @@ cBoard.controller('dashboardViewCtrl', function ($timeout, $rootScope, $scope, $
             location.href = location.href.split("?")[0];
         }
 
+        //解析特别类型参数
+        $scope.parseParam();
+
         _.each($scope.board.layout.rows, function (row) {
             _.each(row.params, function (param) {
                 if (param.values.length <= 0) {
@@ -625,6 +628,25 @@ cBoard.controller('dashboardViewCtrl', function ($timeout, $rootScope, $scope, $
                 break;
         }
         param.title = param.values.length > 0 ? paramObj : undefined;
-    }
+    };
+
+    $scope.parseParam = function () {
+        _.each($scope.board.layout.rows, function (row) {
+            _.each(row.params, function (param) {
+                $scope.parseParam_do(param);
+            });
+            _.each(row.paramRows, function (paramRow) {
+                _.each(paramRow.params, function (param) {
+                    $scope.parseParam_do(param);
+                });
+            });
+        });
+    };
+    $scope.parseParam_do = function (param) {
+        if (param.paramType === 'dateselector') {
+            dateSelectService.changeParamValue(param);
+        }
+    };
+
 
 });

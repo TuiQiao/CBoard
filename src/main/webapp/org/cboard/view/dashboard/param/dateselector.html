@@ -1,0 +1,90 @@
+<style>
+
+    /*重写 daterangepicker css*/
+    .daterangepicker {
+        /*静态显示*/
+        display: block !important;
+        /*固定位置*/
+        position: relative !important;
+        top: 8px !important;
+        left: 30px !important;
+        right: auto !important;
+        /**/
+        z-index: 0 !important;
+        /*边框颜色*/
+        border-color: #d2d6de !important;
+    }
+</style>
+<div ng-controller="dateSelectViewCtrl" class="date-div">
+    <button type="button" class="btn btn-sm ng-binding btn-default" ng-click="editParam($event,param)">
+        <span class="glyphicon glyphicon-calendar" style="color: #3c8dbc"></span> {{param.temp.date_string}}
+    </button>
+    <div class="date-show-select" ng-show="temp.show">
+        <div class="row" style="margin-bottom: 10px">
+            <div class="col-md-4 date-opt">
+                <div class="row clearfix">
+                    <div class="col-md-6 column">
+                        <button type="button" class="btn btn-block btn-default" ng-click="optChange($event)" value="yesterday">{{'CONFIG.DASHBOARD.DATE_OPT_YESTERDAY'|translate}}</button>
+                    </div>
+                    <div class="col-md-6 column">
+                        <button type="button" class="btn btn-block btn-default" ng-click="optChange($event)" value="today">{{'CONFIG.DASHBOARD.DATE_OPT_TODAY'|translate}}</button>
+                    </div>
+                </div>
+                <div class="row clearfix">
+                    <div class="col-md-6 column">
+                        <button type="button" class="btn btn-block btn-default" ng-click="optChange($event)" value="week_last">{{'CONFIG.DASHBOARD.DATE_OPT_LAST_WEEK'|translate}}</button>
+                    </div>
+                    <div class="col-md-6 column">
+                        <button type="button" class="btn btn-block btn-default" ng-click="optChange($event)" value="week">{{'CONFIG.DASHBOARD.DATE_OPT_THIS_WEEK'|translate}}</button>
+                    </div>
+                </div>
+                <div class="row clearfix">
+                    <div class="col-md-6 column">
+                        <button type="button" class="btn btn-block btn-default" ng-click="optChange($event)" value="month_last">{{'CONFIG.DASHBOARD.DATE_OPT_LAST_MONTH'|translate}}</button>
+                    </div>
+                    <div class="col-md-6 column">
+                        <button type="button" class="btn btn-block btn-default" ng-click="optChange($event)" value="month">{{'CONFIG.DASHBOARD.DATE_OPT_THIS_MONTH'|translate}}</button>
+                    </div>
+                </div>
+                <div class="row clearfix">
+                    <div class="col-md-6 column">
+                        <button type="button" class="btn btn-block btn-default" ng-click="optChange($event)" value="year_last">{{'CONFIG.DASHBOARD.DATE_OPT_LAST_YEAR'|translate}}</button>
+                    </div>
+                    <div class="col-md-6 column">
+                        <button type="button" class="btn btn-block btn-default" ng-click="optChange($event)" value="year">{{'CONFIG.DASHBOARD.DATE_OPT_THIS_YEAR'|translate}}</button>
+                    </div>
+                </div>
+                <div class="row clearfix">
+                    <div class="col-md-12 column">
+                        <button type="button" class="btn btn-block btn-default" ng-click="optChange($event)" value="day_7">{{'CONFIG.DASHBOARD.DATE_OPT_DAY_7'|translate}}</button>
+                    </div>
+                </div>
+                <div class="row clearfix">
+                    <div class="col-md-12 column">
+                        <button type="button" class="btn btn-block btn-default" ng-click="optChange($event)" value="day_30">{{'CONFIG.DASHBOARD.DATE_OPT_DAY_30'|translate}}</button>
+                    </div>
+                </div>
+                <div class="row clearfix">
+                    <div class="col-md-12 column">
+                        <button type="button" class="btn btn-block btn-default" ng-click="optChange($event)" value="all">{{'CONFIG.DASHBOARD.DATE_OPT_ALL'|translate}}</button>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-8" style="margin-top: 5px;">
+                <div class="c-range-picker-p">
+                    <input class="form-control date-picker pull-right c-range-picker" type="text"
+                           ng-show="false">
+                </div>
+                <!--<div class="layui-inline date-range"></div>-->
+                <div style="margin-top: 20px;float: right;">
+                    <button type="button" class="btn btn-sm ng-binding btn-default" style="right: 10px" ng-click="closedate($event,param)">取消
+                    </button>
+                    <button type="button" class="btn btn-sm ng-binding btn-default" style="right: 10px" ng-click="okdate($event,param)">确定
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+

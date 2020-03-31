@@ -755,3 +755,39 @@ treecontrol.tree-dark {
     border-color: rgba(47, 165, 255, 0.75);
     -webkit-box-shadow: 0 0 4px rgba(54, 131, 255, 0.86);
 }
+
+/* dateselector */
+.date-opt .row {
+    margin-top: 12px;
+}
+
+.date-opt{
+    left: 10px;
+}
+
+.date-opt .btn {
+    color: #3c8dbc;
+}
+
+.date-opt-select {
+    background-color: #3c8dbc;
+    color: black !important;
+}
+.date-show-select {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    z-index: 1000;
+    float: left;
+    min-width: 860px;
+    padding: 5px 5px;
+    margin: 2px 0 0;
+    font-size: 14px;
+    text-align: left;
+    background-color: white;
+    border: 1px solid #d1d1d1;
+    border-radius: 5px;
+
+}
+/* dateselector  end */
+

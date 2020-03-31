@@ -28,6 +28,11 @@
                                             <ng-include src="'org/cboard/view/dashboard/param/slider.html'" class="col-md-{{param.cfg.width}}"/>
                                         </div>
                                     </div>
+                                    <div class="row">
+                                        <div ng-repeat="param in row.params | filter:{paramType:'dateselector'}:true" ng-controller="paramCtrl" ng-init="init()">
+                                            <ng-include src="'org/cboard/view/dashboard/param/dateselector.html'" class="col-md-{{param.cfg.width}}"/>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -59,6 +64,11 @@
                                         <div class="row">
                                             <div ng-repeat="param in paramRow.params | filter:{paramType:'slider'}:true" ng-controller="paramCtrl" ng-init="init(crow)">
                                                 <ng-include src="'org/cboard/view/dashboard/param/slider.html'" class="col-md-{{param.cfg.width}}"/>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div ng-repeat="param in paramRow.params | filter:{paramType:'dateselector'}:true" ng-controller="paramCtrl" ng-init="init(crow)">
+                                                <ng-include src="'org/cboard/view/dashboard/param/dateselector.html'" class="col-md-{{param.cfg.width}}"/>
                                             </div>
                                         </div>
                                     </div>

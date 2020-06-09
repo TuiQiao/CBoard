@@ -73,7 +73,7 @@ public class ElasticsearchDataProvider extends DataProvider implements Aggregata
 
     @QueryParameter(label = "Type *",
             type = QueryParameter.Type.Input,
-            required = true,
+            required = false,
             order = 3)
     protected String TYPE = "type";
 
@@ -108,6 +108,9 @@ public class ElasticsearchDataProvider extends DataProvider implements Aggregata
 
     private static final Integer NULL_NUMBER = -999;
 
+    private int bigVersion;
+    private int smallVersion;
+
     static {
         numericTypes.add("long");
         numericTypes.add("integer");
@@ -117,7 +120,15 @@ public class ElasticsearchDataProvider extends DataProvider implements Aggregata
         numericTypes.add("float");
     }
 
-    @Override
+    private void getVersion() throws Exception {
+        JSONObject meta = get("http://" + dataSource.get(SERVERIP));
+        String versionNumber = (String) JSONPath.eval(meta, "$.version.number");
+        String[] versions = versionNumber.split("\\.");
+        this.bigVersion = Integer.parseInt(versions[0]);
+        this.smallVersion = Integer.parseInt(versions[1]);
+    }
+
+        @Override
     public boolean doAggregationInDataSource() {
         return true;
     }
@@ -386,11 +397,21 @@ public class ElasticsearchDataProvider extends DataProvider implements Aggregata
     }
 
     protected String getMappingUrl() {
-        return String.format("http://%s/%s/_mapping/%s", dataSource.get(SERVERIP), query.get(INDEX), query.get(TYPE));
+        String index = query.get(INDEX);
+        if (bigVersion < 7) {
+            return String.format("http://%s/%s/_mapping/%s", dataSource.get(SERVERIP), index, query.get(TYPE));
+        } else {
+            return String.format("http://%s/%s/_mapping", dataSource.get(SERVERIP), index);
+        }
     }
 
     protected String getSearchUrl(JSONObject request) {
-        return String.format("http://%s/%s/%s/_search", dataSource.get(SERVERIP), query.get(INDEX), query.get(TYPE));
+        String index = query.get(INDEX);
+        if (bigVersion < 7) {
+            return String.format("http://%s/%s/%s/_search?ignore_unavailable=true", dataSource.get(SERVERIP), index, query.get(TYPE));
+        } else {
+            return String.format("http://%s/%s/_search?ignore_unavailable=true", dataSource.get(SERVERIP), index);
+        }
     }
 
     @Override
@@ -408,7 +429,10 @@ public class ElasticsearchDataProvider extends DataProvider implements Aggregata
                 types = typesCache.get(key);
                 if (types == null) {
                     JSONObject mapping = get(getMappingUrl());
-                    mapping = mapping.getJSONObject(mapping.keySet().iterator().next()).getJSONObject("mappings").getJSONObject(query.get(TYPE));
+                    mapping = mapping.getJSONObject(mapping.keySet().iterator().next()).getJSONObject("mappings");
+                    if (bigVersion < 7) {
+                        mapping = mapping.getJSONObject(query.get(TYPE));
+                    }
                     types = new HashMap<>();
                     getField(types, new DefaultMapEntry(null, mapping), null);
                     typesCache.put(key, types, 1 * 60 * 60 * 1000);
@@ -623,6 +647,7 @@ public class ElasticsearchDataProvider extends DataProvider implements Aggregata
 
     @Override
     public void afterPropertiesSet() throws Exception {
+        this.getVersion();
         if (StringUtils.isNotBlank(query.get(OVERRIDE))) {
             overrideAggregations = JSONObject.parseObject(query.get(OVERRIDE));
         }

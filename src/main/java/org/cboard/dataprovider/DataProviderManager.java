@@ -37,7 +37,7 @@ public class DataProviderManager implements ApplicationContextAware {
     static {
         Set<Class<?>> classSet = new Reflections("org.cboard").getTypesAnnotatedWith(ProviderName.class);
         for (Class c : classSet) {
-            if (!c.isAssignableFrom(DataProvider.class)) {
+            if (DataProvider.class.isAssignableFrom(c)) {
                 providers.put(((ProviderName) c.getAnnotation(ProviderName.class)).name(), c);
             } else {
                 System.out.println("自定义DataProvider需要继承org.cboard.dataprovider.DataProvider");

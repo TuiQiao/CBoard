@@ -21,6 +21,13 @@
   <![endif]-->
 </head>
 <body class="hold-transition login-page">
+
+<div id="error_" class="alert alert-warning"
+     style="color: black!important;text-align:center;display:none;">
+  <a href="#" class="close" data-dismiss="alert">&times;</a>
+  <strong>Warning!</strong> Account/password error!
+</div>
+
 <div class="login-box">
   <div class="login-logo">
     <span><b>CB</b></span><span>oard</span>
@@ -87,6 +94,12 @@
       radioClass: 'iradio_square-blue',
       increaseArea: '20%' // optional
     });
+    if (location.href.split("?")[1] === 'error') {
+      $("#error_").show();
+      setTimeout(function () {
+        $("#error_").alert('close');
+      }, 2000);
+    }
   });
 </script>
 </body>

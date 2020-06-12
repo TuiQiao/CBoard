@@ -95,7 +95,7 @@ cBoard.controller('paramCtrl', function ($scope, $uibModal, $http) {
                     $scope.param.values = [formatter($scope.slider.minValue, cfg.value_fmt), formatter($scope.slider.maxValue, cfg.value_fmt)];
                 }
             }
-        } else {
+        } else if ($scope.param.paramType == 'selector') {
             _.each($scope.param.col, function (c) {
                 var p;
                 if (_.isUndefined(c.datasetId)) {

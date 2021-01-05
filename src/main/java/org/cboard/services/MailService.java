@@ -120,13 +120,19 @@ public class MailService {
             email.attach(ds, "report.xls", EmailAttachment.ATTACHMENT, "test");
         }
         email.setHostName(mail_smtp_host);
-        email.setSmtpPort(mail_smtp_port);
+        if (mail_smtp_ssl_check) {
+          email.setSslSmtpPort(Integer.toString(mail_smtp_port));
+          email.setSSLOnConnect(true);
+        } else {
+          email.setSmtpPort(mail_smtp_port);
+        }
         email.setSSLCheckServerIdentity(mail_smtp_ssl_check);
         email.setStartTLSEnabled(mail_smtp_start_tls_enabled);
         if (mail_smtp_username != null && mail_smtp_password != null) {
             email.setAuthentication(mail_smtp_username, mail_smtp_password);
         }
         email.setFrom(mail_smtp_from);
+        LOG.error(String.format("sslPort:%s,host:%s",email.getSslSmtpPort(),email.getHostName()));
         email.setSubject(config.getString("subject"));
         String to = config.getString("to");
         if (StringUtils.isNotBlank(to)) {

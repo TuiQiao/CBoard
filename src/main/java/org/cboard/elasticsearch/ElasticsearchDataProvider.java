@@ -8,6 +8,7 @@ import com.google.common.base.Charsets;
 import com.google.common.hash.Hashing;
 import org.apache.commons.collections.keyvalue.DefaultMapEntry;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.http.Header;
 import org.apache.http.HttpResponse;
 import org.apache.http.auth.AuthScope;
 import org.apache.http.auth.UsernamePasswordCredentials;
@@ -22,6 +23,7 @@ import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.BasicAuthCache;
 import org.apache.http.impl.client.BasicCredentialsProvider;
 import org.apache.http.impl.client.HttpClientBuilder;
+import org.apache.http.message.BasicHeader;
 import org.apache.http.util.EntityUtils;
 import org.cboard.cache.CacheManager;
 import org.cboard.cache.HeapCacheManager;
@@ -242,6 +244,10 @@ public class ElasticsearchDataProvider extends DataProvider implements Aggregata
             httpResponse = Request.Post(url).bodyString(request.toString(), ContentType.APPLICATION_JSON).execute().returnResponse();
         } else {
             HttpClientBuilder httpClientBuilder = HttpClientBuilder.create();
+            List<Header> defaultHeaders = new LinkedList<>();
+            //defaultHeaders.add(new BasicHeader("charset", chartset));
+            defaultHeaders.add(new BasicHeader("content-type", "application/json"));
+            httpClientBuilder.setDefaultHeaders(defaultHeaders);
             HttpPost httpPost = new HttpPost(url);
             StringEntity reqEntity = new StringEntity(request.toString());
             httpPost.setEntity(reqEntity);
@@ -638,7 +644,7 @@ public class ElasticsearchDataProvider extends DataProvider implements Aggregata
 
     @Override
     public String viewAggDataQuery(AggConfig ac) throws Exception {
-        String format = "curl -XPOST '%s?pretty' -d '\n%s'";
+        String format = "curl -XPOST '%s' -d '\n%s'";
         JSONObject request = getQueryAggDataRequest(ac);
         String dsl = JSON.toJSONString(request, true);
         return String.format(format, getSearchUrl(request), dsl);

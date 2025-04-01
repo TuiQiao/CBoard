@@ -75,5 +75,5 @@ SDK级别外部集成  | :x: | :white_check_mark: 便于个性化集成
 [职位链接](http://www.chuguotech.com/2)
 
 :books: 更多文档
-- [:cn: 帮助文档](http://peter_zhang921.gitee.io/cboard_docsify/#/zh-cn/)
+- [:cn: 帮助文档](https://www.chuguotech.com/cboard/#/zh-cn/)
 - [:uk: Document](https://tuiqiao.github.io/CBoardDoc/#/en-us/)

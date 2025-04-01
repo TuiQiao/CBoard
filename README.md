@@ -107,7 +107,7 @@ Any bugs or question please feel free to post at Github[Issue system](https://gi
 [职位链接](http://www.chuguotech.com/2)
 
 ## More Document
-- [帮助文档](http://peter_zhang921.gitee.io/cboard_docsify/#/zh-cn/)
+- [帮助文档](https://www.chuguotech.com/cboard/#/zh-cn/)
 - [Document](https://tuiqiao.github.io/CBoardDoc/#/en-us/)
 
 ## Gitter交流 

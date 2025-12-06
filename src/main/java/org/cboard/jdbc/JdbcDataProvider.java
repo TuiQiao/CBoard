@@ -94,6 +94,12 @@ public class JdbcDataProvider extends DataProvider implements Aggregatable, Init
         return v != null && "true".equals(v);
     }
 
+    private String getJdbcUrl() {
+        String url = dataSource.get(JDBC_URL);
+        JdbcSecurityChecker.checkJdbcUrlSafety(url);
+        return url;
+    }
+
     @Override
     public String[][] getData() throws Exception {
         final int batchSize = 100000;
@@ -197,7 +203,7 @@ public class JdbcDataProvider extends DataProvider implements Aggregatable, Init
                     if (ds == null) {
                         Map<String, String> conf = new HashedMap();
                         conf.put(DruidDataSourceFactory.PROP_DRIVERCLASSNAME, dataSource.get(DRIVER));
-                        conf.put(DruidDataSourceFactory.PROP_URL, dataSource.get(JDBC_URL));
+                        conf.put(DruidDataSourceFactory.PROP_URL, getJdbcUrl());
                         conf.put(DruidDataSourceFactory.PROP_USERNAME, dataSource.get(USERNAME));
                         if (StringUtils.isNotBlank(password)) {
                             conf.put(DruidDataSourceFactory.PROP_PASSWORD, dataSource.get(PASSWORD));
@@ -220,7 +226,7 @@ public class JdbcDataProvider extends DataProvider implements Aggregatable, Init
             return conn;
         } else {
             String driver = dataSource.get(DRIVER);
-            String jdbcurl = dataSource.get(JDBC_URL);
+            String jdbcurl = getJdbcUrl();
 
             Class.forName(driver);
             Properties props = new Properties();

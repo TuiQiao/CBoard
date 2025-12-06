@@ -2,6 +2,7 @@ package org.cboard.dataprovider.util;
 
 import org.cboard.dataprovider.config.DimensionConfig;
 import org.cboard.dataprovider.config.ValueConfig;
+import org.cboard.util.sql.SqlInjectionValidator;
 
 import java.sql.Types;
 import java.util.Map;
@@ -23,6 +24,7 @@ public class SqlSyntaxHelper {
 
     public String getDimMemberStr(DimensionConfig config, int index) {
         String memberStr =  config.getValues().get(index).replaceAll("'", "\\\\'");
+        SqlInjectionValidator.quickValidate(memberStr);
         switch (columnTypes.get(config.getColumnName().toUpperCase())) {
             case Types.VARCHAR:
             case Types.CHAR:
@@ -43,6 +45,7 @@ public class SqlSyntaxHelper {
 
     public String getAggStr(ValueConfig vConfig) {
         String aggExp = vConfig.getColumn();
+        SqlInjectionValidator.quickValidate(aggExp);
         switch (vConfig.getAggType()) {
             case "sum":
                 return "SUM(" + aggExp + ")";
